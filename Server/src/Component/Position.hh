@@ -12,7 +12,6 @@ namespace bc
 
 namespace app::component
 {
-
     class Position
     {
         float m_X;
@@ -37,6 +36,6 @@ namespace app::component
         void Reset();
 
         // clone becuase the struct is small
-        static void Write(bc::BinaryCoder &, Position, bool isCreation);
+        static void Write(bc::BinaryCoder &, Position, bool);
     };
 }

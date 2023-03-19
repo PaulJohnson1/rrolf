@@ -22,13 +22,13 @@ namespace app::system
             
             Vector positionVector{position.X(), position.Y()};
 
+            physics.m_Velocity *= physics.Friction();
             physics.m_Velocity += physics.m_Acceleration;
             physics.m_Acceleration.Set(0, 1);
             positionVector += physics.m_Velocity;
 
-            // for testing
-            // physics.m_Velocity *= physics.Friction();
-            if (physics.m_Velocity < 0.1f)
+            physics.m_Velocity *= physics.Friction();
+            if (physics.m_Velocity < 0.01f)
                 physics.m_Velocity.Set(0, 0);
 
             position.X(positionVector.m_X);

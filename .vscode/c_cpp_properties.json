@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/ThirdParty",
-                "${workspaceFolder}/Client/src"
+                "${workspaceFolder}/Client/src",
+                "${workspaceFolder}/Client/ThirdParty"
             ],
             "defines": [],
             "cStandard": "c17",

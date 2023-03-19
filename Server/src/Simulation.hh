@@ -25,7 +25,7 @@ namespace app
     class Client;
     class Camera;
 
-    constexpr Entity MAX_ENTITY_COUNT = (Entity)-1;
+    constexpr Entity MAX_ENTITY_COUNT = 65535;
 
     class Simulation
     {
