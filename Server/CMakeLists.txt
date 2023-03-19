@@ -5,10 +5,11 @@ include_directories(src)
 include_directories(ThirdParty)
 
 set(SOURCES
-    src/Entity/Component/Physics.cc
-    src/Entity/Component/Position.cc
-    src/Entity/Entity.cc
+    src/Component/Physics.cc
+    src/Component/Position.cc
+    src/System/Physics.cc
     src/Client.cc
+    src/Entity.cc
     src/Main.cc
     src/Server.cc
     src/Simulation.cc

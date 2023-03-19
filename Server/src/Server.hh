@@ -12,18 +12,22 @@ namespace
     typedef websocketpp::server<websocketpp::config::asio> WebSocketServer;
 }
 
-class Server
+namespace app
 {
-    uint32_t m_TickCount = 0;
-    WebSocketServer m_Server;
-    std::vector<Client *> m_Clients;
+    class Server
+    {
+        uint32_t m_TickCount = 0;
+        std::vector<Client *> m_Clients;
 
-public:
-    Simulation m_Simulation;
-    Server();
+    public:
+        Simulation m_Simulation;
+        WebSocketServer m_Server;
 
-    void Run();
-    void OnClientConnect(websocketpp::connection_hdl);
-    void OnClientDisconnect(websocketpp::connection_hdl);
-    void Tick();
-};
+        Server();
+
+        void Run();
+        void OnClientConnect(websocketpp::connection_hdl);
+        void OnClientDisconnect(websocketpp::connection_hdl);
+        void Tick();
+    };
+}

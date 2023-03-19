@@ -23,10 +23,10 @@ namespace bc
         {
             return T::Read(*this);
         }
-        template <typename T>
-        void Write(typename T::Type const &x)
+        template <typename T, typename... Arguments>
+        void Write(typename T::Type const &x, Arguments const &... args)
         {
-            T::Write(*this, x);
+            T::Write(*this, x, args...);
         }
     };
 }

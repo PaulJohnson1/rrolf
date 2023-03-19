@@ -1,21 +1,25 @@
 #pragma once
 
-class Vector
+namespace app
 {
-public:
-    float m_X;
-    float m_Y;
-    Vector() = default;
-    Vector(float, float);
-    Vector &operator=(Vector);
-    Vector &operator+=(Vector);
-    Vector &operator-=(Vector);
-    Vector &operator*=(float);
-    Vector operator+(Vector);
-    Vector operator-(Vector);
-    Vector operator*(float);
-    bool operator>(float);
-    bool operator<(float);
-    float Magnitude();
-    Vector &Normalize();
-};
+    class Vector
+    {
+    public:
+        float m_X;
+        float m_Y;
+        Vector() = default;
+        Vector(float, float);
+        void Set(float, float);
+        Vector &operator=(Vector);
+        Vector &operator+=(Vector);
+        Vector &operator-=(Vector);
+        Vector &operator*=(float);
+        Vector operator+(Vector);
+        Vector operator-(Vector);
+        Vector operator*(float);
+        bool operator>(float);
+        bool operator<(float);
+        float Magnitude();
+        Vector &Normalize();
+    };
+}

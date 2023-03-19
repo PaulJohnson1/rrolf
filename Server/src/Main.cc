@@ -5,26 +5,19 @@
 
 #include <Server.hh>
 #include <Simulation.hh>
-#include <Entity/Entity.hh>
+#include <Entity.hh>
 
 int main()
 {
-    Server server;
-    // server.Run();
+    app::Server server;
 
-    Entity &a = server.m_Simulation.Create();
+    app::Entity &a = server.m_Simulation.Create();
     a.m_Position->X(122);
     a.m_Position->Y(1233);
     a.m_Position->Angle(3.14159265358979 - 2);
     a.m_Physics->Radius(123121212);
-
-    Camera camera;
-    static uint8_t data[1024*1024*8];
-    bc::BinaryCoder coder{data};
-    server.m_Simulation.WriteUpdate(coder, camera);
-
-    std::cout << coder.At() << '\n';
-
+    
+    server.Run();
     /*
         00          // deletion count
         01          // update count
@@ -41,10 +34,30 @@ int main()
         01          // physics state
         c8 d5 ea 4c // physics radius
     */
-    for (uint64_t i = 0; i < coder.At(); i++)
-        std::cout << std::hex << (int32_t)coder.Data()[i] << ' ';
-    
-    std::cout << '\n';
+
+
+    // Camera camera;
+
+    // static uint8_t data[1024*1024*8];
+    // bc::BinaryCoder coder{data};
+    // server.m_Simulation.WriteUpdate(coder, camera);
+
+    // for (uint64_t i = 0; i < coder.At(); i++)
+    //     std::cout << std::hex << (int32_t)coder.Data()[i] << ' ';
+    // std::cout << '\n';
+    // server.m_Simulation.Tick();
+    // coder.At(0);
+    // server.m_Simulation.WriteUpdate(coder, camera);
+    // for (uint64_t i = 0; i < coder.At(); i++)
+    //     std::cout << std::hex << (int32_t)coder.Data()[i] << ' ';
+    // std::cout << '\n';
+    // a.m_Position->Angle(3.14159265358979 - 2);
+    // a.m_Position->X(123);
+    // coder.At(0);
+    // server.m_Simulation.WriteUpdate(coder, camera);
+    // for (uint64_t i = 0; i < coder.At(); i++)
+    //     std::cout << std::hex << (int32_t)coder.Data()[i] << ' ';
+    // std::cout << '\n';
 
     return 0;
 }

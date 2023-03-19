@@ -3,31 +3,40 @@
 #include <websocketpp/server.hpp>
 #include <Vector.hh>
 
-class Simulation;
-
-class Camera
+namespace bc
 {
-public:
-    float m_Fov = 1;
-    Vector m_Position{0.0f, 0.0f};
-    std::vector<uint16_t> m_EntitiesInView;
+    class BinaryCoder;
+}
 
-    Camera() = default;
-};
-
-class Client
+namespace app
 {
-    Simulation &m_Simulation;
-    websocketpp::connection_hdl m_Hdl;
+    class Simulation;
 
-public:
-    Camera m_Camera;
+    class Camera
+    {
+    public:
+        float m_Fov = 1;
+        Vector m_Position{0.0f, 0.0f};
+        std::vector<uint16_t> m_EntitiesInView;
 
-    Client(websocketpp::connection_hdl, Simulation &);
-    ~Client();
+        Camera() = default;
+    };
 
-    websocketpp::connection_hdl GetHdl();
+    class Client
+    {
+        Simulation &m_Simulation;
+        websocketpp::connection_hdl m_Hdl;
 
-    void BroadcastUpdate();
-    void Tick();
-};
+    public:
+        Camera m_Camera;
+
+        Client(websocketpp::connection_hdl, Simulation &);
+        ~Client();
+
+        websocketpp::connection_hdl GetHdl();
+
+        void BroadcastUpdate();
+        void Tick();
+        void SendPacket(bc::BinaryCoder const &coder) const;
+    };
+}
