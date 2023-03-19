@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstdint>
+
+#include <Entity.hh>
 #include <Vector.hh>
 
 namespace bc
@@ -8,10 +10,9 @@ namespace bc
     class BinaryCoder;
 }
 
-class Entity;
-
 namespace app::component
 {
+
     class Position
     {
         float m_X;
@@ -22,8 +23,9 @@ namespace app::component
         using Type = Position;
 
         uint16_t m_State;
+        Entity m_Parent;
 
-        Position(Vector, float);
+        Position(Entity);
 
         float X() const;
         float Y() const;
@@ -32,7 +34,7 @@ namespace app::component
         void Y(float);
         void Angle(float);
 
-        void operator+=(Vector v);
+        void Reset();
 
         // clone becuase the struct is small
         static void Write(bc::BinaryCoder &, Position, bool isCreation);

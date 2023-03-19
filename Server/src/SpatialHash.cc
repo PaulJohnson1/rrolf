@@ -1,79 +1,76 @@
-#include <cstdint>
 #include <SpatialHash.hh>
-#include <Entity.hh>
+
+#include <cstdint>
 #include <vector>
 #include <array>
 
+#include <Simulation.hh>
+
 namespace app
 {
-    SpatialHash::SpatialHash()
+    SpatialHash::SpatialHash(Simulation &simulation)
+        : m_Simulation(simulation)
     {
-        for (int32_t n = 0; n < space; ++n)
-        {
-            m_Grid.at(n) = std::vector<Entity *>();
-        }
     }
-    void SpatialHash::insert(Entity *e)
+
+    void SpatialHash::Insert(Entity id)
     {
-        int32_t sx = ((int32_t)e->m_Position->X() - (int32_t)e->m_Physics->Radius()) >> m_GRID_SIZE;
-        int32_t sy = ((int32_t)e->m_Position->Y() - (int32_t)e->m_Physics->Radius()) >> m_GRID_SIZE;
-        int32_t ex = ((int32_t)e->m_Position->X() + (int32_t)e->m_Physics->Radius()) >> m_GRID_SIZE;
-        int32_t ey = ((int32_t)e->m_Position->Y() + (int32_t)e->m_Physics->Radius()) >> m_GRID_SIZE;
-        for (int32_t y = sy; y <= ey; ++y)
+        component::Position position = m_Simulation.Get<component::Position>(id);
+        int32_t entityX = (int32_t)position.X();
+        int32_t entityY = (int32_t)position.Y();
+        int32_t entitySize = (int32_t)m_Simulation.Get<component::Physics>(id).Radius();
+
+        int32_t sx = (entityX - entitySize) >> GRID_SIZE;
+        int32_t sy = (entityY - entitySize) >> GRID_SIZE;
+        int32_t ex = (entityX + entitySize) >> GRID_SIZE;
+        int32_t ey = (entityY + entitySize) >> GRID_SIZE;
+        for (int32_t y = sy; y <= ey; y++)
         {
-            if (y < 0)
-                continue;
-            for (int32_t x = sx; x <= ex; ++x)
+            for (int32_t x = sx; x <= ex; x++)
             {
-                if (x < 0)
-                    continue;
-                uint32_t hash = x | y << m_HASH_SIZE;
-                if (hash >= space)
-                    continue; // should never happen
-                m_Grid.at(hash).push_back(e);
+                uint32_t hash = ((x << 16) | (y >> 16)) % HASH_TABLE_SIZE;
+                m_Cells[hash].push_back(id);
             }
         }
     }
 
-    std::vector<Entity *> SpatialHash::getCollisions(float x, float y, float w, float h)
+    std::vector<Entity> SpatialHash::GetCollisions(int32_t x, int32_t y, int32_t w, int32_t h)
     {
-        std::vector<Entity *> ret = {};
-        int32_t sx = ((int32_t)x - (int32_t)w) >> m_GRID_SIZE;
-        int32_t sy = ((int32_t)y - (int32_t)h) >> m_GRID_SIZE;
-        int32_t ex = ((int32_t)x + (int32_t)w) >> m_GRID_SIZE;
-        int32_t ey = ((int32_t)y + (int32_t)h) >> m_GRID_SIZE;
-        for (int32_t y = sy; y <= ey; ++y)
-        {
-            if (y < 0)
-                continue;
-            for (int32_t x = sx; x <= ex; ++x)
+        std::vector<Entity> result = {};
+        int32_t sx = (x - w) >> GRID_SIZE;
+        int32_t sy = (y - h) >> GRID_SIZE;
+        int32_t ex = (x + w) >> GRID_SIZE;
+        int32_t ey = (y + h) >> GRID_SIZE;
+        for (int32_t y = sy; y <= ey; y++)
+            for (int32_t x = sx; x <= ex; x++)
             {
-                if (x < 0)
-                    continue;
-                uint32_t hash = x | y << m_HASH_SIZE;
-                if (hash >= space)
-                    continue; // should never happen
-                for (Entity *ent : m_Grid.at(hash))
+                uint32_t hash = ((x << 16) | (y >> 16)) % HASH_TABLE_SIZE;
+                std::vector<Entity> &cell = m_Cells[hash];
+                for (uint64_t i = 0; i < cell.size(); i++)
                 {
-                    if (ent->m_QueryId == m_QueryId)
-                        continue;
-                    ent->m_QueryId = m_QueryId;
-                    ret.push_back(ent);
+                    component::Physics &physics = m_Simulation.Get<component::Physics>(cell[i]);
+                    if (physics.m_QueryId != m_QueryId)
+                    {
+                        physics.m_QueryId = m_QueryId;
+                        result.push_back(cell[i]);
+                    }
                 }
             }
-        }
+
         m_QueryId++;
-        return ret;
+        return result;
     }
-    std::vector<Entity *> SpatialHash::getCollisions(Entity *ent)
+    std::vector<Entity> SpatialHash::GetCollisions(Entity id)
     {
-        return getCollisions(ent->m_Position->X(), ent->m_Position->Y(), ent->m_Physics->Radius(), ent->m_Physics->Radius());
+        int32_t entityX = (int32_t)m_Simulation.Get<component::Position>(id).X();
+        int32_t entityY = (int32_t)m_Simulation.Get<component::Position>(id).Y();
+        int32_t entitySize = (int32_t)m_Simulation.Get<component::Physics>(id).Radius();
+
+        return GetCollisions(entityX, entityY, entitySize, entitySize);
     }
-    void SpatialHash::clear()
+    void SpatialHash::Clear()
     {
-        for (int32_t n = 0; n < space; ++n)
-        {
-            m_Grid.at(n).clear();
-        }
+        for (int32_t i = 0; i < HASH_TABLE_SIZE; i++)
+            m_Cells[i].clear();
     }
 }

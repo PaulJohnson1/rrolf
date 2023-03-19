@@ -5,6 +5,17 @@
 
 namespace app::component
 {
+    Physics::Physics(Entity parent)
+        : m_Parent(parent)
+    {
+    }
+
+    void Physics::Reset()
+    {
+        m_State = 0;
+        m_Collisions.clear();
+    }
+
     void Physics::Write(bc::BinaryCoder &coder, Physics physics, bool isCreation)
     {
         uint32_t state = isCreation ? 0b1 : physics.m_State;

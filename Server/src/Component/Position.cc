@@ -5,15 +5,16 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <Entity.hh>
-
 namespace app::component
 {
-    Position::Position(Vector position, float a)
+    Position::Position(Entity parent)
+        : m_Parent(parent)
     {
-        m_Angle = a;
-        m_X = position.m_X;
-        m_Y = position.m_Y;
+    }
+
+    void Position::Reset()
+    {
+        m_State = 0;
     }
 
     void Position::Write(bc::BinaryCoder &coder, Position position, bool isCreation)
@@ -61,10 +62,5 @@ namespace app::component
             return;
         m_Angle = v;
         m_State |= 1 << 2;
-    }
-    void Position::operator+=(Vector v)
-    {
-        X(m_Y + v.m_Y);
-        Y(m_Y + v.m_Y);
     }
 }

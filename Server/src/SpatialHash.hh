@@ -1,26 +1,31 @@
 #pragma once
+
 #include <cstdint>
 #include <list>
 #include <vector>
 #include <array>
 
+#include <Entity.hh>
+
 namespace app
 {
+    class Simulation;
 
-    class Entity;
     class SpatialHash
     {
         uint32_t m_QueryId = 0;
+        Simulation &m_Simulation;
 
     public:
-        static uint32_t constexpr m_GRID_SIZE = 5; // 32 x 32
-        static uint32_t constexpr m_HASH_SIZE = 5;
-        static uint32_t constexpr space = 1 << (m_HASH_SIZE << 1);
-        std::array<std::vector<Entity *>, space> m_Grid = {};
-        SpatialHash();
-        void insert(Entity *);
-        void clear();
-        std::vector<Entity *> getCollisions(float, float, float, float);
-        std::vector<Entity *> getCollisions(Entity *);
+        static constexpr uint32_t GRID_SIZE = 5;
+        static constexpr uint32_t HASH_TABLE_SIZE = 65537;
+        std::vector<Entity> *m_Cells = new std::vector<Entity>[HASH_TABLE_SIZE];
+
+        SpatialHash(Simulation &);
+
+        void Insert(uint16_t);
+        void Clear();
+        std::vector<uint16_t> GetCollisions(int32_t, int32_t, int32_t, int32_t);
+        std::vector<uint16_t> GetCollisions(uint16_t);
     };
 }

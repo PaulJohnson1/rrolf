@@ -5,11 +5,12 @@ include_directories(src)
 include_directories(ThirdParty)
 
 set(SOURCES
+    src/Component/Life.cc
     src/Component/Physics.cc
     src/Component/Position.cc
-    src/System/Physics.cc
+    src/System/CollisionDetector.cc
+    src/System/Velocity.cc
     src/Client.cc
-    src/Entity.cc
     src/Main.cc
     src/Server.cc
     src/Simulation.cc

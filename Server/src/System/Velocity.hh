@@ -7,11 +7,11 @@ namespace app
 
 namespace app::system
 {
-    class Physics
+    class Velocity
     {
-        Simulation &m_Simulation;
     public:
-        Physics(Simulation &);
+        Simulation &m_Simulation;
+        Velocity(Simulation &);
 
         void Tick();
     };

@@ -5,36 +5,26 @@
 
 #include <Server.hh>
 #include <Simulation.hh>
-#include <Entity.hh>
 
 int main()
 {
-    app::Server server;
+    using namespace app;
+    Server server;
 
-    app::Entity &a = server.m_Simulation.Create();
-    a.m_Position->X(122);
-    a.m_Position->Y(1233);
-    a.m_Position->Angle(3.14159265358979 - 2);
-    a.m_Physics->Radius(123121212);
+    Entity id = server.m_Simulation.Create();
+    component::Position &position = server.m_Simulation.AddComponent<component::Position>(id);
+    component::Physics &physics = server.m_Simulation.AddComponent<component::Physics>(id);
+    position.X(122);
+    position.Y(1233);
+    position.Angle(3.14159265358979 - 2);
+    physics.Radius(100.0f);
+    physics.m_Velocity.Set(0.0f, 1.0f);
     
+    Entity second = server.m_Simulation.Create();
+    component::Life &life = server.m_Simulation.AddComponent<component::Life>(second);
+    life.Damage(69);
+
     server.Run();
-    /*
-        00          // deletion count
-        01          // update count
-
-        01          // creation type
-        00          // entity id
-        03          // component flags
-
-        07          // position state
-        00 00 f4 42 // position x value
-        00 20 9a 44 // position y value
-        b5 1f 92 3f // angle
-
-        01          // physics state
-        c8 d5 ea 4c // physics radius
-    */
-
 
     // Camera camera;
 
