@@ -1166,7 +1166,14 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  15964: ($0, $1, $2) => { let string = ""; for (let i = $1; i < $1 + $2; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { const data = event.data; const buffer = Module._malloc(data.length); Module.HEAPU8.set(data, buffer); Module._OnMessage($0, buffer); Module._free(buffer); }; }
+  16068: ($0) => { Module.canvas = document.createElement("canvas"); Module.ctx = Module.canvas.getContext("2d"); devicePixelRatio = 1; Module.canvas.width = window.innerWidth; Module.canvas.height = window.innerHeight; function Draw() { Module._Render($0); requestAnimationFrame(Draw); } Draw(); },  
+ 16350: () => { Module.ctx.setTransform(1, 0, 0, 1, 0, 0); Module.ctx.clearRect(0, 0, Module.canvas.width, Module.canvas.height); },  
+ 16468: ($0, $1) => { Module.ctx.translate($0, $1); },  
+ 16502: ($0, $1) => { Module.ctx.scale($0, $1); },  
+ 16532: () => { Module.ctx.save(); },  
+ 16555: () => { Module.ctx.restore(); },  
+ 16581: ($0, $1, $2, $3, $4, $5, $6, $7, $8) => { Module.ctx.save(); Module.ctx.lineWidth = $1; Module.ctx.fillStyle = Module.ctx.strokeStyle = "rgba(" + $1 + "," + $2 + "," + $3 + "," + $4 + ")"; Module.ctx.beginPath(); Module.ctx.arc($5, $6, $7, 0, 2*Math.PI); if ($8 % 2 === 0) Module.ctx.fill(); if ($8 > 0) Module.ctx.stroke(); Module.ctx.restore(); },  
+ 16890: ($0, $1, $2) => { let string = ""; for (let i = $1; i < $1 + $2; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { const data = event.data; const buffer = Module._malloc(data.length); Module.HEAPU8.set(data, buffer); Module._OnMessage($0, buffer); Module._free(buffer); }; }
 };
 
 
@@ -4893,6 +4900,9 @@ var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__w
 
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
+
+/** @type {function(...*):?} */
+var _Render = Module["_Render"] = createExportWrapper("Render");
 
 /** @type {function(...*):?} */
 var _OnMessage = Module["_OnMessage"] = createExportWrapper("OnMessage");

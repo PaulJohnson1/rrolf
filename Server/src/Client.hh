@@ -1,6 +1,10 @@
 #pragma once
 
+#include <optional>
+
 #include <websocketpp/server.hpp>
+
+#include <Entity.hh>
 #include <Vector.hh>
 
 namespace bc
@@ -16,8 +20,9 @@ namespace app
     {
     public:
         float m_Fov = 1;
-        Vector m_Position{0.0f, 0.0f};
-        std::vector<uint16_t> m_EntitiesInView;
+        float m_X = 0;
+        float m_Y = 0;
+        std::vector<Entity> m_EntitiesInView;
 
         Camera() = default;
     };
@@ -28,6 +33,7 @@ namespace app
         websocketpp::connection_hdl m_Hdl;
 
     public:
+        std::optional<Entity> m_Player;
         Camera m_Camera;
 
         Client(websocketpp::connection_hdl, Simulation &);

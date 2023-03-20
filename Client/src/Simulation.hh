@@ -10,6 +10,14 @@
 
 namespace app
 {
+    class Camera
+    {
+    public:
+        float m_Fov;
+        float m_X;
+        float m_Y;
+    };
+
     class Simulation
     {
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
@@ -18,6 +26,8 @@ namespace app
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
 
     public:
+        Camera m_Camera;
+
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);

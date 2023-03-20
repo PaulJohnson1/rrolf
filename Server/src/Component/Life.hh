@@ -21,7 +21,7 @@ namespace app::component
         using Type = Life;
         
         Entity m_Parent;
-        uint16_t m_State;
+        uint64_t m_State = 0;
 
         Life(Entity);
 

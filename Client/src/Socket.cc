@@ -23,7 +23,6 @@ extern "C"
 
 namespace app
 {
-    // Socket::Socket(std::string url, std::function<void()>, std::function<void()>, std::function<void()>)
     Socket::Socket(std::string url)
         : m_Url(url)
     {
@@ -52,7 +51,7 @@ namespace app
                 Module._free(buffer);
             };
         },
-               this, url.c_str(), url.size());
+               this, m_Url.c_str(), m_Url.size());
 #else
         m_WebSocketClient.init_asio();
         m_WebSocketClient.set_access_channels(websocketpp::log::alevel::none);

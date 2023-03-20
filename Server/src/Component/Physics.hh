@@ -29,7 +29,7 @@ namespace app::component
 
         using Type = Physics;
 
-        uint16_t m_State;
+        uint64_t m_State = 0;
         Physics(Entity);
         float Radius() const;
         float Friction() const;

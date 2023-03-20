@@ -9,6 +9,7 @@
 #include <Component/Physics.hh>
 #include <Component/Life.hh>
 #include <Component/Position.hh>
+#include <Component/Flower.hh>
 #include <System/Velocity.hh>
 #include <System/CollisionDetector.hh>
 #include <Entity.hh>
@@ -36,6 +37,7 @@ namespace app
         std::optional<component::Physics> m_PhysicsComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Position> m_PositionComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
 
     public:
         Server &m_Server;
@@ -66,8 +68,8 @@ namespace app
         template <typename Component>
         std::optional<Component> const &GetOptional(Entity) const;
 
-        std::vector<uint16_t> FindEntitiesInView(Camera &camera);
-        uint16_t Create();
+        std::vector<Entity> FindEntitiesInView(Camera &camera);
+        Entity Create();
 
         void WriteEntity(bc::BinaryCoder &, Entity, bool);
         void ResetEntity(Entity);

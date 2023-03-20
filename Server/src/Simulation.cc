@@ -41,6 +41,7 @@ namespace app
     DEFINE_COMPONENT_GETTER(Position);
     DEFINE_COMPONENT_GETTER(Physics);
     DEFINE_COMPONENT_GETTER(Life);
+    DEFINE_COMPONENT_GETTER(Flower);
 
 #undef DEFINE_COMPONENT_GETTER
 
@@ -132,12 +133,14 @@ namespace app
             componentFlags |= GetOptional<component::Position>(id).has_value() << 0;
             componentFlags |= GetOptional<component::Physics>(id).has_value() << 1;
             componentFlags |= GetOptional<component::Life>(id).has_value() << 2;
+            componentFlags |= GetOptional<component::Flower>(id).has_value() << 3;
         }
         else
         {
             componentFlags |= (GetOptional<component::Position>(id) && Get<component::Position>(id).m_State != 0) << 0;
             componentFlags |= (GetOptional<component::Physics>(id) && Get<component::Physics>(id).m_State != 0) << 1;
             componentFlags |= (GetOptional<component::Life>(id) && Get<component::Life>(id).m_State != 0) << 2;
+            componentFlags |= (GetOptional<component::Flower>(id) && Get<component::Flower>(id).m_State != 0) << 2;
         }
 
         coder.Write<bc::VarUint>(id);
@@ -149,6 +152,8 @@ namespace app
             coder.Write<component::Physics>(Get<component::Physics>(id), isCreation);
         if (componentFlags & 4)
             coder.Write<component::Life>(Get<component::Life>(id), isCreation);
+        if (componentFlags & 8)
+            coder.Write<component::Flower>(Get<component::Flower>(id), isCreation);
     }
 
     void Simulation::ResetEntity(Entity id)
@@ -159,6 +164,8 @@ namespace app
             Get<component::Physics>(id).Reset();
         if (GetOptional<component::Life>(id))
             Get<component::Life>(id).Reset();
+        if (GetOptional<component::Flower>(id))
+            Get<component::Flower>(id).Reset();
     }
 
     Entity Simulation::Create()

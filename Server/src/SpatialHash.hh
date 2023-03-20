@@ -23,9 +23,9 @@ namespace app
 
         SpatialHash(Simulation &);
 
-        void Insert(uint16_t);
+        void Insert(Entity);
         void Clear();
-        std::vector<uint16_t> GetCollisions(int32_t, int32_t, int32_t, int32_t);
-        std::vector<uint16_t> GetCollisions(uint16_t);
+        std::vector<Entity> GetCollisions(int32_t, int32_t, int32_t, int32_t);
+        std::vector<Entity> GetCollisions(Entity);
     };
 }

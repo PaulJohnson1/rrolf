@@ -14,14 +14,14 @@ namespace app::component
 {
     class Position
     {
-        float m_X;
-        float m_Y;
-        float m_Angle;
+        float m_X = 0.0f;
+        float m_Y = 0.0f;
+        float m_Angle = 0.0f;
 
     public:
         using Type = Position;
 
-        uint16_t m_State;
+        uint64_t m_State = 0;
         Entity m_Parent;
 
         Position(Entity);

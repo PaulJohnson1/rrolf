@@ -47,6 +47,10 @@ namespace app
 
         if (type == 0)
         {
+            m_Camera.m_Fov = coder.Read<bc::Float32>();
+            m_Camera.m_X = coder.Read<bc::Float32>();
+            m_Camera.m_Y = coder.Read<bc::Float32>();
+
             std::vector<Entity> deletedEntities;
             Entity deletedEntityCount = coder.Read<bc::VarUint>();
             for (Entity i = 0; i < deletedEntityCount; i++)
