@@ -7,11 +7,12 @@ namespace app
 
 namespace app::system
 {
-    class Velocity
+    class CollisionResolver
     {
     public:
         Simulation &m_Simulation;
-        Velocity(Simulation &);
+        
+        CollisionResolver(Simulation &);
 
         void Tick();
         void PostTick();

@@ -28,6 +28,7 @@ namespace app
         void Run();
         void OnClientConnect(websocketpp::connection_hdl);
         void OnClientDisconnect(websocketpp::connection_hdl);
+        void OnMessage(websocketpp::connection_hdl, WebSocketServer::message_ptr);
         void Tick();
     };
 }

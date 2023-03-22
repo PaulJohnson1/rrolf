@@ -31,6 +31,7 @@ namespace app
     {
         Simulation &m_Simulation;
         websocketpp::connection_hdl m_Hdl;
+        Vector m_PlayerAcceleration;
 
     public:
         std::optional<Entity> m_Player;
@@ -44,5 +45,6 @@ namespace app
         void BroadcastUpdate();
         void Tick();
         void SendPacket(bc::BinaryCoder const &coder) const;
+        void ReadPacket(uint8_t *data, size_t);
     };
 }

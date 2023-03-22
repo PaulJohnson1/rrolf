@@ -42,12 +42,18 @@ namespace app::system
 
                 if ((positionVector - position2Vector) < (physics.Radius() + physics2.Radius()))
                 {
-                    if (std::find(physics.m_Collisions.begin(), physics.m_Collisions.end(), id) == physics.m_Collisions.end())
+                    if (std::find(physics.m_Collisions.begin(), physics.m_Collisions.end(), id) == physics.m_Collisions.end()
+                    && std::find(physics2.m_Collisions.begin(), physics2.m_Collisions.end(), id) == physics2.m_Collisions.end()
+                    && std::find(physics.m_Collisions.begin(), physics.m_Collisions.end(), entity) == physics.m_Collisions.end()
+                    && std::find(physics2.m_Collisions.begin(), physics2.m_Collisions.end(), entity) == physics2.m_Collisions.end())
                         physics.m_Collisions.push_back(id);
-                    if (std::find(physics2.m_Collisions.begin(), physics2.m_Collisions.end(), id) == physics2.m_Collisions.end())
-                        physics2.m_Collisions.push_back(entity);
                 }
             }
         });
+    }
+
+    void CollisionDetector::PostTick()
+    {
+        m_SpatialHash.Clear();
     }
 }

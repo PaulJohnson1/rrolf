@@ -30,8 +30,12 @@ namespace app
 
         std::string m_Url;
 
-        Socket(std::string);
+        Socket(std::string, std::function<void()>, std::function<void()>, std::function<void(uint8_t *)>);
 
+        void OnMessage();
+        void OnClose();
+        void OnOpen();
+        void SendPacket(uint8_t *, size_t);
         void Connect();
     };
 }

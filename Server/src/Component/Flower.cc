@@ -11,10 +11,12 @@ namespace app::component
         : m_Parent(parent)
     {
     }
+
     void Flower::Reset()
     {
         m_State = 0;
     }
+
     void Flower::Write(bc::BinaryCoder &coder, Flower flower, bool isCreation)
     {
         uint32_t state = isCreation ? 0b111 : flower.m_State;
@@ -25,21 +27,25 @@ namespace app::component
         if (state & 2)
             coder.Write<bc::Float32>(flower.m_EyeAngle);
     }
-    Flags Flower::FaceFlags() const
+
+    uint8_t Flower::FaceFlags() const
     {
         return m_FaceFlags;
     }
+
     float Flower::EyeAngle() const
     {
         return m_EyeAngle;
     }
-    void Flower::FaceFlags(Flags v)
+
+    void Flower::FaceFlags(uint8_t v)
     {
         if (v == m_FaceFlags)
             return;
         m_FaceFlags = v;
         m_State |= 1 << 0;
     }
+
     void Flower::EyeAngle(float v)
     {
         if (v == m_EyeAngle)

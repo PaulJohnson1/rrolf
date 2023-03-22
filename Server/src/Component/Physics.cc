@@ -30,14 +30,17 @@ namespace app::component
     {
         return m_Radius;
     }
+    
     float Physics::Friction() const
     {
         return m_Friction;
     }
+
     float Physics::Mass() const
     {
         return m_Mass;
     }
+
 
     void Physics::Radius(float r)
     {
@@ -46,10 +49,12 @@ namespace app::component
         m_Radius = r;
         m_State |= 1;
     }
+
     void Physics::Friction(float f)
     {
         m_Friction = f;
     }
+
     void Physics::Mass(float m)
     {
         m_Mass = m;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 
 class SkCanvas;
 
@@ -16,14 +17,17 @@ namespace app
         Simulation &m_Simulation;
 
     public:
+        int32_t m_Width;
+        int32_t m_Height;
+        std::map<uint8_t, uint8_t> m_KeysPressed{};
+
         class Paint
         {
         public:
             enum class Style : uint8_t
             {
                 Fill,
-                Stroke,
-                FillAndStroke
+                Stroke
             };
 
             enum class Cap : uint8_t
@@ -54,10 +58,11 @@ namespace app
         Renderer(Simulation &);
 
         void Initialize();
-        void Render();
+        void SetSize(int32_t width, int32_t height);
         void Translate(float, float);
         void Scale(float, float);
         void DrawCircle(float, float, float, Paint const &);
+        void Render();
         void Save();
         void Restore();
         void Clear();

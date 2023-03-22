@@ -7,11 +7,12 @@ namespace app
 
 namespace app::system
 {
-    class Velocity
+    class Damage
     {
     public:
         Simulation &m_Simulation;
-        Velocity(Simulation &);
+        
+        Damage(Simulation &);
 
         void Tick();
         void PostTick();

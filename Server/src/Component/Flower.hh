@@ -14,7 +14,7 @@ namespace app::component
     class Flower
     {
     public:
-        enum class Flags
+        enum class Flags : uint8_t
         {
             Attack = 1,
             Defend = 2,
@@ -25,7 +25,7 @@ namespace app::component
         };
         
     private:
-        Flags m_FaceFlags = 0;
+        uint8_t m_FaceFlags = 0;
         float m_EyeAngle = 0.0f;
 
     public:
@@ -36,9 +36,9 @@ namespace app::component
 
         Flower(Entity);
 
-        Flags FaceFlags();
-        float EyeAngle();
-        void FaceFlags(Flags);
+        uint8_t FaceFlags() const;
+        float EyeAngle() const;
+        void FaceFlags(uint8_t);
         void EyeAngle(float);
 
         void Reset();

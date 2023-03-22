@@ -45,7 +45,6 @@ namespace app
 
 #undef DEFINE_COMPONENT_GETTER
 
-
     Simulation::Simulation(Server &s)
         : m_Server(s),
           m_Velocity(*this),
@@ -62,7 +61,8 @@ namespace app
         m_Velocity.Tick();
         m_CollisionDetector.Tick();
 
-        m_CollisionDetector.m_SpatialHash.Clear();
+        m_Velocity.PostTick();
+        m_CollisionDetector.PostTick();
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(Camera &camera)
@@ -97,22 +97,21 @@ namespace app
         std::vector<Entity> entitiesInView = FindEntitiesInView(camera);
         std::vector<Entity> deletedEntities;
 
-        std::copy_if(
-            camera.m_EntitiesInView.begin(),
-            camera.m_EntitiesInView.end(),
-            std::back_inserter(deletedEntities),
-            [&](Entity id)
+        for (Entity i = 0; i < camera.m_EntitiesInView.size(); i++)
+        {
+            Entity id = camera.m_EntitiesInView[i];
+            // id is not in the entities the client should view
+            if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
             {
-                return std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end();
-            });
-
-        std::for_each(deletedEntities.begin(), deletedEntities.end(), [&](Entity id)
-                      { camera.m_EntitiesInView.erase(std::remove(camera.m_EntitiesInView.begin(), camera.m_EntitiesInView.end(), id),
-                                                      camera.m_EntitiesInView.end()); });
+                deletedEntities.push_back(id);
+                // remove id from the camera's view after writing deletion so it does not get deleted twice
+                camera.m_EntitiesInView.erase(std::find(camera.m_EntitiesInView.begin(), camera.m_EntitiesInView.end(), id));
+            }
+        }
 
         coder.Write<bc::VarUint>(deletedEntities.size());
-        std::for_each(deletedEntities.begin(), deletedEntities.end(), [&](Entity id)
-                      { coder.Write<bc::VarUint>(id); });
+        for (Entity id : deletedEntities)
+            coder.Write<bc::VarUint>(id);
 
         coder.Write<bc::VarUint>(entitiesInView.size());
         for (Entity id : entitiesInView)
@@ -174,10 +173,12 @@ namespace app
         Entity id = m_AvailableIds.front();
         m_AvailableIds.pop();
         m_EntityTracker[id] = true;
+        std::cout << "entity with id " << std::to_string(id) << " created\n";
         return id;
     }
     void Simulation::Remove(Entity id)
     {
+        std::cout << "entity with id " << std::to_string(id) << " deleted\n";
         assert(m_EntityTracker[id]);
         m_AvailableIds.push(id);
         m_PhysicsComponents[id].reset();

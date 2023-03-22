@@ -5,6 +5,7 @@ include_directories(src)
 include_directories(ThirdParty)
 
 set(SOURCES
+    src/Component/Flower.cc
     src/Component/Life.cc
     src/Component/Physics.cc
     src/Component/Position.cc

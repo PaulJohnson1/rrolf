@@ -2,30 +2,62 @@
 
 #include <iostream>
 
+static uint8_t g_MessageData[1024*1024];
 #ifdef WASM_BUILD
 extern "C"
 {
-    void OnMessage(app::Socket *socket, uint8_t *message)
+    void OnMessage(app::Socket *socket)
     {
-        // std::cout << "template <typename T> " << (void *)message << '\n';
-        socket->m_OnMessage(message);
+        socket->OnMessage();
     }
     void OnOpen(app::Socket *socket)
     {
-        // socket->m_OnOpen();
+        socket->OnOpen();
     }
     void OnClose(app::Socket *socket)
     {
-        // socket->m_OnClose();
+        socket->OnClose();
     }
 }
 #endif
 
 namespace app
 {
-    Socket::Socket(std::string url)
-        : m_Url(url)
+    Socket::Socket(std::string url, std::function<void()> OnOpen, std::function<void()> OnClose, std::function<void(uint8_t *)> OnMessage)
+        : m_Url(url),
+          m_OnOpen(OnOpen),
+          m_OnClose(OnClose),
+          m_OnMessage(OnMessage)
     {
+    }
+
+    void Socket::OnOpen()
+    {
+        m_OnOpen();
+    }
+
+    void Socket::OnClose()
+    {
+        m_OnClose();
+    }
+
+    void Socket::OnMessage()
+    {
+        m_OnMessage(g_MessageData);
+    }
+
+    void Socket::SendPacket(uint8_t *data, size_t size)
+    {
+#ifdef WASM_BUILD
+        EM_ASM({
+            const data = new Uint8Array($1);
+            for (let i = 0; i < $1; i++)
+                data[i] = HEAPU8[$0 + i];
+            window.socket.send(data);
+        }, data, (uint32_t)size);
+#else
+        m_WebSocketClient.send(m_ConnectionPointer->get_handle(), (void *)data, size, websocketpp::frame::opcode::binary);
+#endif
     }
 
     void Socket::Connect()
@@ -33,7 +65,7 @@ namespace app
 #ifdef WASM_BUILD
         EM_ASM({
             let string = "";
-            for (let i = $1; i < $1 + $2; i++)
+            for (let i = $2; i < $2 + $3; i++)
                 string += String.fromCharCode(Module.HEAPU8[i]);
             console.log("connecting to socket", string);
             let socket = window.socket = new WebSocket(string);
@@ -44,14 +76,10 @@ namespace app
             };
             socket.onmessage = function(event)
             {
-                const data = event.data;
-                const buffer = Module._malloc(data.length);
-                Module.HEAPU8.set(data, buffer);
-                Module._OnMessage($0, buffer);
-                Module._free(buffer);
+                Module.HEAPU8.set(new Uint8Array(event.data), $1);
+                Module._OnMessage($0);
             };
-        },
-               this, m_Url.c_str(), m_Url.size());
+        }, this, g_MessageData, m_Url.c_str(), m_Url.size());
 #else
         m_WebSocketClient.init_asio();
         m_WebSocketClient.set_access_channels(websocketpp::log::alevel::none);
@@ -59,9 +87,9 @@ namespace app
         m_ConnectionPointer = m_WebSocketClient.get_connection("ws://localhost:8000", error);
         assert(!error);
         m_ConnectionPointer->set_close_handler([&](websocketpp::connection_hdl hdl)
-                                               { m_OnClose(); });
+                                               { OnClose(); });
         m_ConnectionPointer->set_open_handler([&](websocketpp::connection_hdl hdl)
-                                              { m_OnOpen(); });
+                                              { OnOpen(); });
         m_ConnectionPointer->set_message_handler([&](websocketpp::connection_hdl hdl, Client::message_ptr m)
                                                  { m_OnMessage((uint8_t *)m->get_raw_payload().c_str()); });
 

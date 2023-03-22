@@ -15,17 +15,17 @@ namespace app::component
 {
     class Physics
     {
-        float m_Radius;
-        float m_Friction = 0.9;
-        float m_Mass = 1;
+        float m_Radius = 1.0f;
+        float m_Friction = 0.9f;
+        float m_Mass = 1.0f;
 
     public:
         Entity m_Parent;
         uint32_t m_QueryId = 0;
         std::vector<Entity> m_Collisions{};
 
-        Vector m_Velocity;
-        Vector m_Acceleration;
+        Vector m_Velocity{0, 0};
+        Vector m_Acceleration{0, 0};
 
         using Type = Physics;
 

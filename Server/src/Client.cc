@@ -20,11 +20,15 @@ namespace app
         m_Simulation.AddComponent<component::Flower>(*m_Player);
         m_Simulation.AddComponent<component::Physics>(*m_Player);
         m_Simulation.AddComponent<component::Life>(*m_Player);
+        m_Simulation.Get<component::Physics>(*m_Player).Radius(5.0f);
     }
 
     Client::~Client()
     {
         std::cout << "client destroy\n";
+
+        if (m_Player)
+            m_Simulation.Remove(*m_Player);
     }
 
     void Client::BroadcastUpdate()
@@ -44,6 +48,7 @@ namespace app
 
     void Client::Tick()
     {
+        m_Simulation.Get<component::Physics>(*m_Player).m_Acceleration = m_PlayerAcceleration;
         m_Camera.m_X = m_Simulation.Get<component::Position>(*m_Player).X();
         m_Camera.m_Y = m_Simulation.Get<component::Position>(*m_Player).Y();
         BroadcastUpdate();
@@ -55,8 +60,45 @@ namespace app
         m_Simulation.m_Server.m_Server.send(m_Hdl, packet, websocketpp::frame::opcode::binary);
     }
 
-    websocketpp::connection_hdl Client::GetHdl()
+    void Client::ReadPacket(uint8_t *data, size_t size)
     {
-        return m_Hdl;
+        if (size < 1)
+        {
+            std::cout << "someone sent packet with size < 1\n";
+            return;
+        }
+        bc::BinaryCoder coder{data};
+        uint8_t type = coder.Read<bc::Uint8>();
+        if (type == 0)
+        {
+            if (size != 3) {
+                std::cout << "someone sent update packet with size not equal to 3\n";
+                return;
+            }
+
+            bool mouseMovement = coder.Read<bc::Uint8>();
+
+            if (mouseMovement)
+            {
+                std::cout << "mouse movement doesn't exist yet\n";
+                return;
+            }
+
+            uint8_t movementFlags = coder.Read<bc::Uint8>();
+
+            float x = 0;
+            float y = 0;
+
+            if (movementFlags & 1) y--;
+            if (movementFlags & 2) x--;
+            if (movementFlags & 4) y++;
+            if (movementFlags & 8) x++;
+
+            std::cout << std::to_string(movementFlags) <<  x << ' ' << y << '\n';
+
+            m_PlayerAcceleration.Set(x, y);
+        }
     }
+
+    websocketpp::connection_hdl Client::GetHdl() { return m_Hdl; }
 }

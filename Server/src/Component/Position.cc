@@ -34,14 +34,17 @@ namespace app::component
     {
         return m_X;
     }
+    
     float Position::Y() const
     {
         return m_Y;
     }
+
     float Position::Angle() const
     {
         return m_Angle;
     }
+
     void Position::X(float v)
     {
         if (v == m_X)
@@ -49,6 +52,7 @@ namespace app::component
         m_X = v;
         m_State |= 1 << 0;
     }
+
     void Position::Y(float v)
     {
         if (v == m_Y)
@@ -56,6 +60,7 @@ namespace app::component
         m_Y = v;
         m_State |= 1 << 1;
     }
+
     void Position::Angle(float v)
     {
         if (v == m_Angle)

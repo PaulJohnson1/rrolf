@@ -14,6 +14,7 @@ namespace app
         m_Server.start_accept();
         m_Server.set_open_handler(bind(&Server::OnClientConnect, this, websocketpp::lib::placeholders::_1));
         m_Server.set_close_handler(bind(&Server::OnClientDisconnect, this, websocketpp::lib::placeholders::_1));
+        m_Server.set_message_handler(bind(&Server::OnMessage, this, websocketpp::lib::placeholders::_1, websocketpp::lib::placeholders::_2));
 
         std::thread([&]()
                     {
@@ -52,6 +53,15 @@ namespace app
                 delete *i;
                 m_Clients.erase(i);
                 break;
+            }
+    }
+
+    void Server::OnMessage(websocketpp::connection_hdl hdl, WebSocketServer::message_ptr message)
+    {
+        for (decltype(m_Clients)::iterator i = m_Clients.begin(); i != m_Clients.end(); i++)
+            if ((*i)->GetHdl().lock() == hdl.lock())
+            {
+                (*i)->ReadPacket((uint8_t *)message->get_raw_payload().c_str(), message->get_raw_payload().size());
             }
     }
 }

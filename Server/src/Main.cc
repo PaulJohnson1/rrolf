@@ -9,21 +9,18 @@
 int main()
 {
     using namespace app;
+
     Server server;
 
     Entity id = server.m_Simulation.Create();
     component::Position &position = server.m_Simulation.AddComponent<component::Position>(id);
     component::Physics &physics = server.m_Simulation.AddComponent<component::Physics>(id);
     position.X(122);
-    position.Y(1233);
+    position.Y(123);
     position.Angle(3.14159265358979 - 2);
-    physics.Radius(100.0f);
+    physics.Radius(50.0f);
     physics.m_Velocity.Set(0.0f, 1.0f);
     
-    Entity second = server.m_Simulation.Create();
-    component::Life &life = server.m_Simulation.AddComponent<component::Life>(second);
-    life.Damage(69);
-
     server.Run();
 
     // Camera camera;

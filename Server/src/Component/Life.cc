@@ -34,14 +34,17 @@ namespace app::component
     {
         return m_Health;
     }
+    
     float Life::MaxHealth() const
     {
         return m_MaxHealth;
     }
+
     float Life::Damage() const
     {
         return m_Damage;
     }
+
     void Life::Health(float v)
     {
         if (v == m_Health)
@@ -49,6 +52,7 @@ namespace app::component
         m_Health = v;
         m_State |= 1 << 0;
     }
+
     void Life::MaxHealth(float v)
     {
         if (v == m_MaxHealth)
@@ -56,11 +60,30 @@ namespace app::component
         m_MaxHealth = v;
         m_State |= 1 << 1;
     }
+
     void Life::Damage(float v)
     {
         if (v == m_Damage)
             return;
         m_Damage = v;
         m_State |= 1 << 2;
+    }
+
+    void Life::operator+=(float v)
+    {
+        if (v == 0)
+            return;
+        m_Health += v;
+        if (m_Health > m_MaxHealth) m_Health = m_MaxHealth;
+        m_State |= 1 << 0;
+    }
+
+    void Life::operator-=(float v)
+    {
+        if (v == 0)
+            return;
+        m_Health -= v;
+        if (m_Health < 0) m_Health = 0;
+        m_State |= 1 << 0;
     }
 }

@@ -32,6 +32,9 @@ namespace app::component
         void MaxHealth(float);
         void Damage(float);
 
+        void operator+=(float);
+        void operator-=(float);
+
         void Reset();
 
         // clone becuase the struct is small

@@ -12,6 +12,7 @@
 #include <Component/Flower.hh>
 #include <System/Velocity.hh>
 #include <System/CollisionDetector.hh>
+#include <System/CollisionResolver.hh>
 #include <Entity.hh>
 #include <SpatialHash.hh>
 
@@ -26,12 +27,11 @@ namespace app
     class Client;
     class Camera;
 
-    constexpr Entity MAX_ENTITY_COUNT = 65535;
-
     class Simulation
     {
         system::Velocity m_Velocity;
         system::CollisionDetector m_CollisionDetector;
+        // system::CollisionResolver m_CollisionResolver;
         std::queue<Entity> m_AvailableIds{};
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
         std::optional<component::Physics> m_PhysicsComponents[MAX_ENTITY_COUNT] = {};
