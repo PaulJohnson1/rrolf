@@ -14,7 +14,6 @@ extern "C"
 {
     void KeyEvent(uint8_t op, int32_t key)
     {
-        std::cout << std::to_string(op) << ' ' << key << '\n';
         if (op == 1)
             g_Renderer->m_KeysPressed[key] = 1;
         else if (op == 0)
@@ -125,8 +124,6 @@ namespace app
                 Module.surface.requestAnimationFrame(Draw);
                 if (Date.now() - lastTick < tickDelay)
                     return;
-
-                console.log("frame");                
 
                 Module.canvas = canvas;
                 Module._Render(canvasElement.width, canvasElement.height);

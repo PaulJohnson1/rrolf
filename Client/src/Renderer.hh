@@ -3,18 +3,14 @@
 #include <cstdint>
 #include <map>
 
-class SkCanvas;
-
 namespace app
 {
-    class Simulation;
-
     class Renderer
     {
 #ifndef WASM_BUILD
-        SkCanvas *m_Canvas;
+        class SkCanvas *m_Canvas;
 #endif
-        Simulation &m_Simulation;
+        class Simulation &m_Simulation;
 
     public:
         int32_t m_Width;

@@ -19,7 +19,7 @@ namespace app::component
 
     void Flower::Write(bc::BinaryCoder &coder, Flower flower, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b111 : flower.m_State;
+        uint32_t state = isCreation ? 0b11 : flower.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)

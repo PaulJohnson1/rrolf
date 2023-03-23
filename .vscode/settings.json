@@ -89,7 +89,8 @@
         "__locale": "cpp",
         "__hash_table": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "forward_list": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

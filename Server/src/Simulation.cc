@@ -38,17 +38,18 @@ namespace app
         return Get<component::NAME>(id);                                                            \
     }
 
-    DEFINE_COMPONENT_GETTER(Position);
-    DEFINE_COMPONENT_GETTER(Physics);
-    DEFINE_COMPONENT_GETTER(Life);
     DEFINE_COMPONENT_GETTER(Flower);
+    DEFINE_COMPONENT_GETTER(Life);
+    DEFINE_COMPONENT_GETTER(Physical);
+    DEFINE_COMPONENT_GETTER(Render);
 
 #undef DEFINE_COMPONENT_GETTER
 
     Simulation::Simulation(Server &s)
         : m_Server(s),
-          m_Velocity(*this),
-          m_CollisionDetector(*this)
+          m_CollisionDetector(*this),
+          m_CollisionResolver(*this),
+          m_Velocity(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
             m_AvailableIds.push(i);
@@ -60,9 +61,11 @@ namespace app
                       { ResetEntity(id); });
         m_Velocity.Tick();
         m_CollisionDetector.Tick();
+        m_CollisionResolver.Tick();
 
         m_Velocity.PostTick();
         m_CollisionDetector.PostTick();
+        m_CollisionResolver.PostTick();
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(Camera &camera)
@@ -77,23 +80,6 @@ namespace app
 
     void Simulation::WriteUpdate(bc::BinaryCoder &coder, Camera &camera)
     {
-        /*
-            00          // deletion count
-            01          // update count
-
-            01          // creation type
-            00          // entity id
-            03          // component flags
-
-            07          // position state
-            00 00 f4 42 // position x value
-            00 20 9a 44 // position y value
-            b5 1f 92 3f // angle
-
-            01          // physics state
-            c8 d5 ea 4c // physics radius
-        */
-
         std::vector<Entity> entitiesInView = FindEntitiesInView(camera);
         std::vector<Entity> deletedEntities;
 
@@ -129,42 +115,42 @@ namespace app
         uint32_t componentFlags = 0;
         if (isCreation)
         {
-            componentFlags |= GetOptional<component::Position>(id).has_value() << 0;
-            componentFlags |= GetOptional<component::Physics>(id).has_value() << 1;
-            componentFlags |= GetOptional<component::Life>(id).has_value() << 2;
-            componentFlags |= GetOptional<component::Flower>(id).has_value() << 3;
+            componentFlags |= GetOptional<component::Physical>(id).has_value() << 0;
+            componentFlags |= GetOptional<component::Life>(id).has_value() << 1;
+            componentFlags |= GetOptional<component::Flower>(id).has_value() << 2;
+            componentFlags |= GetOptional<component::Render>(id).has_value() << 3;
         }
         else
         {
-            componentFlags |= (GetOptional<component::Position>(id) && Get<component::Position>(id).m_State != 0) << 0;
-            componentFlags |= (GetOptional<component::Physics>(id) && Get<component::Physics>(id).m_State != 0) << 1;
-            componentFlags |= (GetOptional<component::Life>(id) && Get<component::Life>(id).m_State != 0) << 2;
+            componentFlags |= (GetOptional<component::Physical>(id) && Get<component::Physical>(id).m_State != 0) << 0;
+            componentFlags |= (GetOptional<component::Life>(id) && Get<component::Life>(id).m_State != 0) << 1;
             componentFlags |= (GetOptional<component::Flower>(id) && Get<component::Flower>(id).m_State != 0) << 2;
+            componentFlags |= (GetOptional<component::Render>(id) && Get<component::Flower>(id).m_State != 0) << 3;
         }
 
         coder.Write<bc::VarUint>(id);
         coder.Write<bc::VarUint>(componentFlags);
 
         if (componentFlags & 1)
-            coder.Write<component::Position>(Get<component::Position>(id), isCreation);
+            coder.Write<component::Physical>(Get<component::Physical>(id), isCreation);
         if (componentFlags & 2)
-            coder.Write<component::Physics>(Get<component::Physics>(id), isCreation);
-        if (componentFlags & 4)
             coder.Write<component::Life>(Get<component::Life>(id), isCreation);
-        if (componentFlags & 8)
+        if (componentFlags & 4)
             coder.Write<component::Flower>(Get<component::Flower>(id), isCreation);
+        if (componentFlags & 8)
+            coder.Write<component::Render>(Get<component::Render>(id), isCreation);
     }
 
     void Simulation::ResetEntity(Entity id)
     {
-        if (GetOptional<component::Position>(id))
-            Get<component::Position>(id).Reset();
-        if (GetOptional<component::Physics>(id))
-            Get<component::Physics>(id).Reset();
+        if (GetOptional<component::Physical>(id))
+            Get<component::Physical>(id).Reset();
         if (GetOptional<component::Life>(id))
             Get<component::Life>(id).Reset();
         if (GetOptional<component::Flower>(id))
             Get<component::Flower>(id).Reset();
+        if (GetOptional<component::Render>(id))
+            Get<component::Render>(id).Reset();
     }
 
     Entity Simulation::Create()
@@ -181,7 +167,7 @@ namespace app
         std::cout << "entity with id " << std::to_string(id) << " deleted\n";
         assert(m_EntityTracker[id]);
         m_AvailableIds.push(id);
-        m_PhysicsComponents[id].reset();
+        m_PhysicalComponents[id].reset();
         m_EntityTracker[id] = false;
     }
 }

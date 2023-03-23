@@ -11,14 +11,21 @@ namespace bc
 
 namespace app::component
 {
-    class Physics
+    class Physical
     {
     public:
         Entity m_Parent;
 
         float m_Radius;
+        float m_X;
+        float m_Y;
+        float m_Angle;
+        float m_RadiusDestination;
+        float m_XDestination;
+        float m_YDestination;
 
-        Physics(Entity);
+
+        Physical(Entity);
 
         void UpdateFromBinary(bc::BinaryCoder &);
     };

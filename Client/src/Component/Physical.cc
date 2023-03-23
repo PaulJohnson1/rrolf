@@ -1,24 +1,26 @@
-#include <Component/Position.hh>
+#include <Component/Physical.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
 namespace app::component
 {
-    Position::Position(Entity parent)
+    Physical::Physical(Entity parent)
         : m_Parent(parent)
     {
     }
 
-    void Position::UpdateFromBinary(bc::BinaryCoder &coder)
+    void Physical::UpdateFromBinary(bc::BinaryCoder &coder)
     {
         uint32_t updatedFields = coder.Read<bc::VarUint>();
 
         if (updatedFields & 1)
-            m_XDestination = coder.Read<bc::Float32>();
+            m_RadiusDestination = coder.Read<bc::Float32>();
         if (updatedFields & 2)
-            m_YDestination = coder.Read<bc::Float32>();
+            m_XDestination = coder.Read<bc::Float32>();
         if (updatedFields & 4)
+            m_YDestination = coder.Read<bc::Float32>();
+        if (updatedFields & 8)
             m_Angle = coder.Read<bc::Float32>();
     }
 }

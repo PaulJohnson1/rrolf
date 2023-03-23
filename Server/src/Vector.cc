@@ -58,7 +58,10 @@ namespace app
     }
     Vector &Vector::Normalize()
     {
-        float scale = 1 / Magnitude();
+        float m = Magnitude();
+        if (m == 0)
+            m = 1;
+        float scale = 1 / m;
         m_X *= scale;
         m_Y *= scale;
         return *this;

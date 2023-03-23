@@ -1,7 +1,7 @@
 #include <System/Damage.hh>
 
 #include <Component/Life.hh>
-#include <Component/Physics.hh>
+#include <Component/Physical.hh>
 #include <Simulation.hh>
 
 namespace app::system
@@ -15,16 +15,16 @@ namespace app::system
     {
         m_Simulation.ForEachEntity([&](Entity entity)
         {
-            if (!m_Simulation.GetOptional<component::Physics>(entity))
+            if (!m_Simulation.GetOptional<component::Physical>(entity))
                 return;
-            component::Physics &physics = m_Simulation.Get<component::Physics>(entity);
-            component::Position &life = m_Simulation.Get<component::Life>(entity);
-            Vector tempPos = Vector(position.X(), position.Y());
-            for (Entity other: physics.m_Collisions)
+            component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
+            component::Life &life = m_Simulation.Get<component::Life>(entity);
+            Vector tempPos = Vector(physical.X(), physical.Y());
+            for (Entity other: physical.m_Collisions)
             {
                 if (!m_Simulation.GetOptional<component::Life>(other))
                     continue;
-                component::Position &life2 = m_Simulation.Get<component::Life>(entity);
+                component::Life &life2 = m_Simulation.Get<component::Life>(entity);
                 life -= life2.Damage();
                 life2 -= life.Damage();
 

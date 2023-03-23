@@ -6,20 +6,15 @@
 #include <functional>
 #include <optional>
 
-#include <Component/Physics.hh>
+#include <Component/Physical.hh>
 #include <Component/Life.hh>
-#include <Component/Position.hh>
 #include <Component/Flower.hh>
+#include <Component/Render.hh>
 #include <System/Velocity.hh>
 #include <System/CollisionDetector.hh>
 #include <System/CollisionResolver.hh>
 #include <Entity.hh>
 #include <SpatialHash.hh>
-
-namespace bc
-{
-    class BinaryCoder;
-}
 
 namespace app
 {
@@ -29,14 +24,15 @@ namespace app
 
     class Simulation
     {
-        system::Velocity m_Velocity;
         system::CollisionDetector m_CollisionDetector;
-        // system::CollisionResolver m_CollisionResolver;
+        system::CollisionResolver m_CollisionResolver;
+        system::Velocity m_Velocity;
+
         std::queue<Entity> m_AvailableIds{};
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Physics> m_PhysicsComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::Physical> m_PhysicalComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Position> m_PositionComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
 
     public:
@@ -45,7 +41,7 @@ namespace app
         Simulation(Server &);
 
         void Remove(Entity);
-        void WriteUpdate(bc::BinaryCoder &, Camera &);
+        void WriteUpdate(class bc::BinaryCoder &, Camera &);
         void Tick();
         // use if you want bound checking
         template <typename T>

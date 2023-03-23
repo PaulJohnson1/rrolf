@@ -15,41 +15,37 @@ namespace app::system
     {
         // insert physical entitis
         m_Simulation.ForEachEntity([&](Entity entity)
-        {
-            if (!m_Simulation.GetOptional<component::Physics>(entity))
+                                   {
+            if (!m_Simulation.GetOptional<component::Physical>(entity))
                 return;
-            m_SpatialHash.Insert(entity);
-        });
+            m_SpatialHash.Insert(entity); });
 
         // find detection with physical entities
         m_Simulation.ForEachEntity([&](Entity entity)
-        {
-            if (!m_Simulation.GetOptional<component::Physics>(entity))
+                                   {
+            if (!m_Simulation.GetOptional<component::Physical>(entity))
                 return;
                 
-            component::Physics &physics = m_Simulation.Get<component::Physics>(entity);
-            component::Position &position = m_Simulation.Get<component::Position>(entity);
-            Vector positionVector{position.X(), position.Y()};
+            component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
+            Vector positionVector{physical.X(), physical.Y()};
 
             std::vector<Entity> possibleCollisions = m_SpatialHash.GetCollisions(entity);
             for (Entity id : possibleCollisions)
             {
                 if (id == entity)
                     continue;
-                component::Physics &physics2 = m_Simulation.Get<component::Physics>(id);
-                component::Position &position2 = m_Simulation.Get<component::Position>(id);
-                Vector position2Vector{position2.X(), position2.Y()};
+                component::Physical &physical2 = m_Simulation.Get<component::Physical>(id);
+                Vector position2Vector{physical2.X(), physical2.Y()};
 
-                if ((positionVector - position2Vector) < (physics.Radius() + physics2.Radius()))
+                if ((positionVector - position2Vector) < (physical.Radius() + physical2.Radius()))
                 {
-                    if (std::find(physics.m_Collisions.begin(), physics.m_Collisions.end(), id) == physics.m_Collisions.end()
-                    && std::find(physics2.m_Collisions.begin(), physics2.m_Collisions.end(), id) == physics2.m_Collisions.end()
-                    && std::find(physics.m_Collisions.begin(), physics.m_Collisions.end(), entity) == physics.m_Collisions.end()
-                    && std::find(physics2.m_Collisions.begin(), physics2.m_Collisions.end(), entity) == physics2.m_Collisions.end())
-                        physics.m_Collisions.push_back(id);
+                    if (std::find(physical.m_Collisions.begin(), physical.m_Collisions.end(), id) == physical.m_Collisions.end()
+                        && std::find(physical2.m_Collisions.begin(), physical2.m_Collisions.end(), id) == physical2.m_Collisions.end()
+                        && std::find(physical.m_Collisions.begin(), physical.m_Collisions.end(), entity) == physical.m_Collisions.end()
+                        && std::find(physical2.m_Collisions.begin(), physical2.m_Collisions.end(), entity) == physical2.m_Collisions.end())
+                            physical.m_Collisions.push_back(id);
                 }
-            }
-        });
+            } });
     }
 
     void CollisionDetector::PostTick()

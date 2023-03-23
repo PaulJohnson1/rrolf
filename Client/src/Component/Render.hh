@@ -11,17 +11,14 @@ namespace bc
 
 namespace app::component
 {
-    class Position
+    class Render
     {
     public:
         Entity m_Parent;
-        float m_X = 0;
-        float m_Y = 0;
-        float m_Angle = 0;
-        float m_XDestination = 0;
-        float m_YDestination = 0;
 
-        Position(Entity);
+        uint32_t m_Color;
+
+        Render(Entity);
 
         void UpdateFromBinary(bc::BinaryCoder &);
     };

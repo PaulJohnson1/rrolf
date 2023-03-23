@@ -9,9 +9,10 @@ include_directories(/usr/include)
 set(SOURCES
     src/Component/Flower.cc
     src/Component/Life.cc
-    src/Component/Physics.cc
-    src/Component/Position.cc
+    src/Component/Physical.cc
+    src/Component/Render.cc
     src/System/Interpolation.cc
+    src/System/Renderer.cc
     src/Main.cc
     src/Renderer.cc
     src/Simulation.cc

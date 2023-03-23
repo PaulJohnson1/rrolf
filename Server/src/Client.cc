@@ -16,11 +16,11 @@ namespace app
     {
         std::cout << "client create\n";
         m_Player.emplace(m_Simulation.Create());
-        m_Simulation.AddComponent<component::Position>(*m_Player);
         m_Simulation.AddComponent<component::Flower>(*m_Player);
-        m_Simulation.AddComponent<component::Physics>(*m_Player);
+        m_Simulation.AddComponent<component::Physical>(*m_Player);
         m_Simulation.AddComponent<component::Life>(*m_Player);
-        m_Simulation.Get<component::Physics>(*m_Player).Radius(5.0f);
+        m_Simulation.AddComponent<component::Render>(*m_Player);
+        m_Simulation.Get<component::Physical>(*m_Player).Radius(25.0f);
     }
 
     Client::~Client()
@@ -48,9 +48,9 @@ namespace app
 
     void Client::Tick()
     {
-        m_Simulation.Get<component::Physics>(*m_Player).m_Acceleration = m_PlayerAcceleration;
-        m_Camera.m_X = m_Simulation.Get<component::Position>(*m_Player).X();
-        m_Camera.m_Y = m_Simulation.Get<component::Position>(*m_Player).Y();
+        m_Simulation.Get<component::Physical>(*m_Player).m_Acceleration = m_PlayerAcceleration;
+        m_Camera.m_X = m_Simulation.Get<component::Physical>(*m_Player).X();
+        m_Camera.m_Y = m_Simulation.Get<component::Physical>(*m_Player).Y();
         BroadcastUpdate();
     }
 
@@ -94,9 +94,8 @@ namespace app
             if (movementFlags & 4) y++;
             if (movementFlags & 8) x++;
 
-            std::cout << std::to_string(movementFlags) <<  x << ' ' << y << '\n';
-
             m_PlayerAcceleration.Set(x, y);
+            m_PlayerAcceleration.Normalize();
         }
     }
 

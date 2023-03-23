@@ -20,16 +20,19 @@ namespace app::system
 
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-            if (m_Simulation.GetOptional<component::Position>(entity))
+            if (m_Simulation.GetOptional<component::Render>(entity))
             {
-                component::Position &position = m_Simulation.Get<component::Position>(entity);
+                component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
 
-                if (position.m_X == 0)
-                    position.m_X = position.m_XDestination;
-                if (position.m_Y == 0)
-                    position.m_Y = position.m_YDestination;
-                position.m_X = std::lerp<float>(position.m_X, position.m_XDestination, 0.1);
-                position.m_Y = std::lerp<float>(position.m_Y, position.m_YDestination, 0.1);
+                if (physical.m_X == 0)
+                    physical.m_X = physical.m_XDestination;
+                if (physical.m_Y == 0)
+                    physical.m_Y = physical.m_YDestination;
+                if (physical.m_Radius == 0)
+                    physical.m_Y = physical.m_YDestination;
+                physical.m_X = std::lerp<float>(physical.m_X, physical.m_XDestination, 0.1);
+                physical.m_Y = std::lerp<float>(physical.m_Y, physical.m_YDestination, 0.1);
+                physical.m_Radius = std::lerp<float>(physical.m_Radius, physical.m_RadiusDestination, 0.1);
             } });
     }
 

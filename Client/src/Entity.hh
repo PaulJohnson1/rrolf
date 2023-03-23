@@ -5,5 +5,5 @@
 namespace app
 {
     using Entity = uint16_t;
-    constexpr Entity MAX_ENTITY_COUNT = 128;
+    constexpr Entity MAX_ENTITY_COUNT = 16384;
 }

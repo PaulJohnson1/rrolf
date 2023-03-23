@@ -1,7 +1,6 @@
-#include <websocketpp/config/asio_no_tls.hpp>
-
 #include <vector>
 
+#include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
 #include <Client.hh>

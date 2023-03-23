@@ -3,17 +3,16 @@
 #include <cstdint>
 #include <optional>
 
-#include <Component/Physics.hh>
+#include <Component/Physical.hh>
 #include <Component/Life.hh>
-#include <Component/Position.hh>
 #include <Component/Flower.hh>
+#include <Component/Render.hh>
 #include <System/Interpolation.hh>
+#include <System/Renderer.hh>
 #include <Entity.hh>
 
 namespace app
 {
-    class Renderer;
-
     class Camera
     {
     public:
@@ -27,28 +26,24 @@ namespace app
 
     class Simulation
     {
+        system::Interpolation m_InterpolationSystem;
+        system::Renderer m_RendererSystem;
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Position> m_PositionComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Physics> m_PhysicsComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::Physical> m_PhysicalComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
 
-        system::Interpolation m_InterpolationSystem;
     public:
         Camera m_Camera{};
 
         Simulation();
-        Simulation(Simulation &&) = delete;
-        Simulation(Simulation const &) = delete;
-        Simulation &operator=(Simulation &&) = delete;
-        Simulation &operator=(Simulation const &) = delete;
 
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);
         void RemoveEntity(Entity);
-        void TickRenderer(Renderer *);
-        // use if you want bound checking
+        void TickRenderer(class Renderer *);
         template <typename T>
         void ForEachEntity(T callback)
         {
