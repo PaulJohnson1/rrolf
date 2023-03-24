@@ -4,9 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/ThirdParty",
-                "${workspaceFolder}/Client/src",
-                "${workspaceFolder}/Client/ThirdParty"
+                "${workspaceFolder}/Server/ThirdParty",
+                "${workspaceFolder}/"
             ],
             "defines": [],
             "cStandard": "c17",
