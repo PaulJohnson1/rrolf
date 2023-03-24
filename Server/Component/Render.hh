@@ -13,7 +13,7 @@ namespace app::component
 {
     class Render
     {
-        uint32_t m_Color = 0x00ff00;
+        uint32_t m_Color = 0x7f00ff00;
 
     public:
         using Type = Render;

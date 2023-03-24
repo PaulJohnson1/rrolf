@@ -45,11 +45,8 @@ namespace app
             Style m_Style = Style::Fill;
             Join m_Join = Join::Round;
             Cap m_Cap = Cap::Butt;
-            bool m_AntiAliased = false;
-            uint8_t m_Alpha = 0xff;
-            uint8_t m_Red = 0x00;
-            uint8_t m_Blue = 0x00;
-            uint8_t m_Green = 0x00;
+            bool m_AntiAliased = true;
+            uint32_t m_Color = 0;
             float m_StrokeWidth = 1;
         };
 

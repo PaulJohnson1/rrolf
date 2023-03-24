@@ -16,20 +16,27 @@ namespace app::system
     // lucky this isn't c otherwise this would be a name collision
     void Renderer::Tick(app::Renderer *ctx)
     {
+        // use bound checking for this one
+        if (!m_Simulation.GetOptional<component::ArenaInfo>(0))
+            return;
         ctx->Clear();
         ctx->Save();
         ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
         ctx->Scale(m_Simulation.m_Camera.m_Fov, m_Simulation.m_Camera.m_Fov);
         ctx->Translate(-m_Simulation.m_Camera.m_X, -m_Simulation.m_Camera.m_Y);
+        component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
+        app::Renderer::Paint mapPaint;
+        mapPaint.m_Color = 0xff51983c;
+        ctx->DrawCircle(0, 0, arena.m_MapSize, mapPaint);
         m_Simulation.ForEachEntity([&](Entity entity)
         {
             if (!m_Simulation.GetOptional<component::Render>(entity))
                 return;
             component::Physical physical = m_Simulation.Get<component::Physical>(entity);
+            component::Render renderInfo = m_Simulation.Get<component::Render>(entity);
 
             app::Renderer::Paint paint;
-            paint.m_AntiAliased = true;
-            paint.m_Red = 0xff;
+            paint.m_Color = renderInfo.m_Color;
 
             ctx->DrawCircle(physical.m_X, physical.m_Y, physical.m_Radius, paint);
         });

@@ -20,6 +20,9 @@ namespace app
         bool operator>(float);
         bool operator<(float);
         float Magnitude();
+        float Theta();
+        void Theta(float);
+        Vector &Magnitude(float);
         Vector &Normalize();
     };
 }

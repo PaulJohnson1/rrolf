@@ -207,7 +207,7 @@ namespace app
         skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
         skPaint.setStrokeWidth(paint.m_StrokeWidth);
         skPaint.setAntiAlias(paint.m_AntiAliased);
-        skPaint.setColor(SkColorSetARGB(paint.m_Alpha, paint.m_Red, paint.m_Blue, paint.m_Green));
+        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
         m_Canvas->drawCircle(x, y, size, skPaint);
 #else
     EM_ASM({
@@ -219,10 +219,9 @@ namespace app
         if ($0 == 1)
             paint.setStrokeWidth($1);
         paint.setAntiAlias($2);
-        paint.setColor(Module.CanvasKit.Color4f($3 / 255, $4 / 255, $5 / 255, $6 / 255));
+        paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255));
         Module.canvas.drawCircle($7, $8, $9, paint);
-    },
-           paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, paint.m_Red, paint.m_Blue, paint.m_Green, paint.m_Alpha, x, y, size);
+    }, paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x, y, size);
 #endif
     }
 

@@ -1,16 +1,18 @@
 project(rrolf-server)
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 
 include_directories(..)
 include_directories(ThirdParty)
 
 set(SOURCES
+    Component/ArenaInfo.cc
     Component/Flower.cc
     Component/Life.cc
     Component/Physical.cc
     Component/Render.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
+    System/MapBoundaries.cc
     System/Velocity.cc
     Client.cc
     Main.cc
@@ -22,10 +24,10 @@ set(SOURCES
     ThirdParty/BinaryCoder/NativeTypes.cc
     )
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -g")
+set(CMAKE_CXX_FLAGS "-std=c++17 -g -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})
 if(WIN32)
-    target_link_libraries(rrolf-server wsock32 ws2_32)
+    target_link_libraries(rrolf-server wsock32 ws2_32 pthread)
 endif()

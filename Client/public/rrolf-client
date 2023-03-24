@@ -1172,7 +1172,7 @@ var ASM_CONSTS = {
  17410: ($0, $1) => { Module.canvas.scale($0, $1) },  
  17440: () => { Module.canvas.save(); },  
  17466: () => { Module.canvas.restore(); },  
- 17495: ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($3 / 255, $4 / 255, $5 / 255, $6 / 255)); Module.canvas.drawCircle($7, $8, $9, paint); },  
+ 17495: ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255)); Module.canvas.drawCircle($7, $8, $9, paint); },  
  17861: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
  17979: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
 };

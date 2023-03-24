@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <optional>
 
+#include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Physical.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Flower.hh>
@@ -33,6 +34,7 @@ namespace app
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::ArenaInfo> m_ArenaInfoComponents[MAX_ENTITY_COUNT] = {};
 
     public:
         Camera m_Camera{};

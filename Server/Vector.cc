@@ -56,6 +56,17 @@ namespace app
     {
         return std::sqrt(m_X * m_X + m_Y * m_Y);
     }
+
+    Vector &Vector::Magnitude(float r)
+    {
+        return Normalize().operator*=(r);
+    }
+
+    float Vector::Theta()
+    {
+        return std::atan2(m_X, m_Y);
+    }
+
     Vector &Vector::Normalize()
     {
         float m = Magnitude();

@@ -39,6 +39,7 @@ namespace app
         return Get<component::NAME>(id);                                                            \
     }
 
+    DEFINE_COMPONENT_GETTER(ArenaInfo);
     DEFINE_COMPONENT_GETTER(Flower);
     DEFINE_COMPONENT_GETTER(Life);
     DEFINE_COMPONENT_GETTER(Physical);
@@ -80,6 +81,7 @@ namespace app
         GetOptional<component::Life>(id).reset();
         GetOptional<component::Physical>(id).reset();
         GetOptional<component::Render>(id).reset();
+        GetOptional<component::ArenaInfo>(id).reset();
     }
 
 
@@ -108,6 +110,8 @@ namespace app
                 AddComponent<component::Flower>(id);
             if (componentFlags & 8)
                 AddComponent<component::Render>(id);
+            if (componentFlags & 16)
+                AddComponent<component::ArenaInfo>(id);
         }
 
         if (componentFlags & 1)
@@ -118,6 +122,8 @@ namespace app
             Get<component::Flower>(id).UpdateFromBinary(coder);
         if (componentFlags & 8)
             Get<component::Render>(id).UpdateFromBinary(coder);
+        if (componentFlags & 16)
+            Get<component::ArenaInfo>(id).UpdateFromBinary(coder);
     }
 
     Entity Simulation::CreateEntityWithId(Entity id)

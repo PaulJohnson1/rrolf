@@ -1,10 +1,11 @@
 project(rrolf-client)
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 
 include_directories(..)
 include_directories(ThirdParty)
 
 set(SOURCES
+    Component/ArenaInfo.cc
     Component/Flower.cc
     Component/Life.cc
     Component/Physical.cc
@@ -19,13 +20,13 @@ set(SOURCES
     ThirdParty/BinaryCoder/NativeTypes.cc
 )
 
-set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")
-set(CMAKE_CXX_COMPILER "clang++")
 
 if(WASM_BUILD)
     set(CMAKE_CXX_FLAGS "-std=c++20 -g -DWASM_BUILD -sEXPORTED_FUNCTIONS=\"_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent\"")
     set(CMAKE_CXX_COMPILER "em++")
 else()
+    set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")
+    set(CMAKE_CXX_COMPILER "clang++")
     include_directories(/usr/include)
     include_directories(/usr/include/skia)
 endif()

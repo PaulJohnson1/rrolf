@@ -6,13 +6,15 @@
 #include <functional>
 #include <optional>
 
+#include <Server/Component/ArenaInfo.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/Life.hh>
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Render.hh>
-#include <Server/System/Velocity.hh>
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
+#include <Server/System/MapBoundaries.hh>
+#include <Server/System/Velocity.hh>
 #include <Server/Entity.hh>
 #include <Server/SpatialHash.hh>
 
@@ -26,6 +28,7 @@ namespace app
     {
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
+        system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
 
         std::queue<Entity> m_AvailableIds{};
@@ -34,8 +37,10 @@ namespace app
         std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
         std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
+        std::optional<component::ArenaInfo> m_ArenaInfoComponents[MAX_ENTITY_COUNT] = {};
 
     public:
+        Entity m_Arena;
         Server &m_Server;
 
         Simulation(Server &);

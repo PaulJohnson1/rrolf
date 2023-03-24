@@ -38,6 +38,7 @@ namespace app
         return Get<component::NAME>(id);                                                            \
     }
 
+    DEFINE_COMPONENT_GETTER(ArenaInfo);
     DEFINE_COMPONENT_GETTER(Flower);
     DEFINE_COMPONENT_GETTER(Life);
     DEFINE_COMPONENT_GETTER(Physical);
@@ -49,20 +50,29 @@ namespace app
         : m_Server(s),
           m_CollisionDetector(*this),
           m_CollisionResolver(*this),
-          m_Velocity(*this)
+          m_Velocity(*this),
+          m_MapBoundaries(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
             m_AvailableIds.push(i);
+
+        m_Arena = Create();
+        AddComponent<component::ArenaInfo>(m_Arena);
+        Get<component::ArenaInfo>(m_Arena).MapSize(750.0f);
     }
 
     void Simulation::Tick()
     {
         ForEachEntity([&](Entity id)
                       { ResetEntity(id); });
+        
+        // order is critical
+        m_MapBoundaries.Tick();
         m_Velocity.Tick();
         m_CollisionDetector.Tick();
         m_CollisionResolver.Tick();
 
+        m_MapBoundaries.PostTick();
         m_Velocity.PostTick();
         m_CollisionDetector.PostTick();
         m_CollisionResolver.PostTick();
@@ -119,6 +129,7 @@ namespace app
             componentFlags |= GetOptional<component::Life>(id).has_value() << 1;
             componentFlags |= GetOptional<component::Flower>(id).has_value() << 2;
             componentFlags |= GetOptional<component::Render>(id).has_value() << 3;
+            componentFlags |= GetOptional<component::ArenaInfo>(id).has_value() << 4;
         }
         else
         {
@@ -126,6 +137,7 @@ namespace app
             componentFlags |= (GetOptional<component::Life>(id) && Get<component::Life>(id).m_State != 0) << 1;
             componentFlags |= (GetOptional<component::Flower>(id) && Get<component::Flower>(id).m_State != 0) << 2;
             componentFlags |= (GetOptional<component::Render>(id) && Get<component::Flower>(id).m_State != 0) << 3;
+            componentFlags |= (GetOptional<component::ArenaInfo>(id) && Get<component::ArenaInfo>(id).m_State != 0) << 4;
         }
 
         coder.Write<bc::VarUint>(id);
@@ -139,6 +151,8 @@ namespace app
             coder.Write<component::Flower>(Get<component::Flower>(id), isCreation);
         if (componentFlags & 8)
             coder.Write<component::Render>(Get<component::Render>(id), isCreation);
+        if (componentFlags & 16)
+            coder.Write<component::ArenaInfo>(Get<component::ArenaInfo>(id), isCreation);
     }
 
     void Simulation::ResetEntity(Entity id)
@@ -151,6 +165,8 @@ namespace app
             Get<component::Flower>(id).Reset();
         if (GetOptional<component::Render>(id))
             Get<component::Render>(id).Reset();
+        if (GetOptional<component::ArenaInfo>(id))
+            Get<component::ArenaInfo>(id).Reset();
     }
 
     Entity Simulation::Create()
