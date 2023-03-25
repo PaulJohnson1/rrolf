@@ -44,13 +44,20 @@ namespace app::system
             paint.m_Color = 0xffffe763;
 
             ctx->DrawCircle(0, 0, physical.m_Radius - 1.5, paint);
-            paint.m_Color = 0xff000000;
-            ctx->Scale(physical.m_Radius,2 * physical.m_Radius);
-            ctx->Translate(0,-0.1);
-            ctx->DrawCircle(-0.28, 0, 0.12, paint);
-            ctx->DrawCircle(0.28, 0, 0.12, paint);
-            ctx->Scale(1, 0.5);
-            // 10 down 0 0 0 5 6 0 QCto
+            paint.m_Color = 0xff222222;
+            ctx->Scale(physical.m_Radius / 25,physical.m_Radius / 25);
+            ctx->Save();
+            ctx->Scale(1, 2);
+            app::Path pathMouth = {};
+            ctx->DrawCircle(-7, -2.5, 3, paint);
+            ctx->DrawCircle(7, -2.5, 3, paint);
+            ctx->Restore();
+            pathMouth.MoveTo(-6, 10);
+            pathMouth.QuadTo(0, 15, 6, 10);
+            paint.m_Style = app::Renderer::Paint::Style::Stroke;
+            paint.m_Cap = app::Renderer::Paint::Cap::Round;
+            paint.m_StrokeWidth = 1.5; //3.0f / 2
+            ctx->DrawPath(pathMouth, paint);
             ctx->Restore();
         });
         ctx->Restore();

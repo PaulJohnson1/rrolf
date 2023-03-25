@@ -3,10 +3,27 @@
 #include <cstdint>
 #include <map>
 
+
 class SkCanvas;
 
 namespace app
 {
+    class Path
+    {
+    public:
+    #ifndef WASM_BUILD
+        #include <skia/include/core/SkPath.h>
+        SkPath m_Path;
+    #else 
+        int32_t m_Index;
+    #endif
+        Path();
+        void MoveTo(float, float);
+        void LineTo(float, float);
+        void QuadTo(float, float, float, float);
+        void Arc(float, float, float, float, float);
+        ~Path();
+    }; 
     class Renderer
     {
 #ifndef WASM_BUILD
@@ -57,6 +74,8 @@ namespace app
         void Translate(float, float);
         void Scale(float, float);
         void DrawCircle(float, float, float, Paint const &);
+        void DrawPath(Path const &, Paint const &);
+        void ClipPath(Path const &, int);
         void Render();
         void Save();
         void Restore();
