@@ -17,6 +17,7 @@ namespace app
         Vector operator+(Vector);
         Vector operator-(Vector);
         Vector operator*(float);
+        float operator*(Vector);
         bool operator>(float);
         bool operator<(float);
         float Magnitude();

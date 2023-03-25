@@ -162,23 +162,8 @@ namespace app
 });
 #endif
     }
-Path::Path() 
+Renderer::Path::Path() 
 {
-#ifndef WASM_BUILD
-    m_Path = {};
-#else
-    m_Index = EM_ASM_INT({
-        return Module.addPath();
-    });
-#endif
-}
-Path::~Path()
-{
-#ifdef WASM_BUILD
-    EM_ASM({
-        Module.removePath($0);
-    }, m_Index);
-    #endif
 }
 void Path::MoveTo(float x, float y)
 {

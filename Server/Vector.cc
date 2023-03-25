@@ -52,6 +52,10 @@ namespace app
     {
         return Vector(m_X * v, m_Y * v);
     }
+    float Vector::operator*(Vector v)
+    {
+        return m_X * v.m_X + m_Y * v.m_Y;
+    }
     float Vector::Magnitude()
     {
         return std::sqrt(m_X * m_X + m_Y * m_Y);

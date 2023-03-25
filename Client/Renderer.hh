@@ -3,27 +3,14 @@
 #include <cstdint>
 #include <map>
 
+#ifndef WASM_BULD
+#include <skia/include/core/SkPath.h>
+#endif
 
 class SkCanvas;
 
 namespace app
 {
-    class Path
-    {
-    public:
-    #ifndef WASM_BUILD
-        #include <skia/include/core/SkPath.h>
-        SkPath m_Path;
-    #else 
-        int32_t m_Index;
-    #endif
-        Path();
-        void MoveTo(float, float);
-        void LineTo(float, float);
-        void QuadTo(float, float, float, float);
-        void Arc(float, float, float, float, float);
-        ~Path();
-    }; 
     class Renderer
     {
 #ifndef WASM_BUILD
@@ -35,6 +22,25 @@ namespace app
         int32_t m_Width;
         int32_t m_Height;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
+
+        class Path
+        {
+            struct Point
+            {
+                bool m_Line;
+                float m_X;
+                float m_Y;
+            };
+
+            std::vector<Point> m_Points;
+
+        public:
+            Path();
+            void MoveTo(float, float);
+            void LineTo(float, float);
+            void QuadTo(float, float, float, float);
+            void Arc(float, float, float, float, float);
+        }; 
 
         class Paint
         {

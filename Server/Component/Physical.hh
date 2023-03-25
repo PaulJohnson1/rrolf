@@ -25,6 +25,7 @@ namespace app::component
         uint32_t m_QueryId = 0;
         float m_Mass = 1.0f;
         float m_Friction = 0.9f;
+        float m_Restitution = 1.0f;
         std::vector<Entity> m_Collisions{};
 
         Vector m_Velocity{0, 0};
