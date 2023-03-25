@@ -1,5 +1,7 @@
 #include <Server/Server.hh>
 
+#include <thread>
+
 #include <Server/Simulation.hh>
 
 namespace app

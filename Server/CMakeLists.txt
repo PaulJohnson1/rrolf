@@ -24,10 +24,9 @@ set(SOURCES
     ThirdParty/BinaryCoder/NativeTypes.cc
     )
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -g -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++17 -g -lws2_32 -lwsock32")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})
-if(WIN32)
-    target_link_libraries(rrolf-server wsock32 ws2_32 pthread)
-endif()
+
+target_link_libraries(rrolf-server wsock32 ws2_32)

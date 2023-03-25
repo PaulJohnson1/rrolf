@@ -40,6 +40,7 @@ int main()
             socket->SendPacket(coder.Data(), coder.At());
         });
 #ifdef WASM_BUILD
+    std::cout << "wasm init\n";
     renderer->Initialize();
 #else
     std::thread([&]()

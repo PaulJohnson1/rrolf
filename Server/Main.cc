@@ -10,7 +10,7 @@ int main()
 {
     using namespace app;
 
-    Server server;
+    Server &server = *new Server;
 
     Entity id = server.m_Simulation.Create();
     component::Physical &physical = server.m_Simulation.AddComponent<component::Physical>(id);
