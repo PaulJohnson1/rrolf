@@ -22,7 +22,7 @@ set(SOURCES
 
 
 if(WASM_BUILD)
-    set(CMAKE_CXX_FLAGS "-std=c++20 -g -DWASM_BUILD -sEXPORTED_FUNCTIONS=\"_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent\"")
+    set(CMAKE_CXX_FLAGS "-std=c++20 -g -sEXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")

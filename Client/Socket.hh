@@ -1,4 +1,4 @@
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
 #include <emscripten.h>
 #else
 #include <websocketpp/config/asio_client.hpp>
@@ -17,7 +17,7 @@ namespace app
 {
     class Socket
     {
-#ifndef WASM_BUILD
+#ifndef EMSCRIPTEN
         typedef websocketpp::client<websocketpp::config::asio_client> Client;
         Client m_WebSocketClient;
         Client::connection_ptr m_ConnectionPointer;        

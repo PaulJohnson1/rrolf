@@ -3,7 +3,7 @@
 #include <iostream>
 
 static uint8_t g_MessageData[1024*1024];
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
 extern "C"
 {
     void OnMessage(app::Socket *socket)
@@ -48,7 +48,7 @@ namespace app
 
     void Socket::SendPacket(uint8_t *data, size_t size)
     {
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
         EM_ASM({
             const data = new Uint8Array($1);
             for (let i = 0; i < $1; i++)
@@ -62,7 +62,7 @@ namespace app
 
     void Socket::Connect()
     {
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
         EM_ASM({
             let string = "";
             for (let i = $2; i < $2 + $3; i++)

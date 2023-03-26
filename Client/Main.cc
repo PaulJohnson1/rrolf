@@ -8,7 +8,7 @@
 #include <Client/Socket.hh>
 #include <Client/Renderer.hh>
 
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
 #include <emscripten.h>
 #endif
 
@@ -39,7 +39,7 @@ int main()
             coder.Write<bc::Uint8>(movementFlags);
             socket->SendPacket(coder.Data(), coder.At());
         });
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
     std::cout << "wasm init\n";
     renderer->Initialize();
 #else

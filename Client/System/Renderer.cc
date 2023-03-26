@@ -48,7 +48,7 @@ namespace app::system
             ctx->Scale(physical.m_Radius / 25,physical.m_Radius / 25);
             ctx->Save();
             ctx->Scale(1, 2);
-            app::Path pathMouth = {};
+            app::Renderer::Path pathMouth = {};
             ctx->DrawCircle(-7, -2.5, 3, paint);
             ctx->DrawCircle(7, -2.5, 3, paint);
             ctx->Restore();

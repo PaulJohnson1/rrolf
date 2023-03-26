@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <map>
 
-#ifndef WASM_BULD
+#ifndef EMSCRIPTEN
 #include <skia/include/core/SkPath.h>
 #endif
 
@@ -13,7 +13,7 @@ namespace app
 {
     class Renderer
     {
-#ifndef WASM_BUILD
+#ifndef EMSCRIPTEN
         SkCanvas *m_Canvas;
 #endif
         class Simulation &m_Simulation;
@@ -25,17 +25,16 @@ namespace app
 
         class Path
         {
-            struct Point
-            {
-                bool m_Line;
-                float m_X;
-                float m_Y;
-            };
-
-            std::vector<Point> m_Points;
-
         public:
+            uint32_t m_Index;
+         
             Path();
+            ~Path();
+            Path(Path const &) = delete;
+            Path(Path &&) = delete;
+            Path &operator=(Path const &) = delete;
+            Path &operator=(Path &&) = delete;
+         
             void MoveTo(float, float);
             void LineTo(float, float);
             void QuadTo(float, float, float, float);
