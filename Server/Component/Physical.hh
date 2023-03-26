@@ -16,9 +16,9 @@ namespace app::component
     class Physical
     {
         float m_Radius = 1.0f;
-        float m_X = 0;
-        float m_Y = 0;
-        float m_Angle = 0;
+        float m_X = 0.0f;
+        float m_Y = 0.0f;
+        float m_Angle = 0.0f;
 
     public:
         Entity m_Parent;
@@ -26,15 +26,16 @@ namespace app::component
         float m_Mass = 1.0f;
         float m_Friction = 0.9f;
         float m_Restitution = 1.0f;
-        std::vector<Entity> m_Collisions{};
+        uint64_t m_State = 0;
 
         Vector m_Velocity{0, 0};
         Vector m_Acceleration{0, 0};
+        std::vector<Entity> m_Collisions{};
 
         using Type = Physical;
 
-        uint64_t m_State = 0;
         Physical(Entity);
+
         float Radius() const;
         float Friction() const;
         float X() const;

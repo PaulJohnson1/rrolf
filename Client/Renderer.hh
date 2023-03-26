@@ -72,6 +72,18 @@ namespace app
             float m_StrokeWidth = 1;
         };
 
+        class ContextLock
+        {
+            Renderer *m_Renderer;
+        public:
+            ContextLock(Renderer *);
+            ContextLock(Renderer const &) = delete;
+            ContextLock(Renderer &&) = delete;
+            Renderer &operator=(Renderer const &) = delete;
+            Renderer &operator=(Renderer &&) = delete;
+            ~ContextLock();
+        };
+
         Renderer(Simulation &);
 
         void Initialize();
@@ -80,10 +92,11 @@ namespace app
         void Scale(float, float);
         void DrawCircle(float, float, float, Paint const &);
         void DrawPath(Path const &, Paint const &);
-        void ClipPath(Path const &, int);
+        void ClipPath(Path const &);
         void Render();
         void Save();
         void Restore();
         void Clear();
+        ContextLock AutoSaveRestore();
     };
 }

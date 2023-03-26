@@ -31,7 +31,7 @@ namespace app
     {
         Simulation &m_Simulation;
         websocketpp::connection_hdl m_Hdl;
-        Vector m_PlayerAcceleration;
+        Vector m_PlayerAcceleration{0, 0};
 
     public:
         std::optional<Entity> m_Player;

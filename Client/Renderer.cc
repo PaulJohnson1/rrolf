@@ -163,61 +163,81 @@ namespace app
 #endif
     }
 
-Renderer::Path::Path() 
-{
-    m_Index = EM_ASM_INT({
-        return Module.addPath();
-    });
-}
+    Renderer::ContextLock Renderer::AutoSaveRestore()
+    {
+        return Renderer::ContextLock(this);
+    }
 
-Renderer::Path::~Path()
-{
-    EM_ASM({
-        Module.availablePaths.push($0);
-        Module.paths[$0] = null;
-    }, m_Index);
-}
+    Renderer::ContextLock::ContextLock(Renderer *renderer)
+      : m_Renderer(renderer)
+    {
+        m_Renderer->Save();
+    }
 
-void Renderer::Path::MoveTo(float x, float y)
-{
+    Renderer::ContextLock::~ContextLock()
+    {
+        m_Renderer->Restore();
+    }
+
+    Renderer::Path::Path() 
+    {
+        m_Index = EM_ASM_INT({
+            return Module.addPath();
+        });
+    }
+
+    Renderer::Path::~Path()
+    {
+        EM_ASM({
+            Module.availablePaths.push($0);
+            Module.paths[$0] = null;
+        }, m_Index);
+    }
+
+    void Renderer::Path::MoveTo(float x, float y)
+    {
 #ifndef EMSCRIPTEN
-    m_Path.moveTo(x, y);
+        m_Path.moveTo(x, y);
 #else 
-    EM_ASM({
-        Module.paths[$0].moveTo($1, $2);
-    }, m_Index, x, y);
+        EM_ASM({
+            Module.paths[$0].moveTo($1, $2);
+        }, m_Index, x, y);
 #endif
-}
-void Renderer::Path::LineTo(float x, float y)
-{
+    }
+    
+    void Renderer::Path::LineTo(float x, float y)
+    {
 #ifndef EMSCRIPTEN
-    m_Path.lineTo(x, y);
+        m_Path.lineTo(x, y);
 #else
-    EM_ASM({
-        Module.paths[$0].lineTo($1, $2);
-    }, m_Index, x, y);
+        EM_ASM({
+            Module.paths[$0].lineTo($1, $2);
+        }, m_Index, x, y);
 #endif
-}
-void Renderer::Path::QuadTo(float x1, float y1, float x, float y)
-{
+    }
+
+    void Renderer::Path::QuadTo(float x1, float y1, float x, float y)
+    {
 #ifndef EMSCRIPTEN
-    m_Path.quadTo(x1, y1, x, y);
+        m_Path.quadTo(x1, y1, x, y);
 #else
-    EM_ASM({
-        Module.paths[$0].quadTo($1, $2, $3, $4);
-    }, m_Index, x1, y1, x, y);
+        EM_ASM({
+            Module.paths[$0].quadTo($1, $2, $3, $4);
+        }, m_Index, x1, y1, x, y);
 #endif
-}
-void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
-{
+    }
+
+    void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
+    {
 #ifndef EMSCRIPTEN
-    m_Path.arc(x, y, r, sA, eA, false);
+        m_Path.arc(x, y, r, sA, eA, false);
 #else
-    EM_ASM({
-        Module.paths[$0].quadTo($1, $2, $3, $4, $5, false);
-    }, m_Index, x, y, r, sA, eA);
+        EM_ASM({
+            Module.paths[$0].quadTo($1, $2, $3, $4, $5, false);
+        }, m_Index, x, y, r, sA, eA);
 #endif
-}
+    }
+
     void Renderer::Clear()
     {
 #ifndef EMSCRIPTEN
@@ -295,9 +315,9 @@ void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
     }
     void Renderer::DrawPath(Path const &path, Paint const &paint) 
     {
-    #ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN
         m_Canvas.drawPath(path, paint);
-    #else
+#else
         EM_ASM({
             const paint = new Module.CanvasKit.Paint();
             if ($0 == 0)
@@ -310,17 +330,17 @@ void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
             paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255));
             Module.canvas.drawPath(Module.paths[$7], paint);
         }, paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, path.m_Index);
-    #endif
+#endif
     }
-    void Renderer::ClipPath(Path const & path, int type) 
+    void Renderer::ClipPath(Path const & path) 
     {
-    #ifndef EMSCRIPTEN
+#ifndef EMSCRIPTEN
         m_Canvas->clipPath(path, type, true);
-    #else
+#else
         EM_ASM({
-            Module.canvas.clipPath(Module.paths[$0], $1, true);
-        }, path.m_Index, type);
-    #endif
+            Module.canvas.clipPath(Module.paths[$0], Module.CanvasKit.ClipOp.Intersect, true);
+        }, path.m_Index);
+#endif
     }
     void Renderer::SetSize(int32_t width, int32_t height)
     {

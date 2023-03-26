@@ -3,11 +3,14 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <iostream>
+
 namespace app::component
 {
     Physical::Physical(Entity parent)
         : m_Parent(parent)
     {
+        std::cout << m_X << '\n';
     }
 
     void Physical::Reset()
@@ -36,7 +39,7 @@ namespace app::component
     {
         return m_Radius;
     }
-    
+
     float Physical::Friction() const
     {
         return m_Friction;

@@ -26,9 +26,6 @@ namespace app::system
             physical.m_Acceleration.Set(0, 0);
             positionVector += physical.m_Velocity;
 
-            if (physical.m_Velocity < 0.01f)
-                physical.m_Velocity.Set(0, 0);
-
             physical.X(positionVector.m_X);
             physical.Y(positionVector.m_Y); });
     }

@@ -58,6 +58,7 @@ namespace app
     void Client::SendPacket(bc::BinaryCoder const &data) const
     {
         std::string packet{data.Data(), data.Data() + data.At()};
+        
         m_Simulation.m_Server.m_Server.send(m_Hdl, packet, websocketpp::frame::opcode::binary);
     }
 

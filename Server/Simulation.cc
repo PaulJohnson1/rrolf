@@ -54,7 +54,14 @@ namespace app
           m_MapBoundaries(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
+        {
             m_AvailableIds.push(i);
+            m_ArenaInfoComponents[i].reset();
+            m_FlowerComponents[i].reset();
+            m_LifeComponents[i].reset();
+            m_PhysicalComponents[i].reset();
+            m_RenderComponents[i].reset();
+        }
 
         m_Arena = Create();
         AddComponent<component::ArenaInfo>(m_Arena);
@@ -67,15 +74,15 @@ namespace app
                       { ResetEntity(id); });
         
         // order is critical
-        m_MapBoundaries.Tick();
         m_Velocity.Tick();
         m_CollisionDetector.Tick();
         m_CollisionResolver.Tick();
+        m_MapBoundaries.Tick();
 
-        m_MapBoundaries.PostTick();
         m_Velocity.PostTick();
         m_CollisionDetector.PostTick();
         m_CollisionResolver.PostTick();
+        m_MapBoundaries.PostTick();
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(Camera &camera)

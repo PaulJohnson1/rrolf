@@ -12,6 +12,7 @@ namespace app
         // websocket++ spams stdout by default (goofy)
         m_Server.set_access_channels(websocketpp::log::alevel::none);
         m_Server.init_asio();
+        m_Server.set_reuse_addr(true);
         m_Server.listen(8000);
         m_Server.start_accept();
         m_Server.set_open_handler(bind(&Server::OnClientConnect, this, websocketpp::lib::placeholders::_1));
@@ -54,8 +55,10 @@ namespace app
             {
                 delete *i;
                 m_Clients.erase(i);
-                break;
+                return;
             }
+
+        std::cout << "something went wrong\n";
     }
 
     void Server::OnMessage(websocketpp::connection_hdl hdl, WebSocketServer::message_ptr message)

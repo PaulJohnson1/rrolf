@@ -5,9 +5,9 @@
 namespace app
 {
     Vector::Vector(float x, float y)
+        : m_X(x),
+          m_Y(y)
     {
-        m_X = x;
-        m_Y = y;
     }
 
     void Vector::Set(float x, float y)

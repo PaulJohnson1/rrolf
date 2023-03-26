@@ -1189,23 +1189,23 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  80588: () => { const canvasElement = document.createElement("canvas"); canvasElement.id = "rrolf"; document.body.appendChild(canvasElement); const script = document.createElement("script"); script.src = "https://unpkg.com/canvaskit-wasm@0.19.0/bin/canvaskit.js"; document.getElementsByTagName("head")[0].appendChild(script); script.onload = function() { const ckLoaded = CanvasKitInit({ locateFile(file) { return 'https://unpkg.com/canvaskit-wasm@0.19.0/bin/'+file; } }); ckLoaded.then(function(CanvasKit) { const fps = 60; const tickDelay = 1000 / 60; let lastTick = Date.now(); const Draw = function(canvas) { Module.surface.requestAnimationFrame(Draw); if (Date.now() - lastTick < tickDelay) return; Module.canvas = canvas; Module._Render(canvasElement.width, canvasElement.height); }; const InitCanvas = function() { canvasElement.width = innerWidth; canvasElement.height = innerHeight; const surface = CanvasKit.MakeCanvasSurface("rrolf"); Module.CanvasKit = CanvasKit; Module.surface = surface; Module.surface.requestAnimationFrame(Draw); }; window.addEventListener( "resize", function() { InitCanvas(); }); window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);}); window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);}); Module.paths = [...Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map((_,i) => i); Module.addPath = _ => { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = index => { Module.paths[index] = null; Module.availablePaths.push(index); }; InitCanvas(); }); } },  
- 82327: () => { return Module.addPath(); },  
- 82356: ($0) => { Module.availablePaths.push($0); Module.paths[$0] = null; },  
- 82417: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
- 82454: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
- 82491: ($0, $1, $2, $3, $4) => { Module.paths[$0].quadTo($1, $2, $3, $4); },  
- 82536: ($0, $1, $2, $3, $4, $5) => { Module.paths[$0].quadTo($1, $2, $3, $4, $5, false); },  
- 82592: () => { Module.canvas.clear(Module.CanvasKit.BLACK); },  
- 82641: ($0, $1) => { Module.canvas.translate($0, $1) },  
- 82675: ($0, $1) => { Module.canvas.scale($0, $1) },  
- 82705: () => { Module.canvas.save(); },  
- 82731: () => { Module.canvas.restore(); },  
- 82760: ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255)); Module.canvas.drawCircle($7, $8, $9, paint); },  
- 83126: ($0, $1, $2, $3, $4, $5, $6, $7) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255)); Module.canvas.drawPath(Module.paths[$7], paint); },  
- 83496: ($0, $1) => { Module.canvas.clipPath(Module.paths[$0], $1, true); },  
- 83552: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
- 83670: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
+  80604: () => { const canvasElement = document.createElement("canvas"); canvasElement.id = "rrolf"; document.body.appendChild(canvasElement); const script = document.createElement("script"); script.src = "https://unpkg.com/canvaskit-wasm@0.19.0/bin/canvaskit.js"; document.getElementsByTagName("head")[0].appendChild(script); script.onload = function() { const ckLoaded = CanvasKitInit({ locateFile(file) { return 'https://unpkg.com/canvaskit-wasm@0.19.0/bin/'+file; } }); ckLoaded.then(function(CanvasKit) { const fps = 60; const tickDelay = 1000 / 60; let lastTick = Date.now(); const Draw = function(canvas) { Module.surface.requestAnimationFrame(Draw); if (Date.now() - lastTick < tickDelay) return; Module.canvas = canvas; Module._Render(canvasElement.width, canvasElement.height); }; const InitCanvas = function() { canvasElement.width = innerWidth; canvasElement.height = innerHeight; const surface = CanvasKit.MakeCanvasSurface("rrolf"); Module.CanvasKit = CanvasKit; Module.surface = surface; Module.surface.requestAnimationFrame(Draw); }; window.addEventListener( "resize", function() { InitCanvas(); }); window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);}); window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);}); Module.paths = [...Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map((_,i) => i); Module.addPath = _ => { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = index => { Module.paths[index] = null; Module.availablePaths.push(index); }; InitCanvas(); }); } },  
+ 82343: () => { return Module.addPath(); },  
+ 82372: ($0) => { Module.availablePaths.push($0); Module.paths[$0] = null; },  
+ 82433: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
+ 82470: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
+ 82507: ($0, $1, $2, $3, $4) => { Module.paths[$0].quadTo($1, $2, $3, $4); },  
+ 82552: ($0, $1, $2, $3, $4, $5) => { Module.paths[$0].quadTo($1, $2, $3, $4, $5, false); },  
+ 82608: () => { Module.canvas.clear(Module.CanvasKit.BLACK); },  
+ 82657: ($0, $1) => { Module.canvas.translate($0, $1) },  
+ 82691: ($0, $1) => { Module.canvas.scale($0, $1) },  
+ 82721: () => { Module.canvas.save(); },  
+ 82747: () => { Module.canvas.restore(); },  
+ 82776: ($0, $1, $2, $3, $4, $5, $6, $7, $8, $9) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255)); Module.canvas.drawCircle($7, $8, $9, paint); },  
+ 83142: ($0, $1, $2, $3, $4, $5, $6, $7) => { const paint = new Module.CanvasKit.Paint(); if ($0 == 0) paint.setStyle(Module.CanvasKit.PaintStyle.Fill); if ($0 == 1) paint.setStyle(Module.CanvasKit.PaintStyle.Stroke); if ($0 == 1) paint.setStrokeWidth($1); paint.setAntiAlias($2); paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255)); Module.canvas.drawPath(Module.paths[$7], paint); },  
+ 83512: ($0) => { Module.canvas.clipPath(Module.paths[$0], Module.CanvasKit.ClipOp.Intersect, true); },  
+ 83599: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
+ 83717: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
 };
 
 
