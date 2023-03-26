@@ -233,11 +233,14 @@ namespace app
         m_Path.arc(x, y, r, sA, eA, false);
 #else
         EM_ASM({
-            Module.paths[$0].quadTo($1, $2, $3, $4, $5, false);
+            Module.paths[$0].arc($1, $2, $3, $4, $5, false);
         }, m_Index, x, y, r, sA, eA);
 #endif
     }
+    void Renderer::Path::AddCircle(float x, float y, float r)
+    {
 
+    }
     void Renderer::Clear()
     {
 #ifndef EMSCRIPTEN

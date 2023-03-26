@@ -32,8 +32,11 @@ namespace app::system
                                    {
             if (!m_Simulation.GetOptional<component::Render>(entity))
                 return;
+            if (!m_Simulation.GetOptional<component::Flower>(entity))
+                return;
             component::Physical physical = m_Simulation.Get<component::Physical>(entity);
             component::Render renderInfo = m_Simulation.Get<component::Render>(entity);
+            component::Flower flowerInfo = m_Simulation.Get<component::Flower>(entity);
             app::Renderer::ContextLock lock1 = ctx->AutoSaveRestore();
             ctx->Translate(physical.m_X, physical.m_Y);
             app::Renderer::Paint paint;
@@ -51,22 +54,31 @@ namespace app::system
                 {
                     app::Renderer::ContextLock lock3 = ctx->AutoSaveRestore();
                     ctx->Scale(1, 2);
-                    ctx->DrawCircle(-7, -2.5, 3, paint);
-                    app::Renderer::Path eye1Path;
-                    eye1Path.Arc(-7, -2.5, 3, 0, M_PI_2);
-                    ctx->ClipPath(eye1Path);
+                    ctx->DrawCircle(-7, -2.5, 3.25, paint);
+                    app::Renderer::Path eyePath;
+                    eyePath.MoveTo(-4,-2.5);
+                    eyePath.Arc(-7, -2.5, 3, 0, M_PI * 2);
+                    ctx->ClipPath(eyePath);
                     ctx->Scale(1, 0.5f);
                     paint.m_Color = 0xffffffff;
-                    ctx->DrawCircle(-5.5, -2.5, 2, paint);
+                    ctx->DrawCircle(-7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 4, paint);
                 }
                 paint.m_Color = 0xff222222;
                 {
                     app::Renderer::ContextLock lock4 = ctx->AutoSaveRestore();
                     ctx->Scale(1, 2);
-                    ctx->DrawCircle(7, -2.5, 3, paint);
+                    ctx->DrawCircle(7, -2.5, 3.25, paint);
+                    app::Renderer::Path eyePath;
+                    eyePath.MoveTo(10,-2.5);
+                    eyePath.Arc(7, -2.5, 3, 0, M_PI * 2);
+                    ctx->ClipPath(eyePath);
+                    ctx->Scale(1, 0.5f);
+                    paint.m_Color = 0xffffffff;
+                    ctx->DrawCircle(7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 4, paint);
                 }
             }
             // draw mouth
+            paint.m_Color = 0xff222222;
             app::Renderer::Path mouth = {};
             mouth.MoveTo(-6, 10);
             mouth.QuadTo(0, 15, 6, 10);

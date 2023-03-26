@@ -39,6 +39,7 @@ namespace app
             void LineTo(float, float);
             void QuadTo(float, float, float, float);
             void Arc(float, float, float, float, float);
+            void AddCircle(float, float, float);
         }; 
 
         class Paint
@@ -59,14 +60,14 @@ namespace app
 
             enum class Join : uint8_t
             {
-                Mitter,
+                Miter,
                 Round,
                 Bevel
             };
 
             Style m_Style = Style::Fill;
             Join m_Join = Join::Round;
-            Cap m_Cap = Cap::Butt;
+            Cap m_Cap = Cap::Round;
             bool m_AntiAliased = true;
             uint32_t m_Color = 0;
             float m_StrokeWidth = 1;

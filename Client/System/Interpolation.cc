@@ -1,6 +1,7 @@
 #include <Client/System/Interpolation.hh>
 
 #include <iostream>
+#include <cmath>
 
 #include <Client/Simulation.hh>
 #include <Client/Util/Lerp.hh>
@@ -33,7 +34,17 @@ namespace app::system
                 physical.m_X = Lerp<float>(physical.m_X, physical.m_XDestination, 0.1);
                 physical.m_Y = Lerp<float>(physical.m_Y, physical.m_YDestination, 0.1);
                 physical.m_Radius = Lerp<float>(physical.m_Radius, physical.m_RadiusDestination, 0.1);
-            } });
+            }
+            if (m_Simulation.GetOptional<component::Flower>(entity))
+            {
+                component::Flower &flower = m_Simulation.Get<component::Flower>(entity);
+
+                flower.m_EyeX = Lerp<float>(flower.m_EyeX, flower.m_EyeXDestination, 0.25);
+                flower.m_EyeY = Lerp<float>(flower.m_EyeY, flower.m_EyeYDestination, 0.25);
+                flower.m_EyeXDestination = 3 * std::cos(flower.m_EyeAngle);
+                flower.m_EyeYDestination = 3 * std::sin(flower.m_EyeAngle);
+            }
+        });
     }
 
     void Interpolation::PostTick()

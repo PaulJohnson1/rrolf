@@ -68,7 +68,7 @@ namespace app
 
     float Vector::Theta()
     {
-        return std::atan2(m_X, m_Y);
+        return std::atan2(m_Y, m_X);
     }
 
     Vector &Vector::Normalize()

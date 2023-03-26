@@ -28,3 +28,6 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -g -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})
+if(WINDOWS)
+    target_link_libraries(rrolf-server ws2_32 wsock32)
+endif()

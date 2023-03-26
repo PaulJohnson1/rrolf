@@ -29,6 +29,12 @@ namespace app::component
         uint8_t m_Flags;
         float m_EyeAngle;
 
+        float m_EyeX = 3.0f;
+        float m_EyeXDestination = 3.0f;
+
+        float m_EyeY = 0.0f;
+        float m_EyeYDestination = 0.0f;
+
         Flower(Entity);
         void UpdateFromBinary(bc::BinaryCoder &);
     };
