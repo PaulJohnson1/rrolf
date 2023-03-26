@@ -41,8 +41,8 @@ namespace app::system
 
                 flower.m_EyeX = Lerp<float>(flower.m_EyeX, flower.m_EyeXDestination, 0.25);
                 flower.m_EyeY = Lerp<float>(flower.m_EyeY, flower.m_EyeYDestination, 0.25);
-                flower.m_EyeXDestination = 3 * std::cos(flower.m_EyeAngle);
-                flower.m_EyeYDestination = 3 * std::sin(flower.m_EyeAngle);
+                flower.m_EyeXDestination = 2.5 * std::cos(flower.m_EyeAngle);
+                flower.m_EyeYDestination = 4 * std::sin(flower.m_EyeAngle);
             }
         });
     }

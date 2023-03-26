@@ -46,7 +46,17 @@ namespace app::system
             // draw fill
             paint.m_Color = 0xffffe763;
             ctx->DrawCircle(0, 0, physical.m_Radius - 1.5, paint);
+            // draw hp (separate for each entity type)
+            paint.m_Cap = app::Renderer::Paint::Cap::Round;
+            paint.m_Style = app::Renderer::Paint::Style::Stroke;
+            paint.m_Color = 0xff222222;
+            paint.m_StrokeWidth = 7;
+            ctx->DrawLine(-40, physical.m_Radius + 30, 40, physical.m_Radius + 30, paint);
+            paint.m_Color = 0xff75dd34;
+            paint.m_StrokeWidth = 5;
+            ctx->DrawLine(-40, physical.m_Radius + 30, 40, physical.m_Radius + 30, paint);
             // draw eye outlines
+            paint.m_Style = app::Renderer::Paint::Style::Fill;
             paint.m_Color = 0xff222222;
             ctx->Scale(physical.m_Radius / 25,physical.m_Radius / 25);
             {
@@ -61,7 +71,7 @@ namespace app::system
                     ctx->ClipPath(eyePath);
                     ctx->Scale(1, 0.5f);
                     paint.m_Color = 0xffffffff;
-                    ctx->DrawCircle(-7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 4, paint);
+                    ctx->DrawCircle(-7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 3, paint);
                 }
                 paint.m_Color = 0xff222222;
                 {
@@ -74,7 +84,7 @@ namespace app::system
                     ctx->ClipPath(eyePath);
                     ctx->Scale(1, 0.5f);
                     paint.m_Color = 0xffffffff;
-                    ctx->DrawCircle(7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 4, paint);
+                    ctx->DrawCircle(7 + flowerInfo.m_EyeX, -5 + flowerInfo.m_EyeY, 3, paint);
                 }
             }
             // draw mouth
@@ -83,7 +93,6 @@ namespace app::system
             mouth.MoveTo(-6, 10);
             mouth.QuadTo(0, 15, 6, 10);
             paint.m_Style = app::Renderer::Paint::Style::Stroke;
-            paint.m_Cap = app::Renderer::Paint::Cap::Round;
             paint.m_StrokeWidth = 1.5; //3.0f / 2
             ctx->DrawPath(mouth, paint);
         });

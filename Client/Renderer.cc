@@ -306,14 +306,47 @@ namespace app
         const paint = new Module.CanvasKit.Paint();
         if ($0 == 0)
             paint.setStyle(Module.CanvasKit.PaintStyle.Fill);
-        if ($0 == 1)
+        if ($0 == 1) 
+        {
             paint.setStyle(Module.CanvasKit.PaintStyle.Stroke);
-        if ($0 == 1)
-            paint.setStrokeWidth($1);
-        paint.setAntiAlias($2);
-        paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255));
-        Module.canvas.drawCircle($7, $8, $9, paint);
-    }, paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x, y, size);
+            paint.setStrokeWidth($3);
+        };
+        if ($1 == 0)
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Butt);
+        else if ($1 == 1)
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Round);
+        else
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Square);
+        paint.setAntiAlias($4);
+        paint.setColor(Module.CanvasKit.Color4f($6 / 255, $7 / 255, $8 / 255, $5 / 255));
+        Module.canvas.drawCircle($9, $10, $11, paint);
+    }, paint.m_Style, paint.m_Cap, paint.m_Join, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x, y, size);
+#endif
+    }
+    void Renderer::DrawLine(float x0, float y0, float x1, float y1, Paint const &paint)
+    {
+#ifndef EMSCRIPTEN
+    m_Canvas.drawLine(x0, y0, x1, y1, paint);
+#else
+    EM_ASM({
+        const paint = new Module.CanvasKit.Paint();
+        if ($0 == 0)
+            paint.setStyle(Module.CanvasKit.PaintStyle.Fill);
+        if ($0 == 1) 
+        {
+            paint.setStyle(Module.CanvasKit.PaintStyle.Stroke);
+            paint.setStrokeWidth($3);
+        };
+        if ($1 == 0)
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Butt);
+        else if ($1 == 1)
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Round);
+        else
+            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Square);
+        paint.setAntiAlias($4);
+        paint.setColor(Module.CanvasKit.Color4f($6 / 255, $7 / 255, $8 / 255, $5 / 255));
+        Module.canvas.drawLine($9, $10, $11, $12, paint);
+    }, paint.m_Style, paint.m_Cap, paint.m_Join, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x0, y0, x1, y1);
 #endif
     }
     void Renderer::DrawPath(Path const &path, Paint const &paint) 

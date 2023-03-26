@@ -21,7 +21,7 @@ set(SOURCES
 
 
 if(WASM_BUILD)
-    set(CMAKE_CXX_FLAGS "-std=c++20 -g -v -sEXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent")
+    set(CMAKE_CXX_FLAGS "-std=c++20 -g -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")
@@ -30,6 +30,5 @@ else()
     include_directories(/usr/include/skia)
 endif()
 set(CMAKE_EXE_LINKER_FLAGS "")
-set(CMAKE_SHARED_LINKER_FLAGS "")
 add_executable(rrolf-client ${SOURCES})
-target_link_options(rrolf-client PRIVATE "")
+

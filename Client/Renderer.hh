@@ -66,8 +66,8 @@ namespace app
             };
 
             Style m_Style = Style::Fill;
-            Join m_Join = Join::Round;
             Cap m_Cap = Cap::Round;
+            Join m_Join = Join::Round;
             bool m_AntiAliased = true;
             uint32_t m_Color = 0;
             float m_StrokeWidth = 1;
@@ -92,6 +92,7 @@ namespace app
         void Translate(float, float);
         void Scale(float, float);
         void DrawCircle(float, float, float, Paint const &);
+        void DrawLine(float, float, float, float, Paint const &);
         void DrawPath(Path const &, Paint const &);
         void ClipPath(Path const &);
         void Render();
