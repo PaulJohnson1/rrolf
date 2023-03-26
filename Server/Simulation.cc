@@ -65,7 +65,7 @@ namespace app
 
         m_Arena = Create();
         AddComponent<component::ArenaInfo>(m_Arena);
-        Get<component::ArenaInfo>(m_Arena).MapSize(750.0f);
+        Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
     }
 
     void Simulation::Tick()

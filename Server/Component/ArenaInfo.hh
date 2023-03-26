@@ -13,7 +13,7 @@ namespace app::component
 {
     class ArenaInfo
     {
-        float m_MapSize = 750.0f;
+        float m_MapSize = 1650.0f;
 
     public:
         using Type = ArenaInfo;

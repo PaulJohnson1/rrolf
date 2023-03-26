@@ -13,8 +13,8 @@ namespace app::component
 {
     class Life
     {
-        float m_Health = 0.0f;
-        float m_MaxHealth = 0.0f;
+        float m_Health = 1.0f;
+        float m_MaxHealth = 1.0f;
         float m_Damage = 0.0f;
 
     public:

@@ -8,7 +8,10 @@ namespace bc
 {
     class BinaryCoder;
 }
-
+namespace app
+{
+    class Renderer;
+}
 namespace app::component
 {
     class Flower
@@ -37,5 +40,6 @@ namespace app::component
 
         Flower(Entity);
         void UpdateFromBinary(bc::BinaryCoder &);
+        void Render(Renderer *ctx);
     };
 }

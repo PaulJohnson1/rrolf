@@ -8,7 +8,10 @@ namespace bc
 {
     class BinaryCoder;
 }
-
+namespace app
+{
+    class Renderer;
+}
 namespace app::component
 {
     class Life
@@ -22,5 +25,6 @@ namespace app::component
 
         Life(Entity);
         void UpdateFromBinary(bc::BinaryCoder &);
+        void Render(Renderer *ctx);
     };
 }

@@ -19,7 +19,7 @@ namespace app
     class Camera
     {
     public:
-        float m_Fov = 1;
+        float m_Fov = 0.9f;
         float m_X = 0;
         float m_Y = 0;
         std::vector<Entity> m_EntitiesInView;

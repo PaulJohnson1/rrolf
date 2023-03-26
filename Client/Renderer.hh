@@ -16,9 +16,9 @@ namespace app
 #ifndef EMSCRIPTEN
         SkCanvas *m_Canvas;
 #endif
+    public:
         class Simulation &m_Simulation;
 
-    public:
         int32_t m_Width;
         int32_t m_Height;
         std::map<uint8_t, uint8_t> m_KeysPressed{};

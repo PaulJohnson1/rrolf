@@ -8,7 +8,10 @@ namespace bc
 {
     class BinaryCoder;
 }
-
+namespace app
+{
+    class Renderer;
+}
 namespace app::component
 {
     class ArenaInfo
@@ -16,11 +19,12 @@ namespace app::component
     public:
 
         Entity m_Parent;
-        float m_MapSize = 500.0f;
+        float m_MapSize = 1650.0f;
         uint32_t m_Color;
 
         ArenaInfo(Entity);
 
         void UpdateFromBinary(bc::BinaryCoder &);
+        void Render(Renderer *ctx);
     };
 }
