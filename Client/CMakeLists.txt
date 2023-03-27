@@ -1,3 +1,5 @@
+set(CMAKE_SYSTEM_NAME Generic)
+
 project(rrolf-client)
 cmake_minimum_required(VERSION 3.16)
 
@@ -29,6 +31,5 @@ else()
     include_directories(/usr/include)
     include_directories(/usr/include/skia)
 endif()
-set(CMAKE_EXE_LINKER_FLAGS "")
 add_executable(rrolf-client ${SOURCES})
 
