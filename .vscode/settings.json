@@ -74,7 +74,9 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__locale": "cpp",
+        "locale": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

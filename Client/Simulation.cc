@@ -11,40 +11,37 @@
 
 namespace app
 {
-#define DEFINE_COMPONENT_GETTER(NAME)                                                               \
-    template <>                                                                                     \
-    component::NAME &Simulation::Get<component::NAME>(Entity id)                                    \
-    {                                                                                               \
-        return *m_##NAME##Components[id];                                                           \
-    }                                                                                               \
-    template <>                                                                                     \
-    component::NAME const &Simulation::Get<component::NAME>(Entity id) const                        \
-    {                                                                                               \
-        return *m_##NAME##Components[id];                                                           \
-    }                                                                                               \
-    template <>                                                                                     \
-    std::optional<component::NAME> &Simulation::GetOptional<component::NAME>(Entity id)             \
-    {                                                                                               \
-        return m_##NAME##Components[id];                                                            \
-    }                                                                                               \
-    template <>                                                                                     \
-    std::optional<component::NAME> const &Simulation::GetOptional<component::NAME>(Entity id) const \
-    {                                                                                               \
-        return m_##NAME##Components[id];                                                            \
-    }                                                                                               \
-    template <>                                                                                     \
-    component::NAME &Simulation::AddComponent(Entity id)                                            \
-    {                                                                                               \
-        m_##NAME##Components[id].emplace(id);                                                       \
-        return Get<component::NAME>(id);                                                            \
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)                                                                  \
+    template <>                                                                                               \
+    component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)                                    \
+    {                                                                                                         \
+        return *m_##COMPONENT##Components[id];                                                                \
+    }                                                                                                         \
+    template <>                                                                                               \
+    component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const                        \
+    {                                                                                                         \
+        return *m_##COMPONENT##Components[id];                                                                \
+    }                                                                                                         \
+    template <>                                                                                               \
+    std::optional<component::COMPONENT> &Simulation::GetOptional<component::COMPONENT>(Entity id)             \
+    {                                                                                                         \
+        return m_##COMPONENT##Components[id];                                                                 \
+    }                                                                                                         \
+    template <>                                                                                               \
+    std::optional<component::COMPONENT> const &Simulation::GetOptional<component::COMPONENT>(Entity id) const \
+    {                                                                                                         \
+        return m_##COMPONENT##Components[id];                                                                 \
+    }                                                                                                         \
+    template <>                                                                                               \
+    component::COMPONENT &Simulation::AddComponent(Entity id)                                                 \
+    {                                                                                                         \
+        m_##COMPONENT##Components[id].emplace(id);                                                            \
+        return Get<component::COMPONENT>(id);                                                                 \
     }
 
-    DEFINE_COMPONENT_GETTER(ArenaInfo);
-    DEFINE_COMPONENT_GETTER(Flower);
-    DEFINE_COMPONENT_GETTER(Life);
-    DEFINE_COMPONENT_GETTER(Physical);
-    DEFINE_COMPONENT_GETTER(Render);
-#undef DEFINE_COMPONENT_GETTER
+    FOR_EACH_COMPONENT;
+
+#undef RROLF_COMPONENT_ENTRY
 
     Simulation::Simulation()
         : m_InterpolationSystem(*this),
@@ -77,13 +74,11 @@ namespace app
     void Simulation::RemoveEntity(Entity id)
     {
         m_EntityTracker[id] = false;
-        GetOptional<component::Flower>(id).reset();
-        GetOptional<component::Life>(id).reset();
-        GetOptional<component::Physical>(id).reset();
-        GetOptional<component::Render>(id).reset();
-        GetOptional<component::ArenaInfo>(id).reset();
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
+    GetOptional<component::COMPONENT>(id).reset();
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
     }
-
 
     void Simulation::TickRenderer(Renderer *ctx)
     {
@@ -102,28 +97,18 @@ namespace app
         if (isCreation)
         {
             CreateEntityWithId(id);
-            if (componentFlags & 1)
-                AddComponent<component::Physical>(id);
-            if (componentFlags & 2)
-                AddComponent<component::Life>(id);
-            if (componentFlags & 4)
-                AddComponent<component::Flower>(id);
-            if (componentFlags & 8)
-                AddComponent<component::Render>(id);
-            if (componentFlags & 16)
-                AddComponent<component::ArenaInfo>(id);
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
+    if (componentFlags & (1 << ID))          \
+        AddComponent<component::COMPONENT>(id);
+            FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
         }
 
-        if (componentFlags & 1)
-            Get<component::Physical>(id).UpdateFromBinary(coder);
-        if (componentFlags & 2)
-            Get<component::Life>(id).UpdateFromBinary(coder);
-        if (componentFlags & 4)
-            Get<component::Flower>(id).UpdateFromBinary(coder);
-        if (componentFlags & 8)
-            Get<component::Render>(id).UpdateFromBinary(coder);
-        if (componentFlags & 16)
-            Get<component::ArenaInfo>(id).UpdateFromBinary(coder);
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
+    if (componentFlags & (1 << ID))          \
+        Get<component::COMPONENT>(id).UpdateFromBinary(coder);
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
     }
 
     Entity Simulation::CreateEntityWithId(Entity id)

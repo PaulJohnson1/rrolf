@@ -29,7 +29,7 @@ namespace app
 #ifdef EMSCRIPTEN
             uint32_t m_Index;
 #else
-            SkPath m_Path;
+            SkPath m_Path{};
 #endif
 
             Path();
@@ -42,7 +42,7 @@ namespace app
             void MoveTo(float, float);
             void LineTo(float, float);
             void QuadTo(float, float, float, float);
-            void Arc(float, float, float, float, float);
+            void Circle(float, float, float);
             void AddCircle(float, float, float);
         };
 

@@ -3,10 +3,19 @@
 #include <cstdint>
 #include <optional>
 
+#define FOR_EACH_COMPONENT              \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 0) \
+    RROLF_COMPONENT_ENTRY(Basic, 1)     \
+    RROLF_COMPONENT_ENTRY(Flower, 2)    \
+    RROLF_COMPONENT_ENTRY(Life, 3)      \
+    RROLF_COMPONENT_ENTRY(Physical, 4)  \
+    RROLF_COMPONENT_ENTRY(Render, 5)
+
 #include <Client/Component/ArenaInfo.hh>
-#include <Client/Component/Physical.hh>
-#include <Client/Component/Life.hh>
+#include <Client/Component/Basic.hh>
 #include <Client/Component/Flower.hh>
+#include <Client/Component/Life.hh>
+#include <Client/Component/Physical.hh>
 #include <Client/Component/Render.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/Renderer.hh>
@@ -29,11 +38,10 @@ namespace app
         system::Interpolation m_InterpolationSystem;
         system::Renderer m_RendererSystem;
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Physical> m_PhysicalComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::ArenaInfo> m_ArenaInfoComponents[MAX_ENTITY_COUNT] = {};
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
+    std::optional<component::COMPONENT> m_##COMPONENT##Components[MAX_ENTITY_COUNT] = {};
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
 
     public:
         Camera m_Camera{};

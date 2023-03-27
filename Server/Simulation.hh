@@ -6,10 +6,19 @@
 #include <functional>
 #include <optional>
 
+#define FOR_EACH_COMPONENT              \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 0) \
+    RROLF_COMPONENT_ENTRY(Basic, 1)     \
+    RROLF_COMPONENT_ENTRY(Flower, 2)    \
+    RROLF_COMPONENT_ENTRY(Life, 3)      \
+    RROLF_COMPONENT_ENTRY(Physical, 4)  \
+    RROLF_COMPONENT_ENTRY(Render, 5)
+
 #include <Server/Component/ArenaInfo.hh>
-#include <Server/Component/Physical.hh>
-#include <Server/Component/Life.hh>
+#include <Server/Component/Basic.hh>
 #include <Server/Component/Flower.hh>
+#include <Server/Component/Life.hh>
+#include <Server/Component/Physical.hh>
 #include <Server/Component/Render.hh>
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
@@ -33,11 +42,10 @@ namespace app
 
         std::queue<Entity> m_AvailableIds{};
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Physical> m_PhysicalComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Life> m_LifeComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Render> m_RenderComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::Flower> m_FlowerComponents[MAX_ENTITY_COUNT] = {};
-        std::optional<component::ArenaInfo> m_ArenaInfoComponents[MAX_ENTITY_COUNT] = {};
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
+    std::optional<component::COMPONENT> m_##COMPONENT##Components[MAX_ENTITY_COUNT] = {};
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
 
     public:
         Entity m_Arena;

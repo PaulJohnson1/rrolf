@@ -29,6 +29,7 @@ extern "C"
 }
 #else
 #define SK_GL
+#define SK_GANESH
 #include <GLFW/glfw3.h>
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkColor.h>
@@ -231,19 +232,15 @@ namespace app
 #endif
     }
 
-    void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
+    void Renderer::Path::Circle(float x, float y, float r)
     {
 #ifndef EMSCRIPTEN
-        m_Path.addArc(SkRect::MakeXYWH(x, y, r, r), sA, eA);
+        m_Path.addCircle(x, y, r);
 #else
         EM_ASM({
-            Module.paths[$0].arc($1, $2, $3, $4, $5, false);
-        }, m_Index, x, y, r, sA, eA);
+            Module.paths[$0].arc($1, $2, $3, 0, Math.PI * 2, false);
+        }, m_Index, x, y, r);
 #endif
-    }
-    void Renderer::Path::AddCircle(float x, float y, float r)
-    {
-
     }
     void Renderer::Clear()
     {

@@ -43,7 +43,7 @@ namespace app::component
                 ctx->DrawCircle(-7, -2.5, 3.25, paint);
                 Renderer::Path eyePath;
                 eyePath.MoveTo(-4,-2.5);
-                eyePath.Arc(-7, -2.5, 3, 0, M_PI * 2);
+                eyePath.Circle(-7, -2.5, 3);
                 ctx->ClipPath(eyePath);
                 ctx->Scale(1, 0.5f);
                 paint.m_Color = 0xffffffff;
@@ -56,7 +56,7 @@ namespace app::component
                 ctx->DrawCircle(7, -2.5, 3.25, paint);
                 Renderer::Path eyePath;
                 eyePath.MoveTo(10,-2.5);
-                eyePath.Arc(7, -2.5, 3, 0, M_PI * 2);
+                eyePath.Circle(7, -2.5, 3);
                 ctx->ClipPath(eyePath);
                 ctx->Scale(1, 0.5f);
                 paint.m_Color = 0xffffffff;

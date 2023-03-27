@@ -6,6 +6,7 @@ include_directories(ThirdParty)
 
 set(SOURCES
     Component/ArenaInfo.cc
+    Component/Basic.cc
     Component/Flower.cc
     Component/Life.cc
     Component/Physical.cc
