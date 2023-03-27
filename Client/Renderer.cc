@@ -181,17 +181,21 @@ namespace app
 
     Renderer::Path::Path() 
     {
+#ifdef EMSCRIPTEN
         m_Index = EM_ASM_INT({
             return Module.addPath();
         });
+#endif
     }
 
     Renderer::Path::~Path()
     {
+#ifdef EMSCRIPTEN
         EM_ASM({
             Module.availablePaths.push($0);
             Module.paths[$0] = null;
         }, m_Index);
+#endif
     }
 
     void Renderer::Path::MoveTo(float x, float y)
@@ -230,7 +234,7 @@ namespace app
     void Renderer::Path::Arc(float x, float y, float r, float sA, float eA)
     {
 #ifndef EMSCRIPTEN
-        m_Path.arc(x, y, r, sA, eA, false);
+        m_Path.addArc(SkRect::MakeXYWH(x, y, r, r), sA, eA);
 #else
         EM_ASM({
             Module.paths[$0].arc($1, $2, $3, $4, $5, false);
@@ -326,7 +330,12 @@ namespace app
     void Renderer::DrawLine(float x0, float y0, float x1, float y1, Paint const &paint)
     {
 #ifndef EMSCRIPTEN
-    m_Canvas.drawLine(x0, y0, x1, y1, paint);
+        SkPaint skPaint;
+        skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
+        skPaint.setStrokeWidth(paint.m_StrokeWidth);
+        skPaint.setAntiAlias(paint.m_AntiAliased);
+        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
+        m_Canvas->drawLine(x0, y0, x1, y1, skPaint);
 #else
     EM_ASM({
         const paint = new Module.CanvasKit.Paint();
@@ -352,7 +361,12 @@ namespace app
     void Renderer::DrawPath(Path const &path, Paint const &paint) 
     {
 #ifndef EMSCRIPTEN
-        m_Canvas.drawPath(path, paint);
+        SkPaint skPaint;
+        skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
+        skPaint.setStrokeWidth(paint.m_StrokeWidth);
+        skPaint.setAntiAlias(paint.m_AntiAliased);
+        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
+        m_Canvas->drawPath(path.m_Path, skPaint);
 #else
         EM_ASM({
             const paint = new Module.CanvasKit.Paint();
@@ -368,10 +382,10 @@ namespace app
         }, paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, path.m_Index);
 #endif
     }
-    void Renderer::ClipPath(Path const & path) 
+    void Renderer::ClipPath(Path const &path) 
     {
 #ifndef EMSCRIPTEN
-        m_Canvas->clipPath(path, type, true);
+        m_Canvas->clipPath(path.m_Path, true);
 #else
         EM_ASM({
             Module.canvas.clipPath(Module.paths[$0], Module.CanvasKit.ClipOp.Intersect, true);

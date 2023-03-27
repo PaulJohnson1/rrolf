@@ -26,21 +26,25 @@ namespace app
         class Path
         {
         public:
+#ifdef EMSCRIPTEN
             uint32_t m_Index;
-         
+#else
+            SkPath m_Path;
+#endif
+
             Path();
             ~Path();
             Path(Path const &) = delete;
             Path(Path &&) = delete;
             Path &operator=(Path const &) = delete;
             Path &operator=(Path &&) = delete;
-         
+
             void MoveTo(float, float);
             void LineTo(float, float);
             void QuadTo(float, float, float, float);
             void Arc(float, float, float, float, float);
             void AddCircle(float, float, float);
-        }; 
+        };
 
         class Paint
         {
@@ -76,6 +80,7 @@ namespace app
         class ContextLock
         {
             Renderer *m_Renderer;
+
         public:
             ContextLock(Renderer *);
             ContextLock(Renderer const &) = delete;
