@@ -74,7 +74,7 @@ namespace app::component
         ctx->SetLineWidth(1.5);
         ctx->BeginPath();
         ctx->MoveTo(-6, 10);
-        ctx->QuadTo(0, 15, 6, 10);
+        ctx->QuadraticCurveTo(0, 15, 6, 10);
         ctx->Stroke();
     }
 }

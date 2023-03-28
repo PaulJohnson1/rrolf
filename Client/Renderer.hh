@@ -12,6 +12,8 @@ class SkCanvas;
 
 namespace app
 {
+    class Renderer;
+
     class Guard
     {
         Renderer *m_Renderer;
@@ -110,12 +112,6 @@ namespace app
         // void BezierCurveTo(float, float, float, float, float, float);
 
         void Render();
-        [[nodiscard]] ContextLock AutoSaveRestore();
+        [[nodiscard]] Guard AutoSaveRestore();
     };
 } //the old path2d impl worked somewhat
-
-// we can probably do something similar to what we had before
-// with the path index and the path wrapper
-// that worked pretty much flawless
-
-//path2d only needs arc moveto lineto quadcurveto

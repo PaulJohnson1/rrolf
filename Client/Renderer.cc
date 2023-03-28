@@ -108,26 +108,25 @@ namespace app
 #else
         EM_ASM({
             Module.canvas = document.createElement("canvas");
-            canvasElement.id = "canvas";
+            Module.canvas.id = "canvas";
             document.body.appendChild(Module.canvas);
             Module.ctx = Module.canvas.getContext('2d');
             Module.paths = [...new Array(128)].fill(null);
             Module.FindPathIndex = function()
             {
 
-            }
-            const loop = _ = >
+            };
+            function loop()
             {
                 Module._Render();
                 requestAnimationFrame(loop);
-            }
+            };
             requestAnimationFrame(loop);
         });
     }
 #endif
-    }
 
-    Renderer::Guard Renderer::AutoSaveRestore()
+    Guard Renderer::AutoSaveRestore()
     {
         return Guard(this);
     }
@@ -142,6 +141,7 @@ namespace app
     {
         m_Renderer->Restore();
     }
+
     void Renderer::SetTransform(float a, float b, float c, float d, float e, float f)
     {
         m_Matrix[0] = a;
@@ -170,7 +170,8 @@ namespace app
     }
     void Renderer::ResetTransform()
     {
-        m_Matrix = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+        // memset(m_Matrix, 0, 9 * sizeof(float))
+        //m_Matrix = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
         UpdateTransform();
     }
     void Renderer::Rotate(float a)
@@ -205,7 +206,7 @@ namespace app
         m_Canvas->save();
 #else
     EM_ASM({
-        Module.canvas.save();
+        Module.ctx.save();
     });
 #endif
     }
@@ -216,7 +217,7 @@ namespace app
         m_Canvas->restore();
 #else
     EM_ASM({
-        Module.canvas.restore();
+        Module.ctx.restore();
     });
 #endif
     }

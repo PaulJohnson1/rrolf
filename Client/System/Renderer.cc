@@ -19,7 +19,7 @@ namespace app::system
         // use bound checking for this one
         if (!m_Simulation.GetOptional<component::ArenaInfo>(0))
             return;
-        ctx->Clear();
+        //ctx->Clear();
         Guard lock0 = ctx->AutoSaveRestore();
         ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
         ctx->Scale(m_Simulation.m_Camera.m_Fov, m_Simulation.m_Camera.m_Fov);

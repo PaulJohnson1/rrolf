@@ -25,15 +25,5 @@ namespace app::component
 
     void Mob::Render(Renderer *ctx)
     {
-        Renderer::ContextLock lock = ctx->AutoSaveRestore();
-        component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
-        switch(m_Id) {
-            case 0:
-                ctx->DrawCircle(0, 0, physical.m_Radius, paint);
-                break;
-        
-            default:
-                assert(false);
-        }
     }
 }
