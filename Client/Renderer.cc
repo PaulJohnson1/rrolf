@@ -111,10 +111,21 @@ namespace app
             Module.canvas.id = "canvas";
             document.body.appendChild(Module.canvas);
             Module.ctx = Module.canvas.getContext('2d');
-            Module.paths = [...new Array(128)].fill(null);
-            Module.FindPathIndex = function()
-            {
-
+            window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);});
+            window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);});
+            Module.paths = [...Array(100)].fill(null);
+            Module.availablePaths = new Array(100).fill(0).map((_,i) => i);
+            Module.addPath = _ => {
+                if (Module.availablePaths.length) {
+                    const index = Module.availablePaths.pop();
+                    Module.paths[index] = new CanvasKit.Path();
+                    return index;
+                }
+                throw new Error('Out of Paths: Can be fixed by allowing more paths');
+            };
+            Module.removePath = index => {
+                Module.paths[index] = null;
+                Module.availablePaths.push(index);
             };
             function loop()
             {
@@ -342,6 +353,15 @@ namespace app
         m_CurrentPath.addCircle(x, y, r);
 #endif
     }
+
+    void Renderer::Clip()
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.clip(); });
+#else 
+        //skcanvas clip currpath
+#endif
+    }
     
     void Renderer::Fill()
     {
@@ -366,5 +386,30 @@ namespace app
     void Renderer::Render()
     {
         m_Simulation.TickRenderer(this);
+    }
+
+    Path2D::Path2D()
+    {
+#ifdef EMSCRIPTEN
+        m_Index = EM_ASM_INT({ return Module.addPath(); });
+#else
+        m_Path = SkPath;
+#endif
+    }
+
+    void Path2D::MoveTo(float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.paths[$0].moveTo($1, $2); }, m_Index, x, y);
+#else
+#endif
+    }
+
+    void Path2D::LineTo(float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.paths[$0].lineTo($1, $2); }, m_Index, x, y);
+#else
+#endif
     }
 }

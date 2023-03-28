@@ -36,40 +36,43 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, physical.m_Radius - 1.5);
         ctx->Fill();
-        ctx->SetFill(0xff222222);
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
-        /*
         {
-            Renderer::ContextLock lock2 = ctx->AutoSaveRestore();
+            Guard lock2 = ctx->AutoSaveRestore();
             {
-                Renderer::ContextLock lock3 = ctx->AutoSaveRestore();
+                ctx->SetFill(0xff222222);
+                Guard lock3 = ctx->AutoSaveRestore();
                 ctx->Scale(1, 2);
                 ctx->BeginPath();
                 ctx->Arc(-7, -2.5, 3.25);
-                Renderer::Path eyePath;
-                eyePath.MoveTo(-4,-2.5);
-                eyePath.Circle(-7, -2.5, 3);
-                ctx->ClipPath(eyePath);
+                ctx->Fill();
+                ctx->BeginPath();
+                ctx->Arc(-7, -2.5, 3);
+                ctx->Clip();
                 ctx->Scale(1, 0.5f);
-                paint.m_Color = 0xffffffff;
-                ctx->DrawCircle(-7 + m_EyeX, -5 + m_EyeY, 3, paint);
+                ctx->SetFill(0xffffffff);
+                ctx->BeginPath();
+                ctx->Arc(-7 + m_EyeX, -5 + m_EyeY, 3);
+                ctx->Fill();
             }
-            paint.m_Color = 0xff222222;
             {
-                Renderer::ContextLock lock4 = ctx->AutoSaveRestore();
+                ctx->SetFill(0xff222222);
+                Guard lock4 = ctx->AutoSaveRestore();
                 ctx->Scale(1, 2);
-                ctx->DrawCircle(7, -2.5, 3.25, paint);
-                Renderer::Path eyePath;
-                eyePath.MoveTo(10,-2.5);
-                eyePath.Circle(7, -2.5, 3);
-                ctx->ClipPath(eyePath);
+                ctx->BeginPath();
+                ctx->Arc(7, -2.5, 3.25);
+                ctx->Fill();
+                ctx->BeginPath();
+                ctx->Arc(7, -2.5, 3);
+                ctx->Clip();
                 ctx->Scale(1, 0.5f);
-                paint.m_Color = 0xffffffff;
-                ctx->DrawCircle(7 + m_EyeX, -5 + m_EyeY, 3, paint);
+                ctx->SetFill(0xffffffff);
+                ctx->BeginPath();
+                ctx->Arc(7 + m_EyeX, -5 + m_EyeY, 3);
+                ctx->Fill();
             }
         }
         // draw mouth
-        */
         ctx->SetStroke(0xff222222);
         ctx->SetLineWidth(1.5);
         ctx->BeginPath();

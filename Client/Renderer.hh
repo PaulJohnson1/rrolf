@@ -31,7 +31,7 @@ namespace app
     class Path2D
     {
 #ifdef EMSCRIPTEN
-        uint32_t m_Id;
+        uint32_t m_Index;
 #else
         SkPath m_Path;
 #endif
@@ -108,6 +108,7 @@ namespace app
         void LineTo(float, float);
         void QuadraticCurveTo(float, float, float, float);
         void Arc(float, float, float);
+        void Clip();
         
         // render
         void Stroke();

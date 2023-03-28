@@ -22,26 +22,29 @@ namespace app::component
     void ArenaInfo::Render(Renderer *ctx)
     {
         Guard lock = ctx->AutoSaveRestore();
-        // need begin and close path?? only beginpath mostly for conplex polys (may not be used at all rn)
         
         ctx->SetFill(0xff51983c);
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize);
         ctx->Fill();
-        /*
-        Renderer::Path arenaPath;
-        arenaPath.MoveTo(0, 0);
-        arenaPath.Circle(0, 0, m_MapSize);
-        ctx->ClipPath(arenaPath);
-        paint.m_Style = Renderer::Paint::Style::Stroke;
-        paint.m_StrokeWidth = 1;
+        ctx->Clip();
+        ctx->SetLineWidth(1);
         uint8_t alpha = (uint8_t)(ctx->m_Simulation.m_Camera.m_Fov * 51);
-        paint.m_Color = alpha << 24 | 0x000000;
+        ctx->SetStroke(alpha << 24);
         int32_t size = (int32_t)(m_MapSize * 0.02);
         for (int32_t posX = -size; posX <= size; ++posX)
-            ctx->DrawLine(posX * 50, -m_MapSize, posX * 50, m_MapSize, paint);
+        {
+            ctx->BeginPath();
+            ctx->MoveTo(posX * 50, -m_MapSize);
+            ctx->LineTo(posX * 50, m_MapSize);
+            ctx->Stroke();
+        }
         for (int32_t posY = -size; posY <= size; ++posY)
-            ctx->DrawLine(-m_MapSize, posY * 50, m_MapSize, posY * 50, paint);
-        */
+        {
+            ctx->BeginPath();
+            ctx->MoveTo(-m_MapSize, posY * 50);
+            ctx->LineTo(m_MapSize, posY * 50);
+            ctx->Stroke();
+        }
     }
 }
