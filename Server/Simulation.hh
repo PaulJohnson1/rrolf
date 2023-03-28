@@ -12,12 +12,14 @@
     RROLF_COMPONENT_ENTRY(Flower, 2)    \
     RROLF_COMPONENT_ENTRY(Life, 3)      \
     RROLF_COMPONENT_ENTRY(Physical, 4)  \
-    RROLF_COMPONENT_ENTRY(Render, 5)
+    RROLF_COMPONENT_ENTRY(Render, 5)    \
+    RROLF_COMPONENT_ENTRY(Mob, 6)
 
 #include <Server/Component/ArenaInfo.hh>
 #include <Server/Component/Basic.hh>
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Life.hh>
+#include <Server/Component/Mob.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/Render.hh>
 #include <Server/System/CollisionDetector.hh>

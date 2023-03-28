@@ -21,10 +21,14 @@ namespace app::component
     }
     void ArenaInfo::Render(Renderer *ctx)
     {
-        Renderer::ContextLock lock = ctx->AutoSaveRestore();
-        Renderer::Paint paint;
-        paint.m_Color = 0xff51983c;
-        ctx->DrawCircle(0, 0, m_MapSize, paint);
+        Guard lock = ctx->AutoSaveRestore();
+        // need begin and close path?? only beginpath mostly for conplex polys (may not be used at all rn)
+        
+        ctx->SetFill(0xff51983c);
+        ctx->BeginPath();
+        ctx->Arc(0, 0, m_MapSize);
+        ctx->Fill();
+        /*
         Renderer::Path arenaPath;
         arenaPath.MoveTo(0, 0);
         arenaPath.Circle(0, 0, m_MapSize);
@@ -38,5 +42,6 @@ namespace app::component
             ctx->DrawLine(posX * 50, -m_MapSize, posX * 50, m_MapSize, paint);
         for (int32_t posY = -size; posY <= size; ++posY)
             ctx->DrawLine(-m_MapSize, posY * 50, m_MapSize, posY * 50, paint);
+        */
     }
 }

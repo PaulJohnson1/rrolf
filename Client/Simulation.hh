@@ -9,12 +9,14 @@
     RROLF_COMPONENT_ENTRY(Flower, 2)    \
     RROLF_COMPONENT_ENTRY(Life, 3)      \
     RROLF_COMPONENT_ENTRY(Physical, 4)  \
-    RROLF_COMPONENT_ENTRY(Render, 5)
+    RROLF_COMPONENT_ENTRY(Render, 5)    \
+    RROLF_COMPONENT_ENTRY(Mob, 6)
 
 #include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Basic.hh>
 #include <Client/Component/Flower.hh>
 #include <Client/Component/Life.hh>
+#include <Client/Component/Mob.hh>
 #include <Client/Component/Physical.hh>
 #include <Client/Component/Render.hh>
 #include <Client/System/Interpolation.hh>
@@ -29,7 +31,7 @@ namespace app
         float m_Fov = 0.9f;
         float m_X = 0;
         float m_Y = 0;
-        float m_FovDestination = 1;
+        float m_FovDestination = 0.9f;
         float m_XDestination = 0;
         float m_YDestination = 0;
     };

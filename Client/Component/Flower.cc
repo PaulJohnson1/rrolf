@@ -23,24 +23,29 @@ namespace app::component
     }
     void Flower::Render(Renderer *ctx)
     {
-        Renderer::ContextLock lock = ctx->AutoSaveRestore();
+        Guard lock = ctx->AutoSaveRestore();
         component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
-        Renderer::Paint paint;
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw stroke
-        paint.m_Color = 0xffcfbb50;
-        ctx->DrawCircle(0, 0, physical.m_Radius + 1.5, paint);
+        ctx->SetFill(0xffcfbb50);
+        ctx->BeginPath();
+        ctx->Arc(0, 0, physical.m_Radius + 1.5);
+        ctx->Fill();
         // draw fill
-        paint.m_Color = 0xffffe763;
-        ctx->DrawCircle(0, 0, physical.m_Radius - 1.5, paint);
-        paint.m_Color = 0xff222222;
-        ctx->Scale(physical.m_Radius / 25,physical.m_Radius / 25);
+        ctx->SetFill(0xffffe763);
+        ctx->BeginPath();
+        ctx->Arc(0, 0, physical.m_Radius - 1.5);
+        ctx->Fill();
+        ctx->SetFill(0xff222222);
+        ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
+        /*
         {
             Renderer::ContextLock lock2 = ctx->AutoSaveRestore();
             {
                 Renderer::ContextLock lock3 = ctx->AutoSaveRestore();
                 ctx->Scale(1, 2);
-                ctx->DrawCircle(-7, -2.5, 3.25, paint);
+                ctx->BeginPath();
+                ctx->Arc(-7, -2.5, 3.25);
                 Renderer::Path eyePath;
                 eyePath.MoveTo(-4,-2.5);
                 eyePath.Circle(-7, -2.5, 3);
@@ -64,12 +69,12 @@ namespace app::component
             }
         }
         // draw mouth
-        paint.m_Color = 0xff222222;
-        Renderer::Path mouth = {};
-        mouth.MoveTo(-6, 10);
-        mouth.QuadTo(0, 15, 6, 10);
-        paint.m_Style = Renderer::Paint::Style::Stroke;
-        paint.m_StrokeWidth = 1.5; //3.0f / 2
-        ctx->DrawPath(mouth, paint);
+        */
+        ctx->SetStroke(0xff222222);
+        ctx->SetLineWidth(1.5);
+        ctx->BeginPath();
+        ctx->MoveTo(-6, 10);
+        ctx->QuadTo(0, 15, 6, 10);
+        ctx->Stroke();
     }
 }

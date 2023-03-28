@@ -4,6 +4,7 @@
 #include <chrono>
 #include <thread>
 #include <cassert>
+#include <cmath>
 
 static app::Renderer *g_Renderer = nullptr;
 
@@ -106,169 +107,96 @@ namespace app
         }
 #else
         EM_ASM({
-            const canvasElement = document.createElement("canvas");
-            canvasElement.id = "rrolf";
-            document.body.appendChild(canvasElement);
-            const script = document.createElement("script");
-            script.src = "https://unpkg.com/canvaskit-wasm@0.19.0/bin/canvaskit.js";
-            document.getElementsByTagName("head")[0].appendChild(script);
-            script.onload = function()
+            Module.canvas = document.createElement("canvas");
+            canvasElement.id = "canvas";
+            document.body.appendChild(Module.canvas);
+            Module.ctx = Module.canvas.getContext('2d');
+            Module.paths = [...new Array(128)].fill(null);
+            Module.FindPathIndex = function()
             {
-                const ckLoaded = CanvasKitInit({
-                    locateFile(file) { return 'https://unpkg.com/canvaskit-wasm@0.19.0/bin/'+file; } });
-        ckLoaded.then(function(CanvasKit) {
-            const fps = 60;
-            const tickDelay = 1000 / 60;
-            let lastTick = Date.now();
-            const Draw = function(canvas)
-            {
-                Module.surface.requestAnimationFrame(Draw);
-                if (Date.now() - lastTick < tickDelay)
-                    return;
 
-                Module.canvas = canvas;
-                Module._Render(canvasElement.width, canvasElement.height);
-            };
-            const InitCanvas = function()
+            }
+            const loop = _ = >
             {
-                canvasElement.width = innerWidth;
-                canvasElement.height = innerHeight;
-                const surface = CanvasKit.MakeCanvasSurface("rrolf");
-                Module.CanvasKit = CanvasKit;
-                Module.surface = surface;
-                Module.surface.requestAnimationFrame(Draw);
-            };
-            window.addEventListener(
-                "resize", function() { InitCanvas(); });
-
-            window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);});
-            window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);});
-            Module.paths = [...Array(100)].fill(null);
-            Module.availablePaths = new Array(100).fill(0).map((_,i) => i);
-            Module.addPath = _ => {
-                if (Module.availablePaths.length) {
-                    const index = Module.availablePaths.pop();
-                    Module.paths[index] = new CanvasKit.Path();
-                    return index;
-                }
-                throw new Error('Out of Paths: Can be fixed by allowing more paths');
-            };
-            Module.removePath = index => {
-                Module.paths[index] = null;
-                Module.availablePaths.push(index);
-            };
-            InitCanvas();
+                Module._Render();
+                requestAnimationFrame(loop);
+            }
+            requestAnimationFrame(loop);
         });
     }
-});
 #endif
     }
 
-    Renderer::ContextLock Renderer::AutoSaveRestore()
+    Renderer::Guard Renderer::AutoSaveRestore()
     {
-        return Renderer::ContextLock(this);
+        return Guard(this);
     }
 
-    Renderer::ContextLock::ContextLock(Renderer *renderer)
-      : m_Renderer(renderer)
+    Guard::Guard(Renderer *renderer)
+        : m_Renderer(renderer)
     {
         m_Renderer->Save();
     }
 
-    Renderer::ContextLock::~ContextLock()
+    Guard::~Guard()
     {
         m_Renderer->Restore();
     }
-
-    Renderer::Path::Path() 
+    void Renderer::SetTransform(float a, float b, float c, float d, float e, float f)
     {
+        m_Matrix[0] = a;
+        m_Matrix[1] = b;
+        m_Matrix[2] = c;
+        m_Matrix[3] = d;
+        m_Matrix[4] = e;
+        m_Matrix[5] = f;
+#ifndef EMSCRIPTEN
+        m_CurrentMatrix.set9(a, b, c, d, e, f, 0, 0, 1);
+#else
+    EM_ASM({Module.ctx.setTransform($0, $1, $2, $3, $4, $5); }, a, b, c, d, e, f);
+#endif
+    }
+    void Renderer::UpdateTransform() {
 #ifdef EMSCRIPTEN
-        m_Index = EM_ASM_INT({
-            return Module.addPath();
-        });
-#endif
-    }
-
-    Renderer::Path::~Path()
-    {
-#ifdef EMSCRIPTEN
         EM_ASM({
-            Module.availablePaths.push($0);
-            Module.paths[$0] = null;
-        }, m_Index);
-#endif
-    }
-
-    void Renderer::Path::MoveTo(float x, float y)
-    {
-#ifndef EMSCRIPTEN
-        m_Path.moveTo(x, y);
-#else 
-        EM_ASM({
-            Module.paths[$0].moveTo($1, $2);
-        }, m_Index, x, y);
-#endif
-    }
-    
-    void Renderer::Path::LineTo(float x, float y)
-    {
-#ifndef EMSCRIPTEN
-        m_Path.lineTo(x, y);
+            Module.ctx.setTransform($0, $1, $2, $3, $4, $5);
+        }, m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5]);
 #else
-        EM_ASM({
-            Module.paths[$0].lineTo($1, $2);
-        }, m_Index, x, y);
+        SkMatrix m;
+        // silly
+        m.set9(m_Matrix[0], m_Matrix[1], m_Matrix[2], m_Matrix[3], m_Matrix[4], m_Matrix[5], m_Matrix[6], m_Matrix[7], m_Matrix[8]);
+        m_Canvas->setMatrix(m);
 #endif
     }
-
-    void Renderer::Path::QuadTo(float x1, float y1, float x, float y)
+    void Renderer::ResetTransform()
     {
-#ifndef EMSCRIPTEN
-        m_Path.quadTo(x1, y1, x, y);
-#else
-        EM_ASM({
-            Module.paths[$0].quadTo($1, $2, $3, $4);
-        }, m_Index, x1, y1, x, y);
-#endif
+        m_Matrix = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+        UpdateTransform();
     }
-
-    void Renderer::Path::Circle(float x, float y, float r)
+    void Renderer::Rotate(float a)
     {
-#ifndef EMSCRIPTEN
-        m_Path.addCircle(x, y, r);
-#else
-        EM_ASM({
-            Module.paths[$0].arc($1, $2, $3, 0, Math.PI * 2, false);
-        }, m_Index, x, y, r);
-#endif
+        float cos_a = std::cos(a);
+        float sin_a = std::sin(a);
+        m_Matrix[0] = m_Matrix[0] * cos_a + m_Matrix[3] * sin_a;
+        m_Matrix[1] = m_Matrix[1] * cos_a + m_Matrix[4] * sin_a;
+        m_Matrix[3] = - m_Matrix[0] * sin_a + m_Matrix[3] * cos_a; //wait lol
+        m_Matrix[4] = - m_Matrix[1] * sin_a + m_Matrix[4] * cos_a; //multiplying by cos sin -sin cos
+        UpdateTransform();
     }
-    void Renderer::Clear()
-    {
-#ifndef EMSCRIPTEN
-        m_Canvas->clear(0);
-#else
-    EM_ASM({
-        Module.canvas.clear(Module.CanvasKit.BLACK);
-    });
-#endif
-    }
-
     void Renderer::Translate(float x, float y)
     {
-#ifndef EMSCRIPTEN
-        m_Canvas->translate(x, y);
-#else
-    EM_ASM({Module.canvas.translate($0, $1)}, x, y);
-#endif
+        m_Matrix[2] += x * (m_Matrix[0] + m_Matrix[3]);
+        m_Matrix[5] += y * (m_Matrix[1] + m_Matrix[4]);
+        UpdateTransform();
     }
 
     void Renderer::Scale(float x, float y)
     {
-#ifndef EMSCRIPTEN
-        m_Canvas->scale(x, y);
-#else
-    EM_ASM({Module.canvas.scale($0, $1)}, x, y);
-#endif
+        m_Matrix[0] *= x;
+        m_Matrix[1] *= y;
+        m_Matrix[3] *= x;
+        m_Matrix[4] *= y;
+        UpdateTransform();
     }
 
     void Renderer::Save()
@@ -293,102 +221,6 @@ namespace app
 #endif
     }
 
-    void Renderer::DrawCircle(float x, float y, float size, Paint const &paint)
-    {
-#ifndef EMSCRIPTEN
-        SkPaint skPaint;
-        skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
-        skPaint.setStrokeWidth(paint.m_StrokeWidth);
-        skPaint.setAntiAlias(paint.m_AntiAliased);
-        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
-        m_Canvas->drawCircle(x, y, size, skPaint);
-#else
-    EM_ASM({
-        const paint = new Module.CanvasKit.Paint();
-        if ($0 == 0)
-            paint.setStyle(Module.CanvasKit.PaintStyle.Fill);
-        if ($0 == 1) 
-        {
-            paint.setStyle(Module.CanvasKit.PaintStyle.Stroke);
-            paint.setStrokeWidth($3);
-        };
-        if ($1 == 0)
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Butt);
-        else if ($1 == 1)
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Round);
-        else
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Square);
-        paint.setAntiAlias($4);
-        paint.setColor(Module.CanvasKit.Color4f($6 / 255, $7 / 255, $8 / 255, $5 / 255));
-        Module.canvas.drawCircle($9, $10, $11, paint);
-    }, paint.m_Style, paint.m_Cap, paint.m_Join, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x, y, size);
-#endif
-    }
-    void Renderer::DrawLine(float x0, float y0, float x1, float y1, Paint const &paint)
-    {
-#ifndef EMSCRIPTEN
-        SkPaint skPaint;
-        skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
-        skPaint.setStrokeWidth(paint.m_StrokeWidth);
-        skPaint.setAntiAlias(paint.m_AntiAliased);
-        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
-        m_Canvas->drawLine(x0, y0, x1, y1, skPaint);
-#else
-    EM_ASM({
-        const paint = new Module.CanvasKit.Paint();
-        if ($0 == 0)
-            paint.setStyle(Module.CanvasKit.PaintStyle.Fill);
-        if ($0 == 1) 
-        {
-            paint.setStyle(Module.CanvasKit.PaintStyle.Stroke);
-            paint.setStrokeWidth($3);
-        };
-        if ($1 == 0)
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Butt);
-        else if ($1 == 1)
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Round);
-        else
-            paint.setStrokeCap(Module.CanvasKit.StrokeCap.Square);
-        paint.setAntiAlias($4);
-        paint.setColor(Module.CanvasKit.Color4f($6 / 255, $7 / 255, $8 / 255, $5 / 255));
-        Module.canvas.drawLine($9, $10, $11, $12, paint);
-    }, paint.m_Style, paint.m_Cap, paint.m_Join, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, x0, y0, x1, y1);
-#endif
-    }
-    void Renderer::DrawPath(Path const &path, Paint const &paint) 
-    {
-#ifndef EMSCRIPTEN
-        SkPaint skPaint;
-        skPaint.setStyle(static_cast<SkPaint::Style>(paint.m_Style));
-        skPaint.setStrokeWidth(paint.m_StrokeWidth);
-        skPaint.setAntiAlias(paint.m_AntiAliased);
-        skPaint.setColor(SkColorSetARGB((paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255));
-        m_Canvas->drawPath(path.m_Path, skPaint);
-#else
-        EM_ASM({
-            const paint = new Module.CanvasKit.Paint();
-            if ($0 == 0)
-                paint.setStyle(Module.CanvasKit.PaintStyle.Fill);
-            if ($0 == 1)
-                paint.setStyle(Module.CanvasKit.PaintStyle.Stroke);
-            if ($0 == 1)
-                paint.setStrokeWidth($1);
-            paint.setAntiAlias($2);
-            paint.setColor(Module.CanvasKit.Color4f($4 / 255, $5 / 255, $6 / 255, $3 / 255));
-            Module.canvas.drawPath(Module.paths[$7], paint);
-        }, paint.m_Style, paint.m_StrokeWidth, paint.m_AntiAliased, (paint.m_Color >> 24) & 255, (paint.m_Color >> 16) & 255, (paint.m_Color >> 8) & 255, paint.m_Color & 255, path.m_Index);
-#endif
-    }
-    void Renderer::ClipPath(Path const &path) 
-    {
-#ifndef EMSCRIPTEN
-        m_Canvas->clipPath(path.m_Path, true);
-#else
-        EM_ASM({
-            Module.canvas.clipPath(Module.paths[$0], Module.CanvasKit.ClipOp.Intersect, true);
-        }, path.m_Index);
-#endif
-    }
     void Renderer::SetSize(int32_t width, int32_t height)
     {
 #ifdef EMSCRIPTEN
@@ -398,7 +230,119 @@ namespace app
     assert(false);
 #endif
     }
+    void Renderer::SetFill(uint32_t fill)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            // fillStyle = "argb(a,r,g,b)" might be easier
+            Module.ctx.fillStyle = '#' + ($0 << 8 | 0 >> 24).toString(16).padStart(8, "0"); //gg ez trust
+        }, fill);
+#else
+        m_FillPaint.setARGB(fill >> 24 & 255, fill >> 16 & 255, fill >> 8 & 255, fill >> 0 & 255);
+#endif
+    }
+    
+    void Renderer::SetStroke(uint32_t stroke)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            // fillStyle = "argb(a,r,g,b)" might be easier
+            Module.ctx.strokeStyle = '#' + (0 << 8 | 0 >> 24).toString(16).padStart(8, "0"); //gg ez trust
+        }, stroke);
+#else
+        m_StrokePaint.setARGB(stroke >> 24 & 255, stroke >> 16 & 255, stroke >> 8 & 255, stroke >> 24 & 255);
+#endif
+    }
+    
+    void Renderer::SetLineWidth(float w)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            Module.ctx.lineWidth = $0;
+        }, w);
+#else
+        m_StrokePaint.setLineWidth(w);
+#endif
+    }
 
+    void Renderer::SetLineCap(LineCap l)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            if ($0 === 0) Module.ctx.lineCap = 'butt';
+            else if ($0 === 1) Module.ctx.lineCap = 'round';
+            else Module.ctx.lineCap = 'square';
+        }, l);
+#else
+        // TODO later
+#endif
+    }
+    
+    void Renderer::BeginPath()
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.beginPath(); });
+#else
+        m_Path = SkPath{};
+#endif
+    }
+
+    void Renderer::MoveTo(float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.moveTo($0, $1); }, x, y);
+#else
+        m_CurrentPath.moveTo(x, y);
+#endif
+    }    
+    
+    void Renderer::LineTo(float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.lineTo($0, $1); }, x, y);
+#else
+        m_CurrentPath.lineTo(x, y);
+#endif
+    }
+    
+    void Renderer::QuadraticCurveTo(float x1, float y1, float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.quadraticCurveTo($0, $1, $2, $3); }, x1, y1, x, y);
+#else
+        m_CurrentPath.quadTo(x1, y1, x, y);
+#endif
+    }
+    
+    void Renderer::Arc(float x, float y, float r)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.arc($0, $1, $2, 0, 6.283185307179586); }, x, y, r);
+#else
+        m_CurrentPath.addCircle(x, y, r);
+#endif
+    }
+    
+    void Renderer::Fill()
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.fill(); });
+#else
+        m_FillPaint.setStyle(SkPaint::kFill_Style);
+        m_Canvas->drawPath(m_CurrentPath, m_FillPaint)
+#endif
+    }
+    
+    void Renderer::Stroke()
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.stroke(); });
+#else
+        m_StrokePaint.setStyle(SkPaint::kStroke_Style);
+        m_Canvas->drawPath(m_CurrentPath, m_StrokePaint)
+#endif
+    }
+  
     void Renderer::Render()
     {
         m_Simulation.TickRenderer(this);

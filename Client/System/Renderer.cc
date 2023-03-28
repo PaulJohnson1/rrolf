@@ -20,7 +20,7 @@ namespace app::system
         if (!m_Simulation.GetOptional<component::ArenaInfo>(0))
             return;
         ctx->Clear();
-        app::Renderer::ContextLock lock0 = ctx->AutoSaveRestore();
+        Guard lock0 = ctx->AutoSaveRestore();
         ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
         ctx->Scale(m_Simulation.m_Camera.m_Fov, m_Simulation.m_Camera.m_Fov);
         ctx->Translate(-m_Simulation.m_Camera.m_X, -m_Simulation.m_Camera.m_Y);

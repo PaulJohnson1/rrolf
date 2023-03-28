@@ -10,6 +10,7 @@ set(SOURCES
     Component/Basic.cc
     Component/Flower.cc
     Component/Life.cc
+    Component/Mob.cc
     Component/Physical.cc
     Component/Render.cc
     System/Interpolation.cc
