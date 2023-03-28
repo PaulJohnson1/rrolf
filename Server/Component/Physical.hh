@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 #include <Server/Vector.hh>
 
 namespace bc

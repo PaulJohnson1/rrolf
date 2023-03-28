@@ -116,6 +116,5 @@ namespace app
         // void BezierCurveTo(float, float, float, float, float, float);
 
         void Render();
-        [[nodiscard]] Guard AutoSaveRestore();
     };
 } //the old path2d impl worked somewhat

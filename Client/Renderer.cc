@@ -63,6 +63,10 @@ namespace app
     {
         assert(!g_Renderer);
         g_Renderer = this;
+#ifndef EMSCRIPTEN
+        m_StrokePaint.setAntiAlias(true);
+        m_FillPaint.setAntiAlias(true);
+#endif
     }
 
     void Renderer::Initialize()
@@ -136,12 +140,7 @@ namespace app
             };
             requestAnimationFrame(loop);
         });
-    }
 #endif
-
-    Guard Renderer::AutoSaveRestore()
-    {
-        return Guard(this);
     }
 
     Guard::Guard(Renderer *renderer)
@@ -182,12 +181,8 @@ namespace app
         m_Matrix[4] = e;
         m_Matrix[5] = f;
         UpdateTransform();
-// #ifndef EMSCRIPTEN
-//         m_CurrentMatrix.set9(a, b, c, d, e, f, m_Matrix[6], m_Matrix[7], m_Matrix[8]);
-// #else
-//     EM_ASM({Module.ctx.setTransform($0, $1, $2, $3, $4, $5); }, a, b, c, d, e, f);
-// #endif
     }
+
     void Renderer::UpdateTransform() {
 #ifdef EMSCRIPTEN
         EM_ASM({
@@ -195,27 +190,36 @@ namespace app
         }, m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5]);
 #else
         SkMatrix m;
-        // silly
-        m.set9(m_Matrix[0], m_Matrix[1], m_Matrix[2], m_Matrix[3], m_Matrix[4], m_Matrix[5], m_Matrix[6], m_Matrix[7], m_Matrix[8]);
+        m.set9(m_Matrix);
         m_Canvas->setMatrix(m);
 #endif
     }
+
     void Renderer::ResetTransform()
     {
-        // memset(m_Matrix, 0, 9 * sizeof(float))
-        //m_Matrix = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
+        m_Matrix[0] = 1;
+        m_Matrix[1] = 0;
+        m_Matrix[2] = 0;
+        m_Matrix[3] = 0;
+        m_Matrix[4] = 1;
+        m_Matrix[5] = 0;
+        m_Matrix[6] = 0;
+        m_Matrix[7] = 0;
+        m_Matrix[8] = 1;
         UpdateTransform();
     }
+
     void Renderer::Rotate(float a)
     {
         float cos_a = std::cos(a);
         float sin_a = std::sin(a);
         m_Matrix[0] = m_Matrix[0] * cos_a + m_Matrix[3] * sin_a;
         m_Matrix[1] = m_Matrix[1] * cos_a + m_Matrix[4] * sin_a;
-        m_Matrix[3] = - m_Matrix[0] * sin_a + m_Matrix[3] * cos_a; //wait lol
-        m_Matrix[4] = - m_Matrix[1] * sin_a + m_Matrix[4] * cos_a; //multiplying by cos sin -sin cos
+        m_Matrix[3] = -m_Matrix[0] * sin_a + m_Matrix[3] * cos_a;
+        m_Matrix[4] = -m_Matrix[1] * sin_a + m_Matrix[4] * cos_a;
         UpdateTransform();
     }
+
     void Renderer::Translate(float x, float y)
     {
         m_Matrix[2] += x * (m_Matrix[0] + m_Matrix[3]);
@@ -263,25 +267,26 @@ namespace app
     assert(false);
 #endif
     }
-    void Renderer::SetFill(uint32_t fill)
+
+    void Renderer::SetFill(uint32_t c)
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
-            Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${$0 >> 24 & 255})`
-        }, fill);
+            Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})`
+        }, c);
 #else
-        m_FillPaint.setARGB(fill >> 24 & 255, fill >> 16 & 255, fill >> 8 & 255, fill >> 0 & 255);
+        m_FillPaint.setColor(c);
 #endif
     }
     
-    void Renderer::SetStroke(uint32_t stroke)
+    void Renderer::SetStroke(uint32_t c)
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
-            Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${$0 >> 24 & 255})`
-        }, stroke);
+            Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})`
+        }, c);
 #else
-        m_StrokePaint.setARGB(stroke >> 24 & 255, stroke >> 16 & 255, stroke >> 8 & 255, stroke >> 24 & 255);
+        m_StrokePaint.setColor(c);
 #endif
     }
     
@@ -292,7 +297,7 @@ namespace app
             Module.ctx.lineWidth = $0;
         }, w);
 #else
-        m_StrokePaint.setLineWidth(w);
+        m_StrokePaint.setStrokeWidth(w);
 #endif
     }
 
@@ -314,7 +319,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctx.beginPath(); });
 #else
-        m_Path = SkPath{};
+        m_CurrentPath = SkPath{};
 #endif
     }
 
@@ -359,7 +364,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctx.clip(); });
 #else 
-        //skcanvas clip currpath
+        m_Canvas->clipPath(m_CurrentPath, true);
 #endif
     }
     
@@ -369,7 +374,7 @@ namespace app
         EM_ASM({ Module.ctx.fill(); });
 #else
         m_FillPaint.setStyle(SkPaint::kFill_Style);
-        m_Canvas->drawPath(m_CurrentPath, m_FillPaint)
+        m_Canvas->drawPath(m_CurrentPath, m_FillPaint);
 #endif
     }
     
@@ -379,7 +384,7 @@ namespace app
         EM_ASM({ Module.ctx.stroke(); });
 #else
         m_StrokePaint.setStyle(SkPaint::kStroke_Style);
-        m_Canvas->drawPath(m_CurrentPath, m_StrokePaint)
+        m_Canvas->drawPath(m_CurrentPath, m_StrokePaint);
 #endif
     }
   
@@ -392,8 +397,6 @@ namespace app
     {
 #ifdef EMSCRIPTEN
         m_Index = EM_ASM_INT({ return Module.addPath(); });
-#else
-        m_Path = SkPath;
 #endif
     }
 
@@ -402,6 +405,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.paths[$0].moveTo($1, $2); }, m_Index, x, y);
 #else
+        m_Path.moveTo(x, y);
 #endif
     }
 
@@ -410,6 +414,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.paths[$0].lineTo($1, $2); }, m_Index, x, y);
 #else
+        m_Path.lineTo(x, y);
 #endif
     }
 }

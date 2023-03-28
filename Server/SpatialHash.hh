@@ -5,7 +5,7 @@
 #include <vector>
 #include <array>
 
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 
 namespace app
 {

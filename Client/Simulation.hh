@@ -21,7 +21,7 @@
 #include <Client/Component/Render.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/Renderer.hh>
-#include <Client/Entity.hh>
+#include <Shared/Entity.hh>
 
 namespace app
 {

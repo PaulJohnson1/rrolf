@@ -26,7 +26,7 @@ namespace app::component
     void Life::Render(Renderer *ctx)
     {
         if (ctx->m_Simulation.GetOptional<component::Flower>(m_Parent)) {
-            Guard lock = ctx->AutoSaveRestore();
+            Guard g(ctx);
             component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
             ctx->Translate(physical.m_X, physical.m_Y);
             //draw hp

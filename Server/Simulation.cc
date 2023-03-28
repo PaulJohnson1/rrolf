@@ -5,7 +5,7 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 #include <Server/Server.hh>
 
 namespace app

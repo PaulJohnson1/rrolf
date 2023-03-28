@@ -26,7 +26,7 @@
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/Velocity.hh>
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
 
 namespace app

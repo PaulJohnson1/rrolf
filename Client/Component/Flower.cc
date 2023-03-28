@@ -23,7 +23,7 @@ namespace app::component
     }
     void Flower::Render(Renderer *ctx)
     {
-        Guard lock = ctx->AutoSaveRestore();
+        Guard g(ctx);
         component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw stroke
@@ -38,10 +38,10 @@ namespace app::component
         ctx->Fill();
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
         {
-            Guard lock2 = ctx->AutoSaveRestore();
+            Guard g(ctx);
             {
                 ctx->SetFill(0xff222222);
-                Guard lock3 = ctx->AutoSaveRestore();
+                Guard g(ctx);
                 ctx->Scale(1, 2);
                 ctx->BeginPath();
                 ctx->Arc(-7, -2.5, 3.25);
@@ -57,7 +57,7 @@ namespace app::component
             }
             {
                 ctx->SetFill(0xff222222);
-                Guard lock4 = ctx->AutoSaveRestore();
+                Guard g(ctx);
                 ctx->Scale(1, 2);
                 ctx->BeginPath();
                 ctx->Arc(7, -2.5, 3.25);

@@ -4,7 +4,7 @@
 
 #include <websocketpp/server.hpp>
 
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 #include <Server/Vector.hh>
 
 namespace bc

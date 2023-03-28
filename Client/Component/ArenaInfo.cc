@@ -21,7 +21,7 @@ namespace app::component
     }
     void ArenaInfo::Render(Renderer *ctx)
     {
-        Guard lock = ctx->AutoSaveRestore();
+        Guard g(ctx);
         
         ctx->SetFill(0xff51983c);
         ctx->BeginPath();
@@ -29,8 +29,8 @@ namespace app::component
         ctx->Fill();
         ctx->Clip();
         ctx->SetLineWidth(1);
-        uint8_t alpha = (uint8_t)(ctx->m_Simulation.m_Camera.m_Fov * 51);
-        ctx->SetStroke(alpha << 24);
+        float alpha = ctx->m_Simulation.m_Camera.m_Fov * 51;
+        ctx->SetStroke((uint32_t)(alpha) << 24);
         int32_t size = (int32_t)(m_MapSize * 0.02);
         for (int32_t posX = -size; posX <= size; ++posX)
         {

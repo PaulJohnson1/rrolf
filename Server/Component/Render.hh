@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include <Server/Entity.hh>
+#include <Shared/Entity.hh>
 
 namespace bc
 {
