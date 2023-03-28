@@ -118,7 +118,9 @@ namespace app
             };
             function loop()
             {
-                Module._Render();
+                Module.canvas.width = innerWidth;
+                Module.canvas.height = innerHeight;
+                Module._Render(Module.canvas.width, Module.canvas.height);
                 requestAnimationFrame(loop);
             };
             requestAnimationFrame(loop);
@@ -134,11 +136,29 @@ namespace app
     Guard::Guard(Renderer *renderer)
         : m_Renderer(renderer)
     {
+        m_CurrentMatrix[0] = m_Renderer->m_Matrix[0];
+        m_CurrentMatrix[1] = m_Renderer->m_Matrix[1];
+        m_CurrentMatrix[2] = m_Renderer->m_Matrix[2];
+        m_CurrentMatrix[3] = m_Renderer->m_Matrix[3];
+        m_CurrentMatrix[4] = m_Renderer->m_Matrix[4];
+        m_CurrentMatrix[5] = m_Renderer->m_Matrix[5];
+        m_CurrentMatrix[6] = m_Renderer->m_Matrix[6];
+        m_CurrentMatrix[7] = m_Renderer->m_Matrix[7];
+        m_CurrentMatrix[8] = m_Renderer->m_Matrix[8];
         m_Renderer->Save();
     }
 
     Guard::~Guard()
     {
+        m_Renderer->m_Matrix[0] = m_CurrentMatrix[0];
+        m_Renderer->m_Matrix[1] = m_CurrentMatrix[1];
+        m_Renderer->m_Matrix[2] = m_CurrentMatrix[2];
+        m_Renderer->m_Matrix[3] = m_CurrentMatrix[3];
+        m_Renderer->m_Matrix[4] = m_CurrentMatrix[4];
+        m_Renderer->m_Matrix[5] = m_CurrentMatrix[5];
+        m_Renderer->m_Matrix[6] = m_CurrentMatrix[6];
+        m_Renderer->m_Matrix[7] = m_CurrentMatrix[7];
+        m_Renderer->m_Matrix[8] = m_CurrentMatrix[8];
         m_Renderer->Restore();
     }
 
@@ -150,11 +170,12 @@ namespace app
         m_Matrix[3] = d;
         m_Matrix[4] = e;
         m_Matrix[5] = f;
-#ifndef EMSCRIPTEN
-        m_CurrentMatrix.set9(a, b, c, d, e, f, 0, 0, 1);
-#else
-    EM_ASM({Module.ctx.setTransform($0, $1, $2, $3, $4, $5); }, a, b, c, d, e, f);
-#endif
+        UpdateTransform();
+// #ifndef EMSCRIPTEN
+//         m_CurrentMatrix.set9(a, b, c, d, e, f, m_Matrix[6], m_Matrix[7], m_Matrix[8]);
+// #else
+//     EM_ASM({Module.ctx.setTransform($0, $1, $2, $3, $4, $5); }, a, b, c, d, e, f);
+// #endif
     }
     void Renderer::UpdateTransform() {
 #ifdef EMSCRIPTEN
@@ -235,8 +256,7 @@ namespace app
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
-            // fillStyle = "argb(a,r,g,b)" might be easier
-            Module.ctx.fillStyle = '#' + ($0 << 8 | 0 >> 24).toString(16).padStart(8, "0"); //gg ez trust
+            Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${$0 >> 24 & 255})`
         }, fill);
 #else
         m_FillPaint.setARGB(fill >> 24 & 255, fill >> 16 & 255, fill >> 8 & 255, fill >> 0 & 255);
@@ -247,8 +267,7 @@ namespace app
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
-            // fillStyle = "argb(a,r,g,b)" might be easier
-            Module.ctx.strokeStyle = '#' + (0 << 8 | 0 >> 24).toString(16).padStart(8, "0"); //gg ez trust
+            Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${$0 >> 24 & 255})`
         }, stroke);
 #else
         m_StrokePaint.setARGB(stroke >> 24 & 255, stroke >> 16 & 255, stroke >> 8 & 255, stroke >> 24 & 255);

@@ -16,6 +16,7 @@ namespace app
 
     class Guard
     {
+        float m_CurrentMatrix[9];
         Renderer *m_Renderer;
 
     public:
@@ -58,6 +59,12 @@ namespace app
             0, 1, 0, //s s y
             0, 0, 1};//0 0 1
 
+        friend Guard;
+
+        // state
+        void Save();
+        void Restore();
+
     public:
         class Simulation &m_Simulation;
 
@@ -88,10 +95,6 @@ namespace app
         void Rotate(float);
         void Translate(float, float);
         void Scale(float, float);
-
-        // state
-        void Save();
-        void Restore();
         
         // style
         void SetFill(uint32_t);
