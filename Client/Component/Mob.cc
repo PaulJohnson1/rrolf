@@ -5,7 +5,7 @@
 
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
-#include <Shared/MobData.hh>
+#include <Shared/StaticData.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>

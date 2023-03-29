@@ -79,7 +79,16 @@
         "locale": "cpp",
         "__bit_reference": "cpp",
         "ios": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "any": "cpp",
+        "coroutine": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "__config": "cpp",
+        "__debug": "cpp",
+        "__nullptr": "cpp",
+        "__tuple": "cpp",
+        "__assert": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

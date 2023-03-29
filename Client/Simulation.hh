@@ -39,9 +39,24 @@ namespace app
     {
         system::Interpolation m_InterpolationSystem;
         system::Renderer m_RendererSystem;
-        bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
+        
+        bool m_EntityTracker[MAX_ENTITY_COUNT];
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
-    std::optional<component::COMPONENT> m_##COMPONENT##Components[MAX_ENTITY_COUNT] = {};
+    bool m_##COMPONENT##Tracker[MAX_ENTITY_COUNT];
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
+
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)      \
+    union COMPONENT##__UT                         \
+    {                                             \
+        component::COMPONENT d[MAX_ENTITY_COUNT]; \
+        COMPONENT##__UT()                         \
+        {                                         \
+        }                                         \
+        ~COMPONENT##__UT()                        \
+        {                                         \
+        }                                         \
+    } m_##COMPONENT##Components;
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
 
@@ -56,7 +71,7 @@ namespace app
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);
-        void RemoveEntity(Entity);
+        void Remove(Entity);
         void TickRenderer(class Renderer *);
         template <typename T>
         void ForEachEntity(T callback)
@@ -68,12 +83,13 @@ namespace app
 
         template <typename Component>
         Component &Get(Entity);
+
         template <typename Component>
         Component const &Get(Entity) const;
+
         template <typename Component>
-        std::optional<Component> &GetOptional(Entity);
-        template <typename Component>
-        std::optional<Component> const &GetOptional(Entity) const;
+        bool HasComponent(Entity) const;
+
         template <typename Component>
         Component &AddComponent(Entity);
     };

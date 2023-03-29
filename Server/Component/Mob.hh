@@ -3,18 +3,25 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 
 namespace bc
 {
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Mob
     {
-        uint8_t m_Id;
-        uint8_t m_Rarity;
+        uint32_t m_Id;
+        uint32_t m_Rarity;
+        Simulation *m_Simulation;
 
     public:
         using Type = Mob;
@@ -22,12 +29,13 @@ namespace app::component
         Entity m_Parent;
         uint64_t m_State = 0;
 
-        Mob(Entity);
+        Mob(Entity, Simulation *);
+        ~Mob();
 
-        uint8_t Id() const;
-        void Id(uint8_t);
-        uint8_t Rarity() const;
-        void Rarity(uint8_t);
+        uint32_t Id() const;
+        void Id(uint32_t);
+        uint32_t Rarity() const;
+        void Rarity(uint32_t);
 
         void Reset();
 

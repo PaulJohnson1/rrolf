@@ -3,12 +3,17 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <iostream>
+#include <Server/Simulation.hh>
 
 namespace app::component
 {
-    Physical::Physical(Entity parent)
-        : m_Parent(parent)
+    Physical::Physical(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
+    {
+    }
+
+    Physical::~Physical()
     {
     }
 

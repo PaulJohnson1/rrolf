@@ -5,10 +5,17 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Server/Simulation.hh>
+
 namespace app::component
 {
-    Life::Life(Entity parent)
-        : m_Parent(parent)
+    Life::Life(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
+    {
+    }
+
+    Life::~Life()
     {
     }
 
@@ -67,23 +74,5 @@ namespace app::component
             return;
         m_Damage = v;
         m_State |= 1 << 2;
-    }
-
-    void Life::operator+=(float v)
-    {
-        if (v == 0)
-            return;
-        m_Health += v;
-        if (m_Health > m_MaxHealth) m_Health = m_MaxHealth;
-        m_State |= 1 << 0;
-    }
-
-    void Life::operator-=(float v)
-    {
-        if (v == 0)
-            return;
-        m_Health -= v;
-        if (m_Health < 0) m_Health = 0;
-        m_State |= 1 << 0;
     }
 }

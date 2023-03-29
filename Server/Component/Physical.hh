@@ -11,6 +11,11 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Physical
@@ -19,6 +24,7 @@ namespace app::component
         float m_X = 0.0f;
         float m_Y = 0.0f;
         float m_Angle = 0.0f;
+        Simulation *m_Simulation;
 
     public:
         Entity m_Parent;
@@ -34,7 +40,8 @@ namespace app::component
 
         using Type = Physical;
 
-        Physical(Entity);
+        Physical(Entity, Simulation *);
+        ~Physical();
 
         float Radius() const;
         float Friction() const;

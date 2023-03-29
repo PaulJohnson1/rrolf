@@ -9,13 +9,20 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Ai
     {
+        Simulation *m_Simulation;
+
     public:
         using Type = Ai;
-        
+
         Entity m_Parent;
         Entity m_Target;
 
@@ -30,7 +37,8 @@ namespace app::component
         uint32_t m_TicksUntilNextAction = 10;
         uint64_t m_State = 0;
 
-        Ai(Entity);
+        Ai(Entity, Simulation *);
+        ~Ai();
 
         void Reset();
 

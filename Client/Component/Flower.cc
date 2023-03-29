@@ -21,20 +21,21 @@ namespace app::component
         if (updatedFields & 2)
             m_EyeAngle = coder.Read<bc::Float32>();
     }
+    
     void Flower::Render(Renderer *ctx)
     {
         Guard g(ctx);
         component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw stroke
-        ctx->SetFill(0xffcfbb50);
         ctx->BeginPath();
         ctx->Arc(0, 0, physical.m_Radius + 1.5);
+        ctx->SetFill(0xffcfbb50);
         ctx->Fill();
         // draw fill
-        ctx->SetFill(0xffffe763);
         ctx->BeginPath();
         ctx->Arc(0, 0, physical.m_Radius - 1.5);
+        ctx->SetFill(0xffffe763);
         ctx->Fill();
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
         {

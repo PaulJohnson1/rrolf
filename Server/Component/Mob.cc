@@ -1,14 +1,19 @@
 #include <Server/Component/Mob.hh>
 
-#include <cstdint>
-
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Server/Simulation.hh>
+
 namespace app::component
 {
-    Mob::Mob(Entity parent)
-        : m_Parent(parent)
+    Mob::Mob(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
+    {
+    }
+
+    Mob::~Mob()
     {
     }
 
@@ -28,22 +33,24 @@ namespace app::component
             coder.Write<bc::VarUint>(entity.m_Rarity);
     }
 
-    uint8_t Mob::Id() const { return m_Id; }
-    uint8_t Mob::Rarity() const { return m_Rarity; }
-    
-    void Mob::Id(uint8_t v)
+    uint32_t Mob::Id() const { return m_Id; }
+    uint32_t Mob::Rarity() const { return m_Rarity; }
+
+    void Mob::Id(uint32_t v)
     {
         if (v == m_Id)
             return;
         m_Id = v;
+        m_Simulation->Get<component::Physical>(m_Parent).Radius(MOB_DATA[m_Id].m_BaseSize * MOB_SCALE_FACTOR[m_Rarity]);
         m_State |= 1;
     }
- 
-    void Mob::Rarity(uint8_t v)
+
+    void Mob::Rarity(uint32_t v)
     {
         if (v == m_Rarity)
             return;
         m_Rarity = v;
+        m_Simulation->Get<component::Physical>(m_Parent).Radius(MOB_DATA[m_Id].m_BaseSize * MOB_SCALE_FACTOR[m_Rarity]);
         m_State |= 2;
     }
 }

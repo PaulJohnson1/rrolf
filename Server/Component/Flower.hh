@@ -9,11 +9,23 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Flower
     {
+    private:
+        uint8_t m_FaceFlags = 0;
+        float m_EyeAngle = 0.0f;
+        Simulation *m_Simulation;
+
     public:
+        using Type = Flower;
+        
         enum class Flags : uint8_t
         {
             Attack = 1,
@@ -23,18 +35,12 @@ namespace app::component
             Antennae = 16,
             Cutter = 32
         };
-        
-    private:
-        uint8_t m_FaceFlags = 0;
-        float m_EyeAngle = 0.0f;
-
-    public:
-        using Type = Flower;
 
         uint64_t m_State = 0;
         Entity m_Parent;
 
-        Flower(Entity);
+        Flower(Entity, Simulation *);
+        ~Flower();
 
         uint8_t FaceFlags() const;
         float EyeAngle() const;

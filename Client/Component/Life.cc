@@ -25,24 +25,22 @@ namespace app::component
     }
     void Life::Render(Renderer *ctx)
     {
-        if (ctx->m_Simulation.GetOptional<component::Flower>(m_Parent)) {
-            Guard g(ctx);
-            component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
-            ctx->Translate(physical.m_X, physical.m_Y);
-            //draw hp
-            ctx->SetLineCap(Renderer::LineCap::Round);
-            ctx->SetStroke(0xff222222);
-            ctx->SetLineWidth(7);
-            ctx->BeginPath();
-            ctx->MoveTo(-40, physical.m_Radius + 30);
-            ctx->LineTo(40, physical.m_Radius + 30);
-            ctx->Stroke();
-            ctx->SetStroke(0xff75dd34);
-            ctx->SetLineWidth(5);
-            ctx->BeginPath();
-            ctx->MoveTo(-40, physical.m_Radius + 30);
-            ctx->LineTo(-40 + 80 * m_Health / m_MaxHealth, physical.m_Radius + 30);
-            ctx->Stroke();        
-        }
+        Guard g(ctx);
+        component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
+        ctx->Translate(physical.m_X, physical.m_Y);
+        //draw hp
+        ctx->SetLineCap(Renderer::LineCap::Round);
+        ctx->SetStroke(0xff222222);
+        ctx->SetLineWidth(7);
+        ctx->BeginPath();
+        ctx->MoveTo(-40, physical.m_Radius + 30);
+        ctx->LineTo(40, physical.m_Radius + 30);
+        ctx->Stroke();
+        ctx->SetStroke(0xff75dd34);
+        ctx->SetLineWidth(5);
+        ctx->BeginPath();
+        ctx->MoveTo(-40, physical.m_Radius + 30);
+        ctx->LineTo(-40 + 80 * m_Health / m_MaxHealth, physical.m_Radius + 30);
+        ctx->Stroke();        
     }
 }

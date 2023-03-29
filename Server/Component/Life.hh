@@ -9,6 +9,11 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Life
@@ -16,6 +21,7 @@ namespace app::component
         float m_Health = 1.0f;
         float m_MaxHealth = 1.0f;
         float m_Damage = 0.0f;
+        Simulation *m_Simulation;
 
     public:
         using Type = Life;
@@ -23,7 +29,8 @@ namespace app::component
         Entity m_Parent;
         uint64_t m_State = 0;
 
-        Life(Entity);
+        Life(Entity, Simulation *);
+        ~Life();
 
         float Health() const;
         float MaxHealth() const;
@@ -31,9 +38,6 @@ namespace app::component
         void Health(float);
         void MaxHealth(float);
         void Damage(float);
-
-        void operator+=(float);
-        void operator-=(float);
 
         void Reset();
 

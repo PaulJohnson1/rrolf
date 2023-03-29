@@ -17,7 +17,7 @@ namespace app::system
     void Renderer::Tick(app::Renderer *ctx)
     {
         // use bound checking for this one
-        if (!m_Simulation.GetOptional<component::ArenaInfo>(0))
+        if (!m_Simulation.HasComponent<component::ArenaInfo>(0))
             return;
         //ctx->Clear();
         Guard g(ctx);
@@ -27,15 +27,15 @@ namespace app::system
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
         arena.Render(ctx);
         m_Simulation.ForEachEntity([&](Entity entity) {
-            if (m_Simulation.GetOptional<component::Life>(entity))
+            if (m_Simulation.HasComponent<component::Life>(entity))
                 m_Simulation.Get<component::Life>(entity).Render(ctx);
         });
         m_Simulation.ForEachEntity([&](Entity entity) {
-            if (m_Simulation.GetOptional<component::Mob>(entity))
+            if (m_Simulation.HasComponent<component::Mob>(entity))
                 m_Simulation.Get<component::Mob>(entity).Render(ctx);
         });
         m_Simulation.ForEachEntity([&](Entity entity) {
-            if (m_Simulation.GetOptional<component::Flower>(entity))
+            if (m_Simulation.HasComponent<component::Flower>(entity))
                 m_Simulation.Get<component::Flower>(entity).Render(ctx);
         });
     }

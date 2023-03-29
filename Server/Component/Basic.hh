@@ -9,12 +9,18 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Basic
     {
         Entity m_Team;
         uint32_t m_Flags;
+        Simulation *m_Simulation;
 
     public:
         using Type = Basic;
@@ -22,7 +28,8 @@ namespace app::component
         Entity m_Parent;
         uint64_t m_State = 0;
 
-        Basic(Entity);
+        Basic(Entity, Simulation *);
+        ~Basic();
 
         Entity Team() const;
         void Team(Entity);

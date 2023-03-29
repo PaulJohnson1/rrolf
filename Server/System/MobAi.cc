@@ -46,7 +46,7 @@ namespace app::system
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(m_Simulation.m_Arena);
         m_Simulation.ForEachEntity([&](Entity entity)
         {
-            if (!m_Simulation.GetOptional<component::Mob>(entity))
+            if (!m_Simulation.HasComponent<component::Mob>(entity))
                 return;
 
             TickIdle(entity);

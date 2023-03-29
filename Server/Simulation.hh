@@ -4,7 +4,6 @@
 #include <vector>
 #include <queue>
 #include <functional>
-#include <optional>
 
 #define FOR_EACH_COMPONENT              \
     RROLF_COMPONENT_ENTRY(Ai, 0)        \
@@ -25,6 +24,7 @@
 
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
+#include <Server/System/Damage.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
 #include <Server/System/Velocity.hh>
@@ -42,14 +42,29 @@ namespace app
     {
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
+        system::Damage m_Damage;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
 
         std::queue<Entity> m_AvailableIds{};
-        bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
+        bool m_EntityTracker[MAX_ENTITY_COUNT];
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
-    std::optional<component::COMPONENT> m_##COMPONENT##Components[MAX_ENTITY_COUNT] = {};
+    bool m_##COMPONENT##Tracker[MAX_ENTITY_COUNT];
+        FOR_EACH_COMPONENT;
+#undef RROLF_COMPONENT_ENTRY
+
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)      \
+    union COMPONENT##__UT                         \
+    {                                             \
+        component::COMPONENT d[MAX_ENTITY_COUNT]; \
+        COMPONENT##__UT()                         \
+        {                                         \
+        }                                         \
+        ~COMPONENT##__UT()                        \
+        {                                         \
+        }                                         \
+    } m_##COMPONENT##Components;
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
 
@@ -62,7 +77,7 @@ namespace app
         void Remove(Entity);
         void WriteUpdate(class bc::BinaryCoder &, Camera &);
         void Tick();
-        // use if you want bound checking
+
         template <typename T>
         void ForEachEntity(T callback)
         {
@@ -72,16 +87,16 @@ namespace app
         }
 
         template <typename Component>
+        Component &Get(Entity);
+
+        template <typename Component>
+        Component const &Get(Entity) const;
+
+        template <typename Component>
         Component &AddComponent(Entity);
 
         template <typename Component>
-        Component &Get(Entity);
-        template <typename Component>
-        Component const &Get(Entity) const;
-        template <typename Component>
-        std::optional<Component> &GetOptional(Entity);
-        template <typename Component>
-        std::optional<Component> const &GetOptional(Entity) const;
+        bool HasComponent(Entity) const;
 
         std::vector<Entity> FindEntitiesInView(Camera &camera);
         Entity Create();

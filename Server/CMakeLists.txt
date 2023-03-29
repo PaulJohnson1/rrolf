@@ -14,6 +14,7 @@ set(SOURCES
     Component/Physical.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
+    System/Damage.cc
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc
@@ -27,7 +28,7 @@ set(SOURCES
     ThirdParty/BinaryCoder/NativeTypes.cc
     )
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++17 -g -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})

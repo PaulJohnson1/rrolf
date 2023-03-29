@@ -1,5 +1,6 @@
 #include <Client/Simulation.hh>
 
+#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -16,32 +17,31 @@
 
 namespace app
 {
-#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)                                                                  \
-    template <>                                                                                               \
-    component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)                                    \
-    {                                                                                                         \
-        return *m_##COMPONENT##Components[id];                                                                \
-    }                                                                                                         \
-    template <>                                                                                               \
-    component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const                        \
-    {                                                                                                         \
-        return *m_##COMPONENT##Components[id];                                                                \
-    }                                                                                                         \
-    template <>                                                                                               \
-    std::optional<component::COMPONENT> &Simulation::GetOptional<component::COMPONENT>(Entity id)             \
-    {                                                                                                         \
-        return m_##COMPONENT##Components[id];                                                                 \
-    }                                                                                                         \
-    template <>                                                                                               \
-    std::optional<component::COMPONENT> const &Simulation::GetOptional<component::COMPONENT>(Entity id) const \
-    {                                                                                                         \
-        return m_##COMPONENT##Components[id];                                                                 \
-    }                                                                                                         \
-    template <>                                                                                               \
-    component::COMPONENT &Simulation::AddComponent(Entity id)                                                 \
-    {                                                                                                         \
-        m_##COMPONENT##Components[id].emplace(id);                                                            \
-        return Get<component::COMPONENT>(id);                                                                 \
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)                                           \
+    template <>                                                                        \
+    component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
+    {                                                                                  \
+        return m_##COMPONENT##Components.d[id];                                        \
+    }                                                                                  \
+                                                                                       \
+    template <>                                                                        \
+    component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
+    {                                                                                  \
+        return m_##COMPONENT##Components.d[id];                                        \
+    }                                                                                  \
+                                                                                       \
+    template <>                                                                        \
+    bool Simulation::HasComponent<component::COMPONENT>(Entity id) const               \
+    {                                                                                  \
+        return m_##COMPONENT##Tracker[id];                                             \
+    }                                                                                  \
+                                                                                       \
+    template <>                                                                        \
+    component::COMPONENT &Simulation::AddComponent<component::COMPONENT>(Entity id)    \
+    {                                                                                  \
+        m_##COMPONENT##Tracker[id] = true;                                             \
+        new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id);               \
+        return Get<component::COMPONENT>(id);                                          \
     }
 
     FOR_EACH_COMPONENT;
@@ -82,7 +82,7 @@ namespace app
 
             Entity deletedEntityCount = coder.Read<bc::VarUint>();
             for (Entity i = 0; i < deletedEntityCount; i++)
-                RemoveEntity(coder.Read<bc::VarUint>());
+                Remove(coder.Read<bc::VarUint>());
 
             Entity updatedEntityCount = coder.Read<bc::VarUint>();
             for (Entity i = 0; i < updatedEntityCount; i++)
@@ -90,13 +90,23 @@ namespace app
         }
     }
 
-    void Simulation::RemoveEntity(Entity id)
+    void Simulation::Remove(Entity id)
     {
-        m_EntityTracker[id] = false;
-#define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
-    GetOptional<component::COMPONENT>(id).reset();
+        std::cout << "entity with id " << std::to_string(id) << " deleted\n";
+        assert(m_EntityTracker[id]);
+#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
+    {                                           \
+        using T = component::COMPONENT;         \
+        if (HasComponent<T>(id))                \
+        {                                       \
+            m_##COMPONENT##Tracker[id] = false; \
+            T &comp = Get<T>(id);               \
+            comp.~T();                          \
+        }                                       \
+    }
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
+        m_EntityTracker[id] = false;
     }
 
     void Simulation::TickRenderer(Renderer *ctx)

@@ -16,7 +16,7 @@ namespace app::system
         // static collisions
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-            if (!m_Simulation.GetOptional<component::Physical>(entity))
+            if (!m_Simulation.HasComponent<component::Physical>(entity))
                 return;
 
             component::Physical &physical1 = m_Simulation.Get<component::Physical>(entity);
@@ -38,7 +38,7 @@ namespace app::system
         });
         m_Simulation.ForEachEntity([&](Entity entity)
         {
-            if (!m_Simulation.GetOptional<component::Physical>(entity))
+            if (!m_Simulation.HasComponent<component::Physical>(entity))
                 return;
             component::Physical &physical1 = m_Simulation.Get<component::Physical>(entity);
             Vector ball1Position = Vector(physical1.X(), physical1.Y());

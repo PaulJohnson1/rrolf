@@ -7,8 +7,13 @@
 
 namespace app::component
 {
-    Basic::Basic(Entity parent)
-        : m_Parent(parent)
+    Basic::Basic(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
+    {
+    }
+
+    Basic::~Basic()
     {
     }
 
