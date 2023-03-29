@@ -24,6 +24,9 @@ namespace app::component
     void Flower::Render(Renderer *ctx)
     {
         Guard g(ctx);
+        ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
+        ctx->Scale(ctx->m_Simulation.m_Camera.m_Fov, ctx->m_Simulation.m_Camera.m_Fov);
+        ctx->Translate(-ctx->m_Simulation.m_Camera.m_X, -ctx->m_Simulation.m_Camera.m_Y);
         component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw stroke
@@ -39,38 +42,35 @@ namespace app::component
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
         {
             Guard g(ctx);
-            {
-                ctx->SetFill(0xff222222);
-                Guard g(ctx);
-                ctx->Scale(1, 2);
-                ctx->BeginPath();
-                ctx->Arc(-7, -2.5, 3.25);
-                ctx->Fill();
-                ctx->BeginPath();
-                ctx->Arc(-7, -2.5, 3);
-                ctx->Clip();
-                ctx->Scale(1, 0.5f);
-                ctx->SetFill(0xffffffff);
-                ctx->BeginPath();
-                ctx->Arc(-7 + m_EyeX, -5 + m_EyeY, 3);
-                ctx->Fill();
-            }
-            {
-                ctx->SetFill(0xff222222);
-                Guard g(ctx);
-                ctx->Scale(1, 2);
-                ctx->BeginPath();
-                ctx->Arc(7, -2.5, 3.25);
-                ctx->Fill();
-                ctx->BeginPath();
-                ctx->Arc(7, -2.5, 3);
-                ctx->Clip();
-                ctx->Scale(1, 0.5f);
-                ctx->SetFill(0xffffffff);
-                ctx->BeginPath();
-                ctx->Arc(7 + m_EyeX, -5 + m_EyeY, 3);
-                ctx->Fill();
-            }
+            ctx->SetFill(0xff222222);
+            ctx->Scale(1, 2);
+            ctx->BeginPath();
+            ctx->Arc(-7, -2.5, 3.25);
+            ctx->Fill();
+            ctx->BeginPath();
+            ctx->Arc(-7, -2.5, 3);
+            ctx->Clip();
+            ctx->Scale(1, 0.5f);
+            ctx->SetFill(0xffffffff);
+            ctx->BeginPath();
+            ctx->Arc(-7 + m_EyeX, -5 + m_EyeY, 3);
+            ctx->Fill();
+        }
+        {
+            Guard g(ctx);
+            ctx->SetFill(0xff222222);
+            ctx->Scale(1, 2);
+            ctx->BeginPath();
+            ctx->Arc(7, -2.5, 3.25);
+            ctx->Fill();
+            ctx->BeginPath();
+            ctx->Arc(7, -2.5, 3);
+            ctx->Clip();
+            ctx->Scale(1, 0.5f);
+            ctx->SetFill(0xffffffff);
+            ctx->BeginPath();
+            ctx->Arc(7 + m_EyeX, -5 + m_EyeY, 3);
+            ctx->Fill();
         }
         // draw mouth
         ctx->SetStroke(0xff222222);

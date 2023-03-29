@@ -19,8 +19,8 @@ namespace app::component
     public:
         Entity m_Parent;
 
-        uint8_t m_Id;
-        uint8_t m_Rarity;
+        uint8_t m_Id = 0;
+        uint8_t m_Rarity = 0;
 
         Mob(Entity);
 

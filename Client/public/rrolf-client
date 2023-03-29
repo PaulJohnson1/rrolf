@@ -1189,27 +1189,27 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  83468: () => { Module.canvas = document.createElement("canvas"); Module.canvas.id = "canvas"; document.body.appendChild(Module.canvas); Module.ctx = Module.canvas.getContext('2d'); window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);}); window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);}); Module.paths = [...Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map((_,i) => i); Module.addPath = _ => { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = index => { Module.paths[index] = null; Module.availablePaths.push(index); }; function loop() { Module.canvas.width = innerWidth; Module.canvas.height = innerHeight; Module._Render(Module.canvas.width, Module.canvas.height); requestAnimationFrame(loop); }; requestAnimationFrame(loop); },  
- 84462: ($0, $1, $2, $3, $4, $5) => { Module.ctx.setTransform($0, $1, $2, $3, $4, $5); },  
- 84515: () => { Module.ctx.save(); },  
- 84538: () => { Module.ctx.restore(); },  
- 84564: ($0) => { Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})` },  
- 84672: ($0) => { Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})` },  
- 84782: ($0) => { Module.ctx.lineWidth = $0; },  
- 84813: ($0) => { if ($0 === 0) Module.ctx.lineCap = 'butt'; else if ($0 === 1) Module.ctx.lineCap = 'round'; else Module.ctx.lineCap = 'square'; },  
- 84945: () => { Module.ctx.beginPath(); },  
- 84973: ($0, $1) => { Module.ctx.moveTo($0, $1); },  
- 85004: ($0, $1) => { Module.ctx.lineTo($0, $1); },  
- 85035: ($0, $1, $2, $3) => { Module.ctx.quadraticCurveTo($0, $1, $2, $3); },  
- 85084: ($0, $1, $2) => { Module.ctx.arc($0, $1, $2, 0, 6.283185307179586); },  
- 85138: () => { Module.ctx.clip(); },  
- 85161: () => { Module.ctx.fill(); },  
- 85184: () => { Module.ctx.stroke(); },  
- 85209: () => { return Module.addPath(); },  
- 85238: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
- 85275: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
- 85312: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
- 85430: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
+  83500: () => { Module.canvas = document.createElement("canvas"); Module.canvas.id = "canvas"; document.body.appendChild(Module.canvas); Module.ctx = Module.canvas.getContext('2d'); window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);}); window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);}); Module.paths = [...Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map((_,i) => i); Module.addPath = _ => { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = index => { Module.paths[index] = null; Module.availablePaths.push(index); }; function loop() { Module.canvas.width = innerWidth; Module.canvas.height = innerHeight; Module._Render(Module.canvas.width, Module.canvas.height); requestAnimationFrame(loop); }; requestAnimationFrame(loop); },  
+ 84494: ($0, $1, $2, $3, $4, $5) => { Module.ctx.setTransform($0, $1, $2, $3, $4, $5); },  
+ 84547: () => { Module.ctx.save(); },  
+ 84570: () => { Module.ctx.restore(); },  
+ 84596: ($0) => { Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})` },  
+ 84704: ($0) => { Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})` },  
+ 84814: ($0) => { Module.ctx.lineWidth = $0; },  
+ 84845: ($0) => { if ($0 === 0) Module.ctx.lineCap = 'butt'; else if ($0 === 1) Module.ctx.lineCap = 'round'; else Module.ctx.lineCap = 'square'; },  
+ 84977: () => { Module.ctx.beginPath(); },  
+ 85005: ($0, $1) => { Module.ctx.moveTo($0, $1); },  
+ 85036: ($0, $1) => { Module.ctx.lineTo($0, $1); },  
+ 85067: ($0, $1, $2, $3) => { Module.ctx.quadraticCurveTo($0, $1, $2, $3); },  
+ 85116: ($0, $1, $2) => { Module.ctx.arc($0, $1, $2, 0, 6.283185307179586); },  
+ 85170: () => { Module.ctx.clip(); },  
+ 85193: () => { Module.ctx.fill(); },  
+ 85216: () => { Module.ctx.stroke(); },  
+ 85241: () => { return Module.addPath(); },  
+ 85270: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
+ 85307: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
+ 85344: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
+ 85462: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
 };
 
 
@@ -1392,6 +1392,11 @@ var ASM_CONSTS = {
       throw ptr + " - Exception catching is disabled, this exception cannot be caught. Compile with -sNO_DISABLE_EXCEPTION_CATCHING or -sEXCEPTION_CATCHING_ALLOWED=[..] to catch.";
     }
 
+  var nowIsMonotonic = true;;
+  function __emscripten_get_now_is_monotonic() {
+      return nowIsMonotonic;
+    }
+
   function _abort() {
       abort('native code called abort()');
     }
@@ -1430,6 +1435,18 @@ var ASM_CONSTS = {
   function _emscripten_asm_const_int(code, sigPtr, argbuf) {
       return runEmAsmFunction(code, sigPtr, argbuf);
     }
+
+  function _emscripten_date_now() {
+      return Date.now();
+    }
+
+  var _emscripten_get_now;if (ENVIRONMENT_IS_NODE) {
+    _emscripten_get_now = () => {
+      var t = process.hrtime();
+      return t[0] * 1e3 + t[1] / 1e6;
+    };
+  } else _emscripten_get_now = () => performance.now();
+  ;
 
   function _emscripten_memcpy_big(dest, src, num) {
       HEAPU8.copyWithin(dest, src, src + num);
@@ -4449,8 +4466,11 @@ function checkIncomingModuleAPI() {
 var wasmImports = {
   "__assert_fail": ___assert_fail,
   "__cxa_throw": ___cxa_throw,
+  "_emscripten_get_now_is_monotonic": __emscripten_get_now_is_monotonic,
   "abort": _abort,
   "emscripten_asm_const_int": _emscripten_asm_const_int,
+  "emscripten_date_now": _emscripten_date_now,
+  "emscripten_get_now": _emscripten_get_now,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_resize_heap": _emscripten_resize_heap,
   "environ_get": _environ_get,

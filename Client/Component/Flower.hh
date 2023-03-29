@@ -29,8 +29,8 @@ namespace app::component
 
 
         Entity m_Parent;
-        uint8_t m_Flags;
-        float m_EyeAngle;
+        uint8_t m_Flags = 0;
+        float m_EyeAngle = 0;
 
         float m_EyeX = 3.0f;
         float m_EyeXDestination = 3.0f;

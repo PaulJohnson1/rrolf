@@ -20,7 +20,7 @@ namespace app::component
 
         Entity m_Parent;
         float m_MapSize = 1650.0f;
-        uint32_t m_Color;
+        uint32_t m_Color = 0;
 
         ArenaInfo(Entity);
 

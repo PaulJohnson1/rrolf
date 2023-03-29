@@ -1,5 +1,6 @@
 #include <Client/Simulation.hh>
 
+#include <chrono>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -50,6 +51,14 @@ namespace app
         std::fill(m_EntityTracker, m_EntityTracker + MAX_ENTITY_COUNT, false);
     }
 
+    float Simulation::GetTime()
+    {
+        using namespace std::chrono;
+        system_clock::time_point start = system_clock::now();
+
+        return duration_cast<microseconds>(start.time_since_epoch()).count();
+    }
+
     void Simulation::ReadBinary(uint8_t *data)
     {
         bc::BinaryCoder coder{data};
@@ -82,6 +91,9 @@ namespace app
 
     void Simulation::TickRenderer(Renderer *ctx)
     {
+        float time = GetTime();
+        m_TickTime = time - m_LastTick;
+        m_LastTick = time;
         m_InterpolationSystem.Tick();
         m_RendererSystem.Tick(ctx);
 

@@ -17,7 +17,7 @@ namespace app::component
         if (updatedFields & 1)
             m_RadiusDestination = coder.Read<bc::Float32>();
         if (updatedFields & 2)
-            m_XDestination = coder.Read<bc::Float32>();
+           m_XDestination = coder.Read<bc::Float32>();
         if (updatedFields & 4)
             m_YDestination = coder.Read<bc::Float32>();
         if (updatedFields & 8)

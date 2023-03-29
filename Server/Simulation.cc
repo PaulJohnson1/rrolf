@@ -61,6 +61,17 @@ namespace app
         m_Arena = Create();
         AddComponent<component::ArenaInfo>(m_Arena);
         Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
+
+        Entity id = Create();
+        component::Mob &mob = AddComponent<component::Mob>(id);
+        component::Life &life = AddComponent<component::Life>(id);
+        component::Physical &physical = AddComponent<component::Physical>(id);
+        component::Basic &basic = AddComponent<component::Basic>(id);
+        physical.X(100);
+        basic.Team(1); // arena team
+        mob.Rarity(0); // common
+        mob.Id(0); // baby ant
+        physical.Radius(14);
     }
 
     void Simulation::Tick()

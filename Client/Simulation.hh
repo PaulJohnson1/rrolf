@@ -47,9 +47,12 @@ namespace app
 
     public:
         Camera m_Camera{};
+        float m_LastTick = 0;
+        float m_TickTime = 0;
 
         Simulation();
 
+        float GetTime(); 
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);

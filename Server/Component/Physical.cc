@@ -10,7 +10,6 @@ namespace app::component
     Physical::Physical(Entity parent)
         : m_Parent(parent)
     {
-        std::cout << m_X << '\n';
     }
 
     void Physical::Reset()

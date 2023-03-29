@@ -16,13 +16,13 @@ namespace app::component
     public:
         Entity m_Parent;
 
-        float m_Radius;
-        float m_X;
-        float m_Y;
-        float m_Angle;
-        float m_RadiusDestination;
-        float m_XDestination;
-        float m_YDestination;
+        float m_Radius = 1.0f;
+        float m_X = 0;
+        float m_Y = 0;
+        float m_Angle = 0;
+        float m_RadiusDestination = 1.0f;
+        float m_XDestination = 0;
+        float m_YDestination = 0;
 
 
         Physical(Entity);

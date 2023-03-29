@@ -17,7 +17,7 @@ namespace app::component
         Entity m_Parent;
 
         Entity m_Team;
-        uint32_t m_Flags;
+        uint32_t m_Flags = 0;
 
         Basic(Entity);
 
