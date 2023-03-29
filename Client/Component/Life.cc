@@ -27,9 +27,6 @@ namespace app::component
     {
         if (ctx->m_Simulation.GetOptional<component::Flower>(m_Parent)) {
             Guard g(ctx);
-            ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
-            ctx->Scale(ctx->m_Simulation.m_Camera.m_Fov, ctx->m_Simulation.m_Camera.m_Fov);
-            ctx->Translate(-ctx->m_Simulation.m_Camera.m_X, -ctx->m_Simulation.m_Camera.m_Y);
             component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
             ctx->Translate(physical.m_X, physical.m_Y);
             //draw hp

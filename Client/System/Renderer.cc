@@ -20,6 +20,10 @@ namespace app::system
         if (!m_Simulation.GetOptional<component::ArenaInfo>(0))
             return;
         //ctx->Clear();
+        Guard g(ctx);
+        ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
+        ctx->Scale(ctx->m_Simulation.m_Camera.m_Fov, ctx->m_Simulation.m_Camera.m_Fov);
+        ctx->Translate(-ctx->m_Simulation.m_Camera.m_X, -ctx->m_Simulation.m_Camera.m_Y);
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
         arena.Render(ctx);
         m_Simulation.ForEachEntity([&](Entity entity) {
