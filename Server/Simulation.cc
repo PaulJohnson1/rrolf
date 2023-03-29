@@ -69,9 +69,9 @@ namespace app
         component::Basic &basic = AddComponent<component::Basic>(id);
         physical.X(100);
         basic.Team(1); // arena team
-        mob.Rarity(0); // common
+        mob.Rarity(5); // mythic
         mob.Id(0); // baby ant
-        physical.Radius(14);
+        physical.Radius(100);
     }
 
     void Simulation::Tick()

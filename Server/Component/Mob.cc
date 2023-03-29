@@ -19,7 +19,7 @@ namespace app::component
 
     void Mob::Write(bc::BinaryCoder &coder, Type entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b1 : entity.m_State;
+        uint32_t state = isCreation ? 0b11 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)

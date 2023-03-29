@@ -31,6 +31,10 @@ namespace app::system
                 m_Simulation.Get<component::Life>(entity).Render(ctx);
         });
         m_Simulation.ForEachEntity([&](Entity entity) {
+            if (m_Simulation.GetOptional<component::Mob>(entity))
+                m_Simulation.Get<component::Mob>(entity).Render(ctx);
+        });
+        m_Simulation.ForEachEntity([&](Entity entity) {
             if (m_Simulation.GetOptional<component::Flower>(entity))
                 m_Simulation.Get<component::Flower>(entity).Render(ctx);
         });

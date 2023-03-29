@@ -10,6 +10,10 @@
 
 #include <Client/Renderer.hh>
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 namespace app
 {
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)                                                                  \
@@ -53,10 +57,16 @@ namespace app
 
     float Simulation::GetTime()
     {
+#ifdef EMSCRIPTEN
+        return EM_ASM_DOUBLE({
+            return performance.now();
+        });
+#else
         using namespace std::chrono;
         system_clock::time_point start = system_clock::now();
 
-        return duration_cast<microseconds>(start.time_since_epoch()).count();
+        return duration_cast<microseconds>(start.time_since_epoch()).count() / 1000;
+#endif
     }
 
     void Simulation::ReadBinary(uint8_t *data)
