@@ -9,6 +9,9 @@ namespace app
         float m_Y;
         Vector() = default;
         Vector(float, float);
+
+        static Vector FromPolar(float r, float theta);
+
         void Set(float, float);
         Vector &operator=(Vector);
         Vector &operator+=(Vector);

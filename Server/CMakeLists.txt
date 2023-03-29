@@ -5,16 +5,17 @@ include_directories(..)
 include_directories(ThirdParty)
 
 set(SOURCES
+    Component/Ai.cc
     Component/ArenaInfo.cc
     Component/Basic.cc
     Component/Flower.cc
     Component/Life.cc
     Component/Mob.cc
     Component/Physical.cc
-    Component/Render.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/MapBoundaries.cc
+    System/MobAi.cc
     System/Velocity.cc
     Client.cc
     Main.cc
@@ -26,7 +27,7 @@ set(SOURCES
     ThirdParty/BinaryCoder/NativeTypes.cc
     )
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -g -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})

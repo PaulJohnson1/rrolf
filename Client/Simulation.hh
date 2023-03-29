@@ -4,21 +4,21 @@
 #include <optional>
 
 #define FOR_EACH_COMPONENT              \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 0) \
-    RROLF_COMPONENT_ENTRY(Basic, 1)     \
-    RROLF_COMPONENT_ENTRY(Flower, 2)    \
-    RROLF_COMPONENT_ENTRY(Life, 3)      \
-    RROLF_COMPONENT_ENTRY(Physical, 4)  \
-    RROLF_COMPONENT_ENTRY(Render, 5)    \
+    RROLF_COMPONENT_ENTRY(Ai, 0)        \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
+    RROLF_COMPONENT_ENTRY(Basic, 2)     \
+    RROLF_COMPONENT_ENTRY(Flower, 3)    \
+    RROLF_COMPONENT_ENTRY(Life, 4)      \
+    RROLF_COMPONENT_ENTRY(Physical, 5)  \
     RROLF_COMPONENT_ENTRY(Mob, 6)
 
+#include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Basic.hh>
 #include <Client/Component/Flower.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>
 #include <Client/Component/Physical.hh>
-#include <Client/Component/Render.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/Renderer.hh>
 #include <Shared/Entity.hh>
@@ -52,7 +52,7 @@ namespace app
 
         Simulation();
 
-        float GetTime(); 
+        float GetTime();
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);

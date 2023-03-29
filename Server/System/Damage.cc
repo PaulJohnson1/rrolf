@@ -20,8 +20,9 @@ namespace app::system
             component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
             component::Life &life = m_Simulation.Get<component::Life>(entity);
             Vector tempPos = Vector(physical.X(), physical.Y());
-            for (Entity other: physical.m_Collisions)
+            for (Entity i = 0; i < physical.m_Collisions.size(); i++)
             {
+                Entity other = physical.m_Collisions[i]
                 if (!m_Simulation.GetOptional<component::Life>(other))
                     continue;
                 component::Life &life2 = m_Simulation.Get<component::Life>(entity);

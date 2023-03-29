@@ -47,6 +47,7 @@ namespace app
           m_CollisionDetector(*this),
           m_CollisionResolver(*this),
           m_Velocity(*this),
+          m_MobAi(*this),
           m_MapBoundaries(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
@@ -62,16 +63,21 @@ namespace app
         AddComponent<component::ArenaInfo>(m_Arena);
         Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
 
-        Entity id = Create();
-        component::Mob &mob = AddComponent<component::Mob>(id);
-        component::Life &life = AddComponent<component::Life>(id);
-        component::Physical &physical = AddComponent<component::Physical>(id);
-        component::Basic &basic = AddComponent<component::Basic>(id);
-        physical.X(100);
-        basic.Team(1); // arena team
-        mob.Rarity(5); // mythic
-        mob.Id(0); // baby ant
-        physical.Radius(100);
+        for (uint32_t i = 0; i < 1000; i++)
+        {
+            Entity id = Create();
+            component::Mob &mob = AddComponent<component::Mob>(id);
+            component::Life &life = AddComponent<component::Life>(id);
+            component::Physical &physical = AddComponent<component::Physical>(id);
+            component::Basic &basic = AddComponent<component::Basic>(id);
+            component::Ai &ai = AddComponent<component::Ai>(id);
+            physical.X(rand() % 1650 - 1650 / 2);
+            physical.Y(rand() % 1650 - 1650 / 2);
+            basic.Team(1); // arena team
+            mob.Rarity(0); // mythic
+            mob.Id(0);     // baby ant
+            physical.Radius(14);
+        }
     }
 
     void Simulation::Tick()
@@ -79,16 +85,40 @@ namespace app
         ForEachEntity([&](Entity id)
                       { ResetEntity(id); });
 
+        std::string output;
+
+#define TICK_SYSTEM(SYSTEM)                                        \
+    {                                                              \
+        using namespace std::chrono;                               \
+        time_point start = system_clock::now();                    \
+        m_##SYSTEM.Tick();                                         \
+        time_point end = system_clock::now();                      \
+        duration<double> difference = end - start;                 \
+        output += #SYSTEM;                                         \
+        output += "::Tick(): ";                                    \
+        output += std::to_string((double)(duration_cast<microseconds>(difference).count()) / 1000.0); \
+        output += "ms\n";                                            \
+    }
         // order is critical
-        m_Velocity.Tick();
-        m_CollisionDetector.Tick();
-        m_CollisionResolver.Tick();
-        m_MapBoundaries.Tick();
+        TICK_SYSTEM(Velocity);
+        TICK_SYSTEM(CollisionDetector);
+        TICK_SYSTEM(CollisionResolver);
+        TICK_SYSTEM(MapBoundaries);
+        TICK_SYSTEM(MobAi);
+        output += '\n';
+        std::cout << output;
+        // m_Velocity.Tick();
+        // m_CollisionDetector.Tick();
+        // m_CollisionResolver.Tick();
+        // m_MapBoundaries.Tick();
+        // m_MobAi.Tick();
+#undef TICK_SYSTEM
 
         m_Velocity.PostTick();
         m_CollisionDetector.PostTick();
         m_CollisionResolver.PostTick();
         m_MapBoundaries.PostTick();
+        m_MobAi.PostTick();
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(Camera &camera)
@@ -119,12 +149,13 @@ namespace app
         }
 
         coder.Write<bc::VarUint>(deletedEntities.size());
-        for (Entity id : deletedEntities)
-            coder.Write<bc::VarUint>(id);
+        for (Entity i = 0; i < deletedEntities.size(); i++)
+            coder.Write<bc::VarUint>(deletedEntities[i]);
 
         coder.Write<bc::VarUint>(entitiesInView.size());
-        for (Entity id : entitiesInView)
+        for (Entity i = 0; i < entitiesInView.size(); i++)
         {
+            Entity id = entitiesInView[i];
             bool isCreation = std::find(camera.m_EntitiesInView.begin(), camera.m_EntitiesInView.end(), id) == camera.m_EntitiesInView.end();
             if (isCreation)
                 camera.m_EntitiesInView.push_back(id);

@@ -34,8 +34,8 @@ namespace app
     {
         m_Simulation.Tick();
 
-        for (Client *client : m_Clients)
-            client->Tick();
+        for (uint64_t i = 0; i < m_Clients.size(); i++)
+            m_Clients[i]->Tick();
     }
 
     void Server::Run()
@@ -50,11 +50,11 @@ namespace app
 
     void Server::OnClientDisconnect(websocketpp::connection_hdl hdl)
     {
-        for (decltype(m_Clients)::iterator i = m_Clients.begin(); i != m_Clients.end(); i++)
-            if ((*i)->GetHdl().lock() == hdl.lock())
+        for (uint64_t i = 0; i < m_Clients.size(); i++)
+            if (m_Clients[i]->GetHdl().lock() == hdl.lock())
             {
-                delete *i;
-                m_Clients.erase(i);
+                delete m_Clients[i];
+                m_Clients.erase(m_Clients.begin() + i);
                 return;
             }
 
@@ -63,10 +63,10 @@ namespace app
 
     void Server::OnMessage(websocketpp::connection_hdl hdl, WebSocketServer::message_ptr message)
     {
-        for (decltype(m_Clients)::iterator i = m_Clients.begin(); i != m_Clients.end(); i++)
-            if ((*i)->GetHdl().lock() == hdl.lock())
+        for (uint64_t i = 0; i < m_Clients.size(); i++)
+            if (m_Clients[i]->GetHdl().lock() == hdl.lock())
             {
-                (*i)->ReadPacket((uint8_t *)message->get_raw_payload().c_str(), message->get_raw_payload().size());
+                m_Clients[i]->ReadPacket((uint8_t *)message->get_raw_payload().c_str(), message->get_raw_payload().size());
             }
     }
 }

@@ -21,8 +21,9 @@ namespace app::system
 
             component::Physical &physical1 = m_Simulation.Get<component::Physical>(entity);
             
-            for (Entity other : physical1.m_Collisions)
+            for (Entity i = 0 ; i < physical1.m_Collisions.size(); i++)
             {
+                Entity other = physical1.m_Collisions[i];
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(other);
                 Vector a = {physical1.X(), physical1.Y()};
                 Vector b = {physical2.X(), physical2.Y()};
@@ -42,8 +43,9 @@ namespace app::system
             component::Physical &physical1 = m_Simulation.Get<component::Physical>(entity);
             Vector ball1Position = Vector(physical1.X(), physical1.Y());
             Vector ball1Velocity = Vector(physical1.m_Velocity.m_X, physical1.m_Velocity.m_Y);
-            for (Entity other : physical1.m_Collisions)
+            for (Entity i = 0 ; i < physical1.m_Collisions.size(); i++)
             {
+                Entity other = physical1.m_Collisions[i];
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(other);
 
                 Vector ball2Position = Vector(physical2.X(), physical2.Y());

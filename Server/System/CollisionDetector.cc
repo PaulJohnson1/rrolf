@@ -30,8 +30,9 @@ namespace app::system
             Vector positionVector{physical.X(), physical.Y()};
 
             std::vector<Entity> possibleCollisions = m_SpatialHash.GetCollisions(entity);
-            for (Entity id : possibleCollisions)
+            for (Entity i = 0; i < possibleCollisions.size(); i++)
             {
+                Entity id = possibleCollisions[i];
                 if (id == entity)
                     continue;
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(id);

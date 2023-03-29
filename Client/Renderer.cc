@@ -213,10 +213,14 @@ namespace app
     {
         float cos_a = std::cos(a);
         float sin_a = std::sin(a);
-        m_Matrix[0] = m_Matrix[0] * cos_a + m_Matrix[3] * sin_a;
-        m_Matrix[1] = m_Matrix[1] * cos_a + m_Matrix[4] * sin_a;
-        m_Matrix[3] = -m_Matrix[0] * sin_a + m_Matrix[3] * cos_a;
-        m_Matrix[4] = -m_Matrix[1] * sin_a + m_Matrix[4] * cos_a;
+        float original0 = m_Matrix[0];
+        float original1 = m_Matrix[1];
+        float original3 = m_Matrix[3];
+        float original4 = m_Matrix[4];
+        m_Matrix[0] = original0 * cos_a + original1 * -sin_a;
+        m_Matrix[1] = original0 * sin_a + original1 * cos_a;
+        m_Matrix[3] = original3 * cos_a + original4 * -sin_a;
+        m_Matrix[4] = original3 * sin_a + original4 * cos_a;
         UpdateTransform();
     }
 

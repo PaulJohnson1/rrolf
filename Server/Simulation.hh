@@ -7,25 +7,28 @@
 #include <optional>
 
 #define FOR_EACH_COMPONENT              \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 0) \
-    RROLF_COMPONENT_ENTRY(Basic, 1)     \
-    RROLF_COMPONENT_ENTRY(Flower, 2)    \
-    RROLF_COMPONENT_ENTRY(Life, 3)      \
-    RROLF_COMPONENT_ENTRY(Physical, 4)  \
-    RROLF_COMPONENT_ENTRY(Render, 5)    \
+    RROLF_COMPONENT_ENTRY(Ai, 0)        \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
+    RROLF_COMPONENT_ENTRY(Basic, 2)     \
+    RROLF_COMPONENT_ENTRY(Flower, 3)    \
+    RROLF_COMPONENT_ENTRY(Life, 4)      \
+    RROLF_COMPONENT_ENTRY(Physical, 5)  \
     RROLF_COMPONENT_ENTRY(Mob, 6)
 
+#include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
 #include <Server/Component/Basic.hh>
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Life.hh>
 #include <Server/Component/Mob.hh>
 #include <Server/Component/Physical.hh>
-#include <Server/Component/Render.hh>
+
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/MapBoundaries.hh>
+#include <Server/System/MobAi.hh>
 #include <Server/System/Velocity.hh>
+
 #include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
 
@@ -41,6 +44,7 @@ namespace app
         system::CollisionResolver m_CollisionResolver;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
+        system::MobAi m_MobAi;
 
         std::queue<Entity> m_AvailableIds{};
         bool m_EntityTracker[MAX_ENTITY_COUNT] = {};

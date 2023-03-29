@@ -22,7 +22,7 @@ namespace app::component
     void ArenaInfo::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        ctx->SetFill(0xff51983c);
+        ctx->SetFill(0xff20a464);
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize * 2);
         ctx->Fill();
@@ -32,7 +32,7 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize * 2);
         ctx->Fill();
-        ctx->SetFill(0xff51983c);
+        ctx->SetFill(0xff20a464);
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize);
         ctx->Fill();

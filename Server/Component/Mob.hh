@@ -17,12 +17,6 @@ namespace app::component
         uint8_t m_Rarity;
 
     public:
-        class BabyAnt
-        {
-        public:
-        
-        };
-
         using Type = Mob;
         
         Entity m_Parent;

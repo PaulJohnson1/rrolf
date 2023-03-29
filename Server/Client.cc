@@ -19,7 +19,6 @@ namespace app
         m_Simulation.AddComponent<component::Flower>(*m_Player);
         m_Simulation.AddComponent<component::Physical>(*m_Player);
         m_Simulation.AddComponent<component::Life>(*m_Player);
-        m_Simulation.AddComponent<component::Render>(*m_Player);
         m_Simulation.Get<component::Physical>(*m_Player).Radius(25.0f);
         m_Simulation.Get<component::Physical>(*m_Player).m_Restitution = 5.0f;
     }

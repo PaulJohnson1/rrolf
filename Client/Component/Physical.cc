@@ -21,6 +21,6 @@ namespace app::component
         if (updatedFields & 4)
             m_YDestination = coder.Read<bc::Float32>();
         if (updatedFields & 8)
-            m_Angle = coder.Read<bc::Float32>();
+            m_AngleDestination = coder.Read<bc::Float32>();
     }
 }

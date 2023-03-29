@@ -16,6 +16,11 @@ namespace app
         m_Y = y;
     }
 
+    Vector Vector::FromPolar(float r, float theta)
+    {
+        return Vector(std::cos(theta) * r, std::sin(theta) * r);
+    }
+
     Vector &Vector::operator=(Vector v)
     {
         m_X = v.m_X;
@@ -83,10 +88,10 @@ namespace app
     }
     bool Vector::operator>(float v)
     {
-        return Magnitude() > v;
+        return m_X * m_X + m_Y * m_Y > v * v;
     }
     bool Vector::operator<(float v)
     {
-        return Magnitude() < v;
+        return m_X * m_X + m_Y * m_Y < v * v;
     }
 }

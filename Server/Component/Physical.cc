@@ -34,25 +34,11 @@ namespace app::component
             coder.Write<bc::Float32>(physical.m_Angle);
     }
 
-    float Physical::Radius() const
-    {
-        return m_Radius;
-    }
-
-    float Physical::Friction() const
-    {
-        return m_Friction;
-    }
-
-    float Physical::X() const
-    {
-        return m_X;
-    }
-
-    float Physical::Y() const
-    {
-        return m_Y;
-    }
+    float Physical::Radius() const { return m_Radius; }
+    float Physical::Friction() const { return m_Friction; }
+    float Physical::X() const { return m_X; }
+    float Physical::Y() const { return m_Y; }
+    float Physical::Angle() const { return m_Angle; }
 
     void Physical::Radius(float r)
     {

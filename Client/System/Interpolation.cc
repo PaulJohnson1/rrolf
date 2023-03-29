@@ -23,7 +23,7 @@ namespace app::system
 
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-            if (m_Simulation.GetOptional<component::Render>(entity))
+            if (m_Simulation.GetOptional<component::Physical>(entity))
             {
                 component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
 
@@ -32,10 +32,13 @@ namespace app::system
                 if (physical.m_Y == 0)
                     physical.m_Y = physical.m_YDestination;
                 if (physical.m_Radius == 0)
-                    physical.m_Y = physical.m_YDestination;
+                    physical.m_Radius = physical.m_YDestination;
+                if (physical.m_Angle == 0)
+                    physical.m_Angle = physical.m_AngleDestination;
                 physical.m_X = Lerp<float>(physical.m_X, physical.m_XDestination, 0.1 * fpsScale);
                 physical.m_Y = Lerp<float>(physical.m_Y, physical.m_YDestination, 0.1 * fpsScale);
                 physical.m_Radius = Lerp<float>(physical.m_Radius, physical.m_RadiusDestination, 0.1 * fpsScale);
+                physical.m_Angle = Lerp<float>(physical.m_Angle, physical.m_AngleDestination, 0.1 * fpsScale);
             }
             if (m_Simulation.GetOptional<component::Flower>(entity))
             {

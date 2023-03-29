@@ -27,7 +27,7 @@ namespace app
         Renderer &operator=(Renderer &&) = delete;
         ~Guard();
     };
-    
+
     class Path2D
     {
 #ifdef EMSCRIPTEN
@@ -55,9 +55,9 @@ namespace app
         SkPaint m_StrokePaint;
 #endif
         float m_Matrix[9] = {
-            1, 0, 0, //s s x !!REMEMBER: CANVAS2D IS s s s s x y SO ORDER MATTERS ITS 0 1 3 4 2 5
-            0, 1, 0, //s s y
-            0, 0, 1};//0 0 1
+            1, 0, 0,  // s s x !!REMEMBER: CANVAS2D IS s s s s x y SO ORDER MATTERS ITS 0 1 3 4 2 5
+            0, 1, 0,  // s s y
+            0, 0, 1}; // 0 0 1
 
         friend Guard;
 
@@ -72,12 +72,14 @@ namespace app
         int32_t m_Height;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
 
-        enum class LineCap {
+        enum class LineCap
+        {
             Butt,
             Round,
             Square
         };
-        enum class LineJoin {
+        enum class LineJoin
+        {
             Bevel,
             Miter,
             // Round
@@ -95,7 +97,7 @@ namespace app
         void Rotate(float);
         void Translate(float, float);
         void Scale(float, float);
-        
+
         // style
         void SetFill(uint32_t);
         void SetStroke(uint32_t);
@@ -109,12 +111,11 @@ namespace app
         void QuadraticCurveTo(float, float, float, float);
         void Arc(float, float, float);
         void Clip();
-        
+
         // render
         void Stroke();
         void Fill();
-        // void BezierCurveTo(float, float, float, float, float, float);
 
         void Render();
     };
-} //the old path2d impl worked somewhat
+}
