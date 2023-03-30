@@ -26,7 +26,6 @@ namespace app::component
 
         Lerp<float> m_Health = Lerp<float>(1.0f);
         Lerp<float> m_MaxHealth = Lerp<float>(1.0f);
-        Lerp<float> m_Damage = Lerp<float>(0.0f);
 
         Life(Entity, Simulation *);
         void UpdateFromBinary(bc::BinaryCoder &);

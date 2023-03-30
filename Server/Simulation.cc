@@ -1,6 +1,8 @@
 #include <Server/Simulation.hh>
 
-#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -14,16 +16,12 @@ namespace app
     template <>                                                                        \
     component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
     {                                                                                  \
-        assert(m_EntityTracker[id]);                                                   \
-        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
     {                                                                                  \
-        assert(m_EntityTracker[id]);                                                   \
-        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
@@ -67,7 +65,7 @@ namespace app
         AddComponent<component::ArenaInfo>(m_Arena);
         Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
 
-        for (uint32_t i = 0; i < 100; i++)
+        for (uint32_t i = 0; i < 1000; i++)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -79,9 +77,9 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Rarity(5);
+            mob.Rarity(0);
             mob.Id(0); // baby ant
-            life.Damage(10);
+            life.m_Damage = 10;
             life.MaxHealth(100);
             life.Health(100);
         }
@@ -89,22 +87,31 @@ namespace app
 
     void Simulation::Tick()
     {
+        m_TickCount++;
+
+        Entity entityCount = 0; // for debugging
         ForEachEntity([&](Entity id)
-                      { ResetEntity(id); });
+                      { ResetEntity(id); entityCount++; });
 
-        std::string output;
+        if (m_TickCount != 1)
+        {
+            puts("\033[9A");
+        }
 
-#define TICK_SYSTEM(SYSTEM)                                                                           \
-    {                                                                                                 \
-        using namespace std::chrono;                                                                  \
-        time_point start = system_clock::now();                                                       \
-        m_##SYSTEM.Tick();                                                                            \
-        time_point end = system_clock::now();                                                         \
-        duration<double> difference = end - start;                                                    \
-        output += #SYSTEM;                                                                            \
-        output += "::Tick(): ";                                                                       \
-        output += std::to_string((double)(duration_cast<microseconds>(difference).count()) / 1000.0); \
-        output += "ms\n";                                                                             \
+        std::string output = std::to_string(entityCount) + " current entities\n";
+        auto lerp = [](float start, float end, float time) -> float { return start * (1 - time) + end * time; };
+#define TICK_SYSTEM(SYSTEM)                                                                                                    \
+    {                                                                                                                          \
+        using namespace std::chrono;                                                                                           \
+        time_point start = system_clock::now();                                                                                \
+        m_##SYSTEM.Tick();                                                                                                     \
+        time_point end = system_clock::now();                                                                                  \
+        duration<double> difference = end - start;                                                                             \
+        output += #SYSTEM;                                                                                                     \
+        output += "::Tick(): ";                                                                                                \
+        m_##SYSTEM##Time = lerp(m_##SYSTEM##Time, (duration_cast<microseconds>(difference).count()) / 1000.0, 0.01); \
+        output += std::to_string(m_##SYSTEM##Time);                                                                            \
+        output += "ms\n";                                                                                                      \
     }
 
         // order is critical
@@ -114,8 +121,8 @@ namespace app
         TICK_SYSTEM(MapBoundaries);
         TICK_SYSTEM(MobAi);
         TICK_SYSTEM(Damage); // potentially deletes entities so it must come last to avoid reading deleted entities
-        output += '\n';
-        std::cout << output;
+        puts(output.c_str());
+
         // m_Velocity.Tick();
         // m_CollisionDetector.Tick();
         // m_CollisionResolver.Tick();
@@ -130,10 +137,10 @@ namespace app
         entitiesInView.push_back(m_Arena);
         entitiesInView.push_back(playerInfo.m_Parent);
 
-        int32_t viewWidth = (int32_t)(1980 / playerInfo.Fov());
-        int32_t viewHeight = (int32_t)(1080 / playerInfo.Fov());
-        int32_t viewX = (int32_t)(playerInfo.CameraX() - viewWidth / 2);
-        int32_t viewY = (int32_t)(playerInfo.CameraY() - viewHeight / 2);
+        int32_t viewWidth = (int32_t)(1280 / playerInfo.Fov());
+        int32_t viewHeight = (int32_t)(720 / playerInfo.Fov());
+        int32_t viewX = (int32_t)playerInfo.CameraX();
+        int32_t viewY = (int32_t)playerInfo.CameraY();
         // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
         std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
         for (Entity i = 0; i < nearBy.size(); i++)

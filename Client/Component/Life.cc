@@ -23,8 +23,6 @@ namespace app::component
             m_Health = coder.Read<bc::Float32>();
         if (updatedFields & 2)
             m_MaxHealth = coder.Read<bc::Float32>();
-        if (updatedFields & 4)
-            m_Damage = coder.Read<bc::Float32>();
     }
     void Life::Render(Renderer *ctx)
     {

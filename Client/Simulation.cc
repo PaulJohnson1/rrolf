@@ -99,8 +99,8 @@ namespace app
         using T = component::COMPONENT;         \
         if (HasComponent<T>(id))                \
         {                                       \
-            m_##COMPONENT##Tracker[id] = false; \
             T &comp = Get<T>(id);               \
+            m_##COMPONENT##Tracker[id] = false; \
             comp.~T();                          \
         }                                       \
     }
@@ -114,11 +114,16 @@ namespace app
         float time = GetTime();
         m_TickTime = time - m_LastTick;
         m_LastTick = time;
-        m_InterpolationSystem.Tick();
-        m_RendererSystem.Tick(ctx);
+        if (m_PlayerInfo != (Entity)-1)
+        {
+            m_InterpolationSystem.Tick();
+            m_RendererSystem.Tick(ctx);
 
-        m_InterpolationSystem.PostTick();
-        m_RendererSystem.PostTick();
+            m_InterpolationSystem.PostTick();
+            m_RendererSystem.PostTick();
+            return;
+        }
+        std::cout << "waiting for player to spawn\n";
     }
 
     void Simulation::ReadEntity(bc::BinaryCoder &coder)

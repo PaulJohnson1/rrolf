@@ -133,10 +133,10 @@ namespace app
             };
             function loop()
             {
+                requestAnimationFrame(loop);
                 Module.canvas.width = innerWidth;
                 Module.canvas.height = innerHeight;
                 Module._Render(Module.canvas.width, Module.canvas.height);
-                requestAnimationFrame(loop);
             };
             requestAnimationFrame(loop);
         });

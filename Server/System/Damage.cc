@@ -13,6 +13,7 @@ namespace app::system
 
     void Damage::Tick()
     {
+        std::vector<Entity> deletedEntities;
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
             if (!m_Simulation.HasComponent<component::Physical>(entity))
@@ -29,8 +30,8 @@ namespace app::system
                 component::Basic &basic2 = m_Simulation.Get<component::Basic>(other);
                 if (basic.Team() == basic2.Team())
                     continue;
-                life.Health(life.Health() - life2.Damage());
-                life2.Health(life2.Health() - life.Damage());
+                life.Health(life.Health() - life2.m_Damage);
+                life2.Health(life2.Health() - life.m_Damage);
 
                 // TODO: delete entity
             } });

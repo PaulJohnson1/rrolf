@@ -38,6 +38,13 @@ namespace app::system
                 flower.m_EyeX.Tick(0.25);
                 flower.m_EyeY.Tick(0.25);
             }
+            if (m_Simulation.HasComponent<component::Life>(entity))
+            {
+                component::Life &life = m_Simulation.Get<component::Life>(entity);
+                life.m_Health.Tick(0.05);
+                life.m_MaxHealth.Tick(0.1);
+            }
+
         });
     }
 

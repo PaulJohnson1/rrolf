@@ -20,11 +20,12 @@ namespace app::component
     {
         float m_Health = 1.0f;
         float m_MaxHealth = 1.0f;
-        float m_Damage = 0.0f;
         Simulation *m_Simulation;
 
     public:
         using Type = Life;
+
+        float m_Damage = 0.0f;
         
         Entity m_Parent;
         uint64_t m_State = 0;
@@ -34,10 +35,8 @@ namespace app::component
 
         float Health() const;
         float MaxHealth() const;
-        float Damage() const;
         void Health(float);
         void MaxHealth(float);
-        void Damage(float);
 
         void Reset();
 

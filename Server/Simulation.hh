@@ -41,6 +41,13 @@ namespace app
 
     class Simulation
     {
+        float m_CollisionDetectorTime;
+        float m_CollisionResolverTime;
+        float m_DamageTime;
+        float m_MapBoundariesTime;
+        float m_VelocityTime;
+        float m_MobAiTime;
+
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
         system::Damage m_Damage;
@@ -72,6 +79,7 @@ namespace app
     public:
         Entity m_Arena;
         Server &m_Server;
+        uint64_t m_TickCount = 0;
 
         Simulation(Server &);
 
