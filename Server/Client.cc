@@ -15,23 +15,25 @@ namespace app
           m_Simulation(simulation)
     {
         std::cout << "client create\n";
-        m_Player.emplace(m_Simulation.Create());
-        m_Simulation.AddComponent<component::Flower>(*m_Player);
-        m_Simulation.AddComponent<component::Physical>(*m_Player);
-        m_Simulation.AddComponent<component::Life>(*m_Player);
-        m_Simulation.Get<component::Physical>(*m_Player).Radius(75.0f);
-        m_Simulation.Get<component::Physical>(*m_Player).m_Restitution = 5.0f;
-        m_Simulation.Get<component::Life>(*m_Player).MaxHealth(1000);
-        m_Simulation.Get<component::Life>(*m_Player).Health(1000);
-        m_Simulation.Get<component::Life>(*m_Player).Damage(10);
+        m_PlayerInfo = m_Simulation.Create();
+        component::PlayerInfo &playerInfo = m_Simulation.AddComponent<component::PlayerInfo>(m_PlayerInfo);
+        playerInfo.Player(m_Simulation.Create());
+        playerInfo.HasPlayer(true);
+        m_Simulation.AddComponent<component::Flower>(playerInfo.Player());
+        m_Simulation.AddComponent<component::Basic>(playerInfo.Player());
+        m_Simulation.AddComponent<component::Life>(playerInfo.Player());
+        m_Simulation.AddComponent<component::Physical>(playerInfo.Player());
     }
 
     Client::~Client()
     {
         std::cout << "client destroy\n";
 
-        if (m_Player)
-            m_Simulation.Remove(*m_Player);
+        component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
+
+        if (playerInfo.HasPlayer())
+            m_Simulation.Remove(playerInfo.Player());
+        m_Simulation.Remove(m_PlayerInfo);
     }
 
     void Client::BroadcastUpdate()
@@ -40,28 +42,33 @@ namespace app
         bc::BinaryCoder coder{data};
         coder.Write<bc::Uint8>(0);
 
-        coder.Write<bc::Float32>(m_Camera.m_Fov);
-        coder.Write<bc::Float32>(m_Camera.m_X);
-        coder.Write<bc::Float32>(m_Camera.m_Y);
-
-        m_Simulation.WriteUpdate(coder, m_Camera);
+        m_Simulation.WriteUpdate(coder, m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo));
 
         SendPacket(coder);
     }
 
     void Client::Tick()
     {
-        m_Simulation.Get<component::Physical>(*m_Player).m_Acceleration = m_PlayerAcceleration;
-        m_Camera.m_X = m_Simulation.Get<component::Physical>(*m_Player).X();
-        m_Camera.m_Y = m_Simulation.Get<component::Physical>(*m_Player).Y();
-        if (m_PlayerAcceleration > 0) m_Simulation.Get<component::Flower>(*m_Player).EyeAngle(m_PlayerAcceleration.Theta());
+        component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
+        if (playerInfo.HasPlayer())
+        {
+            m_Simulation.Get<component::Physical>(playerInfo.Player()).m_Acceleration = m_PlayerAcceleration;
+            if (!playerInfo.HasPlayer())
+                return;
+            component::Physical &physical = m_Simulation.Get<component::Physical>(playerInfo.Player());
+            playerInfo.CameraX(physical.X());
+            playerInfo.CameraY(physical.Y());
+            if (m_PlayerAcceleration > 0)
+                m_Simulation.Get<component::Flower>(playerInfo.Player()).EyeAngle(m_PlayerAcceleration.Theta());
+        }
+
         BroadcastUpdate();
     }
 
     void Client::SendPacket(bc::BinaryCoder const &data) const
     {
         std::string packet{data.Data(), data.Data() + data.At()};
-        
+
         m_Simulation.m_Server.m_Server.send(m_Hdl, packet, websocketpp::frame::opcode::binary);
     }
 
@@ -76,7 +83,8 @@ namespace app
         uint8_t type = coder.Read<bc::Uint8>();
         if (type == 0)
         {
-            if (size != 3) {
+            if (size != 3)
+            {
                 std::cout << "someone sent update packet with size not equal to 3\n";
                 return;
             }
@@ -94,10 +102,14 @@ namespace app
             float x = 0;
             float y = 0;
 
-            if (movementFlags & 1) y--;
-            if (movementFlags & 2) x--;
-            if (movementFlags & 4) y++;
-            if (movementFlags & 8) x++;
+            if (movementFlags & 1)
+                y--;
+            if (movementFlags & 2)
+                x--;
+            if (movementFlags & 4)
+                y++;
+            if (movementFlags & 8)
+                x++;
 
             m_PlayerAcceleration.Set(x, y);
             m_PlayerAcceleration.Normalize();

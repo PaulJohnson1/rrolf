@@ -12,8 +12,11 @@
 #include <emscripten.h>
 #endif
 
+#include <fenv.h>
+
 int main()
 {
+    feenableexcept(FE_INVALID);
     using namespace app;
 
     // heap allocate so the dtor doesn't automatically get called

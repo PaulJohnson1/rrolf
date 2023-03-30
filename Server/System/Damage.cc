@@ -35,4 +35,8 @@ namespace app::system
                 // TODO: delete entity
             } });
     }
+
+    void Damage::PostTick()
+    {
+    }
 }

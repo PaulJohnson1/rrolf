@@ -13,6 +13,7 @@ set(SOURCES
     Component/Life.cc
     Component/Mob.cc
     Component/Physical.cc
+    Component/PlayerInfo.cc
     System/Interpolation.cc
     System/Renderer.cc
     Main.cc

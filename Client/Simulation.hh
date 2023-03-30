@@ -10,7 +10,8 @@
     RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Life, 4)      \
     RROLF_COMPONENT_ENTRY(Physical, 5)  \
-    RROLF_COMPONENT_ENTRY(Mob, 6)
+    RROLF_COMPONENT_ENTRY(Mob, 6)       \
+    RROLF_COMPONENT_ENTRY(PlayerInfo, 7)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
@@ -19,27 +20,19 @@
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>
 #include <Client/Component/Physical.hh>
+#include <Client/Component/PlayerInfo.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/Renderer.hh>
 #include <Shared/Entity.hh>
+#include <Client/Util/Lerp.hh>
 
 namespace app
 {
-    class Camera
-    {
-    public:
-        float m_Fov = 0.9f;
-        float m_X = 0;
-        float m_Y = 0;
-        float m_FovDestination = 0.9f;
-        float m_XDestination = 0;
-        float m_YDestination = 0;
-    };
     class Simulation
     {
         system::Interpolation m_InterpolationSystem;
         system::Renderer m_RendererSystem;
-        
+
         bool m_EntityTracker[MAX_ENTITY_COUNT];
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
     bool m_##COMPONENT##Tracker[MAX_ENTITY_COUNT];
@@ -61,9 +54,9 @@ namespace app
 #undef RROLF_COMPONENT_ENTRY
 
     public:
-        Camera m_Camera{};
         float m_LastTick = 0;
         float m_TickTime = 0;
+        Entity m_PlayerInfo = -1;
 
         Simulation();
 

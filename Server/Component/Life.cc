@@ -41,7 +41,7 @@ namespace app::component
     {
         return m_Health;
     }
-    
+
     float Life::MaxHealth() const
     {
         return m_MaxHealth;
@@ -54,6 +54,8 @@ namespace app::component
 
     void Life::Health(float v)
     {
+        if (v < 0)
+            v = 0;
         if (v == m_Health)
             return;
         m_Health = v;

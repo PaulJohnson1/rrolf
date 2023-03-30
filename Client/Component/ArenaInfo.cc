@@ -1,14 +1,19 @@
 #include <Client/Component/ArenaInfo.hh>
-#include <Client/Renderer.hh>
-#include <Client/Simulation.hh>
+
+#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Simulation.hh>
+#include <Client/Renderer.hh>
+#include <Client/Simulation.hh>
+
 namespace app::component
 {
-    ArenaInfo::ArenaInfo(Entity parent)
-        : m_Parent(parent)
+    ArenaInfo::ArenaInfo(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
     {
     }
 
@@ -26,7 +31,8 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize * 2);
         ctx->Fill();
-        float alpha = ctx->m_Simulation.m_Camera.m_Fov * 51;
+        assert(m_Simulation); // sometimes it's nullptr somehow
+        float alpha = m_Simulation->Get<component::PlayerInfo>(m_Simulation->m_PlayerInfo).m_Fov * 51;
         ctx->SetStroke((uint32_t)(alpha) << 24);
         ctx->SetFill((uint32_t)(alpha) << 24);
         ctx->BeginPath();

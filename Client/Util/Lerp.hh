@@ -4,13 +4,19 @@
 
 namespace app
 {
-    template <typename T, bool angle = false>
-    T Lerp(T start, T end, T time)
+    template <typename T, bool AngleWrapAround = false>
+    class Lerp
     {
-        if constexpr (angle)
+        T m_Interpolated;
+        T m_Destination;
+
+    public:
+        Lerp(T val)
         {
-            return 0;
+            m_Destination = val;
         }
-        return (end - start) * time + start;
-    }
+        void operator=(T val) { m_Destination = val; }
+        void tick(float pct) { m_Interpolated = (m_Destination - m_Interpolated) * pct + m_Interpolated; } 
+        operator T() const { return m_Interpolated; }
+    };
 }

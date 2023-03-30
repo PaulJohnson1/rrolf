@@ -5,10 +5,13 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Simulation.hh>
+
 namespace app::component
 {
-    Life::Life(Entity parent)
-        : m_Parent(parent)
+    Life::Life(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
     {
     }
 
@@ -25,10 +28,11 @@ namespace app::component
     }
     void Life::Render(Renderer *ctx)
     {
+        float health = (float)m_Health >= 0.0f ? (float)m_Health : 0.0f;
         Guard g(ctx);
         component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
-        //draw hp
+        // draw hp
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->SetStroke(0xff222222);
         ctx->SetLineWidth(7);
@@ -40,7 +44,7 @@ namespace app::component
         ctx->SetLineWidth(5);
         ctx->BeginPath();
         ctx->MoveTo(-40, physical.m_Radius + 30);
-        ctx->LineTo(-40 + 80 * m_Health / m_MaxHealth, physical.m_Radius + 30);
-        ctx->Stroke();        
+        ctx->LineTo(-40 + 80 * health / m_MaxHealth, physical.m_Radius + 30);
+        ctx->Stroke();
     }
 }

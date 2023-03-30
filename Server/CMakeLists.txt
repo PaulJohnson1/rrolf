@@ -12,6 +12,7 @@ set(SOURCES
     Component/Life.cc
     Component/Mob.cc
     Component/Physical.cc
+    Component/PlayerInfo.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/Damage.cc

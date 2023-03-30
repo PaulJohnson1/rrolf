@@ -14,12 +14,16 @@ namespace app
     template <>                                                                        \
     component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
@@ -33,7 +37,7 @@ namespace app
     component::COMPONENT &Simulation::AddComponent<component::COMPONENT>(Entity id)    \
     {                                                                                  \
         m_##COMPONENT##Tracker[id] = true;                                             \
-        new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id, this);               \
+        new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id, this);         \
         return Get<component::COMPONENT>(id);                                          \
     }
 
@@ -123,32 +127,47 @@ namespace app
         m_CollisionResolver.PostTick();
         m_MapBoundaries.PostTick();
         m_MobAi.PostTick();
+        m_Damage.PostTick();
     }
 
-    std::vector<Entity> Simulation::FindEntitiesInView(Camera &camera)
+    std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
     {
-        std::vector<Entity> entitiesInView;
+        std::vector<Entity> entitiesInView{};
+        entitiesInView.push_back(m_Arena);
+        entitiesInView.push_back(playerInfo.m_Parent);
         ForEachEntity([&](Entity const &entity)
-                      {
-        // TODO: only send entities in fov
-        entitiesInView.push_back(entity); });
+                        {
+            float viewWidth = 1980 / playerInfo.Fov();
+            float viewHeight = 1080 / playerInfo.Fov();
+            float viewX = playerInfo.CameraX() - viewWidth / 2;
+            float viewY = playerInfo.CameraY() - viewHeight / 2;
+            // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
+            std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
+            for (Entity i = 0; i < nearBy.size(); i++)
+            {
+                Entity other = nearBy[i];
+                component::Physical &physical = Get<component::Physical>(other);
+                // TODO: box collision
+                entitiesInView.push_back(other);
+            }
+        });
         return entitiesInView;
     }
 
-    void Simulation::WriteUpdate(bc::BinaryCoder &coder, Camera &camera)
+    void Simulation::WriteUpdate(bc::BinaryCoder &coder, component::PlayerInfo &playerInfo)
     {
-        std::vector<Entity> entitiesInView = FindEntitiesInView(camera);
+        std::vector<Entity> entitiesInView = FindEntitiesInView(playerInfo);
         std::vector<Entity> deletedEntities;
 
-        for (Entity i = 0; i < camera.m_EntitiesInView.size(); i++)
+        for (Entity i = 0; i < playerInfo.m_EntitiesInView.size(); i++)
         {
-            Entity id = camera.m_EntitiesInView[i];
+            Entity id = playerInfo.m_EntitiesInView[i];
             // id is not in the entities the client should view
             if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
             {
                 deletedEntities.push_back(id);
-                // remove id from the camera's view after writing deletion so it does not get deleted twice
-                camera.m_EntitiesInView.erase(std::find(camera.m_EntitiesInView.begin(), camera.m_EntitiesInView.end(), id));
+                // remove id from the playerInfo's view after writing deletion so it does not get deleted twice
+                playerInfo.m_EntitiesInView.erase(std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id));
             }
         }
 
@@ -160,9 +179,9 @@ namespace app
         for (Entity i = 0; i < entitiesInView.size(); i++)
         {
             Entity id = entitiesInView[i];
-            bool isCreation = std::find(camera.m_EntitiesInView.begin(), camera.m_EntitiesInView.end(), id) == camera.m_EntitiesInView.end();
+            bool isCreation = std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id) == playerInfo.m_EntitiesInView.end();
             if (isCreation)
-                camera.m_EntitiesInView.push_back(id);
+                playerInfo.m_EntitiesInView.push_back(id);
 
             WriteEntity(coder, id, isCreation);
         }
@@ -218,7 +237,6 @@ namespace app
     {
         std::cout << "entity with id " << std::to_string(id) << " deleted\n";
         assert(m_EntityTracker[id]);
-        m_AvailableIds.push(id);
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
     {                                           \
         using T = component::COMPONENT;         \
@@ -231,6 +249,7 @@ namespace app
     }
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
+        m_AvailableIds.push(id);
         m_EntityTracker[id] = false;
     }
 }

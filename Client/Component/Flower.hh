@@ -3,15 +3,19 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
+#include <Client/Util/Lerp.hh>
 
 namespace bc
 {
     class BinaryCoder;
 }
+
 namespace app
 {
     class Renderer;
+    class Simulation;
 }
+
 namespace app::component
 {
     class Flower
@@ -27,18 +31,15 @@ namespace app::component
             Cutter = 32
         };
 
-
-        Entity m_Parent;
         uint8_t m_Flags = 0;
         float m_EyeAngle = 0;
+        Lerp<float> m_EyeX = Lerp<float>(3.0f);
+        Lerp<float> m_EyeY = Lerp<float>(0.0f);
+        Simulation *m_Simulation;
 
-        float m_EyeX = 3.0f;
-        float m_EyeXDestination = 3.0f;
+        Entity m_Parent;
 
-        float m_EyeY = 0.0f;
-        float m_EyeYDestination = 0.0f;
-
-        Flower(Entity);
+        Flower(Entity, Simulation *);
         void UpdateFromBinary(bc::BinaryCoder &);
         void Render(Renderer *ctx);
     };

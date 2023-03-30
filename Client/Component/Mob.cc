@@ -3,18 +3,20 @@
 #include <iostream>
 #include <cmath>
 
+#include <BinaryCoder/BinaryCoder.hh>
+#include <BinaryCoder/NativeTypes.hh>
+
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
-
-#include <BinaryCoder/BinaryCoder.hh>
-#include <BinaryCoder/NativeTypes.hh>
+#include <Client/Simulation.hh>
 
 
 namespace app::component
 {
-    Mob::Mob(Entity parent)
-        : m_Parent(parent)
+    Mob::Mob(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
     {
     }
 

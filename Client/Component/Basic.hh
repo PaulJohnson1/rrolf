@@ -9,17 +9,23 @@ namespace bc
     class BinaryCoder;
 }
 
+namespace app
+{
+    class Simulation;
+}
+
 namespace app::component
 {
     class Basic
     {
     public:
-        Entity m_Parent;
-
         Entity m_Team;
         uint32_t m_Flags = 0;
+        Simulation *m_Simulation;
 
-        Basic(Entity);
+        Entity m_Parent;
+
+        Basic(Entity, Simulation *);
 
         void UpdateFromBinary(bc::BinaryCoder &);
     };

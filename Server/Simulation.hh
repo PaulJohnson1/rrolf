@@ -12,7 +12,8 @@
     RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Life, 4)      \
     RROLF_COMPONENT_ENTRY(Physical, 5)  \
-    RROLF_COMPONENT_ENTRY(Mob, 6)
+    RROLF_COMPONENT_ENTRY(Mob, 6)       \
+    RROLF_COMPONENT_ENTRY(PlayerInfo, 7)
 
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
@@ -21,6 +22,7 @@
 #include <Server/Component/Life.hh>
 #include <Server/Component/Mob.hh>
 #include <Server/Component/Physical.hh>
+#include <Server/Component/PlayerInfo.hh>
 
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
@@ -36,7 +38,6 @@ namespace app
 {
     class Server;
     class Client;
-    class Camera;
 
     class Simulation
     {
@@ -75,7 +76,7 @@ namespace app
         Simulation(Server &);
 
         void Remove(Entity);
-        void WriteUpdate(class bc::BinaryCoder &, Camera &);
+        void WriteUpdate(class bc::BinaryCoder &, component::PlayerInfo &);
         void Tick();
 
         template <typename T>
@@ -98,7 +99,7 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
-        std::vector<Entity> FindEntitiesInView(Camera &camera);
+        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &playerInfo);
         Entity Create();
 
         void WriteEntity(bc::BinaryCoder &, Entity, bool);

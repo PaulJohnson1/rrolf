@@ -13,17 +13,13 @@ namespace app::system
     {
     }
 
-    // lucky this isn't c otherwise this would be a name collision
     void Renderer::Tick(app::Renderer *ctx)
     {
-        // use bound checking for this one
-        if (!m_Simulation.HasComponent<component::ArenaInfo>(0))
-            return;
-        //ctx->Clear();
         Guard g(ctx);
+        component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
         ctx->Translate(ctx->m_Width / 2, ctx->m_Height / 2);
-        ctx->Scale(ctx->m_Simulation.m_Camera.m_Fov, ctx->m_Simulation.m_Camera.m_Fov);
-        ctx->Translate(-ctx->m_Simulation.m_Camera.m_X, -ctx->m_Simulation.m_Camera.m_Y);
+        ctx->Scale(playerInfo.m_Fov, playerInfo.m_Fov);
+        ctx->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
         arena.Render(ctx);
         m_Simulation.ForEachEntity([&](Entity entity) {

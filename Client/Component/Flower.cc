@@ -5,10 +5,13 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Simulation.hh>
+
 namespace app::component
 {
-    Flower::Flower(Entity parent)
-        : m_Parent(parent)
+    Flower::Flower(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
     {
     }
 

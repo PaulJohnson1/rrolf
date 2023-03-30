@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include <websocketpp/server.hpp>
 
 #include <Shared/Entity.hh>
@@ -16,17 +14,6 @@ namespace app
 {
     class Simulation;
 
-    class Camera
-    {
-    public:
-        float m_Fov = 0.9f;
-        float m_X = 0;
-        float m_Y = 0;
-        std::vector<Entity> m_EntitiesInView;
-
-        Camera() = default;
-    };
-
     class Client
     {
         Simulation &m_Simulation;
@@ -34,8 +21,7 @@ namespace app
         Vector m_PlayerAcceleration{0, 0};
 
     public:
-        std::optional<Entity> m_Player;
-        Camera m_Camera;
+        Entity m_PlayerInfo;
 
         Client(websocketpp::connection_hdl, Simulation &);
         ~Client();

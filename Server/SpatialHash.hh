@@ -25,7 +25,7 @@ namespace app
 
         void Insert(Entity);
         void Clear();
-        std::vector<Entity> GetCollisions(int32_t, int32_t, int32_t, int32_t);
-        std::vector<Entity> GetCollisions(Entity);
+        [[nodiscard]] std::vector<Entity> GetCollisions(int32_t, int32_t, int32_t, int32_t);
+        [[nodiscard]] std::vector<Entity> GetCollisions(Entity);
     };
 }

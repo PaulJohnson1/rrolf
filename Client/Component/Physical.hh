@@ -3,10 +3,16 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
+#include <Client/Util/Lerp.hh>
 
 namespace bc
 {
     class BinaryCoder;
+}
+
+namespace app
+{
+    class Simulation;
 }
 
 namespace app::component
@@ -14,19 +20,15 @@ namespace app::component
     class Physical
     {
     public:
+        Simulation *m_Simulation;
         Entity m_Parent;
 
-        float m_Radius = 1.0f;
-        float m_X = 0;
-        float m_Y = 0;
-        float m_Angle = 0;
-        float m_AngleDestination = 0;
-        float m_RadiusDestination = 1.0f;
-        float m_XDestination = 0;
-        float m_YDestination = 0;
+        Lerp<float> m_Radius = Lerp<float>(1.0f);
+        Lerp<float> m_X = Lerp<float>(0.0f);
+        Lerp<float> m_Y = Lerp<float>(0.0f);
+        Lerp<float, true> m_Angle = Lerp<float, true>(0.0f);
 
-
-        Physical(Entity);
+        Physical(Entity, Simulation *);
 
         void UpdateFromBinary(bc::BinaryCoder &);
     };

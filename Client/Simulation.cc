@@ -21,12 +21,16 @@ namespace app
     template <>                                                                        \
     component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
@@ -40,7 +44,7 @@ namespace app
     component::COMPONENT &Simulation::AddComponent<component::COMPONENT>(Entity id)    \
     {                                                                                  \
         m_##COMPONENT##Tracker[id] = true;                                             \
-        new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id);               \
+        new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id, this);         \
         return Get<component::COMPONENT>(id);                                          \
     }
 
@@ -76,10 +80,6 @@ namespace app
 
         if (type == 0)
         {
-            m_Camera.m_FovDestination = coder.Read<bc::Float32>();
-            m_Camera.m_XDestination = coder.Read<bc::Float32>();
-            m_Camera.m_YDestination = coder.Read<bc::Float32>();
-
             Entity deletedEntityCount = coder.Read<bc::VarUint>();
             for (Entity i = 0; i < deletedEntityCount; i++)
                 Remove(coder.Read<bc::VarUint>());

@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
-#include <Client/Util/Lerp.hh>
 
 namespace bc
 {
@@ -12,24 +11,25 @@ namespace bc
 
 namespace app
 {
-    class Renderer;
     class Simulation;
 }
 
 namespace app::component
 {
-    class Life
+    class PlayerInfo
     {
     public:
+        float m_CameraX;
+        float m_CameraY;
+        float m_Fov;
+        bool m_HasPlayer;
+        Entity m_Player;
         Simulation *m_Simulation;
+
         Entity m_Parent;
 
-        Lerp<float> m_Health = Lerp<float>(1.0f);
-        Lerp<float> m_MaxHealth = Lerp<float>(1.0f);
-        Lerp<float> m_Damage = Lerp<float>(0.0f);
+        PlayerInfo(Entity, Simulation *);
 
-        Life(Entity, Simulation *);
         void UpdateFromBinary(bc::BinaryCoder &);
-        void Render(Renderer *ctx);
     };
 }

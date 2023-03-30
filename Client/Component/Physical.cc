@@ -3,10 +3,13 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Simulation.hh>
+
 namespace app::component
 {
-    Physical::Physical(Entity parent)
-        : m_Parent(parent)
+    Physical::Physical(Entity parent, Simulation *simulation)
+        : m_Parent(parent),
+          m_Simulation(simulation)
     {
     }
 
@@ -15,12 +18,12 @@ namespace app::component
         uint32_t updatedFields = coder.Read<bc::VarUint>();
 
         if (updatedFields & 1)
-            m_RadiusDestination = coder.Read<bc::Float32>();
+            m_Radius = coder.Read<bc::Float32>();
         if (updatedFields & 2)
-           m_XDestination = coder.Read<bc::Float32>();
+            m_X = coder.Read<bc::Float32>();
         if (updatedFields & 4)
-            m_YDestination = coder.Read<bc::Float32>();
+            m_Y = coder.Read<bc::Float32>();
         if (updatedFields & 8)
-            m_AngleDestination = coder.Read<bc::Float32>();
+            m_Angle = coder.Read<bc::Float32>();
     }
 }
