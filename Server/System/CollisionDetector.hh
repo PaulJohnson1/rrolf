@@ -17,6 +17,5 @@ namespace app::system
         CollisionDetector(Simulation &);
 
         void Tick();
-        void PostTick();
     };
 }

@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
+#include <Client/Util/Lerp.hh>
 
 namespace bc
 {
@@ -19,9 +20,9 @@ namespace app::component
     class PlayerInfo
     {
     public:
-        float m_CameraX;
-        float m_CameraY;
-        float m_Fov;
+        Lerp<float> m_CameraX{0};
+        Lerp<float> m_CameraY{0};
+        Lerp<float> m_Fov{0.1};
         bool m_HasPlayer;
         Entity m_Player;
         Simulation *m_Simulation;

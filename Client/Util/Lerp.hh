@@ -13,10 +13,15 @@ namespace app
     public:
         Lerp(T val)
         {
-            m_Destination = val;
+            m_Interpolated = m_Destination = val;
         }
         void operator=(T val) { m_Destination = val; }
-        void tick(float pct) { m_Interpolated = (m_Destination - m_Interpolated) * pct + m_Interpolated; } 
+        void Tick(float pct)
+        {
+            if (m_Interpolated == 0)
+                m_Interpolated = m_Destination;
+            m_Interpolated = (m_Destination - m_Interpolated) * pct + m_Interpolated;
+        }
         operator T() const { return m_Interpolated; }
     };
 }

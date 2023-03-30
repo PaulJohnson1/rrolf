@@ -13,7 +13,7 @@ namespace app::system
 
     void CollisionDetector::Tick()
     {
-        // insert physical entitis
+        m_SpatialHash.Clear();
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
             if (!m_Simulation.HasComponent<component::Physical>(entity))
@@ -72,11 +72,6 @@ namespace app::system
                             physical.m_Collisions.push_back(id);
                 }
             }
-            });
-    }
-
-    void CollisionDetector::PostTick()
-    {
-        m_SpatialHash.Clear();
+        });
     }
 }

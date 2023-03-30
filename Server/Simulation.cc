@@ -106,6 +106,7 @@ namespace app
         output += std::to_string((double)(duration_cast<microseconds>(difference).count()) / 1000.0); \
         output += "ms\n";                                                                             \
     }
+
         // order is critical
         TICK_SYSTEM(Velocity);
         TICK_SYSTEM(CollisionDetector);
@@ -121,13 +122,6 @@ namespace app
         // m_MapBoundaries.Tick();
         // m_MobAi.Tick();
 #undef TICK_SYSTEM
-
-        m_Velocity.PostTick();
-        m_CollisionDetector.PostTick();
-        m_CollisionResolver.PostTick();
-        m_MapBoundaries.PostTick();
-        m_MobAi.PostTick();
-        m_Damage.PostTick();
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
@@ -135,22 +129,20 @@ namespace app
         std::vector<Entity> entitiesInView{};
         entitiesInView.push_back(m_Arena);
         entitiesInView.push_back(playerInfo.m_Parent);
-        ForEachEntity([&](Entity const &entity)
-                        {
-            float viewWidth = 1980 / playerInfo.Fov();
-            float viewHeight = 1080 / playerInfo.Fov();
-            float viewX = playerInfo.CameraX() - viewWidth / 2;
-            float viewY = playerInfo.CameraY() - viewHeight / 2;
-            // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
-            std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
-            for (Entity i = 0; i < nearBy.size(); i++)
-            {
-                Entity other = nearBy[i];
-                component::Physical &physical = Get<component::Physical>(other);
-                // TODO: box collision
-                entitiesInView.push_back(other);
-            }
-        });
+
+        int32_t viewWidth = (int32_t)(1980 / playerInfo.Fov());
+        int32_t viewHeight = (int32_t)(1080 / playerInfo.Fov());
+        int32_t viewX = (int32_t)(playerInfo.CameraX() - viewWidth / 2);
+        int32_t viewY = (int32_t)(playerInfo.CameraY() - viewHeight / 2);
+        // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
+        std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
+        for (Entity i = 0; i < nearBy.size(); i++)
+        {
+            Entity other = nearBy[i];
+            component::Physical &physical = Get<component::Physical>(other);
+            // TODO: box collision
+            entitiesInView.push_back(other);
+        }
         return entitiesInView;
     }
 
@@ -242,8 +234,8 @@ namespace app
         using T = component::COMPONENT;         \
         if (HasComponent<T>(id))                \
         {                                       \
-            m_##COMPONENT##Tracker[id] = false; \
             T &comp = Get<T>(id);               \
+            m_##COMPONENT##Tracker[id] = false; \
             comp.~T();                          \
         }                                       \
     }
