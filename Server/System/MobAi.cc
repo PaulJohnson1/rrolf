@@ -31,7 +31,7 @@ namespace app::system
             {
                 ai.m_AiState = component::Ai::AiState::IdleMoving;
                 ai.m_TicksUntilNextAction = rand() % 100 + 50;
-                physical.Angle(((float)rand() / (float)RAND_MAX) * M_PI * 2);
+                physical.Angle(((float)rand() / (float)RAND_MAX) * 3.141592653589 * 2);
             }
         }
 

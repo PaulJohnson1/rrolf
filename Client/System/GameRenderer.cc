@@ -5,6 +5,7 @@
 
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
+#include <Client/Socket.hh>
 
 #include <Client/Ui/Text.hh>
 #include <Client/Ui/Button.hh>
@@ -41,8 +42,8 @@ namespace app::system
             std::cout << "button is pressed up\nrespawning\n";
             static uint8_t outgoingInputPacket[20];
             bc::BinaryCoder coder{outgoingInputPacket};
-            coder.Write<bc::Uint8>(0);
-            m_GameRenderer->m_Simulation->m_Socket->SendPacket(coder.Data(), coder.At());;
+            coder.Write<bc::Uint8>(1);
+            m_GameRenderer.m_Simulation.m_Socket->SendPacket(coder.Data(), coder.At());;
         };
     }
 

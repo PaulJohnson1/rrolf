@@ -99,9 +99,9 @@ namespace app
                 "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
             window.addEventListener(
                 "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-            window.addEventListener("mousedown", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 1)});
-            window.addEventListener("mousemove", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 2)});
-            window.addEventListener("mouseup", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 0)});
+            window.addEventListener("mousedown", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 1)});
+            window.addEventListener("mousemove", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 2)});
+            window.addEventListener("mouseup", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 0)});
             Module.paths = [... Array(100)].fill(null);
             Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; });
             Module.addPath = function()

@@ -47,7 +47,7 @@ int main()
             coder.Write<bc::Uint8>(movementFlags);
             socket->SendPacket(coder.Data(), coder.At());
         });
-    simulation.m_Socket = socket;
+    simulation->m_Socket = socket;
 #ifdef EMSCRIPTEN
     std::cout << "wasm init " << __TIME__ << '\n';
     renderer->Initialize();

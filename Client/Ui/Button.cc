@@ -21,7 +21,7 @@ namespace app::ui
 
     bool Button::MouseTouching()
     {
-        return std::abs(m_Renderer.m_MouseX - m_X) < m_Width / 2 && std::abs(m_Renderer.m_MouseY - m_Y) > m_Height / 2;
+        return std::abs(m_Renderer.m_MouseX - m_X) < m_Width / 2 && std::abs(m_Renderer.m_MouseY - m_Y) < m_Height / 2;
     }
     void Button::Render() const
     {

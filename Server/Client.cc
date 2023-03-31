@@ -120,6 +120,24 @@ namespace app
             m_PlayerAcceleration.Set(x, y);
             m_PlayerAcceleration.Normalize();
         }
+        else if (type == 1)
+        {
+            m_PlayerInfo = m_Simulation.Create();
+            component::PlayerInfo &playerInfo = m_Simulation.AddComponent<component::PlayerInfo>(m_PlayerInfo);
+            playerInfo.Player(m_Simulation.Create());
+            playerInfo.HasPlayer(true);
+            component::Flower &flower = m_Simulation.AddComponent<component::Flower>(playerInfo.Player());
+            component::Basic &basic = m_Simulation.AddComponent<component::Basic>(playerInfo.Player());
+            component::Life &life = m_Simulation.AddComponent<component::Life>(playerInfo.Player());
+            component::Physical &physical = m_Simulation.AddComponent<component::Physical>(playerInfo.Player());
+            physical.Radius(25.0f);
+            physical.m_Restitution = 0.1;
+            basic.m_Owner = m_PlayerInfo;
+            life.m_Damage = 10;
+            life.MaxHealth(1000);
+            life.Health(50); // a test
+            basic.Team(0);
+        }
     }
 
     websocketpp::connection_hdl Client::GetHdl() { return m_Hdl; }
