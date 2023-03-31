@@ -42,7 +42,7 @@ namespace app::system
             } });
 
             for (uint64_t i = 0; i < deletedEntities.size(); i++)
-                m_Simulation.Remove(deletedEntities[i]);
+                m_Simulation.m_PendingDeletions.push_back(deletedEntities[i]);
     }
 
     void Damage::PostTick()

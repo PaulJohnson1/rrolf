@@ -12,12 +12,17 @@
 class SkCanvas;
 #endif
 
+#include <Client/Ui/Element.hh>
+
 namespace app
 {
     class Renderer;
 }
 
 extern app::Renderer *g_Renderer;
+// extern float g_MouseX = 0.0f;
+// extern float g_MouseY = 0.0f;
+// extern uint8_t g_MouseState = 0;
 
 namespace ui
 {
@@ -54,8 +59,10 @@ namespace app
 
         int32_t m_Width;
         int32_t m_Height;
+        float m_MouseX = 0.0f;
+        float m_MouseY = 0.0f;
+        uint8_t m_MouseState = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
-
         enum class LineCap
         {
             Butt,
@@ -68,7 +75,18 @@ namespace app
             Miter,
             // Round
         };
-
+        enum class TextAlign
+        {
+            Left,
+            Center,
+            Right  
+        };
+        enum class TextBaseLine
+        {
+            Top,
+            Middle,
+            Bottom  
+        };
         Renderer(T onRender)
             : m_OnRender(onRender)
         {
@@ -97,6 +115,8 @@ namespace app
         void SetLineWidth(float);
         void SetLineCap(LineCap);
         void SetTextSize(float);
+        void SetTextAlign(TextAlign);
+        void SetTextBaseLine(TextBaseLine);
 
         // path
         void BeginPath();
@@ -117,6 +137,8 @@ namespace app
 
         void Render()
         {
+            for (uint64_t i = 0; i < m_UiElements.size(); i++)
+                m_UiElements[i]->Render();
             m_OnRender();
         }
     };
@@ -161,6 +183,7 @@ extern "C"
 {
     void __Renderer_KeyEvent(uint8_t op, int32_t key);
     void __Renderer_Render(int32_t width, int32_t height);
+    void __Renderer_MouseEvent(float x, float y, uint8_t state);
 }
 #else
 void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)

@@ -4,12 +4,13 @@
 #include <vector>
 #include <queue>
 #include <functional>
+#include <mutex>
 
 #define FOR_EACH_COMPONENT              \
+    RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Ai, 0)        \
     RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
     RROLF_COMPONENT_ENTRY(Basic, 2)     \
-    RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Life, 4)      \
     RROLF_COMPONENT_ENTRY(Physical, 5)  \
     RROLF_COMPONENT_ENTRY(Mob, 6)       \
@@ -41,19 +42,14 @@ namespace app
 
     class Simulation
     {
-        float m_CollisionDetectorTime;
-        float m_CollisionResolverTime;
-        float m_DamageTime;
-        float m_MapBoundariesTime;
-        float m_VelocityTime;
-        float m_MobAiTime;
-
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
         system::Damage m_Damage;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
+
+        std::mutex m_Mutex;
 
         std::queue<Entity> m_AvailableIds{};
         bool m_EntityTracker[MAX_ENTITY_COUNT];
@@ -76,14 +72,18 @@ namespace app
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
 
+        // IMPORTANT: PUSH TO m_PendingDeletions INSTEAD OF DIRECTLY CALLING THIS FUNCTION
+        void Remove(Entity);
+
     public:
         Entity m_Arena;
         Server &m_Server;
         uint64_t m_TickCount = 0;
+        std::vector<Entity> m_PendingDeletions;
 
         Simulation(Server &);
 
-        void Remove(Entity);
+        void BroadcastUpdates();
         void WriteUpdate(class bc::BinaryCoder &, component::PlayerInfo &);
         void Tick();
 

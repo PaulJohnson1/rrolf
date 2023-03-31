@@ -16,24 +16,31 @@ namespace app
     template <>                                                                        \
     component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(m_##COMPONENT##Tracker[id]);                                            \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     bool Simulation::HasComponent<component::COMPONENT>(Entity id) const               \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
         return m_##COMPONENT##Tracker[id];                                             \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT &Simulation::AddComponent<component::COMPONENT>(Entity id)    \
     {                                                                                  \
+        assert(m_EntityTracker[id]);                                                   \
+        assert(!m_##COMPONENT##Tracker[id]);                                           \
         m_##COMPONENT##Tracker[id] = true;                                             \
         new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id, this);         \
         return Get<component::COMPONENT>(id);                                          \
@@ -87,48 +94,24 @@ namespace app
 
     void Simulation::Tick()
     {
-        m_TickCount++;
-
-        Entity entityCount = 0; // for debugging
-        ForEachEntity([&](Entity id)
-                      { ResetEntity(id); entityCount++; });
-
-        if (m_TickCount != 1)
         {
-            // puts("\033[9A");
+            std::unique_lock<std::mutex> l(m_Mutex);
+            m_Velocity.Tick();
+            m_CollisionDetector.Tick();
+            m_CollisionResolver.Tick();
+            m_MapBoundaries.Tick();
+            m_MobAi.Tick();
+            m_Damage.Tick();
         }
+        for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
+            m_Server.m_Clients[i]->Tick();
+        ForEachEntity([&](Entity id)
+                      { ResetEntity(id); });
+        for (Entity i = 0; i < m_PendingDeletions.size(); i++)
+            Remove(m_PendingDeletions[i]);
 
-        std::string output = std::to_string(entityCount) + " current entities\n";
-        auto lerp = [](float start, float end, float time) -> float { return start * (1 - time) + end * time; };
-#define TICK_SYSTEM(SYSTEM)                                                                                                    \
-    {                                                                                                                          \
-        using namespace std::chrono;                                                                                           \
-        time_point start = system_clock::now();                                                                                \
-        m_##SYSTEM.Tick();                                                                                                     \
-        time_point end = system_clock::now();                                                                                  \
-        duration<double> difference = end - start;                                                                             \
-        output += #SYSTEM;                                                                                                     \
-        output += "::Tick(): ";                                                                                                \
-        m_##SYSTEM##Time = lerp(m_##SYSTEM##Time, (duration_cast<microseconds>(difference).count()) / 1000.0, 0.01); \
-        output += std::to_string(m_##SYSTEM##Time);                                                                            \
-        output += "ms\n";                                                                                                      \
-    }
+        m_PendingDeletions.clear();
 
-        // order is critical
-        TICK_SYSTEM(Velocity);
-        TICK_SYSTEM(CollisionDetector);
-        TICK_SYSTEM(CollisionResolver);
-        TICK_SYSTEM(MapBoundaries);
-        TICK_SYSTEM(MobAi);
-        TICK_SYSTEM(Damage); // potentially deletes entities so it must come last to avoid reading deleted entities
-        // puts(output.c_str());
-
-        // m_Velocity.Tick();
-        // m_CollisionDetector.Tick();
-        // m_CollisionResolver.Tick();
-        // m_MapBoundaries.Tick();
-        // m_MobAi.Tick();
-#undef TICK_SYSTEM
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
@@ -248,7 +231,7 @@ namespace app
     }
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
-        m_AvailableIds.push(id);
         m_EntityTracker[id] = false;
+        m_AvailableIds.push(id);
     }
 }

@@ -28,7 +28,7 @@ namespace app
         basic.m_Owner = m_PlayerInfo;
         life.m_Damage = 10;
         life.MaxHealth(1000);
-        life.Health(900); // a test
+        life.Health(50); // a test
         basic.Team(0);
     }
 
@@ -39,8 +39,8 @@ namespace app
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
 
         if (playerInfo.HasPlayer())
-            m_Simulation.Remove(playerInfo.Player());
-        m_Simulation.Remove(m_PlayerInfo);
+            m_Simulation.m_PendingDeletions.push_back(playerInfo.Player());
+        m_Simulation.m_PendingDeletions.push_back(m_PlayerInfo);
     }
 
     void Client::BroadcastUpdate()
@@ -72,11 +72,10 @@ namespace app
         BroadcastUpdate();
     }
 
-    void Client::SendPacket(bc::BinaryCoder const &data) const
+    void Client::SendPacket(bc::BinaryCoder data) const
     {
-        std::string packet{data.Data(), data.Data() + data.At()};
-
-        m_Simulation.m_Server.m_Server.send(m_Hdl, packet, websocketpp::frame::opcode::binary);
+        std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
+        m_Simulation.m_Server.m_Server.send(m_Hdl, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
     }
 
     void Client::ReadPacket(uint8_t *data, size_t size)

@@ -52,9 +52,10 @@ namespace app
 
 #undef RROLF_COMPONENT_ENTRY
 
-    Simulation::Simulation()
+    Simulation::Simulation(Renderer *renderer)
         : m_InterpolationSystem(*this),
-          m_RendererSystem(*this)
+          m_RendererSystem({*this, renderer}),
+          m_Renderer(renderer)
     {
         std::fill(m_EntityTracker, m_EntityTracker + MAX_ENTITY_COUNT, false);
     }
@@ -109,7 +110,7 @@ namespace app
         m_EntityTracker[id] = false;
     }
 
-    void Simulation::TickRenderer(Renderer *ctx)
+    void Simulation::TickRenderer()
     {
         float time = GetTime();
         m_TickTime = time - m_LastTick;
@@ -117,7 +118,7 @@ namespace app
         if (m_PlayerInfo != (Entity)-1)
         {
             m_InterpolationSystem.Tick();
-            m_RendererSystem.Tick(ctx);
+            m_RendererSystem.Tick();
 
             m_InterpolationSystem.PostTick();
             m_RendererSystem.PostTick();

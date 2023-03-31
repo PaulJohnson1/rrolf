@@ -4,10 +4,10 @@
 #include <optional>
 
 #define FOR_EACH_COMPONENT              \
+    RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Ai, 0)        \
     RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
     RROLF_COMPONENT_ENTRY(Basic, 2)     \
-    RROLF_COMPONENT_ENTRY(Flower, 3)    \
     RROLF_COMPONENT_ENTRY(Life, 4)      \
     RROLF_COMPONENT_ENTRY(Physical, 5)  \
     RROLF_COMPONENT_ENTRY(Mob, 6)       \
@@ -56,16 +56,18 @@ namespace app
     public:
         float m_LastTick = 0;
         float m_TickTime = 0;
+        class Renderer *m_Renderer;
+        class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
 
-        Simulation();
+        Simulation(class Renderer *);
 
         float GetTime();
         void ReadBinary(uint8_t *);
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);
         void Remove(Entity);
-        void TickRenderer(class Renderer *);
+        void TickRenderer();
         template <typename T>
         void ForEachEntity(T callback)
         {

@@ -1,4 +1,5 @@
 #include <vector>
+#include <mutex>
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -15,11 +16,13 @@ namespace app
 {
     class Server
     {
+        friend Client;
         uint32_t m_TickCount = 0;
-        std::vector<Client *> m_Clients;
+        std::mutex m_Mutex;
 
     public:
         Simulation m_Simulation;
+        std::vector<Client *> m_Clients;
         WebSocketServer m_Server;
 
         Server();

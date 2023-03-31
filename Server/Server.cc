@@ -33,9 +33,6 @@ namespace app
     void Server::Tick()
     {
         m_Simulation.Tick();
-
-        for (uint64_t i = 0; i < m_Clients.size(); i++)
-            m_Clients[i]->Tick();
     }
 
     void Server::Run()

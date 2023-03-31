@@ -30,6 +30,12 @@ void __Renderer_KeyEvent(uint8_t op, int32_t key)
     else if (op == 0)
         g_Renderer->m_KeysPressed[key] = 0;
 }
+void __Renderer_MouseEvent(float x, float y, uint8_t state)
+{
+    g_Renderer->m_MouseX = x;
+    g_Renderer->m_MouseY = y;
+    g_Renderer->m_MouseState = state;
+}
 void __Renderer_Render(int32_t width, int32_t height)
 {
     if (!g_Renderer)
@@ -90,9 +96,12 @@ namespace app
             document.body.appendChild(Module.canvas);
             Module.ctx = Module.canvas.getContext('2d');
             window.addEventListener(
-                "keydown", function({which}) { Module._KeyEvent(1, which); });
+                "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
             window.addEventListener(
-                "keyup", function({which}) { Module._KeyEvent(0, which); });
+                "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
+            window.addEventListener("mousedown", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 1)});
+            window.addEventListener("mousemove", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 2)});
+            window.addEventListener("mouseup", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 0)});
             Module.paths = [... Array(100)].fill(null);
             Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; });
             Module.addPath = function()
@@ -307,12 +316,47 @@ namespace app
         // TODO later
 #endif
     }
+
     void Renderer::SetTextSize(float size)
     {
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctx.font = $0 + "px Ubuntu"; }, size);
 #else
         assert(false);
+#endif
+    }
+
+    void Renderer::SetTextAlign(TextAlign l)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            if ($0 == 0)
+                Module.ctx.textAlign = 'left';
+            else if ($0 == 1)
+                Module.ctx.textAlign = 'center';
+            else
+                Module.ctx.textAlign = 'right';
+        },
+               l);
+#else
+        // TODO later
+#endif
+    }
+
+    void Renderer::SetTextBaseLine(TextBaseLine l)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            if ($0 == 0)
+                Module.ctx.textBaseLine = 'top';
+            else if ($0 == 1)
+                Module.ctx.textBaseLine = 'middle';
+            else
+                Module.ctx.textBaseLine = 'bottom';
+        },
+               l);
+#else
+        // TODO later
 #endif
     }
 
@@ -388,19 +432,19 @@ namespace app
 #endif
     }
 
-    void Renderer::FillText(std::string const &str, float x, float y)
+    void Renderer::FillText(std::string const &string, float x, float y)
     {
 #ifdef EMSCRIPTEN
-        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.fillText($0, $1, $2); }, &str, x, y);
+        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.fillText($0, $1, $2); }, string.c_str(), x, y);
 #else
         assert(false);
 #endif
     }
 
-    void Renderer::StrokeText(std::string const &str, float x, float y)
+    void Renderer::StrokeText(std::string const &string, float x, float y)
     {
 #ifdef EMSCRIPTEN
-        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.strokeText($0, $1, $2); }, &str, x, y);
+        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.strokeText($0, $1, $2); }, string.c_str(), x, y);
 #else
         assert(false);
 #endif

@@ -1189,34 +1189,36 @@ function dbg(text) {
 // === Body ===
 
 var ASM_CONSTS = {
-  84140: () => { Module.canvas = document.createElement("canvas"); Module.canvas.id = "canvas"; document.body.appendChild(Module.canvas); Module.ctx = Module.canvas.getContext('2d'); window.addEventListener( "keydown", function({which}) { Module._KeyEvent(1, which); }); window.addEventListener( "keyup", function({which}) { Module._KeyEvent(0, which); }); Module.paths = [... Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; }); Module.addPath = function() { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = function(index) { Module.paths[index] = null; Module.availablePaths.push(index); }; Module.ReadCstr = function(ptr) { let str = ""; let char; while ((char = Module.HEAPU8[ptr++])) str += String.fromCharCode(char); return str; }; function loop() { requestAnimationFrame(loop); Module.canvas.width = innerWidth; Module.canvas.height = innerHeight; Module.___Renderer_Render(Module.canvas.width, Module.canvas.height); }; requestAnimationFrame(loop); },  
- 85321: ($0, $1, $2, $3, $4, $5) => { Module.ctx.setTransform($0, $1, $2, $3, $4, $5); },  
- 85374: () => { Module.ctx.save(); },  
- 85397: () => { Module.ctx.restore(); },  
- 85423: ($0) => { Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` },  
- 85533: ($0) => { Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` },  
- 85645: ($0) => { Module.ctx.lineWidth = $0; },  
- 85676: ($0) => { if ($0 == 0) Module.ctx.lineCap = 'butt'; else if ($0 == 1) Module.ctx.lineCap = 'round'; else Module.ctx.lineCap = 'square'; },  
- 85806: ($0) => { Module.ctx.font = $0 + "px Ubuntu"; },  
- 85846: () => { Module.ctx.beginPath(); },  
- 85874: ($0, $1) => { Module.ctx.moveTo($0, $1); },  
- 85905: ($0, $1) => { Module.ctx.lineTo($0, $1); },  
- 85936: ($0, $1, $2, $3) => { Module.ctx.quadraticCurveTo($0, $1, $2, $3); },  
- 85985: ($0, $1, $2) => { Module.ctx.arc($0, $1, $2, 0, 6.283185307179586); },  
- 86039: ($0, $1, $2, $3) => { Module.ctx.fillRect($0, $1, $2, $3); },  
- 86080: ($0, $1, $2, $3) => { Module.ctx.strokeRect($0, $1, $2, $3); },  
- 86123: ($0, $1, $2, $3) => { Module.ctx.rect($0, $1, $2, $3); },  
- 86160: ($0, $1, $2) => { $0 = Module.ReadCstr($0); Module.ctx.fillText($0, $1, $2); },  
- 86223: ($0, $1, $2) => { $0 = Module.ReadCstr($0); Module.ctx.strokeText($0, $1, $2); },  
- 86288: () => { Module.ctx.clip(); },  
- 86311: () => { Module.ctx.fill(); },  
- 86334: () => { Module.ctx.stroke(); },  
- 86359: () => { return Module.addPath(); },  
- 86388: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
- 86425: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
- 86462: () => { return performance.now(); },  
- 86492: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
- 86610: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
+  85428: () => { Module.canvas = document.createElement("canvas"); Module.canvas.id = "canvas"; document.body.appendChild(Module.canvas); Module.ctx = Module.canvas.getContext('2d'); window.addEventListener( "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); }); window.addEventListener( "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); }); window.addEventListener("mousedown", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 1)}); window.addEventListener("mousemove", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 2)}); window.addEventListener("mouseup", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX * devicePixelRatio, clientY * devicePixelRatio, 0)}); Module.paths = [... Array(100)].fill(null); Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; }); Module.addPath = function() { if (Module.availablePaths.length) { const index = Module.availablePaths.pop(); Module.paths[index] = new CanvasKit.Path(); return index; } throw new Error('Out of Paths: Can be fixed by allowing more paths'); }; Module.removePath = function(index) { Module.paths[index] = null; Module.availablePaths.push(index); }; Module.ReadCstr = function(ptr) { let str = ""; let char; while ((char = Module.HEAPU8[ptr++])) str += String.fromCharCode(char); return str; }; function loop() { requestAnimationFrame(loop); Module.canvas.width = innerWidth; Module.canvas.height = innerHeight; Module.___Renderer_Render(Module.canvas.width, Module.canvas.height); }; requestAnimationFrame(loop); },  
+ 87172: ($0, $1, $2, $3, $4, $5) => { Module.ctx.setTransform($0, $1, $2, $3, $4, $5); },  
+ 87225: () => { Module.ctx.save(); },  
+ 87248: () => { Module.ctx.restore(); },  
+ 87274: ($0) => { Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` },  
+ 87384: ($0) => { Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` },  
+ 87496: ($0) => { Module.ctx.lineWidth = $0; },  
+ 87527: ($0) => { if ($0 == 0) Module.ctx.lineCap = 'butt'; else if ($0 == 1) Module.ctx.lineCap = 'round'; else Module.ctx.lineCap = 'square'; },  
+ 87657: ($0) => { Module.ctx.font = $0 + "px Ubuntu"; },  
+ 87697: ($0) => { if ($0 == 0) Module.ctx.textAlign = 'left'; else if ($0 == 1) Module.ctx.textAlign = 'center'; else Module.ctx.textAlign = 'right'; },  
+ 87833: ($0) => { if ($0 == 0) Module.ctx.textBaseLine = 'top'; else if ($0 == 1) Module.ctx.textBaseLine = 'middle'; else Module.ctx.textBaseLine = 'bottom'; },  
+ 87978: () => { Module.ctx.beginPath(); },  
+ 88006: ($0, $1) => { Module.ctx.moveTo($0, $1); },  
+ 88037: ($0, $1) => { Module.ctx.lineTo($0, $1); },  
+ 88068: ($0, $1, $2, $3) => { Module.ctx.quadraticCurveTo($0, $1, $2, $3); },  
+ 88117: ($0, $1, $2) => { Module.ctx.arc($0, $1, $2, 0, 6.283185307179586); },  
+ 88171: ($0, $1, $2, $3) => { Module.ctx.fillRect($0, $1, $2, $3); },  
+ 88212: ($0, $1, $2, $3) => { Module.ctx.strokeRect($0, $1, $2, $3); },  
+ 88255: ($0, $1, $2, $3) => { Module.ctx.rect($0, $1, $2, $3); },  
+ 88292: ($0, $1, $2) => { $0 = Module.ReadCstr($0); Module.ctx.fillText($0, $1, $2); },  
+ 88355: ($0, $1, $2) => { $0 = Module.ReadCstr($0); Module.ctx.strokeText($0, $1, $2); },  
+ 88420: () => { Module.ctx.clip(); },  
+ 88443: () => { Module.ctx.fill(); },  
+ 88466: () => { Module.ctx.stroke(); },  
+ 88491: () => { return Module.addPath(); },  
+ 88520: ($0, $1, $2) => { Module.paths[$0].moveTo($1, $2); },  
+ 88557: ($0, $1, $2) => { Module.paths[$0].lineTo($1, $2); },  
+ 88594: () => { return performance.now(); },  
+ 88624: ($0, $1) => { const data = new Uint8Array($1); for (let i = 0; i < $1; i++) data[i] = HEAPU8[$0 + i]; window.socket.send(data); },  
+ 88742: ($0, $1, $2, $3) => { let string = ""; for (let i = $2; i < $2 + $3; i++) string += String.fromCharCode(Module.HEAPU8[i]); console.log("connecting to socket", string); let socket = window.socket = new WebSocket(string); socket.binaryType = "arraybuffer"; socket.onopen = function() { Module._OnOpen($0); }; socket.onmessage = function(event) { Module.HEAPU8.set(new Uint8Array(event.data), $1); Module._OnMessage($0); }; }
 };
 
 
@@ -4480,6 +4482,8 @@ var ___wasm_call_ctors = createExportWrapper("__wasm_call_ctors");
 var _main = Module["_main"] = createExportWrapper("main");
 /** @type {function(...*):?} */
 var ___Renderer_KeyEvent = Module["___Renderer_KeyEvent"] = createExportWrapper("__Renderer_KeyEvent");
+/** @type {function(...*):?} */
+var ___Renderer_MouseEvent = Module["___Renderer_MouseEvent"] = createExportWrapper("__Renderer_MouseEvent");
 /** @type {function(...*):?} */
 var ___Renderer_Render = Module["___Renderer_Render"] = createExportWrapper("__Renderer_Render");
 /** @type {function(...*):?} */

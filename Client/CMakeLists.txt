@@ -20,6 +20,7 @@ set(SOURCES
     Renderer.cc
     Simulation.cc
     Socket.cc
+    Ui/Button.cc
     Ui/Element.cc
     Ui/Text.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
@@ -28,7 +29,7 @@ set(SOURCES
 
 
 if(WASM_BUILD)
-    set(CMAKE_CXX_FLAGS "-std=c++20 -g -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent")
+    set(CMAKE_CXX_FLAGS "-std=c++20 -g3 -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent,___Renderer_MouseEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")

@@ -30,7 +30,7 @@ namespace app
 
         void BroadcastUpdate();
         void Tick();
-        void SendPacket(bc::BinaryCoder const &coder) const;
+        void SendPacket(bc::BinaryCoder coder) const;
         void ReadPacket(uint8_t *data, size_t);
     };
 }

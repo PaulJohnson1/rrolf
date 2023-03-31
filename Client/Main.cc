@@ -21,11 +21,12 @@ int main()
     using namespace app;
 
     // heap allocate so the dtor doesn't automatically get called
-    static Simulation *simulation = new Simulation();
+    static Simulation *simulation;
     static Renderer *renderer = new Renderer([](void) -> void
     {
-        simulation->TickRenderer(renderer);
+        simulation->TickRenderer();
     });
+    simulation = new Simulation(renderer);
     static Socket *socket = new Socket(
         "ws://localhost:8000", [&]()
         { std::cout << "open\n"; },
@@ -46,8 +47,9 @@ int main()
             coder.Write<bc::Uint8>(movementFlags);
             socket->SendPacket(coder.Data(), coder.At());
         });
+    simulation.m_Socket = socket;
 #ifdef EMSCRIPTEN
-    std::cout << "wasm init\n";
+    std::cout << "wasm init " << __TIME__ << '\n';
     renderer->Initialize();
 #else
     std::thread([&]()
