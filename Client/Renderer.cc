@@ -5,30 +5,9 @@
 #include <thread>
 #include <cassert>
 #include <cmath>
+#include <string>
 
-static app::Renderer *g_Renderer = nullptr;
-
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-
-extern "C"
-{
-    void KeyEvent(uint8_t op, int32_t key)
-    {
-        if (op == 1)
-            g_Renderer->m_KeysPressed[key] = 1;
-        else if (op == 0)
-            g_Renderer->m_KeysPressed[key] = 0;
-    }
-    void Render(int32_t width, int32_t height)
-    {
-        if (!g_Renderer)
-            return;
-        g_Renderer->SetSize(width, height);
-        g_Renderer->Render();
-    }
-}
-#else
+#ifndef EMSCRIPTEN
 #define SK_GL
 #define SK_GANESH
 #include <GLFW/glfw3.h>
@@ -43,32 +22,27 @@ extern "C"
 void SkDebugf(const char format[], ...)
 {
 }
-
-void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+#else
+void __Renderer_KeyEvent(uint8_t op, int32_t key)
 {
-    if (action == GLFW_PRESS)
+    if (op == 1)
         g_Renderer->m_KeysPressed[key] = 1;
-    else if (action == GLFW_RELEASE)
+    else if (op == 0)
         g_Renderer->m_KeysPressed[key] = 0;
 }
-
+void __Renderer_Render(int32_t width, int32_t height)
+{
+    if (!g_Renderer)
+        return;
+    g_Renderer->SetSize(width, height);
+    g_Renderer->Render();
+}
 #endif
 
-#include <Client/Simulation.hh>
+app::Renderer *g_Renderer = nullptr;
 
 namespace app
 {
-    Renderer::Renderer(Simulation &simulation)
-        : m_Simulation(simulation)
-    {
-        assert(!g_Renderer);
-        g_Renderer = this;
-#ifndef EMSCRIPTEN
-        m_StrokePaint.setAntiAlias(true);
-        m_FillPaint.setAntiAlias(true);
-#endif
-    }
-
     void Renderer::Initialize()
     {
 #ifndef EMSCRIPTEN
@@ -115,28 +89,41 @@ namespace app
             Module.canvas.id = "canvas";
             document.body.appendChild(Module.canvas);
             Module.ctx = Module.canvas.getContext('2d');
-            window.addEventListener("keydown", function ({ which }) { Module._KeyEvent(1, which);});
-            window.addEventListener("keyup", function ({ which }) { Module._KeyEvent(0, which);});
-            Module.paths = [...Array(100)].fill(null);
-            Module.availablePaths = new Array(100).fill(0).map((_,i) => i);
-            Module.addPath = _ => {
-                if (Module.availablePaths.length) {
+            window.addEventListener(
+                "keydown", function({which}) { Module._KeyEvent(1, which); });
+            window.addEventListener(
+                "keyup", function({which}) { Module._KeyEvent(0, which); });
+            Module.paths = [... Array(100)].fill(null);
+            Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; });
+            Module.addPath = function()
+            {
+                if (Module.availablePaths.length)
+                {
                     const index = Module.availablePaths.pop();
                     Module.paths[index] = new CanvasKit.Path();
                     return index;
                 }
                 throw new Error('Out of Paths: Can be fixed by allowing more paths');
             };
-            Module.removePath = index => {
+            Module.removePath = function(index)
+            {
                 Module.paths[index] = null;
                 Module.availablePaths.push(index);
+            };
+            Module.ReadCstr = function(ptr)
+            {
+                let str = "";
+                let char;
+                while ((char = Module.HEAPU8[ptr++]))
+                    str += String.fromCharCode(char);
+                return str;
             };
             function loop()
             {
                 requestAnimationFrame(loop);
                 Module.canvas.width = innerWidth;
                 Module.canvas.height = innerHeight;
-                Module._Render(Module.canvas.width, Module.canvas.height);
+                Module.___Renderer_Render(Module.canvas.width, Module.canvas.height);
             };
             requestAnimationFrame(loop);
         });
@@ -183,11 +170,13 @@ namespace app
         UpdateTransform();
     }
 
-    void Renderer::UpdateTransform() {
+    void Renderer::UpdateTransform()
+    {
 #ifdef EMSCRIPTEN
         EM_ASM({
             Module.ctx.setTransform($0, $1, $2, $3, $4, $5);
-        }, m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5]);
+        },
+               m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5]);
 #else
         SkMatrix m;
         m.set9(m_Matrix);
@@ -245,9 +234,9 @@ namespace app
 #ifndef EMSCRIPTEN
         m_Canvas->save();
 #else
-    EM_ASM({
-        Module.ctx.save();
-    });
+        EM_ASM({
+            Module.ctx.save();
+        });
 #endif
     }
 
@@ -256,9 +245,9 @@ namespace app
 #ifndef EMSCRIPTEN
         m_Canvas->restore();
 #else
-    EM_ASM({
-        Module.ctx.restore();
-    });
+        EM_ASM({
+            Module.ctx.restore();
+        });
 #endif
     }
 
@@ -268,38 +257,35 @@ namespace app
         m_Width = width;
         m_Height = height;
 #else
-    assert(false);
+        assert(false);
 #endif
     }
 
     void Renderer::SetFill(uint32_t c)
     {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})`
-        }, c);
+        EM_ASM({Module.ctx.fillStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` }, c);
 #else
         m_FillPaint.setColor(c);
 #endif
     }
-    
+
     void Renderer::SetStroke(uint32_t c)
     {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255},${$0 >> 8 & 255},${$0 & 255},${($0 >> 24 & 255) / 255})`
-        }, c);
+        EM_ASM({Module.ctx.strokeStyle = `rgba(${$0 >> 16 & 255}, ${$0 >> 8 & 255}, ${$0 & 255}, ${($0 >> 24 & 255) / 255})` }, c);
 #else
         m_StrokePaint.setColor(c);
 #endif
     }
-    
+
     void Renderer::SetLineWidth(float w)
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
             Module.ctx.lineWidth = $0;
-        }, w);
+        },
+               w);
 #else
         m_StrokePaint.setStrokeWidth(w);
 #endif
@@ -309,15 +295,27 @@ namespace app
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
-            if ($0 === 0) Module.ctx.lineCap = 'butt';
-            else if ($0 === 1) Module.ctx.lineCap = 'round';
-            else Module.ctx.lineCap = 'square';
-        }, l);
+            if ($0 == 0)
+                Module.ctx.lineCap = 'butt';
+            else if ($0 == 1)
+                Module.ctx.lineCap = 'round';
+            else
+                Module.ctx.lineCap = 'square';
+        },
+               l);
 #else
         // TODO later
 #endif
     }
-    
+    void Renderer::SetTextSize(float size)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.font = $0 + "px Ubuntu"; }, size);
+#else
+        assert(false);
+#endif
+    }
+
     void Renderer::BeginPath()
     {
 #ifdef EMSCRIPTEN
@@ -334,8 +332,8 @@ namespace app
 #else
         m_CurrentPath.moveTo(x, y);
 #endif
-    }    
-    
+    }
+
     void Renderer::LineTo(float x, float y)
     {
 #ifdef EMSCRIPTEN
@@ -344,7 +342,7 @@ namespace app
         m_CurrentPath.lineTo(x, y);
 #endif
     }
-    
+
     void Renderer::QuadraticCurveTo(float x1, float y1, float x, float y)
     {
 #ifdef EMSCRIPTEN
@@ -353,7 +351,7 @@ namespace app
         m_CurrentPath.quadTo(x1, y1, x, y);
 #endif
     }
-    
+
     void Renderer::Arc(float x, float y, float r)
     {
 #ifdef EMSCRIPTEN
@@ -363,15 +361,60 @@ namespace app
 #endif
     }
 
+    void Renderer::FillRect(float x, float y, float w, float h)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.fillRect($0, $1, $2, $3); }, x, y, w, h);
+#else
+        assert(false);
+#endif
+    }
+
+    void Renderer::StrokeRect(float x, float y, float w, float h)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.strokeRect($0, $1, $2, $3); }, x, y, w, h);
+#else
+        assert(false);
+#endif
+    }
+
+    void Renderer::Rect(float x, float y, float w, float h)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctx.rect($0, $1, $2, $3); }, x, y, w, h);
+#else
+        assert(false);
+#endif
+    }
+
+    void Renderer::FillText(std::string const &str, float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.fillText($0, $1, $2); }, &str, x, y);
+#else
+        assert(false);
+#endif
+    }
+
+    void Renderer::StrokeText(std::string const &str, float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ $0 = Module.ReadCstr($0); Module.ctx.strokeText($0, $1, $2); }, &str, x, y);
+#else
+        assert(false);
+#endif
+    }
+
     void Renderer::Clip()
     {
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctx.clip(); });
-#else 
+#else
         m_Canvas->clipPath(m_CurrentPath, true);
 #endif
     }
-    
+
     void Renderer::Fill()
     {
 #ifdef EMSCRIPTEN
@@ -381,7 +424,7 @@ namespace app
         m_Canvas->drawPath(m_CurrentPath, m_FillPaint);
 #endif
     }
-    
+
     void Renderer::Stroke()
     {
 #ifdef EMSCRIPTEN
@@ -390,11 +433,6 @@ namespace app
         m_StrokePaint.setStyle(SkPaint::kStroke_Style);
         m_Canvas->drawPath(m_CurrentPath, m_StrokePaint);
 #endif
-    }
-  
-    void Renderer::Render()
-    {
-        m_Simulation.TickRenderer(this);
     }
 
     Path2D::Path2D()

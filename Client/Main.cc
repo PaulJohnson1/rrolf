@@ -7,6 +7,7 @@
 #include <Client/Simulation.hh>
 #include <Client/Socket.hh>
 #include <Client/Renderer.hh>
+#include <Client/Ui/Text.hh>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -21,7 +22,10 @@ int main()
 
     // heap allocate so the dtor doesn't automatically get called
     static Simulation *simulation = new Simulation();
-    static Renderer *renderer = new Renderer(*simulation);
+    static Renderer *renderer = new Renderer([](void) -> void
+    {
+        simulation->TickRenderer(renderer);
+    });
     static Socket *socket = new Socket(
         "ws://localhost:8000", [&]()
         { std::cout << "open\n"; },

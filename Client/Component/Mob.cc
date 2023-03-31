@@ -33,12 +33,12 @@ namespace app::component
     void Mob::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
+        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         float scale = MOB_SCALE_FACTOR[m_Rarity];
         ctx->Scale(scale, scale);
         ctx->Rotate(physical.m_Angle);
-        float seed = std::sin(ctx->m_Simulation.GetTime() / 100);
+        float seed = std::sin(m_Simulation->GetTime() / 100);
         ctx->SetFill(0xff454545);
         ctx->SetStroke(0xff292929);
         ctx->SetLineWidth(7);

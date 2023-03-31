@@ -8,12 +8,12 @@ namespace app
 
 namespace app::system
 {
-    class Renderer
+    class GameRenderer
     {
     public:
         Simulation &m_Simulation;
 
-        Renderer(Simulation &);
+        GameRenderer(Simulation &);
 
         void Tick(app::Renderer *);
         void PostTick();

@@ -48,7 +48,7 @@ namespace app::component
         /*
         // refactored
         ctx->ResetTransform();
-        float fov = ctx->m_Simulation.m_Camera.m_Fov;
+        float fov = m_Simulation->m_Camera.m_Fov;
         ctx->Scale(fov, fov);
         uint32_t lineCountX = ctx->m_Width * (1 / fov) / 50;
         uint32_t lineCountY = ctx->m_

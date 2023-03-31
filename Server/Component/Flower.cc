@@ -1,11 +1,14 @@
 #include <Server/Component/Flower.hh>
 
 #include <cstdint>
+#include <iostream>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
 #include <Server/Simulation.hh>
+#include <Server/Component/Basic.hh>
+#include <Server/Component/PlayerInfo.hh>
 
 namespace app::component
 {
@@ -17,6 +20,9 @@ namespace app::component
 
     Flower::~Flower()
     {
+        Basic &basic = m_Simulation->Get<Basic>(m_Parent);
+        if (basic.m_Owner)
+            m_Simulation->Get<PlayerInfo>(*basic.m_Owner).HasPlayer(false);
     }
 
     void Flower::Reset()
@@ -24,7 +30,7 @@ namespace app::component
         m_State = 0;
     }
 
-    void Flower::Write(bc::BinaryCoder &coder, Flower flower, bool isCreation)
+    void Flower::Write(bc::BinaryCoder &coder, Type const &flower, bool isCreation)
     {
         uint32_t state = isCreation ? 0b11 : flower.m_State;
         coder.Write<bc::VarUint>(state);

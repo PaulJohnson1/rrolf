@@ -28,7 +28,7 @@ namespace app::component
     {
         float health = (float)m_Health >= 0.0f ? (float)m_Health : 0.0f;
         Guard g(ctx);
-        component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
+        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw hp
         ctx->SetLineCap(Renderer::LineCap::Round);

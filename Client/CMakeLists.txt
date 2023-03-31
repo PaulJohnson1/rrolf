@@ -14,19 +14,21 @@ set(SOURCES
     Component/Mob.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    System/GameRenderer.cc
     System/Interpolation.cc
-    System/Renderer.cc
     Main.cc
     Renderer.cc
     Simulation.cc
     Socket.cc
+    Ui/Element.cc
+    Ui/Text.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc
 )
 
 
 if(WASM_BUILD)
-    set(CMAKE_CXX_FLAGS "-std=c++20 -g -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,_Render,_KeyEvent")
+    set(CMAKE_CXX_FLAGS "-std=c++20 -g -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
     set(CMAKE_CXX_FLAGS "-std=c++20 -g -lcrypto -lssl -lskia -lglfw")

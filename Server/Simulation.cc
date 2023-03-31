@@ -65,7 +65,7 @@ namespace app
         AddComponent<component::ArenaInfo>(m_Arena);
         Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
 
-        for (uint32_t i = 0; i < 1000; i++)
+        for (uint32_t i = 0; i < 100; i++)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -77,7 +77,7 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Rarity(0);
+            mob.Rarity(5);
             mob.Id(0); // baby ant
             life.m_Damage = 10;
             life.MaxHealth(100);
@@ -95,7 +95,7 @@ namespace app
 
         if (m_TickCount != 1)
         {
-            puts("\033[9A");
+            // puts("\033[9A");
         }
 
         std::string output = std::to_string(entityCount) + " current entities\n";
@@ -121,7 +121,7 @@ namespace app
         TICK_SYSTEM(MapBoundaries);
         TICK_SYSTEM(MobAi);
         TICK_SYSTEM(Damage); // potentially deletes entities so it must come last to avoid reading deleted entities
-        puts(output.c_str());
+        // puts(output.c_str());
 
         // m_Velocity.Tick();
         // m_CollisionDetector.Tick();

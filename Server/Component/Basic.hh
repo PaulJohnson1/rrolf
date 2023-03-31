@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 
 #include <Shared/Entity.hh>
 
@@ -26,6 +27,7 @@ namespace app::component
         using Type = Basic;
         
         Entity m_Parent;
+        std::optional<Entity> m_Owner;
         uint64_t m_State = 0;
 
         Basic(Entity, Simulation *);

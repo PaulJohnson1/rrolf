@@ -40,6 +40,10 @@ namespace app::component
         Entity m_Parent;
 
         Flower(Entity, Simulation *);
+        Flower(Flower const &) = delete;
+        Flower(Flower &&) = delete;
+        Flower &operator=(Flower const &) = delete;
+        Flower &operator=(Flower &&) = delete;
         ~Flower();
 
         uint8_t FaceFlags() const;
@@ -49,7 +53,6 @@ namespace app::component
 
         void Reset();
 
-        // clone becuase the struct is small
-        static void Write(bc::BinaryCoder &, Flower, bool);
+        static void Write(bc::BinaryCoder &, Type const &, bool);
     };
 }

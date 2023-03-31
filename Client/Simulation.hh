@@ -22,7 +22,7 @@
 #include <Client/Component/Physical.hh>
 #include <Client/Component/PlayerInfo.hh>
 #include <Client/System/Interpolation.hh>
-#include <Client/System/Renderer.hh>
+#include <Client/System/GameRenderer.hh>
 #include <Shared/Entity.hh>
 #include <Client/Util/Lerp.hh>
 
@@ -31,7 +31,7 @@ namespace app
     class Simulation
     {
         system::Interpolation m_InterpolationSystem;
-        system::Renderer m_RendererSystem;
+        system::GameRenderer m_RendererSystem;
 
         bool m_EntityTracker[MAX_ENTITY_COUNT];
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \

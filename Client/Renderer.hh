@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <map>
+#include <string>
+#include <cassert>
 
 #ifndef EMSCRIPTEN
 #include <skia/include/core/SkPath.h>
@@ -13,6 +15,111 @@ class SkCanvas;
 namespace app
 {
     class Renderer;
+}
+
+extern app::Renderer *g_Renderer;
+
+namespace ui
+{
+    class Element;
+}
+
+namespace app
+{
+    // template <typename T = >
+    class Renderer
+    {
+        using T = void (*)();
+#ifndef EMSCRIPTEN
+        SkCanvas *m_Canvas;
+        SkPath m_CurrentPath;
+        SkPaint m_FillPaint;
+        SkPaint m_StrokePaint;
+#endif
+        float m_Matrix[9] = {
+            1, 0, 0,  // s s x !!REMEMBER: CANVAS2D IS s s s s x y SO ORDER MATTERS ITS 0 1 3 4 2 5
+            0, 1, 0,  // s s y
+            0, 0, 1}; // 0 0 1
+
+        friend class Guard;
+
+        // state
+        void Save();
+        void Restore();
+
+    public:
+        std::vector<ui::Element *> m_UiElements;
+
+        T m_OnRender;
+
+        int32_t m_Width;
+        int32_t m_Height;
+        std::map<uint8_t, uint8_t> m_KeysPressed{};
+
+        enum class LineCap
+        {
+            Butt,
+            Round,
+            Square
+        };
+        enum class LineJoin
+        {
+            Bevel,
+            Miter,
+            // Round
+        };
+
+        Renderer(T onRender)
+            : m_OnRender(onRender)
+        {
+            assert(!g_Renderer);
+            g_Renderer = this;
+#ifndef EMSCRIPTEN
+            m_StrokePaint.setAntiAlias(true);
+            m_FillPaint.setAntiAlias(true);
+#endif
+        }
+
+        void Initialize();
+        void SetSize(int32_t width, int32_t height);
+
+        // matrix
+        void ResetTransform();
+        void UpdateTransform();
+        void SetTransform(float, float, float, float, float, float);
+        void Rotate(float);
+        void Translate(float, float);
+        void Scale(float, float);
+
+        // style
+        void SetFill(uint32_t);
+        void SetStroke(uint32_t);
+        void SetLineWidth(float);
+        void SetLineCap(LineCap);
+        void SetTextSize(float);
+
+        // path
+        void BeginPath();
+        void MoveTo(float, float);
+        void LineTo(float, float);
+        void QuadraticCurveTo(float, float, float, float);
+        void Arc(float, float, float);
+        void FillRect(float, float, float, float);
+        void StrokeRect(float, float, float, float);
+        void Rect(float, float, float, float);
+        void FillText(std::string const &, float, float);
+        void StrokeText(std::string const &, float, float);
+        void Clip();
+
+        // render
+        void Stroke();
+        void Fill();
+
+        void Render()
+        {
+            m_OnRender();
+        }
+    };
 
     class Guard
     {
@@ -45,77 +152,22 @@ namespace app
         void ArcTo(float, float, float);
         void QuadTo(float, float, float, float);
     };
-
-    class Renderer
-    {
-#ifndef EMSCRIPTEN
-        SkCanvas *m_Canvas;
-        SkPath m_CurrentPath;
-        SkPaint m_FillPaint;
-        SkPaint m_StrokePaint;
-#endif
-        float m_Matrix[9] = {
-            1, 0, 0,  // s s x !!REMEMBER: CANVAS2D IS s s s s x y SO ORDER MATTERS ITS 0 1 3 4 2 5
-            0, 1, 0,  // s s y
-            0, 0, 1}; // 0 0 1
-
-        friend Guard;
-
-        // state
-        void Save();
-        void Restore();
-
-    public:
-        class Simulation &m_Simulation;
-
-        int32_t m_Width;
-        int32_t m_Height;
-        std::map<uint8_t, uint8_t> m_KeysPressed{};
-
-        enum class LineCap
-        {
-            Butt,
-            Round,
-            Square
-        };
-        enum class LineJoin
-        {
-            Bevel,
-            Miter,
-            // Round
-        };
-
-        Renderer(Simulation &);
-
-        void Initialize();
-        void SetSize(int32_t width, int32_t height);
-
-        // matrix
-        void ResetTransform();
-        void UpdateTransform();
-        void SetTransform(float, float, float, float, float, float);
-        void Rotate(float);
-        void Translate(float, float);
-        void Scale(float, float);
-
-        // style
-        void SetFill(uint32_t);
-        void SetStroke(uint32_t);
-        void SetLineWidth(float);
-        void SetLineCap(LineCap);
-
-        // path
-        void BeginPath();
-        void MoveTo(float, float);
-        void LineTo(float, float);
-        void QuadraticCurveTo(float, float, float, float);
-        void Arc(float, float, float);
-        void Clip();
-
-        // render
-        void Stroke();
-        void Fill();
-
-        void Render();
-    };
 }
+
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+
+extern "C"
+{
+    void __Renderer_KeyEvent(uint8_t op, int32_t key);
+    void __Renderer_Render(int32_t width, int32_t height);
+}
+#else
+void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+        g_Renderer->m_KeysPressed[key] = 1;
+    else if (action == GLFW_RELEASE)
+        g_Renderer->m_KeysPressed[key] = 0;
+}
+#endif

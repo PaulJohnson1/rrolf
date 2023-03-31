@@ -33,8 +33,16 @@ namespace app::system
                 life.Health(life.Health() - life2.m_Damage);
                 life2.Health(life2.Health() - life.m_Damage);
 
-                // TODO: delete entity
+                if (life.Health() == 0) 
+                    if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
+                        deletedEntities.push_back(entity);
+                if (life2.Health() == 0)
+                    if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
+                        deletedEntities.push_back(other);
             } });
+
+            for (uint64_t i = 0; i < deletedEntities.size(); i++)
+                m_Simulation.Remove(deletedEntities[i]);
     }
 
     void Damage::PostTick()

@@ -1,11 +1,10 @@
 #include <Client/Component/Flower.hh>
-#include <Client/Renderer.hh>
-#include <Client/Simulation.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
 #include <Client/Simulation.hh>
+#include <Client/Renderer.hh>
 
 namespace app::component
 {
@@ -28,7 +27,7 @@ namespace app::component
     void Flower::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = ctx->m_Simulation.Get<component::Physical>(m_Parent);
+        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
         // draw stroke
         ctx->BeginPath();
