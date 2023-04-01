@@ -84,11 +84,8 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Rarity(5);
             mob.Id(0); // baby ant
-            life.m_Damage = 10;
-            life.MaxHealth(100);
-            life.Health(100);
+            mob.Rarity(5);
         }
     }
 

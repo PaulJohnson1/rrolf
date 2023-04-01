@@ -29,6 +29,7 @@ namespace app::system
                 Vector b = {physical2.X(), physical2.Y()};
                 Vector delta = a - b;
                 float distance = delta.Magnitude();
+                if (distance == 0) continue;
                 float overlap = (distance - physical1.Radius() - physical2.Radius()) * 0.5f;
                 physical1.X(physical1.X() - overlap * delta.m_X / distance);
                 physical1.Y(physical1.Y() - overlap * delta.m_Y / distance);

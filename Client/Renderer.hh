@@ -63,6 +63,7 @@ namespace app
         float m_MouseY = 0.0f;
         uint8_t m_MouseState = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
+
         enum class LineCap
         {
             Butt,
@@ -81,12 +82,13 @@ namespace app
             Center,
             Right  
         };
-        enum class TextBaseLine
+        enum class TextBaseline
         {
             Top,
             Middle,
             Bottom  
         };
+        
         Renderer(T onRender)
             : m_OnRender(onRender)
         {
@@ -116,7 +118,7 @@ namespace app
         void SetLineCap(LineCap);
         void SetTextSize(float);
         void SetTextAlign(TextAlign);
-        void SetTextBaseLine(TextBaseLine);
+        void SetTextBaseline(TextBaseline);
 
         // path
         void BeginPath();

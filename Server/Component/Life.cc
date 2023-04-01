@@ -42,6 +42,8 @@ namespace app::component
     {
         if (v < 0)
             v = 0;
+        else if (v > m_MaxHealth)
+            v = m_MaxHealth;
         if (v == m_Health)
             return;
         m_Health = v;
@@ -52,7 +54,9 @@ namespace app::component
     {
         if (v == m_MaxHealth)
             return;
+        float fraction = v / m_MaxHealth;
         m_MaxHealth = v;
+        m_Health *= fraction;
         m_State |= 1 << 1;
     }
 }

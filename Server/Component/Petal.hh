@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstdint>
-#include <optional>
 
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 
 namespace bc
 {
@@ -17,26 +17,25 @@ namespace app
 
 namespace app::component
 {
-    class Basic
+    class Petal
     {
-        Entity m_Team;
-        uint32_t m_Flags;
+        uint32_t m_Id;
+        uint32_t m_Rarity;
         Simulation *m_Simulation;
 
     public:
-        using Type = Basic;
+        using Type = Petal;
         
         Entity m_Parent;
-        Entity m_Owner = 0;
         uint64_t m_State = 0;
 
-        Basic(Entity, Simulation *);
-        ~Basic();
+        Petal(Entity, Simulation *);
+        ~Petal();
 
-        Entity Team() const;
-        void Team(Entity);
-        uint32_t Flags() const;
-        void Flags(uint32_t);
+        uint32_t Id() const;
+        void Id(uint32_t);
+        uint32_t Rarity() const;
+        void Rarity(uint32_t);
 
         void Reset();
 

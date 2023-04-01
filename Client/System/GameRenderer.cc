@@ -4,9 +4,8 @@
 #include <iostream>
 
 #include <Client/Renderer.hh>
-#include <Client/Simulation.hh>
 #include <Client/Socket.hh>
-
+#include <Client/Simulation.hh>
 #include <Client/Ui/Text.hh>
 #include <Client/Ui/Button.hh>
 
@@ -40,10 +39,11 @@ namespace app::system
         {
             m_RespawnButton->m_Clicked = false;
             std::cout << "button is pressed up\nrespawning\n";
-            static uint8_t outgoingInputPacket[20];
+            static uint8_t outgoingInputPacket[60];
             bc::BinaryCoder coder{outgoingInputPacket};
             coder.Write<bc::Uint8>(1);
-            m_GameRenderer.m_Simulation.m_Socket->SendPacket(coder.Data(), coder.At());;
+            m_GameRenderer.m_Simulation.m_Socket->SendPacket(coder.Data(), coder.At());
+            ;
         };
     }
 
@@ -62,8 +62,9 @@ namespace app::system
         m_RespawnButton->m_Width = 200;
         m_RespawnButton->m_Height = 100;
         m_DeathLabel->Render();
+        m_RespawnButton->Render();
         m_RespawnButtonTextLabel->Render();
-        if (m_RespawnButton->m_Showing && m_RespawnButton->MouseTouching())
+        if (m_Showing && m_RespawnButton->MouseTouching())
         {
             switch (m_Renderer.m_MouseState)
             {
@@ -81,7 +82,6 @@ namespace app::system
                 break;
             }
         }
-        m_RespawnButton->Render();
     }
 
     GameRenderer::GameRenderer(Simulation &simulation, Renderer *renderer)

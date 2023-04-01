@@ -21,8 +21,8 @@ namespace app::component
     Flower::~Flower()
     {
         Basic &basic = m_Simulation->Get<Basic>(m_Parent);
-        if (basic.m_Owner)
-            m_Simulation->Get<PlayerInfo>(*basic.m_Owner).HasPlayer(false);
+        if (basic.m_Owner != 0)
+            m_Simulation->Get<PlayerInfo>(basic.m_Owner).HasPlayer(false);
     }
 
     void Flower::Reset()

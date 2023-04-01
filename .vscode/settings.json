@@ -89,7 +89,8 @@
         "__nullptr": "cpp",
         "__tuple": "cpp",
         "__assert": "cpp",
-        "__threading_support": "cpp"
+        "__threading_support": "cpp",
+        "__string": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

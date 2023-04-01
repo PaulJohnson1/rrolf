@@ -343,16 +343,16 @@ namespace app
 #endif
     }
 
-    void Renderer::SetTextBaseLine(TextBaseLine l)
+    void Renderer::SetTextBaseline(TextBaseline l)
     {
 #ifdef EMSCRIPTEN
         EM_ASM({
             if ($0 == 0)
-                Module.ctx.textBaseLine = 'top';
+                Module.ctx.textBaseline = 'top';
             else if ($0 == 1)
-                Module.ctx.textBaseLine = 'middle';
+                Module.ctx.textBaseline = 'middle';
             else
-                Module.ctx.textBaseLine = 'bottom';
+                Module.ctx.textBaseline = 'bottom';
         },
                l);
 #else

@@ -28,6 +28,7 @@ namespace app
 
         websocketpp::connection_hdl GetHdl();
 
+        void ConstructPlayer();
         void BroadcastUpdate();
         void Tick();
         void SendPacket(bc::BinaryCoder coder) const;

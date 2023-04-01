@@ -2,7 +2,7 @@
 
 namespace app
 {
-    // fake enum class
+    // fake enum class (less type casting)
     namespace MobId
     {
         constexpr uint32_t BabyAnt = 0;
@@ -19,7 +19,7 @@ namespace app
         constexpr uint32_t Mythic = 5;
         constexpr uint32_t kMaxRarities = 6;
     };
-    
+
     struct MobData
     {
         // if we see -1 in the debugger something went wrong
@@ -28,8 +28,18 @@ namespace app
         float m_BaseDamage = -1.0f;
     };
 
+    struct PetalData
+    {
+    };
+
+    // 0xffff2b75, 0xff2bffa3 for ultra and super
+    static constexpr uint32_t RARITY_COLORS[RarityId::kMaxRarities] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde};
+    static constexpr char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic"};
+
+    static constexpr char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
+
     static constexpr MobData MOB_DATA[MobId::kMaxMobs] = {
-        MobData{14, 10, 10} // baby ant
+        MobData{14, 25, 10} // baby ant
     };
 
     static constexpr float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
@@ -38,8 +48,7 @@ namespace app
         1.3,
         1.6,
         3.0,
-        5.0
-    };
+        5.0};
 
     static constexpr float MOB_HEALTH_FACTOR[RarityId::kMaxRarities] = {
         1,
@@ -56,6 +65,5 @@ namespace app
         1.3,
         1.6,
         2.0,
-        2.5
-    };
+        2.5};
 }

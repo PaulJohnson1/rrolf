@@ -10,7 +10,7 @@ namespace app::ui
     Text::Text(Renderer &ctx)
         : Element(ctx),
           m_TextAlign(Renderer::TextAlign::Center),
-          m_TextBaseLine(Renderer::TextBaseLine::Middle)
+          m_TextBaseline(Renderer::TextBaseline::Middle)
     {
     }
 
@@ -23,7 +23,7 @@ namespace app::ui
     {
         //Guard g(m_Renderer);
         m_Renderer.SetTextAlign(m_TextAlign);
-        m_Renderer.SetTextBaseLine(m_TextBaseLine);
+        m_Renderer.SetTextBaseline(m_TextBaseline);
         m_Renderer.SetTextSize(m_TextSize);
         m_Renderer.FillText(m_Text, m_X, m_Y);
     }

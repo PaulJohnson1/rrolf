@@ -13,7 +13,7 @@ namespace app::ui
         std::string m_Text = "@@@@UNINITIALIZED STRING@@@@";
         float m_TextSize = 100.0f;
         Renderer::TextAlign m_TextAlign;
-        Renderer::TextBaseLine m_TextBaseLine;
+        Renderer::TextBaseline m_TextBaseline;
 
         Text(Renderer &);
 
