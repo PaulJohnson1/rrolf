@@ -6,26 +6,16 @@
 #include <functional>
 #include <mutex>
 
-// #define FOR_EACH_COMPONENT               \
-//     RROLF_COMPONENT_ENTRY(Flower, 0)     \
-//     RROLF_COMPONENT_ENTRY(Petal, 1)      \
-//     RROLF_COMPONENT_ENTRY(Ai, 2)         \
-//     RROLF_COMPONENT_ENTRY(ArenaInfo, 3)  \
-//     RROLF_COMPONENT_ENTRY(Life, 4)       \
-//     RROLF_COMPONENT_ENTRY(Physical, 5)   \
-//     RROLF_COMPONENT_ENTRY(Mob, 6)        \
-//     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
-//     RROLF_COMPONENT_ENTRY(Basic, 8)
-
-#define FOR_EACH_COMPONENT              \
-    RROLF_COMPONENT_ENTRY(Flower, 3)    \
-    RROLF_COMPONENT_ENTRY(Ai, 0)        \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
-    RROLF_COMPONENT_ENTRY(Basic, 2)     \
-    RROLF_COMPONENT_ENTRY(Life, 4)      \
-    RROLF_COMPONENT_ENTRY(Physical, 5)  \
-    RROLF_COMPONENT_ENTRY(Mob, 6)       \
-    RROLF_COMPONENT_ENTRY(PlayerInfo, 7)
+#define FOR_EACH_COMPONENT               \
+    RROLF_COMPONENT_ENTRY(Flower, 0)     \
+    RROLF_COMPONENT_ENTRY(Petal, 1)      \
+    RROLF_COMPONENT_ENTRY(Ai, 2)         \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 3)  \
+    RROLF_COMPONENT_ENTRY(Life, 4)       \
+    RROLF_COMPONENT_ENTRY(Physical, 5)   \
+    RROLF_COMPONENT_ENTRY(Mob, 6)        \
+    RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
+    RROLF_COMPONENT_ENTRY(Basic, 8)
 
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
@@ -33,16 +23,16 @@
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Life.hh>
 #include <Server/Component/Mob.hh>
+#include <Server/Component/Petal.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/PlayerInfo.hh>
-
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/Damage.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
+#include <Server/System/Petal.hh>
 #include <Server/System/Velocity.hh>
-
 #include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
 
@@ -53,12 +43,14 @@ namespace app
 
     class Simulation
     {
+        std::vector<Entity> m_PendingDeletions;
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
         system::Damage m_Damage;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
+        system::Petal m_Petal;
 
         std::mutex m_Mutex;
 
@@ -90,7 +82,6 @@ namespace app
         Entity m_Arena;
         Server &m_Server;
         uint64_t m_TickCount = 0;
-        std::vector<Entity> m_PendingDeletions;
 
         Simulation(Server &);
 
@@ -121,7 +112,9 @@ namespace app
         std::vector<Entity> FindEntitiesInView(component::PlayerInfo &playerInfo);
         Entity Create();
 
+        bool HasEntity(Entity);
         void WriteEntity(bc::BinaryCoder &, Entity, bool);
         void ResetEntity(Entity);
+        void RequestDeletion(Entity);
     };
 }

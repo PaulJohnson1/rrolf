@@ -16,10 +16,10 @@ namespace app::system
         std::vector<Entity> deletedEntities;
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-            if (!m_Simulation.HasComponent<component::Physical>(entity))
+            if (!m_Simulation.HasComponent<component::Life>(entity))
                 return;
-            component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
             component::Life &life = m_Simulation.Get<component::Life>(entity);
+            component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
             component::Basic &basic = m_Simulation.Get<component::Basic>(entity);
             for (Entity i = 0; i < physical.m_Collisions.size(); i++)
             {
@@ -42,7 +42,7 @@ namespace app::system
             } });
 
             for (uint64_t i = 0; i < deletedEntities.size(); i++)
-                m_Simulation.m_PendingDeletions.push_back(deletedEntities[i]);
+                m_Simulation.RequestDeletion(deletedEntities[i]);
     }
 
     void Damage::PostTick()

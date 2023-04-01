@@ -29,6 +29,6 @@ namespace app::component
         Mob(Entity, Simulation *);
 
         void UpdateFromBinary(bc::BinaryCoder &);
-        void Render(Renderer *ctx);
+        void Render(Renderer *);
     };
 }

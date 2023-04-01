@@ -23,20 +23,20 @@ namespace app::component
         m_Collisions.clear();
     }
 
-    void Physical::Write(bc::BinaryCoder &coder, Physical const &physical, bool isCreation)
+    void Physical::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b1111 : physical.m_State;
+        uint32_t state = isCreation ? 0b1111 : entity.m_State;
 
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)
-            coder.Write<bc::Float32>(physical.m_Radius);
+            coder.Write<bc::Float32>(entity.m_Radius);
         if (state & 2)
-            coder.Write<bc::Float32>(physical.m_X);
+            coder.Write<bc::Float32>(entity.m_X);
         if (state & 4)
-            coder.Write<bc::Float32>(physical.m_Y);
+            coder.Write<bc::Float32>(entity.m_Y);
         if (state & 8)
-            coder.Write<bc::Float32>(physical.m_Angle);
+            coder.Write<bc::Float32>(entity.m_Angle);
     }
 
     float Physical::Radius() const { return m_Radius; }

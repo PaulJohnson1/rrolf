@@ -12,6 +12,7 @@ set(SOURCES
     Component/Flower.cc
     Component/Life.cc
     Component/Mob.cc
+    Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
     System/GameRenderer.cc

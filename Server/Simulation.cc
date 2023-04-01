@@ -57,7 +57,8 @@ namespace app
           m_Velocity(*this),
           m_MobAi(*this),
           m_MapBoundaries(*this),
-          m_Damage(*this)
+          m_Damage(*this),
+          m_Petal(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
         {
@@ -94,6 +95,7 @@ namespace app
     {
         {
             std::unique_lock<std::mutex> l(m_Mutex);
+            m_Petal.Tick();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_CollisionResolver.Tick();
@@ -110,6 +112,12 @@ namespace app
 
         m_PendingDeletions.clear();
 
+    }
+
+    bool Simulation::HasEntity(Entity entity)
+    {
+        assert(entity < MAX_ENTITY_COUNT);
+        return m_EntityTracker[entity];
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
@@ -204,6 +212,15 @@ namespace app
 #undef RROLF_COMPONENT_ENTRY
     }
 
+    void Simulation::RequestDeletion(Entity id)
+    {
+        if (HasComponent<component::Petal>(id))
+            std::cout << "a petal was deleted\n";
+        
+        if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
+            m_PendingDeletions.push_back(id);
+    }
+
     Entity Simulation::Create()
     {
         assert(m_AvailableIds.size());
@@ -223,8 +240,8 @@ namespace app
         if (HasComponent<T>(id))                \
         {                                       \
             T &comp = Get<T>(id);               \
-            m_##COMPONENT##Tracker[id] = false; \
             comp.~T();                          \
+            m_##COMPONENT##Tracker[id] = false; \
         }                                       \
     }
         FOR_EACH_COMPONENT;

@@ -24,7 +24,7 @@ namespace app::component
         m_State = 0;
     }
 
-    void Ai::Write(bc::BinaryCoder &coder, Type entity, bool isCreation)
+    void Ai::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
         coder.Write<bc::VarUint>(0);
     }

@@ -41,6 +41,6 @@ namespace app::component
 
         Flower(Entity, Simulation *);
         void UpdateFromBinary(bc::BinaryCoder &);
-        void Render(Renderer *ctx);
+        void Render(Renderer *);
     };
 }

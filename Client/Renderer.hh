@@ -20,9 +20,6 @@ namespace app
 }
 
 extern app::Renderer *g_Renderer;
-// extern float g_MouseX = 0.0f;
-// extern float g_MouseY = 0.0f;
-// extern uint8_t g_MouseState = 0;
 
 namespace ui
 {
@@ -31,6 +28,20 @@ namespace ui
 
 namespace app
 {
+    class Renderer;
+    class Guard
+    {
+        float m_CurrentMatrix[9];
+        Renderer *m_Renderer;
+
+    public:
+        Guard(Renderer *);
+        Guard(Renderer const &) = delete;
+        Guard(Renderer &&) = delete;
+        Renderer &operator=(Renderer const &) = delete;
+        Renderer &operator=(Renderer &&) = delete;
+        ~Guard();
+    };
     // template <typename T = >
     class Renderer
     {
@@ -57,8 +68,8 @@ namespace app
 
         T m_OnRender;
 
-        int32_t m_Width;
-        int32_t m_Height;
+        float m_Width;
+        float m_Height;
         float m_MouseX = 0.0f;
         float m_MouseY = 0.0f;
         uint8_t m_MouseState = 0;
@@ -149,20 +160,6 @@ namespace app
                     element->Render();
             }
         }
-    };
-
-    class Guard
-    {
-        float m_CurrentMatrix[9];
-        Renderer *m_Renderer;
-
-    public:
-        Guard(Renderer *);
-        Guard(Renderer const &) = delete;
-        Guard(Renderer &&) = delete;
-        Renderer &operator=(Renderer const &) = delete;
-        Renderer &operator=(Renderer &&) = delete;
-        ~Guard();
     };
 
     class Path2D

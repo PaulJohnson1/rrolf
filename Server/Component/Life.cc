@@ -24,15 +24,15 @@ namespace app::component
         m_State = 0;
     }
 
-    void Life::Write(bc::BinaryCoder &coder, Life life, bool isCreation)
+    void Life::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b11 : life.m_State;
+        uint32_t state = isCreation ? 0b11 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)
-            coder.Write<bc::Float32>(life.m_Health);
+            coder.Write<bc::Float32>(entity.m_Health);
         if (state & 2)
-            coder.Write<bc::Float32>(life.m_MaxHealth);
+            coder.Write<bc::Float32>(entity.m_MaxHealth);
     }
 
     float Life::Health() const { return m_Health; }

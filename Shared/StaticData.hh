@@ -20,16 +20,37 @@ namespace app
         constexpr uint32_t kMaxRarities = 6;
     };
 
+    namespace PetalId
+    {
+        constexpr uint32_t None = 0;
+        constexpr uint32_t Basic = 1;
+        constexpr uint32_t kMaxPetals = 2;
+    }
+
     struct MobData
     {
-        // if we see -1 in the debugger something went wrong
-        float m_BaseSize = -1.0f;
-        float m_BaseHealth = -1.0f;
-        float m_BaseDamage = -1.0f;
+        uint32_t m_Id;
+        float m_BaseSize;
+        float m_BaseHealth;
+        float m_BaseDamage;
     };
 
     struct PetalData
     {
+        uint32_t m_Id;
+        float m_BaseHealth;
+        float m_BaseDamage;
+        int32_t m_ReloadTicks;
+        bool m_Clump = false;
+    };
+
+    static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
+        {PetalId::None, 0, 0, true},
+        {PetalId::Basic, 100000.0f, 100.0f, 50, true} // for testing physcis *DO NOT FORGET TO CHANGE*
+    };
+
+    static constexpr MobData MOB_DATA[MobId::kMaxMobs] = {
+        {MobId::BabyAnt, 14, 25, 10} // baby ant
     };
 
     // 0xffff2b75, 0xff2bffa3 for ultra and super
@@ -38,9 +59,6 @@ namespace app
 
     static constexpr char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
 
-    static constexpr MobData MOB_DATA[MobId::kMaxMobs] = {
-        MobData{14, 25, 10} // baby ant
-    };
 
     static constexpr float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
         1,

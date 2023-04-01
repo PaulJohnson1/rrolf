@@ -11,22 +11,22 @@ namespace bc
 
 namespace app
 {
-    class Renderer;
     class Simulation;
+    class Renderer;
 }
 
 namespace app::component
 {
-    class ArenaInfo
+    class Petal
     {
     public:
+        uint32_t m_Id;
+        uint32_t m_Rarity;
         Simulation *m_Simulation;
-        float m_MapSize = 1650.0f;
-        uint32_t m_Color = 0;
-        
+
         Entity m_Parent;
 
-        ArenaInfo(Entity, Simulation *);
+        Petal(Entity, Simulation *);
 
         void UpdateFromBinary(bc::BinaryCoder &);
         void Render(Renderer *);

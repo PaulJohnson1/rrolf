@@ -25,9 +25,14 @@ namespace app::component
 
     public:
         using Type = Petal;
-        
+
         Entity m_Parent;
         uint64_t m_State = 0;
+
+        // for rotation and stuff lol
+        uint32_t m_RotationPos = 0;
+        float m_InnerAngle = 0; // for clumped petals
+        bool m_Clumped = false;
 
         Petal(Entity, Simulation *);
         ~Petal();
@@ -39,6 +44,6 @@ namespace app::component
 
         void Reset();
 
-        static void Write(bc::BinaryCoder &, Type, bool isCreation);
+        static void Write(bc::BinaryCoder &, Type const &, bool);
     };
 }

@@ -16,8 +16,8 @@ namespace app::system
     void Interpolation::Tick()
     {
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
-        playerInfo.m_CameraX.Tick(0.05);
-        playerInfo.m_CameraY.Tick(0.05);
+        playerInfo.m_CameraX.Tick(0.1);
+        playerInfo.m_CameraY.Tick(0.1);
         playerInfo.m_Fov.Tick(0.25);
 
         m_Simulation.ForEachEntity([&](Entity entity)

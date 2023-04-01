@@ -11,6 +11,7 @@ set(SOURCES
     Component/Flower.cc
     Component/Life.cc
     Component/Mob.cc
+    Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
     System/CollisionDetector.cc
@@ -19,6 +20,7 @@ set(SOURCES
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc
+    System/Petal.cc
     Client.cc
     Main.cc
     Server.cc

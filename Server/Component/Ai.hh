@@ -42,6 +42,6 @@ namespace app::component
 
         void Reset();
 
-        static void Write(bc::BinaryCoder &, Type, bool isCreation);
+        static void Write(bc::BinaryCoder &, Type const &, bool);
     };
 }

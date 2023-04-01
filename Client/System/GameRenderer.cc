@@ -104,22 +104,29 @@ namespace app::system
         m_Renderer->FillRect(0, 0, m_Renderer->m_Width, m_Renderer->m_Height);
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
         m_Renderer->Translate(m_Renderer->m_Width / 2, m_Renderer->m_Height / 2);
-        m_Renderer->Scale(playerInfo.m_Fov, playerInfo.m_Fov);
+        float a = m_Renderer->m_Height / 1080;
+        float b = m_Renderer->m_Width / 1920;
+        float windowScale = b < a ? a : b;
+        m_Renderer->Scale(playerInfo.m_Fov * windowScale, playerInfo.m_Fov * windowScale);
         m_Renderer->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
         arena.Render(m_Renderer);
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-                if (m_Simulation.HasComponent<component::Life>(entity))
-                    m_Simulation.Get<component::Life>(entity).Render(m_Renderer); });
+            if (m_Simulation.HasComponent<component::Life>(entity))
+                m_Simulation.Get<component::Life>(entity).Render(m_Renderer); });
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-                if (m_Simulation.HasComponent<component::Mob>(entity))
-                    m_Simulation.Get<component::Mob>(entity).Render(m_Renderer); });
+            if (m_Simulation.HasComponent<component::Mob>(entity))
+                m_Simulation.Get<component::Mob>(entity).Render(m_Renderer); });
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
-                if (m_Simulation.HasComponent<component::Flower>(entity))
-                    m_Simulation.Get<component::Flower>(entity).Render(m_Renderer); });
+            if (m_Simulation.HasComponent<component::Petal>(entity))
+                    m_Simulation.Get<component::Petal>(entity).Render(m_Renderer); });
+        m_Simulation.ForEachEntity([&](Entity entity)
+                                   {
+            if (m_Simulation.HasComponent<component::Flower>(entity))
+                m_Simulation.Get<component::Flower>(entity).Render(m_Renderer); });
         m_DeathScreen.m_Showing = !m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo).m_HasPlayer;
     }
 

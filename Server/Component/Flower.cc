@@ -30,15 +30,15 @@ namespace app::component
         m_State = 0;
     }
 
-    void Flower::Write(bc::BinaryCoder &coder, Type const &flower, bool isCreation)
+    void Flower::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b11 : flower.m_State;
+        uint32_t state = isCreation ? 0b11 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)
-            coder.Write<bc::Uint8>(flower.m_FaceFlags);
+            coder.Write<bc::Uint8>(entity.m_FaceFlags);
         if (state & 2)
-            coder.Write<bc::Float32>(flower.m_EyeAngle);
+            coder.Write<bc::Float32>(entity.m_EyeAngle);
     }
 
     uint8_t Flower::FaceFlags() const

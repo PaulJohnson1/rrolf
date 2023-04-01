@@ -11,7 +11,6 @@
 #include <Shared/StaticData.hh>
 #include <Client/Simulation.hh>
 
-
 namespace app::component
 {
     Mob::Mob(Entity parent, Simulation *simulation)
@@ -44,19 +43,19 @@ namespace app::component
         ctx->SetLineWidth(7);
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->BeginPath();
-        ctx->MoveTo(0,-7);
-        ctx->QuadraticCurveTo(11,-10+seed,22,-5+seed);
+        ctx->MoveTo(0, -7);
+        ctx->QuadraticCurveTo(11, -10 + seed, 22, -5 + seed);
         ctx->Stroke();
         ctx->BeginPath();
-        ctx->MoveTo(0,7);
-        ctx->QuadraticCurveTo(11,10-seed,22,5-seed);
+        ctx->MoveTo(0, 7);
+        ctx->QuadraticCurveTo(11, 10 - seed, 22, 5 - seed);
         ctx->Stroke();
         ctx->BeginPath();
-        ctx->Arc(0,0,17.5);
+        ctx->Arc(0, 0, 17.5);
         ctx->Fill();
         ctx->SetFill(0xff555555);
         ctx->BeginPath();
-        ctx->Arc(0,0,10.5);
+        ctx->Arc(0, 0, 10.5);
         ctx->Fill();
     }
 }

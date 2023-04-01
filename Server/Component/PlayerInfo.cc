@@ -24,7 +24,7 @@ namespace app::component
         m_State = 0;
     }
 
-    void PlayerInfo::Write(bc::BinaryCoder &coder, Type entity, bool isCreation)
+    void PlayerInfo::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
         uint32_t state = isCreation ? 0b11111 : entity.m_State;
         coder.Write<bc::VarUint>(state);

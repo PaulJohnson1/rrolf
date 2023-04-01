@@ -3,15 +3,16 @@
 #include <cstdint>
 #include <optional>
 
-#define FOR_EACH_COMPONENT              \
-    RROLF_COMPONENT_ENTRY(Flower, 3)    \
-    RROLF_COMPONENT_ENTRY(Ai, 0)        \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 1) \
-    RROLF_COMPONENT_ENTRY(Basic, 2)     \
-    RROLF_COMPONENT_ENTRY(Life, 4)      \
-    RROLF_COMPONENT_ENTRY(Physical, 5)  \
-    RROLF_COMPONENT_ENTRY(Mob, 6)       \
-    RROLF_COMPONENT_ENTRY(PlayerInfo, 7)
+#define FOR_EACH_COMPONENT               \
+    RROLF_COMPONENT_ENTRY(Flower, 0)     \
+    RROLF_COMPONENT_ENTRY(Petal, 1)      \
+    RROLF_COMPONENT_ENTRY(Ai, 2)         \
+    RROLF_COMPONENT_ENTRY(ArenaInfo, 3)  \
+    RROLF_COMPONENT_ENTRY(Life, 4)       \
+    RROLF_COMPONENT_ENTRY(Physical, 5)   \
+    RROLF_COMPONENT_ENTRY(Mob, 6)        \
+    RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
+    RROLF_COMPONENT_ENTRY(Basic, 8)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
@@ -19,6 +20,7 @@
 #include <Client/Component/Flower.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>
+#include <Client/Component/Petal.hh>
 #include <Client/Component/Physical.hh>
 #include <Client/Component/PlayerInfo.hh>
 #include <Client/System/Interpolation.hh>
