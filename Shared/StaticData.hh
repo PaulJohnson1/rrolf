@@ -24,7 +24,8 @@ namespace app
     {
         constexpr uint32_t None = 0;
         constexpr uint32_t Basic = 1;
-        constexpr uint32_t kMaxPetals = 2;
+        constexpr uint32_t Light = 2;
+        constexpr uint32_t kMaxPetals = 3;
     }
 
     struct MobData
@@ -42,11 +43,13 @@ namespace app
         float m_BaseDamage;
         int32_t m_ReloadTicks;
         bool m_Clump = false;
+        uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1};
     };
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0, true},
-        {PetalId::Basic, 100000.0f, 100.0f, 50, true} // for testing physcis *DO NOT FORGET TO CHANGE*
+        {PetalId::Basic, 100000.0f, 100.0f, 50, true, {10, 10, 10, 10, 10, 10}}, // for testing physcis *DO NOT FORGET TO CHANGE*
+        {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}}
     };
 
     static constexpr MobData MOB_DATA[MobId::kMaxMobs] = {

@@ -53,7 +53,7 @@ namespace app::component
         uint32_t adjustedHeight = ctx->m_Height * (1 / fov);
         uint32_t lineCountX = adjustedWidth / 50;
         uint32_t lineCountY = adjustedHeight / 50;
-        ctx->Translate(playerInfo.m_CameraX % 50.0f, playerInfo.m_CameraY % 50.0f);
+        ctx->Translate(-fmod(playerInfo.m_CameraX, 50.0f), -fmod(playerInfo.m_CameraY, 50.0f));
         for (float i = 0; i < lineCountY; i++)
         {
             ctx->BeginPath();

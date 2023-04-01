@@ -1,8 +1,6 @@
 #pragma once
 
 #include <vector>
-// #include <cstdlib>
-#include <cmath>
 
 #include <Shared/Entity.hh>
 #include <Shared/StaticData.hh>
@@ -31,18 +29,16 @@ namespace app::component
     public:
         struct Petal
         {
-            bool m_IsDead = true;
-            Entity m_SimulationId; // m_Id is ambiguous with petal data id
             int32_t m_TicksUntilRespawn;
+            bool m_IsDead = true;
+            Entity m_SimulationId = 0; // m_Id is ambiguous with petal data id
         };
 
         struct PetalSlot
         {
-            uint32_t m_Count;
+            uint32_t m_Rarity;
             std::vector<Petal> m_Petals;
             PetalData m_Data;
-            uint32_t m_Rarity;
-            float m_ClumpRotation = M_PI * 2 * rand() / RAND_MAX;
         };
 
         using Type = PlayerInfo;
@@ -52,86 +48,14 @@ namespace app::component
         uint32_t m_RotationCount = 0;
         uint64_t m_State = 0;
         std::vector<PetalSlot> m_PetalSlots{
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
-            PetalSlot{1,
-                      {Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks},
-                       Petal{true, 0, PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic],
-                      0},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]
+                      },
+            PetalSlot{5,
+                      {PETAL_DATA[PetalId::Light].m_Count[5], Petal{PETAL_DATA[PetalId::Light].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Light]
+                      }
         };
         std::vector<Entity> m_EntitiesInView;
 

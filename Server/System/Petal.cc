@@ -31,7 +31,6 @@ namespace app::system
             for (uint64_t i = 0; i < playerInfo.m_PetalSlots.size(); i++)
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
-                petalSlot.m_ClumpRotation += 0.02;
                 bool usingClump = petalSlot.m_Data.m_Clump;
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
                 {
@@ -49,6 +48,7 @@ namespace app::system
 
                             Physical &physical = m_Simulation.AddComponent<Physical>(petalInfo.m_SimulationId);
                             component::Petal &petalEntity = m_Simulation.AddComponent<component::Petal>(petalInfo.m_SimulationId);
+                            Life &life = m_Simulation.AddComponent<Life>(petalInfo.m_SimulationId);
                             Basic &basic = m_Simulation.AddComponent<Basic>(petalInfo.m_SimulationId);
 
                             basic.m_Owner = entity;
@@ -56,11 +56,15 @@ namespace app::system
                             petalEntity.Id(petalSlot.m_Data.m_Id);
                             petalEntity.Rarity(petalSlot.m_Rarity);
                             petalEntity.m_RotationPos = currRotPos - 1; //because it actually starts at 1, not 0
-                            petalEntity.m_InnerAngle = j * 2 * M_PI / petalSlot.m_Petals.size() + petalSlot.m_ClumpRotation;
+                            petalEntity.m_InnerAngle = j * 2 * M_PI / petalSlot.m_Petals.size();
                             petalEntity.m_Clumped = usingClump;
 
                             physical.X(playerInfo.CameraX()); //fix
                             physical.Y(playerInfo.CameraY());
+
+                            life.Health(petalSlot.m_Data.m_BaseHealth);
+                            life.MaxHealth(life.Health());
+                            life.m_Damage = petalSlot.m_Data.m_BaseDamage;
                         }
                     }
                 }
@@ -96,7 +100,7 @@ namespace app::system
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
             Vector extension = Vector::FromPolar(75, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
-            if (petal.m_Clumped) extension += Vector::FromPolar(15, petal.m_InnerAngle);
+            if (petal.m_Clumped) extension += Vector::FromPolar(15, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
             physical.m_Velocity = (flowerPosition + extension - petalPosition) * 0.5; });
     }
 }

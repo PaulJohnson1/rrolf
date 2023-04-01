@@ -44,6 +44,16 @@ namespace app::component
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
             break;
+        case 2:
+            ctx->SetFill(0xffcfcfcf);
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 8.5);
+            ctx->Fill();
+            ctx->SetFill(0xffffffff);
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 5.5);
+            ctx->Fill();
+            break;
         default:
             ctx->SetFill(0xffcfcfcf);
             ctx->BeginPath();

@@ -17,7 +17,6 @@ namespace app
         std::cout << "client create\n";
         m_PlayerInfo = m_Simulation.Create();
         m_Simulation.AddComponent<component::PlayerInfo>(m_PlayerInfo);
-        // ConstructPlayer();
     }
 
     Client::~Client()
