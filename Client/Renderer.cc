@@ -30,11 +30,12 @@ void __Renderer_KeyEvent(uint8_t op, int32_t key)
     else if (op == 0)
         g_Renderer->m_KeysPressed[key] = 0;
 }
-void __Renderer_MouseEvent(float x, float y, uint8_t state)
+void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button)
 {
+    if (button != 3) g_Renderer->m_MouseButton = button;
     g_Renderer->m_MouseX = x;
     g_Renderer->m_MouseY = y;
-    g_Renderer->m_MouseState = state;
+    if (button == 1 || button == 3 || button == 0) g_Renderer->m_MouseState = state;
 }
 void __Renderer_Render(int32_t width, int32_t height)
 {
@@ -91,6 +92,7 @@ namespace app
         }
 #else
         EM_ASM({
+            document.oncontextmenu = _ => false;
             Module.canvas = document.createElement("canvas");
             Module.canvas.id = "canvas";
             document.body.appendChild(Module.canvas);
@@ -99,9 +101,9 @@ namespace app
                 "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
             window.addEventListener(
                 "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-            window.addEventListener("mousedown", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 1)});
-            window.addEventListener("mousemove", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 2)});
-            window.addEventListener("mouseup", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 0)});
+            window.addEventListener("mousedown", function({clientX, clientY, button}){ Module.___Renderer_MouseEvent(clientX, clientY, 1, button == 0? 1: 2)});
+            window.addEventListener("mousemove", function({clientX, clientY}){ Module.___Renderer_MouseEvent(clientX, clientY, 2, 3)});
+            window.addEventListener("mouseup", function({clientX, clientY}){ Module.___Renderer_MouseEvent(clientX, clientY, 0, 0)});
             Module.paths = [... Array(100)].fill(null);
             Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
             Module.addPath = function()

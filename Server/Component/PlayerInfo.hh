@@ -47,16 +47,36 @@ namespace app::component
         float m_GlobalRotation = 0.0f;
         uint32_t m_RotationCount = 0;
         uint64_t m_State = 0;
+        uint8_t m_MouseButton = 0;
         std::vector<PetalSlot> m_PetalSlots{
             PetalSlot{0,
                       {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Basic]
-                      },
-            PetalSlot{5,
-                      {PETAL_DATA[PetalId::Light].m_Count[5], Petal{PETAL_DATA[PetalId::Light].m_ReloadTicks}},
-                      PETAL_DATA[PetalId::Light]
-                      }
-        };
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{0,
+                      {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                      PETAL_DATA[PetalId::Basic]},
+            PetalSlot{
+                0,
+                {PETAL_DATA[PetalId::Basic].m_Count[0], Petal{PETAL_DATA[PetalId::Basic].m_ReloadTicks}},
+                PETAL_DATA[PetalId::Basic]}};
         std::vector<Entity> m_EntitiesInView;
 
         PlayerInfo(Entity, Simulation *);

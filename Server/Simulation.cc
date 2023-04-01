@@ -72,8 +72,14 @@ namespace app
         m_Arena = Create();
         AddComponent<component::ArenaInfo>(m_Arena);
         Get<component::ArenaInfo>(m_Arena).MapSize(1650.0f);
+    }
 
-        for (uint32_t i = 0; i < 100; i++)
+    void Simulation::Tick()
+    {
+        uint32_t entityCount = 0;
+        ForEachEntity([&](Entity)
+                      { entityCount++; });
+        if (entityCount < 100)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -85,14 +91,11 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Id(0); // baby ant
+            mob.Id(0);     // baby ant
             // mob.Rarity(rand() % 6);
             mob.Rarity(5);
         }
-    }
 
-    void Simulation::Tick()
-    {
         {
             std::unique_lock<std::mutex> l(m_Mutex);
             m_Petal.Tick();
@@ -111,7 +114,6 @@ namespace app
             Remove(m_PendingDeletions[i]);
 
         m_PendingDeletions.clear();
-
     }
 
     bool Simulation::HasEntity(Entity entity)
@@ -216,7 +218,7 @@ namespace app
     {
         if (HasComponent<component::Petal>(id))
             std::cout << "a petal was deleted\n";
-        
+
         if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
             m_PendingDeletions.push_back(id);
     }

@@ -133,7 +133,7 @@ namespace app
                 y++;
             if (movementFlags & 8)
                 x++;
-
+            m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo).m_MouseButton = (movementFlags >> 4) & 3;
             m_PlayerAcceleration.Set(x, y);
             m_PlayerAcceleration.Normalize();
         }

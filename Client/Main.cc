@@ -44,6 +44,7 @@ int main()
             movementFlags |= (renderer->m_KeysPressed[65] || renderer->m_KeysPressed[37]) << 1;
             movementFlags |= (renderer->m_KeysPressed[83] || renderer->m_KeysPressed[40]) << 2;
             movementFlags |= (renderer->m_KeysPressed[68] || renderer->m_KeysPressed[39]) << 3;
+            movementFlags |= renderer->m_MouseButton << 4;
             coder.Write<bc::Uint8>(movementFlags);
             socket->SendPacket(coder.Data(), coder.At());
         });

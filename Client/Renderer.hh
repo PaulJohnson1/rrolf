@@ -73,6 +73,7 @@ namespace app
         float m_MouseX = 0.0f;
         float m_MouseY = 0.0f;
         uint8_t m_MouseState = 0;
+        uint8_t m_MouseButton = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
 
         enum class LineCap
@@ -188,7 +189,7 @@ extern "C"
 {
     void __Renderer_KeyEvent(uint8_t op, int32_t key);
     void __Renderer_Render(int32_t width, int32_t height);
-    void __Renderer_MouseEvent(float x, float y, uint8_t state);
+    void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button);
 }
 #else
 void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
