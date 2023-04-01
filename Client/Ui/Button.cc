@@ -9,9 +9,8 @@
 namespace app::ui
 {
     Button::Button(Renderer &ctx)
-    : Element(ctx)
+        : Element(ctx)
     {
-
     }
 
     Button::~Button()
@@ -25,7 +24,11 @@ namespace app::ui
     }
     void Button::Render() const
     {
-        m_Renderer.SetFill(0xffff0000);
-        m_Renderer.FillRect(m_X - m_Width / 2, m_Y - m_Height / 2, m_Width, m_Height);
+        m_Renderer.RoundRect(m_X - m_Width / 2, m_Y - m_Height / 2, m_Width, m_Height, m_R);
+        m_Renderer.SetFill(m_Fill);
+        m_Renderer.SetStroke(m_Stroke);
+        m_Renderer.SetLineWidth(m_LineWidth);
+        m_Renderer.Fill();
+        m_Renderer.Stroke();
     }
 }

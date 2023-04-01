@@ -25,6 +25,10 @@ namespace app::ui
         m_Renderer.SetTextAlign(m_TextAlign);
         m_Renderer.SetTextBaseline(m_TextBaseline);
         m_Renderer.SetTextSize(m_TextSize);
+        m_Renderer.SetLineWidth(m_LineWidth);
+        m_Renderer.SetStroke(m_Stroke);
+        m_Renderer.SetFill(m_Fill);
+        m_Renderer.StrokeText(m_Text, m_X, m_Y);
         m_Renderer.FillText(m_Text, m_X, m_Y);
     }
 }

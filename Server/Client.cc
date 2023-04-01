@@ -86,7 +86,14 @@ namespace app
     void Client::SendPacket(bc::BinaryCoder data) const
     {
         std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
-        m_Simulation.m_Server.m_Server.send(m_Hdl, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+        try
+        {
+            m_Simulation.m_Server.m_Server.send(m_Hdl, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+        }
+        catch (...)
+        {
+            std::cout << "unknown error thing prevented\n";
+        }
     }
 
     void Client::ReadPacket(uint8_t *data, size_t size)

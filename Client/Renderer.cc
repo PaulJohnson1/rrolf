@@ -99,11 +99,11 @@ namespace app
                 "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
             window.addEventListener(
                 "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-            window.addEventListener("mousedown", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 1)});
-            window.addEventListener("mousemove", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 2)});
-            window.addEventListener("mouseup", function ({clientX, clientY, button }) { !button && Module.___Renderer_MouseEvent(clientX, clientY, 0)});
+            window.addEventListener("mousedown", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 1)});
+            window.addEventListener("mousemove", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 2)});
+            window.addEventListener("mouseup", function({clientX, clientY, button}){!button && Module.___Renderer_MouseEvent(clientX, clientY, 0)});
             Module.paths = [... Array(100)].fill(null);
-            Module.availablePaths = new Array(100).fill(0).map(function (_, i) { return i; });
+            Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
             Module.addPath = function()
             {
                 if (Module.availablePaths.length)
@@ -314,6 +314,7 @@ namespace app
                l);
 #else
         // TODO later
+        assert(false);
 #endif
     }
 
@@ -340,6 +341,7 @@ namespace app
                l);
 #else
         // TODO later
+        assert(false);
 #endif
     }
 
@@ -357,6 +359,20 @@ namespace app
                l);
 #else
         // TODO later
+        assert(false);
+#endif
+    }
+
+    void Renderer::SetGlobalAlpha(float a)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({
+            Module.ctx.globalAlpha = $0;
+        },
+               a);
+#else
+        // TODO later
+        assert(false);
 #endif
     }
 
@@ -430,6 +446,20 @@ namespace app
 #else
         assert(false);
 #endif
+    }
+
+    void Renderer::RoundRect(float x, float y, float w, float h, float r)
+    {
+        BeginPath();
+        MoveTo(x + r, y);
+        LineTo(x + w - r, y);
+        QuadraticCurveTo(x + w, y, x + w, y + r);
+        LineTo(x + w, y + h - r);
+        QuadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        LineTo(x + r, y + h);
+        QuadraticCurveTo(x, y + h, x, y + h - r);
+        LineTo(x, y + r);
+        QuadraticCurveTo(x, y, x + r, y);
     }
 
     void Renderer::FillText(std::string const &string, float x, float y)

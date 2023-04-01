@@ -25,6 +25,7 @@ namespace app::component
         Entity m_Parent;
 
         Lerp<float> m_Health = Lerp<float>(1.0f);
+        Lerp<float> m_HealthRedAnimation = Lerp<float>(1.0f);
         Lerp<float> m_MaxHealth = Lerp<float>(1.0f);
 
         Life(Entity, Simulation *);

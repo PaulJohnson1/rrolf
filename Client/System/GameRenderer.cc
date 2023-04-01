@@ -21,24 +21,26 @@ namespace app::system
           m_RespawnButtonTextLabel(new ui::Text(*gameRenderer.m_Renderer)),
           m_RespawnButton(new ui::Button(*gameRenderer.m_Renderer))
     {
-        m_DeathLabel->m_Text = "You died";
-        m_RespawnButtonTextLabel->m_Text = "Respawn";
-        m_DeathLabel->m_TextSize = 60;
-        m_RespawnButtonTextLabel->m_TextSize = 20;
+        m_DeathLabel->m_Text = "You were destroyed";
+        m_DeathLabel->m_TextSize = 20.6;
+        m_DeathLabel->m_LineWidth = 2.5;
+        m_RespawnButtonTextLabel->m_Text = "Continue";
+        m_RespawnButtonTextLabel->m_LineWidth = 2.88;
+        m_RespawnButtonTextLabel->m_TextSize = 24;
+        m_RespawnButton->m_R = 6;
+        m_RespawnButton->m_Fill = 0xff1dd129;
+        m_RespawnButton->m_Stroke = 0xff17A921;
+        m_RespawnButton->m_LineWidth = 6;
 
-        m_RespawnButton->m_OnMouseOver = [&]()
-        {
-            std::cout << "button is hovered\n";
+        m_RespawnButton->m_OnMouseOver = [&]() {
         };
         m_RespawnButton->m_OnMouseDown = [&]()
         {
             m_RespawnButton->m_Clicked = true;
-            std::cout << "button is pressed down\n";
         };
         m_RespawnButton->m_OnMouseUp = [&]()
         {
             m_RespawnButton->m_Clicked = false;
-            std::cout << "button is pressed up\nrespawning\n";
             static uint8_t outgoingInputPacket[60];
             bc::BinaryCoder coder{outgoingInputPacket};
             coder.Write<bc::Uint8>(1);
@@ -53,14 +55,17 @@ namespace app::system
 
     void DeathScreen::Render() const
     {
+        // darken screen
+        m_Renderer.SetFill(0x26000000);
+        m_Renderer.FillRect(0, 0, m_Renderer.m_Width, m_Renderer.m_Height);
         m_DeathLabel->m_X = m_Renderer.m_Width / 2;
         m_DeathLabel->m_Y = m_Renderer.m_Height / 2 - 120;
         m_RespawnButtonTextLabel->m_X = m_Renderer.m_Width / 2;
-        m_RespawnButtonTextLabel->m_Y = m_Renderer.m_Height / 2 + 120;
+        m_RespawnButtonTextLabel->m_Y = m_Renderer.m_Height / 2 + 95;
         m_RespawnButton->m_X = m_Renderer.m_Width / 2;
-        m_RespawnButton->m_Y = m_Renderer.m_Height / 2;
-        m_RespawnButton->m_Width = 200;
-        m_RespawnButton->m_Height = 100;
+        m_RespawnButton->m_Y = m_Renderer.m_Height / 2 + 96;
+        m_RespawnButton->m_Width = 140;
+        m_RespawnButton->m_Height = 40;
         m_DeathLabel->Render();
         m_RespawnButton->Render();
         m_RespawnButtonTextLabel->Render();
@@ -95,34 +100,27 @@ namespace app::system
     void GameRenderer::Tick()
     {
         Guard g(m_Renderer);
-        if (m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo).m_HasPlayer)
-        {
-            m_DeathScreen.m_Showing = false;
-            component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
-            m_Renderer->Translate(m_Renderer->m_Width / 2, m_Renderer->m_Height / 2);
-            m_Renderer->Scale(playerInfo.m_Fov, playerInfo.m_Fov);
-            m_Renderer->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
-            component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
-            arena.Render(m_Renderer);
-            m_Simulation.ForEachEntity([&](Entity entity)
-                                       {
+        m_Renderer->SetFill(0xff000000);
+        m_Renderer->FillRect(0, 0, m_Renderer->m_Width, m_Renderer->m_Height);
+        component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
+        m_Renderer->Translate(m_Renderer->m_Width / 2, m_Renderer->m_Height / 2);
+        m_Renderer->Scale(playerInfo.m_Fov, playerInfo.m_Fov);
+        m_Renderer->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
+        component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
+        arena.Render(m_Renderer);
+        m_Simulation.ForEachEntity([&](Entity entity)
+                                   {
                 if (m_Simulation.HasComponent<component::Life>(entity))
                     m_Simulation.Get<component::Life>(entity).Render(m_Renderer); });
-            m_Simulation.ForEachEntity([&](Entity entity)
-                                       {
+        m_Simulation.ForEachEntity([&](Entity entity)
+                                   {
                 if (m_Simulation.HasComponent<component::Mob>(entity))
                     m_Simulation.Get<component::Mob>(entity).Render(m_Renderer); });
-            m_Simulation.ForEachEntity([&](Entity entity)
-                                       {
+        m_Simulation.ForEachEntity([&](Entity entity)
+                                   {
                 if (m_Simulation.HasComponent<component::Flower>(entity))
                     m_Simulation.Get<component::Flower>(entity).Render(m_Renderer); });
-        }
-        else
-        {
-            // m_Renderer->SetFill(0xfff0f000);
-            // m_Renderer->FillRect(0, 0, m_Renderer->m_Width, m_Renderer->m_Height);
-            m_DeathScreen.m_Showing = true;
-        }
+        m_DeathScreen.m_Showing = !m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo).m_HasPlayer;
     }
 
     void GameRenderer::PostTick()

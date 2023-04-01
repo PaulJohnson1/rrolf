@@ -17,6 +17,7 @@ namespace app::ui
         bool m_Clicked = false;
         float m_Width = 1.0f;
         float m_Height = 1.0f;
+        float m_R = 5.0f;
 
         Button(Renderer &);
         ~Button();

@@ -80,15 +80,15 @@ namespace app
         {
             Left,
             Center,
-            Right  
+            Right
         };
         enum class TextBaseline
         {
             Top,
             Middle,
-            Bottom  
+            Bottom
         };
-        
+
         Renderer(T onRender)
             : m_OnRender(onRender)
         {
@@ -119,6 +119,7 @@ namespace app
         void SetTextSize(float);
         void SetTextAlign(TextAlign);
         void SetTextBaseline(TextBaseline);
+        void SetGlobalAlpha(float);
 
         // path
         void BeginPath();
@@ -129,6 +130,7 @@ namespace app
         void FillRect(float, float, float, float);
         void StrokeRect(float, float, float, float);
         void Rect(float, float, float, float);
+        void RoundRect(float, float, float, float, float);
         void FillText(std::string const &, float, float);
         void StrokeText(std::string const &, float, float);
         void Clip();
@@ -139,9 +141,13 @@ namespace app
 
         void Render()
         {
-            for (uint64_t i = 0; i < m_UiElements.size(); i++)
-                m_UiElements[i]->Render();
             m_OnRender();
+            for (uint64_t i = 0; i < m_UiElements.size(); i++)
+            {
+                ui::Element *element = m_UiElements[i];
+                if (element->m_Showing)
+                    element->Render();
+            }
         }
     };
 

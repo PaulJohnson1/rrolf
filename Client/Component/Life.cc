@@ -29,7 +29,6 @@ namespace app::component
     }
     void Life::Render(Renderer *ctx)
     {
-        float health = (float)m_Health >= 0.0f ? (float)m_Health : 0.0f;
         Guard g(ctx);
         component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
@@ -47,8 +46,10 @@ namespace app::component
             ctx->SetFill(RARITY_COLORS[mob.m_Rarity]);
             ctx->SetStroke(0xff000000);
             ctx->BeginPath();
-            ctx->StrokeText(RARITY_NAMES[mob.m_Rarity], length, 4);
-            ctx->FillText(RARITY_NAMES[mob.m_Rarity], length, 4);
+            ctx->StrokeText(RARITY_NAMES[mob.m_Rarity], length, 5);
+            ctx->FillText(RARITY_NAMES[mob.m_Rarity], length, 5);
+            ctx->SetTextSize(16);
+            ctx->SetLineWidth(1.92);
             ctx->SetTextBaseline(Renderer::TextBaseline::Bottom);
             ctx->SetTextAlign(Renderer::TextAlign::Left);
             ctx->BeginPath();
@@ -58,17 +59,29 @@ namespace app::component
         }
         // draw hp
         ctx->SetLineCap(Renderer::LineCap::Round);
+
+        // outline
         ctx->SetStroke(0xff222222);
-        ctx->SetLineWidth(7);
+        ctx->SetLineWidth(10);
         ctx->BeginPath();
         ctx->MoveTo(-length, 0);
         ctx->LineTo(length, 0);
         ctx->Stroke();
-        ctx->SetStroke(0xff75dd34);
+
+        // red animation
+        ctx->SetStroke(0xffdd3434);
         ctx->SetLineWidth(6);
         ctx->BeginPath();
         ctx->MoveTo(-length, 0);
-        ctx->LineTo(-length + 2 * length * health / m_MaxHealth, 0);
+        ctx->LineTo(-length + 2 * length * m_HealthRedAnimation / m_MaxHealth, 0);
+        ctx->Stroke();
+
+        // green
+        ctx->SetStroke(0xff75dd34);
+        ctx->SetLineWidth(7);
+        ctx->BeginPath();
+        ctx->MoveTo(-length, 0);
+        ctx->LineTo(-length + 2 * length * m_Health / m_MaxHealth, 0);
         ctx->Stroke();
     }
 }

@@ -41,7 +41,9 @@ namespace app::system
             if (m_Simulation.HasComponent<component::Life>(entity))
             {
                 component::Life &life = m_Simulation.Get<component::Life>(entity);
-                life.m_Health.Tick(0.05);
+                life.m_Health.Tick(0.2);
+                life.m_HealthRedAnimation.Tick(0.05);
+                life.m_HealthRedAnimation = (float)life.m_Health;
                 life.m_MaxHealth.Tick(0.1);
             }
 
