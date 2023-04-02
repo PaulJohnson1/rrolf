@@ -26,6 +26,11 @@ namespace app::component
 
     void Life::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
+        if (entity.m_Simulation->HasComponent<component::Petal>(entity.m_Parent))
+        {
+            coder.Write<bc::VarUint>(0);
+            return;
+        }
         uint32_t state = isCreation ? 0b11 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 

@@ -46,26 +46,28 @@ namespace app::component
         ctx->SetLineWidth(1);
         ctx->SetStroke((uint32_t)(alpha) << 24);
 
-        ctx->ResetTransform();
-        float fov = playerInfo.m_Fov;
-        ctx->Scale(fov, fov);
-        uint32_t adjustedWidth = ctx->m_Width * (1 / fov);
-        uint32_t adjustedHeight = ctx->m_Height * (1 / fov);
-        uint32_t lineCountX = adjustedWidth / 50;
-        uint32_t lineCountY = adjustedHeight / 50;
-        ctx->Translate(-fmod(playerInfo.m_CameraX, 50.0f), -fmod(playerInfo.m_CameraY, 50.0f));
-        for (float i = 0; i < lineCountY; i++)
+        float a = g_Renderer->m_Height / 1080;
+        float b = g_Renderer->m_Width / 1920;
+        float windowScale = b < a ? a : b;
+        float scale = playerInfo.m_Fov * windowScale;
+        float leftX = playerInfo.m_CameraX - ctx->m_Width / (2 * scale); 
+        float rightX = playerInfo.m_CameraX + ctx->m_Width / (2 * scale); 
+        float topY = playerInfo.m_CameraY - ctx->m_Height / (2 * scale); 
+        float bottomY = playerInfo.m_CameraY + ctx->m_Height / (2 * scale); 
+        float newLeftX = ceilf(leftX / 50) * 50;
+        float newTopY = ceilf(topY / 50) * 50;
+        for (; newLeftX < rightX; newLeftX += 50)
         {
             ctx->BeginPath();
-            ctx->MoveTo(0, i * 50);
-            ctx->LineTo(adjustedWidth, i * 50);
+            ctx->MoveTo(newLeftX, topY);
+            ctx->LineTo(newLeftX, bottomY);
             ctx->Stroke();
         }
-        for (float i = 0; i < lineCountX; i++)
+        for (; newTopY < bottomY; newTopY += 50)
         {
             ctx->BeginPath();
-            ctx->MoveTo(i * 50, 0);
-            ctx->LineTo(i * 50, adjustedHeight);
+            ctx->MoveTo(leftX, newTopY);
+            ctx->LineTo(rightX, newTopY);
             ctx->Stroke();
         }
     }

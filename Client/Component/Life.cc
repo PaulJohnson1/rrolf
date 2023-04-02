@@ -29,6 +29,7 @@ namespace app::component
     }
     void Life::Render(Renderer *ctx)
     {
+        if (m_MaxHealth == 0) return;
         Guard g(ctx);
         component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);

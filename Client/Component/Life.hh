@@ -24,9 +24,9 @@ namespace app::component
         Simulation *m_Simulation;
         Entity m_Parent;
 
-        Lerp<float> m_Health = Lerp<float>(1.0f);
-        Lerp<float> m_HealthRedAnimation = Lerp<float>(1.0f);
-        Lerp<float> m_MaxHealth = Lerp<float>(1.0f);
+        Lerp<float> m_Health = Lerp<float>(0.0f);
+        Lerp<float> m_HealthRedAnimation = Lerp<float>(0.0f);
+        float m_MaxHealth = 0.0f;
 
         Life(Entity, Simulation *);
         void UpdateFromBinary(bc::BinaryCoder &);

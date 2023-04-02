@@ -1,3 +1,6 @@
+#ifndef M_PI
+float M_PI = 3.14159265359;
+#endif
 #include <Server/System/Petal.hh>
 
 #include <Server/Component/Petal.hh>
@@ -31,7 +34,7 @@ namespace app::system
             for (uint64_t i = 0; i < playerInfo.m_PetalSlots.size(); i++)
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
-                bool usingClump = petalSlot.m_Data.m_Clump;
+                bool usingClump = petalSlot.m_Data.m_Clump && petalSlot.m_Petals.size() > 1;
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
                 {
                     if (!usingClump || j == 0) currRotPos++; //fix for clump
@@ -52,7 +55,7 @@ namespace app::system
                             Basic &basic = m_Simulation.AddComponent<Basic>(petalInfo.m_SimulationId);
 
                             basic.m_Owner = entity;
-                            basic.Team(1);
+                            basic.Team(0);
 
                             petalEntity.Id(petalSlot.m_Data.m_Id);
                             petalEntity.Rarity(petalSlot.m_Rarity);
@@ -106,6 +109,6 @@ namespace app::system
             // Vector extension = Vector::FromPolar(75, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
             Vector extension = Vector::FromPolar(holdingRadius, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
             if (petal.m_Clumped) extension += Vector::FromPolar(15, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
-            physical.m_Velocity = (flowerPosition + extension - petalPosition) * 0.9; });
+            physical.m_Acceleration = (flowerPosition + extension - petalPosition) * 0.4; });
     }
 }

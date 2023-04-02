@@ -10,7 +10,7 @@
 
 int main()
 {
-    feenableexcept(FE_INVALID);
+    //feenableexcept(FE_INVALID);
     using namespace app;
 
     Server &server = *new Server;

@@ -65,12 +65,12 @@ namespace app::component
 
     void Petal::Rarity(uint32_t v)
     {
-        if (v == m_Rarity)
-            return;
-        m_Rarity = v;
         Life &life = m_Simulation->Get<Life>(m_Parent);
         life.Health(PETAL_DATA[m_Id].m_BaseHealth);    // * PETAL_SCALE_FACTOR[m_Rarity]);
         life.MaxHealth(PETAL_DATA[m_Id].m_BaseHealth); // * PETAL_SCALE_FACTOR[m_Rarity]);
+        if (v == m_Rarity)
+            return;
+        m_Rarity = v;
         m_State |= 2;
     }
 }

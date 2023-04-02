@@ -92,8 +92,8 @@ namespace app
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
             mob.Id(0);     // baby ant
-            // mob.Rarity(rand() % 6);
-            mob.Rarity(5);
+            mob.Rarity(rand() % 6);
+            //mob.Rarity(5);
         }
 
         {
