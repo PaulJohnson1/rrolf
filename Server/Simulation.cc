@@ -245,6 +245,7 @@ namespace app
             component::Physical &physical = AddComponent<component::Physical>(dropId);
             component::Basic &basic = AddComponent<component::Basic>(dropId);
             drop.Id(1);
+            drop.Rarity(1);
             physical.X(mobPhysical.X());
             physical.Y(mobPhysical.Y());
             physical.Radius(60);
