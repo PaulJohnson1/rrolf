@@ -64,7 +64,6 @@ namespace app::component
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
             break;
-            break;
         }
     }
 }

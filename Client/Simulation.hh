@@ -14,11 +14,13 @@
     RROLF_COMPONENT_ENTRY(Physical, 5)   \
     RROLF_COMPONENT_ENTRY(Mob, 6)        \
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
-    RROLF_COMPONENT_ENTRY(Basic, 8)
+    RROLF_COMPONENT_ENTRY(Basic, 8) \
+    RROLF_COMPONENT_ENTRY(Drop, 9)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Basic.hh>
+#include <Client/Component/Drop.hh>
 #include <Client/Component/Flower.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>

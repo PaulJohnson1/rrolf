@@ -79,10 +79,10 @@ namespace app
             ui::VPad<10>(
                 ui::SetJustify<1,2>(
                     ui::MakeHContainer<20,10>({
-                        ui::CreateLoadoutButton(renderer),
-                        ui::CreateLoadoutButton(renderer),
-                        ui::CreateLoadoutButton(renderer),
-                        ui::CreateLoadoutButton(renderer)
+                        ui::CreateLoadoutButton(renderer, 0),
+                        ui::CreateLoadoutButton(renderer, 1),
+                        ui::CreateLoadoutButton(renderer, 2),
+                        ui::CreateLoadoutButton(renderer, 3)
                         })
                 )
             )

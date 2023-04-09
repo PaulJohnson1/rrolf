@@ -236,6 +236,19 @@ namespace app
     {
         std::cout << "entity with id " << std::to_string(id) << " deleted\n";
         assert(m_EntityTracker[id]);
+        if (HasComponent<component::Mob>(id))
+        {
+            component::Physical &mobPhysical = Get<component::Physical>(id);
+            std::cout << "should spawn drop\n";
+            Entity dropId = Create();
+            component::Drop &drop = AddComponent<component::Drop>(dropId);
+            component::Physical &physical = AddComponent<component::Physical>(dropId);
+            component::Basic &basic = AddComponent<component::Basic>(dropId);
+            drop.Id(1);
+            physical.X(mobPhysical.X());
+            physical.Y(mobPhysical.Y());
+            physical.Radius(60);
+        }
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
     {                                           \
         using T = component::COMPONENT;         \

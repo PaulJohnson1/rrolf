@@ -136,15 +136,17 @@ namespace app
         void Scale(float, float);
 
         // style
+        void SetGlobalAlpha(float);
         void SetFill(uint32_t);
+        void SetFill(uint32_t, float); //darken
         void SetStroke(uint32_t);
+        void SetStroke(uint32_t, float);
         void SetLineWidth(float);
         void SetLineCap(LineCap);
         void SetLineJoin(LineJoin);
         void SetTextSize(float);
         void SetTextAlign(TextAlign);
         void SetTextBaseline(TextBaseline);
-        void SetGlobalAlpha(float);
 
         // path
         void BeginPath();
@@ -159,6 +161,8 @@ namespace app
         void FillText(std::string const &, float, float);
         void StrokeText(std::string const &, float, float);
         void Clip();
+
+        void DrawImage(Renderer const &);
 
         float GetTextLength(std::string const &);
 

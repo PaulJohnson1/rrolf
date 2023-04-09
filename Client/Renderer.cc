@@ -177,6 +177,14 @@ namespace app
 #endif
     }
 
+    void Renderer::SetFill(uint32_t c, float h)
+    {
+        uint8_t red = (uint8_t) (((c >> 16) & 255) * h);
+        uint8_t green = (uint8_t) (((c >> 8) & 255) * h);
+        uint8_t blue = (uint8_t) (((c >> 0) & 255) * h);
+        SetFill(((c >> 24 & 255) << 24) | (red << 16) | (green << 8) | blue);
+    }
+
     void Renderer::SetStroke(uint32_t c)
     {
 #ifdef EMSCRIPTEN
@@ -184,6 +192,14 @@ namespace app
 #else
         m_StrokePaint.setColor(c);
 #endif
+    }
+
+    void Renderer::SetStroke(uint32_t c, float h)
+    {
+        uint8_t red = (uint8_t) (((c >> 16) & 255) * h);
+        uint8_t green = (uint8_t) (((c >> 8) & 255) * h);
+        uint8_t blue = (uint8_t) (((c >> 0) & 255) * h);
+        SetStroke(((c >> 24 & 255) << 24) | (red << 16) | (green << 8) | blue);
     }
 
     void Renderer::SetLineWidth(float w)
@@ -425,6 +441,12 @@ namespace app
 #endif
     }
 
+    void Renderer::DrawImage(Renderer const &ctx)
+    {
+        EM_ASM({
+            Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas, $2, $3);
+        }, m_ContextId, ctx.m_ContextId, -ctx.m_Width / 2, -ctx.m_Height / 2);
+    }
     float Renderer::GetTextLength(std::string const &str)
     {
 #ifdef EMSCRIPTEN

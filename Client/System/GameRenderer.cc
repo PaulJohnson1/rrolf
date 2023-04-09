@@ -35,6 +35,10 @@ namespace app::system
         arena.Render(m_Renderer);
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
+            if (m_Simulation.HasComponent<component::Drop>(entity))
+                m_Simulation.Get<component::Drop>(entity).Render(m_Renderer); });
+        m_Simulation.ForEachEntity([&](Entity entity)
+                                   {
             if (m_Simulation.HasComponent<component::Life>(entity))
                 m_Simulation.Get<component::Life>(entity).Render(m_Renderer); });
         m_Simulation.ForEachEntity([&](Entity entity)

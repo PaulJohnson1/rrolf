@@ -8,6 +8,7 @@ set(SOURCES
     Component/Ai.cc
     Component/ArenaInfo.cc
     Component/Basic.cc
+    Component/Drop.cc
     Component/Flower.cc
     Component/Life.cc
     Component/Mob.cc
