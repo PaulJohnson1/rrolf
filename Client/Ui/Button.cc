@@ -1,6 +1,7 @@
 #include <Client/Ui/Button.hh>
 
 #include <cassert>
+#include <iostream>
 
 #include <Client/Renderer.hh>
 
@@ -8,8 +9,8 @@
 
 namespace app::ui
 {
-    Button::Button(Renderer &ctx)
-        : Element(ctx)
+    Button::Button(Renderer &ctx, float w, float h)
+        : Element(ctx, w, h)
     {
     }
 
@@ -17,18 +18,62 @@ namespace app::ui
     {
         assert(false);
     }
-
     bool Button::MouseTouching()
     {
-        return std::abs(m_Renderer.m_MouseX - m_X) < m_Width / 2 && std::abs(m_Renderer.m_MouseY - m_Y) < m_Height / 2;
+        const float *matrix = m_Renderer.GetTransform();
+        return std::abs(g_Mouse->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_Mouse->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
     }
-    void Button::Render() const
+    void Button::ButtonAction()
     {
-        m_Renderer.RoundRect(m_X - m_Width / 2, m_Y - m_Height / 2, m_Width, m_Height, m_R);
+        if (MouseTouching())
+        {
+            switch (g_Mouse->m_MouseState)
+            {
+            case 0:
+                if (m_Clicked)
+                {
+                    m_OnMouseUp();
+                    m_Clicked = false;
+                }
+                else
+                    m_OnMouseOver();
+                break;
+            case 1:
+                if (!m_Clicked)
+                {
+                    m_OnMouseDown();
+                    m_Clicked = true;
+                }
+                break;
+            case 2:
+                m_OnMouseMove();
+            default:
+                break;
+            }
+        }
+        else if (m_Clicked)
+        {
+            if (g_Mouse->m_MouseState == 2)
+                m_OnMouseMove();
+            else if (g_Mouse->m_MouseState == 0)
+            {
+                m_OnMouseUp();
+                m_Clicked = false;
+            }
+        }
+    }
+    void Button::Render()
+    {
+        Guard g(&m_Renderer);
+        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); //necessary btw
+        m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
+        m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
+        m_Renderer.RoundRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height, m_R);
         m_Renderer.SetFill(m_Fill);
         m_Renderer.SetStroke(m_Stroke);
         m_Renderer.SetLineWidth(m_LineWidth);
-        m_Renderer.Fill();
         m_Renderer.Stroke();
+        m_Renderer.Fill();
+        ButtonAction();
     }
 }

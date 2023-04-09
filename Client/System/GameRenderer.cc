@@ -14,100 +14,22 @@
 
 namespace app::system
 {
-    DeathScreen::DeathScreen(GameRenderer &gameRenderer)
-        : ui::Element(*gameRenderer.m_Renderer),
-          m_GameRenderer(gameRenderer),
-          m_DeathLabel(new ui::Text(*gameRenderer.m_Renderer)),
-          m_RespawnButtonTextLabel(new ui::Text(*gameRenderer.m_Renderer)),
-          m_RespawnButton(new ui::Button(*gameRenderer.m_Renderer))
-    {
-        m_DeathLabel->m_Text = "You were destroyed";
-        m_DeathLabel->m_TextSize = 20.6;
-        m_DeathLabel->m_LineWidth = 2.5;
-        m_RespawnButtonTextLabel->m_Text = "Continue";
-        m_RespawnButtonTextLabel->m_LineWidth = 2.88;
-        m_RespawnButtonTextLabel->m_TextSize = 24;
-        m_RespawnButton->m_R = 6;
-        m_RespawnButton->m_Fill = 0xff1dd129;
-        m_RespawnButton->m_Stroke = 0xff17A921;
-        m_RespawnButton->m_LineWidth = 6;
-
-        m_RespawnButton->m_OnMouseOver = [&]() {
-        };
-        m_RespawnButton->m_OnMouseDown = [&]()
-        {
-            m_RespawnButton->m_Clicked = true;
-        };
-        m_RespawnButton->m_OnMouseUp = [&]()
-        {
-            m_RespawnButton->m_Clicked = false;
-            static uint8_t outgoingInputPacket[60];
-            bc::BinaryCoder coder{outgoingInputPacket};
-            coder.Write<bc::Uint8>(1);
-            m_GameRenderer.m_Simulation.m_Socket->SendPacket(coder.Data(), coder.At());
-            ;
-        };
-    }
-
-    DeathScreen::~DeathScreen()
-    {
-    }
-
-    void DeathScreen::Render() const
-    {
-        // darken screen
-        m_Renderer.SetFill(0x26000000);
-        m_Renderer.FillRect(0, 0, m_Renderer.m_Width, m_Renderer.m_Height);
-        m_DeathLabel->m_X = m_Renderer.m_Width / 2;
-        m_DeathLabel->m_Y = m_Renderer.m_Height / 2 - 120;
-        m_RespawnButtonTextLabel->m_X = m_Renderer.m_Width / 2;
-        m_RespawnButtonTextLabel->m_Y = m_Renderer.m_Height / 2 + 95;
-        m_RespawnButton->m_X = m_Renderer.m_Width / 2;
-        m_RespawnButton->m_Y = m_Renderer.m_Height / 2 + 96;
-        m_RespawnButton->m_Width = 140;
-        m_RespawnButton->m_Height = 40;
-        m_DeathLabel->Render();
-        m_RespawnButton->Render();
-        m_RespawnButtonTextLabel->Render();
-        if (m_Showing && m_RespawnButton->MouseTouching())
-        {
-            switch (m_Renderer.m_MouseState)
-            {
-            case 0:
-                if (m_RespawnButton->m_Clicked)
-                    m_RespawnButton->m_OnMouseUp();
-                break;
-            case 1:
-                m_RespawnButton->m_OnMouseDown();
-                break;
-            case 2:
-                m_RespawnButton->m_OnMouseOver();
-                break;
-            default:
-                break;
-            }
-        }
-    }
 
     GameRenderer::GameRenderer(Simulation &simulation, Renderer *renderer)
         : m_Simulation(simulation),
-          m_Renderer(renderer),
-          m_DeathScreen(*this)
+          m_Renderer(renderer)
     {
-        m_Renderer->m_UiElements.push_back(&m_DeathScreen);
     }
 
     void GameRenderer::Tick()
     {
         Guard g(m_Renderer);
+        m_Renderer->ResetTransform();
         m_Renderer->SetFill(0xff000000);
         m_Renderer->FillRect(0, 0, m_Renderer->m_Width, m_Renderer->m_Height);
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo);
         m_Renderer->Translate(m_Renderer->m_Width / 2, m_Renderer->m_Height / 2);
-        float a = m_Renderer->m_Height / 1080;
-        float b = m_Renderer->m_Width / 1920;
-        float windowScale = b < a ? a : b;
-        m_Renderer->Scale(playerInfo.m_Fov * windowScale, playerInfo.m_Fov * windowScale);
+        m_Renderer->Scale(playerInfo.m_Fov * m_Renderer->m_WindowScale, playerInfo.m_Fov * m_Renderer->m_WindowScale);
         m_Renderer->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
         component::ArenaInfo &arena = m_Simulation.Get<component::ArenaInfo>(0);
         arena.Render(m_Renderer);
@@ -127,7 +49,6 @@ namespace app::system
                                    {
             if (m_Simulation.HasComponent<component::Flower>(entity))
                 m_Simulation.Get<component::Flower>(entity).Render(m_Renderer); });
-        m_DeathScreen.m_Showing = !m_Simulation.Get<component::PlayerInfo>(m_Simulation.m_PlayerInfo).m_HasPlayer;
     }
 
     void GameRenderer::PostTick()

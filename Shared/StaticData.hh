@@ -48,7 +48,7 @@ namespace app
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0, true},
-        {PetalId::Basic, 100000.0f, 100.0f, 50, true}, // for testing physcis *DO NOT FORGET TO CHANGE*
+        {PetalId::Basic, 10.0f, 10.0f, 50, true}, // for testing physcis *DO NOT FORGET TO CHANGE*
         {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}}
     };
 

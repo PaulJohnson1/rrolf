@@ -15,16 +15,16 @@ namespace app::ui
     {
     public:
         bool m_Clicked = false;
-        float m_Width = 1.0f;
-        float m_Height = 1.0f;
-        float m_R = 5.0f;
+        float m_R = 0.0f;
 
-        Button(Renderer &);
+        Button(Renderer &, float, float);
         ~Button();
         bool MouseTouching();
-        virtual void Render() const;
+        void ButtonAction();
+        virtual void Render() override;
         std::function<void()> m_OnMouseOver;
         std::function<void()> m_OnMouseDown;
+        std::function<void()> m_OnMouseMove;
         std::function<void()> m_OnMouseUp;
     };
 }

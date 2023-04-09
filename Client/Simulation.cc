@@ -10,10 +10,16 @@
 #include <BinaryCoder/NativeTypes.hh>
 
 #include <Client/Renderer.hh>
+#include <Client/Ui/Button.hh>
+#include <Client/Ui/Text.hh>
+#include <Client/Ui/Engine.hh>
+#include <Client/Ui/ButtonTypes.hh>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #endif
+
+app::Simulation *g_Simulation = nullptr;
 
 namespace app
 {
@@ -58,6 +64,29 @@ namespace app
           m_Renderer(renderer)
     {
         std::fill(m_EntityTracker, m_EntityTracker + MAX_ENTITY_COUNT, false);
+        g_Simulation = this;
+
+        //ui test
+        m_UiElements["DeathScreen"] = ui::Add(
+            ui::SetJustify<1,1>(
+                ui::MakeVContainer<200,0>({
+                    new ui::Text(*renderer, "You were killed by", 0xffffffff, 24),
+                    ui::CreateRespawnButton(renderer)
+                    })
+            )
+        );
+        m_UiElements["Loadout"] = ui::Add(
+            ui::VPad<10>(
+                ui::SetJustify<1,2>(
+                    ui::MakeHContainer<20,10>({
+                        ui::CreateLoadoutButton(renderer),
+                        ui::CreateLoadoutButton(renderer),
+                        ui::CreateLoadoutButton(renderer),
+                        ui::CreateLoadoutButton(renderer)
+                        })
+                )
+            )
+        );
     }
 
     float Simulation::GetTime()
@@ -122,6 +151,9 @@ namespace app
 
             m_InterpolationSystem.PostTick();
             m_RendererSystem.PostTick();
+
+            //ui stuff
+            m_UiElements["DeathScreen"]->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer;
             return;
         }
         std::cout << "waiting for player to spawn\n";

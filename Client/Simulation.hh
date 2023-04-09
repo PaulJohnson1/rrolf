@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <optional>
+#include <map>
+#include <string>
 
 #define FOR_EACH_COMPONENT               \
     RROLF_COMPONENT_ENTRY(Flower, 0)     \
@@ -27,6 +29,15 @@
 #include <Client/System/GameRenderer.hh>
 #include <Shared/Entity.hh>
 #include <Client/Util/Lerp.hh>
+
+#include <Client/Ui/Container.hh>
+
+namespace app
+{
+    class Simulation;
+}
+
+extern app::Simulation *g_Simulation;
 
 namespace app
 {
@@ -61,6 +72,7 @@ namespace app
         class Renderer *m_Renderer;
         class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
+        std::map <std::string, ui::Container *> m_UiElements{};
 
         Simulation(class Renderer *);
 

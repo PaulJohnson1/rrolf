@@ -10,25 +10,37 @@
 #include <skia/include/core/SkPaint.h>
 #include <skia/include/core/SkMatrix.h>
 class SkCanvas;
+#else
+#include <emscripten.h>
 #endif
 
 #include <Client/Ui/Element.hh>
+#include <Client/Ui/Container.hh>
 
 namespace app
 {
     class Renderer;
+    class Mouse;
 }
 
 extern app::Renderer *g_Renderer;
-
-namespace ui
-{
-    class Element;
-}
-
+extern app::Mouse *g_Mouse;
 namespace app
 {
     class Renderer;
+    class Mouse
+    {
+    public:
+        float m_MouseX = 0.0f;
+        float m_MouseY = 0.0f;
+        uint8_t m_MouseState = 0;
+        uint8_t m_MouseButton = 0;
+        std::map<uint8_t, uint8_t> m_KeysPressed{};
+        Mouse()
+        {
+            g_Mouse = this;
+        }
+    };
     class Guard
     {
         float m_CurrentMatrix[9];
@@ -64,17 +76,12 @@ namespace app
         void Restore();
 
     public:
-        std::vector<ui::Element *> m_UiElements;
-
-        T m_OnRender;
 
         float m_Width;
         float m_Height;
-        float m_MouseX = 0.0f;
-        float m_MouseY = 0.0f;
-        uint8_t m_MouseState = 0;
-        uint8_t m_MouseButton = 0;
-        std::map<uint8_t, uint8_t> m_KeysPressed{};
+        float m_WindowScale;
+        uint8_t m_ContextId = 0;
+        ui::Container m_Container;
 
         enum class LineCap
         {
@@ -86,7 +93,7 @@ namespace app
         {
             Bevel,
             Miter,
-            // Round
+            Round
         };
         enum class TextAlign
         {
@@ -101,21 +108,26 @@ namespace app
             Bottom
         };
 
-        Renderer(T onRender)
-            : m_OnRender(onRender)
+        Renderer()
+            : m_Container(*this)
         {
-            assert(!g_Renderer);
-            g_Renderer = this;
 #ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
+            g_Renderer = this;
+#else
+            m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
+            if (m_ContextId == 0) {
+                assert(!g_Renderer);
+                g_Renderer = this;
+            }
 #endif
         }
 
-        void Initialize();
         void SetSize(int32_t width, int32_t height);
 
         // matrix
+        float const *GetTransform();
         void ResetTransform();
         void UpdateTransform();
         void SetTransform(float, float, float, float, float, float);
@@ -128,6 +140,7 @@ namespace app
         void SetStroke(uint32_t);
         void SetLineWidth(float);
         void SetLineCap(LineCap);
+        void SetLineJoin(LineJoin);
         void SetTextSize(float);
         void SetTextAlign(TextAlign);
         void SetTextBaseline(TextBaseline);
@@ -147,20 +160,11 @@ namespace app
         void StrokeText(std::string const &, float, float);
         void Clip();
 
+        float GetTextLength(std::string const &);
+
         // render
         void Stroke();
         void Fill();
-
-        void Render()
-        {
-            m_OnRender();
-            for (uint64_t i = 0; i < m_UiElements.size(); i++)
-            {
-                ui::Element *element = m_UiElements[i];
-                if (element->m_Showing)
-                    element->Render();
-            }
-        }
     };
 
     class Path2D
@@ -183,14 +187,6 @@ namespace app
 }
 
 #ifdef EMSCRIPTEN
-#include <emscripten.h>
-
-extern "C"
-{
-    void __Renderer_KeyEvent(uint8_t op, int32_t key);
-    void __Renderer_Render(int32_t width, int32_t height);
-    void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button);
-}
 #else
 void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {

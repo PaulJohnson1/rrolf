@@ -16,15 +16,21 @@ namespace app::ui
 
     public:
         bool m_Showing = true;
+        uint8_t m_HJustify = 0; //1 for mid 2 for right
+        uint8_t m_VJustify = 0; //1 for mid 2 for bottom
+        class Container *m_Container;
         float m_X = 0.0f;
         float m_Y = 0.0f;
+        float m_Width = 1.0f;
+        float m_Height = 1.0f;
         float m_LineWidth = 1.0f;
         uint32_t m_Fill = 0xffffffff;
-        uint32_t m_Stroke = 0xff000000;
+        uint32_t m_Stroke = 0xff222222;
 
-        Element(Renderer &);
+        Element(Renderer &, float, float);
         virtual ~Element();
-
-        virtual void Render() const = 0;
+        virtual void Render()
+        {
+        };
     };
 }
