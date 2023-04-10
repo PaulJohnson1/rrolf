@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 
 include_directories(..)
 include_directories(ThirdParty)
+include_directories(../Shared)
 
 set(SOURCES
     Component/Ai.cc
@@ -30,6 +31,7 @@ set(SOURCES
     Vector.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc
+    ../Shared/StaticData.cc
     )
 
 set(CMAKE_CXX_FLAGS "-std=c++17 -gdwarf-4 -lpthread")

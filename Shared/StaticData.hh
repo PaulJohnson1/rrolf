@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cmath>
+#include <cstdint>
+#include <vector>
+
 namespace app
 {
     // fake enum class (less type casting)
@@ -26,7 +30,15 @@ namespace app
         constexpr uint32_t Basic = 1;
         constexpr uint32_t Light = 2;
         constexpr uint32_t kMaxPetals = 3;
-    }
+    };
+
+    std::vector<std::vector<float>> LootTable(float);
+    
+    struct LootInstance
+    {
+        uint32_t m_Id;
+        std::vector<std::vector<float>> m_Table;
+    };
 
     struct MobData
     {
@@ -34,6 +46,7 @@ namespace app
         float m_BaseSize;
         float m_BaseHealth;
         float m_BaseDamage;
+        std::vector<LootInstance> m_Loot;
     };
 
     struct PetalData
@@ -52,8 +65,8 @@ namespace app
         {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}}
     };
 
-    static constexpr MobData MOB_DATA[MobId::kMaxMobs] = {
-        {MobId::BabyAnt, 14, 25, 10} // baby ant
+    static MobData MOB_DATA[MobId::kMaxMobs] = {
+        {MobId::BabyAnt, 14, 25, 10, {{1, LootTable(0.25)}, {2, LootTable(1)}}} // baby ant
     };
 
     // 0xffff2b75, 0xff2bffa3 for ultra and super
@@ -69,7 +82,8 @@ namespace app
         1.3,
         1.6,
         3.0,
-        5.0};
+        5.0
+    };
 
     static constexpr float MOB_HEALTH_FACTOR[RarityId::kMaxRarities] = {
         1,
@@ -86,5 +100,6 @@ namespace app
         1.3,
         1.6,
         2.0,
-        2.5};
+        2.5
+    };
 }

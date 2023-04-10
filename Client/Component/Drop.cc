@@ -88,7 +88,7 @@ namespace app::component
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
-        ctx->Scale(physical.m_Radius / 60, physical.m_Radius / 60);
+        ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
         ctx->BeginPath();
         ctx->SetFill(0xff000000);
         ctx->FillRect(-0.5,-0.5,1,1);

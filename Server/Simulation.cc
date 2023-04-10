@@ -1,13 +1,18 @@
+#ifndef M_PI
+#define M_PI 3.14169265358979
+#endif
 #include <Server/Simulation.hh>
 
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <cmath>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 #include <Server/Server.hh>
 
 namespace app
@@ -238,17 +243,43 @@ namespace app
         assert(m_EntityTracker[id]);
         if (HasComponent<component::Mob>(id))
         {
+            component::Mob &mob = Get<component::Mob>(id); // i think this code crashes
             component::Physical &mobPhysical = Get<component::Physical>(id);
             std::cout << "should spawn drop\n";
-            Entity dropId = Create();
-            component::Drop &drop = AddComponent<component::Drop>(dropId);
-            component::Physical &physical = AddComponent<component::Physical>(dropId);
-            component::Basic &basic = AddComponent<component::Basic>(dropId);
-            drop.Id(1);
-            drop.Rarity(1);
-            physical.X(mobPhysical.X());
-            physical.Y(mobPhysical.Y());
-            physical.Radius(60);
+            std::vector<component::Physical *> spawned = {};
+            for (uint64_t i = 0; i < MOB_DATA[mob.Id()].m_Loot.size(); ++i)
+            {
+                std::vector<float> const &table = MOB_DATA[mob.Id()].m_Loot[i].m_Table[mob.Rarity()];
+                float seed = ((float) rand()) / RAND_MAX;
+                for (uint32_t rarity = 0; rarity <= RarityId::kMaxRarities; ++rarity)
+                {
+                    seed -= table[rarity];
+                    if (seed < 0)
+                    {
+                        if (rarity != RarityId::kMaxRarities)
+                        {
+                            Entity dropId = Create();
+                            component::Drop &drop = AddComponent<component::Drop>(dropId);
+                            component::Physical &physical = AddComponent<component::Physical>(dropId);
+                            component::Basic &basic = AddComponent<component::Basic>(dropId);
+                            drop.Id(MOB_DATA[mob.Id()].m_Loot[i].m_Id);
+                            drop.Rarity(rarity);
+                            physical.X(mobPhysical.X());
+                            physical.Y(mobPhysical.Y());
+                            physical.Radius(25);
+                            spawned.push_back(&physical);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (spawned.size() > 1)
+            {
+                for (uint32_t i = 0; i < spawned.size(); ++i)
+                {
+                    spawned[i]->m_Velocity = Vector::FromPolar(10, i * M_PI * 2 / spawned.size());
+                }
+            }
         }
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
     {                                           \
