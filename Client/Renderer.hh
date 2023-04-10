@@ -6,6 +6,7 @@
 #include <cassert>
 
 #ifndef EMSCRIPTEN
+#include <GLFW/glfw3.h>
 #include <skia/include/core/SkPath.h>
 #include <skia/include/core/SkPaint.h>
 #include <skia/include/core/SkMatrix.h>
@@ -20,15 +21,15 @@ class SkCanvas;
 namespace app
 {
     class Renderer;
-    class Mouse;
+    class InputData;
 }
 
 extern app::Renderer *g_Renderer;
-extern app::Mouse *g_Mouse;
+extern app::InputData *g_InputData;
 namespace app
 {
     class Renderer;
-    class Mouse
+    class InputData
     {
     public:
         float m_MouseX = 0.0f;
@@ -36,9 +37,9 @@ namespace app
         uint8_t m_MouseState = 0;
         uint8_t m_MouseButton = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
-        Mouse()
+        InputData()
         {
-            g_Mouse = this;
+            g_InputData = this;
         }
     };
     class Guard
@@ -57,13 +58,6 @@ namespace app
     // template <typename T = >
     class Renderer
     {
-        using T = void (*)();
-#ifndef EMSCRIPTEN
-        SkCanvas *m_Canvas;
-        SkPath m_CurrentPath;
-        SkPaint m_FillPaint;
-        SkPaint m_StrokePaint;
-#endif
         float m_Matrix[9] = {
             1, 0, 0,  // s s x !!REMEMBER: CANVAS2D IS s s s s x y SO ORDER MATTERS ITS 0 1 3 4 2 5
             0, 1, 0,  // s s y
@@ -76,6 +70,12 @@ namespace app
         void Restore();
 
     public:
+#ifndef EMSCRIPTEN
+        SkCanvas *m_Canvas;
+        SkPath m_CurrentPath;
+        SkPaint m_FillPaint;
+        SkPaint m_StrokePaint;
+#endif
 
         float m_Width;
         float m_Height;
@@ -114,7 +114,15 @@ namespace app
 #ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
-            g_Renderer = this;
+            if (g_Renderer == nullptr)
+                g_Renderer = this;
+            else
+            {
+                SkBitmap bitmap;
+                bitmap.allocN32Pixels(100, 100);
+                m_Canvas = new SkCanvas(bitmap);
+
+            }
 #else
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
             if (m_ContextId == 0) {
@@ -123,6 +131,34 @@ namespace app
             }
 #endif
         }
+
+        Renderer(int32_t width, int32_t height)
+        {
+            #ifndef EMSCRIPTEN
+            m_StrokePaint.setAntiAlias(true);
+            m_FillPaint.setAntiAlias(true);
+            if (g_Renderer == nullptr)
+                g_Renderer = this;
+            else
+            {
+                m_Bitmap = new SkBitmap;
+                m_Bitmap->allocN32Pixels(width, height);
+                m_Width = width;
+                m_Height = height;
+                m_Canvas = new SkCanvas(*m_Bitmap);
+
+            }
+#else
+            m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
+            if (m_ContextId == 0) {
+                assert(!g_Renderer);
+                g_Renderer = this;
+            }
+            SetSize(width, height);
+#endif
+        }
+
+        ~Renderer();
 
         void SetSize(int32_t width, int32_t height);
 
@@ -189,14 +225,3 @@ namespace app
         void QuadTo(float, float, float, float);
     };
 }
-
-#ifdef EMSCRIPTEN
-#else
-void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-{
-    if (action == GLFW_PRESS)
-        g_Renderer->m_KeysPressed[key] = 1;
-    else if (action == GLFW_RELEASE)
-        g_Renderer->m_KeysPressed[key] = 0;
-}
-#endif

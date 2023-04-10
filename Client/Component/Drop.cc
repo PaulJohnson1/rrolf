@@ -14,11 +14,8 @@
 namespace app::component
 {
     Drop::Drop(Entity parent, Simulation *simulation)
-        : m_Parent(parent)
-        , m_Simulation(simulation)
-        , m_Renderer({})
+        : m_Parent(parent), m_Simulation(simulation)
     {
-        m_Renderer.SetSize(80, 80);
     }
 
     void Drop::UpdateFromBinary(bc::BinaryCoder &coder)
@@ -29,7 +26,7 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
-        
+        /*
         m_Renderer.ResetTransform();
         m_Renderer.Translate(40,40);
         m_Renderer.SetFill(RARITY_COLORS[m_Rarity]);
@@ -83,6 +80,7 @@ namespace app::component
             m_Renderer.Fill();
             break;
         }
+        */
     }
 
     void Drop::Render(Renderer *ctx)
@@ -91,6 +89,8 @@ namespace app::component
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
         ctx->Scale(physical.m_Radius / 60, physical.m_Radius / 60);
-        ctx->DrawImage(m_Renderer);
+        ctx->BeginPath();
+        ctx->SetFill(0xff000000);
+        ctx->FillRect(-0.5,-0.5,1,1);
     }
 }

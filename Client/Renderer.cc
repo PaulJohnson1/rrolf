@@ -26,7 +26,7 @@ void SkDebugf(const char format[], ...)
 #endif
 
 app::Renderer *g_Renderer = nullptr;
-app::Mouse *g_Mouse = nullptr;
+app::InputData *g_InputData = nullptr;
 
 namespace app
 {
@@ -58,6 +58,13 @@ namespace app
         m_Renderer->m_Matrix[8] = m_CurrentMatrix[8];
         m_Renderer->Restore();
     }
+
+    Renderer::~Renderer()
+    {
+        if (this != g_Renderer)
+            delete m_Canvas;
+    }
+
     float const *Renderer::GetTransform()
     {
         return m_Matrix;
@@ -139,7 +146,8 @@ namespace app
 #else
         EM_ASM({
             Module.ctxs[$0].save();
-        }, m_ContextId);
+        },
+               m_ContextId);
 #endif
     }
 
@@ -150,7 +158,8 @@ namespace app
 #else
         EM_ASM({
             Module.ctxs[$0].restore();
-        }, m_ContextId);
+        },
+               m_ContextId);
 #endif
     }
 
@@ -162,7 +171,8 @@ namespace app
         EM_ASM({
             Module.ctxs[$0].canvas.width = $1;
             Module.ctxs[$0].canvas.height = $2;
-        }, m_ContextId, width, height);
+        },
+               m_ContextId, width, height);
 #else
         assert(false);
 #endif
@@ -179,9 +189,9 @@ namespace app
 
     void Renderer::SetFill(uint32_t c, float h)
     {
-        uint8_t red = (uint8_t) (((c >> 16) & 255) * h);
-        uint8_t green = (uint8_t) (((c >> 8) & 255) * h);
-        uint8_t blue = (uint8_t) (((c >> 0) & 255) * h);
+        uint8_t red = (uint8_t)(((c >> 16) & 255) * h);
+        uint8_t green = (uint8_t)(((c >> 8) & 255) * h);
+        uint8_t blue = (uint8_t)(((c >> 0) & 255) * h);
         SetFill(((c >> 24 & 255) << 24) | (red << 16) | (green << 8) | blue);
     }
 
@@ -196,9 +206,9 @@ namespace app
 
     void Renderer::SetStroke(uint32_t c, float h)
     {
-        uint8_t red = (uint8_t) (((c >> 16) & 255) * h);
-        uint8_t green = (uint8_t) (((c >> 8) & 255) * h);
-        uint8_t blue = (uint8_t) (((c >> 0) & 255) * h);
+        uint8_t red = (uint8_t)(((c >> 16) & 255) * h);
+        uint8_t green = (uint8_t)(((c >> 8) & 255) * h);
+        uint8_t blue = (uint8_t)(((c >> 0) & 255) * h);
         SetStroke(((c >> 24 & 255) << 24) | (red << 16) | (green << 8) | blue);
     }
 
@@ -255,7 +265,8 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctxs[$0].font = $1 + "px Ubuntu"; }, m_ContextId, size);
 #else
-        assert(false);
+        // TODO: implement
+        // assert(false);
 #endif
     }
 
@@ -443,16 +454,19 @@ namespace app
 
     void Renderer::DrawImage(Renderer const &ctx)
     {
+#ifdef EMSCRIPTEN
         EM_ASM({
             Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas, $2, $3);
-        }, m_ContextId, ctx.m_ContextId, -ctx.m_Width / 2, -ctx.m_Height / 2);
+        },
+               m_ContextId, ctx.m_ContextId, -ctx.m_Width / 2, -ctx.m_Height / 2);
+#endif
     }
     float Renderer::GetTextLength(std::string const &str)
     {
 #ifdef EMSCRIPTEN
         return EM_ASM_INT({ $1 = Module.ReadCstr($1); return Module.ctxs[$0].measureText($1).width; }, m_ContextId, str.c_str());
 #else
-        return -1000000.0;
+        return 150.0f;
 #endif
     }
 

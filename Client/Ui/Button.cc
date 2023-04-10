@@ -21,13 +21,13 @@ namespace app::ui
     bool Button::MouseTouching()
     {
         const float *matrix = m_Renderer.GetTransform();
-        return std::abs(g_Mouse->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_Mouse->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
+        return std::abs(g_InputData->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_InputData->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
     }
     void Button::ButtonAction()
     {
         if (MouseTouching())
         {
-            switch (g_Mouse->m_MouseState)
+            switch (g_InputData->m_MouseState)
             {
             case 0:
                 if (m_Clicked)
@@ -53,9 +53,9 @@ namespace app::ui
         }
         else if (m_Clicked)
         {
-            if (g_Mouse->m_MouseState == 2)
+            if (g_InputData->m_MouseState == 2)
                 m_OnMouseMove();
-            else if (g_Mouse->m_MouseState == 0)
+            else if (g_InputData->m_MouseState == 0)
             {
                 m_OnMouseUp();
                 m_Clicked = false;

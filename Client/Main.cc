@@ -1,6 +1,19 @@
 #include <iostream>
 #include <unistd.h>
 
+#ifndef EMSCRIPTEN
+#define SK_GL
+#define SK_GANESH
+#include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkPath.h>
+#include <skia/include/core/SkPaint.h>
+#include <skia/include/core/SkMatrix.h>
+#include <skia/include/core/SkColorSpace.h>
+#include <skia/include/gpu/gl/GrGLInterface.h>
+#include <skia/include/gpu/GrDirectContext.h>
+#include <skia/include/gpu/GrBackendSurface.h>
+#endif
+
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
@@ -10,23 +23,33 @@
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
+#else
+void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+        g_InputData->m_KeysPressed[key] = 1; //mouse is a global that shouldn't be tied to the renderer alr that works too
+    else if (action == GLFW_RELEASE)
+        g_InputData->m_KeysPressed[key] = 0;
+}
+#endif
+
 extern "C" 
 {
     void __Renderer_KeyEvent(uint8_t op, int32_t key)
     {
         if (op == 1)
-            g_Mouse->m_KeysPressed[key] = 1;
+            g_InputData->m_KeysPressed[key] = 1;
         else if (op == 0)
-            g_Mouse->m_KeysPressed[key] = 0;
+            g_InputData->m_KeysPressed[key] = 0;
     }
     void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button)
     {
-        if (button != 3) g_Mouse->m_MouseButton = button;
-        g_Mouse->m_MouseX = x;
-        g_Mouse->m_MouseY = y;
+        if (button != 3) g_InputData->m_MouseButton = button;
+        g_InputData->m_MouseX = x;
+        g_InputData->m_MouseY = y;
         if (button != 2)
-            if (state != 2 || g_Mouse->m_MouseState != 0)
-                g_Mouse->m_MouseState = state;
+            if (state != 2 || g_InputData->m_MouseState != 0)
+                g_InputData->m_MouseState = state;
     }
     void __Renderer_Render(int32_t width, int32_t height)
     {
@@ -43,22 +66,18 @@ extern "C"
         g_Renderer->m_Container.Render();
     }
 }
-#endif
-namespace app
-{
-    static Socket *socket;
-}
+
 // #include <fenv.h>
 void Initialize()
 {
 #ifndef EMSCRIPTEN
     // 16:9 aspect ratio for 500 height
-    m_Width = 889;
-    m_Height = 500;
+    g_Renderer->m_Width = 889;
+    g_Renderer->m_Height = 500;
     glfwSetErrorCallback([](int error, char const *description)
                             { std::cerr << "code " << error << ' ' << description << '\n'; });
     glfwInit();
-    GLFWwindow *window = glfwCreateWindow(m_Width, m_Height, "rrolf native client", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(g_Renderer->m_Width, g_Renderer->m_Height, "rrolf native client", NULL, NULL);
     glfwSetKeyCallback(window, GlfwKeyCallback);
 
     if (!window)
@@ -74,24 +93,29 @@ void Initialize()
     framebufferInfo.fFBOID = 0;
     framebufferInfo.fFormat = GL_RGBA8;
     SkColorType colorType = kRGBA_8888_SkColorType;
-    GrBackendRenderTarget backendRenderTarget(m_Width, m_Height,
+    GrBackendRenderTarget backendRenderTarget(g_Renderer->m_Width, g_Renderer->m_Height,
                                                 0, // sample count
                                                 0, // stencil bits
                                                 framebufferInfo);
     SkSurface *surface = SkSurface::MakeFromBackendRenderTarget(context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release();
-    m_Canvas = surface->getCanvas();
+    g_Renderer->m_Canvas = surface->getCanvas();
 
     while (!glfwWindowShouldClose(window))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
         context->flush();
-        Render();
+        float a = g_Renderer->m_Height / 1080;
+        float b = g_Renderer->m_Width / 1920;
+        g_Renderer->m_WindowScale = b < a ? a : b;
+        g_Simulation->TickRenderer();
+        g_Renderer->ResetTransform();
+        g_Renderer->m_Container.Render();
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
 #else
     EM_ASM({
-        document.oncontextmenu = _ => false;
+        document.oncontextmenu = function() { return false; };
         Module.canvas = document.createElement("canvas");
         Module.canvas.id = "canvas";
         document.body.appendChild(Module.canvas);
@@ -164,14 +188,16 @@ int main()
 {
     // feenableexcept(FE_INVALID);
     using namespace app;
-
+    
+#ifdef EMSCRIPTEN
     Initialize();
+#endif
     // heap allocate so the dtor doesn't automatically get called
     static Renderer *renderer = new Renderer();
     Renderer *test = new Renderer();
-    static Mouse *mouse = new Mouse();
+    static InputData *mouse = new InputData();
     g_Simulation = new Simulation(renderer);
-    socket = new Socket(
+    static Socket *socket = new Socket(
         "ws://localhost:8000", [&]()
         { std::cout << "open\n"; },
         [&]()
@@ -197,7 +223,7 @@ int main()
     std::cout << "wasm init " << __TIME__ << '\n';
 #else
     std::thread([&]()
-                { renderer->Initialize(); })
+                { Initialize(); })
         .detach();
 #endif
 

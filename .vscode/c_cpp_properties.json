@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/Server/ThirdParty",
-                "${workspaceFolder}/"
+                "${workspaceFolder}/",
+                "/usr/include/skia"
             ],
             "defines": [],
             "cStandard": "c17",

@@ -49,14 +49,14 @@ namespace app::ui
         };
         button->m_OnMouseMove = [button]()
         {
-            button->m_GlobalX = g_Mouse->m_MouseX;
-            button->m_GlobalY = g_Mouse->m_MouseY;
+            button->m_GlobalX = g_InputData->m_MouseX;
+            button->m_GlobalY = g_InputData->m_MouseY;
         };
         button->m_OnMouseDown = [button]()
         {
             button->m_UseGlobalPosition = true;
-            button->m_GlobalX = g_Mouse->m_MouseX;
-            button->m_GlobalY = g_Mouse->m_MouseY;
+            button->m_GlobalX = g_InputData->m_MouseX;
+            button->m_GlobalY = g_InputData->m_MouseY;
         };
         button->m_OnMouseUp = [button]()
         {

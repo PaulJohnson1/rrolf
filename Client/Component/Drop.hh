@@ -20,7 +20,6 @@ namespace app::component
 {
     class Drop
     {
-        Renderer m_Renderer;
     public:
         uint8_t m_Id = 0;
         uint8_t m_Rarity = 0;
