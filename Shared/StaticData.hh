@@ -29,7 +29,8 @@ namespace app
         constexpr uint32_t None = 0;
         constexpr uint32_t Basic = 1;
         constexpr uint32_t Light = 2;
-        constexpr uint32_t kMaxPetals = 3;
+        constexpr uint32_t Stinger = 3;
+        constexpr uint32_t kMaxPetals = 4;
     };
 
     std::vector<std::vector<float>> LootTable(float);
@@ -60,9 +61,10 @@ namespace app
     };
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
-        {PetalId::None, 0, 0, true},
-        {PetalId::Basic, 10.0f, 10.0f, 50, true}, // for testing physcis *DO NOT FORGET TO CHANGE*
-        {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}}
+        {PetalId::None, 0, 0},
+        {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
+        {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}},
+        {PetalId::Stinger, 35.0f, 8.0f, 100, true, {1, 1, 1, 1, 1, 3}}
     };
 
     static MobData MOB_DATA[MobId::kMaxMobs] = {

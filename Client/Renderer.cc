@@ -1,5 +1,4 @@
 #include <Client/Renderer.hh>
-#include <Client/Ui/Container.hh>
 
 #include <iostream>
 #include <chrono>
@@ -24,6 +23,8 @@ void SkDebugf(const char format[], ...)
 {
 }
 #endif
+
+#include <Client/Ui/Container.hh>
 
 app::Renderer *g_Renderer = nullptr;
 app::InputData *g_InputData = nullptr;
@@ -61,14 +62,20 @@ namespace app
 
     Renderer::~Renderer()
     {
+#ifndef EMSCRIPTEN
         if (this != g_Renderer)
+        {
             delete m_Canvas;
+            delete m_Bitmap;
+        }
+#endif
     }
 
     float const *Renderer::GetTransform()
     {
         return m_Matrix;
     }
+    
     void Renderer::SetTransform(float a, float b, float c, float d, float e, float f)
     {
         m_Matrix[0] = a;
@@ -89,7 +96,10 @@ namespace app
                m_ContextId, m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5]);
 #else
         SkMatrix m;
-        m.set9(m_Matrix);
+        // float test[9] = { m_Matrix[0], m_Matrix[3], m_Matrix[2], m_Matrix[1], m_Matrix[4], m_Matrix[5], 0, 0, 1}; //idt that works
+        float test[9] = { m_Matrix[0], m_Matrix[1], m_Matrix[3], m_Matrix[4], m_Matrix[2], m_Matrix[5], 0, 0, 1}; //idt that works
+        
+        m.setAffine(test); //test this lol we pray
         m_Canvas->setMatrix(m);
 #endif
     }
@@ -237,8 +247,19 @@ namespace app
         },
                m_ContextId, l);
 #else
-        // TODO later
-        assert(false);
+        switch (l)
+        {
+        case LineCap::Butt:
+            m_StrokePaint.setStrokeCap(SkPaint::kButt_Cap);
+            break;
+        case LineCap::Round:
+            m_StrokePaint.setStrokeCap(SkPaint::kRound_Cap);
+            break;
+        case LineCap::Square:
+            m_StrokePaint.setStrokeCap(SkPaint::kSquare_Cap);
+        default:
+            assert(false);
+        };
 #endif
     }
 
@@ -256,7 +277,20 @@ namespace app
                m_ContextId, l);
 #else
         // TODO later
-        assert(false);
+        switch (l)
+        {
+        case LineJoin::Bevel:
+            m_StrokePaint.setStrokeJoin(SkPaint::kBevel_Join);
+            break;
+        case LineJoin::Miter:
+            m_StrokePaint.setStrokeJoin(SkPaint::kMiter_Join);
+            break;
+        case LineJoin::Round:
+            m_StrokePaint.setStrokeJoin(SkPaint::kRound_Join);
+            break;
+        default:
+            assert(false);
+        };
 #endif
     }
 
@@ -266,7 +300,6 @@ namespace app
         EM_ASM({ Module.ctxs[$0].font = $1 + "px Ubuntu"; }, m_ContextId, size);
 #else
         // TODO: implement
-        // assert(false);
 #endif
     }
 
@@ -284,7 +317,6 @@ namespace app
                m_ContextId, l);
 #else
         // TODO later
-        assert(false);
 #endif
     }
 
@@ -302,7 +334,6 @@ namespace app
                m_ContextId, l);
 #else
         // TODO later
-        assert(false);
 #endif
     }
 
@@ -369,7 +400,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctxs[$0].fillRect($1, $2, $3, $4); }, m_ContextId, x, y, w, h);
 #else
-        assert(false);
+        m_Canvas->drawRect(SkRect::MakeXYWH(x, y, w, h), m_FillPaint);
 #endif
     }
 
@@ -378,7 +409,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctxs[$0].strokeRect($1, $2, $3, $4); }, m_ContextId, x, y, w, h);
 #else
-        assert(false);
+        // TODO: later
 #endif
     }
 
@@ -387,7 +418,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ Module.ctxs[$0].rect($1, $2, $3, $4); }, m_ContextId, x, y, w, h);
 #else
-        assert(false);
+        // TODO: later
 #endif
     }
 
@@ -410,7 +441,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ $1 = Module.ReadCstr($1); Module.ctxs[$0].fillText($1, $2, $3); }, m_ContextId, string.c_str(), x, y);
 #else
-        assert(false);
+        // TODO: later
 #endif
     }
 
@@ -419,7 +450,7 @@ namespace app
 #ifdef EMSCRIPTEN
         EM_ASM({ $1 = Module.ReadCstr($1); Module.ctxs[$0].strokeText($1, $2, $3); }, m_ContextId, string.c_str(), x, y);
 #else
-        assert(false);
+        // TODO: later
 #endif
     }
 
@@ -459,6 +490,8 @@ namespace app
             Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas, $2, $3);
         },
                m_ContextId, ctx.m_ContextId, -ctx.m_Width / 2, -ctx.m_Height / 2);
+#else
+        // TODO: later
 #endif
     }
     float Renderer::GetTextLength(std::string const &str)
@@ -466,7 +499,8 @@ namespace app
 #ifdef EMSCRIPTEN
         return EM_ASM_INT({ $1 = Module.ReadCstr($1); return Module.ctxs[$0].measureText($1).width; }, m_ContextId, str.c_str());
 #else
-        return 150.0f;
+        // TODO: later
+        return 0;
 #endif
     }
 

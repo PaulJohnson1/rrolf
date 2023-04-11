@@ -1,7 +1,5 @@
 #include <Client/Component/Petal.hh>
 
-#include <iostream>
-
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
@@ -14,7 +12,6 @@ namespace app::component
         : m_Parent(parent),
           m_Simulation(simulation)
     {
-        std::cout << "petal ctor\n";
     }
 
     void Petal::UpdateFromBinary(bc::BinaryCoder &coder)

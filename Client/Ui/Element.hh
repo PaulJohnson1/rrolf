@@ -16,9 +16,8 @@ namespace app::ui
 
     public:
         bool m_Showing = true;
-        uint8_t m_HJustify = 0; //1 for mid 2 for right
-        uint8_t m_VJustify = 0; //1 for mid 2 for bottom
-        class Container *m_Container;
+        int32_t m_HJustify = 0; //1 for mid 2 for right
+        int32_t m_VJustify = 0; //1 for mid 2 for bottom
         float m_X = 0.0f;
         float m_Y = 0.0f;
         float m_Width = 1.0f;
@@ -26,6 +25,7 @@ namespace app::ui
         float m_LineWidth = 1.0f;
         uint32_t m_Fill = 0xffffffff;
         uint32_t m_Stroke = 0xff222222;
+        class Container *m_Container;
 
         Element(Renderer &, float, float);
         virtual ~Element();

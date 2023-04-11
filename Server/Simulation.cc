@@ -221,9 +221,6 @@ namespace app
 
     void Simulation::RequestDeletion(Entity id)
     {
-        if (HasComponent<component::Petal>(id))
-            std::cout << "a petal was deleted\n";
-
         if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
             m_PendingDeletions.push_back(id);
     }

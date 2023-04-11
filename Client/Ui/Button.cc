@@ -25,37 +25,21 @@ namespace app::ui
     }
     void Button::ButtonAction()
     {
-        if (MouseTouching())
+        if (MouseTouching() && !m_Clicked)
         {
-            switch (g_InputData->m_MouseState)
+            if (g_InputData->m_MouseButtons & 1)
             {
-            case 0:
-                if (m_Clicked)
-                {
-                    m_OnMouseUp();
-                    m_Clicked = false;
-                }
-                else
-                    m_OnMouseOver();
-                break;
-            case 1:
-                if (!m_Clicked)
-                {
-                    m_OnMouseDown();
-                    m_Clicked = true;
-                }
-                break;
-            case 2:
-                m_OnMouseMove();
-            default:
-                break;
+                m_OnMouseDown();
+                m_Clicked = true;
             }
+            else
+                m_OnMouseOver();
         }
         else if (m_Clicked)
         {
-            if (g_InputData->m_MouseState == 2)
+            if (g_InputData->m_MouseButtons & 1)
                 m_OnMouseMove();
-            else if (g_InputData->m_MouseState == 0)
+            else
             {
                 m_OnMouseUp();
                 m_Clicked = false;

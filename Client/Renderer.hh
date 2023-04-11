@@ -10,7 +10,8 @@
 #include <skia/include/core/SkPath.h>
 #include <skia/include/core/SkPaint.h>
 #include <skia/include/core/SkMatrix.h>
-class SkCanvas;
+#include <skia/include/core/SkBitmap.h>
+#include <skia/include/core/SkCanvas.h>
 #else
 #include <emscripten.h>
 #endif
@@ -34,8 +35,8 @@ namespace app
     public:
         float m_MouseX = 0.0f;
         float m_MouseY = 0.0f;
-        uint8_t m_MouseState = 0;
-        uint8_t m_MouseButton = 0;
+        // order: left right middle
+        uint8_t m_MouseButtons = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
         InputData()
         {
@@ -75,6 +76,7 @@ namespace app
         SkPath m_CurrentPath;
         SkPaint m_FillPaint;
         SkPaint m_StrokePaint;
+        SkBitmap *m_Bitmap;
 #endif
 
         float m_Width;
@@ -111,6 +113,8 @@ namespace app
         Renderer()
             : m_Container(*this)
         {
+            m_Width = 1920;
+            m_Height = 1080;
 #ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
@@ -118,14 +122,14 @@ namespace app
                 g_Renderer = this;
             else
             {
-                SkBitmap bitmap;
-                bitmap.allocN32Pixels(100, 100);
-                m_Canvas = new SkCanvas(bitmap);
-
+                m_Bitmap = new SkBitmap;
+                m_Bitmap->allocN32Pixels(m_Width, m_Height);
+                m_Canvas = new SkCanvas(*m_Bitmap);
             }
 #else
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
-            if (m_ContextId == 0) {
+            if (m_ContextId == 0)
+            {
                 assert(!g_Renderer);
                 g_Renderer = this;
             }
@@ -133,8 +137,11 @@ namespace app
         }
 
         Renderer(int32_t width, int32_t height)
+            : m_Container(*this)
         {
-            #ifndef EMSCRIPTEN
+            m_Width = width;
+            m_Height = height;
+#ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
             if (g_Renderer == nullptr)
@@ -143,14 +150,12 @@ namespace app
             {
                 m_Bitmap = new SkBitmap;
                 m_Bitmap->allocN32Pixels(width, height);
-                m_Width = width;
-                m_Height = height;
                 m_Canvas = new SkCanvas(*m_Bitmap);
-
             }
 #else
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
-            if (m_ContextId == 0) {
+            if (m_ContextId == 0)
+            {
                 assert(!g_Renderer);
                 g_Renderer = this;
             }
@@ -174,7 +179,7 @@ namespace app
         // style
         void SetGlobalAlpha(float);
         void SetFill(uint32_t);
-        void SetFill(uint32_t, float); //darken
+        void SetFill(uint32_t, float); // darken
         void SetStroke(uint32_t);
         void SetStroke(uint32_t, float);
         void SetLineWidth(float);
