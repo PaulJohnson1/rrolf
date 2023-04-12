@@ -21,14 +21,11 @@ namespace app::ui
         button->m_Fill = 0xff1dd129;
         button->m_Stroke = 0xff17a921;
         button->m_LineWidth = 6;
-        button->m_OnMouseOver = [&]()
-        {
+        button->m_OnMouseOver = [&]() {
         };
-        button->m_OnMouseMove = [&]()
-        {
+        button->m_OnMouseMove = [&]() {
         };
-        button->m_OnMouseDown = [&]()
-        {
+        button->m_OnMouseDown = [&]() {
         };
         button->m_OnMouseUp = [&]()
         {
@@ -39,13 +36,13 @@ namespace app::ui
         };
         return button;
     }
+    
     DynamicButton *CreateLoadoutButton(Renderer *renderer, int32_t pos)
     {
         DynamicButton *button = new DynamicButton(*renderer, 60, pos);
         button->m_Fill = 0xffffffff;
         button->m_Stroke = 0xffcfcfcf;
-        button->m_OnMouseOver = [&]()
-        {
+        button->m_OnMouseOver = [&]() {
         };
         button->m_OnMouseMove = [button]()
         {

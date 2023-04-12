@@ -1,20 +1,18 @@
-#include <Client/Ui/Element.hh>
 #include <Client/Ui/Container.hh>
 
-#include <cassert>
-
+#include <Client/Ui/Element.hh>
 #include <Client/Renderer.hh>
 
 namespace app::ui
 {
     Container::Container(Renderer &ctx)
-    :   Element(ctx,0,0)
+        : Element(ctx, 0, 0)
     {
     }
     void Container::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); //necessary btw
+        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); // necessary btw
         m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
         if (m_HasBackground)
         {

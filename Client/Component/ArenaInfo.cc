@@ -1,6 +1,5 @@
 #include <Client/Component/ArenaInfo.hh>
 
-#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -8,6 +7,7 @@
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
+#include <Shared/Assert.hh>
 
 namespace app::component
 {
@@ -31,7 +31,6 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize * 2);
         ctx->Fill();
-        assert(m_Simulation); // sometimes it's nullptr somehow
         component::PlayerInfo &playerInfo = m_Simulation->Get<component::PlayerInfo>(m_Simulation->m_PlayerInfo);
         float alpha = playerInfo.m_Fov * 51;
         ctx->SetStroke((uint32_t)(alpha) << 24);

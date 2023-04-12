@@ -1,11 +1,10 @@
 #include <Client/Ui/Button.hh>
 
-#include <cassert>
+#include <cmath>
 #include <iostream>
 
 #include <Client/Renderer.hh>
-
-#include <cmath>
+#include <Shared/Assert.hh>
 
 namespace app::ui
 {
@@ -14,15 +13,12 @@ namespace app::ui
     {
     }
 
-    Button::~Button()
-    {
-        assert(false);
-    }
     bool Button::MouseTouching()
     {
         const float *matrix = m_Renderer.GetTransform();
         return std::abs(g_InputData->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_InputData->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
     }
+
     void Button::ButtonAction()
     {
         if (MouseTouching() && !m_Clicked)
@@ -49,7 +45,7 @@ namespace app::ui
     void Button::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); //necessary btw
+        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); // necessary btw
         m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
         m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
         m_Renderer.RoundRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height, m_R);

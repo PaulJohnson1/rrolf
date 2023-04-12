@@ -36,10 +36,11 @@ set(SOURCES
 
 
 if(WASM_BUILD)
+    # no assertions in wasm build
     set(CMAKE_CXX_FLAGS "-std=c++20 -gdwarf-4 -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent,___Renderer_MouseEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++20 -gdwarf-4 -lcrypto -lssl -lskia -lglfw")
+    set(CMAKE_CXX_FLAGS "-std=c++20 -DRROLF_ENABLE_ASSERTIONS -gdwarf-4 -lcrypto -lssl -lskia -lglfw")
     set(CMAKE_CXX_COMPILER "clang++")
     include_directories(/usr/include)
     include_directories(/usr/include/skia)

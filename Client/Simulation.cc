@@ -1,6 +1,5 @@
 #include <Client/Simulation.hh>
 
-#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -27,28 +26,31 @@ namespace app
     template <>                                                                        \
     component::COMPONENT &Simulation::Get<component::COMPONENT>(Entity id)             \
     {                                                                                  \
-        assert(m_EntityTracker[id]);                                                   \
-        assert(m_##COMPONENT##Tracker[id]);                                            \
+        RROLF_ASSERT(m_EntityTracker[id], "entity does not exist");                    \
+        RROLF_ASSERT(m_##COMPONENT##Tracker[id], "component does not exist");          \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT const &Simulation::Get<component::COMPONENT>(Entity id) const \
     {                                                                                  \
-        assert(m_EntityTracker[id]);                                                   \
-        assert(m_##COMPONENT##Tracker[id]);                                            \
+        RROLF_ASSERT(m_EntityTracker[id], "entity does not exist");                    \
+        RROLF_ASSERT(m_##COMPONENT##Tracker[id], "component does not exist");          \
         return m_##COMPONENT##Components.d[id];                                        \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     bool Simulation::HasComponent<component::COMPONENT>(Entity id) const               \
     {                                                                                  \
+        RROLF_ASSERT(m_EntityTracker[id], "entity does not exist");                    \
         return m_##COMPONENT##Tracker[id];                                             \
     }                                                                                  \
                                                                                        \
     template <>                                                                        \
     component::COMPONENT &Simulation::AddComponent<component::COMPONENT>(Entity id)    \
     {                                                                                  \
+        RROLF_ASSERT(m_EntityTracker[id], "entity does not exist");                    \
+        RROLF_ASSERT(!m_##COMPONENT##Tracker[id], "component already exists");         \
         m_##COMPONENT##Tracker[id] = true;                                             \
         new (&m_##COMPONENT##Components.d[id]) component::COMPONENT(id, this);         \
         return Get<component::COMPONENT>(id);                                          \
@@ -114,7 +116,7 @@ namespace app
     void Simulation::Remove(Entity id)
     {
         std::cout << "entity with id " << std::to_string(id) << " deleted\n";
-        assert(m_EntityTracker[id]);
+        RROLF_ASSERT(m_EntityTracker[id], "cannot remove nonexistant entity");
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
     {                                           \
         using T = component::COMPONENT;         \

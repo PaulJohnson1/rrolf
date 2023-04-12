@@ -23,7 +23,8 @@ namespace app::ui
             element->m_X = width + element->m_Width / 2;
             element->m_Container = c;
             width += element->m_Width + innerSpacing;
-            if (element->m_Height > height) height = element->m_Height;
+            if (element->m_Height > height)
+                height = element->m_Height;
             c->m_Elements.push_back(element);
         }
         height += 2 * outerSpacing;
@@ -37,6 +38,7 @@ namespace app::ui
         }
         return c;
     }
+
     template <int32_t innerSpacing, int32_t outerSpacing>
     Container *MakeVContainer(std::vector<Element *> elements)
     {
@@ -51,7 +53,8 @@ namespace app::ui
             element->m_Y = height + element->m_Height / 2;
             element->m_Container = c;
             height += element->m_Height + innerSpacing;
-            if (element->m_Width > width) width = element->m_Width;
+            if (element->m_Width > width)
+                width = element->m_Width;
             c->m_Elements.push_back(element);
         }
         width += 2 * outerSpacing;
@@ -65,6 +68,7 @@ namespace app::ui
         }
         return c;
     }
+
     template <int32_t HAlign, int32_t VAlign>
     Container *SetJustify(Container *c)
     {
@@ -74,20 +78,27 @@ namespace app::ui
         c->m_Y = (1 - VAlign) * c->m_Height / 2;
         return c;
     }
+
     template <int32_t pad>
     Container *HPad(Container *c)
     {
-        if (c->m_HJustify == 2) c->m_X -= pad;
-        else c->m_X += pad;
+        if (c->m_HJustify == 2)
+            c->m_X -= pad;
+        else
+            c->m_X += pad;
         return c;
     }
+
     template <int32_t pad>
     Container *VPad(Container *c)
     {
-        if (c->m_VJustify == 2) c->m_Y -= pad;
-        else c->m_Y += pad;
+        if (c->m_VJustify == 2)
+            c->m_Y -= pad;
+        else
+            c->m_Y += pad;
         return c;
     }
+
     template <uint32_t color>
     Container *AddBackground(Container *c)
     {
@@ -95,13 +106,14 @@ namespace app::ui
         c->m_Fill = color;
         return c;
     }
+    
     Container *Add(Container *c)
     {
         for (uint64_t i = 0; i < c->m_Elements.size(); i++)
         {
             ui::Element *element = c->m_Elements[i];
             element->m_X -= c->m_Width / 2;
-            element->m_Y -= c->m_Height / 2; 
+            element->m_Y -= c->m_Height / 2;
         }
         g_Renderer->m_Container.m_Elements.push_back(c);
         return c;

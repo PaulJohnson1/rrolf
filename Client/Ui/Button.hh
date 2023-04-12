@@ -18,7 +18,7 @@ namespace app::ui
         float m_R = 0.0f;
 
         Button(Renderer &, float, float);
-        ~Button();
+
         bool MouseTouching();
         void ButtonAction();
         virtual void Render() override;

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <cassert>
 #include <cmath>
 #include <string>
 
@@ -25,6 +24,7 @@ void SkDebugf(const char format[], ...)
 #endif
 
 #include <Client/Ui/Container.hh>
+#include <Shared/Assert.hh>
 
 app::Renderer *g_Renderer = nullptr;
 app::InputData *g_InputData = nullptr;
@@ -184,7 +184,7 @@ namespace app
         },
                m_ContextId, width, height);
 #else
-        assert(false);
+        RROLF_ASSERT(false, "setsize not implemented");
 #endif
     }
 
@@ -258,7 +258,7 @@ namespace app
         case LineCap::Square:
             m_StrokePaint.setStrokeCap(SkPaint::kSquare_Cap);
         default:
-            assert(false);
+            RROLF_ASSERT(false, "invalid argument for setlinecap");
         };
 #endif
     }
@@ -289,7 +289,7 @@ namespace app
             m_StrokePaint.setStrokeJoin(SkPaint::kRound_Join);
             break;
         default:
-            assert(false);
+            RROLF_ASSERT(false, "invalid argument for setlinejoin");
         };
 #endif
     }
@@ -345,8 +345,7 @@ namespace app
         },
                m_ContextId, a);
 #else
-        // TODO later
-        assert(false);
+        RROLF_ASSERT(false, "setglobalalpha not implemented for skia build");
 #endif
     }
 

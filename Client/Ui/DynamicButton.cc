@@ -1,6 +1,5 @@
 #include <Client/Ui/DynamicButton.hh>
 
-#include <cassert>
 #include <iostream>
 #include <string>
 #include <cstdint>
@@ -10,19 +9,14 @@
 namespace app::ui
 {
     DynamicButton::DynamicButton(Renderer &ctx, float w, uint32_t pos)
-        : Button(ctx, w, w)
-        , m_Position(pos)
+        : Button(ctx, w, w), m_Position(pos)
     {
     }
 
-    DynamicButton::~DynamicButton()
-    {
-        assert(false);
-    }
     void DynamicButton::Render()
     {
-        Guard g1(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); //necessary btw
+        Guard g(&m_Renderer);
+        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); // necessary btw
         m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
         m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
         m_Renderer.RoundRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height, m_R);

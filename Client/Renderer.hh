@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <map>
 #include <string>
-#include <cassert>
 
 #ifndef EMSCRIPTEN
 #include <GLFW/glfw3.h>
@@ -18,6 +17,7 @@
 
 #include <Client/Ui/Element.hh>
 #include <Client/Ui/Container.hh>
+#include <Shared/Assert.hh>
 
 namespace app
 {
@@ -130,7 +130,7 @@ namespace app
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
             if (m_ContextId == 0)
             {
-                assert(!g_Renderer);
+                RROLF_ASSERT(!g_Renderer, "cannot have more than one main renderer");
                 g_Renderer = this;
             }
 #endif
@@ -156,7 +156,7 @@ namespace app
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
             if (m_ContextId == 0)
             {
-                assert(!g_Renderer);
+                RROLF_ASSERT(!g_Renderer, "cannot have more than one main renderer");
                 g_Renderer = this;
             }
             SetSize(width, height);

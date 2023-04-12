@@ -1,6 +1,5 @@
 #include <Client/Ui/Text.hh>
 
-#include <cassert>
 #include <string>
 
 #include <Client/Renderer.hh>
@@ -17,11 +16,6 @@ namespace app::ui
         m_Fill = fill;
         ctx.SetTextSize(size);
         m_Width = ctx.GetTextLength(text);
-    }
-
-    Text::~Text()
-    {
-        assert(false); //oops
     }
 
     void Text::Render()

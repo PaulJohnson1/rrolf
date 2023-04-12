@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <cstdint> 
+#include <cstdint>
 
 #include <Client/Ui/Element.hh>
 #include <Client/Renderer.hh>
@@ -17,8 +17,6 @@ namespace app::ui
         Renderer::TextBaseline m_TextBaseline;
 
         Text(Renderer &, std::string const &, uint32_t, float);
-
-        virtual ~Text();
 
         virtual void Render();
     };

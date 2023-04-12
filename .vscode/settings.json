@@ -2,7 +2,13 @@
     "files.associations": {
         "cstdint": "cpp",
         "*.tcc": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "*.ipp": "cpp",
+        "thread": "cpp",
+        "__locale": "cpp",
+        "locale": "cpp",
+        "cassert": "cpp",
+        "iostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

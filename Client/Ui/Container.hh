@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Client/Ui/Element.hh>
-
 #include <vector>
+
+#include <Client/Ui/Element.hh>
 
 namespace app::ui
 {
@@ -11,7 +11,9 @@ namespace app::ui
     public:
         std::vector<Element *> m_Elements;
         bool m_HasBackground = false;
+        
         Container(Renderer &);
+
         virtual void Render() override;
     };
 }
