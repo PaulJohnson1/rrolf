@@ -76,6 +76,7 @@ namespace app
     static constexpr char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic"};
 
     static constexpr char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
+    static constexpr char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger"};
 
 
     static constexpr float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {

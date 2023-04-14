@@ -5,6 +5,7 @@
 
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
+#include <Client/Ui/DrawPetal.hh>
 
 namespace app::component
 {
@@ -29,38 +30,6 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
-        switch (m_Id)
-        {
-        case 1:
-            ctx->SetFill(0xffcfcfcf);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 11.5);
-            ctx->Fill();
-            ctx->SetFill(0xffffffff);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 8.5);
-            ctx->Fill();
-            break;
-        case 2:
-            ctx->SetFill(0xffcfcfcf);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 8.5);
-            ctx->Fill();
-            ctx->SetFill(0xffffffff);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 5.5);
-            ctx->Fill();
-            break;
-        default:
-            ctx->SetFill(0xffcfcfcf);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 110.5);
-            ctx->Fill();
-            ctx->SetFill(0xffffffff);
-            ctx->BeginPath();
-            ctx->Arc(0, 0, 8.5);
-            ctx->Fill();
-            break;
-        }
+        ui::DrawPetal(ctx, m_Id);
     }
 }

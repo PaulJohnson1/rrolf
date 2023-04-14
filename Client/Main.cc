@@ -58,17 +58,12 @@ extern "C"
     }
     void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button)
     {
-        // if (button != 3)
-        //     g_InputData->m_MouseButton = button;
         g_InputData->m_MouseX = x;
         g_InputData->m_MouseY = y;
-        if (button == 0) // pretty sure it's left idk
-            g_InputData->m_MouseButtons |= 1;
-        if (button == 2) // pretty sure it's right
-            g_InputData->m_MouseButtons |= 2;
-        // if (button != 2)
-        //     if (state != 2 || g_InputData->m_MouseState != 0)
-        //         g_InputData->m_MouseState = state;
+        if (state == 1) //press down
+            g_InputData->m_MouseButtons |= (1 << button);
+        else if (state == 0)
+            g_InputData->m_MouseButtons &= ~(1 << button);
     }
     void __Renderer_Render(int32_t width, int32_t height)
     {
@@ -83,7 +78,6 @@ extern "C"
         g_Simulation->TickRenderer();
         g_Renderer->ResetTransform();
         g_Renderer->m_Container.Render();
-        g_InputData->m_MouseButtons = 0;
     }
 }
 
@@ -149,9 +143,9 @@ void Initialize()
             "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
         window.addEventListener(
             "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 1, button == 0 ? 1 : 2)});
-        window.addEventListener("mousemove", function({clientX, clientY}){Module.___Renderer_MouseEvent(clientX, clientY, 2, 3)});
-        window.addEventListener("mouseup", function({clientX, clientY}){Module.___Renderer_MouseEvent(clientX, clientY, 0, 0)});
+        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 1, button)});
+        window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 2, button)});
+        window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 0, button)});
         Module.paths = [... Array(100)].fill(null);
         Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -175,7 +169,7 @@ void Initialize()
             if (Module.availableCtxs.length)
             {
                 const index = Module.availableCtxs.shift();
-                if (index == = 0)
+                if (index == 0)
                     return 0; // used for the main ctx, because that has special behavior
                 const ocanvas = new OffscreenCanvas(0, 0);
                 Module.ctxs[index] = ocanvas.getContext('2d');
@@ -186,7 +180,7 @@ void Initialize()
         };
         Module.removeCtx = function(index)
         {
-            if (index == = 0)
+            if (index == 0)
                 throw new Error('Tried to delete the main context');
             Module.ctxs[index] = null;
             Module.availableCtxs.push(index);
@@ -240,7 +234,7 @@ int main()
             movementFlags |= (mouse->m_KeysPressed[65] || mouse->m_KeysPressed[37]) << 1;
             movementFlags |= (mouse->m_KeysPressed[83] || mouse->m_KeysPressed[40]) << 2;
             movementFlags |= (mouse->m_KeysPressed[68] || mouse->m_KeysPressed[39]) << 3;
-            movementFlags |= mouse->m_MouseButtons;
+            movementFlags |= mouse->m_MouseButtons << 4;
             coder.Write<bc::Uint8>(movementFlags);
             socket->SendPacket(coder.Data(), coder.At());
         });

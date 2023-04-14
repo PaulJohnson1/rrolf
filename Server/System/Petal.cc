@@ -104,8 +104,8 @@ namespace app::system
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
             float holdingRadius = 75;
-            if (playerInfo.m_MouseButton == 1) holdingRadius = 125;
-            else if (playerInfo.m_MouseButton == 2) holdingRadius = 45;
+            if (playerInfo.m_MouseButton & 1) holdingRadius = 125;
+            else if (playerInfo.m_MouseButton & 4) holdingRadius = 45;
             // Vector extension = Vector::FromPolar(75, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
             Vector extension = Vector::FromPolar(holdingRadius, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
             if (petal.m_Clumped) extension += Vector::FromPolar(15, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
