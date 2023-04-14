@@ -63,8 +63,8 @@ namespace app
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0},
         {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
-        {PetalId::Light, 7.0f, 5.0f, 50, false, {1, 2, 2, 3, 3, 5}},
-        {PetalId::Stinger, 35.0f, 8.0f, 100, true, {1, 1, 1, 1, 1, 3}}
+        {PetalId::Light, 5.0f, 7.0f, 50, false, {1, 2, 2, 3, 3, 5}},
+        {PetalId::Stinger, 8.0f, 35.0f, 100, true, {1, 1, 1, 1, 1, 3}}
     };
 
     static MobData MOB_DATA[MobId::kMaxMobs] = {
@@ -104,5 +104,23 @@ namespace app
         1.6,
         2.0,
         2.5
+    };
+
+    static constexpr float PETAL_HEALTH_FACTOR[RarityId::kMaxRarities] = {
+        1,
+        2,
+        4,
+        8,
+        16,
+        32
+    };
+
+    static constexpr float PETAL_DAMAGE_FACTOR[RarityId::kMaxRarities] = {
+        1,
+        2,
+        4,
+        8,
+        16,
+        32
     };
 }

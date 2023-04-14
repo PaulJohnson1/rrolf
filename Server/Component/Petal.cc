@@ -21,7 +21,7 @@ namespace app::component
         if (!m_Simulation->HasComponent<PlayerInfo>(basic.m_Owner))
             return;
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
-        for (uint64_t i = 0; i < playerInfo.m_PetalSlots.size(); i++)
+        for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
         {
             PlayerInfo::PetalSlot &slot = playerInfo.m_PetalSlots[i];
             for (uint64_t j = 0; j < slot.m_Petals.size(); j++)
@@ -66,8 +66,9 @@ namespace app::component
     void Petal::Rarity(uint32_t v)
     {
         Life &life = m_Simulation->Get<Life>(m_Parent);
-        life.Health(PETAL_DATA[m_Id].m_BaseHealth);    // * PETAL_SCALE_FACTOR[m_Rarity]);
-        life.MaxHealth(PETAL_DATA[m_Id].m_BaseHealth); // * PETAL_SCALE_FACTOR[m_Rarity]);
+        life.Health(PETAL_DATA[m_Id].m_BaseHealth * PETAL_HEALTH_FACTOR[v]);
+        life.MaxHealth(PETAL_DATA[m_Id].m_BaseHealth * PETAL_HEALTH_FACTOR[v]);
+        life.m_Damage = PETAL_DATA[m_Id].m_BaseDamage * PETAL_DAMAGE_FACTOR[v];
         if (v == m_Rarity)
             return;
         m_Rarity = v;

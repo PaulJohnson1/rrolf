@@ -30,7 +30,7 @@ namespace app::component
         Lerp<float> m_CameraY{0};
         Lerp<float> m_Fov{0.1};
         bool m_HasPlayer;
-        std::vector<LoadoutPetal> m_Petals = {};
+        LoadoutPetal m_Petals[10] = {};
         Entity m_Player;
         Simulation *m_Simulation;
 

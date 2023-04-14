@@ -31,7 +31,7 @@ namespace app::system
                 return;
 
             uint32_t currRotPos = 0;            
-            for (uint64_t i = 0; i < playerInfo.m_PetalSlots.size(); i++)
+            for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
                 bool usingClump = petalSlot.m_Data.m_Clump && petalSlot.m_Petals.size() > 1;
@@ -68,7 +68,6 @@ namespace app::system
 
                             life.Health(petalSlot.m_Data.m_BaseHealth);
                             life.MaxHealth(life.Health());
-                            life.m_Damage = petalSlot.m_Data.m_BaseDamage;
                         }
                     }
                 }
