@@ -50,12 +50,22 @@ namespace app::ui
             {
                 component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
                 uint32_t id = playerInfo.m_Petals[m_Position].m_Id;
-                uint32_t rarity = playerInfo.m_Petals[m_Position].m_Rarity;
-                m_Renderer.SetFill(RARITY_COLORS[rarity]);
-                m_Renderer.SetStroke(RARITY_COLORS[rarity], 0.64);
-                m_Renderer.Stroke();
-                m_Renderer.Fill();
-                DrawPetal(&m_Renderer, id);
+                if (id == 0)
+                {
+                    m_Renderer.SetFill(m_Fill);
+                    m_Renderer.SetStroke(m_Stroke);
+                    m_Renderer.Stroke();
+                    m_Renderer.Fill();
+                }
+                else 
+                {
+                    uint32_t rarity = playerInfo.m_Petals[m_Position].m_Rarity;
+                    m_Renderer.SetFill(RARITY_COLORS[rarity]);
+                    m_Renderer.SetStroke(RARITY_COLORS[rarity], 0.64);
+                    m_Renderer.Stroke();
+                    m_Renderer.Fill();
+                    DrawPetal(&m_Renderer, id, rarity);
+                }
             }
             else 
             {

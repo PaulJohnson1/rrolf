@@ -32,9 +32,13 @@ namespace app::component
     void Drop::Render(Renderer *ctx)
     {
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
+        ctx->Rotate(physical.m_Radius + 0.1);
+        float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
+        ctx->Scale(sc, sc);
         ctx->BeginPath();
         ctx->SetFill(RARITY_COLORS[m_Rarity]);
         ctx->SetStroke(RARITY_COLORS[m_Rarity], 0.64);

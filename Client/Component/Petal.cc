@@ -30,6 +30,7 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
+        ctx->Rotate(physical.m_Angle);
         ui::DrawPetal(ctx, m_Id);
     }
 }

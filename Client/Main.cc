@@ -60,6 +60,7 @@ extern "C"
     {
         g_InputData->m_MouseX = x;
         g_InputData->m_MouseY = y;
+        g_InputData->m_State = state;
         if (state == 1) //press down
             g_InputData->m_MouseButtons |= (1 << button);
         else if (state == 0)

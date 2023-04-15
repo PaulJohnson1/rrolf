@@ -37,6 +37,7 @@ namespace app
         float m_MouseY = 0.0f;
         // order: left right middle
         uint8_t m_MouseButtons = 0;
+        uint8_t m_State = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
         InputData()
         {
