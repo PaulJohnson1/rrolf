@@ -10,6 +10,7 @@
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
 #include <Client/Simulation.hh>
+#include <Client/Ui/DrawPetal.hh>
 
 namespace app::component
 {
@@ -26,71 +27,36 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
-        /*
-        m_Renderer.ResetTransform();
-        m_Renderer.Translate(40,40);
-        m_Renderer.SetFill(RARITY_COLORS[m_Rarity]);
-        m_Renderer.SetStroke(RARITY_COLORS[m_Rarity], 0.64);
-        m_Renderer.SetLineJoin(Renderer::LineJoin::Round);
-        m_Renderer.SetLineCap(Renderer::LineCap::Round);
-        m_Renderer.SetLineWidth(60 * 0.2);
-        m_Renderer.BeginPath();
-        m_Renderer.StrokeRect(-30,-30,60,60);
-        m_Renderer.FillRect(-30,-30,60,60);
-        m_Renderer.SetFill(0xffffffff);
-        m_Renderer.SetStroke(0xff000000);
-        m_Renderer.SetTextSize(14);
-        m_Renderer.SetLineWidth(14 * 0.12);
-        m_Renderer.SetTextAlign(Renderer::TextAlign::Center);
-        m_Renderer.SetTextBaseline(Renderer::TextBaseline::Middle);
-        m_Renderer.BeginPath();
-        m_Renderer.StrokeText("Basic", 0, 20);
-        m_Renderer.FillText("Basic", 0, 20);
-        m_Renderer.Translate(0,-5);
-        switch (m_Id)
-        {
-        case 1:
-            m_Renderer.SetFill(0xffcfcfcf);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 11.5);
-            m_Renderer.Fill();
-            m_Renderer.SetFill(0xffffffff);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 8.5);
-            m_Renderer.Fill();
-            break;
-        case 2:
-            m_Renderer.SetFill(0xffcfcfcf);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 8.5);
-            m_Renderer.Fill();
-            m_Renderer.SetFill(0xffffffff);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 5.5);
-            m_Renderer.Fill();
-            break;
-        default:
-            m_Renderer.SetFill(0xffcfcfcf);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 11.5);
-            m_Renderer.Fill();
-            m_Renderer.SetFill(0xffffffff);
-            m_Renderer.BeginPath();
-            m_Renderer.Arc(0, 0, 8.5);
-            m_Renderer.Fill();
-            break;
-        }
-        */
     }
 
     void Drop::Render(Renderer *ctx)
     {
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
+        ctx->Rotate(physical.m_Radius + 0.1);
+        float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
+        ctx->Scale(sc, sc);
         ctx->BeginPath();
-        ctx->SetFill(0xff000000);
-        ctx->FillRect(-0.5,-0.5,1,1);
+        ctx->SetFill(RARITY_COLORS[m_Rarity]);
+        ctx->SetStroke(RARITY_COLORS[m_Rarity], 0.64);
+        ctx->SetLineWidth(10);
+        ctx->SetLineCap(Renderer::LineCap::Round);
+        ctx->SetLineJoin(Renderer::LineJoin::Round);
+        ctx->StrokeRect(-25,-25,50,50);
+        ctx->FillRect(-25,-25,50,50);
+        ctx->SetFill(0xffffffff);
+        ctx->SetStroke(0xff000000);
+        ctx->SetTextSize(14);
+        ctx->SetLineWidth(1.68); 
+        ctx->SetTextAlign(Renderer::TextAlign::Center);
+        ctx->SetTextBaseline(Renderer::TextBaseline::Middle);
+        ctx->BeginPath();
+        ctx->StrokeText(PETAL_NAMES[m_Id], 0, 15);
+        ctx->FillText(PETAL_NAMES[m_Id], 0, 15);
+        ctx->Translate(0,-10);
+        ui::DrawPetal(ctx, m_Id);
     }
 }

@@ -31,7 +31,7 @@ namespace app::system
                 return;
 
             uint32_t currRotPos = 0;            
-            for (uint64_t i = 0; i < playerInfo.m_PetalSlots.size(); i++)
+            for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
                 bool usingClump = petalSlot.m_Data.m_Clump && petalSlot.m_Petals.size() > 1;
@@ -65,10 +65,10 @@ namespace app::system
 
                             physical.X(playerInfo.CameraX()); //fix
                             physical.Y(playerInfo.CameraY());
+                            physical.m_Friction = 0.5;
 
                             life.Health(petalSlot.m_Data.m_BaseHealth);
                             life.MaxHealth(life.Health());
-                            life.m_Damage = petalSlot.m_Data.m_BaseDamage;
                         }
                     }
                 }
@@ -104,11 +104,10 @@ namespace app::system
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
             float holdingRadius = 75;
-            if (playerInfo.m_MouseButton == 1) holdingRadius = 125;
-            else if (playerInfo.m_MouseButton == 2) holdingRadius = 45;
-            // Vector extension = Vector::FromPolar(75, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
+            if (playerInfo.m_MouseButton & 1) holdingRadius = 125;
+            else if (playerInfo.m_MouseButton & 4) holdingRadius = 45;
             Vector extension = Vector::FromPolar(holdingRadius, playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount);
-            if (petal.m_Clumped) extension += Vector::FromPolar(15, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
+            if (petal.m_Clumped) extension += Vector::FromPolar(10, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
             physical.m_Acceleration = (flowerPosition + extension - petalPosition) * 0.4; });
     }
 }

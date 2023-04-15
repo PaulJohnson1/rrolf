@@ -135,8 +135,8 @@ namespace app
 
     void Renderer::Translate(float x, float y)
     {
-        m_Matrix[2] += x * (m_Matrix[0] + m_Matrix[3]);
-        m_Matrix[5] += y * (m_Matrix[1] + m_Matrix[4]);
+        m_Matrix[2] += x * m_Matrix[0] + y * m_Matrix[3];
+        m_Matrix[5] += x * m_Matrix[1] + y * m_Matrix[4];
         UpdateTransform();
     }
 

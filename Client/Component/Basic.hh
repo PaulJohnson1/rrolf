@@ -22,6 +22,7 @@ namespace app::component
         Entity m_Team;
         uint32_t m_Flags = 0;
         Simulation *m_Simulation;
+        float m_CreationTime;
 
         Entity m_Parent;
 

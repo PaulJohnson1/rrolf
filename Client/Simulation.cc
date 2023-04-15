@@ -79,7 +79,13 @@ namespace app
                     ui::MakeHContainer<20, 10>({ui::CreateLoadoutButton(renderer, 0),
                                                 ui::CreateLoadoutButton(renderer, 1),
                                                 ui::CreateLoadoutButton(renderer, 2),
-                                                ui::CreateLoadoutButton(renderer, 3)}))));
+                                                ui::CreateLoadoutButton(renderer, 3),
+                                                ui::CreateLoadoutButton(renderer, 4),
+                                                ui::CreateLoadoutButton(renderer, 5),
+                                                ui::CreateLoadoutButton(renderer, 6),
+                                                ui::CreateLoadoutButton(renderer, 7),
+                                                ui::CreateLoadoutButton(renderer, 8),
+                                                ui::CreateLoadoutButton(renderer, 9)}))));
     }
 
     float Simulation::GetTime()

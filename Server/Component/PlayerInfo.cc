@@ -40,8 +40,8 @@ namespace app::component
         if (state & 16)
             coder.Write<bc::VarUint>(entity.m_Player);
         
-        coder.Write<bc::VarUint>(entity.m_PetalSlots.size());
-        for (uint64_t i = 0; i < entity.m_PetalSlots.size(); ++i)
+        coder.Write<bc::VarUint>(entity.m_SlotCount);
+        for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
         {
             coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Data.m_Id);
             coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Rarity);

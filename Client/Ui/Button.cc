@@ -23,12 +23,12 @@ namespace app::ui
     {
         if (MouseTouching() && !m_Clicked)
         {
-            if (g_InputData->m_MouseButtons & 1)
+            if (g_InputData->m_MouseButtons & 1 && g_InputData->m_State == 1)
             {
                 m_OnMouseDown();
                 m_Clicked = true;
             }
-            else
+            else if (g_InputData->m_MouseButtons & 1 && g_InputData->m_State == 2)
                 m_OnMouseOver();
         }
         else if (m_Clicked)

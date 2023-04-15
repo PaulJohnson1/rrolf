@@ -9,6 +9,7 @@
    This is broken in G++ before version 2.6.
    C9x has a similar variable called __func__, but prefer the GCC one since
    it demangles C++ function names.  */
+#ifdef RROLF_ENABLE_ASSERTIONS
 #if defined __cplusplus ? __GNUC_PREREQ(2, 6) : __GNUC_PREREQ(2, 4)
 #define __ASSERT_FUNCTION __extension__ __PRETTY_FUNCTION__
 #else
@@ -19,7 +20,6 @@
 #endif
 #endif
 
-#ifdef RROLF_ENABLE_ASSERTIONS
 #define RROLF_ASSERT(CONDITION, ERROR)                                                                                                        \
     if (!static_cast<bool>(CONDITION))                                                                                                        \
     {                                                                                                                                         \

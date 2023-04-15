@@ -32,7 +32,6 @@ namespace app::component
         uint64_t size = coder.Read<bc::VarUint>();
         for (uint64_t i = 0; i < size; ++i)
         {
-            if (m_Petals.size() < i) m_Petals.push_back(PlayerInfo::LoadoutPetal{0, 0});
             m_Petals[i].m_Id = coder.Read<bc::VarUint>();
             m_Petals[i].m_Rarity = coder.Read<bc::VarUint>();
         }

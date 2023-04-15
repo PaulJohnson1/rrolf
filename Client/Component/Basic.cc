@@ -8,8 +8,9 @@
 namespace app::component
 {
     Basic::Basic(Entity parent, Simulation *simulation)
-        : m_Parent(parent),
-          m_Simulation(simulation)
+        : m_Parent(parent)
+        , m_Simulation(simulation)
+        , m_CreationTime(simulation->GetTime())
     {
     }
 
