@@ -31,6 +31,7 @@
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/Damage.hh>
+#include <Server/System/DropCollector.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
 #include <Server/System/Petal.hh>
@@ -49,6 +50,7 @@ namespace app
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
         system::Damage m_Damage;
+        system::DropCollector m_DropCollector;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;

@@ -19,6 +19,7 @@ set(SOURCES
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/Damage.cc
+    System/DropCollector.cc
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc

@@ -69,6 +69,7 @@ namespace app::component
             MakePetal(PetalId::None, RarityId::Mythic),
             MakePetal(PetalId::None, RarityId::Mythic),
         };
+        uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         std::vector<Entity> m_EntitiesInView;
 
         PlayerInfo(Entity, Simulation *);

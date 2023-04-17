@@ -547,6 +547,7 @@ CMakeFiles/rrolf-client.dir/Component/PlayerInfo.cc.obj: \
   C:\emsdk\upstream\emscripten\cache\sysroot\include\c++\v1\__algorithm\shift_right.h \
   C:\emsdk\upstream\emscripten\cache\sysroot\include\c++\v1\__algorithm\transform.h \
   C:\rrolf\rrolf\Client\..\Shared\Entity.hh \
+  C:\rrolf\rrolf\Client\..\Shared\StaticData.hh \
   C:\rrolf\rrolf\Client\..\Client\Util\Lerp.hh \
   C:\rrolf\rrolf\Client\ThirdParty\BinaryCoder\BinaryCoder.hh \
   C:\rrolf\rrolf\Client\ThirdParty\BinaryCoder\NativeTypes.hh \

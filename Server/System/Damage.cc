@@ -13,7 +13,7 @@ namespace app::system
 
     void Damage::Tick()
     {
-        std::vector<Entity> deletedEntities;
+        std::vector<Entity> deletedEntities = {};
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
             if (!m_Simulation.HasComponent<component::Life>(entity))
@@ -37,7 +37,7 @@ namespace app::system
                     if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
                         deletedEntities.push_back(entity);
                 if (life2.Health() == 0)
-                    if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
+                    if (std::find(deletedEntities.begin(), deletedEntities.end(), other) == deletedEntities.end())
                         deletedEntities.push_back(other);
             } });
 

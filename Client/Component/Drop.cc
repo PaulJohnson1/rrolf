@@ -57,6 +57,6 @@ namespace app::component
         ctx->StrokeText(PETAL_NAMES[m_Id], 0, 15);
         ctx->FillText(PETAL_NAMES[m_Id], 0, 15);
         ctx->Translate(0,-10);
-        ui::DrawPetal(ctx, m_Id);
+        ui::DrawPetal(ctx, m_Id, m_Rarity);
     }
 }

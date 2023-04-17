@@ -63,7 +63,8 @@ namespace app
           m_MobAi(*this),
           m_MapBoundaries(*this),
           m_Damage(*this),
-          m_Petal(*this)
+          m_Petal(*this),
+          m_DropCollector(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
         {
@@ -107,6 +108,7 @@ namespace app
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_CollisionResolver.Tick();
+            m_DropCollector.Tick();
             m_MapBoundaries.Tick();
             m_MobAi.Tick();
             m_Damage.Tick();

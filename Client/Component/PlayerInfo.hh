@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <Shared/Entity.hh>
+#include <Shared/StaticData.hh>
 #include <Client/Util/Lerp.hh>
 
 namespace bc
@@ -31,6 +32,7 @@ namespace app::component
         Lerp<float> m_Fov{0.1};
         bool m_HasPlayer;
         LoadoutPetal m_Petals[10] = {};
+        uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         Entity m_Player;
         Simulation *m_Simulation;
 

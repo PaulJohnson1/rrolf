@@ -46,6 +46,8 @@ namespace app::component
             coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Data.m_Id);
             coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Rarity);
         }
+        for (uint64_t i = 0; i < PetalId::kMaxPetals * RarityId::kMaxRarities; ++i)
+            coder.Write<bc::VarUint>(entity.m_Inventory[i]);
     }
 
     float PlayerInfo::Fov() const { return m_Fov; }

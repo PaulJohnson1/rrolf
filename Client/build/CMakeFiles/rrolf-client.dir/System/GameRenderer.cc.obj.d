@@ -636,6 +636,7 @@ CMakeFiles/rrolf-client.dir/System/GameRenderer.cc.obj: \
   C:\rrolf\rrolf\Client\..\Client\Component\Petal.hh \
   C:\rrolf\rrolf\Client\..\Client\Component\Physical.hh \
   C:\rrolf\rrolf\Client\..\Client\Component\PlayerInfo.hh \
+  C:\rrolf\rrolf\Client\..\Shared\StaticData.hh \
   C:\rrolf\rrolf\Client\..\Client\System\Interpolation.hh \
   C:\rrolf\rrolf\Client\..\Client\Ui\Text.hh \
   C:\rrolf\rrolf\Client\..\Client\Ui\Button.hh \

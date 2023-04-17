@@ -25,7 +25,14 @@ namespace app::system
                                    {
             if (!m_Simulation.HasComponent<component::Physical>(entity))
                 return;
-                
+            
+            /*
+            THIS IS INTENTIONAL
+            */
+            if (m_Simulation.HasComponent<component::Petal>(entity))
+                return;
+            if (m_Simulation.HasComponent<component::Drop>(entity))
+                return;
             component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
             float a = physical.X();
             float b = physical.Y();
