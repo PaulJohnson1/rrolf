@@ -1,1 +1,5 @@
 build/
+
+### Rivet ###
+.rivet/
+.env

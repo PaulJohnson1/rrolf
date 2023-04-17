@@ -35,16 +35,23 @@ set(SOURCES
     ../Shared/StaticData.cc
 )
 
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_FLAGS "-std=c++20")
+
+# release by default
+if(DEBUG_BUILD)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -gdwarf-4)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRROLF_DISABLE_ASSERTIONS -O3")
+endif()
 
 if(WASM_BUILD)
-    # no assertions in wasm build
-    set(CMAKE_CXX_FLAGS "-std=c++20 -gdwarf-4 -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent,___Renderer_MouseEvent")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent,___Renderer_MouseEvent")
     set(CMAKE_CXX_COMPILER "em++")
 else()
-    set(CMAKE_CXX_FLAGS "-std=c++20 -DRROLF_ENABLE_ASSERTIONS -gdwarf-4 -lcrypto -lssl -lskia -lglfw")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lcrypto -lssl -lskia -lglfw")
     set(CMAKE_CXX_COMPILER "clang++")
     include_directories(/usr/include)
     include_directories(/usr/include/skia)
 endif()
 add_executable(rrolf-client ${SOURCES})
-

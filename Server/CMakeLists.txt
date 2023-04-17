@@ -32,11 +32,20 @@ set(SOURCES
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc
     ../Shared/StaticData.cc
-    )
+)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -gdwarf-4 -lpthread")
-# set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++20")
+
+# release by default
+if(DEBUG_BUILD)
+    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -gdwarf-4)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRROLF_DISABLE_ASSERTIONS -O3")
+endif()
+
+set(CMAKE_CXX_FLAGS "-${CMAKE_CXX_FLAGS} -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
+set(CMAKE_C_COMPILER "clang")
 
 add_executable(rrolf-server ${SOURCES})
 if(WINDOWS)
