@@ -40,10 +40,19 @@ set(CMAKE_CXX_FLAGS "-std=c++20")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -gdwarf-4)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRROLF_DISABLE_ASSERTIONS -O3")
 endif()
+
+if(RIVET_PRODUCTION_BUILD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRIVET_PRODUCTION_BUILD")
+endif()
+
+if(RIVET_DEVELOPER_BUILD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRIVET_DEVELOPER_BUILD")
+endif()
+
 
 if(WASM_BUILD)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s EXPORTED_FUNCTIONS=_main,_malloc,_free,_OnMessage,_OnOpen,_OnClose,___Renderer_Render,___Renderer_KeyEvent,___Renderer_MouseEvent")

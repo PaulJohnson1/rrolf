@@ -62,8 +62,6 @@ namespace app
     {
         for (uint64_t i = 0; i < m_Clients.size(); i++)
             if (m_Clients[i]->GetHdl().lock() == hdl.lock())
-            {
                 m_Clients[i]->ReadPacket((uint8_t *)message->get_raw_payload().c_str(), message->get_raw_payload().size());
-            }
     }
 }

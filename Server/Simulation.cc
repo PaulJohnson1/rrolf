@@ -247,7 +247,7 @@ namespace app
             for (uint64_t i = 0; i < MOB_DATA[mob.Id()].m_Loot.size(); ++i)
             {
                 std::vector<float> const &table = MOB_DATA[mob.Id()].m_Loot[i].m_Table[mob.Rarity()];
-                float seed = ((float) rand()) / RAND_MAX;
+                float seed = ((float) rand()) / (float)RAND_MAX;
                 for (uint32_t rarity = 0; rarity <= RarityId::kMaxRarities; ++rarity)
                 {
                     seed -= table[rarity];

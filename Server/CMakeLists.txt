@@ -38,16 +38,28 @@ set(CMAKE_CXX_FLAGS "-std=c++20")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -gdwarf-4)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRROLF_DISABLE_ASSERTIONS -O3")
 endif()
 
-set(CMAKE_CXX_FLAGS "-${CMAKE_CXX_FLAGS} -lpthread")
+if(RIVET_PRODUCTION_BUILD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRIVET_PRODUCTION_BUILD")
+endif()
+
+if(RIVET_DEVELOPER_BUILD)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRIVET_DEVELOPER_BUILD")
+endif()
+
 set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_C_COMPILER "clang")
 
 add_executable(rrolf-server ${SOURCES})
+target_link_libraries(rrolf-server pthread)
 if(WINDOWS)
     target_link_libraries(rrolf-server ws2_32 wsock32)
+endif()
+
+if (RIVET_PRODUCTION_BUILD OR RIVET_DEVELOPER_BUILD)
+    target_link_libraries(rrolf-server curl)
 endif()

@@ -51,8 +51,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/rrolf-client.dir/Ui/LabeledButton.cc.obj.d"
   "CMakeFiles/rrolf-client.dir/Ui/Text.cc.obj"
   "CMakeFiles/rrolf-client.dir/Ui/Text.cc.obj.d"
-  "CMakeFiles/rrolf-client.dir/c/rrolf/rrolf/Shared/StaticData.cc.obj"
-  "CMakeFiles/rrolf-client.dir/c/rrolf/rrolf/Shared/StaticData.cc.obj.d"
+  "CMakeFiles/rrolf-client.dir/home/paul/Downloads/rrolf/Shared/StaticData.cc.obj"
+  "CMakeFiles/rrolf-client.dir/home/paul/Downloads/rrolf/Shared/StaticData.cc.obj.d"
   "rrolf-client"
   "rrolf-client.pdb"
 )
