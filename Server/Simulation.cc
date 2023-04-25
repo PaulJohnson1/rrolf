@@ -121,6 +121,8 @@ namespace app
             Remove(m_PendingDeletions[i]);
 
         m_PendingDeletions.clear();
+
+        ++m_TickCount;
     }
 
     bool Simulation::HasEntity(Entity entity)
@@ -146,7 +148,14 @@ namespace app
             Entity other = nearBy[i];
             component::Physical &physical = Get<component::Physical>(other);
             // TODO: box collision
-            entitiesInView.push_back(other);
+            if (!HasComponent<component::Drop>(other))
+            {
+                entitiesInView.push_back(other);
+                continue;
+            }
+            std::vector<Entity> collectedBy = Get<component::Drop>(other).m_CollectedBy;
+            if (std::find(collectedBy.begin(), collectedBy.end(), playerInfo.Player()) == collectedBy.end())
+                entitiesInView.push_back(other);
         }
         return entitiesInView;
     }

@@ -4,6 +4,7 @@
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
+#include <Server/Simulation.hh>
 
 namespace app::component
 {
@@ -11,6 +12,7 @@ namespace app::component
         : m_Parent(parent),
           m_Simulation(simulation)
     {
+        m_CreationTick = simulation->m_TickCount;
     }
 
     Basic::~Basic()

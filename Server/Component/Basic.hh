@@ -29,6 +29,7 @@ namespace app::component
         Entity m_Parent;
         Entity m_Owner = 0;
         uint64_t m_State = 0;
+        uint64_t m_CreationTick = 0;
 
         Basic(Entity, Simulation *);
         ~Basic();

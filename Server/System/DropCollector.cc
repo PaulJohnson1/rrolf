@@ -14,7 +14,6 @@ namespace app::system
     void DropCollector::Tick()
     {
         // drop collection
-        std::vector<Entity> deletedEntities = {};
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
             if (!m_Simulation.HasComponent<component::Physical>(entity))
@@ -33,13 +32,20 @@ namespace app::system
                     continue;
                 
                 component::Drop &drop = m_Simulation.Get<component::Drop>(other);
+                if (std::find(drop.m_CollectedBy.begin(), drop.m_CollectedBy.end(), entity) != drop.m_CollectedBy.end())
+                    continue;
                 ++playerInfo.m_Inventory[drop.Id() * RarityId::kMaxRarities + drop.Rarity()];
-                if (std::find(deletedEntities.begin(), deletedEntities.end(), other) == deletedEntities.end())
-                    deletedEntities.push_back(other);
+                drop.m_CollectedBy.push_back(entity);
             }
         });
-        for (uint64_t i = 0; i < deletedEntities.size(); i++)
-            m_Simulation.RequestDeletion(deletedEntities[i]);
+        m_Simulation.ForEachEntity([&](Entity entity) 
+        {
+            if (!m_Simulation.HasComponent<component::Drop>(entity))
+                return;
+            component::Drop &drop = m_Simulation.Get<component::Drop>(entity);
+            if (m_Simulation.m_TickCount - m_Simulation.Get<component::Basic>(entity).m_CreationTick >= (drop.Rarity() + 1) * 50)
+                m_Simulation.RequestDeletion(entity);
+        });
     }
 
     void DropCollector::PostTick()
