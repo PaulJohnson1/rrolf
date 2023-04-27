@@ -56,15 +56,15 @@ namespace app
         float m_BaseHealth;
         float m_BaseDamage;
         int32_t m_ReloadTicks;
-        bool m_Clump = false;
+        float m_ClumpRadius = 0; //0 = no clump
         uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1};
     };
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0},
         {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
-        {PetalId::Light, 5.0f, 7.0f, 50, false, {1, 2, 2, 3, 3, 5}},
-        {PetalId::Stinger, 8.0f, 35.0f, 100, true, {1, 1, 1, 1, 1, 3}}
+        {PetalId::Light, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5}},
+        {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 1, 3}}
     };
 
     static MobData MOB_DATA[MobId::kMaxMobs] = {

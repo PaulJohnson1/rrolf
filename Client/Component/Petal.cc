@@ -23,6 +23,10 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
+        if (updatedFields & 4)
+            m_Shootable = coder.Read<bc::Uint8>();
+        if (updatedFields & 8)
+            m_Independent = coder.Read<bc::Uint8>();
     }
 
     void Petal::Render(Renderer *ctx)

@@ -63,7 +63,7 @@ namespace app
           m_MobAi(*this),
           m_MapBoundaries(*this),
           m_Damage(*this),
-          m_Petal(*this),
+          m_PetalBehavior(*this),
           m_DropCollector(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
@@ -104,7 +104,7 @@ namespace app
 
         {
             std::unique_lock<std::mutex> l(m_Mutex);
-            m_Petal.Tick();
+            m_PetalBehavior.Tick();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_CollisionResolver.Tick();

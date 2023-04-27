@@ -21,6 +21,8 @@ namespace app::component
     {
         uint32_t m_Id;
         uint32_t m_Rarity;
+        bool m_Shootable;
+        bool m_Independent;
         Simulation *m_Simulation;
 
     public:
@@ -32,7 +34,7 @@ namespace app::component
         // for rotation and stuff lol
         uint32_t m_RotationPos = 0;
         float m_InnerAngle = 0; // for clumped petals
-        bool m_Clumped = false;
+        float m_ClumpRadius = 0;
 
         Petal(Entity, Simulation *);
         ~Petal();
@@ -41,6 +43,10 @@ namespace app::component
         void Id(uint32_t);
         uint32_t Rarity() const;
         void Rarity(uint32_t);
+        bool Shootable() const;
+        void Shootable(bool);
+        bool Independent() const;
+        void Independent(bool);
 
         void Reset();
 

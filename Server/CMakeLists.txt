@@ -23,7 +23,7 @@ set(SOURCES
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc
-    System/Petal.cc
+    System/PetalBehavior.cc
     Client.cc
     Main.cc
     Server.cc

@@ -34,7 +34,7 @@
 #include <Server/System/DropCollector.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
-#include <Server/System/Petal.hh>
+#include <Server/System/PetalBehavior.hh>
 #include <Server/System/Velocity.hh>
 #include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
@@ -54,7 +54,7 @@ namespace app
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
-        system::Petal m_Petal;
+        system::PetalBehavior m_PetalBehavior;
 
         std::mutex m_Mutex;
 

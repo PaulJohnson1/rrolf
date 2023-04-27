@@ -50,10 +50,16 @@ namespace app::component
             coder.Write<bc::VarUint>(entity.m_Id);
         if (state & 2)
             coder.Write<bc::VarUint>(entity.m_Rarity);
+        if (state & 4)
+            coder.Write<bc::Uint8>(entity.m_Shootable);
+        if (state & 8)
+            coder.Write<bc::Uint8>(entity.m_Independent);
     }
 
     uint32_t Petal::Id() const { return m_Id; }
     uint32_t Petal::Rarity() const { return m_Rarity; }
+    bool Petal::Shootable() const { return m_Shootable; }
+    bool Petal::Independent() const { return m_Independent; }
 
     void Petal::Id(uint32_t v)
     {
@@ -73,5 +79,21 @@ namespace app::component
             return;
         m_Rarity = v;
         m_State |= 2;
+    }
+
+    void Petal::Shootable(bool v)
+    {
+        if (v == m_Shootable)
+            return;
+        m_Shootable = v;
+        m_State |= 4;
+    }
+
+    void Petal::Independent(bool v)
+    {
+        if (v == m_Independent)
+            return;
+        m_Independent = v;
+        m_State |= 8;
     }
 }
