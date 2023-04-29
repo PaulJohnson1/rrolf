@@ -24,6 +24,7 @@ namespace app::component
         uint32_t m_Rarity;
         bool m_Shootable;
         bool m_Independent;
+        float m_RandomRotation;
         Simulation *m_Simulation;
 
         Entity m_Parent;

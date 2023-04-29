@@ -60,7 +60,7 @@ namespace app::component
         PetalSlot m_PetalSlots[10] = {
             MakePetal(PetalId::Stinger, RarityId::Ultra),
             MakePetal(PetalId::Stinger, RarityId::Mythic),
-            MakePetal(PetalId::Stinger, RarityId::Mythic),
+            MakePetal(PetalId::Stinger, RarityId::Legendary),
             MakePetal(PetalId::Stinger, RarityId::Mythic),
             MakePetal(PetalId::Stinger, RarityId::Common),
             MakePetal(PetalId::None, RarityId::Epic),

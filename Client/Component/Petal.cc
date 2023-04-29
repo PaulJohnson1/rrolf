@@ -11,7 +11,8 @@ namespace app::component
 {
     Petal::Petal(Entity parent, Simulation *simulation)
         : m_Parent(parent),
-          m_Simulation(simulation)
+          m_Simulation(simulation),
+          m_RandomRotation(rand() * M_PI * 2 / RAND_MAX)
     {
     }
 
@@ -37,7 +38,7 @@ namespace app::component
         if (!m_Shootable)
         {   
             component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
-            ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000);
+            ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
         }
         ui::DrawPetal(ctx, m_Id);
     }
