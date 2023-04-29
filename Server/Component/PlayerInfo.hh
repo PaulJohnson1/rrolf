@@ -58,7 +58,7 @@ namespace app::component
         uint8_t m_MouseButton = 0;
         uint32_t m_SlotCount = 5;
         PetalSlot m_PetalSlots[10] = {
-            MakePetal(PetalId::Stinger, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
             MakePetal(PetalId::Stinger, RarityId::Mythic),
             MakePetal(PetalId::Stinger, RarityId::Legendary),
             MakePetal(PetalId::Stinger, RarityId::Mythic),

@@ -40,6 +40,8 @@ namespace app::component
             component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
             ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
         }
+        else
+            ctx->Rotate(physical.m_Angle);
         ui::DrawPetal(ctx, m_Id);
     }
 }

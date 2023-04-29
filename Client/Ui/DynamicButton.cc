@@ -49,25 +49,7 @@ namespace app::ui
                 if (id != 0)
                 {
                     uint32_t rarity = playerInfo.m_Petals[m_Position].m_Rarity;
-                    m_Renderer.BeginPath();
-                    m_Renderer.SetFill(RARITY_COLORS[rarity]);
-                    m_Renderer.SetStroke(RARITY_COLORS[rarity], 0.75);
-                    m_Renderer.SetLineWidth(6);
-                    m_Renderer.SetLineCap(Renderer::LineCap::Round);
-                    m_Renderer.SetLineJoin(Renderer::LineJoin::Round);
-                    m_Renderer.FillRect(-30,-30,60,60);
-                    m_Renderer.StrokeRect(-30,-30,60,60);
-                    m_Renderer.Translate(0,-5);
-                    ui::DrawPetal(&m_Renderer, id, rarity);
-                    m_Renderer.SetFill(0xffffffff);
-                    m_Renderer.SetStroke(0xff000000);
-                    m_Renderer.SetTextSize(14);
-                    m_Renderer.SetLineWidth(1.68); 
-                    m_Renderer.SetTextAlign(Renderer::TextAlign::Center);
-                    m_Renderer.SetTextBaseline(Renderer::TextBaseline::Middle);
-                    m_Renderer.BeginPath();
-                    m_Renderer.StrokeText(PETAL_NAMES[id], 0, 20);
-                    m_Renderer.FillText(PETAL_NAMES[id], 0, 20);
+                    ui::DrawPetalWithBackground(&m_Renderer, id, rarity);
                     ButtonAction();
                 }
             }

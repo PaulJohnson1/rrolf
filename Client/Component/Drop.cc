@@ -39,24 +39,6 @@ namespace app::component
         ctx->Rotate(physical.m_Radius + 0.1);
         float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
         ctx->Scale(sc, sc);
-        ctx->BeginPath();
-        ctx->SetFill(RARITY_COLORS[m_Rarity]);
-        ctx->SetStroke(RARITY_COLORS[m_Rarity], 0.75);
-        ctx->SetLineWidth(6);
-        ctx->SetLineCap(Renderer::LineCap::Round);
-        ctx->SetLineJoin(Renderer::LineJoin::Round);
-        ctx->FillRect(-30,-30,60,60);
-        ctx->StrokeRect(-30,-30,60,60);
-        ctx->Translate(0,-5);
-        ui::DrawPetal(ctx, m_Id, m_Rarity);
-        ctx->SetFill(0xffffffff);
-        ctx->SetStroke(0xff000000);
-        ctx->SetTextSize(14);
-        ctx->SetLineWidth(1.68); 
-        ctx->SetTextAlign(Renderer::TextAlign::Center);
-        ctx->SetTextBaseline(Renderer::TextBaseline::Middle);
-        ctx->BeginPath();
-        ctx->StrokeText(PETAL_NAMES[m_Id], 0, 20);
-        ctx->FillText(PETAL_NAMES[m_Id], 0, 20);
+        ui::DrawPetalWithBackground(ctx, m_Id, m_Rarity);
     }
 }

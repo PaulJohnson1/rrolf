@@ -31,7 +31,8 @@ namespace app
         constexpr uint32_t Basic = 1;
         constexpr uint32_t Light = 2;
         constexpr uint32_t Stinger = 3;
-        constexpr uint32_t kMaxPetals = 4;
+        constexpr uint32_t Missile = 4;
+        constexpr uint32_t kMaxPetals = 5;
     };
 
     std::vector<std::vector<float>> LootTable(float);
@@ -59,13 +60,15 @@ namespace app
         int32_t m_ReloadTicks;
         float m_ClumpRadius = 0; //0 = no clump
         uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1};
+        bool m_Shootable = false;
     };
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0},
         {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
         {PetalId::Light, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5}},
-        {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 2, 3, 5}}
+        {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 2, 3, 5}},
+        {PetalId::Missile, 8.0f, 35.0f, 10, 0, {1,1,1,1,1,1,1}, true}
     };
 
     static MobData MOB_DATA[MobId::kMaxMobs] = {
@@ -77,7 +80,7 @@ namespace app
     static constexpr char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 
     static constexpr char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
-    static constexpr char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger"};
+    static constexpr char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile"};
 
 
     static constexpr float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {

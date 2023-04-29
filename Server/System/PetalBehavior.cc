@@ -59,13 +59,15 @@ namespace app::system
 
                             petalEntity.Id(petalSlot.m_Data.m_Id);
                             petalEntity.Rarity(petalSlot.m_Rarity);
+                            petalEntity.Shootable(petalSlot.m_Data.m_Shootable);
+                            petalEntity.Independent(false);
                             petalEntity.m_RotationPos = currRotPos - 1; //because it actually starts at 1, not 0
                             petalEntity.m_InnerAngle = j * 2 * M_PI / petalSlot.m_Petals.size();
                             petalEntity.m_ClumpRadius = usingClump ? petalSlot.m_Data.m_ClumpRadius : 0;
 
                             physical.X(playerInfo.CameraX()); //fix
                             physical.Y(playerInfo.CameraY());
-                            physical.m_Friction = 0.5;
+                            physical.m_Friction = 0.75;
 
                             life.Health(petalSlot.m_Data.m_BaseHealth);
                             life.MaxHealth(life.Health());
@@ -103,29 +105,28 @@ namespace app::system
             Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
-            /*
-            if (playerInfo.m_MouseButton & 1 && !petal.Independent())
+            if (petal.Shootable() && playerInfo.m_MouseButton & 1 && !petal.Independent())
             {
                 petal.Independent(true);
-                physical.m_Acceleration = Vector::FromPolar(3, physical.Angle());
-                physical.m_Velocity = Vector::FromPolar(200, physical.Angle());
+                physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
+                physical.m_Velocity = Vector::FromPolar(100, physical.Angle());
             }
-            */
             if (!petal.Independent())
             {
                 float holdingRadius = 75;
-                if (playerInfo.m_MouseButton & 1) holdingRadius = 125;
+                if (playerInfo.m_MouseButton & 1) holdingRadius = 175;
                 else if (playerInfo.m_MouseButton & 4) holdingRadius = 45;
                 
                 float currAngle = playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount;
                 Vector extension = Vector::FromPolar(holdingRadius, currAngle);
                 extension += Vector::FromPolar(petal.m_ClumpRadius, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
-                physical.m_Acceleration = (flowerPosition + extension - petalPosition) * 0.4;
+                physical.m_Acceleration = (flowerPosition + extension - petalPosition) * 0.8;
+                if (petal.Shootable())
+                    physical.Angle(currAngle);
                 return;
             }
 
-            physical.m_Acceleration = Vector::FromPolar(3, physical.Angle());
-
+            physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
         });
     }
 }

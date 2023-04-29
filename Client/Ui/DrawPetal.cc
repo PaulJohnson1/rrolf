@@ -2,6 +2,8 @@
 #include <Shared/StaticData.hh>
 #include <Client/Renderer.hh>
 
+#include <iostream>
+
 namespace app::ui
 {
     void DrawPetal(Renderer *ctx, uint32_t id)
@@ -43,6 +45,20 @@ namespace app::ui
             ctx->Fill();
             ctx->Stroke();
             break;
+        case 4:
+            ctx->SetFill(0xff333333);
+            ctx->SetStroke(0xff333333);
+            ctx->SetLineWidth(5);
+            ctx->SetLineJoin(Renderer::LineJoin::Round);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->BeginPath();
+            ctx->MoveTo(11,0);
+            ctx->LineTo(-11,-6);
+            ctx->LineTo(-11,6);
+            ctx->LineTo(11,0);
+            ctx->Fill();
+            ctx->Stroke();
+            break;
         default:
             ctx->SetFill(0xffcfcfcf);
             ctx->BeginPath();
@@ -52,9 +68,11 @@ namespace app::ui
             ctx->BeginPath();
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
+            std::cout << id << '\n';
             break;
         }
     }
+
     void DrawPetal(Renderer *ctx, uint32_t id, uint32_t rarity)
     {
         uint32_t count = PETAL_DATA[id].m_Count[rarity];
@@ -74,5 +92,29 @@ namespace app::ui
                 ctx->Rotate(M_PI * 2 / count);
             }
         }
+    }
+
+    void DrawPetalWithBackground(Renderer *ctx, uint32_t id, uint32_t rarity)
+    {
+        Guard g(ctx);
+        ctx->BeginPath();
+        ctx->SetFill(RARITY_COLORS[rarity]);
+        ctx->SetStroke(RARITY_COLORS[rarity], 0.75);
+        ctx->SetLineWidth(6);
+        ctx->SetLineCap(Renderer::LineCap::Round);
+        ctx->SetLineJoin(Renderer::LineJoin::Round);
+        ctx->FillRect(-30,-30,60,60);
+        ctx->StrokeRect(-30,-30,60,60);
+        ctx->Translate(0,-5);
+        ui::DrawPetal(ctx, id, rarity);
+        ctx->SetFill(0xffffffff);
+        ctx->SetStroke(0xff000000);
+        ctx->SetTextSize(14);
+        ctx->SetLineWidth(1.68); 
+        ctx->SetTextAlign(Renderer::TextAlign::Center);
+        ctx->SetTextBaseline(Renderer::TextBaseline::Middle);
+        ctx->BeginPath();
+        ctx->StrokeText(PETAL_NAMES[id], 0, 20);
+        ctx->FillText(PETAL_NAMES[id], 0, 20);
     }
 }

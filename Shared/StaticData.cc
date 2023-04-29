@@ -7,8 +7,8 @@ namespace app
 {
     std::vector<std::vector<float>> LootTable(float seed)
     {
-        double const mobS[RarityId::kMaxRarities] = { 5, 20, 120, 3000, 60000, 3000000, 30000000 };
-        double const dropS[RarityId::kMaxRarities+1] = { 0, 3, 5, 6, 7, 8, 9, INFINITY };
+        double const mobS[RarityId::kMaxRarities] = { 5, 20, 120, 3000, 60000, 3000000, 10000000 };
+        double const dropS[RarityId::kMaxRarities+1] = { 0, 3, 5, 8, 10, 12, 15, INFINITY };
         std::vector<std::vector<float>> table(RarityId::kMaxRarities, std::vector<float>(RarityId::kMaxRarities + 1));
         for (uint32_t mob = 0; mob < RarityId::kMaxRarities; ++mob) {
             uint32_t cap = mob != 0 ? mob: 1;
