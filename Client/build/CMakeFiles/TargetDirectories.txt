@@ -1,3 +1,0 @@
-/home/paul/Downloads/rrolf/Client/build/CMakeFiles/rrolf-client.dir
-/home/paul/Downloads/rrolf/Client/build/CMakeFiles/edit_cache.dir
-/home/paul/Downloads/rrolf/Client/build/CMakeFiles/rebuild_cache.dir

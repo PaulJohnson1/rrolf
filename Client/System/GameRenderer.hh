@@ -1,8 +1,9 @@
 #pragma once
 
+#include <vector>
+
 #include <Client/Ui/Element.hh>
 
-#include <vector>
 namespace app
 {
     class Simulation;

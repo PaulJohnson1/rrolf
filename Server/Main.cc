@@ -30,10 +30,11 @@ int main()
 #if defined(RIVET_PRODUCTION_BUILD) || defined(RIVET_DEVELOPER_BUILD)
     // tell rivet the server is ready
     assert(rivetToken);
+    std::cout << "connecting to rivet server with token: " << rivetToken << '\n';
     curl_slist *list = nullptr;
     CURL *curl = curl_easy_init();
     assert(curl);
-    char header[500] = "Authorization: ";
+    char header[500] = "Authorization: Bearer ";
     list = curl_slist_append(list, strcat(header, rivetToken));
     assert(curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list) == CURLE_OK);
     assert(curl_easy_setopt(curl, CURLOPT_POST, 1) == CURLE_OK);

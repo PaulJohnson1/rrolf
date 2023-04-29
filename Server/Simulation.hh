@@ -111,7 +111,7 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
-        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &playerInfo);
+        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &);
         Entity Create();
 
         bool HasEntity(Entity);
