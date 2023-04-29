@@ -74,6 +74,7 @@ namespace app
         class Renderer *m_Renderer;
         class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
+        bool m_HasHadPlayer = false;
         std::map <std::string, ui::Container *> m_UiElements{};
 
         Simulation(class Renderer *);

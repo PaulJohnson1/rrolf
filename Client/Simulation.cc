@@ -69,10 +69,26 @@ namespace app
         g_Simulation = this;
 
         // ui test
-        m_UiElements["DeathScreen"] = ui::Add(
+        (m_UiElements["DeathScreen"] = ui::Add(
             ui::SetJustify<1, 1>(
-                ui::MakeVContainer<200, 0>({new ui::Text(*renderer, "You were killed by", 0xffffffff, 24),
-                                            ui::CreateRespawnButton(renderer)})));
+                ui::MakeVContainer<200, 0>({
+                    new ui::Text(*renderer, "You were killed by", 0xffffffff, 24),
+                    ui::CreateRespawnButton(renderer)
+                    }
+                )
+            )
+        ))->m_Showing = false;
+        m_UiElements["TitleScreen"] = ui::Add(
+            ui::SetJustify<1, 1>(
+                ui::MakeVContainer<100, 0>({
+                    new ui::Text(*renderer, "florr.io", 0xffffffff, 96),
+                    ui::MakeHContainer<25, 0>({
+                        new ui::Text(*renderer, "this is your name", 0xffffffff, 25),
+                        ui::CreateRespawnButton(renderer)
+                    })
+                })
+            )
+        );
         m_UiElements["Loadout"] = ui::Add(
             ui::VPad<10>(
                 ui::SetJustify<1, 2>(
@@ -145,6 +161,7 @@ namespace app
         m_LastTick = time;
         if (m_PlayerInfo != (Entity)-1)
         {
+            if (!m_HasHadPlayer && Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer) m_HasHadPlayer = true;
             m_InterpolationSystem.Tick();
             m_RendererSystem.Tick();
 
@@ -152,7 +169,8 @@ namespace app
             m_RendererSystem.PostTick();
 
             // ui stuff
-            m_UiElements["DeathScreen"]->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer;
+            m_UiElements["TitleScreen"]->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
+            m_UiElements["DeathScreen"]->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
             return;
         }
         std::cout << "waiting for player to spawn\n";

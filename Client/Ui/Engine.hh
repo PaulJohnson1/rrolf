@@ -34,7 +34,7 @@ namespace app::ui
         c->m_Height = height;
         for (uint64_t i = 0; i < elements.size(); i++)
         {
-            elements[i]->m_Y = c->m_Height / 2;
+            elements[i]->m_X -= c->m_Width / 2;
         }
         return c;
     }
@@ -64,7 +64,7 @@ namespace app::ui
         c->m_Height = height;
         for (uint64_t i = 0; i < elements.size(); i++)
         {
-            elements[i]->m_X = c->m_Width / 2;
+            elements[i]->m_Y -= c->m_Height / 2;
         }
         return c;
     }
@@ -109,12 +109,6 @@ namespace app::ui
     
     Container *Add(Container *c)
     {
-        for (uint64_t i = 0; i < c->m_Elements.size(); i++)
-        {
-            ui::Element *element = c->m_Elements[i];
-            element->m_X -= c->m_Width / 2;
-            element->m_Y -= c->m_Height / 2;
-        }
         g_Renderer->m_Container.m_Elements.push_back(c);
         return c;
     }
