@@ -34,7 +34,11 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
-        ctx->Rotate(physical.m_Angle);
+        if (!m_Shootable)
+        {   
+            component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
+            ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000);
+        }
         ui::DrawPetal(ctx, m_Id);
     }
 }

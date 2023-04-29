@@ -41,12 +41,14 @@ namespace app::component
         ctx->Scale(sc, sc);
         ctx->BeginPath();
         ctx->SetFill(RARITY_COLORS[m_Rarity]);
-        ctx->SetStroke(RARITY_COLORS[m_Rarity], 0.64);
-        ctx->SetLineWidth(10);
+        ctx->SetStroke(RARITY_COLORS[m_Rarity], 0.75);
+        ctx->SetLineWidth(6);
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->SetLineJoin(Renderer::LineJoin::Round);
-        ctx->StrokeRect(-25,-25,50,50);
-        ctx->FillRect(-25,-25,50,50);
+        ctx->FillRect(-30,-30,60,60);
+        ctx->StrokeRect(-30,-30,60,60);
+        ctx->Translate(0,-5);
+        ui::DrawPetal(ctx, m_Id, m_Rarity);
         ctx->SetFill(0xffffffff);
         ctx->SetStroke(0xff000000);
         ctx->SetTextSize(14);
@@ -54,9 +56,7 @@ namespace app::component
         ctx->SetTextAlign(Renderer::TextAlign::Center);
         ctx->SetTextBaseline(Renderer::TextBaseline::Middle);
         ctx->BeginPath();
-        ctx->StrokeText(PETAL_NAMES[m_Id], 0, 15);
-        ctx->FillText(PETAL_NAMES[m_Id], 0, 15);
-        ctx->Translate(0,-10);
-        ui::DrawPetal(ctx, m_Id, m_Rarity);
+        ctx->StrokeText(PETAL_NAMES[m_Id], 0, 20);
+        ctx->FillText(PETAL_NAMES[m_Id], 0, 20);
     }
 }

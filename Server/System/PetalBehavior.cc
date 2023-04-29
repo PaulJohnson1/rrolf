@@ -103,13 +103,14 @@ namespace app::system
             Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
-
+            /*
             if (playerInfo.m_MouseButton & 1 && !petal.Independent())
             {
                 petal.Independent(true);
                 physical.m_Acceleration = Vector::FromPolar(3, physical.Angle());
                 physical.m_Velocity = Vector::FromPolar(200, physical.Angle());
             }
+            */
             if (!petal.Independent())
             {
                 float holdingRadius = 75;
@@ -120,7 +121,6 @@ namespace app::system
                 Vector extension = Vector::FromPolar(holdingRadius, currAngle);
                 extension += Vector::FromPolar(petal.m_ClumpRadius, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
                 physical.m_Acceleration = (flowerPosition + extension - petalPosition) * 0.4;
-                physical.Angle(petal.m_InnerAngle + currAngle);
                 return;
             }
 

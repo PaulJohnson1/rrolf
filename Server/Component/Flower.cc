@@ -23,7 +23,7 @@ namespace app::component
         Basic &basic = m_Simulation->Get<Basic>(m_Parent);
         if (basic.m_Owner != 0)
         {
-            PlayerInfo playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
+            PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
             playerInfo.HasPlayer(false);
         
             for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)

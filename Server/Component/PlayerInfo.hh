@@ -56,13 +56,13 @@ namespace app::component
         uint32_t m_RotationCount = 0;
         uint64_t m_State = 0;
         uint8_t m_MouseButton = 0;
-        uint32_t m_SlotCount = 1;
+        uint32_t m_SlotCount = 5;
         PetalSlot m_PetalSlots[10] = {
+            MakePetal(PetalId::Stinger, RarityId::Ultra),
             MakePetal(PetalId::Stinger, RarityId::Mythic),
-            MakePetal(PetalId::None, RarityId::Mythic),
-            MakePetal(PetalId::None, RarityId::Mythic),
-            MakePetal(PetalId::None, RarityId::Mythic),
-            MakePetal(PetalId::None, RarityId::Common),
+            MakePetal(PetalId::Stinger, RarityId::Mythic),
+            MakePetal(PetalId::Stinger, RarityId::Mythic),
+            MakePetal(PetalId::Stinger, RarityId::Common),
             MakePetal(PetalId::None, RarityId::Epic),
             MakePetal(PetalId::None, RarityId::Rare),
             MakePetal(PetalId::None, RarityId::Mythic),

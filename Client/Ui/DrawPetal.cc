@@ -65,7 +65,11 @@ namespace app::ui
             for (uint32_t i = 0; i < count; ++i)
             {
                 ctx->Translate(10,0);
+                if (id == 3 && rarity >= 6)
+                    ctx->Rotate(M_PI);
                 DrawPetal(ctx, id);
+                if (id == 3 && rarity >= 6)
+                    ctx->Rotate(M_PI);
                 ctx->Translate(-10,0);         
                 ctx->Rotate(M_PI * 2 / count);
             }
