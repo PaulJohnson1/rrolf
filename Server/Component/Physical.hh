@@ -24,6 +24,7 @@ namespace app::component
         float m_X = 0.0f;
         float m_Y = 0.0f;
         float m_Angle = 0.0f;
+        uint32_t m_DeletionTick = 0;
         Simulation *m_Simulation;
 
     public:
@@ -44,15 +45,15 @@ namespace app::component
         ~Physical();
 
         float Radius() const;
-        float Friction() const;
         float X() const;
         float Y() const;
         float Angle() const;
+        uint32_t DeletionTick() const;
         void Radius(float);
-        void Friction(float);
         void X(float);
         void Y(float);
         void Angle(float);
+        void DeletionTick(uint32_t);
 
         void Reset();
 

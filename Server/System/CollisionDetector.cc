@@ -25,7 +25,7 @@ namespace app::system
                                    {
             if (!m_Simulation.HasComponent<component::Physical>(entity))
                 return;
-            
+                        
             /*
             THIS IS INTENTIONAL
             */
@@ -34,6 +34,15 @@ namespace app::system
             if (m_Simulation.HasComponent<component::Drop>(entity))
                 return;
             component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
+            
+            if (physical.DeletionTick() != 0)
+            {
+                if (physical.DeletionTick() == 5)
+                    m_Simulation.RequestDeletion(entity);
+                else 
+                    physical.DeletionTick(1);
+                return;
+            }
             float a = physical.X();
             float b = physical.Y();
 
