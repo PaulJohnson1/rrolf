@@ -6,35 +6,50 @@
 
 namespace app::ui
 {
-    void DrawPetal(Renderer *ctx, uint32_t id)
+    uint32_t DamageColor(uint32_t c, uint32_t tick)
+    {
+        if (tick == 0)
+            return c;
+        else if (tick >= 10)
+            return 0xffcccccc;
+        else
+        {
+            float mixIn = (float) tick * 0.05;
+            uint8_t red = (uint8_t)(((c >> 16) & 255) * (1-mixIn)) + (uint8_t)(mixIn * 255);
+            uint8_t green = (uint8_t)(((c >> 8) & 255) * (1-mixIn));
+            uint8_t blue = (uint8_t)(((c >> 0) & 255) * (1-mixIn));
+            return (((c >> 24 & 255) << 24) | (red << 16) | (green << 8) | blue);
+        }
+    }
+    void DrawPetal(Renderer *ctx, uint32_t id, uint32_t dTick)
     {
         switch (id)
         {
         case 0:
             break;
         case 1:
-            ctx->SetFill(0xffcfcfcf);
+            ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 11.5);
             ctx->Fill();
-            ctx->SetFill(0xffffffff);
+            ctx->SetFill(DamageColor(0xffffffff, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
             break;
         case 2:
-            ctx->SetFill(0xffcfcfcf);
+            ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
-            ctx->SetFill(0xffffffff);
+            ctx->SetFill(DamageColor(0xffffffff, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 5.5);
             ctx->Fill();
             break;
         case 3:
-            ctx->SetFill(0xff333333);
-            ctx->SetStroke(0xff292929);
+            ctx->SetFill(DamageColor(0xff333333, dTick));
+            ctx->SetStroke(DamageColor(0xff292929, dTick));
             ctx->SetLineWidth(3);
             ctx->SetLineJoin(Renderer::LineJoin::Round);
             ctx->BeginPath();
@@ -46,8 +61,8 @@ namespace app::ui
             ctx->Stroke();
             break;
         case 4:
-            ctx->SetFill(0xff333333);
-            ctx->SetStroke(0xff333333);
+            ctx->SetFill(DamageColor(0xff333333, dTick));
+            ctx->SetStroke(DamageColor(0xff333333, dTick));
             ctx->SetLineWidth(5);
             ctx->SetLineJoin(Renderer::LineJoin::Round);
             ctx->SetLineCap(Renderer::LineCap::Round);
@@ -60,11 +75,11 @@ namespace app::ui
             ctx->Stroke();
             break;
         default:
-            ctx->SetFill(0xffcfcfcf);
+            ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 110.5);
             ctx->Fill();
-            ctx->SetFill(0xffffffff);
+            ctx->SetFill(DamageColor(0xffffffff, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
@@ -73,7 +88,7 @@ namespace app::ui
         }
     }
 
-    void DrawPetal(Renderer *ctx, uint32_t id, uint32_t rarity)
+    void DrawStaticPetal(Renderer *ctx, uint32_t id, uint32_t rarity)
     {
         uint32_t count = PETAL_DATA[id].m_Count[rarity];
         if (count == 1)
@@ -81,7 +96,7 @@ namespace app::ui
             Guard g(ctx);
             if (id == 4)
                 ctx->Rotate(1);
-            DrawPetal(ctx, id);
+            DrawPetal(ctx, id, 0);
         }
         else
         {
@@ -94,7 +109,7 @@ namespace app::ui
                         ctx->Rotate(M_PI);
                     else if (id == 4)
                         ctx->Rotate(1);
-                    DrawPetal(ctx, id);     
+                    DrawPetal(ctx, id, 0);     
                 }   
                 ctx->Rotate(M_PI * 2 / count);
             }
@@ -113,7 +128,7 @@ namespace app::ui
         ctx->FillRect(-30,-30,60,60);
         ctx->StrokeRect(-30,-30,60,60);
         ctx->Translate(0,-5);
-        ui::DrawPetal(ctx, id, rarity);
+        ui::DrawStaticPetal(ctx, id, rarity);
         ctx->SetFill(0xffffffff);
         ctx->SetStroke(0xff000000);
         ctx->SetTextSize(14);

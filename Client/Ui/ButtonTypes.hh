@@ -14,5 +14,6 @@ namespace app
 namespace app::ui
 {
     LabeledButton *CreateRespawnButton(Renderer *);
-    DynamicButton *CreateLoadoutButton(Renderer *, int32_t pos);
+    DynamicButton *CreateLoadoutButton(Renderer *, int32_t);
+    DynamicButton *CreateSecondaryButton(Renderer *, int32_t);
 }

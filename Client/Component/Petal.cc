@@ -38,6 +38,6 @@ namespace app::component
         }
         else
             ctx->Rotate(physical.m_Angle);
-        ui::DrawPetal(ctx, m_Id);
+        ui::DrawPetal(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick);
     }
 }

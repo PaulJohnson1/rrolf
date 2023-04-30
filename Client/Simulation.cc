@@ -92,16 +92,35 @@ namespace app
         m_UiElements["Loadout"] = ui::Add(
             ui::VPad<10>(
                 ui::SetJustify<1, 2>(
-                    ui::MakeHContainer<20, 10>({ui::CreateLoadoutButton(renderer, 0),
-                                                ui::CreateLoadoutButton(renderer, 1),
-                                                ui::CreateLoadoutButton(renderer, 2),
-                                                ui::CreateLoadoutButton(renderer, 3),
-                                                ui::CreateLoadoutButton(renderer, 4),
-                                                ui::CreateLoadoutButton(renderer, 5),
-                                                ui::CreateLoadoutButton(renderer, 6),
-                                                ui::CreateLoadoutButton(renderer, 7),
-                                                ui::CreateLoadoutButton(renderer, 8),
-                                                ui::CreateLoadoutButton(renderer, 9)}))));
+                    ui::MakeVContainer<10, 0>({
+                        ui::MakeHContainer<20, 10>({
+                            ui::CreateLoadoutButton(renderer, 0),
+                            ui::CreateLoadoutButton(renderer, 1),
+                            ui::CreateLoadoutButton(renderer, 2),
+                            ui::CreateLoadoutButton(renderer, 3),
+                            ui::CreateLoadoutButton(renderer, 4),
+                            ui::CreateLoadoutButton(renderer, 5),
+                            ui::CreateLoadoutButton(renderer, 6),
+                            ui::CreateLoadoutButton(renderer, 7),
+                            ui::CreateLoadoutButton(renderer, 8),
+                            ui::CreateLoadoutButton(renderer, 9)
+                        }),
+                        ui::MakeHContainer<20, 10>({
+                            ui::CreateSecondaryButton(renderer, 10),
+                            ui::CreateSecondaryButton(renderer, 11),
+                            ui::CreateSecondaryButton(renderer, 12),
+                            ui::CreateSecondaryButton(renderer, 13),
+                            ui::CreateSecondaryButton(renderer, 14),
+                            ui::CreateSecondaryButton(renderer, 15),
+                            ui::CreateSecondaryButton(renderer, 16),
+                            ui::CreateSecondaryButton(renderer, 17),
+                            ui::CreateSecondaryButton(renderer, 18),
+                            ui::CreateSecondaryButton(renderer, 19)
+                        })
+                    })
+                )
+            )
+        );
     }
 
     float Simulation::GetTime()
