@@ -45,7 +45,7 @@ namespace app
         component::Life &life = m_Simulation.AddComponent<component::Life>(playerInfo.Player());
         component::Physical &physical = m_Simulation.AddComponent<component::Physical>(playerInfo.Player());
         physical.Radius(25.0f);
-        physical.m_Restitution = 0.1;
+        physical.m_Restitution = 1;
         basic.m_Owner = m_PlayerInfo;
         life.m_Damage = 10;
         life.MaxHealth(1000);

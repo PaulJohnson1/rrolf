@@ -16,6 +16,7 @@ set(SOURCES
     Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    Component/Projectile.cc
     System/GameRenderer.cc
     System/Interpolation.cc
     Main.cc

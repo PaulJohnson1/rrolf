@@ -77,18 +77,25 @@ namespace app::ui
     {
         uint32_t count = PETAL_DATA[id].m_Count[rarity];
         if (count == 1)
+        {
+            Guard g(ctx);
+            if (id == 4)
+                ctx->Rotate(1);
             DrawPetal(ctx, id);
+        }
         else
         {
             for (uint32_t i = 0; i < count; ++i)
             {
-                ctx->Translate(PETAL_DATA[id].m_ClumpRadius,0);
-                if (id == 3 && rarity >= 6)
-                    ctx->Rotate(M_PI);
-                DrawPetal(ctx, id);
-                if (id == 3 && rarity >= 6)
-                    ctx->Rotate(M_PI);
-                ctx->Translate(-PETAL_DATA[id].m_ClumpRadius,0);         
+                {
+                    Guard g(ctx);
+                    ctx->Translate(PETAL_DATA[id].m_ClumpRadius,0);
+                    if (id == 3 && rarity >= 6)
+                        ctx->Rotate(M_PI);
+                    else if (id == 4)
+                        ctx->Rotate(1);
+                    DrawPetal(ctx, id);     
+                }   
                 ctx->Rotate(M_PI * 2 / count);
             }
         }

@@ -16,7 +16,8 @@
     RROLF_COMPONENT_ENTRY(Mob, 6)        \
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
     RROLF_COMPONENT_ENTRY(Basic, 8) \
-    RROLF_COMPONENT_ENTRY(Drop, 9)
+    RROLF_COMPONENT_ENTRY(Drop, 9) \
+    RROLF_COMPONENT_ENTRY(Projectile, 10)
 
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
@@ -28,6 +29,7 @@
 #include <Server/Component/Petal.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/PlayerInfo.hh>
+#include <Server/Component/Projectile.hh>
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/Damage.hh>
@@ -113,7 +115,8 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
-        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &playerInfo);
+        std::vector<Entity> FindNearBy(float, float, float);
+        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &);
         Entity Create();
 
         bool HasEntity(Entity);

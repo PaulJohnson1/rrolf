@@ -21,8 +21,6 @@ namespace app::component
     {
         uint32_t m_Id;
         uint32_t m_Rarity;
-        bool m_Shootable;
-        bool m_Independent;
         Simulation *m_Simulation;
 
     public:

@@ -24,10 +24,6 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
-        if (updatedFields & 4)
-            m_Shootable = coder.Read<bc::Uint8>();
-        if (updatedFields & 8)
-            m_Independent = coder.Read<bc::Uint8>();
     }
 
     void Petal::Render(Renderer *ctx)
@@ -35,7 +31,7 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
-        if (!m_Shootable)
+        if (!m_Simulation->HasComponent<component::Projectile>(m_Parent))
         {   
             component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
             ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);

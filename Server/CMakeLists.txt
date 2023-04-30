@@ -16,6 +16,7 @@ set(SOURCES
     Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    Component/Projectile.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/Damage.cc

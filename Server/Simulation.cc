@@ -106,9 +106,9 @@ namespace app
 
         {
             std::unique_lock<std::mutex> l(m_Mutex);
-            m_PetalBehavior.Tick();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
+            m_PetalBehavior.Tick();
             m_CollisionResolver.Tick();
             m_DropCollector.Tick();
             m_MapBoundaries.Tick();
@@ -131,6 +131,11 @@ namespace app
     {
         assert(entity < MAX_ENTITY_COUNT);
         return m_EntityTracker[entity];
+    }
+
+    std::vector<Entity> Simulation::FindNearBy(float x, float y, float r)
+    {
+        return m_CollisionDetector.m_SpatialHash.GetCollisions(x, y, r, r);       
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)

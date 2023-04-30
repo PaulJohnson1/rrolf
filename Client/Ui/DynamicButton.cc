@@ -24,7 +24,7 @@ namespace app::ui
         m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
         m_Renderer.SetFill(m_Fill);
         m_Renderer.SetStroke(m_Stroke);
-        m_Renderer.SetLineWidth(m_Width * 0.12);
+        m_Renderer.SetLineWidth(m_Width * 0.1);
         m_Renderer.SetLineJoin(Renderer::LineJoin::Round);
         m_Renderer.SetLineCap(Renderer::LineCap::Round);
         m_Renderer.FillRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
