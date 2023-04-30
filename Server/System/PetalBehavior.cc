@@ -214,11 +214,11 @@ namespace app::system
                 m_Simulation.RequestDeletion(entity);
             }
 
-            if (petal.Rarity() == 6)
+            if (petal.Rarity() >= RarityId::Ultra)
             {
                 std::vector<Entity> nearBy = m_Simulation.FindNearBy(petalPosition.m_X, petalPosition.m_Y, 200 * petal.Rarity());
                 Entity closest = (Entity)-1;
-                float distance = INFINITY;
+                float distance = 1e10;
                 for (uint64_t i = 0; i < nearBy.size(); ++i)
                 {
                     Entity ent = nearBy[i];
