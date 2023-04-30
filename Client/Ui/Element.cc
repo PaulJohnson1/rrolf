@@ -16,6 +16,6 @@ namespace app::ui
 
     Element::~Element()
     {
-        RROLF_ASSERT(false, "");
+        assert(false);
     }
 }

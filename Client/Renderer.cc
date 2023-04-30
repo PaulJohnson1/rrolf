@@ -184,7 +184,7 @@ namespace app
         },
                m_ContextId, width, height);
 #else
-        RROLF_ASSERT(false, "setsize not implemented");
+        assert(false);
 #endif
     }
 
@@ -258,7 +258,7 @@ namespace app
         case LineCap::Square:
             m_StrokePaint.setStrokeCap(SkPaint::kSquare_Cap);
         default:
-            RROLF_ASSERT(false, "invalid argument for setlinecap");
+            assert(false);
         };
 #endif
     }
@@ -289,7 +289,7 @@ namespace app
             m_StrokePaint.setStrokeJoin(SkPaint::kRound_Join);
             break;
         default:
-            RROLF_ASSERT(false, "invalid argument for setlinejoin");
+            assert(false);
         };
 #endif
     }
@@ -345,7 +345,7 @@ namespace app
         },
                m_ContextId, a);
 #else
-        RROLF_ASSERT(false, "setglobalalpha not implemented for skia build");
+        assert(false);
 #endif
     }
 

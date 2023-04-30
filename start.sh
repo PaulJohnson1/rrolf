@@ -8,8 +8,9 @@ touch a
 tail -f a
 
 # export RIVET_LOBBY_TOKEN=`cat /RIVET_LOBBY_TOKEN`
-# apt install libcurl4-openssl-dev git clang-13 libwebsocketpp-dev libboost-dev cmake make gdb
+# apt install libcurl4-openssl-dev git clang-13 libwebsocketpp-dev libboost-dev cmake make gdb --yes --no-install-recommends
 # ln -s /usr/bin/clang++-13 /usr/bin/clang++
+# ln -s /usr/bin/clang-13 /usr/bin/clang
 # git clone https://github.com/PaulJohnson1/rrolf
 # cd rrolf/Server
 # git switch rivet

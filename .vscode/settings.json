@@ -9,7 +9,9 @@
         "locale": "cpp",
         "cassert": "cpp",
         "iostream": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

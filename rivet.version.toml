@@ -12,7 +12,7 @@
 	# How many players can join a specific lobby.
 	#
 	# Read more about matchmaking: https://docs.rivet.gg/matchmaker/concepts/finding-lobby
-	max_players = 128
+	max_players = 4
 
 	# The hardware to provide for lobbies.
 	#
@@ -36,7 +36,7 @@
 	# with different protocols.
 	#
 	# How ports work: https://docs.rivet.gg/serverless-lobbies/concepts/ports
-	ports.default = { port = 2222, protocol = "tcp" }
+	ports.default = { port = 8000, protocol = "http" }
 
 # What game modes are avaiable.
 #
