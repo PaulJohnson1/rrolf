@@ -17,7 +17,7 @@ namespace app::ui
         if (m_HasBackground)
         {
             Guard g(&m_Renderer);
-            m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
+            m_Renderer.Scale(m_Renderer.m_WindowScale);
             m_Renderer.SetFill(m_Fill);
             m_Renderer.SetStroke(m_Stroke);
             m_Renderer.BeginPath();

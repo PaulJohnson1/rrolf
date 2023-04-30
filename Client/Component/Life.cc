@@ -37,9 +37,15 @@ namespace app::component
         if (m_MaxHealth == 0) return;
         Guard g(ctx);
         component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
+
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
         if (m_Simulation->HasComponent<component::Mob>(m_Parent) && m_Simulation->Get<component::Mob>(m_Parent).m_Rarity == 6)
             ctx->Translate(0, 75);
+
+        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        
         float length = 40;
         
         // mob rarity render

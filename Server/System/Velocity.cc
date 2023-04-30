@@ -27,7 +27,8 @@ namespace app::system
             positionVector += physical.m_Velocity;
 
             physical.X(positionVector.m_X);
-            physical.Y(positionVector.m_Y); });
+            physical.Y(positionVector.m_Y); 
+        });
     }
 
     void Velocity::PostTick()

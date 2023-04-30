@@ -28,7 +28,12 @@ namespace app::component
     {
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+
         ctx->Translate(physical.m_X, physical.m_Y);
+
+        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
         // draw stroke
         ctx->BeginPath();
         ctx->Arc(0, 0, physical.m_Radius + 1.5);
@@ -39,7 +44,7 @@ namespace app::component
         ctx->Arc(0, 0, physical.m_Radius - 1.5);
         ctx->SetFill(0xffffe763);
         ctx->Fill();
-        ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
+        ctx->Scale(physical.m_Radius / 25);
         {
             Guard g(ctx);
             ctx->SetFill(0xff222222);
@@ -50,7 +55,7 @@ namespace app::component
             ctx->BeginPath();
             ctx->Arc(-7, -2.5, 3);
             ctx->Clip();
-            ctx->Scale(1, 0.5f);
+            ctx->Scale(1, 0.5);
             ctx->SetFill(0xffffffff);
             ctx->BeginPath();
             ctx->Arc(-7 + m_EyeX, -5 + m_EyeY, 3);

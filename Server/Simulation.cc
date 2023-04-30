@@ -237,12 +237,6 @@ namespace app
 #undef RROLF_COMPONENT_ENTRY
     }
 
-    void Simulation::RequestDeletion(Entity id)
-    {
-        if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
-            m_PendingDeletions.push_back(id);
-    }
-
     Entity Simulation::Create()
     {
         assert(m_AvailableIds.size());

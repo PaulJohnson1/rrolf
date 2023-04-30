@@ -29,20 +29,21 @@ namespace app::system
             /*
             THIS IS INTENTIONAL
             */
-            if (m_Simulation.HasComponent<component::Petal>(entity))
-                return;
-            if (m_Simulation.HasComponent<component::Drop>(entity))
-                return;
             component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
             
             if (physical.DeletionTick() != 0)
             {
-                if (physical.DeletionTick() == 5)
-                    m_Simulation.RequestDeletion(entity);
+                if (physical.DeletionTick() >= 5)
+                    m_Simulation.RequestDeletion<false>(entity);
                 else 
                     physical.DeletionTick(1);
                 return;
             }
+            if (m_Simulation.HasComponent<component::Petal>(entity))
+                return;
+            if (m_Simulation.HasComponent<component::Drop>(entity))
+                return;
+
             float a = physical.X();
             float b = physical.Y();
 
@@ -74,6 +75,8 @@ namespace app::system
                 if (id == entity)
                     continue;
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(id);
+                if (physical2.DeletionTick() != 0)
+                    continue;
                 float c = physical2.X();
                 float d = physical2.Y();
                 float e = a - c;

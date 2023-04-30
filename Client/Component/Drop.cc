@@ -38,7 +38,7 @@ namespace app::component
         ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
         ctx->Rotate(physical.m_Radius + 0.1);
         float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
-        ctx->Scale(sc, sc);
+        ctx->Scale(sc);
         ui::DrawPetalWithBackground(ctx, m_Id, m_Rarity);
     }
 }

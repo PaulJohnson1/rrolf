@@ -44,7 +44,7 @@ namespace app::system
                 return;
             component::Drop &drop = m_Simulation.Get<component::Drop>(entity);
             if (m_Simulation.m_TickCount - m_Simulation.Get<component::Basic>(entity).m_CreationTick >= (drop.Rarity() + 1) * 50)
-                m_Simulation.RequestDeletion(entity);
+                m_Simulation.RequestDeletion<true>(entity);
         });
     }
 

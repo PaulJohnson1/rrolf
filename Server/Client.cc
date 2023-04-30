@@ -26,8 +26,8 @@ namespace app
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
 
         if (playerInfo.HasPlayer())
-            m_Simulation.RequestDeletion(playerInfo.Player());
-        m_Simulation.RequestDeletion(m_PlayerInfo);
+            m_Simulation.RequestDeletion<false>(playerInfo.Player());
+        m_Simulation.RequestDeletion<false>(m_PlayerInfo);
     }
 
     void Client::ConstructPlayer()
