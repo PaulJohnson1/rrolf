@@ -7,7 +7,6 @@
 #include <Client/Renderer.hh>
 #include <Client/Ui/DrawPetal.hh>
 
-#include <iostream>
 namespace app::component
 {
     Petal::Petal(Entity parent, Simulation *simulation)
@@ -35,10 +34,6 @@ namespace app::component
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y);
-        if (physical.m_DeletionTick > 0)
-        {
-            std::cout << "id: " << m_Parent << " " << physical.m_DeletionTick << '\n';
-        }
         if (!m_Simulation->HasComponent<component::Projectile>(m_Parent))
         {   
             component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
