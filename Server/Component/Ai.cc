@@ -21,7 +21,6 @@ namespace app::component
 
     void Ai::Reset()
     {
-        m_State = 0;
     }
 
     void Ai::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)

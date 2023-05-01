@@ -3,7 +3,6 @@
 #include <cstdint>
 
 #include <Shared/Entity.hh>
-#include <Shared/StaticData.hh>
 
 namespace bc
 {

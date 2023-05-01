@@ -1,4 +1,6 @@
-#include <Server/Component/Petal.hh>
+#include <Server/Component/Ai.hh>
+
+#include <cstdint>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -13,10 +15,12 @@ namespace app::component
     {
     }
 
+    Projectile::~Projectile()
+    {
+    }
 
     void Projectile::Reset()
     {
-        m_State = 0;
     }
 
     void Projectile::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
