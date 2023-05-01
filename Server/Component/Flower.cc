@@ -22,7 +22,19 @@ namespace app::component
     {
         Basic &basic = m_Simulation->Get<Basic>(m_Parent);
         if (basic.m_Owner != 0)
-            m_Simulation->Get<PlayerInfo>(basic.m_Owner).HasPlayer(false);
+        {
+            PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
+            playerInfo.HasPlayer(false);
+        
+            for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
+            {
+                PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
+                for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
+                {
+                    petalSlot.m_Petals[j].m_TicksUntilRespawn = petalSlot.m_Data.m_ReloadTicks;
+                }
+            }
+        }
     }
 
     void Flower::Reset()

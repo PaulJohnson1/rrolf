@@ -11,7 +11,8 @@ namespace app::component
 {
     Petal::Petal(Entity parent, Simulation *simulation)
         : m_Parent(parent),
-          m_Simulation(simulation)
+          m_Simulation(simulation),
+          m_RandomRotation(rand() * M_PI * 2 / RAND_MAX)
     {
     }
 
@@ -30,7 +31,13 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y);
-        ctx->Rotate(physical.m_Angle);
-        ui::DrawPetal(ctx, m_Id);
+        if (!m_Simulation->HasComponent<component::Projectile>(m_Parent))
+        {   
+            component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
+            ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
+        }
+        else
+            ctx->Rotate(physical.m_Angle);
+        ui::DrawPetal(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick);
     }
 }

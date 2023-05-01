@@ -16,6 +16,7 @@ set(SOURCES
     Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    Component/Projectile.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/Damage.cc
@@ -23,7 +24,7 @@ set(SOURCES
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc
-    System/Petal.cc
+    System/PetalBehavior.cc
     Client.cc
     Main.cc
     Server.cc

@@ -15,7 +15,8 @@
     RROLF_COMPONENT_ENTRY(Mob, 6)        \
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
     RROLF_COMPONENT_ENTRY(Basic, 8) \
-    RROLF_COMPONENT_ENTRY(Drop, 9)
+    RROLF_COMPONENT_ENTRY(Drop, 9) \
+    RROLF_COMPONENT_ENTRY(Projectile, 10)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
@@ -27,6 +28,7 @@
 #include <Client/Component/Petal.hh>
 #include <Client/Component/Physical.hh>
 #include <Client/Component/PlayerInfo.hh>
+#include <Client/Component/Projectile.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/GameRenderer.hh>
 #include <Shared/Entity.hh>
@@ -74,6 +76,7 @@ namespace app
         class Renderer *m_Renderer;
         class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
+        bool m_HasHadPlayer = false;
         std::map <std::string, ui::Container *> m_UiElements{};
 
         Simulation(class Renderer *);

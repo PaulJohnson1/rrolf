@@ -58,6 +58,7 @@ namespace app
         m_Renderer->m_Matrix[7] = m_CurrentMatrix[7];
         m_Renderer->m_Matrix[8] = m_CurrentMatrix[8];
         m_Renderer->Restore();
+        // m_Renderer->SetGlobalAlpha(1);
     }
 
     Renderer::~Renderer()

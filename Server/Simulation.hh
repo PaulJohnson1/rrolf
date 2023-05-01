@@ -16,7 +16,8 @@
     RROLF_COMPONENT_ENTRY(Mob, 6)        \
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
     RROLF_COMPONENT_ENTRY(Basic, 8) \
-    RROLF_COMPONENT_ENTRY(Drop, 9)
+    RROLF_COMPONENT_ENTRY(Drop, 9) \
+    RROLF_COMPONENT_ENTRY(Projectile, 10)
 
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
@@ -28,13 +29,14 @@
 #include <Server/Component/Petal.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/PlayerInfo.hh>
+#include <Server/Component/Projectile.hh>
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/Damage.hh>
 #include <Server/System/DropCollector.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
-#include <Server/System/Petal.hh>
+#include <Server/System/PetalBehavior.hh>
 #include <Server/System/Velocity.hh>
 #include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
@@ -54,7 +56,7 @@ namespace app
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
-        system::Petal m_Petal;
+        system::PetalBehavior m_PetalBehavior;
 
         std::mutex m_Mutex;
 
@@ -113,7 +115,8 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
-        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &playerInfo);
+        std::vector<Entity> FindNearBy(float, float, float);
+        std::vector<Entity> FindEntitiesInView(component::PlayerInfo &);
         Entity Create();
 
         bool HasEntity(Entity);

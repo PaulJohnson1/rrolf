@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-
+#include <assert.h>
 // taken from assert.h
 
 /* Version 2.4 and later of GCC define a magical variable `__PRETTY_FUNCTION__'
@@ -27,5 +27,5 @@
         abort();                                                                                                                              \
     }
 #else
-#define RROLF_ASSERT(CONDITION, ERROR) static_cast<void>(0);
+#define RROLF_ASSERT(CONDITION, ERROR) assert(CONDITION);
 #endif

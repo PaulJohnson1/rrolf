@@ -61,4 +61,28 @@ namespace app::ui
         };
         return button;
     }
+    DynamicButton *CreateSecondaryButton(Renderer *renderer, int32_t pos)
+    {
+        DynamicButton *button = new DynamicButton(*renderer, 40, pos);
+        button->m_Fill = 0xffffffff;
+        button->m_Stroke = 0xffcfcfcf;
+        button->m_OnMouseOver = [&]() {
+        };
+        button->m_OnMouseMove = [button]()
+        {
+            button->m_GlobalX = g_InputData->m_MouseX;
+            button->m_GlobalY = g_InputData->m_MouseY;
+        };
+        button->m_OnMouseDown = [button]()
+        {
+            button->m_UseGlobalPosition = true;
+            button->m_GlobalX = g_InputData->m_MouseX;
+            button->m_GlobalY = g_InputData->m_MouseY;
+        };
+        button->m_OnMouseUp = [button]()
+        {
+            button->m_UseGlobalPosition = false;
+        };
+        return button;
+    }
 }

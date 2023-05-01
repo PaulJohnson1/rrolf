@@ -21,7 +21,8 @@ namespace app
         constexpr uint32_t Epic = 3;
         constexpr uint32_t Legendary = 4;
         constexpr uint32_t Mythic = 5;
-        constexpr uint32_t kMaxRarities = 6;
+        constexpr uint32_t Ultra = 6;
+        constexpr uint32_t kMaxRarities = 7;
     };
 
     namespace PetalId
@@ -30,7 +31,8 @@ namespace app
         constexpr uint32_t Basic = 1;
         constexpr uint32_t Light = 2;
         constexpr uint32_t Stinger = 3;
-        constexpr uint32_t kMaxPetals = 4;
+        constexpr uint32_t Missile = 4;
+        constexpr uint32_t kMaxPetals = 5;
     };
 
     std::vector<std::vector<float>> LootTable(float);
@@ -56,15 +58,17 @@ namespace app
         float m_BaseHealth;
         float m_BaseDamage;
         int32_t m_ReloadTicks;
-        bool m_Clump = false;
-        uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1};
+        float m_ClumpRadius = 0; //0 = no clump
+        uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1};
+        bool m_Shootable = false;
     };
 
     static constexpr PetalData PETAL_DATA[PetalId::kMaxPetals] = {
         {PetalId::None, 0, 0},
         {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
-        {PetalId::Light, 5.0f, 7.0f, 50, false, {1, 2, 2, 3, 3, 5}},
-        {PetalId::Stinger, 8.0f, 35.0f, 100, true, {1, 1, 1, 1, 1, 3}}
+        {PetalId::Light, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5}},
+        {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 2, 3, 5}},
+        {PetalId::Missile, 8.0f, 35.0f, 100, 0, {1,1,1,1,1,1,1}, true}
     };
 
     static MobData MOB_DATA[MobId::kMaxMobs] = {
@@ -72,11 +76,11 @@ namespace app
     };
 
     // 0xffff2b75, 0xff2bffa3 for ultra and super
-    static constexpr uint32_t RARITY_COLORS[RarityId::kMaxRarities] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde};
-    static constexpr char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic"};
+    static constexpr uint32_t RARITY_COLORS[RarityId::kMaxRarities] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75};
+    static constexpr char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 
     static constexpr char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
-    static constexpr char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger"};
+    static constexpr char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile"};
 
 
     static constexpr float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
@@ -85,7 +89,8 @@ namespace app
         1.3,
         1.6,
         3.0,
-        5.0
+        5.0,
+        20.0
     };
 
     static constexpr float MOB_HEALTH_FACTOR[RarityId::kMaxRarities] = {
@@ -95,6 +100,7 @@ namespace app
         4.0,
         25.0,
         50.0,
+        1000.0
     };
 
     static constexpr float MOB_DAMAGE_FACTOR[RarityId::kMaxRarities] = {
@@ -103,7 +109,8 @@ namespace app
         1.3,
         1.6,
         2.0,
-        2.5
+        2.5,
+        10.0
     };
 
     static constexpr float PETAL_HEALTH_FACTOR[RarityId::kMaxRarities] = {
@@ -112,7 +119,8 @@ namespace app
         4,
         8,
         16,
-        32
+        32,
+        64
     };
 
     static constexpr float PETAL_DAMAGE_FACTOR[RarityId::kMaxRarities] = {
@@ -121,6 +129,7 @@ namespace app
         4,
         8,
         16,
-        32
+        32,
+        64
     };
 }

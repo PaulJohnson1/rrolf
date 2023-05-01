@@ -9,7 +9,8 @@
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
-#include <Client/Simulation.hh>
+
+#include <Client/Ui/DrawPetal.hh>
 
 namespace app::component
 {
@@ -33,13 +34,14 @@ namespace app::component
     {
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        uint32_t dTick = m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick;
         ctx->Translate(physical.m_X, physical.m_Y);
         float scale = MOB_SCALE_FACTOR[m_Rarity];
         ctx->Scale(scale, scale);
         ctx->Rotate(physical.m_Angle);
         float seed = std::sin(m_Simulation->GetTime() / 100);
-        ctx->SetFill(0xff454545);
-        ctx->SetStroke(0xff292929);
+        ctx->SetFill(ui::DamageColor(0xff454545, dTick));
+        ctx->SetStroke(ui::DamageColor(0xff292929, dTick));
         ctx->SetLineWidth(7);
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->BeginPath();
@@ -53,7 +55,7 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, 17.5);
         ctx->Fill();
-        ctx->SetFill(0xff555555);
+        ctx->SetFill(ui::DamageColor(0xff555555, dTick));
         ctx->BeginPath();
         ctx->Arc(0, 0, 10.5);
         ctx->Fill();

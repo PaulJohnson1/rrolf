@@ -66,7 +66,7 @@ extern "C"
         else if (state == 0)
             g_InputData->m_MouseButtons &= ~(1 << button);
     }
-    void __Renderer_Render(int32_t width, int32_t height)
+    void __Renderer_Render(int32_t width, int32_t height, float devicePixelRatio)
     {
         if (!g_Renderer)
             return;
@@ -76,6 +76,7 @@ extern "C"
         float a = g_Renderer->m_Height / 1080;
         float b = g_Renderer->m_Width / 1920;
         g_Renderer->m_WindowScale = b < a ? a : b;
+        //g_Renderer->m_WindowScale *= devicePixelRatio;
         g_Simulation->TickRenderer();
         g_Renderer->ResetTransform();
         g_Renderer->m_Container.Render();
@@ -144,9 +145,9 @@ void Initialize()
             "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
         window.addEventListener(
             "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 1, button)});
-        window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 2, button)});
-        window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 0, button)});
+        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 1, button)});
+        window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 2, button)});
+        window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 0, button)});
         Module.paths = [... Array(100)].fill(null);
         Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -197,9 +198,9 @@ void Initialize()
         function loop()
         {
             requestAnimationFrame(loop);
-            Module.canvas.width = innerWidth;
-            Module.canvas.height = innerHeight;
-            Module.___Renderer_Render(Module.canvas.width, Module.canvas.height);
+            Module.canvas.width = innerWidth * devicePixelRatio;
+            Module.canvas.height = innerHeight * devicePixelRatio;
+            Module.___Renderer_Render(Module.canvas.width, Module.canvas.height, devicePixelRatio);
         };
         requestAnimationFrame(loop);
     });

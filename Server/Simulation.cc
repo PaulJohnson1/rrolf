@@ -15,6 +15,8 @@
 #include <Shared/StaticData.hh>
 #include <Server/Server.hh>
 
+#include <Shared/Assert.hh>
+
 namespace app
 {
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)                                           \
@@ -63,7 +65,7 @@ namespace app
           m_MobAi(*this),
           m_MapBoundaries(*this),
           m_Damage(*this),
-          m_Petal(*this),
+          m_PetalBehavior(*this),
           m_DropCollector(*this)
     {
         for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
@@ -85,7 +87,7 @@ namespace app
         uint32_t entityCount = 0;
         ForEachEntity([&](Entity)
                       { entityCount++; });
-        if (entityCount < 100)
+        if (entityCount < 4)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -98,15 +100,15 @@ namespace app
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
             mob.Id(0);     // baby ant
-            mob.Rarity(5);
+            mob.Rarity(6);
             //mob.Rarity(5);
         }
 
         {
             std::unique_lock<std::mutex> l(m_Mutex);
-            m_Petal.Tick();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
+            m_PetalBehavior.Tick();
             m_CollisionResolver.Tick();
             m_DropCollector.Tick();
             m_MapBoundaries.Tick();
@@ -129,6 +131,11 @@ namespace app
     {
         assert(entity < MAX_ENTITY_COUNT);
         return m_EntityTracker[entity];
+    }
+
+    std::vector<Entity> Simulation::FindNearBy(float x, float y, float r)
+    {
+        return m_CollisionDetector.m_SpatialHash.GetCollisions(x, y, r, r);       
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)

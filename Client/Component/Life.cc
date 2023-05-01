@@ -23,7 +23,12 @@ namespace app::component
         uint32_t updatedFields = coder.Read<bc::VarUint>();
 
         if (updatedFields & 1)
+        {
+            float old = m_Health.Destination();
             m_Health = coder.Read<bc::Float32>();
+            if (m_Health.Destination() < old)
+                m_DamageAnimationTick = 12;
+        }
         if (updatedFields & 2)
             m_MaxHealth = coder.Read<bc::Float32>();
     }
@@ -33,6 +38,8 @@ namespace app::component
         Guard g(ctx);
         component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
+        if (m_Simulation->HasComponent<component::Mob>(m_Parent) && m_Simulation->Get<component::Mob>(m_Parent).m_Rarity == 6)
+            ctx->Translate(0, 75);
         float length = 40;
         
         // mob rarity render
