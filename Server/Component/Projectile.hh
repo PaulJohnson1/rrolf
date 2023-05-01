@@ -27,9 +27,11 @@ namespace app::component
         uint64_t m_State = 0;
 
         uint32_t m_TicksUntilDeath;
+        int32_t m_ShootDelay;
         bool m_Detached;
 
         Projectile(Entity, Simulation *);
+        ~Projectile();
 
         void Reset();
 

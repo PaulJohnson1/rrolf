@@ -84,10 +84,10 @@ namespace app
 
     void Simulation::Tick()
     {
-        uint32_t entityCount = 0;
-        ForEachEntity([&](Entity)
-                      { entityCount++; });
-        if (entityCount < 4)
+        uint32_t mobCount = 0;
+        ForEachEntity([&](Entity e)
+                      { mobCount += HasComponent<component::Mob>(e); });
+        if (mobCount < 10)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);

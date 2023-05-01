@@ -17,5 +17,6 @@ namespace app::system
         CollisionDetector(Simulation &);
 
         void Tick();
+        bool IsValidCollision(Entity, Entity);
     };
 }

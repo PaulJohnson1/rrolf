@@ -100,11 +100,12 @@ namespace app::ui
         }
         else
         {
+            float radius = PETAL_DATA[id].m_ClumpRadius != 0? PETAL_DATA[id].m_ClumpRadius: 10;
             for (uint32_t i = 0; i < count; ++i)
             {
                 {
                     Guard g(ctx);
-                    ctx->Translate(PETAL_DATA[id].m_ClumpRadius,0);
+                    ctx->Translate(radius,0);
                     if (id == PetalId::Stinger && rarity == RarityId::Ultra)
                         ctx->Rotate(M_PI);
                     else if (id == PetalId::Missile)

@@ -33,6 +33,8 @@ namespace app::component
         uint32_t m_RotationPos = 0;
         float m_InnerAngle = 0; // for clumped petals
         float m_ClumpRadius = 0;
+        uint32_t m_Slot = 0;
+        uint32_t m_InnerPos = 0;
 
         Petal(Entity, Simulation *);
         ~Petal();

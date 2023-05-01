@@ -20,20 +20,11 @@ namespace app::component
             return;
         if (!m_Simulation->HasComponent<PlayerInfo>(basic.m_Owner))
             return;
+        if (m_Simulation->HasComponent<Projectile>(basic.m_Owner) && m_Simulation->Get<Projectile>(basic.m_Owner).m_Detached)
+            return;
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
-        for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
-        {
-            PlayerInfo::PetalSlot &slot = playerInfo.m_PetalSlots[i];
-            for (uint64_t j = 0; j < slot.m_Petals.size(); j++)
-            {
-                PlayerInfo::Petal &playerInfoPetal = slot.m_Petals[j];
-                if (m_Parent == playerInfoPetal.m_SimulationId)
-                {
-                    playerInfoPetal.m_IsDead = true;
-                    playerInfoPetal.m_TicksUntilRespawn = slot.m_Data.m_ReloadTicks;
-                }
-            }
-        }
+        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
+        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data.m_ReloadTicks; 
     }
 
     void Petal::Reset()
