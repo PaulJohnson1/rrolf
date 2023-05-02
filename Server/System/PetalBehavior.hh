@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Shared/Entity.hh>
+
 namespace app
 {
     class Simulation;
@@ -16,5 +18,8 @@ namespace app::system
 
         void Tick();
         void PostTick();
+
+        void MissileTarget(Entity);
+        void ProjectileDetach(Entity);
     };
 }

@@ -10,6 +10,7 @@ namespace app
     {
         T m_Interpolated;
         T m_Destination;
+        bool m_First = true;
 
     public:
         Lerp(T val)
@@ -23,11 +24,13 @@ namespace app
             if (AngleWrapAround)
                 val = std::fmod(val, M_PI * 2);
             m_Destination = val; 
+            if (m_First)
+                m_Interpolated = val;
+            m_First = false;
         }
         void Tick(float pct)
         {
-            if (m_Interpolated == 0)
-                m_Interpolated = m_Destination;
+
             if (AngleWrapAround)
             {
                 if (std::abs(m_Destination - m_Interpolated) < M_PI)

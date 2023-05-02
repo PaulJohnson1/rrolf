@@ -20,7 +20,7 @@ namespace app::component
             return;
         if (!m_Simulation->HasComponent<PlayerInfo>(basic.m_Owner))
             return;
-        if (m_Simulation->HasComponent<Projectile>(basic.m_Owner) && m_Simulation->Get<Projectile>(basic.m_Owner).m_Detached)
+        if (m_AlreadyFreedSpace)
             return;
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;

@@ -133,9 +133,11 @@ namespace app
         return m_EntityTracker[entity];
     }
 
-    std::vector<Entity> Simulation::FindNearBy(float x, float y, float r)
+    std::vector<Entity> Simulation::FindNearBy(Entity e, float r)
     {
-        return m_CollisionDetector.m_SpatialHash.GetCollisions(x, y, r, r);       
+        //assert(m_PhysicalTracker[e]);
+        component::Physical &physical = Get<component::Physical>(e);
+        return m_CollisionDetector.m_SpatialHash.GetCollisions(physical.X(), physical.Y(), r, r);       
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)

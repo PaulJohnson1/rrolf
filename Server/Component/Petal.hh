@@ -35,6 +35,7 @@ namespace app::component
         float m_ClumpRadius = 0;
         uint32_t m_Slot = 0;
         uint32_t m_InnerPos = 0;
+        bool m_AlreadyFreedSpace = false;
 
         Petal(Entity, Simulation *);
         ~Petal();
@@ -43,10 +44,6 @@ namespace app::component
         void Id(uint32_t);
         uint32_t Rarity() const;
         void Rarity(uint32_t);
-        bool Shootable() const;
-        void Shootable(bool);
-        bool Independent() const;
-        void Independent(bool);
 
         void Reset();
 

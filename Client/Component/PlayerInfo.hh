@@ -32,6 +32,7 @@ namespace app::component
         Lerp<float> m_Fov{0.1};
         bool m_HasPlayer;
         LoadoutPetal m_Petals[10] = {};
+        LoadoutPetal m_SecondaryPetals[10] = {};
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         Entity m_Player;
         Simulation *m_Simulation;

@@ -106,9 +106,9 @@ namespace app
         uint8_t type = coder.Read<bc::Uint8>();
         if (type == 0)
         {
-            if (size != 3)
+            if (size < 3)
             {
-                std::cout << "someone sent update packet with size not equal to 3\n";
+                std::cout << "someone sent update packet with size less than 3\n";
                 return;
             }
 
@@ -133,6 +133,7 @@ namespace app
                 y++;
             if (movementFlags & 8)
                 x++;
+
             m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo).m_MouseButton = (movementFlags >> 4) & 7;
             m_PlayerAcceleration.Set(x, y);
             m_PlayerAcceleration.Normalize();
@@ -140,6 +141,28 @@ namespace app
         else if (type == 1)
         {
             ConstructPlayer();
+        }
+        else if (type == 2)
+        {
+            //THIS PROGRAM CREATES MEMORY BUGS: DO NOT RUN UNLESS YOU FIX THESE BUGS
+            /*
+            component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
+            uint32_t pos = coder.Read<bc::Uint8>();
+            uint32_t id1 = playerInfo.m_PetalSlots[pos].m_Data.m_Id; //not a reference
+            uint32_t rar1 = playerInfo.m_PetalSlots[pos].m_Rarity; //not a reference
+            uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data.m_Id; //not a reference
+            uint32_t rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
+            std::cout << 'b ' << id1 << ' ' << rar1 << ' ' << id2 << ' ' << rar2 << '\n';
+            playerInfo.ChangePetal(pos, id2, rar2);
+            playerInfo.ChangePetal(pos + 10, id1, rar1);
+             id1 = playerInfo.m_PetalSlots[pos].m_Data.m_Id; //not a reference
+             rar1 = playerInfo.m_PetalSlots[pos].m_Rarity; //not a reference
+             id2 = playerInfo.m_SecondarySlots[pos].m_Data.m_Id; //not a reference
+             rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
+            std::cout << 'e ' << id1 << ' ' << rar1 << ' ' << id2 << ' ' << rar2 << '\n';
+
+            std::cout << "changed petal " << pos << '\n';
+            */
         }
     }
 
