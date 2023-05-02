@@ -21,7 +21,7 @@ namespace app::component
     {
         bool m_HasPlayer;
         Entity m_Player = (Entity)-1;
-        float m_Fov = 0.4f;
+        float m_Fov = 0.9f;
         float m_CameraX = 0.0f;
         float m_CameraY = 0.0f;
         Simulation *m_Simulation;
@@ -37,8 +37,8 @@ namespace app::component
         struct PetalSlot
         {
             uint32_t m_Rarity;
+            PetalData &m_Data;
             std::vector<Petal> m_Petals;
-            PetalData m_Data;
         };
 
         PetalSlot MakePetal(uint32_t id, uint32_t rarity) const

@@ -11,11 +11,10 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <Shared/Entity.hh>
-#include <Shared/StaticData.hh>
-#include <Server/Server.hh>
-
 #include <Shared/Assert.hh>
+#include <Shared/Entity.hh>
+#include <Server/Server.hh>
+#include <Shared/StaticData.hh>
 
 namespace app
 {
@@ -68,7 +67,7 @@ namespace app
           m_PetalBehavior(*this),
           m_DropCollector(*this)
     {
-        for (Entity i = 0; i < MAX_ENTITY_COUNT; i++)
+        for (Entity i = 0; i < MAX_ENTITY_COUNT - 1; i++)
         {
             m_AvailableIds.push(i);
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
@@ -84,10 +83,11 @@ namespace app
 
     void Simulation::Tick()
     {
-        uint32_t entityCount = 0;
-        ForEachEntity([&](Entity)
-                      { entityCount++; });
-        if (entityCount < 4)
+        std::unique_lock<std::mutex> l(m_Mutex);// m_Mutex.lock();
+        uint32_t mobCount = 0;
+        ForEachEntity([&](Entity e)
+                      { mobCount += HasComponent<component::Mob>(e); });
+        if (mobCount < 4)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -105,7 +105,6 @@ namespace app
         }
 
         {
-            std::unique_lock<std::mutex> l(m_Mutex);
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_PetalBehavior.Tick();
@@ -124,7 +123,8 @@ namespace app
 
         m_PendingDeletions.clear();
 
-        ++m_TickCount;
+        m_TickCount++;
+        l.unlock(); // m_Mutex.unlock();
     }
 
     bool Simulation::HasEntity(Entity entity)

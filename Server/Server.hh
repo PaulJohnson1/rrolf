@@ -18,9 +18,9 @@ namespace app
     {
         friend Client;
         uint32_t m_TickCount = 0;
-        std::mutex m_Mutex;
 
     public:
+        std::mutex m_Mutex;
         Simulation m_Simulation;
         std::vector<Client *> m_Clients;
         WebSocketServer m_Server;

@@ -42,7 +42,7 @@ namespace app::ui
             m_Renderer.ResetTransform();
             m_Renderer.Translate(m_GlobalX, m_GlobalY);
             m_Renderer.Scale(m_Renderer.m_WindowScale * m_Width / 60, m_Renderer.m_WindowScale * m_Height / 60);
-            if (g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+            if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
             {
                 component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
                 uint32_t id = playerInfo.m_Petals[m_Position].m_Id;
