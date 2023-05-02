@@ -47,11 +47,13 @@ namespace app
 
     void Server::OnClientDisconnect(websocketpp::connection_hdl hdl)
     {
+        std::unique_lock<std::mutex> l(m_Mutex);// m_Mutex.lock();
         for (uint64_t i = 0; i < m_Clients.size(); i++)
             if (m_Clients[i]->GetHdl().lock() == hdl.lock())
             {
                 delete m_Clients[i];
                 m_Clients.erase(m_Clients.begin() + i);
+                l.unlock(); // m_Mutex.unlock();
                 return;
             }
 

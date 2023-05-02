@@ -122,6 +122,18 @@ namespace app
         bool HasEntity(Entity);
         void WriteEntity(bc::BinaryCoder &, Entity, bool);
         void ResetEntity(Entity);
-        void RequestDeletion(Entity);
+        template <bool Animation>
+        void RequestDeletion(Entity id)
+        {
+            if constexpr (Animation)
+            {
+                component::Physical &physical = Get<component::Physical>(id);
+                if (physical.DeletionTick() == 0)
+                    physical.DeletionTick(1);
+            }
+            else
+                if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
+                    m_PendingDeletions.push_back(id);
+        }
     };
 }

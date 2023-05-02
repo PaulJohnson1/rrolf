@@ -22,7 +22,7 @@ namespace app::ui
     {
         Guard g(&m_Renderer);
         m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2);
-        m_Renderer.Scale(m_Renderer.m_WindowScale, m_Renderer.m_WindowScale);
+        m_Renderer.Scale(m_Renderer.m_WindowScale);
         m_Renderer.SetTextAlign(m_TextAlign);
         m_Renderer.SetTextBaseline(m_TextBaseline);
         m_Renderer.SetTextSize(m_TextSize);

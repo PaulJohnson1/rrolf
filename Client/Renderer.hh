@@ -176,6 +176,7 @@ namespace app
         void Rotate(float);
         void Translate(float, float);
         void Scale(float, float);
+        void Scale(float);
 
         // style
         void SetGlobalAlpha(float);

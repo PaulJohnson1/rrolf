@@ -94,21 +94,23 @@ namespace app::system
                 return;
             component::Petal &petal = m_Simulation.Get<component::Petal>(entity);
             Physical &physical = m_Simulation.Get<Physical>(entity);
+            if (physical.DeletionTick() != 0)
+                return;
             Basic &basic = m_Simulation.Get<Basic>(entity);
             if (!m_Simulation.HasEntity(basic.m_Owner)) // owner left
             {
-                m_Simulation.RequestDeletion(entity);
+                m_Simulation.RequestDeletion<true>(entity);
                 return;
             }
             if (!m_Simulation.HasComponent<PlayerInfo>(basic.m_Owner)) // owner left and something replaced it
             {
-                m_Simulation.RequestDeletion(entity);
+                m_Simulation.RequestDeletion<true>(entity);
                 return;
             }
             PlayerInfo &playerInfo = m_Simulation.Get<PlayerInfo>(basic.m_Owner);
             if (!playerInfo.HasPlayer()) // player died
             {
-                m_Simulation.RequestDeletion(entity);
+                m_Simulation.RequestDeletion<true>(entity);
                 return;
             }
             Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
@@ -144,7 +146,7 @@ namespace app::system
                     //one-time homing
                     std::vector<Entity> nearBy = m_Simulation.FindNearBy(petalPosition.m_X, petalPosition.m_Y, 200 * petal.Rarity());
                     Entity closest = (Entity)-1;
-                    float distance = INFINITY;
+                    float distance = 1e10;
                     for (uint64_t i = 0; i < nearBy.size(); ++i)
                     {
                         Entity ent = nearBy[i];
@@ -174,11 +176,15 @@ namespace app::system
                 
                 float currAngle = playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount;
                 Vector extension = Vector::FromPolar(holdingRadius, currAngle);
-                extension += Vector::FromPolar(petal.m_ClumpRadius, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
+                if (petal.m_ClumpRadius != 0)
+                {
+                    extension += Vector::FromPolar(petal.m_ClumpRadius, petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3);
+                    currAngle = petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3;
+                }
 
                 std::vector<Entity> nearBy = m_Simulation.FindNearBy(petalPosition.m_X, petalPosition.m_Y, 400);
                 Entity closest = (Entity)-1;
-                float distance = INFINITY;
+                float distance = 1e10;
                 for (uint64_t i = 0; i < nearBy.size(); ++i)
                 {
                     Entity ent = nearBy[i];
@@ -211,7 +217,7 @@ namespace app::system
             physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
             if (--m_Simulation.Get<component::Projectile>(entity).m_TicksUntilDeath <= 0)
             {
-                m_Simulation.RequestDeletion(entity);
+                m_Simulation.RequestDeletion<true>(entity);
             }
 
             if (petal.Rarity() >= RarityId::Ultra)

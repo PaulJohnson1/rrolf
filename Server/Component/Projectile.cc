@@ -1,6 +1,7 @@
-#include <Server/Component/Ai.hh>
+#include <Server/Component/Projectile.hh>
 
 #include <cstdint>
+#include <Server/Component/Petal.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>

@@ -25,7 +25,7 @@ namespace app::component
 
     void Physical::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b1111 : entity.m_State;
+        uint32_t state = isCreation ? 0b11111 : entity.m_State;
 
         coder.Write<bc::VarUint>(state);
 
@@ -37,13 +37,15 @@ namespace app::component
             coder.Write<bc::Float32>(entity.m_Y);
         if (state & 8)
             coder.Write<bc::Float32>(entity.m_Angle);
+        if (state & 16)
+            coder.Write<bc::VarUint>(entity.m_DeletionTick);
     }
 
     float Physical::Radius() const { return m_Radius; }
-    float Physical::Friction() const { return m_Friction; }
     float Physical::X() const { return m_X; }
     float Physical::Y() const { return m_Y; }
     float Physical::Angle() const { return m_Angle; }
+    uint32_t Physical::DeletionTick() const { return m_DeletionTick; }
 
     void Physical::Radius(float r)
     {
@@ -78,8 +80,9 @@ namespace app::component
         m_State |= 8;
     }
 
-    void Physical::Friction(float f)
+    void Physical::DeletionTick(uint32_t v)
     {
-        m_Friction = f;
+        ++m_DeletionTick;
+        m_State |= 16;
     }
 }

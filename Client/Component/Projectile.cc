@@ -1,4 +1,4 @@
-#include <Client/Component/Ai.hh>
+#include <Client/Component/Projectile.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>

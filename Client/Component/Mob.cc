@@ -35,9 +35,14 @@ namespace app::component
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
         uint32_t dTick = m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick;
+
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+
         ctx->Translate(physical.m_X, physical.m_Y);
+        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        
         float scale = MOB_SCALE_FACTOR[m_Rarity];
-        ctx->Scale(scale, scale);
+        ctx->Scale(scale);
         ctx->Rotate(physical.m_Angle);
         float seed = std::sin(m_Simulation->GetTime() / 100);
         ctx->SetFill(ui::DamageColor(0xff454545, dTick));

@@ -94,7 +94,7 @@ namespace app::ui
         if (count == 1)
         {
             Guard g(ctx);
-            if (id == 4)
+            if (id == PetalId::Missile)
                 ctx->Rotate(1);
             DrawPetal(ctx, id, 0);
         }
@@ -105,9 +105,9 @@ namespace app::ui
                 {
                     Guard g(ctx);
                     ctx->Translate(PETAL_DATA[id].m_ClumpRadius,0);
-                    if (id == 3 && rarity >= 6)
+                    if (id == PetalId::Stinger && rarity == RarityId::Ultra)
                         ctx->Rotate(M_PI);
-                    else if (id == 4)
+                    else if (id == PetalId::Missile)
                         ctx->Rotate(1);
                     DrawPetal(ctx, id, 0);     
                 }   

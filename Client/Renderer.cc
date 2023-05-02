@@ -150,6 +150,11 @@ namespace app
         UpdateTransform();
     }
 
+    void Renderer::Scale(float s)
+    {
+        Scale(s, s);
+    }
+
     void Renderer::Save()
     {
 #ifndef EMSCRIPTEN

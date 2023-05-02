@@ -30,6 +30,9 @@ namespace app::component
     {
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+
         ctx->Translate(physical.m_X, physical.m_Y);
         if (!m_Simulation->HasComponent<component::Projectile>(m_Parent))
         {   
@@ -38,6 +41,9 @@ namespace app::component
         }
         else
             ctx->Rotate(physical.m_Angle);
+
+        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+
         ui::DrawPetal(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick);
     }
 }

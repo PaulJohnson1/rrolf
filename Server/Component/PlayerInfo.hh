@@ -37,16 +37,15 @@ namespace app::component
         struct PetalSlot
         {
             uint32_t m_Rarity;
+            PetalData &m_Data;
             std::vector<Petal> m_Petals;
-            PetalData m_Data;
         };
 
         PetalSlot MakePetal(uint32_t id, uint32_t rarity) const
         {
             return PetalSlot{rarity,
-                            {PETAL_DATA[id].m_Count[rarity], Petal{PETAL_DATA[id].m_ReloadTicks}},
-                            PETAL_DATA[id]
-            };
+                             PETAL_DATA[id],
+                             {PETAL_DATA[id].m_Count[rarity], Petal{PETAL_DATA[id].m_ReloadTicks, true}}};
         };
 
         using Type = PlayerInfo;

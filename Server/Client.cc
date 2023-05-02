@@ -21,13 +21,13 @@ namespace app
 
     Client::~Client()
     {
-        std::cout << "client destroy\n";
+        std::cout << "client destroy   " << this << ' ' << &m_Simulation << '\n';
 
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
 
         if (playerInfo.HasPlayer())
-            m_Simulation.RequestDeletion(playerInfo.Player());
-        m_Simulation.RequestDeletion(m_PlayerInfo);
+            m_Simulation.RequestDeletion<false>(playerInfo.Player());
+        m_Simulation.RequestDeletion<false>(m_PlayerInfo);
     }
 
     void Client::ConstructPlayer()
@@ -84,14 +84,19 @@ namespace app
 
     void Client::SendPacket(bc::BinaryCoder data) const
     {
-        std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
         try
         {
-            m_Simulation.m_Server.m_Server.send(m_Hdl, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+            std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
+            auto c = m_Hdl.lock();
+            if (c)
+                m_Simulation.m_Server.m_Server.send(c, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+            else 
+                std::cout << "\n\n\nsegmentation fault avoided\n\n\n";
+            l.unlock();
         }
         catch (...)
         {
-            std::cout << "unknown error thing prevented\n";
+            std::cerr << "SendPacket error\n";
         }
     }
 
@@ -143,5 +148,5 @@ namespace app
         }
     }
 
-    websocketpp::connection_hdl Client::GetHdl() { return m_Hdl; }
+    websocketpp::connection_hdl const &Client::GetHdl() { return m_Hdl; }
 }

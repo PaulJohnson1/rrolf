@@ -25,5 +25,7 @@ namespace app::component
             m_Y = coder.Read<bc::Float32>();
         if (updatedFields & 8)
             m_Angle = coder.Read<bc::Float32>();
+        if (updatedFields & 16)
+            m_DeletionTick = coder.Read<bc::VarUint>();
     }
 }
