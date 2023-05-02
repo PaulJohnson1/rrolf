@@ -22,7 +22,7 @@ namespace app
     char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 
     char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
-    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile"};
+    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile", "Pollen"};
     float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
         1,
         1.1,
