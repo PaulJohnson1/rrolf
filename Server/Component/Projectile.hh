@@ -25,6 +25,7 @@ namespace app::component
 
         bool m_Detached = false;
         Entity m_Parent;
+        int32_t m_ShootDelay = 0;
         uint32_t m_TicksUntilDeath = 0;
         uint64_t m_State = 0;
 

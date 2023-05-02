@@ -10,7 +10,8 @@ namespace app
         {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
         {PetalId::Light, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5}},
         {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 2, 3, 5}},
-        {PetalId::Missile, 8.0f, 35.0f, 10, 20, {1,1,1,1,1,1,5}, true}
+        {PetalId::Missile, 8.0f, 35.0f, 100, 15, {1,1,1,1,1,1,3}, 13},
+        {PetalId::Pollen, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5}, 13},
     };
 
     MobData MOB_DATA[MobId::kMaxMobs] = {
@@ -21,7 +22,7 @@ namespace app
     char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 
     char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
-    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile"};
+    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile", "Pollen"};
     float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
         1,
         1.1,

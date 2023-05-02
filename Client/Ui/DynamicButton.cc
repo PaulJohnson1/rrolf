@@ -14,6 +14,7 @@ namespace app::ui
     DynamicButton::DynamicButton(Renderer &ctx, float w, uint32_t pos)
         : Button(ctx, w, w), m_Position(pos)
     {
+        m_LerpWidth = 0;
     }
 
     void DynamicButton::Render()
@@ -35,23 +36,30 @@ namespace app::ui
             m_GlobalX = matrix[2];
             m_GlobalY = matrix[5];
         }
+
         m_GlobalX.Tick(0.2);
         m_GlobalY.Tick(0.2);
+        m_LerpWidth.Tick(0.2);
+
         {
             Guard g(&m_Renderer);
             m_Renderer.ResetTransform();
             m_Renderer.Translate(m_GlobalX, m_GlobalY);
-            m_Renderer.Scale(m_Renderer.m_WindowScale * m_Width / 60, m_Renderer.m_WindowScale * m_Height / 60);
+            m_Renderer.Scale(m_Renderer.m_WindowScale * m_LerpWidth / 60);
             if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
             {
                 component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
-                uint32_t id = playerInfo.m_Petals[m_Position].m_Id;
+                component::PlayerInfo::LoadoutPetal usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
+                uint32_t id = usingPos.m_Id;
                 if (id != 0)
                 {
-                    uint32_t rarity = playerInfo.m_Petals[m_Position].m_Rarity;
+                    m_LerpWidth = m_Width;
+                    uint32_t rarity = usingPos.m_Rarity;
                     ui::DrawPetalWithBackground(&m_Renderer, id, rarity);
                     ButtonAction();
                 }
+                else
+                    m_LerpWidth = 0;
             }
         }
     }

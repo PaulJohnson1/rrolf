@@ -27,12 +27,12 @@ namespace app::component
         using Type = Petal;
 
         Entity m_Parent;
-        uint64_t m_State = 0;
-
-        // for rotation and stuff lol
         uint32_t m_RotationPos = 0;
-        float m_InnerAngle = 0; // for clumped petals
+        uint32_t m_Slot = 0;
+        uint32_t m_InnerPos = 0;
         float m_ClumpRadius = 0;
+        float m_InnerAngle = 0;
+        uint64_t m_State = 0;
 
         Petal(Entity, Simulation *);
         ~Petal();
@@ -41,10 +41,6 @@ namespace app::component
         void Id(uint32_t);
         uint32_t Rarity() const;
         void Rarity(uint32_t);
-        bool Shootable() const;
-        void Shootable(bool);
-        bool Independent() const;
-        void Independent(bool);
 
         void Reset();
 

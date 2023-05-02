@@ -32,7 +32,8 @@ namespace app
         constexpr uint32_t Light = 2;
         constexpr uint32_t Stinger = 3;
         constexpr uint32_t Missile = 4;
-        constexpr uint32_t kMaxPetals = 5;
+        constexpr uint32_t Pollen = 5;
+        constexpr uint32_t kMaxPetals = 6;
     };
 
     std::vector<std::vector<float>> LootTable(float);
@@ -60,7 +61,7 @@ namespace app
         int32_t m_ReloadTicks;
         float m_ClumpRadius = 0; //0 = no clump
         uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1};
-        bool m_Shootable = false;
+        uint32_t m_ShootDelay = 0;
     };
 
     extern PetalData PETAL_DATA[PetalId::kMaxPetals];

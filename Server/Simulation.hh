@@ -115,7 +115,7 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
-        std::vector<Entity> FindNearBy(float, float, float);
+        std::vector<Entity> FindNearBy(Entity, float);
         std::vector<Entity> FindEntitiesInView(component::PlayerInfo &);
         Entity Create();
 

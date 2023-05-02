@@ -1,11 +1,11 @@
 #include <Server/Component/Projectile.hh>
 
 #include <cstdint>
-#include <Server/Component/Petal.hh>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Server/Component/Petal.hh>
 #include <Server/Simulation.hh>
 
 namespace app::component

@@ -35,6 +35,11 @@ namespace app::component
             m_Petals[i].m_Id = coder.Read<bc::VarUint>();
             m_Petals[i].m_Rarity = coder.Read<bc::VarUint>();
         }
+        for (uint64_t i = 0; i < size; ++i)
+        {
+            m_SecondaryPetals[i].m_Id = coder.Read<bc::VarUint>();
+            m_SecondaryPetals[i].m_Rarity = coder.Read<bc::VarUint>();
+        }
         for (uint64_t i = 0; i < PetalId::kMaxPetals * RarityId::kMaxRarities; ++i)
         {
             m_Inventory[i] = coder.Read<bc::VarUint>();

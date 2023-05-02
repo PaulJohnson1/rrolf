@@ -23,6 +23,8 @@ namespace app::system
             Vector position = {physical.X(), physical.Y()};
             if (position > arena.MapSize() - physical.Radius())
             {
+                if (m_Simulation.HasComponent<component::Projectile>(entity) && m_Simulation.Get<component::Projectile>(entity).m_Detached)
+                    m_Simulation.RequestDeletion<true>(entity);
                 position.Magnitude(arena.MapSize() - physical.Radius());
                 // physical.m_Acceleration += position.Normalize() * -0.1;
             }

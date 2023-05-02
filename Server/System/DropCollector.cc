@@ -36,6 +36,27 @@ namespace app::system
                     continue;
                 ++playerInfo.m_Inventory[drop.Id() * RarityId::kMaxRarities + drop.Rarity()];
                 drop.m_CollectedBy.push_back(entity);
+                /*
+                ADD THE PETAL TO LOADOUT IF POSSIBLE
+                */
+                for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
+                {
+                    component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
+                    if (petalSlot.m_Data.m_Id == 0)
+                    {
+                        petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
+                        return;
+                    }
+                }
+                for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
+                {
+                    component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_SecondarySlots[i];
+                    if (petalSlot.m_Data.m_Id == 0)
+                    {
+                        petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
+                        return;
+                    }
+                }
             }
         });
         m_Simulation.ForEachEntity([&](Entity entity) 

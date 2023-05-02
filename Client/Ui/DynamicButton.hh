@@ -14,6 +14,7 @@ namespace app::ui
         bool m_UseGlobalPosition = false;
         Lerp<float> m_GlobalX = Lerp<float>(0.0f);
         Lerp<float> m_GlobalY = Lerp<float>(0.0f);
+        Lerp<float> m_LerpWidth = Lerp<float>(0.0f);
         
         DynamicButton(Renderer &, float, uint32_t);
 

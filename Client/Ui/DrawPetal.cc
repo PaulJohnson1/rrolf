@@ -27,7 +27,7 @@ namespace app::ui
         {
         case 0:
             break;
-        case 1:
+        case PetalId::Basic:
             ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 11.5);
@@ -37,7 +37,7 @@ namespace app::ui
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
             break;
-        case 2:
+        case PetalId::Light:
             ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
             ctx->Arc(0, 0, 8.5);
@@ -47,7 +47,7 @@ namespace app::ui
             ctx->Arc(0, 0, 5.5);
             ctx->Fill();
             break;
-        case 3:
+        case PetalId::Stinger:
             ctx->SetFill(DamageColor(0xff333333, dTick));
             ctx->SetStroke(DamageColor(0xff292929, dTick));
             ctx->SetLineWidth(3);
@@ -60,7 +60,7 @@ namespace app::ui
             ctx->Fill();
             ctx->Stroke();
             break;
-        case 4:
+        case PetalId::Missile:
             ctx->SetFill(DamageColor(0xff333333, dTick));
             ctx->SetStroke(DamageColor(0xff333333, dTick));
             ctx->SetLineWidth(5);
@@ -73,6 +73,16 @@ namespace app::ui
             ctx->LineTo(11,0);
             ctx->Fill();
             ctx->Stroke();
+            break;
+        case PetalId::Pollen:
+            ctx->SetFill(DamageColor(0xffcfbb50, dTick));
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 8.5);
+            ctx->Fill();
+            ctx->SetFill(DamageColor(0xffffe763, dTick));
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 5.5);
+            ctx->Fill();
             break;
         default:
             ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
@@ -100,11 +110,12 @@ namespace app::ui
         }
         else
         {
+            float radius = PETAL_DATA[id].m_ClumpRadius != 0? PETAL_DATA[id].m_ClumpRadius: 10;
             for (uint32_t i = 0; i < count; ++i)
             {
                 {
                     Guard g(ctx);
-                    ctx->Translate(PETAL_DATA[id].m_ClumpRadius,0);
+                    ctx->Translate(radius,0);
                     if (id == PetalId::Stinger && rarity == RarityId::Ultra)
                         ctx->Rotate(M_PI);
                     else if (id == PetalId::Missile)
@@ -121,7 +132,7 @@ namespace app::ui
         Guard g(ctx);
         ctx->BeginPath();
         ctx->SetFill(RARITY_COLORS[rarity]);
-        ctx->SetStroke(RARITY_COLORS[rarity], 0.75);
+        ctx->SetStroke(RARITY_COLORS[rarity], 0.8);
         ctx->SetLineWidth(6);
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->SetLineJoin(Renderer::LineJoin::Round);
