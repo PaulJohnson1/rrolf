@@ -252,9 +252,8 @@ namespace app
         assert(m_EntityTracker[id]);
         if (HasComponent<component::Mob>(id))
         {
-            component::Mob &mob = Get<component::Mob>(id); // i think this code crashes
+            component::Mob &mob = Get<component::Mob>(id);
             component::Physical &mobPhysical = Get<component::Physical>(id);
-            std::cout << "should spawn drop\n";
             std::vector<component::Physical *> spawned = {};
             for (uint64_t i = 0; i < MOB_DATA[mob.Id()].m_Loot.size(); ++i)
             {

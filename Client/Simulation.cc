@@ -156,7 +156,6 @@ namespace app
 
     void Simulation::Remove(Entity id)
     {
-        std::cout << "entity with id " << std::to_string(id) << " deleted\n";
         RROLF_ASSERT(m_EntityTracker[id], "cannot remove nonexistant entity");
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
     {                                           \
@@ -192,7 +191,6 @@ namespace app
             m_UiElements["DeathScreen"]->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
             return;
         }
-        std::cout << "waiting for player to spawn\n";
     }
 
     void Simulation::ReadEntity(bc::BinaryCoder &coder)
