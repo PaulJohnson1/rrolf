@@ -43,12 +43,12 @@ namespace app::component
         coder.Write<bc::VarUint>(entity.m_SlotCount);
         for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
         {
-            coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Data.m_Id);
+            coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Data->m_Id);
             coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Rarity);
         }
         for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
         {
-            coder.Write<bc::VarUint>(entity.m_SecondarySlots[i].m_Data.m_Id);
+            coder.Write<bc::VarUint>(entity.m_SecondarySlots[i].m_Data->m_Id);
             coder.Write<bc::VarUint>(entity.m_SecondarySlots[i].m_Rarity);
         }
         for (uint64_t i = 0; i < PetalId::kMaxPetals * RarityId::kMaxRarities; ++i)

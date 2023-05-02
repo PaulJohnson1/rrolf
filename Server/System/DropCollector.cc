@@ -42,7 +42,7 @@ namespace app::system
                 for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
                 {
                     component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
-                    if (petalSlot.m_Data.m_Id == 0)
+                    if (petalSlot.m_Data->m_Id == 0)
                     {
                         petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
                         return;
@@ -51,7 +51,7 @@ namespace app::system
                 for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
                 {
                     component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_SecondarySlots[i];
-                    if (petalSlot.m_Data.m_Id == 0)
+                    if (petalSlot.m_Data->m_Id == 0)
                     {
                         petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
                         return;

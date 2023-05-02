@@ -31,7 +31,7 @@ namespace app::component
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
                 {
-                    petalSlot.m_Petals[j].m_TicksUntilRespawn = petalSlot.m_Data.m_ReloadTicks;
+                    petalSlot.m_Petals[j].m_TicksUntilRespawn = petalSlot.m_Data->m_ReloadTicks;
                 }
             }
         }

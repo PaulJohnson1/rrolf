@@ -22,7 +22,7 @@ namespace app::component
             return;
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
-        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data.m_ReloadTicks; 
+        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data->m_ReloadTicks; 
     }
 
     void Petal::Reset()
