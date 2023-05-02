@@ -21,7 +21,7 @@ namespace app::component
     {
         bool m_HasPlayer;
         Entity m_Player = (Entity)-1;
-        float m_Fov = 0.4f;
+        float m_Fov = 0.9f;
         float m_CameraX = 0.0f;
         float m_CameraY = 0.0f;
         Simulation *m_Simulation;
