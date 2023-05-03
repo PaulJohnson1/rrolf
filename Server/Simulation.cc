@@ -83,7 +83,7 @@ namespace app
 
     void Simulation::Tick()
     {
-        std::unique_lock<std::mutex> l(m_Mutex);// m_Mutex.lock();
+        std::lock_guard<std::mutex> l(m_Server.m_Mutex);
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
@@ -101,7 +101,7 @@ namespace app
             basic.Team(1); // arena team
             mob.Id(0);     // baby ant
             mob.Rarity(6);
-            //mob.Rarity(5);
+            // mob.Rarity(5);
         }
 
         {
@@ -124,7 +124,6 @@ namespace app
         m_PendingDeletions.clear();
 
         m_TickCount++;
-        l.unlock(); // m_Mutex.unlock();
     }
 
     bool Simulation::HasEntity(Entity entity)
@@ -135,9 +134,9 @@ namespace app
 
     std::vector<Entity> Simulation::FindNearBy(Entity e, float r)
     {
-        //assert(m_PhysicalTracker[e]);
+        // assert(m_PhysicalTracker[e]);
         component::Physical &physical = Get<component::Physical>(e);
-        return m_CollisionDetector.m_SpatialHash.GetCollisions(physical.X(), physical.Y(), r, r);       
+        return m_CollisionDetector.m_SpatialHash.GetCollisions(physical.X(), physical.Y(), r, r);
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
@@ -260,7 +259,7 @@ namespace app
             for (uint64_t i = 0; i < MOB_DATA[mob.Id()].m_Loot.size(); ++i)
             {
                 std::vector<float> const &table = MOB_DATA[mob.Id()].m_Loot[i].m_Table[mob.Rarity()];
-                float seed = ((float) rand()) / RAND_MAX;
+                float seed = ((float)rand()) / RAND_MAX;
                 for (uint32_t rarity = 0; rarity <= RarityId::kMaxRarities; ++rarity)
                 {
                     seed -= table[rarity];

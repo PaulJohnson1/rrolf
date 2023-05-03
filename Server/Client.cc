@@ -84,20 +84,20 @@ namespace app
 
     void Client::SendPacket(bc::BinaryCoder data) const
     {
+        // std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
         try
         {
-            std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
             auto c = m_Hdl.lock();
             if (c)
                 m_Simulation.m_Server.m_Server.send(c, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
             else 
                 std::cout << "\n\n\nsegmentation fault avoided\n\n\n";
-            l.unlock();
         }
         catch (...)
         {
             std::cerr << "SendPacket error\n";
         }
+        // l.unlock();
     }
 
     void Client::ReadPacket(uint8_t *data, size_t size)

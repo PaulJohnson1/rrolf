@@ -15,13 +15,13 @@ namespace app
     public:
         Lerp(T val)
         {
-            if (AngleWrapAround)
+            if constexpr (AngleWrapAround)
                 val = std::fmod(val, M_PI * 2);
             m_Interpolated = m_Destination = val;
         }
         void operator=(T val) 
         { 
-            if (AngleWrapAround)
+            if constexpr (AngleWrapAround)
                 val = std::fmod(val, M_PI * 2);
             m_Destination = val; 
             if (m_First)
@@ -31,7 +31,7 @@ namespace app
         void Tick(float pct)
         {
 
-            if (AngleWrapAround)
+            if constexpr (AngleWrapAround)
             {
                 if (std::abs(m_Destination - m_Interpolated) < M_PI)
                     m_Interpolated = (m_Destination - m_Interpolated) * pct + m_Interpolated;
