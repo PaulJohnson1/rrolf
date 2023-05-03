@@ -21,7 +21,7 @@ namespace app::component
 
     void PlayerInfo::Reset()
     {
-        m_State = 0;
+        m_State = 64;
     }
 
     void PlayerInfo::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
@@ -43,13 +43,32 @@ namespace app::component
         coder.Write<bc::VarUint>(entity.m_SlotCount);
         for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
         {
-            coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Data->m_Id);
-            coder.Write<bc::VarUint>(entity.m_PetalSlots[i].m_Rarity);
+            PetalSlot const &slot = entity.m_PetalSlots[i];
+            coder.Write<bc::VarUint>(slot.m_Data->m_Id);
+            coder.Write<bc::VarUint>(slot.m_Rarity);
+            uint32_t count = slot.m_Petals.size();
+            float health = 0;
+            float cooldown = 0;
+            for (uint64_t j = 0; j < count; ++j)
+            {
+                if (entity.m_Simulation->HasEntity(slot.m_Petals[j].m_SimulationId) && entity.m_Simulation->HasComponent<Life>(slot.m_Petals[j].m_SimulationId))
+                {
+                    Life &life = entity.m_Simulation->Get<Life>(slot.m_Petals[j].m_SimulationId);
+                    health += life.Health() / life.MaxHealth() / count;
+                }
+                float indivCd = (float) slot.m_Petals[j].m_TicksUntilRespawn / slot.m_Data->m_ReloadTicks;
+                if (!slot.m_Petals[j].m_IsDead)
+                    indivCd = 0;
+                if (indivCd > cooldown) cooldown = indivCd;
+            }
+            coder.Write<bc::Float32>(health);
+            coder.Write<bc::Float32>(cooldown);
         }
         for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
         {
-            coder.Write<bc::VarUint>(entity.m_SecondarySlots[i].m_Data->m_Id);
-            coder.Write<bc::VarUint>(entity.m_SecondarySlots[i].m_Rarity);
+            PetalSlot const &slot = entity.m_SecondarySlots[i];
+            coder.Write<bc::VarUint>(slot.m_Data->m_Id);
+            coder.Write<bc::VarUint>(slot.m_Rarity);
         }
         for (uint64_t i = 0; i < PetalId::kMaxPetals * RarityId::kMaxRarities; ++i)
             coder.Write<bc::VarUint>(entity.m_Inventory[i]);

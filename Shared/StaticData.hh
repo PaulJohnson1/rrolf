@@ -22,7 +22,8 @@ namespace app
         constexpr uint32_t Legendary = 4;
         constexpr uint32_t Mythic = 5;
         constexpr uint32_t Ultra = 6;
-        constexpr uint32_t kMaxRarities = 7;
+        constexpr uint32_t Super = 7;
+        constexpr uint32_t kMaxRarities = 8;
     };
 
     namespace PetalId
@@ -60,7 +61,7 @@ namespace app
         float m_BaseDamage;
         int32_t m_ReloadTicks;
         float m_ClumpRadius = 0; //0 = no clump
-        uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1};
+        uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1, 1};
         uint32_t m_ShootDelay = 0;
     };
 

@@ -29,6 +29,7 @@ namespace app::system
                 physical.m_Y.Tick(0.1);
                 physical.m_Radius.Tick(0.1);
                 physical.m_Angle.Tick(0.1);
+                physical.m_DeletionTick.Tick(0.2);
             }
             if (m_Simulation.HasComponent<component::Flower>(entity))
             {

@@ -8,4 +8,5 @@ namespace app::ui
     void DrawPetal(Renderer *, uint32_t, uint32_t);
     void DrawStaticPetal(Renderer *, uint32_t, uint32_t);
     void DrawPetalWithBackground(Renderer *, uint32_t, uint32_t);
+    void DrawLoadoutPetal(Renderer *, uint32_t, uint32_t, float);
 }

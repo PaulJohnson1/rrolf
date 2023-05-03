@@ -49,13 +49,18 @@ namespace app::ui
             if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
             {
                 component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
-                component::PlayerInfo::LoadoutPetal usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
+                component::PlayerInfo::LoadoutPetal &usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
                 uint32_t id = usingPos.m_Id;
                 if (id != 0)
                 {
                     m_LerpWidth = m_Width;
+                    usingPos.m_Reload.Tick(0.5);
+
                     uint32_t rarity = usingPos.m_Rarity;
-                    ui::DrawPetalWithBackground(&m_Renderer, id, rarity);
+                    if (m_Position < 10)
+                        ui::DrawLoadoutPetal(&m_Renderer, id, rarity, usingPos.m_Reload);
+                    else
+                        ui::DrawLoadoutPetal(&m_Renderer, id, rarity, 0.0f);
                     ButtonAction();
                 }
                 else

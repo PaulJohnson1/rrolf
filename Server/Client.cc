@@ -149,25 +149,16 @@ namespace app
         }
         else if (type == 2)
         {
-            //THIS PROGRAM CREATES MEMORY BUGS: DO NOT RUN UNLESS YOU FIX THESE BUGS
-            /*
+            //THIS PROGRAM CREATES BUGS: DO NOT RUN UNLESS YOU FIX THESE BUGS
+            //REMEMBER TO DELETE PETALS
             component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
             uint32_t pos = coder.Read<bc::Uint8>();
-            uint32_t id1 = playerInfo.m_PetalSlots[pos].m_Data.m_Id; //not a reference
+            uint32_t id1 = playerInfo.m_PetalSlots[pos].m_Data->m_Id; //not a reference
             uint32_t rar1 = playerInfo.m_PetalSlots[pos].m_Rarity; //not a reference
-            uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data.m_Id; //not a reference
+            uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data->m_Id; //not a reference
             uint32_t rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
-            std::cout << 'b ' << id1 << ' ' << rar1 << ' ' << id2 << ' ' << rar2 << '\n';
-            playerInfo.ChangePetal(pos, id2, rar2);
-            playerInfo.ChangePetal(pos + 10, id1, rar1);
-             id1 = playerInfo.m_PetalSlots[pos].m_Data.m_Id; //not a reference
-             rar1 = playerInfo.m_PetalSlots[pos].m_Rarity; //not a reference
-             id2 = playerInfo.m_SecondarySlots[pos].m_Data.m_Id; //not a reference
-             rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
-            std::cout << 'e ' << id1 << ' ' << rar1 << ' ' << id2 << ' ' << rar2 << '\n';
-
-            std::cout << "changed petal " << pos << '\n';
-            */
+            playerInfo.m_PetalSlots[pos] = component::PlayerInfo::MakePetal(id2, rar2);
+            playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
         }
     }
 

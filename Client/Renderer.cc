@@ -391,13 +391,18 @@ namespace app
 #endif
     }
 
-    void Renderer::Arc(float x, float y, float r)
+    void Renderer::Arc(float x, float y, float r, float sa, float ea)
     {
 #ifdef EMSCRIPTEN
-        EM_ASM({ Module.ctxs[$0].arc($1, $2, $3, 0, 6.283185307179586); }, m_ContextId, x, y, r);
+        EM_ASM({ Module.ctxs[$0].arc($1, $2, $3, $4, $5); }, m_ContextId, x, y, r, sa, ea);
 #else
         m_CurrentPath.addCircle(x, y, r);
 #endif
+    }
+
+    void Renderer::Arc(float x, float y, float r)
+    {
+        Arc(x, y, r, 0, M_PI * 2);
     }
 
     void Renderer::FillRect(float x, float y, float w, float h)

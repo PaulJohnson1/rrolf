@@ -116,7 +116,7 @@ namespace app::ui
                 {
                     Guard g(ctx);
                     ctx->Translate(radius,0);
-                    if (id == PetalId::Stinger && rarity == RarityId::Ultra)
+                    if (id == PetalId::Stinger && rarity >= RarityId::Ultra)
                         ctx->Rotate(M_PI);
                     else if (id == PetalId::Missile)
                         ctx->Rotate(1);
@@ -139,6 +139,40 @@ namespace app::ui
         ctx->FillRect(-30,-30,60,60);
         ctx->StrokeRect(-30,-30,60,60);
         ctx->Translate(0,-5);
+        ui::DrawStaticPetal(ctx, id, rarity);
+        ctx->SetFill(0xffffffff);
+        ctx->SetStroke(0xff000000);
+        ctx->SetTextSize(14);
+        ctx->SetLineWidth(1.68); 
+        ctx->SetTextAlign(Renderer::TextAlign::Center);
+        ctx->SetTextBaseline(Renderer::TextBaseline::Middle);
+        ctx->BeginPath();
+        ctx->StrokeText(PETAL_NAMES[id], 0, 20);
+        ctx->FillText(PETAL_NAMES[id], 0, 20);
+    }
+    void DrawLoadoutPetal(Renderer *ctx, uint32_t id, uint32_t rarity, float reload)
+    {
+        reload = reload * reload * (3 - 2 * reload); //slerp
+        Guard g(ctx);
+        ctx->BeginPath();
+        ctx->SetFill(RARITY_COLORS[rarity]);
+        ctx->SetStroke(RARITY_COLORS[rarity], 0.8);
+        ctx->SetLineWidth(12);
+        ctx->SetLineCap(Renderer::LineCap::Round);
+        ctx->SetLineJoin(Renderer::LineJoin::Round);
+        ctx->StrokeRect(-30,-30,60,60);
+        ctx->FillRect(-30,-30,60,60);
+        ctx->Rect(-30,-30,60,60);
+        ctx->Clip();
+        ctx->Translate(0,-5);
+        if (reload != 0)
+        {
+            ctx->SetFill(0x40000000);
+            ctx->BeginPath();
+            ctx->MoveTo(0,0);
+            ctx->Arc(0, 0, 50, -M_PI_2 - 12 * reload * M_PI, -M_PI_2 - 10 * reload * M_PI);
+        }
+        ctx->Fill();
         ui::DrawStaticPetal(ctx, id, rarity);
         ctx->SetFill(0xffffffff);
         ctx->SetStroke(0xff000000);

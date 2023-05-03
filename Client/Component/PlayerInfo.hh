@@ -26,6 +26,8 @@ namespace app::component
         {
             uint32_t m_Id;
             uint32_t m_Rarity;
+            float m_Health;
+            Lerp<float> m_Reload = Lerp<float>(0.0f);
         };
         Lerp<float> m_CameraX{0};
         Lerp<float> m_CameraY{0};
