@@ -170,7 +170,7 @@ namespace app::ui
             ctx->SetFill(0x40000000);
             ctx->BeginPath();
             ctx->MoveTo(0,0);
-            ctx->Arc(0, 0, 50, -M_PI_2 - 12 * reload * M_PI, -M_PI_2 - 10 * reload * M_PI);
+            ctx->Arc(0, 0, 50, -M_PI_2 + -11.5 * reload * M_PI, -M_PI_2 -9.5 * reload * M_PI);
         }
         ctx->Fill();
         ui::DrawStaticPetal(ctx, id, rarity);
