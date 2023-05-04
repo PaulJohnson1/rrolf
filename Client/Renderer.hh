@@ -199,6 +199,7 @@ namespace app
         void BezierCurveTo(float, float, float, float, float, float);
         void Arc(float, float, float);
         void Arc(float, float, float, float, float);
+        void Ellipse(float, float, float, float);
         void FillRect(float, float, float, float);
         void StrokeRect(float, float, float, float);
         void Rect(float, float, float, float);
@@ -231,6 +232,6 @@ namespace app
         void MoveTo(float, float);
         void LineTo(float, float);
         void ArcTo(float, float, float);
-        void QuadTo(float, float, float, float);
+        void QuadraticCurveTo(float, float, float, float);
     };
 }

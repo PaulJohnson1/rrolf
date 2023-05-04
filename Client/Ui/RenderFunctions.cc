@@ -276,6 +276,52 @@ namespace app::ui
             ctx->Arc(0,0,10.5);
             ctx->Fill();
             break;
+        case MobId::Hornet:
+            ctx->SetFill(0xff333333);
+            ctx->SetStroke(0xff333333);
+            ctx->SetLineWidth(5);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->SetLineJoin(Renderer::LineJoin::Round);
+            ctx->BeginPath();
+            ctx->MoveTo(-47,0);
+            ctx->LineTo(-25,-6);
+            ctx->LineTo(-25,6);
+            ctx->LineTo(-47,0);
+            ctx->Fill();
+            ctx->Stroke();
+            ctx->SetFill(0xffffd363);
+            ctx->BeginPath();
+            ctx->Ellipse(0,0,30,20);
+            ctx->Fill();
+            ctx->SetFill(0xff333333);
+            {
+                Guard g(ctx);
+                ctx->Clip();
+                ctx->BeginPath();
+                ctx->FillRect(-30,-20,10,40);
+                ctx->FillRect(-10,-20,10,40);
+                ctx->FillRect(10,-20,10,40);
+            }
+            ctx->SetStroke(0xffd3ad46);
+            ctx->SetLineWidth(5);
+            ctx->BeginPath();
+            ctx->Ellipse(0,0,30,20);
+            ctx->Stroke();
+            ctx->SetStroke(0xff333333);
+            ctx->SetLineWidth(3);
+            ctx->BeginPath();
+            ctx->MoveTo(25,5);
+            ctx->QuadraticCurveTo(40,10,50,15);
+            ctx->QuadraticCurveTo(40,5,25,5);
+            ctx->Fill();
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->MoveTo(25,-5);
+            ctx->QuadraticCurveTo(40,-10,50,-15);
+            ctx->QuadraticCurveTo(40,-5,25,-5);
+            ctx->Fill();
+            ctx->Stroke();
+            break;
         }
     }
 }

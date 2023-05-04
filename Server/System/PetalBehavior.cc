@@ -201,8 +201,9 @@ namespace app::system
                         Entity ent = nearBy[i];
                         if (!m_Simulation.HasComponent<Mob>(ent))
                             continue;
-                        
                         Physical &mobPhysical = m_Simulation.Get<Physical>(ent);
+                        if (mobPhysical.DeletionTick() != 0)
+                            continue;
                         Vector mobPosition = Vector{mobPhysical.X(), mobPhysical.Y()};
                         float distTo = (mobPosition - petalPosition).Magnitude();
                         if (distTo < distance && (extension + flowerPosition - mobPosition).Magnitude() < 200 + mobPhysical.Radius())
@@ -215,7 +216,7 @@ namespace app::system
                 if (closest != (Entity)-1)
                 {
                     Physical &mobPhysical = m_Simulation.Get<Physical>(closest);
-                    physical.m_Acceleration = (Vector{mobPhysical.X(), mobPhysical.Y()} - petalPosition) * 0.1;
+                    physical.m_Acceleration = (Vector{mobPhysical.X(), mobPhysical.Y()} - petalPosition) * 0.2;
                 }
                 else
                 {
