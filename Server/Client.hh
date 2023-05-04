@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include <websocketpp/server.hpp>
 
 #include <Shared/Entity.hh>
@@ -22,11 +24,12 @@ namespace app
 
     public:
         Entity m_PlayerInfo;
+        std::mutex m_Mutex;
 
         Client(websocketpp::connection_hdl, Simulation &);
         ~Client();
 
-        websocketpp::connection_hdl GetHdl();
+        websocketpp::connection_hdl const &GetHdl();
 
         void ConstructPlayer();
         void BroadcastUpdate();

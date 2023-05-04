@@ -9,7 +9,8 @@
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
-#include <Client/Simulation.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::component
 {
@@ -33,29 +34,13 @@ namespace app::component
     {
         Guard g(ctx);
         component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+
         ctx->Translate(physical.m_X, physical.m_Y);
-        float scale = MOB_SCALE_FACTOR[m_Rarity];
-        ctx->Scale(scale, scale);
-        ctx->Rotate(physical.m_Angle);
         float seed = std::sin(m_Simulation->GetTime() / 100);
-        ctx->SetFill(0xff454545);
-        ctx->SetStroke(0xff292929);
-        ctx->SetLineWidth(7);
-        ctx->SetLineCap(Renderer::LineCap::Round);
-        ctx->BeginPath();
-        ctx->MoveTo(0, -7);
-        ctx->QuadraticCurveTo(11, -10 + seed, 22, -5 + seed);
-        ctx->Stroke();
-        ctx->BeginPath();
-        ctx->MoveTo(0, 7);
-        ctx->QuadraticCurveTo(11, 10 - seed, 22, 5 - seed);
-        ctx->Stroke();
-        ctx->BeginPath();
-        ctx->Arc(0, 0, 17.5);
-        ctx->Fill();
-        ctx->SetFill(0xff555555);
-        ctx->BeginPath();
-        ctx->Arc(0, 0, 10.5);
-        ctx->Fill();
+        float scale = MOB_SCALE_FACTOR[m_Rarity];
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+        ctx->Scale(scale * (1 + physical.m_DeletionTick * 0.1));
+        ctx->Rotate(physical.m_Angle);
+        ui::DrawMob(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick, seed);
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include <Shared/Entity.hh>
 #include <Shared/StaticData.hh>
@@ -28,6 +29,7 @@ namespace app::component
         
         Entity m_Parent;
         uint64_t m_State = 0;
+        std::vector<Entity> m_CollectedBy = {};
 
         Drop(Entity, Simulation *);
         ~Drop();

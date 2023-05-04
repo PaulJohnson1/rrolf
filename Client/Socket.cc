@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <Shared/Assert.hh>
-
 static uint8_t g_MessageData[1024*1024];
 #ifdef EMSCRIPTEN
 extern "C"

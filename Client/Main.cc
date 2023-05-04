@@ -54,7 +54,17 @@ extern "C"
         if (op == 1)
             g_InputData->m_KeysPressed[key] = 1;
         else if (op == 0)
+        {
             g_InputData->m_KeysPressed[key] = 0;
+            if (key >= 48 && key <= 57)
+            {
+                static uint8_t outgoingInputPacket[16];
+                bc::BinaryCoder coder{outgoingInputPacket};
+                coder.Write<bc::Uint8>(2);
+                coder.Write<bc::Uint8>(key - 48);
+                g_Simulation->m_Socket->SendPacket(coder.Data(), coder.At());
+            }
+        }
     }
     void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button)
     {
@@ -66,7 +76,7 @@ extern "C"
         else if (state == 0)
             g_InputData->m_MouseButtons &= ~(1 << button);
     }
-    void __Renderer_Render(int32_t width, int32_t height)
+    void __Renderer_Render(int32_t width, int32_t height, float devicePixelRatio)
     {
         if (!g_Renderer)
             return;
@@ -76,6 +86,7 @@ extern "C"
         float a = g_Renderer->m_Height / 1080;
         float b = g_Renderer->m_Width / 1920;
         g_Renderer->m_WindowScale = b < a ? a : b;
+        //g_Renderer->m_WindowScale *= devicePixelRatio;
         g_Simulation->TickRenderer();
         g_Renderer->ResetTransform();
         g_Renderer->m_Container.Render();
@@ -144,9 +155,9 @@ void Initialize()
             "keydown", function({which}) { Module.___Renderer_KeyEvent(1, which); });
         window.addEventListener(
             "keyup", function({which}) { Module.___Renderer_KeyEvent(0, which); });
-        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 1, button)});
-        window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 2, button)});
-        window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX, clientY, 0, button)});
+        window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 1, button)});
+        window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 2, button)});
+        window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 0, button)});
         Module.paths = [... Array(100)].fill(null);
         Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -197,9 +208,9 @@ void Initialize()
         function loop()
         {
             requestAnimationFrame(loop);
-            Module.canvas.width = innerWidth;
-            Module.canvas.height = innerHeight;
-            Module.___Renderer_Render(Module.canvas.width, Module.canvas.height);
+            Module.canvas.width = innerWidth * devicePixelRatio;
+            Module.canvas.height = innerHeight * devicePixelRatio;
+            Module.___Renderer_Render(Module.canvas.width, Module.canvas.height, devicePixelRatio);
         };
         requestAnimationFrame(loop);
     });
@@ -226,7 +237,7 @@ int main()
         [&](uint8_t *m)
         {
             g_Simulation->ReadBinary(m);
-            static uint8_t outgoingInputPacket[20];
+            static uint8_t outgoingInputPacket[16];
             bc::BinaryCoder coder{outgoingInputPacket};
             coder.Write<bc::Uint8>(0);
             coder.Write<bc::Uint8>(0); // keyboard movement
@@ -237,6 +248,7 @@ int main()
             movementFlags |= (mouse->m_KeysPressed[68] || mouse->m_KeysPressed[39]) << 3;
             movementFlags |= mouse->m_MouseButtons << 4;
             coder.Write<bc::Uint8>(movementFlags);
+
             socket->SendPacket(coder.Data(), coder.At());
         });
     g_Simulation->m_Socket = socket;

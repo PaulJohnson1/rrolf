@@ -2,7 +2,6 @@
 
 #include <Client/Renderer.hh>
 #include <Client/Ui/Container.hh>
-#include <Shared/Assert.hh>
 
 namespace app::ui
 {
@@ -12,10 +11,5 @@ namespace app::ui
           m_Width(w),
           m_Height(h)
     {
-    }
-
-    Element::~Element()
-    {
-        assert(false);
     }
 }

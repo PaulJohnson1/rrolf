@@ -28,7 +28,6 @@ namespace app::ui
         class Container *m_Container;
 
         Element(Renderer &, float, float);
-        virtual ~Element();
         
         virtual void Render(){};
     };

@@ -25,6 +25,9 @@ namespace app::system
             {
                 Entity other = physical1.m_Collisions[i];
 
+                if (m_Simulation.HasComponent<component::Drop>(other))
+                     continue;
+
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(other);
                 Vector a = {physical1.X(), physical1.Y()};
                 Vector b = {physical2.X(), physical2.Y()};
@@ -48,6 +51,9 @@ namespace app::system
             for (Entity i = 0 ; i < physical1.m_Collisions.size(); i++)
             {
                 Entity other = physical1.m_Collisions[i];
+
+                if (m_Simulation.HasComponent<component::Drop>(other))
+                    continue;
 
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(other);
 

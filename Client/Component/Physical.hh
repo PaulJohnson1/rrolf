@@ -27,6 +27,7 @@ namespace app::component
         Lerp<float> m_X = Lerp<float>(0.0f);
         Lerp<float> m_Y = Lerp<float>(0.0f);
         Lerp<float, true> m_Angle = Lerp<float, true>(0.0f);
+        Lerp<float> m_DeletionTick = Lerp<float>(0.0f);
 
         Physical(Entity, Simulation *);
 

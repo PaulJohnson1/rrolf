@@ -6,34 +6,25 @@
 #include <functional>
 #include <mutex>
 
-#define FOR_EACH_COMPONENT               \
-    RROLF_COMPONENT_ENTRY(Flower, 0)     \
-    RROLF_COMPONENT_ENTRY(Petal, 1)      \
-    RROLF_COMPONENT_ENTRY(Ai, 2)         \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 3)  \
-    RROLF_COMPONENT_ENTRY(Life, 4)       \
-    RROLF_COMPONENT_ENTRY(Physical, 5)   \
-    RROLF_COMPONENT_ENTRY(Mob, 6)        \
-    RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
-    RROLF_COMPONENT_ENTRY(Basic, 8) \
-    RROLF_COMPONENT_ENTRY(Drop, 9)
-
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
 #include <Server/Component/Basic.hh>
 #include <Server/Component/Drop.hh>
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Life.hh>
+#include <Server/Component/Heal.hh>
 #include <Server/Component/Mob.hh>
 #include <Server/Component/Petal.hh>
 #include <Server/Component/Physical.hh>
 #include <Server/Component/PlayerInfo.hh>
+#include <Server/Component/Projectile.hh>
 #include <Server/System/CollisionDetector.hh>
 #include <Server/System/CollisionResolver.hh>
 #include <Server/System/Damage.hh>
+#include <Server/System/DropCollector.hh>
 #include <Server/System/MapBoundaries.hh>
 #include <Server/System/MobAi.hh>
-#include <Server/System/Petal.hh>
+#include <Server/System/PetalBehavior.hh>
 #include <Server/System/Velocity.hh>
 #include <Shared/Entity.hh>
 #include <Server/SpatialHash.hh>
@@ -49,10 +40,11 @@ namespace app
         system::CollisionDetector m_CollisionDetector;
         system::CollisionResolver m_CollisionResolver;
         system::Damage m_Damage;
+        system::DropCollector m_DropCollector;
         system::MapBoundaries m_MapBoundaries;
         system::Velocity m_Velocity;
         system::MobAi m_MobAi;
-        system::Petal m_Petal;
+        system::PetalBehavior m_PetalBehavior;
 
         std::mutex m_Mutex;
 
@@ -111,12 +103,25 @@ namespace app
         template <typename Component>
         bool HasComponent(Entity) const;
 
+        std::vector<Entity> FindNearBy(Entity, float);
         std::vector<Entity> FindEntitiesInView(component::PlayerInfo &);
         Entity Create();
 
         bool HasEntity(Entity);
         void WriteEntity(bc::BinaryCoder &, Entity, bool);
         void ResetEntity(Entity);
-        void RequestDeletion(Entity);
+        template <bool Animation>
+        void RequestDeletion(Entity id)
+        {
+            if constexpr (Animation)
+            {
+                component::Physical &physical = Get<component::Physical>(id);
+                if (physical.DeletionTick() == 0)
+                    physical.DeletionTick(1);
+            }
+            else
+                if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())
+                    m_PendingDeletions.push_back(id);
+        }
     };
 }

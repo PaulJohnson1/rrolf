@@ -21,13 +21,13 @@ namespace app
 
     Client::~Client()
     {
-        std::cout << "client destroy\n";
+        std::cout << "client destroy   " << this << ' ' << &m_Simulation << '\n';
 
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
 
         if (playerInfo.HasPlayer())
-            m_Simulation.RequestDeletion(playerInfo.Player());
-        m_Simulation.RequestDeletion(m_PlayerInfo);
+            m_Simulation.RequestDeletion<false>(playerInfo.Player());
+        m_Simulation.RequestDeletion<false>(m_PlayerInfo);
     }
 
     void Client::ConstructPlayer()
@@ -45,7 +45,7 @@ namespace app
         component::Life &life = m_Simulation.AddComponent<component::Life>(playerInfo.Player());
         component::Physical &physical = m_Simulation.AddComponent<component::Physical>(playerInfo.Player());
         physical.Radius(25.0f);
-        physical.m_Restitution = 0.1;
+        physical.m_Restitution = 1;
         basic.m_Owner = m_PlayerInfo;
         life.m_Damage = 10;
         life.MaxHealth(1000);
@@ -84,15 +84,20 @@ namespace app
 
     void Client::SendPacket(bc::BinaryCoder data) const
     {
-        std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
+        // std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
         try
         {
-            m_Simulation.m_Server.m_Server.send(m_Hdl, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+            auto c = m_Hdl.lock();
+            if (c)
+                m_Simulation.m_Server.m_Server.send(c, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+            else 
+                std::cout << "\n\n\nsegmentation fault avoided\n\n\n";
         }
         catch (...)
         {
-            std::cout << "unknown error thing prevented\n";
+            std::cerr << "SendPacket error\n";
         }
+        // l.unlock();
     }
 
     void Client::ReadPacket(uint8_t *data, size_t size)
@@ -106,9 +111,9 @@ namespace app
         uint8_t type = coder.Read<bc::Uint8>();
         if (type == 0)
         {
-            if (size != 3)
+            if (size < 3)
             {
-                std::cout << "someone sent update packet with size not equal to 3\n";
+                std::cout << "someone sent update packet with size less than 3\n";
                 return;
             }
 
@@ -133,6 +138,7 @@ namespace app
                 y++;
             if (movementFlags & 8)
                 x++;
+
             m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo).m_MouseButton = (movementFlags >> 4) & 7;
             m_PlayerAcceleration.Set(x, y);
             m_PlayerAcceleration.Normalize();
@@ -141,7 +147,35 @@ namespace app
         {
             ConstructPlayer();
         }
+        else if (type == 2)
+        {
+            if (size != 2)
+            {
+                std::cout << "someone sent a petal switch packet with size != 3\n";
+                return;
+            }
+            //THIS PROGRAM CREATES BUGS: DO NOT RUN UNLESS YOU FIX THESE BUGS
+            //REMEMBER TO DELETE PETALS
+            component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
+            uint32_t pos = coder.Read<bc::Uint8>();
+            component::PlayerInfo::PetalSlot &slot = playerInfo.m_PetalSlots[pos];
+            uint32_t id1 = slot.m_Data->m_Id; //not a reference
+            uint32_t rar1 = slot.m_Rarity; //not a reference
+            uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data->m_Id; //not a reference
+            uint32_t rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
+            for (uint64_t i = 0; i < slot.m_Petals.size(); ++i)
+            {
+                component::PlayerInfo::Petal &petal = slot.m_Petals[i];
+                if (petal.m_IsDead)
+                    continue;
+                m_Simulation.Get<component::Petal>(petal.m_SimulationId).m_Detached = true;
+                m_Simulation.RequestDeletion<true>(petal.m_SimulationId);
+            }
+
+            playerInfo.m_PetalSlots[pos] = component::PlayerInfo::MakePetal(id2, rar2);
+            playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
+        }
     }
 
-    websocketpp::connection_hdl Client::GetHdl() { return m_Hdl; }
+    websocketpp::connection_hdl const &Client::GetHdl() { return m_Hdl; }
 }

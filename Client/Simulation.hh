@@ -2,31 +2,19 @@
 
 #include <cstdint>
 #include <optional>
-#include <map>
-#include <string>
-
-#define FOR_EACH_COMPONENT               \
-    RROLF_COMPONENT_ENTRY(Flower, 0)     \
-    RROLF_COMPONENT_ENTRY(Petal, 1)      \
-    RROLF_COMPONENT_ENTRY(Ai, 2)         \
-    RROLF_COMPONENT_ENTRY(ArenaInfo, 3)  \
-    RROLF_COMPONENT_ENTRY(Life, 4)       \
-    RROLF_COMPONENT_ENTRY(Physical, 5)   \
-    RROLF_COMPONENT_ENTRY(Mob, 6)        \
-    RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
-    RROLF_COMPONENT_ENTRY(Basic, 8) \
-    RROLF_COMPONENT_ENTRY(Drop, 9)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Basic.hh>
 #include <Client/Component/Drop.hh>
 #include <Client/Component/Flower.hh>
+#include <Client/Component/Heal.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>
 #include <Client/Component/Petal.hh>
 #include <Client/Component/Physical.hh>
 #include <Client/Component/PlayerInfo.hh>
+#include <Client/Component/Projectile.hh>
 #include <Client/System/Interpolation.hh>
 #include <Client/System/GameRenderer.hh>
 #include <Shared/Entity.hh>
@@ -74,7 +62,14 @@ namespace app
         class Renderer *m_Renderer;
         class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
-        std::map <std::string, ui::Container *> m_UiElements{};
+        bool m_HasHadPlayer = false;
+        struct GameUi
+        {
+            ui::Container *m_TitleScreen;
+            ui::Container *m_DeathScreen;
+            ui::Container *m_Loadout;
+        };
+        GameUi m_UiElements;
 
         Simulation(class Renderer *);
 

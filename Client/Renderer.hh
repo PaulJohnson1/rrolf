@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <map>
 #include <string>
@@ -17,7 +18,6 @@
 
 #include <Client/Ui/Element.hh>
 #include <Client/Ui/Container.hh>
-#include <Shared/Assert.hh>
 
 namespace app
 {
@@ -176,6 +176,7 @@ namespace app
         void Rotate(float);
         void Translate(float, float);
         void Scale(float, float);
+        void Scale(float);
 
         // style
         void SetGlobalAlpha(float);
@@ -195,7 +196,9 @@ namespace app
         void MoveTo(float, float);
         void LineTo(float, float);
         void QuadraticCurveTo(float, float, float, float);
+        void BezierCurveTo(float, float, float, float, float, float);
         void Arc(float, float, float);
+        void Arc(float, float, float, float, float);
         void FillRect(float, float, float, float);
         void StrokeRect(float, float, float, float);
         void Rect(float, float, float, float);

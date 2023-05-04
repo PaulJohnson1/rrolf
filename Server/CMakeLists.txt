@@ -12,17 +12,20 @@ set(SOURCES
     Component/Drop.cc
     Component/Flower.cc
     Component/Life.cc
+    Component/Heal.cc 
     Component/Mob.cc
     Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    Component/Projectile.cc
     System/CollisionDetector.cc
     System/CollisionResolver.cc
     System/Damage.cc
+    System/DropCollector.cc
     System/MapBoundaries.cc
     System/MobAi.cc
     System/Velocity.cc
-    System/Petal.cc
+    System/PetalBehavior.cc
     Client.cc
     Main.cc
     Server.cc

@@ -24,10 +24,14 @@ namespace app
         std::thread([&]()
                     {
             using namespace std::chrono_literals;
-            while (true)
-            {
+            while (true) {
+                auto start = std::chrono::steady_clock::now();
                 Tick();
-                std::this_thread::sleep_for(40ms);
+                auto end = std::chrono::steady_clock::now();
+                auto timeTaken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                std::cout << (double)timeTaken / 1'000'000.0f << "ms\n";
+                auto sleepTime = std::max(0ns, 40ms - std::chrono::nanoseconds(timeTaken));
+                std::this_thread::sleep_for(sleepTime);
             } })
             .detach();
     }
@@ -68,6 +72,7 @@ namespace app
 
     void Server::OnClientDisconnect(websocketpp::connection_hdl hdl)
     {
+        std::lock_guard<std::mutex> l(m_Mutex);
         for (uint64_t i = 0; i < m_Clients.size(); i++)
             if (m_Clients[i]->GetHdl().lock() == hdl.lock())
             {

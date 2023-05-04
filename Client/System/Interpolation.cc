@@ -29,6 +29,7 @@ namespace app::system
                 physical.m_Y.Tick(0.1);
                 physical.m_Radius.Tick(0.1);
                 physical.m_Angle.Tick(0.1);
+                physical.m_DeletionTick.Tick(0.2);
             }
             if (m_Simulation.HasComponent<component::Flower>(entity))
             {
@@ -42,10 +43,14 @@ namespace app::system
             {
                 component::Life &life = m_Simulation.Get<component::Life>(entity);
                 life.m_Health.Tick(0.2);
-                life.m_HealthRedAnimation.Tick(0.05);
+                
+
+                if (life.m_DamageAnimationTick > 0)
+                    --life.m_DamageAnimationTick;
+                else
+                    life.m_HealthRedAnimation.Tick(0.2);
                 life.m_HealthRedAnimation = (float)life.m_Health;
             }
-
         });
     }
 

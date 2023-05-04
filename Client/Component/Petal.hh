@@ -22,6 +22,7 @@ namespace app::component
     public:
         uint32_t m_Id;
         uint32_t m_Rarity;
+        float m_RandomRotation;
         Simulation *m_Simulation;
 
         Entity m_Parent;

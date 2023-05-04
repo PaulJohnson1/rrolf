@@ -12,10 +12,12 @@ set(SOURCES
     Component/Drop.cc
     Component/Flower.cc
     Component/Life.cc
+    Component/Heal.cc
     Component/Mob.cc
     Component/Petal.cc
     Component/Physical.cc
     Component/PlayerInfo.cc
+    Component/Projectile.cc
     System/GameRenderer.cc
     System/Interpolation.cc
     Main.cc
@@ -25,10 +27,10 @@ set(SOURCES
     Ui/Button.cc
     Ui/ButtonTypes.cc
     Ui/Container.cc
-    Ui/DrawPetal.cc
     Ui/DynamicButton.cc
     Ui/Element.cc
     Ui/LabeledButton.cc
+    Ui/RenderFunctions.cc
     Ui/Text.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc

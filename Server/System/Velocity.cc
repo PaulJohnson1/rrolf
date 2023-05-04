@@ -21,13 +21,14 @@ namespace app::system
             
             Vector positionVector{physical.X(), physical.Y()};
 
-            physical.m_Velocity *= physical.Friction();
+            physical.m_Velocity *= physical.m_Friction;
             physical.m_Velocity += physical.m_Acceleration;
             physical.m_Acceleration.Set(0, 0);
             positionVector += physical.m_Velocity;
 
             physical.X(positionVector.m_X);
-            physical.Y(positionVector.m_Y); });
+            physical.Y(positionVector.m_Y); 
+        });
     }
 
     void Velocity::PostTick()

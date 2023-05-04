@@ -27,12 +27,13 @@ namespace app::component
         using Type = Petal;
 
         Entity m_Parent;
-        uint64_t m_State = 0;
-
-        // for rotation and stuff lol
+        bool m_Detached = false;
         uint32_t m_RotationPos = 0;
-        float m_InnerAngle = 0; // for clumped petals
-        bool m_Clumped = false;
+        uint32_t m_Slot = 0;
+        uint32_t m_InnerPos = 0;
+        float m_ClumpRadius = 0;
+        float m_InnerAngle = 0;
+        uint64_t m_State = 0;
 
         Petal(Entity, Simulation *);
         ~Petal();

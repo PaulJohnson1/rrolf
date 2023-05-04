@@ -13,7 +13,6 @@ namespace app::system
 
     void Damage::Tick()
     {
-        std::vector<Entity> deletedEntities;
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
             if (!m_Simulation.HasComponent<component::Life>(entity))
@@ -29,20 +28,19 @@ namespace app::system
                 component::Life &life2 = m_Simulation.Get<component::Life>(other);
                 component::Basic &basic2 = m_Simulation.Get<component::Basic>(other);
                 if (basic.Team() == basic2.Team())
+                {
+                    //check for heal
                     continue;
+                }
                 life.Health(life.Health() - life2.m_Damage);
                 life2.Health(life2.Health() - life.m_Damage);
 
                 if (life.Health() == 0) 
-                    if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
-                        deletedEntities.push_back(entity);
+                    m_Simulation.RequestDeletion<true>(entity);
                 if (life2.Health() == 0)
-                    if (std::find(deletedEntities.begin(), deletedEntities.end(), entity) == deletedEntities.end())
-                        deletedEntities.push_back(other);
-            } });
-
-            for (uint64_t i = 0; i < deletedEntities.size(); i++)
-                m_Simulation.RequestDeletion(deletedEntities[i]);
+                    m_Simulation.RequestDeletion<true>(other);
+            } 
+        });
     }
 
     void Damage::PostTick()
