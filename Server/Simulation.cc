@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cmath>
+#include <set>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -83,7 +84,7 @@ namespace app
 
     void Simulation::Tick()
     {
-        std::unique_lock<std::mutex> l(m_Mutex);// m_Mutex.lock();
+        std::unique_lock<std::mutex> l(m_Mutex); // m_Mutex.lock();
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
@@ -101,7 +102,7 @@ namespace app
             basic.Team(1); // arena team
             mob.Id(0);     // baby ant
             mob.Rarity(7);
-            //mob.Rarity(5);
+            // mob.Rarity(5);
         }
 
         {
@@ -135,9 +136,9 @@ namespace app
 
     std::vector<Entity> Simulation::FindNearBy(Entity e, float r)
     {
-        //assert(m_PhysicalTracker[e]);
+        // assert(m_PhysicalTracker[e]);
         component::Physical &physical = Get<component::Physical>(e);
-        return m_CollisionDetector.m_SpatialHash.GetCollisions(physical.X(), physical.Y(), r, r);       
+        return m_CollisionDetector.m_SpatialHash.GetCollisions(physical.X(), physical.Y(), r, r);
     }
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
@@ -156,7 +157,14 @@ namespace app
         {
             Entity other = nearBy[i];
             component::Physical &physical = Get<component::Physical>(other);
-            // TODO: box collision
+
+            // Check if the entity's position and size fall within the viewport
+            if (physical.X() + physical.Radius() < viewX - viewWidth ||
+                physical.X() - physical.Radius() > viewX + viewWidth ||
+                physical.Y() + physical.Radius() < viewY - viewHeight ||
+                physical.Y() - physical.Radius() > viewY + viewHeight)
+                continue;
+
             if (!HasComponent<component::Drop>(other))
             {
                 entitiesInView.push_back(other);
@@ -171,19 +179,23 @@ namespace app
 
     void Simulation::WriteUpdate(bc::BinaryCoder &coder, component::PlayerInfo &playerInfo)
     {
-        std::vector<Entity> entitiesInView = FindEntitiesInView(playerInfo);
+        std::vector<Entity> _entitiesInView = FindEntitiesInView(playerInfo);
+        std::set<Entity> entitiesInView(
+            std::make_move_iterator(_entitiesInView.begin()),
+            std::make_move_iterator(_entitiesInView.end()));
         std::vector<Entity> deletedEntities;
 
-        for (Entity i = 0; i < playerInfo.m_EntitiesInView.size(); i++)
+        auto it = playerInfo.m_EntitiesInView.begin();
+        while (it != playerInfo.m_EntitiesInView.end())
         {
-            Entity id = playerInfo.m_EntitiesInView[i];
-            // id is not in the entities the client should view
-            if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
+            Entity id = *it;
+            if (entitiesInView.find(id) == entitiesInView.end())
             {
                 deletedEntities.push_back(id);
-                // remove id from the playerInfo's view after writing deletion so it does not get deleted twice
-                playerInfo.m_EntitiesInView.erase(std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id));
+                it = playerInfo.m_EntitiesInView.erase(it);
             }
+            else
+                ++it;
         }
 
         coder.Write<bc::VarUint>(deletedEntities.size());
@@ -191,12 +203,11 @@ namespace app
             coder.Write<bc::VarUint>(deletedEntities[i]);
 
         coder.Write<bc::VarUint>(entitiesInView.size());
-        for (Entity i = 0; i < entitiesInView.size(); i++)
+        for (Entity id : entitiesInView)
         {
-            Entity id = entitiesInView[i];
-            bool isCreation = std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id) == playerInfo.m_EntitiesInView.end();
+            bool isCreation = playerInfo.m_EntitiesInView.find(id) == playerInfo.m_EntitiesInView.end();
             if (isCreation)
-                playerInfo.m_EntitiesInView.push_back(id);
+                playerInfo.m_EntitiesInView.insert(id);
 
             WriteEntity(coder, id, isCreation);
         }
@@ -260,7 +271,7 @@ namespace app
             for (uint64_t i = 0; i < MOB_DATA[mob.Id()].m_Loot.size(); ++i)
             {
                 std::vector<float> const &table = MOB_DATA[mob.Id()].m_Loot[i].m_Table[mob.Rarity()];
-                float seed = ((float) rand()) / RAND_MAX;
+                float seed = ((float)rand()) / RAND_MAX;
                 for (uint32_t rarity = 0; rarity <= RarityId::kMaxRarities; ++rarity)
                 {
                     seed -= table[rarity];

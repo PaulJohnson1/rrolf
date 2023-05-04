@@ -12,19 +12,19 @@ namespace app
 
     class SpatialHash
     {
-        uint32_t m_QueryId = 0;
+        // uint32_t m_QueryId = 0;
         Simulation &m_Simulation;
 
 
     public:
-        std::vector<Entity> *m_Cells;
-        // std::vector<Entity> m_Entities;
+        // std::vector<Entity> *m_Cells;
+        std::vector<Entity> m_Entities;
 
         SpatialHash(Simulation &);
 
         void Insert(Entity);
         void Clear();
-        [[nodiscard]] std::vector<Entity> GetCollisions(int32_t, int32_t, int32_t, int32_t);
-        [[nodiscard]] std::vector<Entity> GetCollisions(Entity);
+        [[nodiscard]] std::vector<Entity> const &GetCollisions(int32_t, int32_t, int32_t, int32_t);
+        [[nodiscard]] std::vector<Entity> const &GetCollisions(Entity);
     };
 }
