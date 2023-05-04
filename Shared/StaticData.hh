@@ -34,7 +34,8 @@ namespace app
         constexpr uint32_t Stinger = 3;
         constexpr uint32_t Missile = 4;
         constexpr uint32_t Pollen = 5;
-        constexpr uint32_t kMaxPetals = 6;
+        constexpr uint32_t Rose = 6;
+        constexpr uint32_t kMaxPetals = 7;
     };
 
     std::vector<std::vector<float>> LootTable(float);
@@ -54,15 +55,24 @@ namespace app
         std::vector<LootInstance> m_Loot;
     };
 
-    struct PetalData
+    class PetalData
     {
-        uint32_t m_Id;
-        float m_BaseHealth;
-        float m_BaseDamage;
-        int32_t m_ReloadTicks;
+    public:
+        uint32_t m_Id = 0;
+        float m_BaseHealth = 0.0f;
+        float m_BaseDamage = 0.0f;
+        int32_t m_ReloadTicks = 0;
         float m_ClumpRadius = 0; //0 = no clump
         uint32_t m_Count[RarityId::kMaxRarities] = {1, 1, 1, 1, 1, 1, 1, 1};
-        uint32_t m_ShootDelay = 0;
+        int32_t m_ShootDelay = 0;
+        float m_Heal = 0.0f;
+
+        PetalData(uint32_t id) { m_Id = id; };
+        PetalData &BaseStats(float hp, float dmg, uint32_t cd) { m_BaseHealth = hp; m_BaseDamage = dmg; m_ReloadTicks = cd; return *this; };
+        PetalData &ClumpRadius(float radius) { m_ClumpRadius = radius; return *this; };
+        PetalData &Count(uint32_t const (&count)[RarityId::kMaxRarities]) { for (uint64_t i = 0; i < RarityId::kMaxRarities; ++i) m_Count[i] = count[i]; return *this; };
+        PetalData &ShootDelay(int32_t delay) { m_ShootDelay = delay; return *this; };
+        PetalData &Heal(float heal) { m_Heal = heal; return *this; };
     };
 
     extern PetalData PETAL_DATA[PetalId::kMaxPetals];
@@ -74,8 +84,8 @@ namespace app
     extern char const *RARITY_NAMES[RarityId::kMaxRarities];
 
     extern char const *MOB_NAMES[MobId::kMaxMobs];
-    extern char const *PETAL_NAMES[PetalId::kMaxPetals];
 
+    extern char const *PETAL_NAMES[PetalId::kMaxPetals];
 
     extern float MOB_SCALE_FACTOR[RarityId::kMaxRarities];
 

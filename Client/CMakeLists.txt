@@ -12,6 +12,7 @@ set(SOURCES
     Component/Drop.cc
     Component/Flower.cc
     Component/Life.cc
+    Component/Heal.cc
     Component/Mob.cc
     Component/Petal.cc
     Component/Physical.cc

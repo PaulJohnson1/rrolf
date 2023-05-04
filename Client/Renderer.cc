@@ -34,31 +34,16 @@ namespace app
     Guard::Guard(Renderer *renderer)
         : m_Renderer(renderer)
     {
-        m_CurrentMatrix[0] = m_Renderer->m_Matrix[0];
-        m_CurrentMatrix[1] = m_Renderer->m_Matrix[1];
-        m_CurrentMatrix[2] = m_Renderer->m_Matrix[2];
-        m_CurrentMatrix[3] = m_Renderer->m_Matrix[3];
-        m_CurrentMatrix[4] = m_Renderer->m_Matrix[4];
-        m_CurrentMatrix[5] = m_Renderer->m_Matrix[5];
-        m_CurrentMatrix[6] = m_Renderer->m_Matrix[6];
-        m_CurrentMatrix[7] = m_Renderer->m_Matrix[7];
-        m_CurrentMatrix[8] = m_Renderer->m_Matrix[8];
+        for (uint64_t i = 0; i < 9; ++i)
+            m_CurrentMatrix[i] = m_Renderer->m_Matrix[i];
         m_Renderer->Save();
     }
 
     Guard::~Guard()
     {
-        m_Renderer->m_Matrix[0] = m_CurrentMatrix[0];
-        m_Renderer->m_Matrix[1] = m_CurrentMatrix[1];
-        m_Renderer->m_Matrix[2] = m_CurrentMatrix[2];
-        m_Renderer->m_Matrix[3] = m_CurrentMatrix[3];
-        m_Renderer->m_Matrix[4] = m_CurrentMatrix[4];
-        m_Renderer->m_Matrix[5] = m_CurrentMatrix[5];
-        m_Renderer->m_Matrix[6] = m_CurrentMatrix[6];
-        m_Renderer->m_Matrix[7] = m_CurrentMatrix[7];
-        m_Renderer->m_Matrix[8] = m_CurrentMatrix[8];
+        for (uint64_t i = 0; i < 9; ++i)
+            m_Renderer->m_Matrix[i] = m_CurrentMatrix[i];
         m_Renderer->Restore();
-        // m_Renderer->SetGlobalAlpha(1);
     }
 
     Renderer::~Renderer()

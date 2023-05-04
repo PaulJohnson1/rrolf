@@ -28,7 +28,10 @@ namespace app::system
                 component::Life &life2 = m_Simulation.Get<component::Life>(other);
                 component::Basic &basic2 = m_Simulation.Get<component::Basic>(other);
                 if (basic.Team() == basic2.Team())
+                {
+                    //check for heal
                     continue;
+                }
                 life.Health(life.Health() - life2.m_Damage);
                 life2.Health(life2.Health() - life.m_Damage);
 

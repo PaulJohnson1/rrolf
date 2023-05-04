@@ -27,6 +27,7 @@ namespace app::component
         using Type = Petal;
 
         Entity m_Parent;
+        bool m_Detached = false;
         uint32_t m_RotationPos = 0;
         uint32_t m_Slot = 0;
         uint32_t m_InnerPos = 0;

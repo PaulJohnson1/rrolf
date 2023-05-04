@@ -3,6 +3,7 @@ float M_PI = 3.14159265359;
 #endif
 #include <Server/System/PetalBehavior.hh>
 
+#include <Server/Component/Heal.hh>
 #include <Server/Component/Petal.hh>
 #include <Server/Component/PlayerInfo.hh>
 #include <Server/Component/Projectile.hh>
@@ -62,6 +63,7 @@ namespace app::system
 
                             petalEntity.Id(petalSlot.m_Data->m_Id);
                             petalEntity.Rarity(petalSlot.m_Rarity);
+                            petalEntity.m_Detached = false;
 
                             petalEntity.m_RotationPos = currRotPos - 1; //because it actually starts at 1, not 0
                             petalEntity.m_InnerAngle = j * 2 * M_PI / petalSlot.m_Petals.size();
@@ -79,10 +81,14 @@ namespace app::system
                             if (petalSlot.m_Data->m_ShootDelay != 0)
                             {
                                 Projectile &projectile = m_Simulation.AddComponent<Projectile>(petalInfo.m_SimulationId);
-                                projectile.m_Detached = false;
                                 projectile.m_TicksUntilDeath = 75;
                                 projectile.m_ShootDelay = petalSlot.m_Data->m_ShootDelay;
                                 physical.Angle(playerInfo.m_GlobalRotation + 2 * M_PI * petalEntity.m_RotationPos / playerInfo.m_RotationCount);
+                            }
+                            if (petalSlot.m_Data->m_Heal != 0)
+                            {
+                                Heal &heal = m_Simulation.AddComponent<Heal>(petalInfo.m_SimulationId);
+                                heal.m_HealAmount = petalSlot.m_Data->m_Heal * PETAL_DAMAGE_FACTOR[petalSlot.m_Rarity];
                             }
                         }
                     }
@@ -117,14 +123,58 @@ namespace app::system
                 return;
             }
             Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
+            Life &flowerLife = m_Simulation.Get<Life>(playerInfo.Player());
 
             Vector petalPosition{physical.X(), physical.Y()};
             Vector flowerPosition{flowerPhysical.X(), flowerPhysical.Y()};
 
-            bool isProjectile = m_Simulation.HasComponent<Projectile>(entity);
-
-            if (!isProjectile || !m_Simulation.Get<Projectile>(entity).m_Detached)
+            if (!petal.m_Detached)
             {
+                if (m_Simulation.HasComponent<Projectile>(entity))
+                {
+                    Projectile &projectile = m_Simulation.Get<Projectile>(entity);
+                    projectile.m_ShootDelay--;
+                    if (projectile.m_ShootDelay <= 0)
+                    {
+                        switch (petal.Id())
+                        {
+                            case PetalId::Missile:
+                                if (!(playerInfo.m_MouseButton & 1))
+                                    break;
+                                physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
+                                physical.m_Velocity = Vector::FromPolar(100, physical.Angle());
+                                MissileTarget(entity);
+                                ProjectileDetach(entity);
+                                break;
+                            case PetalId::Pollen:
+                                if (!(playerInfo.m_MouseButton & 5))
+                                    break;
+                                physical.m_Friction = 0.3;
+                                ProjectileDetach(entity);
+                                break;
+                            case PetalId::Rose: //USE FOR ACTIVE HEALS
+                                if (flowerLife.Health() < flowerLife.MaxHealth())
+                                {
+                                    m_Simulation.Get<Heal>(entity).m_Target = playerInfo.Player(); //IT DOES NOT DETACH: IMPORTANT
+                                    physical.m_Acceleration = (flowerPosition - petalPosition) * 0.4;
+                                    if ((flowerPosition - petalPosition).Magnitude() < (physical.Radius() + flowerPhysical.Radius()))
+                                    {
+                                        flowerLife.Health(flowerLife.Health() + m_Simulation.Get<Heal>(entity).m_HealAmount);
+                                        m_Simulation.RequestDeletion<true>(entity);
+                                    }
+                                    return; //IT SHOULD RETURN
+                                }
+                                else
+                                    m_Simulation.Get<Heal>(entity).m_Target = (Entity)-1;
+                                break;
+                            default:
+                                break; //add rose here
+                        }
+                    }
+                }
+                else if (m_Simulation.HasComponent<Heal>(entity))
+                    flowerLife.Health(flowerLife.Health() + m_Simulation.Get<Heal>(entity).m_HealAmount);           
+
                 float holdingRadius = 75;
                 if (playerInfo.m_MouseButton & 1) holdingRadius = 175;
                 else if (playerInfo.m_MouseButton & 4) holdingRadius = 45;
@@ -137,22 +187,25 @@ namespace app::system
                     currAngle = petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3;
                 }
 
-                std::vector<Entity> nearBy = m_Simulation.FindNearBy(entity, 400);
                 Entity closest = (Entity)-1;
-                float distance = 1e10;
-                for (uint64_t i = 0; i < nearBy.size(); ++i)
+                if (m_Simulation.m_TickCount - basic.m_CreationTick > 12)
                 {
-                    Entity ent = nearBy[i];
-                    if (!m_Simulation.HasComponent<Mob>(ent))
-                        continue;
-                    
-                    Physical &mobPhysical = m_Simulation.Get<Physical>(ent);
-                    Vector mobPosition = Vector{mobPhysical.X(), mobPhysical.Y()};
-                    float distTo = (mobPosition - petalPosition).Magnitude();
-                    if (distTo < distance && (extension + flowerPosition - mobPosition).Magnitude() < 200 + mobPhysical.Radius())
+                    std::vector<Entity> nearBy = m_Simulation.FindNearBy(entity, 200);
+                    float distance = 1e10;
+                    for (uint64_t i = 0; i < nearBy.size(); ++i)
                     {
-                        distance = distTo;
-                        closest = ent;
+                        Entity ent = nearBy[i];
+                        if (!m_Simulation.HasComponent<Mob>(ent))
+                            continue;
+                        
+                        Physical &mobPhysical = m_Simulation.Get<Physical>(ent);
+                        Vector mobPosition = Vector{mobPhysical.X(), mobPhysical.Y()};
+                        float distTo = (mobPosition - petalPosition).Magnitude();
+                        if (distTo < distance && (extension + flowerPosition - mobPosition).Magnitude() < 200 + mobPhysical.Radius())
+                        {
+                            distance = distTo;
+                            closest = ent;
+                        }
                     }
                 }
                 if (closest != (Entity)-1)
@@ -166,40 +219,6 @@ namespace app::system
                     if (m_Simulation.HasComponent<Projectile>(entity))
                         physical.Angle(currAngle);
                 }
-                if (isProjectile)
-                {
-                    Projectile &projectile = m_Simulation.Get<Projectile>(entity);
-                    projectile.m_ShootDelay--;
-                    if (projectile.m_ShootDelay <= 0)
-                    {
-                        if (playerInfo.m_MouseButton & 1)
-                        {
-                            switch(petal.Id())
-                            {
-                                case PetalId::Missile:
-                                    physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
-                                    physical.m_Velocity = Vector::FromPolar(100, physical.Angle());
-                                    MissileTarget(entity);
-                                    ProjectileDetach(entity);
-                                    break;
-                                case PetalId::Pollen:
-                                    physical.m_Friction = 0.3;
-                                    ProjectileDetach(entity);
-                                    break;
-                            }
-                        }
-                        else if (playerInfo.m_MouseButton & 4)
-                        {
-                            switch(petal.Id())
-                            {
-                                case PetalId::Pollen:
-                                    physical.m_Friction = 0.3;
-                                    ProjectileDetach(entity);
-                                    break;
-                            }
-                        }
-                    }
-                }
                 return;
             }
 
@@ -211,20 +230,17 @@ namespace app::system
             {
                 case PetalId::Missile:
                     physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
-                    if (petal.Rarity() == RarityId::Ultra)
+                    if (petal.Rarity() >= RarityId::Ultra)
                         MissileTarget(entity);
                     break;
-            } });
+            }
+        });
     }
 
     void PetalBehavior::MissileTarget(Entity missile)
     {
-        std::cout << "this works\n";
         component::Petal &petal = m_Simulation.Get<component::Petal>(missile);
-        std::cout << "intermediate works\n";
-
         std::vector<Entity> nearBy = m_Simulation.FindNearBy(missile, 200 * petal.Rarity());
-        std::cout << "this also works\n";
         component::Physical &physical = m_Simulation.Get<component::Physical>(missile);
         Vector petalPosition = {physical.X(), physical.Y()};
         Entity closest = (Entity)-1;
@@ -260,7 +276,7 @@ namespace app::system
         component::Petal &petal = m_Simulation.Get<component::Petal>(e);
         component::Projectile &projectile = m_Simulation.Get<component::Projectile>(e);
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.Get<component::Basic>(e).m_Owner);
-        projectile.m_Detached = true;
+        petal.m_Detached = true;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_IsDead = true;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[petal.m_Slot].m_Data->m_ReloadTicks;
     }

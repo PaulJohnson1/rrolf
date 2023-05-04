@@ -17,7 +17,8 @@
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
     RROLF_COMPONENT_ENTRY(Basic, 8) \
     RROLF_COMPONENT_ENTRY(Drop, 9) \
-    RROLF_COMPONENT_ENTRY(Projectile, 10)
+    RROLF_COMPONENT_ENTRY(Projectile, 10) \
+    RROLF_COMPONENT_ENTRY(Heal, 11)
 
 #include <Server/Component/Ai.hh>
 #include <Server/Component/ArenaInfo.hh>
@@ -25,6 +26,7 @@
 #include <Server/Component/Drop.hh>
 #include <Server/Component/Flower.hh>
 #include <Server/Component/Life.hh>
+#include <Server/Component/Heal.hh>
 #include <Server/Component/Mob.hh>
 #include <Server/Component/Petal.hh>
 #include <Server/Component/Physical.hh>

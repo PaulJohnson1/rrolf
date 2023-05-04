@@ -6,12 +6,13 @@
 namespace app
 {
     PetalData PETAL_DATA[PetalId::kMaxPetals] = {
-        {PetalId::None, 0, 0},
-        {PetalId::Basic, 10.0f, 10.0f, 50}, // for testing physcis *DO NOT FORGET TO CHANGE*
-        {PetalId::Light, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5, 7}},
-        {PetalId::Stinger, 8.0f, 35.0f, 100, 10, {1, 1, 1, 1, 2, 3, 4, 5}},
-        {PetalId::Missile, 8.0f, 35.0f, 100, 15, {1,1,1,1,1,1,3,3}, 13},
-        {PetalId::Pollen, 5.0f, 7.0f, 50, 0, {1, 2, 2, 3, 3, 5, 5, 7}, 13},
+        PetalData(PetalId::None),
+        PetalData(PetalId::Basic).BaseStats(10.0f, 10.0f, 50), // for testing physcis *DO NOT FORGET TO CHANGE*
+        PetalData(PetalId::Light).BaseStats(5.0f, 7.0f, 25).Count({1, 2, 2, 3, 3, 5, 5, 7}),
+        PetalData(PetalId::Stinger).BaseStats(8.0f, 35.0f, 100).ClumpRadius(10.0f).Count({1, 1, 1, 1, 2, 3, 5, 5}),
+        PetalData(PetalId::Missile).BaseStats(8.0f, 40.0f, 100).ShootDelay(13),
+        PetalData(PetalId::Pollen).BaseStats(5.0f, 7.0f, 25).Count({1, 2, 2, 3, 3, 5, 5, 7}).ShootDelay(13),
+        PetalData(PetalId::Rose).BaseStats(100.0f, 100.0f, 100).Heal(100.0f).ShootDelay(13)
     };
 
     MobData MOB_DATA[MobId::kMaxMobs] = {
@@ -22,7 +23,7 @@ namespace app
     char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra", "Super"};
 
     char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
-    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile", "Pollen"};
+    char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile", "Pollen", "Rose"};
     float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
         1,
         1.1,
@@ -42,7 +43,7 @@ namespace app
         25.0,
         50.0,
         1000.0,
-        50000.0
+        5000.0
     };
 
     float MOB_DAMAGE_FACTOR[RarityId::kMaxRarities] = {

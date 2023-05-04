@@ -84,6 +84,16 @@ namespace app::ui
             ctx->Arc(0, 0, 5.5);
             ctx->Fill();
             break;
+        case PetalId::Rose:
+            ctx->SetFill(DamageColor(0xffcf78a3, dTick));
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 11.5);
+            ctx->Fill();
+            ctx->SetFill(DamageColor(0xffff94c9, dTick));
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 8.5);
+            ctx->Fill();
+            break;
         default:
             ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();

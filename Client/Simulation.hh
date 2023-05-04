@@ -16,13 +16,15 @@
     RROLF_COMPONENT_ENTRY(PlayerInfo, 7) \
     RROLF_COMPONENT_ENTRY(Basic, 8) \
     RROLF_COMPONENT_ENTRY(Drop, 9) \
-    RROLF_COMPONENT_ENTRY(Projectile, 10)
+    RROLF_COMPONENT_ENTRY(Projectile, 10) \
+    RROLF_COMPONENT_ENTRY(Heal, 11)
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
 #include <Client/Component/Basic.hh>
 #include <Client/Component/Drop.hh>
 #include <Client/Component/Flower.hh>
+#include <Client/Component/Heal.hh>
 #include <Client/Component/Life.hh>
 #include <Client/Component/Mob.hh>
 #include <Client/Component/Petal.hh>
