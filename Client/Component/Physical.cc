@@ -11,6 +11,7 @@ namespace app::component
         : m_Parent(parent),
           m_Simulation(simulation)
     {
+        m_Radius = 1.0f;
     }
 
     void Physical::UpdateFromBinary(bc::BinaryCoder &coder)
@@ -26,6 +27,6 @@ namespace app::component
         if (updatedFields & 8)
             m_Angle = coder.Read<bc::Float32>();
         if (updatedFields & 16)
-            m_DeletionTick = coder.Read<bc::VarUint>();
+            m_DeletionTick = (float) coder.Read<bc::VarUint>();
     }
 }

@@ -41,9 +41,13 @@ namespace app::component
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
-        if (m_Simulation->HasComponent<component::Mob>(m_Parent) && m_Simulation->Get<component::Mob>(m_Parent).m_Rarity == 6)
-            ctx->Translate(0, 75);
-
+        if (m_Simulation->HasComponent<component::Mob>(m_Parent))
+        {
+            if (m_Simulation->Get<component::Mob>(m_Parent).m_Rarity == 6)
+                ctx->Translate(0, 75);
+            if (m_Simulation->Get<component::Mob>(m_Parent).m_Rarity == 7)
+                ctx->Translate(0, 125);
+        }
         ctx->Scale(1 + physical.m_DeletionTick * 0.1);
         
         float length = 40;

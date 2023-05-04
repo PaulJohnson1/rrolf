@@ -87,7 +87,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 10)
+        if (mobCount < 4)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -100,8 +100,7 @@ namespace app
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
             mob.Id(0);     // baby ant
-            mob.Rarity(6);
-            // mob.Rarity(5);
+            mob.Rarity(7);
         }
 
         {

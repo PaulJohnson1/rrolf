@@ -32,8 +32,14 @@ namespace app::component
         uint64_t size = coder.Read<bc::VarUint>();
         for (uint64_t i = 0; i < size; ++i)
         {
+            float oldReload = m_Petals[i].m_Reload.Destination();
             m_Petals[i].m_Id = coder.Read<bc::VarUint>();
             m_Petals[i].m_Rarity = coder.Read<bc::VarUint>();
+            m_Petals[i].m_Health = coder.Read<bc::Float32>();
+            float newReload = coder.Read<bc::Float32>();
+            m_Petals[i].m_Reload = newReload;
+            if (newReload > oldReload)
+                m_Petals[i].m_Reload.SetInterpolated(newReload);
         }
         for (uint64_t i = 0; i < size; ++i)
         {
