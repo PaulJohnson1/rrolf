@@ -104,16 +104,16 @@ namespace app::component
         uint8_t m_MouseButton = 0;
         uint32_t m_SlotCount = 10;
         PetalSlot m_PetalSlots[10] = {
-            MakePetal(PetalId::Basic, RarityId::Rare),
-            MakePetal(PetalId::Light, RarityId::Rare),
-            MakePetal(PetalId::Stinger, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Pollen, RarityId::Rare),
-            MakePetal(PetalId::Leaf, RarityId::Rare),
-            MakePetal(PetalId::Rose, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare)
+            MakePetal(PetalId::Basic, RarityId::Ultra),
+            MakePetal(PetalId::Light, RarityId::Ultra),
+            MakePetal(PetalId::Stinger, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
+            MakePetal(PetalId::Pollen, RarityId::Ultra),
+            MakePetal(PetalId::Leaf, RarityId::Ultra),
+            MakePetal(PetalId::Rose, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra)
         };
         PetalSlot m_SecondarySlots[10] = {
             MakePetal(PetalId::Stinger, RarityId::Ultra),

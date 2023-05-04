@@ -283,6 +283,7 @@ namespace app::system
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.Get<component::Basic>(e).m_Owner);
         petal.m_Detached = true;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_IsDead = true;
+        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_SimulationId = (Entity)-1;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[petal.m_Slot].m_Data->m_ReloadTicks;
     }
 }

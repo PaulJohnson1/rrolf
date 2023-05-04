@@ -22,9 +22,10 @@ namespace app::component
             return;
         if (m_Detached)
             return;
-            
+
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
+        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_SimulationId = (Entity)-1;
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data->m_ReloadTicks; 
     }
 
@@ -58,7 +59,6 @@ namespace app::component
     void Petal::Rarity(uint32_t v)
     {
         Life &life = m_Simulation->Get<Life>(m_Parent);
-        life.Health(PETAL_DATA[m_Id].m_BaseHealth * PETAL_HEALTH_FACTOR[v]);
         life.MaxHealth(PETAL_DATA[m_Id].m_BaseHealth * PETAL_HEALTH_FACTOR[v]);
         life.m_Damage = PETAL_DATA[m_Id].m_BaseDamage * PETAL_DAMAGE_FACTOR[v];
         if (v == m_Rarity)

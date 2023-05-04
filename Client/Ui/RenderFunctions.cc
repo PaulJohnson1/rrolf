@@ -224,8 +224,8 @@ namespace app::ui
         switch(id)
         {
             case MobId::BabyAnt:
-            ctx->SetFill(ui::DamageColor(0xff454545, dTick));
-            ctx->SetStroke(ui::DamageColor(0xff292929, dTick));
+            ctx->SetFill(DamageColor(0xff454545, dTick));
+            ctx->SetStroke(DamageColor(0xff292929, dTick));
             ctx->SetLineWidth(7);
             ctx->SetLineCap(Renderer::LineCap::Round);
             ctx->BeginPath();
@@ -245,19 +245,19 @@ namespace app::ui
             ctx->Fill();
             break;
         case MobId::WorkerAnt:
-            ctx->SetFill(0xff454545);
-            ctx->SetStroke(0xff292929);
+            ctx->SetFill(DamageColor(0xff454545, dTick));
+            ctx->SetStroke(DamageColor(0xff292929, dTick));
             ctx->SetLineWidth(7);
             ctx->SetLineCap(Renderer::LineCap::Round);
             ctx->BeginPath();
             ctx->Arc(-16,0,13.5);
             ctx->Fill();
-            ctx->SetFill(0xff555555);
+            ctx->SetFill(DamageColor(0xff555555, dTick));
             ctx->BeginPath();
             ctx->Arc(-16,0,6.5);
             ctx->Fill();
-            ctx->SetFill(0xff454545);
-            ctx->SetStroke(0xff292929);
+            ctx->SetFill(DamageColor(0xff454545, dTick));
+            ctx->SetStroke(DamageColor(0xff292929, dTick));
             ctx->SetLineWidth(7);
             ctx->SetLineCap(Renderer::LineCap::Round);
             ctx->BeginPath();
@@ -271,14 +271,14 @@ namespace app::ui
             ctx->BeginPath();
             ctx->Arc(0,0,17.5);
             ctx->Fill();
-            ctx->SetFill(0xff555555);
+            ctx->SetFill(DamageColor(0xff555555, dTick));
             ctx->BeginPath();
             ctx->Arc(0,0,10.5);
             ctx->Fill();
             break;
         case MobId::Hornet:
-            ctx->SetFill(0xff333333);
-            ctx->SetStroke(0xff333333);
+            ctx->SetFill(DamageColor(0xff333333, dTick));
+            ctx->SetStroke(DamageColor(0xff333333, dTick));
             ctx->SetLineWidth(5);
             ctx->SetLineCap(Renderer::LineCap::Round);
             ctx->SetLineJoin(Renderer::LineJoin::Round);
@@ -289,11 +289,11 @@ namespace app::ui
             ctx->LineTo(-47,0);
             ctx->Fill();
             ctx->Stroke();
-            ctx->SetFill(0xffffd363);
+            ctx->SetFill(DamageColor(0xffffd363, dTick));
             ctx->BeginPath();
             ctx->Ellipse(0,0,30,20);
             ctx->Fill();
-            ctx->SetFill(0xff333333);
+            ctx->SetFill(DamageColor(0xff333333, dTick));
             {
                 Guard g(ctx);
                 ctx->Clip();
@@ -302,12 +302,12 @@ namespace app::ui
                 ctx->FillRect(-10,-20,10,40);
                 ctx->FillRect(10,-20,10,40);
             }
-            ctx->SetStroke(0xffd3ad46);
+            ctx->SetStroke(DamageColor(0xffd3ad46, dTick));
             ctx->SetLineWidth(5);
             ctx->BeginPath();
             ctx->Ellipse(0,0,30,20);
             ctx->Stroke();
-            ctx->SetStroke(0xff333333);
+            ctx->SetStroke(DamageColor(0xff333333, dTick));
             ctx->SetLineWidth(3);
             ctx->BeginPath();
             ctx->MoveTo(25,5);
