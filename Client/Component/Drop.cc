@@ -1,6 +1,5 @@
 #include <Client/Component/Drop.hh>
 
-#include <iostream>
 #include <cmath>
 
 #include <BinaryCoder/BinaryCoder.hh>
@@ -10,7 +9,8 @@
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
 #include <Client/Simulation.hh>
-#include <Client/Ui/DrawPetal.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::component
 {

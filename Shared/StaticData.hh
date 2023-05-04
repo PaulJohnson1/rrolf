@@ -10,7 +10,8 @@ namespace app
     namespace MobId
     {
         constexpr uint32_t BabyAnt = 0;
-        constexpr uint32_t kMaxMobs = 1;
+        constexpr uint32_t WorkerAnt = 1;
+        constexpr uint32_t kMaxMobs = 2;
     };
 
     namespace RarityId

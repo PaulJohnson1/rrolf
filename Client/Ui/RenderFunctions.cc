@@ -1,4 +1,4 @@
-#include <Client/Ui/DrawPetal.hh>
+#include <Client/Ui/RenderFunctions.hh>
 #include <Shared/StaticData.hh>
 #include <Client/Renderer.hh>
 
@@ -217,5 +217,65 @@ namespace app::ui
         ctx->BeginPath();
         ctx->StrokeText(PETAL_NAMES[id], 0, 20);
         ctx->FillText(PETAL_NAMES[id], 0, 20);
+    }
+
+    void DrawMob(Renderer *ctx, uint32_t id, uint32_t dTick, float seed)
+    {
+        switch(id)
+        {
+            case MobId::BabyAnt:
+            ctx->SetFill(ui::DamageColor(0xff454545, dTick));
+            ctx->SetStroke(ui::DamageColor(0xff292929, dTick));
+            ctx->SetLineWidth(7);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->BeginPath();
+            ctx->MoveTo(0, -7);
+            ctx->QuadraticCurveTo(11, -10 + seed, 22, -5 + seed);
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->MoveTo(0, 7);
+            ctx->QuadraticCurveTo(11, 10 - seed, 22, 5 - seed);
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 17.5);
+            ctx->Fill();
+            ctx->SetFill(ui::DamageColor(0xff555555, dTick));
+            ctx->BeginPath();
+            ctx->Arc(0, 0, 10.5);
+            ctx->Fill();
+            break;
+        case MobId::WorkerAnt:
+            ctx->SetFill(0xff454545);
+            ctx->SetStroke(0xff292929);
+            ctx->SetLineWidth(7);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->BeginPath();
+            ctx->Arc(-13.5,0,13.5);
+            ctx->Fill();
+            ctx->SetFill(0xff555555);
+            ctx->BeginPath();
+            ctx->Arc(-13.5,0,6.5);
+            ctx->Fill();
+            ctx->SetFill(0xff454545);
+            ctx->SetStroke(0xff292929);
+            ctx->SetLineWidth(7);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->BeginPath();
+            ctx->MoveTo(0,-7);
+            ctx->QuadraticCurveTo(11,-10 + seed,22,-5 + seed);
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->MoveTo(0,7);
+            ctx->QuadraticCurveTo(11,10 - seed,22,5 - seed);
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->Arc(0,0,17.5);
+            ctx->Fill();
+            ctx->SetFill(0xff555555);
+            ctx->BeginPath();
+            ctx->Arc(0,0,10.5);
+            ctx->Fill();
+            break;
+        }
     }
 }

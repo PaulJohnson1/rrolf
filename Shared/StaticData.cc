@@ -17,13 +17,14 @@ namespace app
     };
 
     MobData MOB_DATA[MobId::kMaxMobs] = {
-        {MobId::BabyAnt, 14, 25, 10, {{PetalId::Leaf, LootTable(0.25)}, {PetalId::Light, LootTable(0.25)}}} // baby ant
+        {MobId::BabyAnt, 14, 25, 10, {{PetalId::Leaf, LootTable(0.25)}, {PetalId::Light, LootTable(0.25)}}}, // baby ant
+        {MobId::WorkerAnt, 14, 40, 10, {{PetalId::Leaf, LootTable(0.3)}, {PetalId::Light, LootTable(0.35)}}}
     };
 
     uint32_t RARITY_COLORS[RarityId::kMaxRarities] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75, 0xff2bffa3};
     char const *RARITY_NAMES[RarityId::kMaxRarities] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra", "Super"};
 
-    char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant"};
+    char const *MOB_NAMES[MobId::kMaxMobs] = {"Baby Ant", "Worker Ant"};
     char const *PETAL_NAMES[PetalId::kMaxPetals] = {"", "Basic", "Light", "Stinger", "Missile", "Pollen", "Rose", "Leaf"};
     float MOB_SCALE_FACTOR[RarityId::kMaxRarities] = {
         1,

@@ -5,9 +5,10 @@
 #include <cstdint>
 
 #include <Client/Renderer.hh>
-#include <Client/Ui/DrawPetal.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::ui
 {

@@ -100,7 +100,7 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Id(0);     // baby ant
+            mob.Id(rand() & 1); // baby ant
             mob.Rarity(5);
             //mob.Rarity(5);
         }

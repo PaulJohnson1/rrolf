@@ -27,10 +27,10 @@ set(SOURCES
     Ui/Button.cc
     Ui/ButtonTypes.cc
     Ui/Container.cc
-    Ui/DrawPetal.cc
     Ui/DynamicButton.cc
     Ui/Element.cc
     Ui/LabeledButton.cc
+    Ui/RenderFunctions.cc
     Ui/Text.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc

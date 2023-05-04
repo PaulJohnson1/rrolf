@@ -116,7 +116,8 @@ namespace app::system
             }
             if (!m_Simulation.HasComponent<PlayerInfo>(basic.m_Owner)) // owner left and something replaced it
             {
-                m_Simulation.RequestDeletion<true>(entity);
+                if (!m_Simulation.HasComponent<Mob>(basic.m_Owner)) //check if the petal is mob owned
+                    m_Simulation.RequestDeletion<true>(entity);
                 return;
             }
             PlayerInfo &playerInfo = m_Simulation.Get<PlayerInfo>(basic.m_Owner);
