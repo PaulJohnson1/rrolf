@@ -250,11 +250,11 @@ namespace app::ui
             ctx->SetLineWidth(7);
             ctx->SetLineCap(Renderer::LineCap::Round);
             ctx->BeginPath();
-            ctx->Arc(-13.5,0,13.5);
+            ctx->Arc(-16,0,13.5);
             ctx->Fill();
             ctx->SetFill(0xff555555);
             ctx->BeginPath();
-            ctx->Arc(-13.5,0,6.5);
+            ctx->Arc(-16,0,6.5);
             ctx->Fill();
             ctx->SetFill(0xff454545);
             ctx->SetStroke(0xff292929);

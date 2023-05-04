@@ -17,8 +17,8 @@ namespace app
     };
 
     MobData MOB_DATA[MobId::kMaxMobs] = {
-        {MobId::BabyAnt, 14, 25, 10, {{PetalId::Leaf, LootTable(0.25)}, {PetalId::Light, LootTable(0.25)}}}, // baby ant
-        {MobId::WorkerAnt, 14, 40, 10, {{PetalId::Leaf, LootTable(0.3)}, {PetalId::Light, LootTable(0.35)}}}
+        {MobId::BabyAnt, 17.5, 25, 10, {{PetalId::Leaf, LootTable(0.25)}, {PetalId::Light, LootTable(0.25)}}}, // baby ant
+        {MobId::WorkerAnt, 17.5, 40, 10, {{PetalId::Leaf, LootTable(0.3)}, {PetalId::Light, LootTable(0.35)}}}
     };
 
     uint32_t RARITY_COLORS[RarityId::kMaxRarities] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75, 0xff2bffa3};
