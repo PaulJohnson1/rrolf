@@ -375,6 +375,14 @@ namespace app
         m_CurrentPath.quadTo(x1, y1, x, y);
 #endif
     }
+    void Renderer::BezierCurveTo(float x1, float y1, float x2, float y2, float x, float y)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctxs[$0].bezierCurveTo($1, $2, $3, $4, $5, $6); }, m_ContextId, x1, y1, x2, y2, x, y);
+#else
+        m_CurrentPath.quadTo(x1, y1, x, y);
+#endif
+    }
 
     void Renderer::Arc(float x, float y, float r, float sa, float ea)
     {

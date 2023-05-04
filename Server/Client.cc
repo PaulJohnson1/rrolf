@@ -168,6 +168,7 @@ namespace app
                 component::PlayerInfo::Petal &petal = slot.m_Petals[i];
                 if (petal.m_IsDead)
                     continue;
+                m_Simulation.Get<component::Petal>(petal.m_SimulationId).m_Detached = true;
                 m_Simulation.RequestDeletion<true>(petal.m_SimulationId);
             }
 

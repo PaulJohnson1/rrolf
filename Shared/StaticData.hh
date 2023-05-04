@@ -35,7 +35,8 @@ namespace app
         constexpr uint32_t Missile = 4;
         constexpr uint32_t Pollen = 5;
         constexpr uint32_t Rose = 6;
-        constexpr uint32_t kMaxPetals = 7;
+        constexpr uint32_t Leaf = 7;
+        constexpr uint32_t kMaxPetals = 8;
     };
 
     std::vector<std::vector<float>> LootTable(float);

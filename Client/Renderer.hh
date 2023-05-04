@@ -196,6 +196,7 @@ namespace app
         void MoveTo(float, float);
         void LineTo(float, float);
         void QuadraticCurveTo(float, float, float, float);
+        void BezierCurveTo(float, float, float, float, float, float);
         void Arc(float, float, float);
         void Arc(float, float, float, float, float);
         void FillRect(float, float, float, float);

@@ -33,14 +33,14 @@ namespace app::system
             if (!playerInfo.HasPlayer())
                 return;
 
-            uint32_t currRotPos = 0;            
+            uint32_t currRotPos = 0;
             for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
                 bool usingClump = petalSlot.m_Data->m_ClumpRadius != 0 && petalSlot.m_Petals.size() > 1;
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
                 {
-                    if (!usingClump || j == 0) currRotPos++; //fix for clump
+                    if (!usingClump || j == 0) ++currRotPos; //fix for clump
                     PlayerInfo::Petal &petalInfo = petalSlot.m_Petals[j];
                     
                     if (petalInfo.m_IsDead)
@@ -92,10 +92,13 @@ namespace app::system
                             }
                         }
                     }
+                    else
+                        m_Simulation.Get<Petal>(petalInfo.m_SimulationId).m_RotationPos = currRotPos - 1;
                 }
             } 
             playerInfo.m_GlobalRotation += 0.1;
-            playerInfo.m_RotationCount = currRotPos; });
+            playerInfo.m_RotationCount = currRotPos;
+        });
 
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {

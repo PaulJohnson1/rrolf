@@ -94,6 +94,26 @@ namespace app::ui
             ctx->Arc(0, 0, 8.5);
             ctx->Fill();
             break;
+        case PetalId::Leaf:
+            ctx->SetStroke(DamageColor(0xff2e933c, dTick));
+            ctx->SetFill(DamageColor(0xff39b54a, dTick));
+            ctx->SetLineWidth(3);
+            ctx->SetLineCap(Renderer::LineCap::Round);
+            ctx->BeginPath();
+            ctx->MoveTo(-15,0);
+            ctx->LineTo(-20,0);
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->MoveTo(-15,0);
+            ctx->BezierCurveTo(-10,-12,5,-12,15,0);
+            ctx->BezierCurveTo(5,12,-10,12,-15,0);
+            ctx->Fill();
+            ctx->Stroke();
+            ctx->BeginPath();
+            ctx->MoveTo(-9,0);
+            ctx->QuadraticCurveTo(0,-1.5,7.5,0);
+            ctx->Stroke();
+            break;
         default:
             ctx->SetFill(DamageColor(0xffcfcfcf, dTick));
             ctx->BeginPath();
@@ -116,6 +136,8 @@ namespace app::ui
             Guard g(ctx);
             if (id == PetalId::Missile)
                 ctx->Rotate(1);
+            else if (id == PetalId::Leaf)
+                ctx->Rotate(-1);
             DrawPetal(ctx, id, 0);
         }
         else
@@ -130,6 +152,8 @@ namespace app::ui
                         ctx->Rotate(M_PI);
                     else if (id == PetalId::Missile)
                         ctx->Rotate(1);
+                    else if (id == PetalId::Leaf)
+                        ctx->Rotate(-1);
                     DrawPetal(ctx, id, 0);     
                 }   
                 ctx->Rotate(M_PI * 2 / count);
