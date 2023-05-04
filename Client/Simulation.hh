@@ -2,8 +2,6 @@
 
 #include <cstdint>
 #include <optional>
-#include <map>
-#include <string>
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
@@ -65,7 +63,13 @@ namespace app
         class Socket *m_Socket;
         Entity m_PlayerInfo = -1;
         bool m_HasHadPlayer = false;
-        std::map <std::string, ui::Container *> m_UiElements{};
+        struct GameUi
+        {
+            ui::Container *m_TitleScreen;
+            ui::Container *m_DeathScreen;
+            ui::Container *m_Loadout;
+        };
+        GameUi m_UiElements;
 
         Simulation(class Renderer *);
 
