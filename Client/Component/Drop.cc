@@ -1,6 +1,5 @@
 #include <Client/Component/Drop.hh>
 
-#include <iostream>
 #include <cmath>
 
 #include <BinaryCoder/BinaryCoder.hh>
@@ -10,7 +9,8 @@
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
 #include <Client/Simulation.hh>
-#include <Client/Ui/DrawPetal.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::component
 {
@@ -35,8 +35,9 @@ namespace app::component
         component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
-        ctx->Scale(physical.m_Radius / 25, physical.m_Radius / 25);
-        ctx->Rotate(physical.m_Radius + 0.1);
+        float radius = physical.m_Radius * (1 - physical.m_DeletionTick * 0.2);
+        ctx->Scale(radius / 25, radius / 25);
+        ctx->Rotate(radius + 0.1);
         float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
         ctx->Scale(sc);
         ui::DrawPetalWithBackground(ctx, m_Id, m_Rarity);

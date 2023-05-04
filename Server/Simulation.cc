@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <set>
+#include <chrono>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -100,11 +101,13 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Id(0);     // baby ant
-            mob.Rarity(7);
+            mob.Id(rand() & 1); // baby ant
+            mob.Rarity(5);
+            //mob.Rarity(5);
         }
 
         {
+            // auto t1 = std::chrono::high_resolution_clock::now();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_PetalBehavior.Tick();
@@ -113,6 +116,8 @@ namespace app
             m_MapBoundaries.Tick();
             m_MobAi.Tick();
             m_Damage.Tick();
+            //auto t2 = std::chrono::high_resolution_clock::now();
+            //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();

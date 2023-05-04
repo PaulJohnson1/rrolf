@@ -5,7 +5,8 @@
 
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
-#include <Client/Ui/DrawPetal.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::component
 {

@@ -12,6 +12,7 @@ set(SOURCES
     Component/Drop.cc
     Component/Flower.cc
     Component/Life.cc
+    Component/Heal.cc 
     Component/Mob.cc
     Component/Petal.cc
     Component/Physical.cc
@@ -36,8 +37,8 @@ set(SOURCES
     ../Shared/StaticData.cc
     )
 
-set(CMAKE_CXX_FLAGS "-std=c++17 -gdwarf-4 -lpthread")
-# set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -lpthread")
+# set(CMAKE_CXX_FLAGS "-std=c++17 -gdwarf-4 -lpthread")
+set(CMAKE_CXX_FLAGS "-std=c++17 -O3 -lpthread")
 set(CMAKE_CXX_COMPILER "clang++")
 
 add_executable(rrolf-server ${SOURCES})

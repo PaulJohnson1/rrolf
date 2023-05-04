@@ -5,9 +5,10 @@
 #include <cstdint>
 
 #include <Client/Renderer.hh>
-#include <Client/Ui/DrawPetal.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
+
+#include <Client/Ui/RenderFunctions.hh>
 
 namespace app::ui
 {
@@ -39,13 +40,11 @@ namespace app::ui
 
         m_GlobalX.Tick(0.2);
         m_GlobalY.Tick(0.2);
-        m_LerpWidth.Tick(0.2);
 
         {
             Guard g(&m_Renderer);
             m_Renderer.ResetTransform();
             m_Renderer.Translate(m_GlobalX, m_GlobalY);
-            m_Renderer.Scale(m_Renderer.m_WindowScale * m_LerpWidth / 60);
             if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
             {
                 component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
@@ -53,10 +52,19 @@ namespace app::ui
                 uint32_t id = usingPos.m_Id;
                 if (id != 0)
                 {
+                    uint32_t rarity = usingPos.m_Rarity;
+
+                    if (id != m_PrevId || rarity != m_PrevRarity)
+                        m_LerpWidth.SetInterpolated(0.0f);
+                    
+                    m_PrevId = id;
+                    m_PrevRarity = rarity;
+
                     m_LerpWidth = m_Width;
                     usingPos.m_Reload.Tick(0.5);
+                    m_LerpWidth.Tick(0.2);
+                    m_Renderer.Scale(m_Renderer.m_WindowScale * m_LerpWidth / 60);
 
-                    uint32_t rarity = usingPos.m_Rarity;
                     if (m_Position < 10)
                         ui::DrawLoadoutPetal(&m_Renderer, id, rarity, usingPos.m_Reload);
                     else
@@ -64,7 +72,11 @@ namespace app::ui
                     ButtonAction();
                 }
                 else
+                {
+                    m_PrevId = 0;
+                    m_PrevRarity = 0;
                     m_LerpWidth = 0;
+                }
             }
         }
     }

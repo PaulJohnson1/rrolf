@@ -20,6 +20,9 @@ namespace app::component
             return;
         if (!m_Simulation->HasComponent<PlayerInfo>(basic.m_Owner))
             return;
+        if (m_Detached)
+            return;
+            
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data->m_ReloadTicks; 

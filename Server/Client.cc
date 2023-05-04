@@ -149,14 +149,29 @@ namespace app
         }
         else if (type == 2)
         {
+            if (size != 2)
+            {
+                std::cout << "someone sent a petal switch packet with size != 3\n";
+                return;
+            }
             //THIS PROGRAM CREATES BUGS: DO NOT RUN UNLESS YOU FIX THESE BUGS
             //REMEMBER TO DELETE PETALS
             component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
             uint32_t pos = coder.Read<bc::Uint8>();
-            uint32_t id1 = playerInfo.m_PetalSlots[pos].m_Data->m_Id; //not a reference
-            uint32_t rar1 = playerInfo.m_PetalSlots[pos].m_Rarity; //not a reference
+            component::PlayerInfo::PetalSlot &slot = playerInfo.m_PetalSlots[pos];
+            uint32_t id1 = slot.m_Data->m_Id; //not a reference
+            uint32_t rar1 = slot.m_Rarity; //not a reference
             uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data->m_Id; //not a reference
             uint32_t rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
+            for (uint64_t i = 0; i < slot.m_Petals.size(); ++i)
+            {
+                component::PlayerInfo::Petal &petal = slot.m_Petals[i];
+                if (petal.m_IsDead)
+                    continue;
+                m_Simulation.Get<component::Petal>(petal.m_SimulationId).m_Detached = true;
+                m_Simulation.RequestDeletion<true>(petal.m_SimulationId);
+            }
+
             playerInfo.m_PetalSlots[pos] = component::PlayerInfo::MakePetal(id2, rar2);
             playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
         }
