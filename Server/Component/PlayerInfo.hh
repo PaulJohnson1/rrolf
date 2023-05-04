@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 
 #include <Shared/Entity.hh>
 #include <Shared/StaticData.hh>
@@ -127,7 +128,7 @@ namespace app::component
             MakePetal(PetalId::None, RarityId::Common),
         };
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
-        std::vector<Entity> m_EntitiesInView;
+        std::set<Entity> m_EntitiesInView;
 
         PlayerInfo(Entity, Simulation *);
         ~PlayerInfo();

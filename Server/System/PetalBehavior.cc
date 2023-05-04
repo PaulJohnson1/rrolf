@@ -144,17 +144,17 @@ namespace app::system
                             case PetalId::Missile:
                                 if (!(playerInfo.m_MouseButton & 1))
                                     break;
-                                physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
-                                physical.m_Velocity = Vector::FromPolar(100, physical.Angle());
                                 MissileTarget(entity);
+                                physical.m_Acceleration = Vector::FromPolar(8, physical.Angle());
+                                physical.m_Velocity = Vector::FromPolar(100, physical.Angle());
                                 ProjectileDetach(entity);
-                                break;
+                                return;
                             case PetalId::Pollen:
                                 if (!(playerInfo.m_MouseButton & 5))
                                     break;
                                 physical.m_Friction = 0.3;
                                 ProjectileDetach(entity);
-                                break;
+                                return;
                             case PetalId::Rose: //USE FOR ACTIVE HEALS
                                 if (flowerLife.Health() < flowerLife.MaxHealth())
                                 {
@@ -232,9 +232,9 @@ namespace app::system
             switch (petal.Id())
             {
                 case PetalId::Missile:
-                    physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
                     if (petal.Rarity() >= RarityId::Ultra)
                         MissileTarget(entity);
+                    physical.m_Acceleration = Vector::FromPolar(8, physical.Angle());
                     break;
             }
         });
@@ -243,7 +243,7 @@ namespace app::system
     void PetalBehavior::MissileTarget(Entity missile)
     {
         component::Petal &petal = m_Simulation.Get<component::Petal>(missile);
-        std::vector<Entity> nearBy = m_Simulation.FindNearBy(missile, 200 * petal.Rarity());
+        std::vector<Entity> nearBy = m_Simulation.FindNearBy(missile, 600);
         component::Physical &physical = m_Simulation.Get<component::Physical>(missile);
         Vector petalPosition = {physical.X(), physical.Y()};
         Entity closest = (Entity)-1;
@@ -261,7 +261,7 @@ namespace app::system
             float diffAngle = std::fmod(angle - physical.Angle(), M_PI * 2);
             if (diffAngle < 0)
                 diffAngle += M_PI * 2;
-            if ((diffAngle < 0.15 * petal.Rarity() || M_PI * 2 - diffAngle < 0.15 * petal.Rarity()) && distTo < distance)
+            if ((diffAngle < 0.2 * petal.Rarity() || M_PI * 2 - diffAngle < 0.2 * petal.Rarity()) && distTo < distance)
             {
                 distance = distTo;
                 closest = ent;

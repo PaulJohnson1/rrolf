@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <cmath>
+#include <chrono>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -105,6 +106,7 @@ namespace app
         }
 
         {
+            // auto t1 = std::chrono::high_resolution_clock::now();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_PetalBehavior.Tick();
@@ -113,6 +115,8 @@ namespace app
             m_MapBoundaries.Tick();
             m_MobAi.Tick();
             m_Damage.Tick();
+            //auto t2 = std::chrono::high_resolution_clock::now();
+            //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();
@@ -155,7 +159,6 @@ namespace app
         for (Entity i = 0; i < nearBy.size(); i++)
         {
             Entity other = nearBy[i];
-            component::Physical &physical = Get<component::Physical>(other);
             // TODO: box collision
             if (!HasComponent<component::Drop>(other))
             {
@@ -174,15 +177,14 @@ namespace app
         std::vector<Entity> entitiesInView = FindEntitiesInView(playerInfo);
         std::vector<Entity> deletedEntities;
 
-        for (Entity i = 0; i < playerInfo.m_EntitiesInView.size(); i++)
+        for (Entity id : playerInfo.m_EntitiesInView)
         {
-            Entity id = playerInfo.m_EntitiesInView[i];
             // id is not in the entities the client should view
             if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
             {
                 deletedEntities.push_back(id);
                 // remove id from the playerInfo's view after writing deletion so it does not get deleted twice
-                playerInfo.m_EntitiesInView.erase(std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id));
+                playerInfo.m_EntitiesInView.erase(id);
             }
         }
 
@@ -194,9 +196,9 @@ namespace app
         for (Entity i = 0; i < entitiesInView.size(); i++)
         {
             Entity id = entitiesInView[i];
-            bool isCreation = std::find(playerInfo.m_EntitiesInView.begin(), playerInfo.m_EntitiesInView.end(), id) == playerInfo.m_EntitiesInView.end();
+            bool isCreation = playerInfo.m_EntitiesInView.find(id) == playerInfo.m_EntitiesInView.end();
             if (isCreation)
-                playerInfo.m_EntitiesInView.push_back(id);
+                playerInfo.m_EntitiesInView.insert(id);
 
             WriteEntity(coder, id, isCreation);
         }
