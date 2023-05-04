@@ -211,7 +211,7 @@ namespace app::system
             {
                 case PetalId::Missile:
                     physical.m_Acceleration = Vector::FromPolar(10, physical.Angle());
-                    if (petal.Rarity() == RarityId::Ultra)
+                    if (petal.Rarity() >= RarityId::Ultra)
                         MissileTarget(entity);
                     break;
             } });
@@ -219,12 +219,9 @@ namespace app::system
 
     void PetalBehavior::MissileTarget(Entity missile)
     {
-        std::cout << "this works\n";
         component::Petal &petal = m_Simulation.Get<component::Petal>(missile);
-        std::cout << "intermediate works\n";
 
         std::vector<Entity> nearBy = m_Simulation.FindNearBy(missile, 200 * petal.Rarity());
-        std::cout << "this also works\n";
         component::Physical &physical = m_Simulation.Get<component::Physical>(missile);
         Vector petalPosition = {physical.X(), physical.Y()};
         Entity closest = (Entity)-1;

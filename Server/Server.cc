@@ -22,10 +22,14 @@ namespace app
         std::thread([&]()
                     {
             using namespace std::chrono_literals;
-            while (true)
-            {
+            while (true) {
+                auto start = std::chrono::steady_clock::now();
                 Tick();
-                std::this_thread::sleep_for(40ms);
+                auto end = std::chrono::steady_clock::now();
+                auto timeTaken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                std::cout << (double)timeTaken / 1'000'000.0f << "ms\n";
+                auto sleepTime = std::max(0ns, 40ms - std::chrono::nanoseconds(timeTaken));
+                std::this_thread::sleep_for(sleepTime);
             } })
             .detach();
     }
