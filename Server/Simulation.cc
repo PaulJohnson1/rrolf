@@ -101,7 +101,7 @@ namespace app
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
             mob.Id(rand() % 3); // baby ant
-            mob.Rarity(rand() % 8);
+            mob.Rarity(5);
             //mob.Rarity(5);
         }
 
@@ -133,6 +133,8 @@ namespace app
 
     bool Simulation::HasEntity(Entity entity)
     {
+        if (entity == NULL_ENTITY)
+            return false;
         assert(entity < MAX_ENTITY_COUNT);
         return m_EntityTracker[entity];
     }

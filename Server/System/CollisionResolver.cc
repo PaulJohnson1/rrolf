@@ -4,7 +4,6 @@
 #include <Server/Simulation.hh>
 #include <Server/Vector.hh>
 
-#include <iostream>
 namespace app::system
 {
     CollisionResolver::CollisionResolver(Simulation &simulation)
@@ -35,11 +34,13 @@ namespace app::system
                 Vector delta = a - b;
                 float distance = delta.Magnitude();
                 if (distance == 0) continue;
-                float overlap = (distance - physical1.Radius() - physical2.Radius()) * 0.5f;
-                physical1.X(physical1.X() - overlap * delta.m_X / distance);
-                physical1.Y(physical1.Y() - overlap * delta.m_Y / distance);
-                physical2.X(physical2.X() + overlap * delta.m_Y / distance);
-                physical2.Y(physical2.Y() + overlap * delta.m_X / distance);
+                float overlap = (distance - physical1.Radius() - physical2.Radius());
+                float v2_Coeff = physical1.m_Mass / (physical1.m_Mass + physical2.m_Mass);
+                float v1_Coeff = physical2.m_Mass / (physical1.m_Mass + physical2.m_Mass);
+                physical1.X(physical1.X() - overlap * delta.m_X / distance * v1_Coeff);
+                physical1.Y(physical1.Y() - overlap * delta.m_Y / distance * v1_Coeff);
+                physical2.X(physical2.X() + overlap * delta.m_Y / distance * v2_Coeff);
+                physical2.Y(physical2.Y() + overlap * delta.m_X / distance * v2_Coeff);
             }
         });
         m_Simulation.ForEachEntity([&](Entity entity)
@@ -72,10 +73,6 @@ namespace app::system
 
                 physical1.m_Velocity = ((parallel2 * v1_Coeff) + (parallel1 * v_SharedCoeff)) + perp1;
                 physical2.m_Velocity = ((parallel1 * v2_Coeff) - (parallel2 * v_SharedCoeff)) + perp2;
-                std::cout << "mass: " << physical1.m_Mass << ' ' << physical2.m_Mass << '\n';
-                std::cout << "coeffs: " << v2_Coeff << ' ' << v1_Coeff << '\n';
-                std::cout << "v1: " << physical1.m_Velocity.m_X << ' ' << physical1.m_Velocity.m_Y << '\n';
-                std::cout << "v2: " << physical2.m_Velocity.m_X << ' ' << physical2.m_Velocity.m_Y << '\n';
             }
         });
     }

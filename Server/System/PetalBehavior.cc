@@ -169,7 +169,7 @@ namespace app::system
                                     return; //IT SHOULD RETURN
                                 }
                                 else
-                                    m_Simulation.Get<Heal>(entity).m_Target = (Entity)-1;
+                                    m_Simulation.Get<Heal>(entity).m_Target = NULL_ENTITY;
                                 break;
                             default:
                                 break; //add rose here
@@ -191,7 +191,7 @@ namespace app::system
                     currAngle = petal.m_InnerAngle + playerInfo.m_GlobalRotation * 4 / 3;
                 }
 
-                Entity closest = (Entity)-1;
+                Entity closest = NULL_ENTITY;
                 if (m_Simulation.m_TickCount - basic.m_CreationTick > 12)
                 {
                     std::vector<Entity> nearBy = m_Simulation.FindNearBy(entity, 200);
@@ -199,6 +199,7 @@ namespace app::system
                     for (uint64_t i = 0; i < nearBy.size(); ++i)
                     {
                         Entity ent = nearBy[i];
+
                         if (!m_Simulation.HasComponent<Mob>(ent))
                             continue;
                         Physical &mobPhysical = m_Simulation.Get<Physical>(ent);
@@ -213,7 +214,7 @@ namespace app::system
                         }
                     }
                 }
-                if (closest != (Entity)-1)
+                if (closest != NULL_ENTITY)
                 {
                     Physical &mobPhysical = m_Simulation.Get<Physical>(closest);
                     physical.m_Acceleration = (Vector{mobPhysical.X(), mobPhysical.Y()} - petalPosition) * 0.2;
@@ -248,7 +249,7 @@ namespace app::system
         std::vector<Entity> nearBy = m_Simulation.FindNearBy(missile, 600);
         component::Physical &physical = m_Simulation.Get<component::Physical>(missile);
         Vector petalPosition = {physical.X(), physical.Y()};
-        Entity closest = (Entity)-1;
+        Entity closest = NULL_ENTITY;
         float distance = 1e10;
         for (uint64_t i = 0; i < nearBy.size(); ++i)
         {
@@ -269,7 +270,7 @@ namespace app::system
                 closest = ent;
             }
         }
-        if (closest != (Entity)-1)
+        if (closest != NULL_ENTITY)
         {
             component::Physical &mobPhysical = m_Simulation.Get<component::Physical>(closest);
             physical.Angle((Vector(mobPhysical.X(), mobPhysical.Y()) - petalPosition).Theta());
@@ -283,7 +284,7 @@ namespace app::system
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.Get<component::Basic>(e).m_Owner);
         petal.m_Detached = true;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_IsDead = true;
-        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_SimulationId = (Entity)-1;
+        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_SimulationId = NULL_ENTITY;
         playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[petal.m_Slot].m_Data->m_ReloadTicks;
     }
 }

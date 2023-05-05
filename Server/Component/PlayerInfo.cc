@@ -51,15 +51,20 @@ namespace app::component
             float cooldown = 0;
             for (uint64_t j = 0; j < count; ++j)
             {
+                float indivCd = (float) slot.m_Petals[j].m_TicksUntilRespawn / slot.m_Data->m_ReloadTicks;
+                if (slot.m_Petals[j].m_IsDead)
+                {
+                    if (indivCd > cooldown)
+                        cooldown = indivCd;
+                    continue;
+                }
+                else
+                    indivCd = 0;
                 if (entity.m_Simulation->HasEntity(slot.m_Petals[j].m_SimulationId) && entity.m_Simulation->HasComponent<Life>(slot.m_Petals[j].m_SimulationId))
                 {
                     Life &life = entity.m_Simulation->Get<Life>(slot.m_Petals[j].m_SimulationId);
                     health += life.Health() / life.MaxHealth() / count;
                 }
-                float indivCd = (float) slot.m_Petals[j].m_TicksUntilRespawn / slot.m_Data->m_ReloadTicks;
-                if (!slot.m_Petals[j].m_IsDead)
-                    indivCd = 0;
-                if (indivCd > cooldown) cooldown = indivCd;
             }
             coder.Write<bc::Float32>(health);
             coder.Write<bc::Float32>(cooldown);

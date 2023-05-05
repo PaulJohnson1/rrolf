@@ -15,7 +15,6 @@ namespace app
         uint32_t m_QueryId = 0;
         Simulation &m_Simulation;
 
-
     public:
         std::vector<Entity> *m_Cells;
         // std::vector<Entity> m_Entities;

@@ -21,7 +21,7 @@ namespace app::component
     class PlayerInfo
     {
         bool m_HasPlayer;
-        Entity m_Player = (Entity)-1;
+        Entity m_Player = NULL_ENTITY;
         float m_Fov = 0.9f;
         float m_CameraX = 0.0f;
         float m_CameraY = 0.0f;

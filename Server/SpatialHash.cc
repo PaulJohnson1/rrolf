@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <array>
-
+#include <iostream>
 #include <Server/Simulation.hh>
 
 namespace app
@@ -16,8 +16,9 @@ namespace app
     5: 0.33
     6: 0.42
     */
+    static constexpr int32_t MAP_SIZE = 1650;
     static constexpr uint32_t GRID_SIZE = 5;
-    static constexpr uint32_t HASH_TABLE_SIZE = 2048;
+    static constexpr uint32_t HASH_TABLE_SIZE = (1650 * 4) >> GRID_SIZE;
 
     SpatialHash::SpatialHash(Simulation &simulation)
         : m_Simulation(simulation),
@@ -29,9 +30,9 @@ namespace app
     {
         // m_Entities.push_back(id);
         component::Physical physical = m_Simulation.Get<component::Physical>(id);
-        int32_t entityX = (int32_t)physical.X();
-        int32_t entityY = (int32_t)physical.Y();
-        int32_t entitySize = (int32_t)physical.Radius();
+        int32_t entityX = (int32_t) (physical.X() + MAP_SIZE);
+        int32_t entityY = (int32_t) (physical.Y() + MAP_SIZE);
+        int32_t entitySize = (int32_t) physical.Radius();
 
         int32_t sx = (entityX - entitySize) >> GRID_SIZE;
         int32_t sy = (entityY - entitySize) >> GRID_SIZE;
@@ -41,24 +42,27 @@ namespace app
         {
             for (int32_t x = sx; x <= ex; x++)
             {
-                uint64_t hash = (uint64_t(x) * 89533 + uint64_t(y)) % HASH_TABLE_SIZE;
-                m_Cells[hash].push_back(id);
+                if (x + y < 0)
+                    continue;
+                m_Cells[x + y].push_back(id);
             }
         }
     }
 
     std::vector<Entity> SpatialHash::GetCollisions(int32_t _x, int32_t _y, int32_t _w, int32_t _h)
     {
+        
         std::vector<Entity> result = {};
-        int32_t sx = (_x - _w) >> GRID_SIZE;
-        int32_t sy = (_y - _h) >> GRID_SIZE;
-        int32_t ex = (_x + _w) >> GRID_SIZE;
-        int32_t ey = (_y + _h) >> GRID_SIZE;
+        int32_t sx = (_x + MAP_SIZE - _w) >> GRID_SIZE;
+        int32_t sy = (_y + MAP_SIZE - _h) >> GRID_SIZE;
+        int32_t ex = (_x + MAP_SIZE + _w) >> GRID_SIZE;
+        int32_t ey = (_y + MAP_SIZE + _h) >> GRID_SIZE;
         for (int32_t y = sy; y <= ey; y++)
             for (int32_t x = sx; x <= ex; x++)
             {
-                uint64_t hash = (uint64_t(x) * 89533 + uint64_t(y)) % HASH_TABLE_SIZE;
-                std::vector<Entity> &cell = m_Cells[hash];
+                if (x + y < 0)
+                    continue;
+                std::vector<Entity> &cell = m_Cells[x + y];
                 for (uint64_t i = 0; i < cell.size(); i++)
                 {
                     component::Physical &physical = m_Simulation.Get<component::Physical>(cell[i]);
@@ -80,7 +84,7 @@ namespace app
         component::Physical &physical = m_Simulation.Get<component::Physical>(id);
         int32_t entityX = (int32_t)physical.X();
         int32_t entityY = (int32_t)physical.Y();
-        int32_t entitySize = (int32_t)physical.Radius();
+        uint32_t entitySize = (int32_t)physical.Radius();
 
         return GetCollisions(entityX, entityY, entitySize, entitySize);
 

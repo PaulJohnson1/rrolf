@@ -78,7 +78,6 @@ namespace app
             if (m_PlayerAcceleration > 0)
                 m_Simulation.Get<component::Flower>(playerInfo.Player()).EyeAngle(m_PlayerAcceleration.Theta());
         }
-
         BroadcastUpdate();
     }
 
