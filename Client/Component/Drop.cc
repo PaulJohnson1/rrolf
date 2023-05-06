@@ -27,12 +27,14 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
+        
+        m_PickedUp = coder.Read<bc::Uint8>();  
     }
 
     void Drop::Render(Renderer *ctx)
     {
-        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
-        component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
+        Physical physical = m_Simulation->Get<Physical>(m_Parent);
+        Basic basic = m_Simulation->Get<Basic>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
         float radius = physical.m_Radius * (1 - physical.m_ClientDeletionTick * 0.2);

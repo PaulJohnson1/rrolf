@@ -4,7 +4,7 @@
 #include <BinaryCoder/NativeTypes.hh>
 
 #include <Server/Simulation.hh>
-
+#include <iostream>
 namespace app::component
 {
     Drop::Drop(Entity parent, Simulation *simulation)
@@ -19,7 +19,7 @@ namespace app::component
 
     void Drop::Reset()
     {
-        m_State = 0;
+        m_State = 4;
     }
 
     void Drop::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
@@ -31,6 +31,8 @@ namespace app::component
             coder.Write<bc::VarUint>(entity.m_Id);
         if (state & 2)
             coder.Write<bc::VarUint>(entity.m_Rarity);
+
+        coder.Write<bc::Uint8>(entity.m_PickedUp);
     }
 
     uint32_t Drop::Id() const { return m_Id; }

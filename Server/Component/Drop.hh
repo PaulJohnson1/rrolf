@@ -30,6 +30,7 @@ namespace app::component
         Entity m_Parent;
         uint64_t m_State = 0;
         std::vector<Entity> m_CollectedBy = {};
+        bool m_PickedUp = false; //this is a temp var that is used at packet creation time
 
         Drop(Entity, Simulation *);
         ~Drop();

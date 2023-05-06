@@ -162,14 +162,13 @@ namespace app
         {
             Entity other = nearBy[i];
             // TODO: box collision
-            if (!HasComponent<component::Drop>(other))
+            entitiesInView.push_back(other);
+            if (HasComponent<component::Drop>(other))
             {
-                entitiesInView.push_back(other);
-                continue;
+                component::Drop &drop = Get<component::Drop>(other);
+                std::vector<Entity> &collectedBy = drop.m_CollectedBy;
+                drop.m_PickedUp = std::find(collectedBy.begin(), collectedBy.end(), playerInfo.Player()) != collectedBy.end();
             }
-            std::vector<Entity> collectedBy = Get<component::Drop>(other).m_CollectedBy;
-            if (std::find(collectedBy.begin(), collectedBy.end(), playerInfo.Player()) == collectedBy.end())
-                entitiesInView.push_back(other);
         }
         return entitiesInView;
     }

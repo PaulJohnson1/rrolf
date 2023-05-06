@@ -33,7 +33,7 @@ namespace app::component
     void Mob::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        Physical physical = m_Simulation->Get<Physical>(m_Parent);
 
         ctx->Translate(physical.m_X, physical.m_Y);
         float seed = std::sin(m_Simulation->GetTime() / 100);
@@ -41,6 +41,6 @@ namespace app::component
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
         ctx->Scale(scale * (1 + physical.m_ClientDeletionTick * 0.1));
         ctx->Rotate(physical.m_Angle);
-        ui::DrawMob(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick, seed);
+        ui::DrawMob(ctx, m_Id, m_Simulation->Get<Life>(m_Parent).m_DamageAnimationTick, seed);
     }
 }

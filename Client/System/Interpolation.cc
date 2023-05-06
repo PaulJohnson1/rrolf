@@ -22,6 +22,18 @@ namespace app::system
 
         m_Simulation.ForEachEntity([&](Entity entity)
                                    {
+            if (m_Simulation.HasComponent<component::Drop>(entity))
+            {
+                component::Drop &drop = m_Simulation.Get<component::Drop>(entity);
+                if (drop.m_PickedUp)
+                {
+                    component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
+                    if (physical.m_ClientDeletionTick < 5)
+                        physical.m_ClientDeletionTick += 0.5;
+                    physical.m_X = physical.m_X + 0.2 * (playerInfo.m_CameraX - physical.m_X);
+                    physical.m_Y = physical.m_Y + 0.2 * (playerInfo.m_CameraY - physical.m_Y);
+                }
+            }
             if (m_Simulation.HasComponent<component::Physical>(entity))
             {
                 component::Physical &physical = m_Simulation.Get<component::Physical>(entity);

@@ -27,7 +27,7 @@ namespace app::component
     void Flower::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        Physical physical = m_Simulation->Get<Physical>(m_Parent);
 
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 
