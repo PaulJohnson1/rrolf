@@ -17,7 +17,6 @@ namespace app::component
 
     PlayerInfo::~PlayerInfo()
     {
-        m_EntitiesInView.clear();
     }
 
     void PlayerInfo::Reset()

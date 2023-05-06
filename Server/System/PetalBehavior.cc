@@ -33,6 +33,7 @@ namespace app::system
             if (!playerInfo.HasPlayer())
                 return;
 
+            Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
             uint32_t currRotPos = 0;
             for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
             {
@@ -71,8 +72,10 @@ namespace app::system
                             petalEntity.m_Slot = i;
                             petalEntity.m_InnerPos = j;
 
-                            physical.X(playerInfo.CameraX()); //fix
-                            physical.Y(playerInfo.CameraY());
+                            Vector extension = Vector::FromPolar(flowerPhysical.Radius(), playerInfo.m_GlobalRotation + 2 * M_PI * (currRotPos - 1) / playerInfo.m_RotationCount);
+
+                            physical.X(flowerPhysical.X() + extension.m_X); //fix
+                            physical.Y(flowerPhysical.Y() + extension.m_Y);
                             physical.m_Friction = 0.75;
 
                             life.Health(petalSlot.m_Data->m_BaseHealth);
@@ -179,9 +182,11 @@ namespace app::system
                 else if (m_Simulation.HasComponent<Heal>(entity))
                     flowerLife.Health(flowerLife.Health() + m_Simulation.Get<Heal>(entity).m_HealAmount);           
 
-                float holdingRadius = 75;
-                if (playerInfo.m_MouseButton & 1) holdingRadius = 175;
-                else if (playerInfo.m_MouseButton & 4) holdingRadius = 45;
+                float holdingRadius = 50;
+                if (playerInfo.m_MouseButton & 1) holdingRadius = 150;
+                else if (playerInfo.m_MouseButton & 4) holdingRadius = 25;
+
+                holdingRadius += flowerPhysical.Radius();
                 
                 float currAngle = playerInfo.m_GlobalRotation + 2 * M_PI * petal.m_RotationPos / playerInfo.m_RotationCount;
                 Vector extension = Vector::FromPolar(holdingRadius, currAngle);

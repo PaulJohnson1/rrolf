@@ -80,6 +80,7 @@ namespace app::component
         // draw mouth
         ctx->SetStroke(0xff222222);
         ctx->SetLineWidth(1.5);
+        ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->BeginPath();
         ctx->MoveTo(-6, 10);
         ctx->QuadraticCurveTo(0, 15, 6, 10);

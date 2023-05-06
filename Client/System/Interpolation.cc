@@ -30,15 +30,15 @@ namespace app::system
                     component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
                     if (physical.m_ClientDeletionTick < 5)
                         physical.m_ClientDeletionTick += 0.5;
-                    physical.m_X = physical.m_X + 0.2 * (playerInfo.m_CameraX - physical.m_X);
-                    physical.m_Y = physical.m_Y + 0.2 * (playerInfo.m_CameraY - physical.m_Y);
+                    physical.m_X = (float) playerInfo.m_CameraX;
+                    physical.m_Y = (float) playerInfo.m_CameraY;
                 }
             }
             if (m_Simulation.HasComponent<component::Physical>(entity))
             {
                 component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
-                physical.m_X.Tick(0.1);
-                physical.m_Y.Tick(0.1);
+                physical.m_X.Tick(0.2);
+                physical.m_Y.Tick(0.2);
                 physical.m_Radius.Tick(0.1);
                 physical.m_Angle.Tick(0.1);
                 if (physical.m_DeletionTick > 0 && physical.m_ClientDeletionTick < 5)

@@ -15,7 +15,6 @@ namespace app::component
 
     Physical::~Physical()
     {
-        m_DeletionTick = 0;
     }
 
     void Physical::Reset()
