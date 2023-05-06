@@ -12,7 +12,9 @@ namespace app
         constexpr uint32_t BabyAnt = 0;
         constexpr uint32_t WorkerAnt = 1;
         constexpr uint32_t Hornet = 2;
-        constexpr uint32_t kMaxMobs = 3;
+        constexpr uint32_t Ladybug = 3;
+        constexpr uint32_t Bee = 4;
+        constexpr uint32_t kMaxMobs = 5;
     };
 
     namespace RarityId

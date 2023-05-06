@@ -88,7 +88,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 4)
+        if (mobCount < 15)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -100,7 +100,7 @@ namespace app
             physical.X(p.m_X);
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
-            mob.Id(rand() % 3); // baby ant
+            mob.Id(rand() % 5); // baby ant
             mob.Rarity(5);
             //mob.Rarity(5);
         }
@@ -179,15 +179,19 @@ namespace app
         std::vector<Entity> entitiesInView = FindEntitiesInView(playerInfo);
         std::vector<Entity> deletedEntities;
 
-        for (Entity id : playerInfo.m_EntitiesInView)
+        //for (Entity id : playerInfo.m_EntitiesInView)
+        for (auto it = playerInfo.m_EntitiesInView.begin(); it != playerInfo.m_EntitiesInView.end();)
         {
+            Entity id = *it;
             // id is not in the entities the client should view
             if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
             {
                 deletedEntities.push_back(id);
                 // remove id from the playerInfo's view after writing deletion so it does not get deleted twice
-                playerInfo.m_EntitiesInView.erase(id);
+                it = playerInfo.m_EntitiesInView.erase(it);
             }
+            else
+                ++it;
         }
 
         coder.Write<bc::VarUint>(deletedEntities.size());
@@ -295,18 +299,18 @@ namespace app
                 }
             }
         }
-#define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
-    {                                           \
-        using T = component::COMPONENT;         \
-        if (HasComponent<T>(id))                \
-        {                                       \
-            T &comp = Get<T>(id);               \
-            comp.~T();                          \
-            m_##COMPONENT##Tracker[id] = false; \
-        }                                       \
-    }
+        #define RROLF_COMPONENT_ENTRY(COMPONENT, ID)    \
+        {                                               \
+            using T = component::COMPONENT;             \
+            if (HasComponent<T>(id))                    \
+            {                                           \
+                T &comp = Get<T>(id);                   \
+                comp.~T();                              \
+                m_##COMPONENT##Tracker[id] = false;     \
+            }                                           \
+        }
         FOR_EACH_COMPONENT;
-#undef RROLF_COMPONENT_ENTRY
+        #undef RROLF_COMPONENT_ENTRY
         m_EntityTracker[id] = false;
         m_AvailableIds.push(id);
     }

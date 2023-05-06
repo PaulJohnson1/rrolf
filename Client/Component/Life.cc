@@ -38,10 +38,10 @@ namespace app::component
         Guard g(ctx);
         component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
 
-        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
-        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        ctx->Scale(1 + physical.m_ClientDeletionTick * 0.1);
         
         float length = 40;
         

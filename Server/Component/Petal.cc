@@ -25,7 +25,7 @@ namespace app::component
 
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
-        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_SimulationId = (Entity)-1;
+        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_SimulationId = NULL_ENTITY;
         playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data->m_ReloadTicks; 
     }
 

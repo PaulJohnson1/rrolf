@@ -38,8 +38,8 @@ namespace app::component
         ctx->Translate(physical.m_X, physical.m_Y);
         float seed = std::sin(m_Simulation->GetTime() / 100);
         float scale = MOB_SCALE_FACTOR[m_Rarity];
-        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
-        ctx->Scale(scale * (1 + physical.m_DeletionTick * 0.1));
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
+        ctx->Scale(scale * (1 + physical.m_ClientDeletionTick * 0.1));
         ctx->Rotate(physical.m_Angle);
         ui::DrawMob(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick, seed);
     }

@@ -21,7 +21,7 @@ namespace app::component
     Flower::~Flower()
     {
         Basic &basic = m_Simulation->Get<Basic>(m_Parent);
-        if (basic.m_Owner != 0)
+        if (basic.m_Owner != NULL_ENTITY)
         {
             PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
             playerInfo.HasPlayer(false);
@@ -30,9 +30,7 @@ namespace app::component
             {
                 PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
-                {
                     petalSlot.m_Petals[j].m_TicksUntilRespawn = petalSlot.m_Data->m_ReloadTicks;
-                }
             }
         }
     }

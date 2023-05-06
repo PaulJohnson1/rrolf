@@ -35,7 +35,7 @@ namespace app::component
         component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
         Guard g(ctx);
         ctx->Translate(physical.m_X, physical.m_Y);
-        float radius = physical.m_Radius * (1 - physical.m_DeletionTick * 0.2);
+        float radius = physical.m_Radius * (1 - physical.m_ClientDeletionTick * 0.2);
         ctx->Scale(radius / 25, radius / 25);
         ctx->Rotate(radius + 0.1);
         float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;

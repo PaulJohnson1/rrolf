@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <set>
 
 #include <Shared/Entity.hh>

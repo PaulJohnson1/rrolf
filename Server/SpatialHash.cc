@@ -18,7 +18,7 @@ namespace app
     */
     static constexpr int32_t MAP_SIZE = 1650;
     static constexpr uint32_t GRID_SIZE = 5;
-    static constexpr uint32_t HASH_TABLE_SIZE = (1650 * 4) >> GRID_SIZE;
+    static constexpr uint32_t HASH_TABLE_SIZE = ((1650 * 8) >> GRID_SIZE);
 
     SpatialHash::SpatialHash(Simulation &simulation)
         : m_Simulation(simulation),
