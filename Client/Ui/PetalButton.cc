@@ -11,7 +11,7 @@
 namespace app::ui
 {
     PetalButton::PetalButton(Renderer &ctx, float w, uint32_t pos)
-        : Button(ctx, w, w), m_Position(pos), m_ActualWidth(w)
+        : Button(ctx, w, w), m_Position(pos)
     {
         m_LerpWidth = 0;
     }
@@ -25,12 +25,10 @@ namespace app::ui
             uint32_t count = playerInfo.m_SlotCount;
             if ((m_Position % 10) >= count)
             {
-                m_Width = m_Height = 0;
+                m_Showing = false;
                 return;
             }
-            m_Width = m_Height = m_ActualWidth;
-
-            m_Renderer.Translate((m_X + (m_HJustify - 1) * m_Container->m_Width / 2) * m_Renderer.m_WindowScale,(m_Y + (m_VJustify - 1) * m_Container->m_Height / 2) * m_Renderer.m_WindowScale); // necessary btw
+            PreRender();
 
             m_Renderer.Scale(m_Renderer.m_WindowScale);
             m_Renderer.SetFill(m_Fill);
@@ -80,6 +78,20 @@ namespace app::ui
                     m_PrevRarity = 0;
                     m_LerpWidth = 0;
                 }
+            }
+        }
+    }
+
+    void PetalButton::Idle()
+    {
+        if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+        {
+            component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
+            uint32_t count = playerInfo.m_SlotCount;
+            if ((m_Position % 10) < count)
+            {
+                m_Showing = true;
+                return;
             }
         }
     }

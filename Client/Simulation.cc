@@ -142,42 +142,62 @@ namespace app
         );
         */
         m_UiElements.m_Test = ui::Add(
-            ui::HPad<10>(
-                ui::SetJustify<1, 0>(
-                    ui::MakeVContainer<20, 20>({
-                        new ui::Text(*renderer, "Wave 69", 0xffffffff, 30),
-                        ui::MakeHContainer<20, 10, 0>({
-                            ui::MakeVContainer<-50, 0, 0>({
-                                new ui::MobButton(*renderer,0,0),
-                                new ui::MobButton(*renderer,0,1),
-                                new ui::MobButton(*renderer,0,3),
-                                new ui::MobButton(*renderer,0,4),
-                            }),
-                            ui::MakeVContainer<-50, 0, 0>({
-                                new ui::MobButton(*renderer,1,0),
-                                new ui::MobButton(*renderer,1,1),
-                                new ui::MobButton(*renderer,1,2),
-                                new ui::MobButton(*renderer,1,3),
-                                new ui::MobButton(*renderer,1,4),
-                                new ui::MobButton(*renderer,1,5)
-                            }),
-                            ui::MakeVContainer<-50, 0, 0>({
-                                new ui::MobButton(*renderer,2,7)
-                            }),
-                            ui::MakeVContainer<-50, 0, 0>({
-                                new ui::MobButton(*renderer,3,2),
-                                new ui::MobButton(*renderer,3,3),
-                                new ui::MobButton(*renderer,3,4),
-                                new ui::MobButton(*renderer,3,6)
-                            }),
-                            ui::MakeVContainer<-50, 0, 0>({
-                                new ui::MobButton(*renderer,4,0),
-                                new ui::MobButton(*renderer,4,2),
-                                new ui::MobButton(*renderer,4,3)
-                            })
+            ui::SetJustify<1, 0>(
+                ui::MakeVContainer<20, 20>({
+                    new ui::Text(*renderer, "Wave 69", 0xffffffff, 30),
+                    ui::MakeHContainer<20, 10, 0>({
+                        ui::MakeVContainer<-40, 0, 0>({
+                            ui::CreateMobIcon(renderer,0,0),
+                            ui::CreateMobIcon(renderer,0,1),                           
+                            ui::CreateMobIcon(renderer,0,2),
+                            ui::CreateMobIcon(renderer,0,3),
+                            ui::CreateMobIcon(renderer,0,4),
+                            ui::CreateMobIcon(renderer,0,5),
+                            ui::CreateMobIcon(renderer,0,6),
+                            ui::CreateMobIcon(renderer,0,7),
+                        }),
+                        ui::MakeVContainer<-40, 0, 0>({
+                            ui::CreateMobIcon(renderer,1,0),
+                            ui::CreateMobIcon(renderer,1,1),
+                            ui::CreateMobIcon(renderer,1,2),
+                            ui::CreateMobIcon(renderer,1,3),
+                            ui::CreateMobIcon(renderer,1,4),
+                            ui::CreateMobIcon(renderer,1,5),
+                            ui::CreateMobIcon(renderer,1,6),
+                            ui::CreateMobIcon(renderer,1,7)
+                        }),
+                        ui::MakeVContainer<-40, 0, 0>({
+                            ui::CreateMobIcon(renderer,2,0),
+                            ui::CreateMobIcon(renderer,2,1),
+                            ui::CreateMobIcon(renderer,2,2),
+                            ui::CreateMobIcon(renderer,2,3),
+                            ui::CreateMobIcon(renderer,2,4),
+                            ui::CreateMobIcon(renderer,2,5),
+                            ui::CreateMobIcon(renderer,2,6),
+                            ui::CreateMobIcon(renderer,2,7)
+                        }),
+                        ui::MakeVContainer<-40, 0, 0>({
+                            ui::CreateMobIcon(renderer,3,0),
+                            ui::CreateMobIcon(renderer,3,1),
+                            ui::CreateMobIcon(renderer,3,2),
+                            ui::CreateMobIcon(renderer,3,3),
+                            ui::CreateMobIcon(renderer,3,4),
+                            ui::CreateMobIcon(renderer,3,5),
+                            ui::CreateMobIcon(renderer,3,6),
+                            ui::CreateMobIcon(renderer,3,7)
+                        }),
+                        ui::MakeVContainer<-40, 0, 0>({
+                            ui::CreateMobIcon(renderer,4,0),
+                            ui::CreateMobIcon(renderer,4,1),
+                            ui::CreateMobIcon(renderer,4,2),
+                            ui::CreateMobIcon(renderer,4,3),
+                            ui::CreateMobIcon(renderer,4,4),
+                            ui::CreateMobIcon(renderer,4,5),
+                            ui::CreateMobIcon(renderer,4,6),
+                            ui::CreateMobIcon(renderer,4,7)
                         })
                     })
-                )
+                })
             )
         );
     }
@@ -248,9 +268,8 @@ namespace app
             // ui stuff
             m_UiElements.m_TitleScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
             m_UiElements.m_DeathScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
-            ui::Resize((ui::Container *) m_UiElements.m_Loadout->m_Elements[0]);
-            ui::Resize((ui::Container *) m_UiElements.m_Loadout->m_Elements[1]);
-            ui::Resize(m_UiElements.m_Loadout);
+
+            ui::Resize<true>(m_UiElements.m_Loadout);
             return;
         }
     }

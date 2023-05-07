@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <Client/Util/Lerp.hh>
 
 namespace app
 {
@@ -31,5 +31,8 @@ namespace app::ui
         virtual ~Element();
         
         virtual void Render(){};
+
+        void PreRender();
+        virtual void Idle(){};
     };
 }

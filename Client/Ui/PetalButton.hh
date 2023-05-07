@@ -10,9 +10,7 @@ namespace app::ui
     class PetalButton : public Button
     {
     public:
-        bool m_UseGlobalPosition = false;
         uint32_t m_Position;
-        float m_ActualWidth = 0.0f;
         Lerp<float> m_GlobalX = Lerp<float>(0.0f);
         Lerp<float> m_GlobalY = Lerp<float>(0.0f);
         Lerp<float> m_LerpWidth = Lerp<float>(0.0f);
@@ -22,5 +20,6 @@ namespace app::ui
         PetalButton(Renderer &, float, uint32_t);
 
         void Render();
+        void Idle();
     };
 }

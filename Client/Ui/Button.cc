@@ -45,7 +45,7 @@ namespace app::ui
     void Button::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate((m_X + (m_HJustify - 1) * m_Container->m_Width / 2) * m_Renderer.m_WindowScale,(m_Y + (m_VJustify - 1) * m_Container->m_Height / 2) * m_Renderer.m_WindowScale); // necessary btw
+        PreRender();
         m_Renderer.Scale(m_Renderer.m_WindowScale);
         m_Renderer.RoundRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height, m_R);
         m_Renderer.SetFill(m_Fill);

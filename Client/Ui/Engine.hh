@@ -5,7 +5,6 @@
 
 #include <Client/Ui/Element.hh>
 
-
 namespace app::ui
 {
     class Container;
@@ -113,6 +112,7 @@ namespace app::ui
         return c;
     }
 
+    template <bool recursive>
     void Resize(Container *c)
     {
         float maxX = 0;
@@ -125,8 +125,10 @@ namespace app::ui
         for (uint64_t i = 0; i < c->m_Elements.size(); ++i)
         {
             Element *element = c->m_Elements[i];
-            if (element->m_Width == 0 || element->m_Height == 0)
+            if (!element->m_Showing)
                 continue;
+            if (recursive && dynamic_cast<Container *>(element))
+                Resize<true>((Container *) element);
             float x = element->m_X + (element->m_HJustify - 1) * halfWidth;
             float y = element->m_Y + (element->m_VJustify - 1) * halfHeight;
             float elemPos = x - element->m_Width / 2 - spacing;

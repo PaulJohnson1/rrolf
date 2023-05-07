@@ -442,12 +442,12 @@ namespace app::ui
         ctx->BeginPath();
         ctx->SetFill(RARITY_COLORS[rarity]);
         ctx->SetStroke(RARITY_COLORS[rarity], 0.8);
-        ctx->SetLineWidth(12);
+        ctx->SetLineWidth(10);
         ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->SetLineJoin(Renderer::LineJoin::Round);
-        ctx->StrokeRect(-30,-30,60,60);
-        ctx->FillRect(-30,-30,60,60);
-        ctx->Rect(-30,-30,60,60);
+        ctx->StrokeRect(-25,-25,50,50);
+        ctx->FillRect(-25,-25,50,50);
+        ctx->Rect(-25,-25,50,50);
         ctx->Clip();
         ctx->Rotate(5 * M_PI_4);
         ctx->Scale(0.5);

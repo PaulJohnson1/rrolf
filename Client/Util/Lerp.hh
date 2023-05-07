@@ -51,5 +51,15 @@ namespace app
         T Destination() const { return m_Destination; }
         void SetInterpolated(T val) { m_Interpolated = val; }
         operator T() const { return m_Interpolated; }
+
+        void operator+=(T v)
+        {
+            m_Destination += v;
+        }
+        
+        void operator-=(T v)
+        {
+            m_Destination -= v;
+        }
     };
 }

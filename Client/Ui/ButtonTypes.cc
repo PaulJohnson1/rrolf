@@ -9,6 +9,7 @@
 #include <Client/Simulation.hh>
 #include <Client/Socket.hh>
 #include <Client/Ui/Container.hh>
+#include <Client/Ui/MobButton.hh>
 #include <Client/Ui/LabeledButton.hh>
 #include <Client/Ui/PetalButton.hh>
 
@@ -73,5 +74,10 @@ namespace app::ui
         {
         };
         return button;
+    }
+
+    MobButton *CreateMobIcon(Renderer *renderer, uint32_t id, uint32_t rarity)
+    {
+        return new MobButton(*renderer, 50, id, rarity);
     }
 }
