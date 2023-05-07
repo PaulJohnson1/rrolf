@@ -436,4 +436,21 @@ namespace app::ui
             break;
         }
     }
+    void DrawMobWithBackground(Renderer *ctx, uint32_t id, uint32_t rarity)
+    {
+        Guard g(ctx);
+        ctx->BeginPath();
+        ctx->SetFill(RARITY_COLORS[rarity]);
+        ctx->SetStroke(RARITY_COLORS[rarity], 0.8);
+        ctx->SetLineWidth(12);
+        ctx->SetLineCap(Renderer::LineCap::Round);
+        ctx->SetLineJoin(Renderer::LineJoin::Round);
+        ctx->StrokeRect(-30,-30,60,60);
+        ctx->FillRect(-30,-30,60,60);
+        ctx->Rect(-30,-30,60,60);
+        ctx->Clip();
+        ctx->Rotate(5 * M_PI_4);
+        ctx->Scale(0.5);
+        ui::DrawMob(ctx, id, 0, 0);
+    }
 }

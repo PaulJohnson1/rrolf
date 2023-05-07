@@ -13,6 +13,7 @@
 #include <Client/Ui/Text.hh>
 #include <Client/Ui/Engine.hh>
 #include <Client/Ui/ButtonTypes.hh>
+#include <Client/Ui/MobButton.hh>
 
 #include <Shared/StaticData.hh>
 
@@ -83,7 +84,7 @@ namespace app
         m_UiElements.m_TitleScreen = ui::Add(
             ui::SetJustify<1, 1>(
                 ui::MakeVContainer<100, 0>({
-                    new ui::Text(*renderer, "florr.io", 0xffffffff, 96),
+                    new ui::Text(*renderer, "rrolf", 0xffffffff, 96),
                     ui::MakeHContainer<25, 0>({
                         new ui::Text(*renderer, "this is your name", 0xffffffff, 25),
                         ui::CreateRespawnButton(renderer)
@@ -123,6 +124,7 @@ namespace app
                 )
             )
         );
+        /*
         m_UiElements.m_Test = ui::Add(
             ui::HPad<10>(
                 ui::SetJustify<0, 1>(
@@ -135,6 +137,46 @@ namespace app
                             ui::MakeHContainer<0,0>({new ui::Text(*renderer, "Damage: ", 0xffffffff, 12), new ui::Text(*renderer, "beyond your feeble comprehension", 0xffee2345, 12)})
                         })
                     )
+                )
+            )
+        );
+        */
+        m_UiElements.m_Test = ui::Add(
+            ui::HPad<10>(
+                ui::SetJustify<1, 0>(
+                    ui::MakeVContainer<20, 20>({
+                        new ui::Text(*renderer, "Wave 69", 0xffffffff, 30),
+                        ui::MakeHContainer<20, 10, 0>({
+                            ui::MakeVContainer<-50, 0, 0>({
+                                new ui::MobButton(*renderer,0,0),
+                                new ui::MobButton(*renderer,0,1),
+                                new ui::MobButton(*renderer,0,3),
+                                new ui::MobButton(*renderer,0,4),
+                            }),
+                            ui::MakeVContainer<-50, 0, 0>({
+                                new ui::MobButton(*renderer,1,0),
+                                new ui::MobButton(*renderer,1,1),
+                                new ui::MobButton(*renderer,1,2),
+                                new ui::MobButton(*renderer,1,3),
+                                new ui::MobButton(*renderer,1,4),
+                                new ui::MobButton(*renderer,1,5)
+                            }),
+                            ui::MakeVContainer<-50, 0, 0>({
+                                new ui::MobButton(*renderer,2,7)
+                            }),
+                            ui::MakeVContainer<-50, 0, 0>({
+                                new ui::MobButton(*renderer,3,2),
+                                new ui::MobButton(*renderer,3,3),
+                                new ui::MobButton(*renderer,3,4),
+                                new ui::MobButton(*renderer,3,6)
+                            }),
+                            ui::MakeVContainer<-50, 0, 0>({
+                                new ui::MobButton(*renderer,4,0),
+                                new ui::MobButton(*renderer,4,2),
+                                new ui::MobButton(*renderer,4,3)
+                            })
+                        })
+                    })
                 )
             )
         );

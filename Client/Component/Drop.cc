@@ -27,8 +27,8 @@ namespace app::component
             m_Id = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
             m_Rarity = coder.Read<bc::VarUint>();
-        
-        m_PickedUp = coder.Read<bc::Uint8>();  
+        if (updatedFields & 4)
+            m_PickedUp = coder.Read<bc::Uint8>();  
     }
 
     void Drop::Render(Renderer *ctx)

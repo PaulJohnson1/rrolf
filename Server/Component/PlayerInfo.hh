@@ -128,6 +128,7 @@ namespace app::component
         };
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         std::set<Entity> m_EntitiesInView;
+        std::vector<Entity> m_PendingDropPickups = {};
 
         PlayerInfo(Entity, Simulation *);
         ~PlayerInfo();

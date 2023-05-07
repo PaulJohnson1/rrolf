@@ -30,7 +30,6 @@ namespace app::component
         Entity m_Parent;
         uint64_t m_State = 0;
         std::vector<Entity> m_CollectedBy = {};
-        bool m_PickedUp = false; //this is a temp var that is used at packet creation time
 
         Drop(Entity, Simulation *);
         ~Drop();
@@ -39,6 +38,7 @@ namespace app::component
         void Id(uint32_t);
         uint32_t Rarity() const;
         void Rarity(uint32_t);
+        void PickedUp();
 
         void Reset();
 

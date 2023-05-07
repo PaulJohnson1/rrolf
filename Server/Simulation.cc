@@ -148,9 +148,6 @@ namespace app
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
     {
-        std::vector<Entity> entitiesInView{};
-        entitiesInView.push_back(m_Arena);
-        entitiesInView.push_back(playerInfo.m_Parent);
 
         int32_t viewWidth = (int32_t)(1280 / playerInfo.Fov());
         int32_t viewHeight = (int32_t)(720 / playerInfo.Fov());
@@ -158,27 +155,19 @@ namespace app
         int32_t viewY = (int32_t)playerInfo.CameraY();
         // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
         std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
-        for (Entity i = 0; i < nearBy.size(); i++)
-        {
-            Entity other = nearBy[i];
-            // TODO: box collision
-            entitiesInView.push_back(other);
-            if (HasComponent<component::Drop>(other))
-            {
-                component::Drop &drop = Get<component::Drop>(other);
-                std::vector<Entity> &collectedBy = drop.m_CollectedBy;
-                drop.m_PickedUp = std::find(collectedBy.begin(), collectedBy.end(), playerInfo.Player()) != collectedBy.end();
-            }
-        }
-        return entitiesInView;
+        nearBy.push_back(m_Arena);
+        nearBy.push_back(playerInfo.m_Parent);
+        return nearBy;
     }
 
     void Simulation::WriteUpdate(bc::BinaryCoder &coder, component::PlayerInfo &playerInfo)
     {
         std::vector<Entity> entitiesInView = FindEntitiesInView(playerInfo);
         std::vector<Entity> deletedEntities;
-
-        //for (Entity id : playerInfo.m_EntitiesInView)
+        for (uint64_t i = 0; i < playerInfo.m_PendingDropPickups.size(); ++i)
+            Get<component::Drop>(playerInfo.m_PendingDropPickups[i]).PickedUp();
+        
+        playerInfo.m_PendingDropPickups.clear();
         for (auto it = playerInfo.m_EntitiesInView.begin(); it != playerInfo.m_EntitiesInView.end();)
         {
             Entity id = *it;

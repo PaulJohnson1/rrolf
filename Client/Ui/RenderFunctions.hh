@@ -11,4 +11,5 @@ namespace app::ui
     void DrawLoadoutPetal(Renderer *, uint32_t, uint32_t, float);
 
     void DrawMob(Renderer *, uint32_t, uint32_t, float);
+    void DrawMobWithBackground(Renderer *, uint32_t, uint32_t);
 }

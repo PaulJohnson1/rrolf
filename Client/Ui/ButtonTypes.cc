@@ -10,7 +10,7 @@
 #include <Client/Socket.hh>
 #include <Client/Ui/Container.hh>
 #include <Client/Ui/LabeledButton.hh>
-#include <Client/Ui/DynamicButton.hh>
+#include <Client/Ui/PetalButton.hh>
 
 namespace app::ui
 {
@@ -37,9 +37,9 @@ namespace app::ui
         return button;
     }
     
-    DynamicButton *CreateLoadoutButton(Renderer *renderer, int32_t pos)
+    PetalButton *CreateLoadoutButton(Renderer *renderer, int32_t pos)
     {
-        DynamicButton *button = new DynamicButton(*renderer, 60, pos);
+        PetalButton *button = new PetalButton(*renderer, 60, pos);
         button->m_Fill = 0xffffffff;
         button->m_Stroke = 0xffcfcfcf;
         button->m_OnMouseOver = [&]() {
@@ -56,9 +56,9 @@ namespace app::ui
         };
         return button;
     }
-    DynamicButton *CreateSecondaryButton(Renderer *renderer, int32_t pos)
+    PetalButton *CreateSecondaryButton(Renderer *renderer, int32_t pos)
     {
-        DynamicButton *button = new DynamicButton(*renderer, 40, pos);
+        PetalButton *button = new PetalButton(*renderer, 40, pos);
         button->m_Fill = 0xffffffff;
         button->m_Stroke = 0xffcfcfcf;
         button->m_OnMouseOver = [&]() {

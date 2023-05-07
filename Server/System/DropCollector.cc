@@ -36,6 +36,7 @@ namespace app::system
                     continue;
                 ++playerInfo.m_Inventory[drop.Id() * RarityId::kMaxRarities + drop.Rarity()];
                 drop.m_CollectedBy.push_back(entity);
+                playerInfo.m_PendingDropPickups.push_back(other);
                 /*
                 ADD THE PETAL TO LOADOUT IF POSSIBLE
                 */
