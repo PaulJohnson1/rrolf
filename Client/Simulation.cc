@@ -14,6 +14,8 @@
 #include <Client/Ui/Engine.hh>
 #include <Client/Ui/ButtonTypes.hh>
 
+#include <Shared/StaticData.hh>
+
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #endif
@@ -92,7 +94,7 @@ namespace app
         m_UiElements.m_Loadout = ui::Add(
             ui::VPad<10>(
                 ui::SetJustify<1, 2>(
-                    ui::MakeVContainer<10, 0>({
+                    ui::MakeVContainer<10, 0, 1>({
                         ui::MakeHContainer<20, 10>({
                             ui::CreateLoadoutButton(renderer, 0),
                             ui::CreateLoadoutButton(renderer, 1),
@@ -118,6 +120,21 @@ namespace app
                             ui::CreateSecondaryButton(renderer, 19)
                         })
                     })
+                )
+            )
+        );
+        m_UiElements.m_Test = ui::Add(
+            ui::HPad<10>(
+                ui::SetJustify<0, 1>(
+                    ui::AddBackground<0x80000000>(
+                        ui::MakeVContainer<10, 10, 0>({
+                            new ui::Text(*renderer, "Stinger", 0xffffffff, 25),
+                            new ui::Text(*renderer, "Ultra", RARITY_COLORS[6], 12),
+                            new ui::Text(*renderer, "It really hurts, but it's really fragile.", 0xffffffff, 12),
+                            ui::MakeHContainer<0,0>({new ui::Text(*renderer, "Health: ", 0xffffffff, 12), new ui::Text(*renderer, "over 9000", 0xff23ee45, 12)}),
+                            ui::MakeHContainer<0,0>({new ui::Text(*renderer, "Damage: ", 0xffffffff, 12), new ui::Text(*renderer, "beyond your feeble comprehension", 0xffee2345, 12)})
+                        })
+                    )
                 )
             )
         );

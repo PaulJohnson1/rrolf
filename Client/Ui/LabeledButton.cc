@@ -18,7 +18,7 @@ namespace app::ui
     void LabeledButton::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); // necessary btw
+        m_Renderer.Translate((m_HJustify - 1) * m_Container->m_Width / 2, (m_VJustify - 1) * m_Container->m_Height / 2); // necessary btw
         m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
         m_Renderer.Scale(m_Renderer.m_WindowScale);
         m_Renderer.RoundRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height, m_R);

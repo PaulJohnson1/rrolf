@@ -9,7 +9,7 @@
 
 namespace app::ui
 {
-    template <int32_t innerSpacing, int32_t outerSpacing>
+    template <int32_t innerSpacing, int32_t outerSpacing, int32_t vJustify = 1>
     Container *MakeHContainer(std::vector<Element *> elements)
     {
         Container *c = new Container(*g_Renderer);
@@ -22,6 +22,8 @@ namespace app::ui
             ui::Element *element = elements[i];
             element->m_X = width + element->m_Width / 2;
             element->m_Container = c;
+            element->m_VJustify = vJustify;
+            element->m_Y = (1 - vJustify) * (element->m_Height / 2 + outerSpacing);
             width += element->m_Width + innerSpacing;
             if (element->m_Height > height)
                 height = element->m_Height;
@@ -39,7 +41,7 @@ namespace app::ui
         return c;
     }
 
-    template <int32_t innerSpacing, int32_t outerSpacing>
+    template <int32_t innerSpacing, int32_t outerSpacing, int32_t hJustify = 1>
     Container *MakeVContainer(std::vector<Element *> elements)
     {
         Container *c = new Container(*g_Renderer);
@@ -52,6 +54,8 @@ namespace app::ui
             ui::Element *element = elements[i];
             element->m_Y = height + element->m_Height / 2;
             element->m_Container = c;
+            element->m_HJustify = hJustify;
+            element->m_X = (1 - hJustify) * (element->m_Width / 2 + outerSpacing);
             height += element->m_Height + innerSpacing;
             if (element->m_Width > width)
                 width = element->m_Width;

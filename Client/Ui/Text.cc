@@ -21,8 +21,8 @@ namespace app::ui
     void Text::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2);
-        m_Renderer.Scale(m_Renderer.m_WindowScale);
+        m_Renderer.Translate((m_HJustify - 1) * m_Container->m_Width / 2, (m_VJustify - 1) * m_Container->m_Height / 2); // necessary btw
+        m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
         m_Renderer.SetTextAlign(m_TextAlign);
         m_Renderer.SetTextBaseline(m_TextBaseline);
         m_Renderer.SetTextSize(m_TextSize);
