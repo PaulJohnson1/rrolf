@@ -173,6 +173,7 @@ namespace app
 
             playerInfo.m_PetalSlots[pos] = component::PlayerInfo::MakePetal(id2, rar2);
             playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
+            playerInfo.m_SlotCount = 10;
         }
     }
 

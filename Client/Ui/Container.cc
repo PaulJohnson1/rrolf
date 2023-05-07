@@ -12,8 +12,8 @@ namespace app::ui
     void Container::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate((m_HJustify - 1) * m_Container->m_Width / 2, (m_VJustify - 1) * m_Container->m_Height / 2); // necessary btw
-        m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
+        m_Renderer.Translate((m_X + (m_HJustify - 1) * m_Container->m_Width / 2) * m_Renderer.m_WindowScale,(m_Y + (m_VJustify - 1) * m_Container->m_Height / 2) * m_Renderer.m_WindowScale); // necessary btw
+
         if (m_HasBackground)
         {
             Guard g(&m_Renderer);

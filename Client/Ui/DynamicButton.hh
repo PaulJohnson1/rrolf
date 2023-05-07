@@ -10,8 +10,9 @@ namespace app::ui
     class DynamicButton : public Button
     {
     public:
-        uint32_t m_Position;
         bool m_UseGlobalPosition = false;
+        uint32_t m_Position;
+        float m_ActualWidth = 0.0f;
         Lerp<float> m_GlobalX = Lerp<float>(0.0f);
         Lerp<float> m_GlobalY = Lerp<float>(0.0f);
         Lerp<float> m_LerpWidth = Lerp<float>(0.0f);

@@ -206,6 +206,9 @@ namespace app
             // ui stuff
             m_UiElements.m_TitleScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
             m_UiElements.m_DeathScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
+            ui::Resize((ui::Container *) m_UiElements.m_Loadout->m_Elements[0]);
+            ui::Resize((ui::Container *) m_UiElements.m_Loadout->m_Elements[1]);
+            ui::Resize(m_UiElements.m_Loadout);
             return;
         }
     }

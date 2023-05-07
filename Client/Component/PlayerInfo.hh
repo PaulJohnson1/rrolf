@@ -29,14 +29,15 @@ namespace app::component
             float m_Health;
             Lerp<float> m_Reload = Lerp<float>(0.0f);
         };
+        bool m_HasPlayer;
+        Entity m_Player;
+        uint32_t m_SlotCount = 0;
         Lerp<float> m_CameraX{0};
         Lerp<float> m_CameraY{0};
         Lerp<float> m_Fov{0.1};
-        bool m_HasPlayer;
         LoadoutPetal m_Petals[10] = {};
         LoadoutPetal m_SecondaryPetals[10] = {};
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
-        Entity m_Player;
         Simulation *m_Simulation;
 
         Entity m_Parent;

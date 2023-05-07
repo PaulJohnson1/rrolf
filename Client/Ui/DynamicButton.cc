@@ -13,7 +13,7 @@
 namespace app::ui
 {
     DynamicButton::DynamicButton(Renderer &ctx, float w, uint32_t pos)
-        : Button(ctx, w, w), m_Position(pos)
+        : Button(ctx, w, w), m_Position(pos), m_ActualWidth(w)
     {
         m_LerpWidth = 0;
     }
@@ -21,33 +21,37 @@ namespace app::ui
     void DynamicButton::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate((m_HJustify - 1) * m_Container->m_Width / 2, (m_VJustify - 1) * m_Container->m_Height / 2); // necessary btw
-        m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
-        m_Renderer.Scale(m_Renderer.m_WindowScale);
-        m_Renderer.SetFill(m_Fill);
-        m_Renderer.SetStroke(m_Stroke);
-        m_Renderer.SetLineWidth(m_Width * 0.1);
-        m_Renderer.SetLineJoin(Renderer::LineJoin::Round);
-        m_Renderer.SetLineCap(Renderer::LineCap::Round);
-        m_Renderer.FillRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
-        m_Renderer.StrokeRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
-        if (!m_UseGlobalPosition)
+        if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
         {
+            component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
+            uint32_t count = playerInfo.m_SlotCount;
+            if ((m_Position % 10) >= count)
+            {
+                m_Width = m_Height = 0;
+                return;
+            }
+            m_Width = m_Height = m_ActualWidth;
+
+            m_Renderer.Translate((m_X + (m_HJustify - 1) * m_Container->m_Width / 2) * m_Renderer.m_WindowScale,(m_Y + (m_VJustify - 1) * m_Container->m_Height / 2) * m_Renderer.m_WindowScale); // necessary btw
+
+            m_Renderer.Scale(m_Renderer.m_WindowScale);
+            m_Renderer.SetFill(m_Fill);
+            m_Renderer.SetStroke(m_Stroke);
+            m_Renderer.SetLineWidth(m_Width * 0.1);
+            m_Renderer.SetLineJoin(Renderer::LineJoin::Round);
+            m_Renderer.SetLineCap(Renderer::LineCap::Round);
+            m_Renderer.FillRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
+            m_Renderer.StrokeRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
+
             const float *matrix = m_Renderer.GetTransform();
             m_GlobalX = matrix[2];
             m_GlobalY = matrix[5];
-        }
 
-        m_GlobalX.Tick(0.2);
-        m_GlobalY.Tick(0.2);
-
-        {
-            Guard g(&m_Renderer);
+            m_GlobalX.Tick(0.2);
+            m_GlobalY.Tick(0.2);
             m_Renderer.ResetTransform();
             m_Renderer.Translate(m_GlobalX, m_GlobalY);
-            if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
             {
-                component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
                 component::PlayerInfo::LoadoutPetal &usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
                 uint32_t id = usingPos.m_Id;
                 if (id != 0)
