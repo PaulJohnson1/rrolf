@@ -58,7 +58,10 @@ if(RIVET_DEVELOPER_BUILD)
 endif()
 
 add_executable(rrolf-server ${SOURCES})
+
+target_link_libraries(rrolf-server websockets)
 target_link_libraries(rrolf-server pthread)
+
 if(WINDOWS)
     target_link_libraries(rrolf-server ws2_32 wsock32)
 endif()

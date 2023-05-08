@@ -2,7 +2,7 @@
 
 #include <mutex>
 
-#include <websocketpp/server.hpp>
+#include <libwebsockets.h>
 
 #include <Shared/Entity.hh>
 #include <Server/Vector.hh>
@@ -19,17 +19,15 @@ namespace app
     class Client
     {
         Simulation &m_Simulation;
-        websocketpp::connection_hdl m_Hdl;
         Vector m_PlayerAcceleration{0, 0};
 
     public:
         Entity m_PlayerInfo;
+        lws *m_Socket;
         std::mutex m_Mutex;
 
-        Client(websocketpp::connection_hdl, Simulation &);
+        Client(lws *, Simulation &);
         ~Client();
-
-        websocketpp::connection_hdl const &GetHdl();
 
         void ConstructPlayer();
         void BroadcastUpdate();

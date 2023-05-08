@@ -10,8 +10,8 @@
 
 namespace app
 {
-    Client::Client(websocketpp::connection_hdl hdl, Simulation &simulation)
-        : m_Hdl(hdl),
+    Client::Client(lws *socket, Simulation &simulation)
+        : m_Socket(socket),
           m_Simulation(simulation)
     {
         std::cout << "client create\n";
@@ -85,18 +85,18 @@ namespace app
     void Client::SendPacket(bc::BinaryCoder data) const
     {
         // std::unique_lock<std::mutex> l(m_Simulation.m_Server.m_Mutex);
-        try
-        {
-            auto c = m_Hdl.lock();
-            if (c)
-                m_Simulation.m_Server.m_Server.send(c, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
-            else 
-                std::cout << "\n\n\nsegmentation fault avoided\n\n\n";
-        }
-        catch (...)
-        {
-            std::cerr << "SendPacket error\n";
-        }
+        // try
+        // {
+        //     auto c = m_Hdl.lock();
+        //     if (c)
+        //         m_Simulation.m_Server.m_Server.send(c, (void *)data.Data(), data.At(), websocketpp::frame::opcode::binary);
+        //     else 
+        //         std::cout << "\n\n\nsegmentation fault avoided\n\n\n";
+        // }
+        // catch (...)
+        // {
+        //     std::cerr << "SendPacket error\n";
+        // }
         // l.unlock();
     }
 
@@ -176,6 +176,4 @@ namespace app
             playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
         }
     }
-
-    websocketpp::connection_hdl const &Client::GetHdl() { return m_Hdl; }
 }

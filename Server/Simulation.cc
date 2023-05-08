@@ -9,6 +9,8 @@
 #include <cmath>
 #include <set>
 #include <chrono>
+#include <cassert>
+#include <iostream>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
