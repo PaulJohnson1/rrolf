@@ -47,8 +47,9 @@ namespace app::component
     void Mob::Rarity(uint32_t v)
     {
         Life &life = m_Simulation->Get<Life>(m_Parent);
-        m_Simulation->Get<component::Physical>(m_Parent).Radius(MOB_DATA[m_Id].m_BaseSize * MOB_SCALE_FACTOR[v]);
-        life.Health(MOB_DATA[m_Id].m_BaseHealth * MOB_HEALTH_FACTOR[v]);
+        Physical &physical = m_Simulation->Get<Physical>(m_Parent);
+        physical.Radius(MOB_DATA[m_Id].m_BaseSize * MOB_SCALE_FACTOR[v]);
+        physical.m_Mass = MOB_SCALE_FACTOR[v] * 100000000000000000000.0f;
         life.MaxHealth(MOB_DATA[m_Id].m_BaseHealth * MOB_HEALTH_FACTOR[v]);
         life.m_Damage = MOB_DATA[m_Id].m_BaseDamage * MOB_DAMAGE_FACTOR[v];
         if (v == m_Rarity)

@@ -23,6 +23,7 @@ namespace app::component
     public:
         uint8_t m_Id = 0;
         uint8_t m_Rarity = 0;
+        bool m_PickedUp;
         Simulation *m_Simulation;
 
         Entity m_Parent;

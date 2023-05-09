@@ -20,4 +20,5 @@ namespace app
 {
     using Entity = uint16_t;
     constexpr Entity MAX_ENTITY_COUNT = 768;
+    constexpr Entity NULL_ENTITY = MAX_ENTITY_COUNT;
 }

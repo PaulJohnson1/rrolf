@@ -34,11 +34,13 @@ namespace app::system
                 Vector delta = a - b;
                 float distance = delta.Magnitude();
                 if (distance == 0) continue;
-                float overlap = (distance - physical1.Radius() - physical2.Radius()) * 0.5f;
-                physical1.X(physical1.X() - overlap * delta.m_X / distance);
-                physical1.Y(physical1.Y() - overlap * delta.m_Y / distance);
-                physical2.X(physical2.X() + overlap * delta.m_Y / distance);
-                physical2.Y(physical2.Y() + overlap * delta.m_X / distance);
+                float overlap = (distance - physical1.Radius() - physical2.Radius());
+                float v2_Coeff = physical1.m_Mass / (physical1.m_Mass + physical2.m_Mass);
+                float v1_Coeff = physical2.m_Mass / (physical1.m_Mass + physical2.m_Mass);
+                physical1.X(physical1.X() - overlap * delta.m_X / distance * v1_Coeff);
+                physical1.Y(physical1.Y() - overlap * delta.m_Y / distance * v1_Coeff);
+                physical2.X(physical2.X() + overlap * delta.m_Y / distance * v2_Coeff);
+                physical2.Y(physical2.Y() + overlap * delta.m_X / distance * v2_Coeff);
             }
         });
         m_Simulation.ForEachEntity([&](Entity entity)
@@ -69,8 +71,8 @@ namespace app::system
                 Vector parallel2 = delta * (delta * ball2Velocity);
                 Vector perp2 = ball2Velocity - parallel2;
 
-                physical1.m_Velocity = ((parallel2 * v1_Coeff) + (parallel1 * v_SharedCoeff)) * physical2.m_Restitution + perp1;
-                physical2.m_Velocity = ((parallel1 * v2_Coeff) - (parallel2 * v_SharedCoeff)) * physical1.m_Restitution + perp2;
+                physical1.m_Velocity = ((parallel2 * v1_Coeff) + (parallel1 * v_SharedCoeff)) + perp1;
+                physical2.m_Velocity = ((parallel1 * v2_Coeff) - (parallel2 * v_SharedCoeff)) + perp2;
             }
         });
     }

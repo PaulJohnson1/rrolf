@@ -9,8 +9,9 @@
 #include <Client/Simulation.hh>
 #include <Client/Socket.hh>
 #include <Client/Ui/Container.hh>
+#include <Client/Ui/MobButton.hh>
 #include <Client/Ui/LabeledButton.hh>
-#include <Client/Ui/DynamicButton.hh>
+#include <Client/Ui/PetalButton.hh>
 
 namespace app::ui
 {
@@ -37,52 +38,46 @@ namespace app::ui
         return button;
     }
     
-    DynamicButton *CreateLoadoutButton(Renderer *renderer, int32_t pos)
+    PetalButton *CreateLoadoutButton(Renderer *renderer, int32_t pos)
     {
-        DynamicButton *button = new DynamicButton(*renderer, 60, pos);
+        PetalButton *button = new PetalButton(*renderer, 60, pos);
         button->m_Fill = 0xffffffff;
         button->m_Stroke = 0xffcfcfcf;
         button->m_OnMouseOver = [&]() {
         };
         button->m_OnMouseMove = [button]()
         {
-            button->m_GlobalX = g_InputData->m_MouseX;
-            button->m_GlobalY = g_InputData->m_MouseY;
+
         };
         button->m_OnMouseDown = [button]()
         {
-            button->m_UseGlobalPosition = true;
-            button->m_GlobalX = g_InputData->m_MouseX;
-            button->m_GlobalY = g_InputData->m_MouseY;
         };
         button->m_OnMouseUp = [button]()
         {
-            button->m_UseGlobalPosition = false;
         };
         return button;
     }
-    DynamicButton *CreateSecondaryButton(Renderer *renderer, int32_t pos)
+    PetalButton *CreateSecondaryButton(Renderer *renderer, int32_t pos)
     {
-        DynamicButton *button = new DynamicButton(*renderer, 40, pos);
+        PetalButton *button = new PetalButton(*renderer, 40, pos);
         button->m_Fill = 0xffffffff;
         button->m_Stroke = 0xffcfcfcf;
         button->m_OnMouseOver = [&]() {
         };
         button->m_OnMouseMove = [button]()
         {
-            button->m_GlobalX = g_InputData->m_MouseX;
-            button->m_GlobalY = g_InputData->m_MouseY;
         };
         button->m_OnMouseDown = [button]()
         {
-            button->m_UseGlobalPosition = true;
-            button->m_GlobalX = g_InputData->m_MouseX;
-            button->m_GlobalY = g_InputData->m_MouseY;
         };
         button->m_OnMouseUp = [button]()
         {
-            button->m_UseGlobalPosition = false;
         };
         return button;
+    }
+
+    MobButton *CreateMobIcon(Renderer *renderer, uint32_t id, uint32_t rarity)
+    {
+        return new MobButton(*renderer, 50, id, rarity);
     }
 }

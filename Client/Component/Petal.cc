@@ -30,21 +30,21 @@ namespace app::component
     void Petal::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        Physical physical = m_Simulation->Get<Physical>(m_Parent);
 
-        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y);
-        if (!m_Simulation->HasComponent<component::Projectile>(m_Parent))
+        if (!m_Simulation->HasComponent<Projectile>(m_Parent))
         {   
-            component::Basic basic = m_Simulation->Get<component::Basic>(m_Parent);
+            Basic basic = m_Simulation->Get<Basic>(m_Parent);
             ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
         }
         else
             ctx->Rotate(physical.m_Angle);
 
-        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        ctx->Scale(1 + physical.m_ClientDeletionTick * 0.1);
 
-        ui::DrawPetal(ctx, m_Id, m_Simulation->Get<component::Life>(m_Parent).m_DamageAnimationTick);
+        ui::DrawPetal(ctx, m_Id, m_Simulation->Get<Life>(m_Parent).m_DamageAnimationTick);
     }
 }

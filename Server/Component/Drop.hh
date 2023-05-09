@@ -38,6 +38,7 @@ namespace app::component
         void Id(uint32_t);
         uint32_t Rarity() const;
         void Rarity(uint32_t);
+        void PickedUp();
 
         void Reset();
 

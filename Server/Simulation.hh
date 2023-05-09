@@ -117,7 +117,9 @@ namespace app
             {
                 component::Physical &physical = Get<component::Physical>(id);
                 if (physical.DeletionTick() == 0)
+                {
                     physical.DeletionTick(1);
+                }
             }
             else
                 if (std::find(m_PendingDeletions.begin(), m_PendingDeletions.end(), id) == m_PendingDeletions.end())

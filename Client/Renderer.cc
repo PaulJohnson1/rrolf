@@ -398,6 +398,15 @@ namespace app
         Arc(x, y, r, 0, M_PI * 2);
     }
 
+    void Renderer::Ellipse(float x, float y, float rx, float ry)
+    {
+#ifdef EMSCRIPTEN
+        EM_ASM({ Module.ctxs[$0].ellipse($1, $2, $3, $4, 0, 0, 6.283185307179586); }, m_ContextId, x, y, rx, ry);
+#else
+        m_CurrentPath.addCircle(x, y, r);
+#endif
+    }    
+
     void Renderer::FillRect(float x, float y, float w, float h)
     {
 #ifdef EMSCRIPTEN
