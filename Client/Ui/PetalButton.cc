@@ -48,7 +48,7 @@ namespace app::ui
             m_Renderer.ResetTransform();
             m_Renderer.Translate(m_GlobalX, m_GlobalY);
             {
-                component::PlayerInfo::LoadoutPetal &usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
+                component::LoadoutPetal &usingPos = m_Position < 10 ? playerInfo.m_Petals[m_Position]: playerInfo.m_SecondaryPetals[m_Position - 10];
                 uint32_t id = usingPos.m_Id;
                 if (id != 0)
                 {
@@ -61,12 +61,12 @@ namespace app::ui
                     m_PrevRarity = rarity;
 
                     m_LerpWidth = m_Width;
-                    usingPos.m_Reload.Tick(0.5);
+                    usingPos.m_Cooldown.Tick(0.5);
                     m_LerpWidth.Tick(0.2);
                     m_Renderer.Scale(m_Renderer.m_WindowScale * m_LerpWidth / 60);
 
                     if (m_Position < 10)
-                        ui::DrawLoadoutPetal(&m_Renderer, id, rarity, usingPos.m_Reload);
+                        ui::DrawLoadoutPetal(&m_Renderer, id, rarity, usingPos.m_Cooldown);
                     else
                         ui::DrawLoadoutPetal(&m_Renderer, id, rarity, 0.0f);
                     

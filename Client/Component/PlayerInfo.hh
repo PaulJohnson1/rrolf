@@ -19,16 +19,21 @@ namespace app
 
 namespace app::component
 {
+    class LoadoutPetal
+    {
+    public:
+        uint32_t m_Id = 0;
+        uint32_t m_Rarity = 0;
+        Lerp<float> m_Cooldown = Lerp<float>(0.0f);
+        float m_Health = 0.0f;
+
+        LoadoutPetal() {}
+
+        void UpdateFromBinary(bc::BinaryCoder &);
+    };
     class PlayerInfo
     {
     public:
-        struct LoadoutPetal
-        {
-            uint32_t m_Id;
-            uint32_t m_Rarity;
-            float m_Health;
-            Lerp<float> m_Reload = Lerp<float>(0.0f);
-        };
         bool m_HasPlayer;
         Entity m_Player;
         uint32_t m_SlotCount = 0;

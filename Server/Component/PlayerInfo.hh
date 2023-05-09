@@ -17,6 +17,73 @@ namespace app
 
 namespace app::component
 {
+    struct PlayerPetal
+    {
+        int32_t m_TicksUntilRespawn;
+        bool m_IsDead = true;
+        Entity m_SimulationId = 0; // m_Id is ambiguous with petal data id
+    };
+    class PetalSlot
+    {
+        uint32_t m_Id;
+        uint32_t m_Rarity;
+        float m_AverageCooldown = 0.0f;
+        float m_AverageHealth = 0.0f;
+    public:
+        using Type = PetalSlot;
+        uint64_t m_State = 0;
+        std::vector<PlayerPetal> m_Petals;
+
+        PetalSlot(uint32_t i, uint32_t r)
+            : m_Id(i),
+                m_Rarity(r)
+        {
+            m_Petals = {PETAL_DATA[i].m_Count[r], PlayerPetal{PETAL_DATA[i].m_ReloadTicks, true}};
+        }
+
+        PetalSlot(PetalSlot const &o)
+            : m_Id(o.m_Id),
+                m_Rarity(o.m_Rarity),
+                m_Petals(o.m_Petals)
+        {
+        }
+        PetalSlot(PetalSlot &&o)
+            : m_Id(o.m_Id),
+                m_Rarity(o.m_Rarity),
+                m_Petals(o.m_Petals)
+        {
+            m_State = 15;
+        }
+        PetalSlot &operator=(PetalSlot const &o)
+        {
+            m_Id = o.m_Id;
+            m_Rarity = o.m_Rarity;
+            m_Petals = o.m_Petals;
+            m_State = 15;
+
+            return *this;
+        }
+        PetalSlot &operator=(PetalSlot &&o)
+        {
+            m_Id = o.m_Id;
+            m_Rarity = o.m_Rarity;
+            m_Petals = o.m_Petals;
+            m_State = 15;
+
+            return *this;
+        }
+
+        uint32_t Id() const;
+        void Id(uint32_t);
+        uint32_t Rarity() const;
+        void Rarity(uint32_t);
+        void Cooldown(float);
+        void Health(float);
+
+        void Reset();
+
+        static void Write(bc::BinaryCoder &, Type const &, bool);
+    };
     class PlayerInfo
     {
         bool m_HasPlayer;
@@ -25,74 +92,34 @@ namespace app::component
         float m_CameraX = 0.0f;
         float m_CameraY = 0.0f;
         Simulation *m_Simulation;
+        uint32_t m_SlotCount = 5;
 
+        PetalSlot m_PetalSlots[10] = {
+            PetalSlot(PetalId::Basic, RarityId::Common),
+            PetalSlot(PetalId::Light, RarityId::Common),
+            PetalSlot(PetalId::Stinger, RarityId::Common),
+            PetalSlot(PetalId::Missile, RarityId::Common),
+            PetalSlot(PetalId::Pollen, RarityId::Common),
+            PetalSlot(PetalId::Leaf, RarityId::Ultra),
+            PetalSlot(PetalId::Rose, RarityId::Ultra),
+            PetalSlot(PetalId::Missile, RarityId::Ultra),
+            PetalSlot(PetalId::Missile, RarityId::Ultra),
+            PetalSlot(PetalId::Missile, RarityId::Ultra)
+        };
+        PetalSlot m_SecondarySlots[10] = {
+            PetalSlot(PetalId::Stinger, RarityId::Ultra),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(PetalId::None, RarityId::Common),
+        };
     public:
-        struct Petal
-        {
-            int32_t m_TicksUntilRespawn;
-            bool m_IsDead = true;
-            Entity m_SimulationId = 0; // m_Id is ambiguous with petal data id
-        };
 
-        struct PetalSlot
-        {
-            uint32_t m_Rarity;
-            PetalData const *m_Data;
-            std::vector<Petal> m_Petals;
-
-            PetalSlot(uint32_t r, PetalData const *d, std::vector<Petal> p)
-                : m_Rarity(r),
-                  m_Data(d),
-                  m_Petals(p)
-            {
-            }
-
-            PetalSlot(PetalSlot const &o)
-                : m_Rarity(o.m_Rarity),
-                  m_Data(o.m_Data),
-                  m_Petals(o.m_Petals)
-            {
-            }
-            PetalSlot(PetalSlot &&o)
-                : m_Rarity(o.m_Rarity),
-                  m_Data(o.m_Data),
-                  m_Petals(o.m_Petals)
-            {
-            }
-            PetalSlot &operator=(PetalSlot const &o)
-            {
-                m_Rarity = o.m_Rarity;
-                m_Data = o.m_Data;
-                m_Petals = o.m_Petals;
-
-                return *this;
-            }
-            PetalSlot &operator=(PetalSlot &&o)
-            {
-                m_Rarity = o.m_Rarity;
-                m_Data = o.m_Data;
-                m_Petals = o.m_Petals;
-
-                return *this;
-            }
-        };
-
-        static PetalSlot MakePetal(uint32_t id, uint32_t rarity)
-        {
-            return PetalSlot{rarity,
-                             &PETAL_DATA[id],
-                             {PETAL_DATA[id].m_Count[rarity], Petal{PETAL_DATA[id].m_ReloadTicks, true}}};
-        };
-        void ChangePetal(uint32_t pos, uint32_t id, uint32_t rarity)
-        {
-            PetalSlot &toChange = pos < 10 ? m_PetalSlots[pos] : m_SecondarySlots[pos - 10];
-            toChange.m_Rarity = rarity;
-            toChange.m_Petals.clear();
-            for (uint64_t i = 0; i < PETAL_DATA[id].m_Count[rarity]; ++i)
-                toChange.m_Petals.push_back(Petal{PETAL_DATA[id].m_ReloadTicks});
-            // toChange.m_Petals = {PETAL_DATA[id].m_Count[rarity], Petal{PETAL_DATA[id].m_ReloadTicks}};
-            toChange.m_Data = &PETAL_DATA[id]; // MIGHT HAVE A MEM LEAK HERE
-        };
 
         using Type = PlayerInfo;
 
@@ -101,31 +128,6 @@ namespace app::component
         uint32_t m_RotationCount = 0;
         uint64_t m_State = 0;
         uint8_t m_MouseButton = 0;
-        uint32_t m_SlotCount = 5;
-        PetalSlot m_PetalSlots[10] = {
-            MakePetal(PetalId::Basic, RarityId::Common),
-            MakePetal(PetalId::Light, RarityId::Common),
-            MakePetal(PetalId::Stinger, RarityId::Common),
-            MakePetal(PetalId::Missile, RarityId::Common),
-            MakePetal(PetalId::Pollen, RarityId::Common),
-            MakePetal(PetalId::Leaf, RarityId::Ultra),
-            MakePetal(PetalId::Rose, RarityId::Ultra),
-            MakePetal(PetalId::Missile, RarityId::Ultra),
-            MakePetal(PetalId::Missile, RarityId::Ultra),
-            MakePetal(PetalId::Missile, RarityId::Ultra)
-        };
-        PetalSlot m_SecondarySlots[10] = {
-            MakePetal(PetalId::Stinger, RarityId::Ultra),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-            MakePetal(PetalId::None, RarityId::Common),
-        };
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         std::set<Entity> m_EntitiesInView;
         std::vector<Entity> m_PendingDropPickups = {};
@@ -138,11 +140,19 @@ namespace app::component
         float CameraY() const;
         bool HasPlayer() const;
         Entity Player() const;
+        uint32_t SlotCount() const;
         void Fov(float);
         void CameraX(float);
         void CameraY(float);
         void HasPlayer(bool);
         void Player(Entity);
+        void SlotCount(uint32_t);
+
+        PetalSlot const &PrimaryPetal(uint32_t) const;
+        PetalSlot &PrimaryPetal(uint32_t);
+
+        PetalSlot const &SecondaryPetal(uint32_t) const;
+        PetalSlot &SecondaryPetal(uint32_t);
 
         void Reset();
 

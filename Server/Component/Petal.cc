@@ -24,9 +24,10 @@ namespace app::component
             return;
 
         PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
-        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_IsDead = true;
-        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_SimulationId = NULL_ENTITY;
-        playerInfo.m_PetalSlots[m_Slot].m_Petals[m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[m_Slot].m_Data->m_ReloadTicks; 
+        PetalSlot &slot = playerInfo.PrimaryPetal(m_Slot);
+        slot.m_Petals[m_InnerPos].m_IsDead = true;
+        slot.m_Petals[m_InnerPos].m_SimulationId = NULL_ENTITY;
+        slot.m_Petals[m_InnerPos].m_TicksUntilRespawn = PETAL_DATA[slot.Id()].m_ReloadTicks; 
     }
 
     void Petal::Reset()

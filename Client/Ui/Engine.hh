@@ -127,7 +127,7 @@ namespace app::ui
             Element *element = c->m_Elements[i];
             if (!element->m_Showing)
                 continue;
-            if (recursive && dynamic_cast<Container *>(element))
+            if (recursive && dynamic_cast<Container *>(element) != nullptr)
                 Resize<true>((Container *) element);
             float x = element->m_X + (element->m_HJustify - 1) * halfWidth;
             float y = element->m_Y + (element->m_VJustify - 1) * halfHeight;

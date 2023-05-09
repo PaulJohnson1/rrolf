@@ -35,24 +35,30 @@ namespace app::system
 
             Physical &flowerPhysical = m_Simulation.Get<Physical>(playerInfo.Player());
             uint32_t currRotPos = 0;
-            for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
+            for (uint64_t i = 0; i < playerInfo.SlotCount(); i++)
             {
-                PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
-                bool usingClump = petalSlot.m_Data->m_ClumpRadius != 0 && petalSlot.m_Petals.size() > 1;
+                PetalSlot &petalSlot = playerInfo.PrimaryPetal(i);
+                PetalData const &data = PETAL_DATA[petalSlot.Id()];
+
+                bool usingClump = data.m_ClumpRadius != 0 && petalSlot.m_Petals.size() > 1;
+                float maxCd = 0;
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
                 {
                     if (!usingClump || j == 0) ++currRotPos; //fix for clump
-                    PlayerInfo::Petal &petalInfo = petalSlot.m_Petals[j];
+                    PlayerPetal &petalInfo = petalSlot.m_Petals[j];
                     
                     if (petalInfo.m_IsDead)
                     {
                         petalInfo.m_TicksUntilRespawn--;
+                        float cd = (float) petalInfo.m_TicksUntilRespawn / data.m_ReloadTicks;
+                        if (cd > maxCd)
+                            maxCd = cd;
             
                         if (petalInfo.m_TicksUntilRespawn <= 0)
                         {
                             petalInfo.m_SimulationId = m_Simulation.Create();
                             petalInfo.m_IsDead = false;
-                            petalInfo.m_TicksUntilRespawn = petalSlot.m_Data->m_ReloadTicks;
+                            petalInfo.m_TicksUntilRespawn = data.m_ReloadTicks;
 
                             Physical &physical = m_Simulation.AddComponent<Physical>(petalInfo.m_SimulationId);
                             Petal &petalEntity = m_Simulation.AddComponent<Petal>(petalInfo.m_SimulationId);
@@ -62,13 +68,13 @@ namespace app::system
                             basic.m_Owner = entity;
                             basic.Team(0);
 
-                            petalEntity.Id(petalSlot.m_Data->m_Id);
-                            petalEntity.Rarity(petalSlot.m_Rarity);
+                            petalEntity.Id(petalSlot.Id());
+                            petalEntity.Rarity(petalSlot.Rarity());
                             petalEntity.m_Detached = false;
 
                             petalEntity.m_RotationPos = currRotPos - 1; //because it actually starts at 1, not 0
                             petalEntity.m_InnerAngle = j * 2 * M_PI / petalSlot.m_Petals.size();
-                            petalEntity.m_ClumpRadius = usingClump ? petalSlot.m_Data->m_ClumpRadius : 0;
+                            petalEntity.m_ClumpRadius = usingClump ? data.m_ClumpRadius : 0;
                             petalEntity.m_Slot = i;
                             petalEntity.m_InnerPos = j;
 
@@ -78,26 +84,27 @@ namespace app::system
                             physical.Y(flowerPhysical.Y() + extension.m_Y);
                             physical.m_Friction = 0.75;
 
-                            life.Health(petalSlot.m_Data->m_BaseHealth);
+                            life.Health(data.m_BaseHealth);
                             life.MaxHealth(life.Health());
 
-                            if (petalSlot.m_Data->m_ShootDelay != 0)
+                            if (data.m_ShootDelay != 0)
                             {
                                 Projectile &projectile = m_Simulation.AddComponent<Projectile>(petalInfo.m_SimulationId);
                                 projectile.m_TicksUntilDeath = 75;
-                                projectile.m_ShootDelay = petalSlot.m_Data->m_ShootDelay;
+                                projectile.m_ShootDelay = data.m_ShootDelay;
                                 physical.Angle(playerInfo.m_GlobalRotation + 2 * M_PI * petalEntity.m_RotationPos / playerInfo.m_RotationCount);
                             }
-                            if (petalSlot.m_Data->m_Heal != 0)
+                            if (data.m_Heal != 0)
                             {
                                 Heal &heal = m_Simulation.AddComponent<Heal>(petalInfo.m_SimulationId);
-                                heal.m_HealAmount = petalSlot.m_Data->m_Heal * PETAL_DAMAGE_FACTOR[petalSlot.m_Rarity];
+                                heal.m_HealAmount = data.m_Heal * PETAL_DAMAGE_FACTOR[petalSlot.Rarity()];
                             }
                         }
                     }
                     else
                         m_Simulation.Get<Petal>(petalInfo.m_SimulationId).m_RotationPos = currRotPos - 1;
                 }
+                petalSlot.Cooldown(maxCd);
             } 
             playerInfo.m_GlobalRotation += 0.1;
             playerInfo.m_RotationCount = currRotPos;
@@ -287,9 +294,11 @@ namespace app::system
         component::Petal &petal = m_Simulation.Get<component::Petal>(e);
         component::Projectile &projectile = m_Simulation.Get<component::Projectile>(e);
         component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_Simulation.Get<component::Basic>(e).m_Owner);
+
+        component::PetalSlot &slot = playerInfo.PrimaryPetal(petal.m_Slot);
+        slot.m_Petals[petal.m_InnerPos].m_IsDead = true;
+        slot.m_Petals[petal.m_InnerPos].m_SimulationId = NULL_ENTITY;
+        slot.m_Petals[petal.m_InnerPos].m_TicksUntilRespawn = PETAL_DATA[slot.Id()].m_ReloadTicks;
         petal.m_Detached = true;
-        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_IsDead = true;
-        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_SimulationId = NULL_ENTITY;
-        playerInfo.m_PetalSlots[petal.m_Slot].m_Petals[petal.m_InnerPos].m_TicksUntilRespawn = playerInfo.m_PetalSlots[petal.m_Slot].m_Data->m_ReloadTicks;
     }
 }

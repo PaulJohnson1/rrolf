@@ -106,7 +106,7 @@ namespace app
         }
 
         {
-            // auto t1 = std::chrono::high_resolution_clock::now();
+            auto t1 = std::chrono::high_resolution_clock::now();
             m_Velocity.Tick();
             m_CollisionDetector.Tick();
             m_PetalBehavior.Tick();
@@ -115,8 +115,8 @@ namespace app
             m_MapBoundaries.Tick();
             m_MobAi.Tick();
             m_Damage.Tick();
-            //auto t2 = std::chrono::high_resolution_clock::now();
-            //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
+            auto t2 = std::chrono::high_resolution_clock::now();
+            std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();

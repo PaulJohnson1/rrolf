@@ -40,21 +40,21 @@ namespace app::system
                 /*
                 ADD THE PETAL TO LOADOUT IF POSSIBLE
                 */
-                for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
+                for (uint64_t i = 0; i < playerInfo.SlotCount(); ++i)
                 {
-                    component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
-                    if (petalSlot.m_Data->m_Id == 0)
+                    component::PetalSlot &petalSlot = playerInfo.PrimaryPetal(i);
+                    if (petalSlot.Id() == 0)
                     {
-                        petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
+                        petalSlot = component::PetalSlot{drop.Id(), drop.Rarity()};
                         return;
                     }
                 }
-                for (uint64_t i = 0; i < playerInfo.m_SlotCount; ++i)
+                for (uint64_t i = 0; i < playerInfo.SlotCount(); ++i)
                 {
-                    component::PlayerInfo::PetalSlot &petalSlot = playerInfo.m_SecondarySlots[i];
-                    if (petalSlot.m_Data->m_Id == 0)
+                    component::PetalSlot &petalSlot = playerInfo.SecondaryPetal(i);
+                    if (petalSlot.Id() == 0)
                     {
-                        petalSlot = component::PlayerInfo::MakePetal(drop.Id(), drop.Rarity());
+                        petalSlot = component::PetalSlot{drop.Id(), drop.Rarity()};
                         return;
                     }
                 }

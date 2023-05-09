@@ -26,11 +26,11 @@ namespace app::component
             PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(basic.m_Owner);
             playerInfo.HasPlayer(false);
         
-            for (uint64_t i = 0; i < playerInfo.m_SlotCount; i++)
+            for (uint64_t i = 0; i < playerInfo.SlotCount(); i++)
             {
-                PlayerInfo::PetalSlot &petalSlot = playerInfo.m_PetalSlots[i];
+                PetalSlot &petalSlot = playerInfo.PrimaryPetal(i);
                 for (uint64_t j = 0; j < petalSlot.m_Petals.size(); j++)
-                    petalSlot.m_Petals[j].m_TicksUntilRespawn = petalSlot.m_Data->m_ReloadTicks;
+                    petalSlot.m_Petals[j].m_TicksUntilRespawn = PETAL_DATA[petalSlot.Id()].m_ReloadTicks;
             }
         }
     }

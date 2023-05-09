@@ -44,7 +44,7 @@ namespace app
         component::Basic &basic = m_Simulation.AddComponent<component::Basic>(playerInfo.Player());
         component::Life &life = m_Simulation.AddComponent<component::Life>(playerInfo.Player());
         component::Physical &physical = m_Simulation.AddComponent<component::Physical>(playerInfo.Player());
-        physical.Radius(200.0f);
+        physical.Radius(25.0f);
         physical.m_Restitution = 1;
         basic.m_Owner = m_PlayerInfo;
         life.m_Damage = 10;
@@ -157,23 +157,23 @@ namespace app
             //REMEMBER TO DELETE PETALS
             component::PlayerInfo &playerInfo = m_Simulation.Get<component::PlayerInfo>(m_PlayerInfo);
             uint32_t pos = coder.Read<bc::Uint8>();
-            component::PlayerInfo::PetalSlot &slot = playerInfo.m_PetalSlots[pos];
-            uint32_t id1 = slot.m_Data->m_Id; //not a reference
-            uint32_t rar1 = slot.m_Rarity; //not a reference
-            uint32_t id2 = playerInfo.m_SecondarySlots[pos].m_Data->m_Id; //not a reference
-            uint32_t rar2 = playerInfo.m_SecondarySlots[pos].m_Rarity; //not a reference
+            component::PetalSlot &slot = playerInfo.PrimaryPetal(pos);
+            uint32_t id1 = slot.Id(); //not a reference
+            uint32_t rar1 = slot.Rarity(); //not a reference
+            uint32_t id2 = playerInfo.SecondaryPetal(pos).Id(); //not a reference
+            uint32_t rar2 = playerInfo.SecondaryPetal(pos).Rarity(); //not a reference
             for (uint64_t i = 0; i < slot.m_Petals.size(); ++i)
             {
-                component::PlayerInfo::Petal &petal = slot.m_Petals[i];
+                component::PlayerPetal &petal = slot.m_Petals[i];
                 if (petal.m_IsDead)
                     continue;
                 m_Simulation.Get<component::Petal>(petal.m_SimulationId).m_Detached = true;
                 m_Simulation.RequestDeletion<true>(petal.m_SimulationId);
             }
 
-            playerInfo.m_PetalSlots[pos] = component::PlayerInfo::MakePetal(id2, rar2);
-            playerInfo.m_SecondarySlots[pos] = component::PlayerInfo::MakePetal(id1, rar1);
-            playerInfo.m_SlotCount = 10;
+            playerInfo.PrimaryPetal(pos) = component::PetalSlot{id2, rar2};
+            playerInfo.SecondaryPetal(pos) = component::PetalSlot{id1, rar1};
+            playerInfo.SlotCount(10);
         }
     }
 
