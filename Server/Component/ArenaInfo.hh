@@ -22,6 +22,7 @@ namespace app::component
         float m_MapSize = 1650.0f;
         Simulation *m_Simulation;
 
+        uint32_t m_Wave = 0;
         uint32_t m_MobCount[MobId::kMaxMobs][RarityId::kMaxRarities] = {};
 
     public:
@@ -34,9 +35,12 @@ namespace app::component
         ~ArenaInfo();
 
         float MapSize() const;
-        void MapSize(float);
-
+        uint32_t Wave() const;
         uint32_t MobCount(uint32_t, uint32_t) const;
+        void MapSize(float);
+        void Wave(uint32_t);
+        void IncrWave();
+
         void IncrMobCount(uint32_t, uint32_t);
         void DecrMobCount(uint32_t, uint32_t);
 

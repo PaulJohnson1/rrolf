@@ -14,6 +14,8 @@ namespace app::ui
         uint32_t m_Id = 0;
         uint32_t m_Rarity = 0;
         uint32_t m_Count = 0;
+        uint32_t m_HideAnimationTick = 5;
+        float m_ActualWidth;
         
         MobButton(Renderer &, float, uint32_t, uint32_t);
 

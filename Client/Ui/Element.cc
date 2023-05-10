@@ -21,6 +21,8 @@ namespace app::ui
 
     void Element::PreRender() 
     {
+        m_X.Tick(0.5);
+        m_Y.Tick(0.5);
         m_Renderer.Translate((m_X + (m_HJustify - 1) * m_Container->m_Width / 2) * m_Renderer.m_WindowScale,(m_Y + (m_VJustify - 1) * m_Container->m_Height / 2) * m_Renderer.m_WindowScale); // necessary btw
     }
 }

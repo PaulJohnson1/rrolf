@@ -23,6 +23,7 @@ namespace app::component
     public:
         Simulation *m_Simulation;
         float m_MapSize = 1650.0f;
+        uint32_t m_Wave = 0;
         uint32_t m_MobCount[MobId::kMaxMobs][RarityId::kMaxRarities] = {};
         
         Entity m_Parent;

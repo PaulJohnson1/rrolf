@@ -18,8 +18,8 @@ namespace app::ui
         bool m_Showing = true;
         int32_t m_HJustify = 1; // 1 for mid 2 for right
         int32_t m_VJustify = 1; // 1 for mid 2 for bottom
-        float m_X = 0.0f;
-        float m_Y = 0.0f;
+        Lerp<float> m_X = Lerp<float>(0.0f);
+        Lerp<float> m_Y = Lerp<float>(0.0f);
         float m_Width = 1.0f;
         float m_Height = 1.0f;
         float m_LineWidth = 1.0f;

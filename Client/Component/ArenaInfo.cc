@@ -24,6 +24,8 @@ namespace app::component
         if (updatedFields & 1)
             m_MapSize = coder.Read<bc::VarUint>();
         if (updatedFields & 2)
+            m_Wave = coder.Read<bc::VarUint>();
+        if (updatedFields & 4)
             for (uint32_t id = 0; id < MobId::kMaxMobs; ++id)
                 for (uint32_t rar = 0; rar < RarityId::kMaxRarities; ++rar)
                     m_MobCount[id][rar] = coder.Read<bc::VarUint>();        
