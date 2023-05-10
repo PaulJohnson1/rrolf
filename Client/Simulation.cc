@@ -146,7 +146,7 @@ namespace app
                 ui::MakeVContainer<20, 20>({
                     new ui::Text(*renderer, "Wave 69", 0xffffffff, 30),
                     ui::MakeHContainer<20, 10, 0>({
-                        ui::MakeVContainer<-40, 0, 0>({
+                        ui::MakeVContainer<-35, 0, 0>({
                             ui::CreateMobIcon(renderer,0,0),
                             ui::CreateMobIcon(renderer,0,1),                           
                             ui::CreateMobIcon(renderer,0,2),
@@ -156,7 +156,7 @@ namespace app
                             ui::CreateMobIcon(renderer,0,6),
                             ui::CreateMobIcon(renderer,0,7),
                         }),
-                        ui::MakeVContainer<-40, 0, 0>({
+                        ui::MakeVContainer<-35, 0, 0>({
                             ui::CreateMobIcon(renderer,1,0),
                             ui::CreateMobIcon(renderer,1,1),
                             ui::CreateMobIcon(renderer,1,2),
@@ -166,7 +166,7 @@ namespace app
                             ui::CreateMobIcon(renderer,1,6),
                             ui::CreateMobIcon(renderer,1,7)
                         }),
-                        ui::MakeVContainer<-40, 0, 0>({
+                        ui::MakeVContainer<-35, 0, 0>({
                             ui::CreateMobIcon(renderer,2,0),
                             ui::CreateMobIcon(renderer,2,1),
                             ui::CreateMobIcon(renderer,2,2),
@@ -176,7 +176,7 @@ namespace app
                             ui::CreateMobIcon(renderer,2,6),
                             ui::CreateMobIcon(renderer,2,7)
                         }),
-                        ui::MakeVContainer<-40, 0, 0>({
+                        ui::MakeVContainer<-35, 0, 0>({
                             ui::CreateMobIcon(renderer,3,0),
                             ui::CreateMobIcon(renderer,3,1),
                             ui::CreateMobIcon(renderer,3,2),
@@ -186,7 +186,7 @@ namespace app
                             ui::CreateMobIcon(renderer,3,6),
                             ui::CreateMobIcon(renderer,3,7)
                         }),
-                        ui::MakeVContainer<-40, 0, 0>({
+                        ui::MakeVContainer<-35, 0, 0>({
                             ui::CreateMobIcon(renderer,4,0),
                             ui::CreateMobIcon(renderer,4,1),
                             ui::CreateMobIcon(renderer,4,2),
@@ -256,7 +256,7 @@ namespace app
         float time = GetTime();
         m_TickTime = time - m_LastTick;
         m_LastTick = time;
-        if (m_PlayerInfo != (Entity)-1)
+        if (m_PlayerInfo != NULL_ENTITY)
         {
             if (!m_HasHadPlayer && Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer) m_HasHadPlayer = true;
             m_InterpolationSystem.Tick();
@@ -269,7 +269,8 @@ namespace app
             m_UiElements.m_TitleScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
             m_UiElements.m_DeathScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
 
-            ui::Resize<true>(m_UiElements.m_Loadout);
+            ui::Resize(m_UiElements.m_Loadout);
+            ui::Resize(m_UiElements.m_Test);
             return;
         }
     }

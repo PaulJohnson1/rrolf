@@ -13,9 +13,11 @@ namespace app::ui
         uint32_t m_Position;
         uint32_t m_Id = 0;
         uint32_t m_Rarity = 0;
+        uint32_t m_Count = 0;
         
         MobButton(Renderer &, float, uint32_t, uint32_t);
 
-        void Render();
+        virtual void Render() override;
+        virtual void Idle() override;
     };
 }

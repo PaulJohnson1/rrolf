@@ -15,6 +15,7 @@ namespace app::component
 
     Mob::~Mob()
     {
+        m_Simulation->Get<component::ArenaInfo>(m_Simulation->m_Arena).DecrMobCount(m_Id, m_Rarity);
     }
 
     void Mob::Reset()
@@ -49,12 +50,15 @@ namespace app::component
         Life &life = m_Simulation->Get<Life>(m_Parent);
         Physical &physical = m_Simulation->Get<Physical>(m_Parent);
         physical.Radius(MOB_DATA[m_Id].m_BaseSize * MOB_SCALE_FACTOR[v]);
-        physical.m_Mass = MOB_SCALE_FACTOR[v] * 100000000000000000000.0f;
+        physical.m_Mass = MOB_SCALE_FACTOR[v] * 1000.0f;
         life.MaxHealth(MOB_DATA[m_Id].m_BaseHealth * MOB_HEALTH_FACTOR[v]);
         life.m_Damage = MOB_DATA[m_Id].m_BaseDamage * MOB_DAMAGE_FACTOR[v];
+
+        m_Simulation->Get<component::ArenaInfo>(m_Simulation->m_Arena).IncrMobCount(m_Id, v);
         if (v == m_Rarity)
             return;
         m_Rarity = v;
         m_State |= 2;
+
     }
 }

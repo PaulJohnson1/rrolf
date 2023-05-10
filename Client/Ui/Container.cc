@@ -23,13 +23,30 @@ namespace app::ui
             m_Renderer.BeginPath();
             m_Renderer.FillRect(-m_Width / 2, -m_Height / 2, m_Width, m_Height);
         }
-        for (uint64_t i = 0; i < m_Elements.size(); i++)
+        bool shouldRender = false;
+        for (uint64_t i = 0; i < m_Elements.size(); ++i)
         {
             ui::Element *element = m_Elements[i];
             if (element->m_Showing)
+            {
                 element->Render();
+                shouldRender = true;
+            }
             else
                 element->Idle();
+        }
+        m_Showing = shouldRender;
+    }
+
+    void Container::Idle()
+    {
+        for (uint64_t i = 0; i < m_Elements.size(); ++i)
+        {
+            if (m_Elements[i]->m_Showing)
+            {
+                m_Showing = true;
+                return;
+            }
         }
     }
 }

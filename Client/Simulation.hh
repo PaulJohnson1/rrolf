@@ -61,7 +61,7 @@ namespace app
         float m_TickTime = 0;
         class Renderer *m_Renderer;
         class Socket *m_Socket;
-        Entity m_PlayerInfo = -1;
+        Entity m_PlayerInfo = NULL_ENTITY;
         bool m_HasHadPlayer = false;
         struct GameUi
         {

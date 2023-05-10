@@ -19,7 +19,7 @@ namespace app::ui
         
         PetalButton(Renderer &, float, uint32_t);
 
-        void Render();
-        void Idle();
+        virtual void Render() override;
+        virtual void Idle() override;
     };
 }

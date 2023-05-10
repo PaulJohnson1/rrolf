@@ -4,6 +4,8 @@
 
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
+
+#include <Shared/Entity.hh>
 #include <Shared/StaticData.hh>
 
 #include <Client/Ui/RenderFunctions.hh>
@@ -19,7 +21,7 @@ namespace app::ui
     void PetalButton::Render()
     {
         Guard g(&m_Renderer);
-        if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+        if (g_Simulation->m_PlayerInfo != NULL_ENTITY && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
         {
             component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
             uint32_t count = playerInfo.m_SlotCount;
