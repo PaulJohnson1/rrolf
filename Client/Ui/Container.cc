@@ -43,10 +43,9 @@ namespace app::ui
         for (uint64_t i = 0; i < m_Elements.size(); ++i)
         {
             if (m_Elements[i]->m_Showing)
-            {
                 m_Showing = true;
-                return;
-            }
+            else
+                m_Elements[i]->Idle();
         }
     }
 }

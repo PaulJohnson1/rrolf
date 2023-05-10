@@ -31,7 +31,7 @@ namespace app::component
             coder.Write<bc::VarUint>(0);
             return;
         }
-        uint32_t state = isCreation ? 0b11 : entity.m_State;
+        uint64_t state = isCreation ? 0b11 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)

@@ -171,8 +171,8 @@ namespace app
                 m_Simulation.RequestDeletion<true>(petal.m_SimulationId);
             }
 
-            playerInfo.PrimaryPetal(pos) = component::PetalSlot{id2, rar2};
-            playerInfo.SecondaryPetal(pos) = component::PetalSlot{id1, rar1};
+            playerInfo.PrimaryPetal(pos) = component::PetalSlot{&playerInfo, id2, rar2};
+            playerInfo.SecondaryPetal(pos) = component::PetalSlot{&playerInfo, id1, rar1};
             playerInfo.SlotCount(10);
         }
     }

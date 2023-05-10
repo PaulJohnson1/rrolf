@@ -45,7 +45,7 @@ namespace app::system
                     component::PetalSlot &petalSlot = playerInfo.PrimaryPetal(i);
                     if (petalSlot.Id() == 0)
                     {
-                        petalSlot = component::PetalSlot{drop.Id(), drop.Rarity()};
+                        petalSlot = component::PetalSlot{&playerInfo, drop.Id(), drop.Rarity()};
                         return;
                     }
                 }
@@ -54,7 +54,7 @@ namespace app::system
                     component::PetalSlot &petalSlot = playerInfo.SecondaryPetal(i);
                     if (petalSlot.Id() == 0)
                     {
-                        petalSlot = component::PetalSlot{drop.Id(), drop.Rarity()};
+                        petalSlot = component::PetalSlot{&playerInfo, drop.Id(), drop.Rarity()};
                         return;
                     }
                 }

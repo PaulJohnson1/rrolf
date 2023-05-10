@@ -86,7 +86,7 @@ namespace app::ui
 
     void PetalButton::Idle()
     {
-        if (g_Simulation->m_PlayerInfo != (Entity)-1 && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+        if (g_Simulation->m_PlayerInfo != NULL_ENTITY && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
         {
             component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
             uint32_t count = playerInfo.m_SlotCount;

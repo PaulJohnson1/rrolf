@@ -88,7 +88,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 10)
+        if (mobCount < 5)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -101,7 +101,7 @@ namespace app
             physical.Y(p.m_Y);
             basic.Team(1); // arena team
             mob.Id(rand() % 5); // baby ant
-            mob.Rarity(rand() % 7);
+            mob.Rarity(rand() % 3);
             //mob.Rarity(5);
         }
 
@@ -116,7 +116,7 @@ namespace app
             m_MobAi.Tick();
             m_Damage.Tick();
             auto t2 = std::chrono::high_resolution_clock::now();
-            std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
+            //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();

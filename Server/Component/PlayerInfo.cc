@@ -1,6 +1,6 @@
 #include <Server/Component/PlayerInfo.hh>
 
-#include <cstdint>
+#include <iostream>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -31,7 +31,7 @@ namespace app::component
 
     void PlayerInfo::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b111111 : entity.m_State;
+        uint64_t state = isCreation ? 0b1111111 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)
@@ -46,13 +46,12 @@ namespace app::component
             coder.Write<bc::VarUint>(entity.m_Player);
         if (state & 32)
             coder.Write<bc::VarUint>(entity.m_SlotCount);
-        for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
+        if (state & 64)
         {
-            coder.Write<PetalSlot>(entity.m_PetalSlots[i], isCreation);
-        }
-        for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
-        {
-            coder.Write<PetalSlot>(entity.m_SecondarySlots[i], isCreation);
+            for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
+                coder.Write<PetalSlot>(entity.m_PetalSlots[i], isCreation);
+            for (uint64_t i = 0; i < entity.m_SlotCount; ++i)
+                coder.Write<PetalSlot>(entity.m_SecondarySlots[i], isCreation);
         }
         for (uint64_t i = 0; i < PetalId::kMaxPetals * RarityId::kMaxRarities; ++i)
             coder.Write<bc::VarUint>(entity.m_Inventory[i]);
@@ -113,9 +112,10 @@ namespace app::component
         {
             for (uint64_t i = m_SlotCount; i < v; ++i)
             {
-                m_PetalSlots[v].m_State = 15; 
-                m_SecondarySlots[v].m_State = 15;
+                m_PetalSlots[i].m_State = 15; 
+                m_SecondarySlots[i].m_State = 15;
             }
+            std::cout << "lol it worked? maybe\n";
         }
         m_SlotCount = v;
         m_State |= 32;
@@ -134,7 +134,7 @@ namespace app::component
 
     void PetalSlot::Write(bc::BinaryCoder &coder, Type const &entity, bool isCreation)
     {
-        uint32_t state = isCreation ? 0b1111 : entity.m_State;
+        uint64_t state = isCreation ? 0b1111 : entity.m_State;
         coder.Write<bc::VarUint>(state);
 
         if (state & 1)
@@ -156,6 +156,7 @@ namespace app::component
             return;
         m_Id = v;
         m_State |= 1;
+        m_PlayerInfo->m_State |= 64;
     }
 
     void PetalSlot::Rarity(uint32_t v)
@@ -164,6 +165,7 @@ namespace app::component
             return;
         m_Rarity = v;
         m_State |= 2;
+        m_PlayerInfo->m_State |= 64;
     }
 
     void PetalSlot::Cooldown(float v)
@@ -172,6 +174,7 @@ namespace app::component
             return;
         m_AverageCooldown = v;
         m_State |= 4;
+        m_PlayerInfo->m_State |= 64;
     }
 
 
@@ -181,5 +184,6 @@ namespace app::component
             return;
         m_AverageHealth = v;
         m_State |= 8;
+        m_PlayerInfo->m_State |= 64;
     }
 }

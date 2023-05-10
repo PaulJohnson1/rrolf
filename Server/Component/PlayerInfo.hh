@@ -17,6 +17,8 @@ namespace app
 
 namespace app::component
 {
+    class PlayerInfo;
+
     struct PlayerPetal
     {
         int32_t m_TicksUntilRespawn;
@@ -31,24 +33,29 @@ namespace app::component
         float m_AverageHealth = 0.0f;
     public:
         using Type = PetalSlot;
+        PlayerInfo *m_PlayerInfo;
         uint64_t m_State = 0;
+
         std::vector<PlayerPetal> m_Petals;
 
-        PetalSlot(uint32_t i, uint32_t r)
-            : m_Id(i),
+        PetalSlot(PlayerInfo *p, uint32_t i, uint32_t r)
+            :   m_PlayerInfo(p), 
+                m_Id(i),
                 m_Rarity(r)
         {
             m_Petals = {PETAL_DATA[i].m_Count[r], PlayerPetal{PETAL_DATA[i].m_ReloadTicks, true}};
         }
 
         PetalSlot(PetalSlot const &o)
-            : m_Id(o.m_Id),
+            :   m_PlayerInfo(o.m_PlayerInfo),
+                m_Id(o.m_Id),
                 m_Rarity(o.m_Rarity),
                 m_Petals(o.m_Petals)
         {
         }
         PetalSlot(PetalSlot &&o)
-            : m_Id(o.m_Id),
+            :   m_PlayerInfo(o.m_PlayerInfo),   
+                m_Id(o.m_Id),
                 m_Rarity(o.m_Rarity),
                 m_Petals(o.m_Petals)
         {
@@ -56,6 +63,7 @@ namespace app::component
         }
         PetalSlot &operator=(PetalSlot const &o)
         {
+            m_PlayerInfo = o.m_PlayerInfo;
             m_Id = o.m_Id;
             m_Rarity = o.m_Rarity;
             m_Petals = o.m_Petals;
@@ -65,6 +73,7 @@ namespace app::component
         }
         PetalSlot &operator=(PetalSlot &&o)
         {
+            m_PlayerInfo = o.m_PlayerInfo;
             m_Id = o.m_Id;
             m_Rarity = o.m_Rarity;
             m_Petals = o.m_Petals;
@@ -95,28 +104,28 @@ namespace app::component
         uint32_t m_SlotCount = 5;
 
         PetalSlot m_PetalSlots[10] = {
-            PetalSlot(PetalId::Basic, RarityId::Common),
-            PetalSlot(PetalId::Light, RarityId::Common),
-            PetalSlot(PetalId::Stinger, RarityId::Common),
-            PetalSlot(PetalId::Missile, RarityId::Common),
-            PetalSlot(PetalId::Pollen, RarityId::Common),
-            PetalSlot(PetalId::Leaf, RarityId::Ultra),
-            PetalSlot(PetalId::Rose, RarityId::Ultra),
-            PetalSlot(PetalId::Missile, RarityId::Ultra),
-            PetalSlot(PetalId::Missile, RarityId::Ultra),
-            PetalSlot(PetalId::Missile, RarityId::Ultra)
+            PetalSlot(this, PetalId::Basic, RarityId::Common),
+            PetalSlot(this, PetalId::Light, RarityId::Common),
+            PetalSlot(this, PetalId::Stinger, RarityId::Common),
+            PetalSlot(this, PetalId::Missile, RarityId::Common),
+            PetalSlot(this, PetalId::Pollen, RarityId::Common),
+            PetalSlot(this, PetalId::Leaf, RarityId::Ultra),
+            PetalSlot(this, PetalId::Rose, RarityId::Ultra),
+            PetalSlot(this, PetalId::Missile, RarityId::Ultra),
+            PetalSlot(this, PetalId::Missile, RarityId::Ultra),
+            PetalSlot(this, PetalId::Missile, RarityId::Ultra)
         };
         PetalSlot m_SecondarySlots[10] = {
-            PetalSlot(PetalId::Stinger, RarityId::Ultra),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
-            PetalSlot(PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::Stinger, RarityId::Ultra),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
+            PetalSlot(this, PetalId::None, RarityId::Common),
         };
     public:
 
