@@ -1,7 +1,6 @@
 #include <Server/Component/Flower.hh>
 
 #include <cstdint>
-#include <iostream>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>

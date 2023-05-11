@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fenv.h>
 #include <stdlib.h>
+#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -31,7 +32,7 @@ int main()
     assert(curl_easy_setopt(curl, CURLOPT_POST, 1) == CURLE_OK);
     assert(curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{}") == CURLE_OK);
     assert(curl_easy_setopt(curl, CURLOPT_URL, "https://matchmaker.api.rivet.gg/v1/lobbies/ready") == CURLE_OK);
-    std::cerr << "\n\n\n" << std::to_string(curl_easy_perform(curl)) << "\n\n\n";
+    assert(curl_easy_perform(curl) == CURLE_OK);
     curl_easy_cleanup(curl);
     curl_slist_free_all(list);
 #endif

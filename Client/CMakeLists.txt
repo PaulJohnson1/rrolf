@@ -34,6 +34,7 @@ set(SOURCES
     Ui/Text.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc
+    ../Shared/HttpRequest.cc
     ../Shared/StaticData.cc
 )
 

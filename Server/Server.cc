@@ -2,10 +2,13 @@
 
 #include <thread>
 #include <iostream>
+#include <cassert>
 
 #include <curl/curl.h>
+#include <libwebsockets.h>
 
 #include <Server/Simulation.hh>
+#include <Shared/HttpRequest.hh>
 
 namespace app
 {
@@ -18,14 +21,16 @@ namespace app
         memset(&protocol, 0, sizeof(protocol));
 
         protocol.name = "game";
-            protocol.callback = &Server::OnClientEvent;
+        protocol.callback = &Server::OnClientEvent;
 
         info.port = 8000;
         info.protocols = &protocol;
         info.gid = -1;
         info.uid = -1;
+        info.user = this;
 
         m_Server = lws_create_context(&info);
+        assert(m_Server);
     }
 
     void Server::Tick()
@@ -51,48 +56,83 @@ namespace app
 
     int Server::OnClientEvent(lws *socket, lws_callback_reasons reason, void *user, void *data, size_t size)
     {
+        Server *_this = (Server *)lws_context_user(lws_get_context(socket));
+        std::cout << "client event reason: " << std::to_string(reason) << '\n';
         switch (reason)
         {
         case LWS_CALLBACK_ESTABLISHED:
-            std::cout << "client connected\n";
+        {
+#ifdef RIVET_PRODUCTION_BUILD
+            char uri[500];
+            memset(uri, 0, sizeof(uri));
+            lws_hdr_copy(socket, uri, 500, WSI_TOKEN_GET_URI);
+            if (!IsSafeJson(uri))
+                return;
+#endif
+            Client *client = new Client(socket, _this->m_Simulation);
+#ifdef RIVET_PRODUCTION_BUILD
+            client->m_Token = std::string(uri);
+            char const *rivetToken = getenv("RIVET_LOBBY_TOKEN");
+            assert(rivetToken);
+            std::cout << "player connected " << client->m_Token << '\n';
+            PerformHttpRequest("https://matchmaker.api.rivet.gg/v1/players/connected",
+                               {{"Authorization", std::string("Bearer ") + rivetToken}},
+                               "{\"player_token\":\"" + client->m_Token + "\"}",
+                               true);
+            // curl_slist *list = nullptr;
+            // CURL *curl = curl_easy_init();
+            // assert(curl);
+            // char header[500] = "Authorization: Bearer ";
+            // char uri[500];
+            // memset(uri, 0, sizeof(uri));
+            // lws_hdr_copy(socket, uri, 500, WSI_TOKEN_GET_URI);
+            // std::cout << uri << '\n';
+            // client->m_Token = std::string(uri).substr(1);
+            // std::string body = "{\"player_token\":\"" + client->m_Token + "\"}";
+            // list = curl_slist_append(list, strcat(header, rivetToken));
+            // assert(curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_POST, 1) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_URL, "https://matchmaker.api.rivet.gg/v1/players/connected") == CURLE_OK);
+            // assert(curl_easy_perform(curl) == CURLE_OK);
+            // curl_easy_cleanup(curl);
+            // curl_slist_free_all(list);
+#endif
+
+            _this->m_Clients.push_back(client);
             break;
+        }
         case LWS_CALLBACK_RECEIVE:
             std::cout << "client recieve packet\n";
             break;
         case LWS_CALLBACK_CLOSED:
-            std::cout << "client closed\n";
+        {
+            std::lock_guard<std::mutex> l(_this->m_Mutex);
+#ifdef RIVET_PRODUCTION_BUILD
+            // char const *rivetToken = getenv("RIVET_LOBBY_TOKEN");
+            // std::cout << "player disconnected " << rivetToken << '\n';
+            // curl_slist *list = nullptr;
+            // CURL *curl = curl_easy_init();
+            // assert(curl);
+            // char header[500] = "Authorization: Bearer ";
+            // std::string body = "{\"player_token\":\"" + client->m_Token + "\"}";
+            // list = curl_slist_append(list, strcat(header, rivetToken));
+            // assert(curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_POST, 1) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()) == CURLE_OK);
+            // assert(curl_easy_setopt(curl, CURLOPT_URL, "https://matchmaker.api.rivet.gg/v1/players/disconnected") == CURLE_OK);
+            // assert(curl_easy_perform(curl) == CURLE_OK);
+            // curl_easy_cleanup(curl);
+            // curl_slist_free_all(list);
+#endif
             break;
+        }
         default:
             break;
         }
 
         return 0;
     }
-
-    //     void Server::OnClientConnect(websocketpp::connection_hdl hdl)
-    //     {
-    // #ifdef RIVET_PRODUCTION_BUILD
-    //         char const *rivetToken = getenv("RIVET_LOBBY_TOKEN");
-    //         assert(rivetToken);
-    //         std::cout << "player connected " << rivetToken << '\n';
-    //         curl_slist *list = nullptr;
-    //         CURL *curl = curl_easy_init();
-    //         assert(curl);
-    //         char header[500] = "Authorization: Bearer ";
-    //         std::string body = "{\"player_token\":\"" + m_Server.get_con_from_hdl(hdl)->get_uri()->get_resource().substr(1) + "\"}";
-    //         list = curl_slist_append(list, strcat(header, rivetToken));
-    //         assert(curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list) == CURLE_OK);
-    //         assert(curl_easy_setopt(curl, CURLOPT_POST, 1) == CURLE_OK);
-    //         assert(curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str()) == CURLE_OK);
-    //         assert(curl_easy_setopt(curl, CURLOPT_URL, "https://matchmaker.api.rivet.gg/v1/players/connected") == CURLE_OK);
-    //         assert(curl_easy_perform(curl) == CURLE_OK);
-    //         curl_easy_cleanup(curl);
-    //         curl_slist_free_all(list);
-    // #endif
-
-    //         m_Clients.push_back(new Client(hdl, m_Simulation));
-    //     }
-
     //     void Server::OnClientDisconnect(websocketpp::connection_hdl hdl)
     //     {
     //         std::lock_guard<std::mutex> l(m_Mutex);

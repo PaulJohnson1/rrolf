@@ -20,6 +20,7 @@
 #include <Client/Simulation.hh>
 #include <Client/Socket.hh>
 #include <Client/Renderer.hh>
+#include <Shared/HttpRequest.hh>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -220,6 +221,8 @@ int main()
 {
     // feenableexcept(FE_INVALID);
     using namespace app;
+
+    PerformHttpRequest("test", {{"testName", "testValue"}}, "post data test", true);
 
 #ifdef EMSCRIPTEN
     Initialize();

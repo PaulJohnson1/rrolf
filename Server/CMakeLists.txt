@@ -34,6 +34,7 @@ set(SOURCES
     Vector.cc
     ThirdParty/BinaryCoder/BinaryCoder.cc
     ThirdParty/BinaryCoder/NativeTypes.cc
+    ../Shared/HttpRequest.cc
     ../Shared/StaticData.cc
 )
 

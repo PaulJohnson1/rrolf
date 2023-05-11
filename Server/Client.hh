@@ -1,6 +1,9 @@
 #pragma once
 
 #include <mutex>
+#ifdef RIVET_PRODUCTION_BUILD
+#include <string>
+#endif
 
 #include <libwebsockets.h>
 
@@ -24,7 +27,9 @@ namespace app
     public:
         Entity m_PlayerInfo;
         lws *m_Socket;
-        std::mutex m_Mutex;
+#ifdef RIVET_PRODUCTION_BUILD
+        std::string m_Token;
+#endif
 
         Client(lws *, Simulation &);
         ~Client();
