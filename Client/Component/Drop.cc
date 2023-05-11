@@ -5,6 +5,7 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
@@ -40,7 +41,7 @@ namespace app::component
         float radius = physical.m_Radius * (1 - physical.m_ClientDeletionTick * 0.2);
         ctx->Scale(radius / 25, radius / 25);
         ctx->Rotate(radius + 0.1);
-        float sc = 0.05 * std::sin((m_Simulation->GetTime() - basic.m_CreationTime) * 0.01) + 1;
+        float sc = 0.05 * std::sin((g_Game->GetTime() - basic.m_CreationTime) * 0.01) + 1;
         ctx->Scale(sc);
         ui::DrawPetalWithBackground(ctx, m_Id, m_Rarity);
     }

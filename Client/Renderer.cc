@@ -26,8 +26,6 @@ void SkDebugf(const char format[], ...)
 #include <Client/Ui/Container.hh>
 #include <Shared/Assert.hh>
 
-app::Renderer *g_Renderer = nullptr;
-app::InputData *g_InputData = nullptr;
 
 namespace app
 {
@@ -49,11 +47,8 @@ namespace app
     Renderer::~Renderer()
     {
 #ifndef EMSCRIPTEN
-        if (this != g_Renderer)
-        {
-            delete m_Canvas;
-            delete m_Bitmap;
-        }
+        delete m_Canvas;
+        delete m_Bitmap;
 #endif
     }
 

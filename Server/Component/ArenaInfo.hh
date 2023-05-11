@@ -29,6 +29,7 @@ namespace app::component
         using Type = ArenaInfo;
         
         Entity m_Parent;
+        uint32_t m_TotalMobCount = 0;
         uint64_t m_State = 0;
 
         ArenaInfo(Entity, Simulation *);

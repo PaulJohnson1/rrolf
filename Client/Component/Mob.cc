@@ -6,6 +6,7 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 #include <Shared/StaticData.hh>
@@ -36,7 +37,7 @@ namespace app::component
         Physical physical = m_Simulation->Get<Physical>(m_Parent);
 
         ctx->Translate(physical.m_X, physical.m_Y);
-        float seed = std::sin(m_Simulation->GetTime() / 100);
+        float seed = std::sin(g_Game->GetTime() / 100);
         float scale = MOB_SCALE_FACTOR[m_Rarity];
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
         ctx->Scale(scale * (1 + physical.m_ClientDeletionTick * 0.1));

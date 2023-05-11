@@ -102,6 +102,7 @@ namespace app
             basic.Team(1); // arena team
             mob.Id(rand() % 5); // baby ant
             mob.Rarity(rand() % 3);
+            Get<component::ArenaInfo>(m_Arena).IncrWave();
             //mob.Rarity(5);
         }
 

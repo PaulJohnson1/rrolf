@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 
+#include <Client/Game.hh>
 #include <Client/Ui/Element.hh>
 
 namespace app::ui
@@ -11,7 +12,7 @@ namespace app::ui
     template <int32_t innerSpacing, int32_t outerSpacing, int32_t vJustify = 1>
     Container *MakeHContainer(std::vector<Element *> const &elements)
     {
-        Container *c = new Container(*g_Renderer);
+        Container *c = new Container(*g_Game->m_Renderer);
         c->m_X = 0;
         c->m_Y = 0;
         float width = outerSpacing;
@@ -45,7 +46,7 @@ namespace app::ui
     template <int32_t innerSpacing, int32_t outerSpacing, int32_t hJustify = 1>
     Container *MakeVContainer(std::vector<Element *> const &elements)
     {
-        Container *c = new Container(*g_Renderer);
+        Container *c = new Container(*g_Game->m_Renderer);
         c->m_X = 0;
         c->m_Y = 0;
         float width = 0;
@@ -116,7 +117,7 @@ namespace app::ui
     
     Container *Add(Container *c)
     {
-        g_Renderer->m_Container.m_Elements.push_back(c);
+        g_Game->m_Renderer->m_Container.m_Elements.push_back(c);
         return c;
     }
 

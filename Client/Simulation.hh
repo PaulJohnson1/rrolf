@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <optional>
 
 #include <Client/Component/Ai.hh>
 #include <Client/Component/ArenaInfo.hh>
@@ -15,26 +14,12 @@
 #include <Client/Component/Physical.hh>
 #include <Client/Component/PlayerInfo.hh>
 #include <Client/Component/Projectile.hh>
-#include <Client/System/Interpolation.hh>
-#include <Client/System/GameRenderer.hh>
 #include <Shared/Entity.hh>
-#include <Client/Util/Lerp.hh>
-
-#include <Client/Ui/Container.hh>
-
-namespace app
-{
-    class Simulation;
-}
-
-extern app::Simulation *g_Simulation;
 
 namespace app
 {
     class Simulation
     {
-        system::Interpolation m_InterpolationSystem;
-        system::GameRenderer m_RendererSystem;
 
         bool m_EntityTracker[MAX_ENTITY_COUNT];
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
@@ -57,29 +42,16 @@ namespace app
 #undef RROLF_COMPONENT_ENTRY
 
     public:
-        float m_LastTick = 0;
-        float m_TickTime = 0;
-        class Renderer *m_Renderer;
-        class Socket *m_Socket;
         Entity m_PlayerInfo = NULL_ENTITY;
-        bool m_HasHadPlayer = false;
-        struct GameUi
-        {
-            ui::Container *m_TitleScreen;
-            ui::Container *m_DeathScreen;
-            ui::Container *m_Loadout;
-            ui::Container *m_Test;
-        };
-        GameUi m_UiElements;
 
-        Simulation(class Renderer *);
-
-        float GetTime();
-        void ReadBinary(uint8_t *);
+        Simulation();
+        Simulation(Simulation const &) = delete;
+        Simulation(Simulation &&) = delete;
+        Simulation &operator=(Simulation const &) = delete;
+        Simulation &operator=(Simulation &&) = delete;
         void ReadEntity(bc::BinaryCoder &);
         Entity CreateEntityWithId(Entity);
         void Remove(Entity);
-        void TickRenderer();
         template <typename T>
         void ForEachEntity(T callback)
         {

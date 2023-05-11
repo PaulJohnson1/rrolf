@@ -10,9 +10,9 @@ namespace app::system
     class Interpolation
     {
     public:
-        Simulation &m_Simulation;
+        Simulation *m_Simulation;
 
-        Interpolation(Simulation &);
+        Interpolation(Simulation *);
 
         void Tick();
         void PostTick();

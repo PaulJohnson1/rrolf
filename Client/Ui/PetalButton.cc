@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 
@@ -21,9 +22,9 @@ namespace app::ui
     void PetalButton::Render()
     {
         Guard g(&m_Renderer);
-        if (g_Simulation->m_PlayerInfo != NULL_ENTITY && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+        if (g_Game->m_Simulation->m_PlayerInfo != NULL_ENTITY && g_Game->m_Simulation->HasComponent<component::PlayerInfo>(g_Game->m_Simulation->m_PlayerInfo))
         {
-            component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
+            component::PlayerInfo &playerInfo = g_Game->m_Simulation->Get<component::PlayerInfo>(g_Game->m_Simulation->m_PlayerInfo);
             uint32_t count = playerInfo.m_SlotCount;
             if ((m_Position % 10) >= count)
             {
@@ -86,9 +87,9 @@ namespace app::ui
 
     void PetalButton::Idle()
     {
-        if (g_Simulation->m_PlayerInfo != NULL_ENTITY && g_Simulation->HasComponent<component::PlayerInfo>(g_Simulation->m_PlayerInfo))
+        if (g_Game->m_Simulation->m_PlayerInfo != NULL_ENTITY && g_Game->m_Simulation->HasComponent<component::PlayerInfo>(g_Game->m_Simulation->m_PlayerInfo))
         {
-            component::PlayerInfo &playerInfo = g_Simulation->Get<component::PlayerInfo>(g_Simulation->m_PlayerInfo);
+            component::PlayerInfo &playerInfo = g_Game->m_Simulation->Get<component::PlayerInfo>(g_Game->m_Simulation->m_PlayerInfo);
             uint32_t count = playerInfo.m_SlotCount;
             if ((m_Position % 10) < count)
             {

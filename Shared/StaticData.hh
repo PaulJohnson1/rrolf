@@ -44,6 +44,8 @@ namespace app
     };
 
     std::vector<std::vector<float>> LootTable(float);
+
+    std::vector<float> WaveRarityTable(float);
     
     struct LootInstance
     {

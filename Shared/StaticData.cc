@@ -101,4 +101,18 @@ namespace app
         }
         return table;
     };
+
+    std::vector<float> WaveRarityTable(float difficulty)
+    {
+        float seed = 0.25; //HARDCODED
+        double const rarityS[RarityId::kMaxRarities+1] = { 0, 3, 5, 7, 10, 15, 22, 35, 1e10 };
+        std::vector<float> table(RarityId::kMaxRarities, 0.0f);
+        for (uint32_t rarity = 0; rarity < RarityId::kMaxRarities; ++rarity) {
+            double start = std::exp(-rarityS[rarity]), end = std::exp(-rarityS[rarity+1]);
+            float ret1 = std::pow(1-seed*start,difficulty);
+            float ret2 = std::pow(1-seed*end,difficulty);
+            table[rarity] = ret2-ret1;
+        }
+        return table;
+    }
 }

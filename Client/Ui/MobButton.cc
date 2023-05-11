@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
 
@@ -17,12 +18,12 @@ namespace app::ui
 
     void MobButton::Render()
     {
-        if (g_Simulation->m_PlayerInfo == NULL_ENTITY)
+        if (g_Game->m_Simulation->m_PlayerInfo == NULL_ENTITY)
             return;
         Guard g(&m_Renderer);
         PreRender();
 
-        m_Count = g_Simulation->Get<component::ArenaInfo>(0).m_MobCount[m_Id][m_Rarity];
+        m_Count = g_Game->m_Simulation->Get<component::ArenaInfo>(0).m_MobCount[m_Id][m_Rarity];
         if (m_Count == 0)
         {
             if (--m_HideAnimationTick == 0)
@@ -51,9 +52,9 @@ namespace app::ui
 
     void MobButton::Idle()
     {
-        if (g_Simulation->m_PlayerInfo == NULL_ENTITY)
+        if (g_Game->m_Simulation->m_PlayerInfo == NULL_ENTITY)
             return;
-        if (g_Simulation->Get<component::ArenaInfo>(0).m_MobCount[m_Id][m_Rarity] == 0)
+        if (g_Game->m_Simulation->Get<component::ArenaInfo>(0).m_MobCount[m_Id][m_Rarity] == 0)
             return;
         m_Showing = true;
         m_HideAnimationTick = 5;

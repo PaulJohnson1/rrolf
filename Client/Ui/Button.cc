@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 
+#include <client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Shared/Assert.hh>
 
@@ -16,24 +17,24 @@ namespace app::ui
     bool Button::MouseTouching()
     {
         const float *matrix = m_Renderer.GetTransform();
-        return std::abs(g_InputData->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_InputData->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
+        return std::abs(g_Game->m_InputData->m_MouseX - matrix[2]) < m_Width * matrix[0] / 2 && std::abs(g_Game->m_InputData->m_MouseY - matrix[5]) < m_Height * matrix[4] / 2;
     }
 
     void Button::ButtonAction()
     {
         if (MouseTouching() && !m_Clicked)
         {
-            if (g_InputData->m_MouseButtons & 1 && g_InputData->m_State == 1)
+            if (g_Game->m_InputData->m_MouseButtons & 1 && g_Game->m_InputData->m_State == 1)
             {
                 m_OnMouseDown();
                 m_Clicked = true;
             }
-            else if (g_InputData->m_MouseButtons & 1 && g_InputData->m_State == 2)
+            else if (g_Game->m_InputData->m_MouseButtons & 1 && g_Game->m_InputData->m_State == 2)
                 m_OnMouseOver();
         }
         else if (m_Clicked)
         {
-            if (g_InputData->m_MouseButtons & 1)
+            if (g_Game->m_InputData->m_MouseButtons & 1)
                 m_OnMouseMove();
             else
             {

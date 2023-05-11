@@ -20,10 +20,10 @@ namespace app::system
     class GameRenderer
     {
     public:
-        Simulation &m_Simulation;
+        Simulation *m_Simulation;
         Renderer *m_Renderer;
 
-        GameRenderer(Simulation &, Renderer *);
+        GameRenderer(Simulation *, Renderer *);
 
         void Tick();
         void PostTick();

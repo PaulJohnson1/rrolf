@@ -3,8 +3,9 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <Client/Simulation.hh>
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
+#include <Client/Simulation.hh>
 
 #include <Client/Ui/RenderFunctions.hh>
 
@@ -38,7 +39,7 @@ namespace app::component
         if (!m_Simulation->HasComponent<Projectile>(m_Parent))
         {   
             Basic basic = m_Simulation->Get<Basic>(m_Parent);
-            ctx->Rotate((m_Simulation->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
+            ctx->Rotate((g_Game->GetTime() - basic.m_CreationTime) / 1000 + m_RandomRotation);
         }
         else
             ctx->Rotate(physical.m_Angle);

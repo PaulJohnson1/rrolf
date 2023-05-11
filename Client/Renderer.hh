@@ -22,14 +22,6 @@
 namespace app
 {
     class Renderer;
-    class InputData;
-}
-
-extern app::Renderer *g_Renderer;
-extern app::InputData *g_InputData;
-namespace app
-{
-    class Renderer;
     class InputData
     {
     public:
@@ -40,8 +32,7 @@ namespace app
         uint8_t m_State = 0;
         std::map<uint8_t, uint8_t> m_KeysPressed{};
         InputData()
-        {
-            g_InputData = this;
+        { 
         }
     };
     class Guard
@@ -119,8 +110,6 @@ namespace app
 #ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
-            if (g_Renderer == nullptr)
-                g_Renderer = this;
             else
             {
                 m_Bitmap = new SkBitmap;
@@ -131,8 +120,6 @@ namespace app
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
             if (m_ContextId == 0)
             {
-                RROLF_ASSERT(!g_Renderer, "cannot have more than one main renderer");
-                g_Renderer = this;
             }
 #endif
         }
@@ -145,8 +132,6 @@ namespace app
 #ifndef EMSCRIPTEN
             m_StrokePaint.setAntiAlias(true);
             m_FillPaint.setAntiAlias(true);
-            if (g_Renderer == nullptr)
-                g_Renderer = this;
             else
             {
                 m_Bitmap = new SkBitmap;
@@ -155,11 +140,6 @@ namespace app
             }
 #else
             m_ContextId = EM_ASM_INT({ return Module.addCtx(); });
-            if (m_ContextId == 0)
-            {
-                RROLF_ASSERT(!g_Renderer, "cannot have more than one main renderer");
-                g_Renderer = this;
-            }
             SetSize(width, height);
 #endif
         }

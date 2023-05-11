@@ -21,6 +21,7 @@ set(SOURCES
     System/GameRenderer.cc
     System/Interpolation.cc
     Main.cc
+    Game.cc
     Renderer.cc
     Simulation.cc
     Socket.cc

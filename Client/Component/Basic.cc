@@ -3,6 +3,7 @@
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Game.hh>
 #include <Client/Simulation.hh>
 
 namespace app::component
@@ -10,7 +11,7 @@ namespace app::component
     Basic::Basic(Entity parent, Simulation *simulation)
         : m_Parent(parent)
         , m_Simulation(simulation)
-        , m_CreationTime(simulation->GetTime())
+        , m_CreationTime(g_Game->GetTime())
     {
     }
 

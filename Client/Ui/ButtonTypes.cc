@@ -6,7 +6,7 @@
 #include <cstdint>
 
 #include <Client/Renderer.hh>
-#include <Client/Simulation.hh>
+#include <Client/Game.hh>
 #include <Client/Socket.hh>
 #include <Client/Ui/Container.hh>
 #include <Client/Ui/MobButton.hh>
@@ -30,10 +30,10 @@ namespace app::ui
         };
         button->m_OnMouseUp = [&]()
         {
-            static uint8_t outgoingInputPacket[60];
+            static uint8_t outgoingInputPacket[16];
             bc::BinaryCoder coder{outgoingInputPacket};
             coder.Write<bc::Uint8>(1);
-            g_Simulation->m_Socket->SendPacket(coder.Data(), coder.At());
+            g_Game->m_Socket->SendPacket(coder.Data(), coder.At());
         };
         return button;
     }

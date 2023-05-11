@@ -20,6 +20,7 @@
 #include <Client/Simulation.hh>
 #include <Client/Socket.hh>
 #include <Client/Renderer.hh>
+#include <Client/Game.hh>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -27,23 +28,23 @@
 void GlfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
-        g_InputData->m_KeysPressed[key] = 1; // mouse is a global that shouldn't be tied to the renderer alr that works too
+        g_Game->m_InputData->m_KeysPressed[key] = 1; // g_Game->m_InputData is a global that shouldn't be tied to the renderer alr that works too
     else if (action == GLFW_RELEASE)
-        g_InputData->m_KeysPressed[key] = 0;
+        g_Game->m_InputData->m_KeysPressed[key] = 0;
 }
 void GlfwMouseCallback(GLFWwindow *window, int button, int action, int mods)
 {
     double x;
     double y;
     glfwGetCursorPos(window, &x, &y);
-    g_InputData->m_MouseX = (float)x;
-    g_InputData->m_MouseY = (float)y;
+    g_Game->m_InputData->m_MouseX = (float)x;
+    g_Game->m_InputData->m_MouseY = (float)y;
     if (button == GLFW_MOUSE_BUTTON_LEFT)
-        g_InputData->m_MouseButtons |= 1;
+        g_Game->m_InputData->m_MouseButtons |= 1;
     if (button == GLFW_MOUSE_BUTTON_RIGHT)
-        g_InputData->m_MouseButtons |= 2;
+        g_Game->m_InputData->m_MouseButtons |= 2;
     if (button == GLFW_MOUSE_BUTTON_MIDDLE)
-        g_InputData->m_MouseButtons |= 4;
+        g_Game->m_InputData->m_MouseButtons |= 4;
 }
 #endif
 
@@ -52,46 +53,46 @@ extern "C"
     void __Renderer_KeyEvent(uint8_t op, int32_t key)
     {
         if (op == 1)
-            g_InputData->m_KeysPressed[key] = 1;
+            g_Game->m_InputData->m_KeysPressed[key] = 1;
         else if (op == 0)
         {
-            g_InputData->m_KeysPressed[key] = 0;
+            g_Game->m_InputData->m_KeysPressed[key] = 0;
             if (key >= 48 && key <= 57)
             {
                 static uint8_t outgoingInputPacket[16];
                 bc::BinaryCoder coder{outgoingInputPacket};
                 coder.Write<bc::Uint8>(2);
                 coder.Write<bc::Uint8>(key - 48);
-                g_Simulation->m_Socket->SendPacket(coder.Data(), coder.At());
+                g_Game->m_Socket->SendPacket(coder.Data(), coder.At());
             }
         }
     }
     void __Renderer_MouseEvent(float x, float y, uint8_t state, uint8_t button)
     {
-        g_InputData->m_MouseX = x;
-        g_InputData->m_MouseY = y;
-        g_InputData->m_State = state;
+        g_Game->m_InputData->m_MouseX = x;
+        g_Game->m_InputData->m_MouseY = y;
+        g_Game->m_InputData->m_State = state;
         if (state == 1) //press down
-            g_InputData->m_MouseButtons |= (1 << button);
+            g_Game->m_InputData->m_MouseButtons |= (1 << button);
         else if (state == 0)
-            g_InputData->m_MouseButtons &= ~(1 << button);
+            g_Game->m_InputData->m_MouseButtons &= ~(1 << button);
     }
     void __Renderer_Render(int32_t width, int32_t height, float devicePixelRatio)
     {
-        if (!g_Renderer)
+        if (!g_Game->m_Renderer)
             return;
-        g_Renderer->SetSize(width, height);
-        float a = g_Renderer->m_Height / 1080;
-        float b = g_Renderer->m_Width / 1920;
-        g_Renderer->m_WindowScale = b < a ? a : b;
-        g_Renderer->m_Container.m_X = width * 0.5f / g_Renderer->m_WindowScale;
-        g_Renderer->m_Container.m_Y = height * 0.5f / g_Renderer->m_WindowScale;
-        g_Renderer->m_Container.m_Width = width / g_Renderer->m_WindowScale;
-        g_Renderer->m_Container.m_Height = height / g_Renderer->m_WindowScale;
-        g_Simulation->TickRenderer();
-        //g_Renderer->SetTransform(1, 0, 0, 1, width * 0.5f, height * 0.5f);
-        g_Renderer->ResetTransform();
-        g_Renderer->m_Container.Render();
+        g_Game->m_Renderer->SetSize(width, height);
+        float a = g_Game->m_Renderer->m_Height / 1080;
+        float b = g_Game->m_Renderer->m_Width / 1920;
+        g_Game->m_Renderer->m_WindowScale = b < a ? a : b;
+        g_Game->m_Renderer->m_Container.m_X = width * 0.5f / g_Game->m_Renderer->m_WindowScale;
+        g_Game->m_Renderer->m_Container.m_Y = height * 0.5f / g_Game->m_Renderer->m_WindowScale;
+        g_Game->m_Renderer->m_Container.m_Width = width / g_Game->m_Renderer->m_WindowScale;
+        g_Game->m_Renderer->m_Container.m_Height = height / g_Game->m_Renderer->m_WindowScale;
+        g_Game->Tick();
+        //g_Game->m_Renderer->SetTransform(1, 0, 0, 1, width * 0.5f, height * 0.5f);
+        g_Game->m_Renderer->ResetTransform();
+        g_Game->m_Renderer->m_Container.Render();
     }
 }
 
@@ -100,12 +101,12 @@ void Initialize()
 {
 #ifndef EMSCRIPTEN
     // 16:9 aspect ratio for 500 height
-    g_Renderer->m_Width = 889;
-    g_Renderer->m_Height = 500;
+    g_Game->m_Renderer->m_Width = 889;
+    g_Game->m_Renderer->m_Height = 500;
     glfwSetErrorCallback([](int error, char const *description)
                          { std::cerr << "code " << error << ' ' << description << '\n'; });
     glfwInit();
-    GLFWwindow *window = glfwCreateWindow(g_Renderer->m_Width, g_Renderer->m_Height, "rrolf native client", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(g_Game->m_Renderer->m_Width, g_Game->m_Renderer->m_Height, "rrolf native client", NULL, NULL);
     glfwSetKeyCallback(window, GlfwKeyCallback);
     glfwSetMouseButtonCallback(window, GlfwMouseCallback);
 
@@ -122,26 +123,26 @@ void Initialize()
     framebufferInfo.fFBOID = 0;
     framebufferInfo.fFormat = GL_RGBA8;
     SkColorType colorType = kRGBA_8888_SkColorType;
-    GrBackendRenderTarget backendRenderTarget(g_Renderer->m_Width, g_Renderer->m_Height,
+    GrBackendRenderTarget backendRenderTarget(g_Game->m_Renderer->m_Width, g_Game->m_Renderer->m_Height,
                                               0, // sample count
                                               0, // stencil bits
                                               framebufferInfo);
     SkSurface *surface = SkSurface::MakeFromBackendRenderTarget(context, backendRenderTarget, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, nullptr).release();
-    g_Renderer->m_Canvas = surface->getCanvas();
+    g_Game->m_Renderer->m_Canvas = surface->getCanvas();
 
     while (!glfwWindowShouldClose(window))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
         context->flush();
-        g_Renderer->m_Container.m_Width = g_Renderer->m_Width;
-        g_Renderer->m_Container.m_Height = g_Renderer->m_Height;
-        float a = g_Renderer->m_Height / 1080;
-        float b = g_Renderer->m_Width / 1920;
-        g_Renderer->m_WindowScale = b < a ? a : b;
-        g_Simulation->TickRenderer();
-        g_Renderer->ResetTransform();
-        g_Renderer->m_Container.Render();
-        g_InputData->m_MouseButtons = 0;
+        g_Game->m_Renderer->m_Container.m_Width = g_Game->m_Renderer->m_Width;
+        g_Game->m_Renderer->m_Container.m_Height = g_Game->m_Renderer->m_Height;
+        float a = g_Game->m_Renderer->m_Height / 1080;
+        float b = g_Game->m_Renderer->m_Width / 1920;
+        g_Game->m_Renderer->m_WindowScale = b < a ? a : b;
+        g_Game->m_Simulation->TickRenderer();
+        g_Game->m_Renderer->ResetTransform();
+        g_Game->m_Renderer->m_Container.Render();
+        g_Game->m_InputData->m_MouseButtons = 0;
         glfwPollEvents();
         glfwSwapBuffers(window);
     }
@@ -227,33 +228,31 @@ int main()
     Initialize();
 #endif
     // heap allocate so the dtor doesn't automatically get called
-    static Renderer *renderer = new Renderer();
-    Renderer *test = new Renderer();
-    static InputData *mouse = new InputData();
-    g_Simulation = new Simulation(renderer);
-    static Socket *socket = new Socket(
+    new Game(new Renderer(), new Simulation()); //g_Game is auto set to this
+    g_Game->m_InputData = new InputData();
+    g_Game->m_Socket = new Socket(
         "ws://localhost:8000", [&]()
         { std::cout << "open\n"; },
         [&]()
         { std::cout << "close\n"; },
         [&](uint8_t *m)
         {
-            g_Simulation->ReadBinary(m);
+            g_Game->ReadBinary(m);
             static uint8_t outgoingInputPacket[16];
             bc::BinaryCoder coder{outgoingInputPacket};
             coder.Write<bc::Uint8>(0);
             coder.Write<bc::Uint8>(0); // keyboard movement
             uint8_t movementFlags = 0;
-            movementFlags |= (mouse->m_KeysPressed[87] || mouse->m_KeysPressed[38]) << 0;
-            movementFlags |= (mouse->m_KeysPressed[65] || mouse->m_KeysPressed[37]) << 1;
-            movementFlags |= (mouse->m_KeysPressed[83] || mouse->m_KeysPressed[40]) << 2;
-            movementFlags |= (mouse->m_KeysPressed[68] || mouse->m_KeysPressed[39]) << 3;
-            movementFlags |= mouse->m_MouseButtons << 4;
+            movementFlags |= (g_Game->m_InputData->m_KeysPressed[87] || g_Game->m_InputData->m_KeysPressed[38]) << 0;
+            movementFlags |= (g_Game->m_InputData->m_KeysPressed[65] || g_Game->m_InputData->m_KeysPressed[37]) << 1;
+            movementFlags |= (g_Game->m_InputData->m_KeysPressed[83] || g_Game->m_InputData->m_KeysPressed[40]) << 2;
+            movementFlags |= (g_Game->m_InputData->m_KeysPressed[68] || g_Game->m_InputData->m_KeysPressed[39]) << 3;
+            movementFlags |= g_Game->m_InputData->m_MouseButtons << 4;
             coder.Write<bc::Uint8>(movementFlags);
 
-            socket->SendPacket(coder.Data(), coder.At());
-        });
-    g_Simulation->m_Socket = socket;
+            g_Game->m_Socket->SendPacket(coder.Data(), coder.At());
+        }
+    );
 #ifdef EMSCRIPTEN
     std::cout << "wasm init " << __TIME__ << '\n';
 #else
@@ -262,5 +261,5 @@ int main()
         .detach();
 #endif
 
-    socket->Connect();
+    g_Game->m_Socket->Connect();
 }

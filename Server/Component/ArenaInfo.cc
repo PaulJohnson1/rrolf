@@ -70,15 +70,23 @@ namespace app::component
         m_State |= 2;
     }
 
+    void ArenaInfo::IncrWave()
+    {
+        ++m_Wave;
+        m_State |= 2;
+    }
+
     void ArenaInfo::IncrMobCount(uint32_t id, uint32_t rarity) 
     {
         ++m_MobCount[id][rarity];
+        ++m_TotalMobCount;
         m_State |= 4;
     }
 
     void ArenaInfo::DecrMobCount(uint32_t id, uint32_t rarity) 
     {
         --m_MobCount[id][rarity];
+        --m_TotalMobCount;
         m_State |= 4;
     }
 }

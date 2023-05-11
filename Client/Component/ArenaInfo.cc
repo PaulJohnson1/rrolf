@@ -1,12 +1,13 @@
 #include <Client/Component/ArenaInfo.hh>
 
-
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
+#include <Client/Game.hh>
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
+
 #include <Shared/Assert.hh>
 
 namespace app::component
@@ -51,8 +52,8 @@ namespace app::component
         ctx->SetLineWidth(1);
         ctx->SetStroke((uint32_t)(alpha) << 24);
 
-        float a = g_Renderer->m_Height / 1080;
-        float b = g_Renderer->m_Width / 1920;
+        float a = g_Game->m_Renderer->m_Height / 1080;
+        float b = g_Game->m_Renderer->m_Width / 1920;
         float windowScale = b < a ? a : b;
         float scale = playerInfo.m_Fov * windowScale;
         float leftX = playerInfo.m_CameraX - ctx->m_Width / (2 * scale); 
