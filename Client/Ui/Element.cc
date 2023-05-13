@@ -1,8 +1,9 @@
 #include <Client/Ui/Element.hh>
 
+#include <cassert>
+
 #include <Client/Renderer.hh>
 #include <Client/Ui/Container.hh>
-#include <Shared/Assert.hh>
 
 namespace app::ui
 {
@@ -16,7 +17,7 @@ namespace app::ui
 
     Element::~Element()
     {
-        RROLF_ASSERT(false, "");
+        assert(false);
     }
 
     void Element::PreRender() 

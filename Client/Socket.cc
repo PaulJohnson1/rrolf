@@ -1,8 +1,7 @@
 #include <Client/Socket.hh>
 
 #include <iostream>
-
-#include <Shared/Assert.hh>
+#include <cassert>
 
 static uint8_t g_MessageData[1024*1024];
 #ifdef EMSCRIPTEN
@@ -87,7 +86,7 @@ namespace app
         m_WebSocketClient.set_access_channels(websocketpp::log::alevel::none);
         websocketpp::lib::error_code error;
         m_ConnectionPointer = m_WebSocketClient.get_connection("ws://localhost:8000", error);
-        RROLF_ASSERT(!error, "something went wrong constructing websocket++ socket");
+        assert(!error);
         m_ConnectionPointer->set_close_handler([&](websocketpp::connection_hdl hdl)
                                                { OnClose(); });
         m_ConnectionPointer->set_open_handler([&](websocketpp::connection_hdl hdl)

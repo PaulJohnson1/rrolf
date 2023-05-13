@@ -9,11 +9,11 @@
 #include <cmath>
 #include <set>
 #include <chrono>
+#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
 
-#include <Shared/Assert.hh>
 #include <Shared/Entity.hh>
 #include <Server/Server.hh>
 #include <Shared/StaticData.hh>

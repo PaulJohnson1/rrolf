@@ -1,5 +1,6 @@
 #include <Client/Component/ArenaInfo.hh>
 
+#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -7,7 +8,6 @@
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
 #include <Client/Simulation.hh>
-#include <Shared/Assert.hh>
 
 namespace app::component
 {

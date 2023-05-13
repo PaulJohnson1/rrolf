@@ -2,9 +2,9 @@
 
 #include <cmath>
 #include <iostream>
+#include <cassert>
 
 #include <Client/Renderer.hh>
-#include <Shared/Assert.hh>
 
 namespace app::ui
 {
