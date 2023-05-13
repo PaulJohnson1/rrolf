@@ -14,6 +14,9 @@
 #include <Client/Ui/Text.hh>
 #include <Client/Ui/Engine.hh>
 #include <Client/Ui/ButtonTypes.hh>
+#include <Client/Ui/MobButton.hh>
+
+#include <Shared/StaticData.hh>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -71,57 +74,100 @@ namespace app
 
         // ui test
         (m_UiElements.m_DeathScreen = ui::Add(
-            ui::SetJustify<1, 1>(
-                ui::MakeVContainer<200, 0>({
-                    new ui::Text(*renderer, "You were killed by", 0xffffffff, 24),
-                    ui::CreateRespawnButton(renderer)
-                    }
-                )
-            )
-        ))->m_Showing = false;
+             ui::SetJustify<1, 1>(
+                 ui::MakeVContainer<200, 0>({new ui::Text(*renderer, "You were killed by", 0xffffffff, 24),
+                                             ui::CreateRespawnButton(renderer)}))))
+            ->m_Showing = false;
         m_UiElements.m_TitleScreen = ui::Add(
             ui::SetJustify<1, 1>(
-                ui::MakeVContainer<100, 0>({
-                    new ui::Text(*renderer, "florr.io", 0xffffffff, 96),
-                    ui::MakeHContainer<25, 0>({
-                        new ui::Text(*renderer, "this is your name", 0xffffffff, 25),
-                        ui::CreateRespawnButton(renderer)
-                    })
-                })
-            )
-        );
+                ui::MakeVContainer<100, 0>({new ui::Text(*renderer, "rrolf", 0xffffffff, 96),
+                                            ui::MakeHContainer<25, 0>({new ui::Text(*renderer, "this is your name", 0xffffffff, 25),
+                                                                       ui::CreateRespawnButton(renderer)})})));
         m_UiElements.m_Loadout = ui::Add(
             ui::VPad<10>(
                 ui::SetJustify<1, 2>(
-                    ui::MakeVContainer<10, 0>({
-                        ui::MakeHContainer<20, 10>({
-                            ui::CreateLoadoutButton(renderer, 0),
-                            ui::CreateLoadoutButton(renderer, 1),
-                            ui::CreateLoadoutButton(renderer, 2),
-                            ui::CreateLoadoutButton(renderer, 3),
-                            ui::CreateLoadoutButton(renderer, 4),
-                            ui::CreateLoadoutButton(renderer, 5),
-                            ui::CreateLoadoutButton(renderer, 6),
-                            ui::CreateLoadoutButton(renderer, 7),
-                            ui::CreateLoadoutButton(renderer, 8),
-                            ui::CreateLoadoutButton(renderer, 9)
-                        }),
-                        ui::MakeHContainer<20, 10>({
-                            ui::CreateSecondaryButton(renderer, 10),
-                            ui::CreateSecondaryButton(renderer, 11),
-                            ui::CreateSecondaryButton(renderer, 12),
-                            ui::CreateSecondaryButton(renderer, 13),
-                            ui::CreateSecondaryButton(renderer, 14),
-                            ui::CreateSecondaryButton(renderer, 15),
-                            ui::CreateSecondaryButton(renderer, 16),
-                            ui::CreateSecondaryButton(renderer, 17),
-                            ui::CreateSecondaryButton(renderer, 18),
-                            ui::CreateSecondaryButton(renderer, 19)
+                    ui::MakeVContainer<10, 0, 1>({ui::MakeHContainer<20, 10>({ui::CreateLoadoutButton(renderer, 0),
+                                                                              ui::CreateLoadoutButton(renderer, 1),
+                                                                              ui::CreateLoadoutButton(renderer, 2),
+                                                                              ui::CreateLoadoutButton(renderer, 3),
+                                                                              ui::CreateLoadoutButton(renderer, 4),
+                                                                              ui::CreateLoadoutButton(renderer, 5),
+                                                                              ui::CreateLoadoutButton(renderer, 6),
+                                                                              ui::CreateLoadoutButton(renderer, 7),
+                                                                              ui::CreateLoadoutButton(renderer, 8),
+                                                                              ui::CreateLoadoutButton(renderer, 9)}),
+                                                  ui::MakeHContainer<20, 10>({ui::CreateSecondaryButton(renderer, 10),
+                                                                              ui::CreateSecondaryButton(renderer, 11),
+                                                                              ui::CreateSecondaryButton(renderer, 12),
+                                                                              ui::CreateSecondaryButton(renderer, 13),
+                                                                              ui::CreateSecondaryButton(renderer, 14),
+                                                                              ui::CreateSecondaryButton(renderer, 15),
+                                                                              ui::CreateSecondaryButton(renderer, 16),
+                                                                              ui::CreateSecondaryButton(renderer, 17),
+                                                                              ui::CreateSecondaryButton(renderer, 18),
+                                                                              ui::CreateSecondaryButton(renderer, 19)})}))));
+        /*
+        m_UiElements.m_Test = ui::Add(
+            ui::HPad<10>(
+                ui::SetJustify<0, 1>(
+                    ui::AddBackground<0x80000000>(
+                        ui::MakeVContainer<10, 10, 0>({
+                            new ui::Text(*renderer, "Stinger", 0xffffffff, 25),
+                            new ui::Text(*renderer, "Ultra", RARITY_COLORS[6], 12),
+                            new ui::Text(*renderer, "It really hurts, but it's really fragile.", 0xffffffff, 12),
+                            ui::MakeHContainer<0,0>({new ui::Text(*renderer, "Health: ", 0xffffffff, 12), new ui::Text(*renderer, "over 9000", 0xff23ee45, 12)}),
+                            ui::MakeHContainer<0,0>({new ui::Text(*renderer, "Damage: ", 0xffffffff, 12), new ui::Text(*renderer, "beyond your feeble comprehension", 0xffee2345, 12)})
                         })
-                    })
+                    )
                 )
             )
         );
+        */
+        m_UiElements.m_Test = ui::Add(
+            ui::SetJustify<1, 0>(
+                ui::MakeVContainer<20, 20>({new ui::Text(*renderer, "Wave 69", 0xffffffff, 30),
+                                            ui::MakeHContainer<20, 10, 0>({ui::MakeVContainer<-40, 0, 0>({
+                                                                               ui::CreateMobIcon(renderer, 0, 0),
+                                                                               ui::CreateMobIcon(renderer, 0, 1),
+                                                                               ui::CreateMobIcon(renderer, 0, 2),
+                                                                               ui::CreateMobIcon(renderer, 0, 3),
+                                                                               ui::CreateMobIcon(renderer, 0, 4),
+                                                                               ui::CreateMobIcon(renderer, 0, 5),
+                                                                               ui::CreateMobIcon(renderer, 0, 6),
+                                                                               ui::CreateMobIcon(renderer, 0, 7),
+                                                                           }),
+                                                                           ui::MakeVContainer<-40, 0, 0>({ui::CreateMobIcon(renderer, 1, 0),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 1),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 2),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 3),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 4),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 5),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 6),
+                                                                                                          ui::CreateMobIcon(renderer, 1, 7)}),
+                                                                           ui::MakeVContainer<-40, 0, 0>({ui::CreateMobIcon(renderer, 2, 0),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 1),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 2),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 3),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 4),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 5),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 6),
+                                                                                                          ui::CreateMobIcon(renderer, 2, 7)}),
+                                                                           ui::MakeVContainer<-40, 0, 0>({ui::CreateMobIcon(renderer, 3, 0),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 1),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 2),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 3),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 4),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 5),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 6),
+                                                                                                          ui::CreateMobIcon(renderer, 3, 7)}),
+                                                                           ui::MakeVContainer<-40, 0, 0>({ui::CreateMobIcon(renderer, 4, 0),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 1),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 2),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 3),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 4),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 5),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 6),
+                                                                                                          ui::CreateMobIcon(renderer, 4, 7)})})})));
     }
 
     float Simulation::GetTime()
@@ -180,7 +226,8 @@ namespace app
         m_LastTick = time;
         if (m_PlayerInfo != (Entity)-1)
         {
-            if (!m_HasHadPlayer && Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer) m_HasHadPlayer = true;
+            if (!m_HasHadPlayer && Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer)
+                m_HasHadPlayer = true;
             m_InterpolationSystem.Tick();
             m_RendererSystem.Tick();
 
@@ -190,6 +237,8 @@ namespace app
             // ui stuff
             m_UiElements.m_TitleScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
             m_UiElements.m_DeathScreen->m_Showing = !Get<component::PlayerInfo>(m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
+
+            ui::Resize<true>(m_UiElements.m_Loadout);
             return;
         }
     }

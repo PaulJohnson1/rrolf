@@ -37,7 +37,7 @@ namespace app::component
         };
 
         uint64_t m_State = 0;
-        Entity m_Parent;
+        Entity m_Parent = NULL_ENTITY;
 
         Flower(Entity, Simulation *);
         Flower(Flower const &) = delete;

@@ -36,19 +36,19 @@ namespace app::component
     {
         if (m_MaxHealth == 0) return;
         Guard g(ctx);
-        component::Physical &physical = m_Simulation->Get<component::Physical>(m_Parent);
+        Physical &physical = m_Simulation->Get<Physical>(m_Parent);
 
-        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y + physical.m_Radius + 30);
-        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        ctx->Scale(1 + physical.m_ClientDeletionTick * 0.1);
         
         float length = 40;
         
         // mob rarity render
-        if (m_Simulation->HasComponent<component::Mob>(m_Parent))
+        if (m_Simulation->HasComponent<Mob>(m_Parent))
         {
-            component::Mob &mob = m_Simulation->Get<component::Mob>(m_Parent);
+            Mob &mob = m_Simulation->Get<Mob>(m_Parent);
             length += 5 * mob.m_Rarity;
             ctx->SetTextBaseline(Renderer::TextBaseline::Top);
             ctx->SetTextAlign(Renderer::TextAlign::Right);

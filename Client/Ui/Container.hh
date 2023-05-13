@@ -11,6 +11,7 @@ namespace app::ui
     public:
         std::vector<Element *> m_Elements;
         bool m_HasBackground = false;
+        float m_Padding = 0;
         
         Container(Renderer &);
 

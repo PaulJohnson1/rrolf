@@ -29,8 +29,8 @@ namespace app::component
         if (updatedFields & 16)
             m_Player = coder.Read<bc::VarUint>();
 
-        uint64_t size = coder.Read<bc::VarUint>();
-        for (uint64_t i = 0; i < size; ++i)
+        m_SlotCount = coder.Read<bc::VarUint>();
+        for (uint64_t i = 0; i < m_SlotCount; ++i)
         {
             float oldReload = m_Petals[i].m_Reload.Destination();
             m_Petals[i].m_Id = coder.Read<bc::VarUint>();
@@ -41,7 +41,7 @@ namespace app::component
             if (newReload > oldReload)
                 m_Petals[i].m_Reload.SetInterpolated(newReload);
         }
-        for (uint64_t i = 0; i < size; ++i)
+        for (uint64_t i = 0; i < m_SlotCount; ++i)
         {
             m_SecondaryPetals[i].m_Id = coder.Read<bc::VarUint>();
             m_SecondaryPetals[i].m_Rarity = coder.Read<bc::VarUint>();

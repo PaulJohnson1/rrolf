@@ -90,7 +90,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 4)
+        if (mobCount < 15)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -101,10 +101,10 @@ namespace app
             Vector p = Vector::FromPolar(sqrt(((float)rand() / (float)RAND_MAX)) * 1650, (float)rand() / (float)RAND_MAX * 1000.0);
             physical.X(p.m_X);
             physical.Y(p.m_Y);
-            basic.Team(1); // arena team
-            mob.Id(rand() & 1); // baby ant
+            basic.Team(1);      // arena team
+            mob.Id(rand() % 5); // baby ant
             mob.Rarity(5);
-            //mob.Rarity(5);
+            // mob.Rarity(5);
         }
 
         {
@@ -117,8 +117,8 @@ namespace app
             m_MapBoundaries.Tick();
             m_MobAi.Tick();
             m_Damage.Tick();
-            //auto t2 = std::chrono::high_resolution_clock::now();
-            //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
+            // auto t2 = std::chrono::high_resolution_clock::now();
+            // std::cout << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << "ms loop\n";
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();
@@ -134,6 +134,8 @@ namespace app
 
     bool Simulation::HasEntity(Entity entity)
     {
+        if (entity == NULL_ENTITY)
+            return false;
         assert(entity < MAX_ENTITY_COUNT);
         return m_EntityTracker[entity];
     }
@@ -147,37 +149,35 @@ namespace app
 
     std::vector<Entity> Simulation::FindEntitiesInView(component::PlayerInfo &playerInfo)
     {
-        std::vector<Entity> entitiesInView{};
-        entitiesInView.push_back(m_Arena);
-        entitiesInView.push_back(playerInfo.m_Parent);
-
         int32_t viewWidth = (int32_t)(1280 / playerInfo.Fov());
         int32_t viewHeight = (int32_t)(720 / playerInfo.Fov());
         int32_t viewX = (int32_t)playerInfo.CameraX();
         int32_t viewY = (int32_t)playerInfo.CameraY();
-        // not only is this needed for optimization, but it is also needed to ensure only physical entities are added to the list
-        std::vector<Entity> nearBy = m_CollisionDetector.m_SpatialHash.GetCollisions(viewX, viewY, viewWidth, viewHeight);
-        for (Entity i = 0; i < nearBy.size(); i++)
-        {
-            Entity other = nearBy[i];
-            component::Physical &physical = Get<component::Physical>(other);
+
+        std::vector<Entity> entitiesInView;
+
+        ForEachEntity([&](Entity e)
+                      {
+            if (!HasComponent<component::Physical>(e))
+                return;
+            component::Physical &physical = Get<component::Physical>(e);
 
             // Check if the entity's position and size fall within the viewport
             if (physical.X() + physical.Radius() < viewX - viewWidth ||
                 physical.X() - physical.Radius() > viewX + viewWidth ||
                 physical.Y() + physical.Radius() < viewY - viewHeight ||
                 physical.Y() - physical.Radius() > viewY + viewHeight)
-                continue;
+                return;
 
-            if (!HasComponent<component::Drop>(other))
+            if (!HasComponent<component::Drop>(e))
             {
-                entitiesInView.push_back(other);
-                continue;
+                entitiesInView.push_back(e);
+                return;
             }
-            std::vector<Entity> collectedBy = Get<component::Drop>(other).m_CollectedBy;
+            std::vector<Entity> collectedBy = Get<component::Drop>(e).m_CollectedBy;
             if (std::find(collectedBy.begin(), collectedBy.end(), playerInfo.Player()) == collectedBy.end())
-                entitiesInView.push_back(other);
-        }
+                entitiesInView.push_back(e); });
+
         return entitiesInView;
     }
 
@@ -188,14 +188,18 @@ namespace app
             std::make_move_iterator(_entitiesInView.begin()),
             std::make_move_iterator(_entitiesInView.end()));
         std::vector<Entity> deletedEntities;
+        for (uint64_t i = 0; i < playerInfo.m_PendingDropPickups.size(); i++)
+            Get<component::Drop>(playerInfo.m_PendingDropPickups[i]).PickedUp();
 
-        auto it = playerInfo.m_EntitiesInView.begin();
-        while (it != playerInfo.m_EntitiesInView.end())
+        playerInfo.m_PendingDropPickups.clear();
+        for (auto it = playerInfo.m_EntitiesInView.begin(); it != playerInfo.m_EntitiesInView.end();)
         {
             Entity id = *it;
-            if (entitiesInView.find(id) == entitiesInView.end())
+            // id is not in the entities the client should view
+            if (std::find(entitiesInView.begin(), entitiesInView.end(), id) == entitiesInView.end())
             {
                 deletedEntities.push_back(id);
+                // remove id from the playerInfo's view after writing deletion so it does not get deleted twice
                 it = playerInfo.m_EntitiesInView.erase(it);
             }
             else

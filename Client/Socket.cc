@@ -1,6 +1,7 @@
 #include <Client/Socket.hh>
 
 #include <iostream>
+#include <cassert>
 
 static uint8_t g_MessageData[1024*1024];
 #ifdef EMSCRIPTEN

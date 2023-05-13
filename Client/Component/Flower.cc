@@ -27,13 +27,13 @@ namespace app::component
     void Flower::Render(Renderer *ctx)
     {
         Guard g(ctx);
-        component::Physical physical = m_Simulation->Get<component::Physical>(m_Parent);
+        Physical physical = m_Simulation->Get<Physical>(m_Parent);
 
-        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_DeletionTick);
+        ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 
         ctx->Translate(physical.m_X, physical.m_Y);
 
-        ctx->Scale(1 + physical.m_DeletionTick * 0.1);
+        ctx->Scale(1 + physical.m_ClientDeletionTick * 0.1);
         // draw stroke
         ctx->BeginPath();
         ctx->Arc(0, 0, physical.m_Radius + 1.5);
@@ -80,6 +80,7 @@ namespace app::component
         // draw mouth
         ctx->SetStroke(0xff222222);
         ctx->SetLineWidth(1.5);
+        ctx->SetLineCap(Renderer::LineCap::Round);
         ctx->BeginPath();
         ctx->MoveTo(-6, 10);
         ctx->QuadraticCurveTo(0, 15, 6, 10);

@@ -12,8 +12,8 @@ namespace app::ui
     void Container::Render()
     {
         Guard g(&m_Renderer);
-        m_Renderer.Translate(m_HJustify * m_Container->m_Width / 2, m_VJustify * m_Container->m_Height / 2); // necessary btw
-        m_Renderer.Translate(m_X * m_Renderer.m_WindowScale, m_Y * m_Renderer.m_WindowScale);
+        PreRender();
+
         if (m_HasBackground)
         {
             Guard g(&m_Renderer);
@@ -28,6 +28,8 @@ namespace app::ui
             ui::Element *element = m_Elements[i];
             if (element->m_Showing)
                 element->Render();
+            else
+                element->Idle();
         }
     }
 }

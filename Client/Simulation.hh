@@ -68,6 +68,7 @@ namespace app
             ui::Container *m_TitleScreen;
             ui::Container *m_DeathScreen;
             ui::Container *m_Loadout;
+            ui::Container *m_Test;
         };
         GameUi m_UiElements;
 

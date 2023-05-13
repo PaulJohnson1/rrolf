@@ -18,6 +18,8 @@ namespace app::system
                 return;
 
             component::Physical &physical = m_Simulation.Get<component::Physical>(entity);
+            if (physical.DeletionTick() != 0)
+                return;
             
             Vector positionVector{physical.X(), physical.Y()};
 

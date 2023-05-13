@@ -1,5 +1,8 @@
 build/
 
+rrolf-client
+rrolf-client.wasm
+
 ### Rivet ###
 .rivet/
 .env

@@ -3,6 +3,7 @@
 #include <Server/Simulation.hh>
 #include <Server/Vector.hh>
 
+#include <iostream>
 namespace app::system
 {
     CollisionDetector::CollisionDetector(Simulation &simulation)
@@ -46,13 +47,14 @@ namespace app::system
 
             float a = physical.X();
             float b = physical.Y();
-
             /*
-            brute force implementation
+            //brute force implementation
 
             m_Simulation.ForEachEntity([&](Entity entity2)
             {
                 if (entity == entity2) return;
+                if (!m_Simulation.HasComponent<component::Physical>(entity2))
+                    return;
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(entity2);
                 float c = physical2.X();
                 float d = physical2.Y();
@@ -69,11 +71,12 @@ namespace app::system
             */
 
             // spatial hashing implementation
-
             std::vector<Entity> possibleCollisions = m_SpatialHash.GetCollisions(entity);
             for (Entity i = 0; i < possibleCollisions.size(); i++)
             {
                 Entity id = possibleCollisions[i];
+                if (id >= 768)
+                    std::cout << "cooldetect" << id << '\n';
                 if (!IsValidCollision(entity, id))
                     continue;
                 component::Physical &physical2 = m_Simulation.Get<component::Physical>(id);

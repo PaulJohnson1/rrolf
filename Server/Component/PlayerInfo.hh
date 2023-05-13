@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <set>
 
 #include <Shared/Entity.hh>
@@ -21,7 +20,7 @@ namespace app::component
     class PlayerInfo
     {
         bool m_HasPlayer;
-        Entity m_Player = (Entity)-1;
+        Entity m_Player = NULL_ENTITY;
         float m_Fov = 0.9f;
         float m_CameraX = 0.0f;
         float m_CameraY = 0.0f;
@@ -102,18 +101,18 @@ namespace app::component
         uint32_t m_RotationCount = 0;
         uint64_t m_State = 0;
         uint8_t m_MouseButton = 0;
-        uint32_t m_SlotCount = 10;
+        uint32_t m_SlotCount = 5;
         PetalSlot m_PetalSlots[10] = {
-            MakePetal(PetalId::Basic, RarityId::Rare),
-            MakePetal(PetalId::Light, RarityId::Rare),
-            MakePetal(PetalId::Stinger, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Pollen, RarityId::Rare),
-            MakePetal(PetalId::Leaf, RarityId::Rare),
-            MakePetal(PetalId::Rose, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare),
-            MakePetal(PetalId::Missile, RarityId::Rare)
+            MakePetal(PetalId::Basic, RarityId::Common),
+            MakePetal(PetalId::Light, RarityId::Common),
+            MakePetal(PetalId::Stinger, RarityId::Common),
+            MakePetal(PetalId::Missile, RarityId::Common),
+            MakePetal(PetalId::Pollen, RarityId::Common),
+            MakePetal(PetalId::Leaf, RarityId::Ultra),
+            MakePetal(PetalId::Rose, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra),
+            MakePetal(PetalId::Missile, RarityId::Ultra)
         };
         PetalSlot m_SecondarySlots[10] = {
             MakePetal(PetalId::Stinger, RarityId::Ultra),
@@ -129,6 +128,7 @@ namespace app::component
         };
         uint32_t m_Inventory[PetalId::kMaxPetals * RarityId::kMaxRarities] = {};
         std::set<Entity> m_EntitiesInView;
+        std::vector<Entity> m_PendingDropPickups = {};
 
         PlayerInfo(Entity, Simulation *);
         ~PlayerInfo();

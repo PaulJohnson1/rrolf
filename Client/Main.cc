@@ -82,13 +82,15 @@ extern "C"
         if (!g_Renderer)
             return;
         g_Renderer->SetSize(width, height);
-        g_Renderer->m_Container.m_Width = width;
-        g_Renderer->m_Container.m_Height = height;
         float a = g_Renderer->m_Height / 1080;
         float b = g_Renderer->m_Width / 1920;
         g_Renderer->m_WindowScale = b < a ? a : b;
-        //g_Renderer->m_WindowScale *= devicePixelRatio;
+        g_Renderer->m_Container.m_X = width * 0.5f / g_Renderer->m_WindowScale;
+        g_Renderer->m_Container.m_Y = height * 0.5f / g_Renderer->m_WindowScale;
+        g_Renderer->m_Container.m_Width = width / g_Renderer->m_WindowScale;
+        g_Renderer->m_Container.m_Height = height / g_Renderer->m_WindowScale;
         g_Simulation->TickRenderer();
+        //g_Renderer->SetTransform(1, 0, 0, 1, width * 0.5f, height * 0.5f);
         g_Renderer->ResetTransform();
         g_Renderer->m_Container.Render();
     }

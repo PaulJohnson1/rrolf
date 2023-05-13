@@ -1,5 +1,6 @@
 #include <Client/Component/ArenaInfo.hh>
 
+#include <cassert>
 
 #include <BinaryCoder/BinaryCoder.hh>
 #include <BinaryCoder/NativeTypes.hh>
@@ -30,7 +31,7 @@ namespace app::component
         ctx->BeginPath();
         ctx->Arc(0, 0, m_MapSize * 2);
         ctx->Fill();
-        component::PlayerInfo &playerInfo = m_Simulation->Get<component::PlayerInfo>(m_Simulation->m_PlayerInfo);
+        PlayerInfo &playerInfo = m_Simulation->Get<PlayerInfo>(m_Simulation->m_PlayerInfo);
         float alpha = playerInfo.m_Fov * 51;
         ctx->SetStroke((uint32_t)(alpha) << 24);
         ctx->SetFill((uint32_t)(alpha) << 24);

@@ -27,6 +27,6 @@ namespace app::component
         if (updatedFields & 8)
             m_Angle = coder.Read<bc::Float32>();
         if (updatedFields & 16)
-            m_DeletionTick = (float) coder.Read<bc::VarUint>();
+            m_DeletionTick = coder.Read<bc::VarUint>();
     }
 }
