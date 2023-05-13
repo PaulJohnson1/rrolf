@@ -18,12 +18,12 @@ namespace app
     };
 
     template <typename T>
-    void PerformHttpRequest(T OnFinish, std::string const &uri, std::vector<HttpHeader> const &, std::string const &postData = "", bool post = false)
+    void PerformHttpRequest(T OnFinish, std::string const &uri, std::vector<HttpHeader> const &headers, std::string const &postData = "", bool post = false)
     {
         std::string response;
 
-#ifndef EMSCRIPTEN
         std::cout << "making http request to " << uri << '\n';
+#ifndef EMSCRIPTEN
         curl_slist *list = nullptr;
         CURL *curl = curl_easy_init();
         assert(curl);

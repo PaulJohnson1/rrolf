@@ -224,7 +224,7 @@ int main()
     // feenableexcept(FE_INVALID);
     using namespace app;
 
-    PerformHttpRequest("test", {{"testName", "testValue"}}, "post data test", true);
+    // PerformHttpRequest("test", {{"testName", "testValue"}}, "post data test", true);
 
 #ifdef EMSCRIPTEN
     Initialize();

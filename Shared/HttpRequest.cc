@@ -1,3 +1,5 @@
+#include <Shared/HttpRequest.hh>
+
 namespace app
 {
     bool IsSafeJson(std::string const &json)

@@ -41,6 +41,7 @@ namespace app
     void Server::Run()
     {
         using namespace std::chrono_literals;
+        
         while (true)
         {
             auto start = std::chrono::steady_clock::now();
@@ -48,7 +49,9 @@ namespace app
             Tick();
             auto end = std::chrono::steady_clock::now();
             auto timeTaken = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+#ifndef RIVET_PRODUCTION_BUILD
             std::cout << (double)timeTaken / 1'000'000.0f << "ms\n";
+#endif
             auto sleepTime = std::max(0ns, 40ms - std::chrono::nanoseconds(timeTaken));
             std::this_thread::sleep_for(sleepTime);
         }
@@ -67,7 +70,7 @@ namespace app
             memset(uri, 0, sizeof(uri));
             lws_hdr_copy(socket, uri, 500, WSI_TOKEN_GET_URI);
             if (!IsSafeJson(uri))
-                return;
+                return 0;
 #endif
             Client *client = new Client(socket, _this->m_Simulation);
 #ifdef RIVET_PRODUCTION_BUILD
@@ -75,7 +78,9 @@ namespace app
             char const *rivetToken = getenv("RIVET_LOBBY_TOKEN");
             assert(rivetToken);
             std::cout << "player connected " << client->m_Token << '\n';
-            PerformHttpRequest("https://matchmaker.api.rivet.gg/v1/players/connected",
+            PerformHttpRequest([](std::string const &r)
+                               { std::cout << r << '\n'; },
+                               "https://matchmaker.api.rivet.gg/v1/players/connected",
                                {{"Authorization", std::string("Bearer ") + rivetToken}},
                                "{\"player_token\":\"" + client->m_Token + "\"}",
                                true);
