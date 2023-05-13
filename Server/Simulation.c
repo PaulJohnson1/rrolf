@@ -39,7 +39,10 @@ void rr_simulation_free_entity(struct rr_simulation *self, EntityIdx entity)
 
 int rr_simulation_has_entity(struct rr_simulation *self, EntityIdx entity)
 {
-    return self->entity_tracker[entity >> 3] & (1 << (entity & 7));
+    if (self->entity_tracker[entity >> 3] & (1 << (entity & 7)))
+        return 1;
+    else
+        return 0;
 }
 
 // TODO: use a less goofy name
@@ -66,17 +69,21 @@ void rr_protocol_foreach_function(EntityIdx id, void *_simulation_encoder)
     }
     else
     {
-#define XX(COMPONENT, ID)                                                                    \
-    component_flags |= (rr_simulation_has_##COMPONENT(simulation, id) && \
-                        rr_simulation_get_##COMPONENT(simulation, id)->protocol_state != 0)  \
+#define XX(COMPONENT, ID)                                                                   \
+    component_flags |= (rr_simulation_has_##COMPONENT(simulation, id) &&                    \
+                        rr_simulation_get_##COMPONENT(simulation, id)->protocol_state != 0) \
                        << ID;
         FOR_EACH_COMPONENT;
 #undef XX
     }
 
-    rr_encoder_write_uint8(encoder, 0xfe);
+    printf("%d component flags\n", component_flags);
     rr_encoder_write_varuint(encoder, component_flags);
-    rr_encoder_write_uint8(encoder, 0xfe);
+#define XX(COMPONENT, ID)            \
+    if (component_flags & (1 << ID)) \
+        rr_component_##COMPONENT##_write(rr_simulation_get_##COMPONENT(simulation, id), encoder, is_creation);
+    FOR_EACH_COMPONENT;
+#undef XX
 }
 
 void rr_simulation_write_binary(struct rr_simulation *self, struct rr_encoder *encoder)
@@ -109,7 +116,10 @@ void rr_simulation_tick(struct rr_simulation *self)
     int rr_simulation_has_##COMPONENT(struct rr_simulation *self, EntityIdx entity)                              \
     {                                                                                                            \
         assert(rr_simulation_has_entity(self, entity));                                                          \
-        return self->COMPONENT##_tracker[entity >> 3] & (1 << (entity & 7));                                     \
+        if (self->COMPONENT##_tracker[entity >> 3] & (1 << (entity & 7)))                                        \
+            return 1;                                                                                            \
+        else                                                                                                     \
+            return 0;                                                                                            \
     }                                                                                                            \
     struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *self, EntityIdx entity) \
     {                                                                                                            \

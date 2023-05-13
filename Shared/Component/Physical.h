@@ -19,9 +19,11 @@ struct rr_component_physical
     float mass;
     uint32_t deletion_tick;
     uint32_t query_id;
+    EntityIdx *colliding_with_start;
+    EntityIdx *colliding_with_end;
+    uint64_t protocol_state;
     struct rr_vector velocity;
     struct rr_vector acceleration;
-    uint64_t protocol_state;
 };
 
 void rr_component_physical_write(struct rr_component_physical *, struct rr_encoder *, int is_creation);

@@ -24,20 +24,20 @@ void rr_component_physical_free(struct rr_component_physical *self)
 {
 }
 
-void rr_component_physical_write(struct rr_component_physical *s, struct rr_encoder *writer, int is_creation)
+void rr_component_physical_write(struct rr_component_physical *self, struct rr_encoder *writer, int is_creation)
 {
     uint64_t state = s->protocol_state | (state_flags_all * is_creation);
     rr_encoder_write_varuint(writer, state);
     if (state & state_flags_x)
-        rr_encoder_write_float(writer, s->x);
+        rr_encoder_write_float(writer, self->x);
     if (state & state_flags_y)
-        rr_encoder_write_float(writer, s->y);
+        rr_encoder_write_float(writer, self->y);
     if (state & state_flags_angle)
-        rr_encoder_write_float(writer, s->angle);
+        rr_encoder_write_float(writer, self->angle);
     if (state & state_flags_radius)
-        rr_encoder_write_float(writer, s->radius);
+        rr_encoder_write_float(writer, self->radius);
     if (state & state_flags_deletion_tick)
-        rr_encoder_write_uint8(writer, s->deletion_tick);
+        rr_encoder_write_uint8(writer, self->deletion_tick);
 }
 
 void rr_component_physical_set_x(struct rr_component_physical *self, float x)
