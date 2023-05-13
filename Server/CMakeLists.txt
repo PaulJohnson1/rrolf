@@ -3,21 +3,24 @@ cmake_minimum_required(VERSION 3.16)
 include_directories(..)
 
 set(SRCS
+    System/Velocity.c
     Main.c
     Simulation.c
+    SpatialHash.c
     ../Shared/Component/Physical.c
-    ../Shared/BinaryEncoder.c
+    ../Shared/Encoder.c
     ../Shared/Vector.c)
 
 
-set(CMAKE_C_FLAGS "-std=c99 -DSERVER_BUILD")
+set(CMAKE_C_FLAGS "-std=c11 -DSERVER_BUILD -DHSHG_D=2 -DHSHG_UNIFORM")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3 -DHSHG_NDEBUG")
+    # link time optimiations
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 

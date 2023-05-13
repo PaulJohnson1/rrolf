@@ -3,8 +3,10 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define MAX_ENTITY_COUNT (768)
+// most be multiple of 8 and not 0
+#define MAX_ENTITY_COUNT (1024)
 #define NULL_ENTITY (0)
 
+
 #define FOR_EACH_COMPONENT \
-    XX(Physical, 0)
+    XX(physical, 0)
