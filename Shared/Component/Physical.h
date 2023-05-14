@@ -2,6 +2,7 @@
 
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
+#include <Shared/Utilities.h>
 
 struct rr_simulation;
 struct rr_encoder;
@@ -9,30 +10,34 @@ struct rr_encoder;
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
-    EntityIdx parentID;
-    float radius;
-    float x;
-    float y;
-    float angle;
-    float friction;
-    float restitution;
-    float mass;
-    uint32_t deletion_tick;
-    uint32_t query_id;
-    EntityIdx *colliding_with_start;
-    EntityIdx *colliding_with_end;
-    uint64_t protocol_state;
-    struct rr_vector velocity;
-    struct rr_vector acceleration;
+                   EntityIdx parentID;
+                   float radius;
+    RR_CLIENT_ONLY(float lerp_radius;)
+                   float x;
+    RR_CLIENT_ONLY(float lerp_x;)
+                   float y;
+    RR_CLIENT_ONLY(float lerp_y;)
+                   float angle;
+    RR_CLIENT_ONLY(float lerp_angle;)
+    RR_SERVER_ONLY(float friction;)
+    RR_SERVER_ONLY(float restitution;)
+    RR_SERVER_ONLY(float mass;)
+                   uint32_t deletion_tick;
+    RR_SERVER_ONLY(uint32_t query_id;)
+    RR_SERVER_ONLY(EntityIdx *colliding_with_start;)
+    RR_SERVER_ONLY(EntityIdx *colliding_with_end;)
+    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(struct rr_vector velocity;)
+    RR_SERVER_ONLY(struct rr_vector acceleration;)
 };
 
-void rr_component_physical_write(struct rr_component_physical *, struct rr_encoder *, int is_creation);
-void rr_component_physical_read(struct rr_component_physical *, struct rr_encoder *);
+RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct rr_encoder *, int is_creation);)
+RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *, struct rr_encoder *);)
 
 void rr_component_physical_init(struct rr_component_physical *);
 void rr_component_physical_free(struct rr_component_physical *);
 
-void rr_component_physical_set_x(struct rr_component_physical *, float);
-void rr_component_physical_set_y(struct rr_component_physical *, float);
-void rr_component_physical_set_angle(struct rr_component_physical *, float);
-void rr_component_physical_set_radius(struct rr_component_physical *, float);
+RR_SERVER_ONLY(void rr_component_physical_set_x(struct rr_component_physical *, float);)
+RR_SERVER_ONLY(void rr_component_physical_set_y(struct rr_component_physical *, float);)
+RR_SERVER_ONLY(void rr_component_physical_set_angle(struct rr_component_physical *, float);)
+RR_SERVER_ONLY(void rr_component_physical_set_radius(struct rr_component_physical *, float);)

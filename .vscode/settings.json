@@ -91,7 +91,10 @@
         "string.h": "c",
         "memory.h": "c",
         "features.h": "c",
-        "physical.h": "c"
+        "physical.h": "c",
+        "libwebsockets.h": "c",
+        "server.h": "c",
+        "pthread.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

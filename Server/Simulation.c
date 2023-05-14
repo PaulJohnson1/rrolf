@@ -6,11 +6,12 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
 void rr_simulation_init(struct rr_simulation *self)
 {
-    *self = (struct rr_simulation){0};
+    memset(self, 0, sizeof *self);
 }
 
 // will change later probably
@@ -20,7 +21,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *self)
     {
         if (!rr_simulation_has_entity(self, i))
         {
-            self->entity_tracker[i >> 3] |= 1 << (i & 7);
+            rr_bitset_set(self->entity_tracker, i);
             return i;
         }
     }
@@ -30,19 +31,25 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *self)
 
 void rr_simulation_free_entity(struct rr_simulation *self, EntityIdx entity)
 {
-#define XX(COMPONENT, ID) \
-    rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(self, entity));
+#define XX(COMPONENT, ID)                    \
+    if (rr_simulation_has_##COMPONENT(self, entity)) \
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(self, entity));
     FOR_EACH_COMPONENT;
 #undef XX
-    self->entity_tracker[entity >> 3] &= ~(1 << (entity & 7));
+
+    // unset them
+#define XX(COMPONENT, ID) \
+    rr_bitset_unset(self->COMPONENT##_tracker, entity);
+    FOR_EACH_COMPONENT;
+#undef XX
+
+    // unset entity
+    rr_bitset_unset(self->entity_tracker, entity);
 }
 
 int rr_simulation_has_entity(struct rr_simulation *self, EntityIdx entity)
 {
-    if (self->entity_tracker[entity >> 3] & (1 << (entity & 7)))
-        return 1;
-    else
-        return 0;
+    return rr_bitset_get(self->entity_tracker, entity);
 }
 
 // TODO: use a less goofy name
@@ -92,7 +99,8 @@ void rr_simulation_write_binary(struct rr_simulation *self, struct rr_encoder *e
     // only one capture allowed, must have two fields though
     struct rr_simulation_encoder_temp a = (struct rr_simulation_encoder_temp){
         .simulation = self,
-        .encoder = encoder};
+        .encoder = encoder
+    };
     rr_simulation_for_each_entity(self, &a, rr_protocol_foreach_function);
     rr_encoder_write_uint8(encoder, 0); // null terminate entity update ids
 }
@@ -116,15 +124,12 @@ void rr_simulation_tick(struct rr_simulation *self)
     int rr_simulation_has_##COMPONENT(struct rr_simulation *self, EntityIdx entity)                              \
     {                                                                                                            \
         assert(rr_simulation_has_entity(self, entity));                                                          \
-        if (self->COMPONENT##_tracker[entity >> 3] & (1 << (entity & 7)))                                        \
-            return 1;                                                                                            \
-        else                                                                                                     \
-            return 0;                                                                                            \
+        return rr_bitset_get(self->COMPONENT##_tracker, entity);                                                 \
     }                                                                                                            \
     struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *self, EntityIdx entity) \
     {                                                                                                            \
         assert(rr_simulation_has_entity(self, entity));                                                          \
-        self->COMPONENT##_tracker[entity >> 3] |= 1 << (entity & 7);                                             \
+        rr_bitset_set(self->COMPONENT##_tracker, entity);                                                        \
         rr_component_##COMPONENT##_init(self->COMPONENT##_components + entity);                                  \
         return rr_simulation_get_##COMPONENT(self, entity);                                                      \
     }                                                                                                            \

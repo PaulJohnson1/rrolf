@@ -5,14 +5,16 @@ include_directories(..)
 set(SRCS
     System/Velocity.c
     Main.c
+    Server.c
     Simulation.c
     SpatialHash.c
     ../Shared/Component/Physical.c
+    ../Shared/Bitset.c
     ../Shared/Encoder.c
     ../Shared/Vector.c)
 
 
-set(CMAKE_C_FLAGS "-std=c11 -DSERVER_BUILD -DHSHG_D=2 -DHSHG_UNIFORM")
+set(CMAKE_C_FLAGS "-std=gnu11 -DRR_SERVER -DHSHG_D=2 -DHSHG_UNIFORM")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default
