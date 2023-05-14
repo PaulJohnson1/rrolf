@@ -1,16 +1,21 @@
 #include <Shared/Bitset.h>
 
-int rr_bitset_get(uint8_t *arr, uint64_t pos)
+int rr_bitset_get_bit(uint8_t *a, uint64_t i)
 {
-    return arr[pos >> 3] & (1 << (pos & 7)) ? 1 : 0;
+    return a[i >> 3] & (1 << (i & 7));
 }
 
-void rr_bitset_set(uint8_t *arr, uint64_t pos)
+int rr_bitset_get(uint8_t *a, uint64_t i)
 {
-    arr[pos >> 3] |= 1 << (pos & 7);
+    return (a[i >> 3] & (1 << (i & 7))) ? 1 : 0;
 }
 
-void rr_bitset_unset(uint8_t *arr, uint64_t pos)
+void rr_bitset_set(uint8_t *a, uint64_t i)
 {
-    arr[pos >> 3] &= ~(1 << (pos & 7));
+    a[i >> 3] |= 1 << (i & 7);
+}
+
+void rr_bitset_unset(uint8_t *a, uint64_t i)
+{
+    a[i >> 3] &= ~(1 << (i & 7));
 }

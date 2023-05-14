@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Component/Physical.h>
+#include <Shared/Component/PlayerInfo.h>
 #include <Shared/Encoder.h>
 #include <Shared/Entity.h>
 

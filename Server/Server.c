@@ -18,39 +18,39 @@ void rr_server_client_tick(struct rr_server_client *self)
     puts("client tick or sometihng lol");
 }
 
-int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *_self, void *idk, size_t size)
+int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *other, size_t size)
 {
-    struct rr_server *self = _self;
+    struct rr_server *self = (struct rr_server *)lws_context_user(lws_get_context(socket));
     switch (reason)
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
         puts("client connected");
-        // mke more readable later
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (rr_bitset_get(self->clients_in_use, i))
+            if (!rr_bitset_get(self->clients_in_use, i))
             {
                 rr_bitset_set(self->clients_in_use, i);
                 rr_server_client_init(self->clients + i);
                 self->clients[i].file_descriptor = lws_get_socket_fd(socket);
                 return 0;
             }
-        RR_UNREACHABLE();
+        RR_UNREACHABLE("max clients reached");
     }
 
     case LWS_CALLBACK_CLOSED:
     {
         puts("client disconnected");
+        int file_descriptor = lws_get_socket_fd(socket);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (!rr_bitset_get(self->clients_in_use, i))
+            if (rr_bitset_get(self->clients_in_use, i))
             {
-                if (self->clients[i].file_descriptor == lws_get_socket_fd(socket))
+                if (self->clients[i].file_descriptor == file_descriptor)
                 {
                     rr_bitset_unset(self->clients_in_use, i);
                     return 0;
                 }
             }
-        RR_UNREACHABLE();
+        RR_UNREACHABLE("cloudn't remove client");
     }
 
     default:
@@ -95,8 +95,8 @@ void rr_server_run(struct rr_server *self)
     {
         struct timeval start;
         gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
-        lws_service(self->server, -1);
         rr_server_tick(self);
+        lws_service(self->server, -1);
         struct timeval end;
         gettimeofday(&end, NULL);
 

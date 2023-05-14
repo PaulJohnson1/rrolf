@@ -9,6 +9,7 @@ set(SRCS
     Simulation.c
     SpatialHash.c
     ../Shared/Component/Physical.c
+    ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
     ../Shared/Vector.c)

@@ -26,7 +26,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *self)
         }
     }
 
-    RR_UNREACHABLE();
+    RR_UNREACHABLE("ran out of entity ids");
 }
 
 void rr_simulation_free_entity(struct rr_simulation *self, EntityIdx entity)

@@ -15,5 +15,4 @@ int main()
     struct rr_server s;
     rr_server_init(&s);
     rr_server_run(&s);
-
 }

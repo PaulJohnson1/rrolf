@@ -3,9 +3,12 @@
 #include <stdint.h>
 
 #ifndef NDEBUG
-#define RR_UNREACHABLE() assert(0)
+#include <stdio.h>
+#define RR_UNREACHABLE(MESSAGE) \
+    fputs(#MESSAGE, stderr);    \
+    assert(0)
 #else
-#define RR_UNREACHABLE() __builtin_unreachable()
+#define RR_UNREACHABLE(MESSAGE) __builtin_unreachable()
 #endif
 
 #ifdef RR_CLIENT
