@@ -14,18 +14,18 @@ enum : uint64_t
     state_flags_all =           0b011111
 };
 
-void rr_component_physical_init(struct rr_component_physical *self)
+void rr_component_physical_init(struct rr_component_physical *this)
 {
-    memset(self, 0, sizeof *self);
+    memset(this, 0, sizeof *this);
 }
 
-void rr_component_physical_free(struct rr_component_physical *self)
+void rr_component_physical_free(struct rr_component_physical *this)
 {
 }
 
-void rr_component_physical_write(struct rr_component_physical *self, struct rr_encoder *encoder, int is_creation)
+void rr_component_physical_write(struct rr_component_physical *this, struct rr_encoder *encoder, int is_creation)
 {
-    uint64_t state = self->protocol_state | (state_flags_all * is_creation);
+    uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     rr_encoder_write_varuint(encoder, state);
     RR_ENCODE_PUBLIC_FIELD(x, float);
     RR_ENCODE_PUBLIC_FIELD(y, float);
@@ -34,7 +34,7 @@ void rr_component_physical_write(struct rr_component_physical *self, struct rr_e
     RR_ENCODE_PUBLIC_FIELD(deletion_tick, uint8);
 }
 
-void rr_component_physical_read(struct rr_component_physical *self, struct rr_encoder *encoder)
+void rr_component_physical_read(struct rr_component_physical *this, struct rr_encoder *encoder)
 {
     uint64_t state = rr_encoder_read_varuint(encoder);
     RR_DECODE_PUBLIC_FIELD(x, float);

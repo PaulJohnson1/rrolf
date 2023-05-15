@@ -1,20 +1,19 @@
 #include <Shared/Encoder.h>
 
-#include <stdio.h>
 #include <string.h>
 
-void rr_encoder_init(struct rr_encoder *self, uint8_t *data)
+void rr_encoder_init(struct rr_encoder *this, uint8_t *data)
 {
-    self->start = data;
-    self->current = data;
+    this->start = data;
+    this->current = data;
 }
 
-uint8_t rr_encoder_read_uint8(struct rr_encoder *self)
+uint8_t rr_encoder_read_uint8(struct rr_encoder *this)
 {
-    return *self->current++;
+    return *this->current++;
 }
 
-uint32_t rr_encoder_read_varuint(struct rr_encoder *self)
+uint32_t rr_encoder_read_varuint(struct rr_encoder *this)
 {
     uint8_t byte;
     uint32_t num = 0;
@@ -22,7 +21,7 @@ uint32_t rr_encoder_read_varuint(struct rr_encoder *self)
 
     do
     {
-        byte = *(self->current++);
+        byte = *(this->current++);
         num |= (byte & 127) << count;
         count += 7;
     } while (byte & 128);
@@ -30,31 +29,31 @@ uint32_t rr_encoder_read_varuint(struct rr_encoder *self)
     return num;
 }
 
-float rr_encoder_read_float(struct rr_encoder *self)
+float rr_encoder_read_float(struct rr_encoder *this)
 {
     float f;
-    memcpy(&f, self->current, 4);
-    self->current += 4;
+    memcpy(&f, this->current, 4);
+    this->current += 4;
     return f;
 }
 
-void rr_encoder_write_uint8(struct rr_encoder *self, uint8_t v)
+void rr_encoder_write_uint8(struct rr_encoder *this, uint8_t v)
 {
-    *self->current++ = v;
+    *this->current++ = v;
 }
 
-void rr_encoder_write_varuint(struct rr_encoder *self, uint32_t v)
+void rr_encoder_write_varuint(struct rr_encoder *this, uint32_t v)
 {
     while (v > 127)
     {
-        *self->current++ = v | 128;
+        *this->current++ = v | 128;
         v >>= 7;
     }
-    *self->current++ = v;
+    *this->current++ = v;
 }
 
-void rr_encoder_write_float(struct rr_encoder *self, float v)
+void rr_encoder_write_float(struct rr_encoder *this, float v)
 {
-    memcpy(self->current, &v, 4);
-    self->current += 4;
+    memcpy(this->current, &v, 4);
+    this->current += 4;
 }

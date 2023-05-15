@@ -12,25 +12,25 @@ enum : uint64_t
     state_flags_all =        0b000111
 };
 
-void rr_component_player_info_init(struct rr_component_player_info *self)
+void rr_component_player_info_init(struct rr_component_player_info *this)
 {
-    memset(self, 0, sizeof *self);
+    memset(this, 0, sizeof *this);
 }
 
-void rr_component_player_info_free(struct rr_component_player_info *self)
+void rr_component_player_info_free(struct rr_component_player_info *this)
 {
 }
 
-void rr_component_player_info_write(struct rr_component_player_info *self, struct rr_encoder *encoder, int is_creation)
+void rr_component_player_info_write(struct rr_component_player_info *this, struct rr_encoder *encoder, int is_creation)
 {
-    uint64_t state = self->protocol_state | (state_flags_all * is_creation);
+    uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     rr_encoder_write_varuint(encoder, state);
     RR_ENCODE_PUBLIC_FIELD(camera_x, float);
     RR_ENCODE_PUBLIC_FIELD(camera_y, float);
     RR_ENCODE_PUBLIC_FIELD(camera_fov, float);
 }
 
-void rr_component_player_info_read(struct rr_component_player_info *self, struct rr_encoder *encoder)
+void rr_component_player_info_read(struct rr_component_player_info *this, struct rr_encoder *encoder)
 {
     uint64_t state = rr_encoder_read_varuint(encoder);
     RR_DECODE_PUBLIC_FIELD(camera_x, float);

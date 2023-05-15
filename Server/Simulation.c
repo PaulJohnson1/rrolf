@@ -9,19 +9,19 @@
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
-void rr_simulation_init(struct rr_simulation *self)
+void rr_simulation_init(struct rr_simulation *this)
 {
-    memset(self, 0, sizeof *self);
+    memset(this, 0, sizeof *this);
 }
 
 // will change later probably
-EntityIdx rr_simulation_alloc_entity(struct rr_simulation *self)
+EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
 {
     for (EntityIdx i = 1; i < MAX_ENTITY_COUNT; i++)
     {
-        if (!rr_simulation_has_entity(self, i))
+        if (!rr_simulation_has_entity(this, i))
         {
-            rr_bitset_set(self->entity_tracker, i);
+            rr_bitset_set(this->entity_tracker, i);
             printf("created with id %d\n", i);
             return i;
         }
@@ -30,32 +30,32 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *self)
     RR_UNREACHABLE("ran out of entity ids");
 }
 
-void rr_simulation_free_entity(struct rr_simulation *self, EntityIdx entity)
+void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
 {
     printf("deleted entity with id %d\n", entity);
 #define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(self, entity)) \
-        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(self, entity));
+    if (rr_simulation_has_##COMPONENT(this, entity)) \
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity));
     FOR_EACH_COMPONENT;
 #undef XX
 
     // unset them
 #define XX(COMPONENT, ID) \
-    rr_bitset_unset(self->COMPONENT##_tracker, entity);
+    rr_bitset_unset(this->COMPONENT##_tracker, entity);
     FOR_EACH_COMPONENT;
 #undef XX
 
     // unset entity
-    // rr_bitset_unset(self->entity_tracker, entity);
-    self->entity_tracker[entity] &= ~(1 << (entity & 7));
-    // self->entity_tracker[entity] = 0;
+    // rr_bitset_unset(this->entity_tracker, entity);
+    this->entity_tracker[entity] &= ~(1 << (entity & 7));
+    // this->entity_tracker[entity] = 0;
 }
 
-int rr_simulation_has_entity(struct rr_simulation *self, EntityIdx entity)
+int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
 {
-    // return rr_bitset_get(self->entity_tracker, entity);
-    return self->entity_tracker[entity >> 3] & (1 << (entity & 7));
-    // return self->entity_tracker[entity];
+    // return rr_bitset_get(this->entity_tracker, entity);
+    return this->entity_tracker[entity >> 3] & (1 << (entity & 7));
+    // return this->entity_tracker[entity];
 }
 
 // TODO: use a less goofy name
@@ -126,7 +126,7 @@ void rr_simulation_find_entities_in_view_foreach_function(EntityIdx entity, void
     captures->entities_in_view[entity >> 3] |= 1 << (entity & 7);
 }
 
-void rr_simulation_find_entities_in_view(struct rr_simulation *self, struct rr_component_player_info *player_info, uint8_t *entities_in_view)
+void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_component_player_info *player_info, uint8_t *entities_in_view)
 {
     struct rr_simulation_find_entities_in_view_foreach_function_captures captures;
     memset(&captures, 0, sizeof captures);
@@ -135,57 +135,57 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *self, struct rr_c
     captures.view_x = (int32_t)player_info->camera_x;
     captures.view_y = (int32_t)player_info->camera_y;
     captures.entities_in_view = entities_in_view;
-    captures.simulation = self;
+    captures.simulation = this;
 
-    rr_simulation_for_each_entity(self, &captures, rr_simulation_find_entities_in_view_foreach_function);
+    rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_foreach_function);
 }
 
-void rr_simulation_write_binary(struct rr_simulation *self, struct rr_encoder *encoder, struct rr_component_player_info *player_info)
+void rr_simulation_write_binary(struct rr_simulation *this, struct rr_encoder *encoder, struct rr_component_player_info *player_info)
 {
     // don't use spatial hashing to query (large areas are slow)
     uint8_t entities_in_view[MAX_ENTITY_COUNT >> 3];
     memset(entities_in_view, 0, (MAX_ENTITY_COUNT >> 3) * (sizeof *entities_in_view));
 
-    rr_simulation_find_entities_in_view(self, player_info, entities_in_view);
+    rr_simulation_find_entities_in_view(this, player_info, entities_in_view);
 
     struct rr_simulation_encoder_temp a = (struct rr_simulation_encoder_temp){
-        .simulation = self,
+        .simulation = this,
         .encoder = encoder};
-    rr_simulation_for_each_entity(self, &a, rr_protocol_foreach_function);
+    rr_simulation_for_each_entity(this, &a, rr_protocol_foreach_function);
     rr_encoder_write_uint8(encoder, 0); // null terminate entity update ids
 }
 
 // will change later definitely
-void rr_simulation_for_each_entity(struct rr_simulation *self, void *d, void (*cb)(EntityIdx, void *))
+void rr_simulation_for_each_entity(struct rr_simulation *this, void *d, void (*cb)(EntityIdx, void *))
 {
     for (EntityIdx i = 1; i < MAX_ENTITY_COUNT; i++)
-        if (rr_simulation_has_entity(self, i))
+        if (rr_simulation_has_entity(this, i))
             cb(i, d);
 }
 
-void rr_simulation_tick(struct rr_simulation *self)
+void rr_simulation_tick(struct rr_simulation *this)
 {
-    rr_system_velocity_tick(self);
+    rr_system_velocity_tick(this);
 }
 
 #define XX(COMPONENT, ID)                                                                                        \
-    int rr_simulation_has_##COMPONENT(struct rr_simulation *self, EntityIdx entity)                              \
+    int rr_simulation_has_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                              \
     {                                                                                                            \
-        assert(rr_simulation_has_entity(self, entity));                                                          \
-        return rr_bitset_get(self->COMPONENT##_tracker, entity);                                                 \
+        assert(rr_simulation_has_entity(this, entity));                                                          \
+        return rr_bitset_get(this->COMPONENT##_tracker, entity);                                                 \
     }                                                                                                            \
-    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *self, EntityIdx entity) \
+    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *this, EntityIdx entity) \
     {                                                                                                            \
-        assert(rr_simulation_has_entity(self, entity));                                                          \
-        rr_bitset_set(self->COMPONENT##_tracker, entity);                                                        \
-        rr_component_##COMPONENT##_init(self->COMPONENT##_components + entity);                                  \
-        return rr_simulation_get_##COMPONENT(self, entity);                                                      \
+        assert(rr_simulation_has_entity(this, entity));                                                          \
+        rr_bitset_set(this->COMPONENT##_tracker, entity);                                                        \
+        rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity);                                  \
+        return rr_simulation_get_##COMPONENT(this, entity);                                                      \
     }                                                                                                            \
-    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *self, EntityIdx entity) \
+    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *this, EntityIdx entity) \
     {                                                                                                            \
-        assert(rr_simulation_has_entity(self, entity));                                                          \
-        assert(rr_simulation_has_##COMPONENT(self, entity));                                                     \
-        return &self->COMPONENT##_components[entity];                                                            \
+        assert(rr_simulation_has_entity(this, entity));                                                          \
+        assert(rr_simulation_has_##COMPONENT(this, entity));                                                     \
+        return &this->COMPONENT##_components[entity];                                                            \
     }
 FOR_EACH_COMPONENT;
 #undef XX

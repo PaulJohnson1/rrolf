@@ -9,44 +9,44 @@
 
 #include <libwebsockets.h>
 
-void rr_server_client_init(struct rr_server_client *self)
+void rr_server_client_init(struct rr_server_client *this)
 {
-    memset(self, 0, sizeof *self);
+    memset(this, 0, sizeof *this);
     puts("client connected");
 }
 
-void rr_server_client_create_player_info(struct rr_server_client *self)
+void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
-    self->player_info = rr_simulation_alloc_entity(&self->server->simulation);
+    this->player_info = rr_simulation_alloc_entity(&this->server->simulation);
 }
 
-void rr_server_client_free(struct rr_server_client *self)
+void rr_server_client_free(struct rr_server_client *this)
 {
     puts("client disconnected");
-    rr_simulation_free_entity(&self->server->simulation, self->player_info);
+    rr_simulation_free_entity(&this->server->simulation, this->player_info);
 }
 
-void rr_server_client_tick(struct rr_server_client *self)
+void rr_server_client_tick(struct rr_server_client *this)
 {
     puts("client tick or sometihng lol");
 }
 
 int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *other, size_t size)
 {
-    struct rr_server *self = (struct rr_server *)lws_context_user(lws_get_context(socket));
+    struct rr_server *this = (struct rr_server *)lws_context_user(lws_get_context(socket));
     switch (reason)
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (!rr_bitset_get_bit(self->clients_in_use, i))
+            if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
-                rr_bitset_set(self->clients_in_use, i);
-                rr_server_client_init(self->clients + i);
-                self->clients[i].server = self;
-                self->clients[i].file_descriptor = lws_get_socket_fd(socket);
-                rr_server_client_create_player_info(self->clients + i);
+                rr_bitset_set(this->clients_in_use, i);
+                rr_server_client_init(this->clients + i);
+                this->clients[i].server = this;
+                this->clients[i].file_descriptor = lws_get_socket_fd(socket);
+                rr_server_client_create_player_info(this->clients + i);
                 return 0;
             }
         RR_UNREACHABLE("max clients reached");
@@ -56,12 +56,12 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
     {
         int file_descriptor = lws_get_socket_fd(socket);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (rr_bitset_get(self->clients_in_use, i))
+            if (rr_bitset_get(this->clients_in_use, i))
             {
-                if (self->clients[i].file_descriptor == file_descriptor)
+                if (this->clients[i].file_descriptor == file_descriptor)
                 {
-                    rr_bitset_unset(self->clients_in_use, i);
-                    rr_server_client_free(self->clients + i);
+                    rr_bitset_unset(this->clients_in_use, i);
+                    rr_server_client_free(this->clients + i);
                     return 0;
                 }
             }
@@ -74,11 +74,28 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
     return 0;
 }
 
-void rr_server_init(struct rr_server *self)
+void rr_server_init(struct rr_server *this)
 {
-    printf("server size: %lu\n", sizeof *self);
-    memset(self, 0, sizeof *self);
-    rr_simulation_init(&self->simulation);
+    printf("server size: %lu\n", sizeof *this);
+    memset(this, 0, sizeof *this);
+    rr_simulation_init(&this->simulation);
+}
+
+void rr_server_free(struct rr_server *this)
+{
+    lws_context_destroy(this->server);
+}
+
+void rr_server_tick(struct rr_server *this)
+{
+    rr_simulation_tick(&this->simulation);
+    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+        if (rr_bitset_get(this->clients_in_use, i))
+            rr_server_client_tick(this->clients + i);
+}
+
+void rr_server_run(struct rr_server *this)
+{
     struct lws_context_creation_info info;
     struct lws_protocols protocol;
     memset(&info, 0, sizeof(info));
@@ -91,34 +108,19 @@ void rr_server_init(struct rr_server *self)
     info.protocols = &protocol;
     info.gid = -1;
     info.uid = -1;
-    info.user = self;
+    info.user = this;
 
-    self->server = lws_create_context(&info);
-    assert(self->server);
-}
+    this->server = lws_create_context(&info);
+    assert(this->server);
 
-void rr_server_free(struct rr_server *self)
-{
-    lws_context_destroy(self->server);
-}
-
-void rr_server_tick(struct rr_server *self)
-{
-    rr_simulation_tick(&self->simulation);
-    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-        if (rr_bitset_get(self->clients_in_use, i))
-            rr_server_client_tick(self->clients + i);
-}
-
-void rr_server_run(struct rr_server *self)
-{
     while (1)
     {
         struct timeval start;
-        gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
-        rr_server_tick(self);
-        lws_service(self->server, -1);
         struct timeval end;
+
+        gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
+        rr_server_tick(this);
+        lws_service(this->server, -1);
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);

@@ -7,8 +7,6 @@ set(SRCS
     Renderer.c
 )
 
-set(CMAKE_C_COMPILER "clang")
-
 # release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
@@ -17,5 +15,9 @@ else()
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
+if (WASM_BUILD)
+    set(CMAKE_C_COMPILER "emcc")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main")
+endif()
 
 add_executable(rrolf-client ${SRCS})

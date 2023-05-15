@@ -21,7 +21,7 @@ struct rr_renderer_filter
     float amount;
 };
 
-struct rr_renderer_context_lock
+struct rr_renderer_context_state
 {
     float transform_matrix[6];
     struct rr_renderer_filter filter;
@@ -36,21 +36,19 @@ struct rr_renderer
     uint32_t context_id;
     //struct rr_renderer_paint fill_style;
     //struct rr_renderer_paint stroke_style;
-    float transform_matrix[6]; //NOT 9
     
     //float line_width;
 
     float width;
     float height;
 
-    struct rr_renderer_filter filter;
-    struct rr_renderer_context_lock context_lock;
+    struct rr_renderer_context_state state;
 };
 
 void rr_renderer_init(struct rr_renderer *);
 
-void rr_renderer_init_context_lock(struct rr_renderer *);
-void rr_renderer_free_context_lock(struct rr_renderer *);
+void rr_renderer_init_context_state(struct rr_renderer *, struct rr_renderer_context_state *);
+void rr_renderer_free_context_state(struct rr_renderer *, struct rr_renderer_context_state *);
 
 void rr_renderer_set_fill(struct rr_renderer *, uint32_t);
 void rr_renderer_set_stroke(struct rr_renderer *, uint32_t);
