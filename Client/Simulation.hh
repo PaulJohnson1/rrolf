@@ -21,9 +21,9 @@ namespace app
     class Simulation
     {
 
-        bool m_EntityTracker[MAX_ENTITY_COUNT];
+        bool m_EntityTracker[MAX_ENTITY_COUNT] = {};
 #define RROLF_COMPONENT_ENTRY(COMPONENT, ID) \
-    bool m_##COMPONENT##Tracker[MAX_ENTITY_COUNT];
+    bool m_##COMPONENT##Tracker[MAX_ENTITY_COUNT] = {};
         FOR_EACH_COMPONENT;
 #undef RROLF_COMPONENT_ENTRY
 

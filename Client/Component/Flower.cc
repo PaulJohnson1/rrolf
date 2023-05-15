@@ -6,6 +6,8 @@
 #include <Client/Simulation.hh>
 #include <Client/Renderer.hh>
 
+#include <iostream>
+
 namespace app::component
 {
     Flower::Flower(Entity parent, Simulation *simulation)
@@ -18,16 +20,22 @@ namespace app::component
     {
         uint32_t updatedFields = coder.Read<bc::VarUint>();
 
+        std::cout << updatedFields << ' ' << m_Parent << '\n';
+
         if (updatedFields & 1)
             m_Flags = coder.Read<bc::Uint8>();
         if (updatedFields & 2)
+        {
             m_EyeAngle = coder.Read<bc::Float32>();
+            std::cout << m_EyeAngle << ' ' << m_Parent << '\n';
+        }
     }
     
     void Flower::Render(Renderer *ctx)
     {
+
         Guard g(ctx);
-        Physical physical = m_Simulation->Get<Physical>(m_Parent);
+        Physical &physical = m_Simulation->Get<Physical>(m_Parent);
 
         ctx->SetGlobalAlpha(1 - 0.2 * physical.m_ClientDeletionTick);
 

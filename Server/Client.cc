@@ -75,8 +75,7 @@ namespace app
             component::Physical &physical = m_Simulation.Get<component::Physical>(playerInfo.Player());
             playerInfo.CameraX(physical.X());
             playerInfo.CameraY(physical.Y());
-            if (m_PlayerAcceleration > 0)
-                m_Simulation.Get<component::Flower>(playerInfo.Player()).EyeAngle(m_PlayerAcceleration.Theta());
+
         }
         BroadcastUpdate();
     }

@@ -34,8 +34,8 @@ namespace app::component
     class PlayerInfo
     {
     public:
-        bool m_HasPlayer;
-        Entity m_Player;
+        bool m_HasPlayer = false;
+        Entity m_Player = NULL_ENTITY;
         uint32_t m_SlotCount = 0;
         Lerp<float> m_CameraX{0};
         Lerp<float> m_CameraY{0};

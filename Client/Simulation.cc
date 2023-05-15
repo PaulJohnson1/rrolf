@@ -52,7 +52,6 @@ namespace app
 
     Simulation::Simulation()
     {
-        std::fill(m_EntityTracker, m_EntityTracker + MAX_ENTITY_COUNT, false);
     }
 
     void Simulation::Remove(Entity id)

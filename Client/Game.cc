@@ -175,6 +175,7 @@ namespace app
             m_RendererSystem.PostTick();
 
             // ui stuff
+
             m_UiElements.m_TitleScreen->m_Showing = !m_Simulation->Get<component::PlayerInfo>(m_Simulation->m_PlayerInfo).m_HasPlayer && !m_HasHadPlayer;
             m_UiElements.m_DeathScreen->m_Showing = !m_Simulation->Get<component::PlayerInfo>(m_Simulation->m_PlayerInfo).m_HasPlayer && m_HasHadPlayer;
 

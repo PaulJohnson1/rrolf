@@ -1,6 +1,7 @@
 #include <Client/Ui/MobButton.hh>
 
 #include <string>
+#include <iostream>
 
 #include <Client/Game.hh>
 #include <Client/Renderer.hh>

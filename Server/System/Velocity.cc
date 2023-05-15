@@ -25,11 +25,13 @@ namespace app::system
 
             physical.m_Velocity *= physical.m_Friction;
             physical.m_Velocity += physical.m_Acceleration;
-            physical.m_Acceleration.Set(0, 0);
             positionVector += physical.m_Velocity;
 
             physical.X(positionVector.m_X);
             physical.Y(positionVector.m_Y); 
+
+            if (physical.m_Acceleration > 0 && m_Simulation.HasComponent<component::Flower>(entity))
+                m_Simulation.Get<component::Flower>(entity).EyeAngle(physical.m_Acceleration.Theta());
         });
     }
 

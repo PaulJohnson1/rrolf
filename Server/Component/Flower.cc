@@ -66,7 +66,7 @@ namespace app::component
         if (v == m_FaceFlags)
             return;
         m_FaceFlags = v;
-        m_State |= 1 << 0;
+        m_State |= 1;
     }
 
     void Flower::EyeAngle(float v)
@@ -74,6 +74,6 @@ namespace app::component
         if (v == m_EyeAngle)
             return;
         m_EyeAngle = v;
-        m_State |= 1 << 1;
+        m_State |= 2;
     }
 }

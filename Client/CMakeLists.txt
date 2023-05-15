@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Generic)
 
 project(rrolf-client)
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.15)
 
 include_directories(..)
 include_directories(ThirdParty)

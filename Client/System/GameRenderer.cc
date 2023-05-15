@@ -33,26 +33,28 @@ namespace app::system
         m_Renderer->Translate(-playerInfo.m_CameraX, -playerInfo.m_CameraY);
         component::ArenaInfo &arena = m_Simulation->Get<component::ArenaInfo>(0);
         arena.Render(m_Renderer);
-        m_Simulation->ForEachEntity([&](Entity entity)
+        m_Simulation->ForEachEntity([this](Entity entity)
                                    {
             if (m_Simulation->HasComponent<component::Drop>(entity))
                 m_Simulation->Get<component::Drop>(entity).Render(m_Renderer); });
-        m_Simulation->ForEachEntity([&](Entity entity)
+        m_Simulation->ForEachEntity([this](Entity entity)
                                    {
             if (m_Simulation->HasComponent<component::Life>(entity))
                 m_Simulation->Get<component::Life>(entity).Render(m_Renderer); });
-        m_Simulation->ForEachEntity([&](Entity entity)
+        m_Simulation->ForEachEntity([this](Entity entity)
                                    {
             if (m_Simulation->HasComponent<component::Mob>(entity))
                 m_Simulation->Get<component::Mob>(entity).Render(m_Renderer); });
-        m_Simulation->ForEachEntity([&](Entity entity)
+        m_Simulation->ForEachEntity([this](Entity entity)
                                    {
             if (m_Simulation->HasComponent<component::Petal>(entity))
                     m_Simulation->Get<component::Petal>(entity).Render(m_Renderer); });
-        m_Simulation->ForEachEntity([&](Entity entity)
+
+        m_Simulation->ForEachEntity([this](Entity entity)
                                    {
             if (m_Simulation->HasComponent<component::Flower>(entity))
                 m_Simulation->Get<component::Flower>(entity).Render(m_Renderer); });
+
     }
 
     void GameRenderer::PostTick()

@@ -88,7 +88,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 5)
+        if (mobCount < 0)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -121,6 +121,7 @@ namespace app
         }
         for (uint64_t i = 0; i < m_Server.m_Clients.size(); i++)
             m_Server.m_Clients[i]->Tick();
+
         ForEachEntity([&](Entity id)
                       { ResetEntity(id); });
         for (Entity i = 0; i < m_PendingDeletions.size(); i++)
@@ -194,7 +195,7 @@ namespace app
             bool isCreation = playerInfo.m_EntitiesInView.find(id) == playerInfo.m_EntitiesInView.end();
             if (isCreation)
                 playerInfo.m_EntitiesInView.insert(id);
-
+            
             WriteEntity(coder, id, isCreation);
         }
     }
@@ -240,6 +241,7 @@ namespace app
     {
         assert(m_AvailableIds.size());
         Entity id = m_AvailableIds.front();
+        assert(!m_EntityTracker[id]);
         m_AvailableIds.pop();
         m_EntityTracker[id] = true;
         std::cout << "entity with id " << std::to_string(id) << " created\n";

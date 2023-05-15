@@ -228,9 +228,11 @@ int main()
     Initialize();
 #endif
     // heap allocate so the dtor doesn't automatically get called
-    new Game(new Renderer(), new Simulation()); //g_Game is auto set to this
-    g_Game->m_InputData = new InputData();
-    g_Game->m_Socket = new Socket(
+    static Renderer *renderer = new Renderer();
+    static Simulation *simulation = new Simulation();
+    static Game *game = new Game(renderer, simulation); //g_Game is auto set to this
+    game->m_InputData = new InputData();
+    game->m_Socket = new Socket(
         "ws://localhost:8000", [&]()
         { std::cout << "open\n"; },
         [&]()
@@ -261,5 +263,5 @@ int main()
         .detach();
 #endif
 
-    g_Game->m_Socket->Connect();
+    game->m_Socket->Connect();
 }

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-#include <client/Game.hh>
+#include <Client/Game.hh>
 #include <Client/Renderer.hh>
 #include <Shared/Assert.hh>
 
