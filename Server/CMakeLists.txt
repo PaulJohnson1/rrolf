@@ -12,6 +12,7 @@ set(SRCS
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
+    ../Shared/Utilities.c
     ../Shared/Vector.c)
 
 
@@ -20,7 +21,9 @@ set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4 -D_FORTIFY_SOURCE=3")
+    add_compile_options(-fsanitize=undefined,address)
+    add_link_options(-fsanitize=undefined,address)
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3 -DHSHG_NDEBUG")
     # link time optimiations
@@ -37,8 +40,7 @@ endif()
 
 add_executable(rrolf-server ${SRCS})
 
-target_link_libraries(rrolf-server websockets)
-target_link_libraries(rrolf-server pthread)
+target_link_libraries(rrolf-server websockets pthread m)
 
 if(WINDOWS)
     target_link_libraries(rrolf-server ws2_32 wsock32)

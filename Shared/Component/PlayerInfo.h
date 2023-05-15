@@ -11,6 +11,7 @@ struct rr_encoder;
 // check if there's rr_component_player_info_set function before setting a field
 struct rr_component_player_info
 {
+    RR_SERVER_ONLY(uint8_t entities_in_view[MAX_ENTITY_COUNT >> 3];)
                    EntityIdx parent_id;
                    EntityIdx player_id; // will be 0 if nonexistant
                    float camera_x;
@@ -20,9 +21,6 @@ struct rr_component_player_info
                    float camera_fov;
     RR_CLIENT_ONLY(float lerp_camera_fov;)
                    uint64_t protocol_state;
-    RR_SERVER_ONLY(EntityIdx *entities_in_view_start;)
-    RR_SERVER_ONLY(EntityIdx *entities_in_view_end;)
-    RR_SERVER_ONLY(EntityIdx *entities_in_view_end_of_storage;)
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *);

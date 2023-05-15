@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include <Shared/Encoder.h>
+
 enum : uint64_t
 {
     state_flags_camera_x =   0b000001,
@@ -23,7 +25,6 @@ void rr_component_player_info_write(struct rr_component_player_info *self, struc
 {
     uint64_t state = self->protocol_state | (state_flags_all * is_creation);
     rr_encoder_write_varuint(encoder, state);
-
     RR_ENCODE_PUBLIC_FIELD(camera_x, float);
     RR_ENCODE_PUBLIC_FIELD(camera_y, float);
     RR_ENCODE_PUBLIC_FIELD(camera_fov, float);
@@ -31,6 +32,10 @@ void rr_component_player_info_write(struct rr_component_player_info *self, struc
 
 void rr_component_player_info_read(struct rr_component_player_info *self, struct rr_encoder *encoder)
 {
+    uint64_t state = rr_encoder_read_varuint(encoder);
+    RR_DECODE_PUBLIC_FIELD(camera_x, float);
+    RR_DECODE_PUBLIC_FIELD(camera_y, float);
+    RR_DECODE_PUBLIC_FIELD(camera_fov, float);
 }
 
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_x)

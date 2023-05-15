@@ -13,6 +13,7 @@ struct rr_simulation
 {
     // bitset
     uint8_t entity_tracker[MAX_ENTITY_COUNT >> 3];
+    // uint8_t entity_tracker[MAX_ENTITY_COUNT];
 
 #define XX(COMPONENT, ID) \
     uint8_t COMPONENT##_tracker[MAX_ENTITY_COUNT >> 3];
@@ -31,7 +32,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
 void rr_simulation_free_entity(struct rr_simulation *, EntityIdx);
 
-void rr_simulation_write_binary(struct rr_simulation *, struct rr_encoder *);
+void rr_simulation_write_binary(struct rr_simulation *, struct rr_encoder *, struct rr_component_player_info *);
 void rr_simulation_tick(struct rr_simulation *);
 
 #define XX(COMPONENT, ID)                                                                              \

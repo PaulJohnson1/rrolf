@@ -19,4 +19,3 @@
 #define RR_DECODE_PUBLIC_FIELD(NAME, TYPE) \
     if (state & state_flags_##NAME)        \
         self->NAME = rr_encoder_read_##TYPE(encoder);
-        

@@ -11,6 +11,7 @@ struct rr_encoder;
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
+    RR_SERVER_ONLY(uint8_t colliding_with[MAX_ENTITY_COUNT >> 3];)
                    EntityIdx parent_id;
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
@@ -24,10 +25,6 @@ struct rr_component_physical
     RR_SERVER_ONLY(float restitution;)
     RR_SERVER_ONLY(float mass;)
                    uint32_t deletion_tick;
-    RR_SERVER_ONLY(uint32_t query_id;)
-    RR_SERVER_ONLY(EntityIdx *colliding_with_start;)
-    RR_SERVER_ONLY(EntityIdx *colliding_with_end;)
-    RR_SERVER_ONLY(EntityIdx *colliding_with_end_of_storage;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
     RR_SERVER_ONLY(struct rr_vector velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)

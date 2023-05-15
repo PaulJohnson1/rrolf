@@ -4,6 +4,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <Server/Simulation.h>
 #include <Shared/Bitset.h>
 
 #include <libwebsockets.h>
@@ -11,6 +12,19 @@
 void rr_server_client_init(struct rr_server_client *self)
 {
     memset(self, 0, sizeof *self);
+    puts("client connected");
+}
+
+void rr_server_client_create_player_info(struct rr_server_client *self)
+{
+    puts("creating player info");
+    self->player_info = rr_simulation_alloc_entity(&self->server->simulation);
+}
+
+void rr_server_client_free(struct rr_server_client *self)
+{
+    puts("client disconnected");
+    rr_simulation_free_entity(&self->server->simulation, self->player_info);
 }
 
 void rr_server_client_tick(struct rr_server_client *self)
@@ -25,13 +39,14 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
-        puts("client connected");
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (!rr_bitset_get(self->clients_in_use, i))
+            if (!rr_bitset_get_bit(self->clients_in_use, i))
             {
                 rr_bitset_set(self->clients_in_use, i);
                 rr_server_client_init(self->clients + i);
+                self->clients[i].server = self;
                 self->clients[i].file_descriptor = lws_get_socket_fd(socket);
+                rr_server_client_create_player_info(self->clients + i);
                 return 0;
             }
         RR_UNREACHABLE("max clients reached");
@@ -39,7 +54,6 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
 
     case LWS_CALLBACK_CLOSED:
     {
-        puts("client disconnected");
         int file_descriptor = lws_get_socket_fd(socket);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (rr_bitset_get(self->clients_in_use, i))
@@ -47,6 +61,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 if (self->clients[i].file_descriptor == file_descriptor)
                 {
                     rr_bitset_unset(self->clients_in_use, i);
+                    rr_server_client_free(self->clients + i);
                     return 0;
                 }
             }
@@ -61,6 +76,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
 
 void rr_server_init(struct rr_server *self)
 {
+    printf("server size: %lu\n", sizeof *self);
     memset(self, 0, sizeof *self);
     rr_simulation_init(&self->simulation);
     struct lws_context_creation_info info;
@@ -79,6 +95,11 @@ void rr_server_init(struct rr_server *self)
 
     self->server = lws_create_context(&info);
     assert(self->server);
+}
+
+void rr_server_free(struct rr_server *self)
+{
+    lws_context_destroy(self->server);
 }
 
 void rr_server_tick(struct rr_server *self)

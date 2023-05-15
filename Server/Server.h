@@ -12,6 +12,7 @@ struct rr_server;
 struct rr_server_client
 {
     int file_descriptor;
+    EntityIdx player_info;
     struct rr_server *server;
 };
 
@@ -26,4 +27,5 @@ struct rr_server
 };
 
 void rr_server_init(struct rr_server *);
+void rr_server_free(struct rr_server *);
 void rr_server_run(struct rr_server *);

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdio.h>
 
 #ifndef NDEBUG
-#include <stdio.h>
 #define RR_UNREACHABLE(MESSAGE) \
     fputs(#MESSAGE, stderr);    \
     assert(0)
@@ -22,3 +22,5 @@
 #else
 #define RR_SERVER_ONLY(...)
 #endif
+
+void rr_log_hex(uint8_t *start, uint8_t *end);
