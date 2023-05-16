@@ -92,10 +92,10 @@ document.oncontextmenu = function() { return false; };
         };
         function loop()
         {
-            requestAnimationFrame(loop);
             Module.canvas.width = innerWidth * devicePixelRatio;
             Module.canvas.height = innerHeight * devicePixelRatio;
             Module._rr_renderer_main_loop($0, Module.canvas.width, Module.canvas.height, devicePixelRatio);
+            requestAnimationFrame(loop);
         };
         requestAnimationFrame(loop);        
     }, this);
@@ -117,11 +117,11 @@ void rr_renderer_main_loop(struct rr_game *this, float width, float height, floa
 int main()
 {
     puts("client init");
-    struct rr_game game;
-    struct rr_websocket socket;
-    struct rr_renderer renderer;
-    struct rr_input_data input_data;
-    struct rr_simulation simulation;
+    static struct rr_game game;
+    static struct rr_websocket socket;
+    static struct rr_renderer renderer;
+    static struct rr_input_data input_data;
+    static struct rr_simulation simulation;
 
     rr_websocket_init(&socket);
     rr_renderer_init(&renderer);
