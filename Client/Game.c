@@ -27,7 +27,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
-        puts("websocket closed :(");
+        puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
     {
