@@ -7,6 +7,7 @@
 
 struct rr_simulation;
 struct rr_encoder;
+RR_CLIENT_ONLY(struct rr_renderer;)
 
 // check if there's rr_component_player_info_set function before setting a field
 struct rr_component_player_info

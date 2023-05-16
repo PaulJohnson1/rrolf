@@ -40,11 +40,11 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     struct rr_server *server = this->server;
 
     // 128 KB (not needed but just in case)
-    static uint8_t outgoing_message[128 * 1024 * 1024];
+    static uint8_t outgoing_message[128 * 1024];
     struct rr_encoder encoder;
     rr_encoder_init(&encoder, outgoing_message);
+    rr_encoder_write_uint8(&encoder, 0);
     rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
-
     rr_server_client_write_message(this, encoder.start, encoder.current);
 }
 

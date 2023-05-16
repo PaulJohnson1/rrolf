@@ -9,19 +9,20 @@
 #include <stdint.h>
 
 #ifndef EMSCRIPTEN
-#include <time.h>
+#include <sys/time.h>
 #include <unistd.h>
 #endif
-
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
 {
+    /*
     if (type == 0)
         rr_bitset_set(&this->input_data->keys[0], key);
     else
         rr_bitset_unset(&this->input_data->keys[0], key);
+        */
 }
 #else
 #endif
@@ -123,15 +124,16 @@ int main()
     struct rr_input_data input_data;
     struct rr_simulation simulation;
 
+    rr_game_init(&game);
     rr_websocket_init(&socket);
     rr_renderer_init(&renderer);
     rr_input_data_init(&input_data);
     rr_simulation_init(&simulation);
 
+    game.socket = &socket;
     game.renderer = &renderer;
     game.input_data = &input_data;
     game.simulation = &simulation;
-    game.socket = &socket;
     rr_main_renderer_initialize(&game);
 
     rr_websocket_connect_to(&socket, "localhost", 8000);

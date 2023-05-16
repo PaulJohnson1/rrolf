@@ -8,4 +8,5 @@ struct rr_game
     struct rr_simulation *simulation;
 };
 
+void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *);

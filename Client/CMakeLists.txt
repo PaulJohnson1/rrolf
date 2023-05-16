@@ -18,7 +18,7 @@ set(SRCS
     ../Shared/SimulationCommon.c
 )
 
-set(CMAKE_C_FLAGS "-std=gnu11")
+set(CMAKE_C_FLAGS "-std=gnu11 -DRR_CLIENT")
 
 # release by default
 if(DEBUG_BUILD)
