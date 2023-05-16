@@ -18,18 +18,39 @@ void rr_server_client_init(struct rr_server_client *this)
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
-    this->player_info = rr_simulation_alloc_entity(&this->server->simulation);
+    this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
+    rr_component_player_info_set_player_id(this->player_info, rr_simulation_alloc_entity(&this->server->simulation));
+    rr_simulation_add_physical(&this->server->simulation, this->player_info->player_id);
 }
 
 void rr_server_client_free(struct rr_server_client *this)
 {
     puts("client disconnected");
-    rr_simulation_free_entity(&this->server->simulation, this->player_info);
+    rr_simulation_free_entity(&this->server->simulation, this->player_info->player_id);
+    rr_simulation_free_entity(&this->server->simulation, this->player_info->parent_id);
+}
+
+void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint8_t *message_end)
+{
+    lws_write(this->socket_handle, message_start, message_end - message_start, LWS_WRITE_BINARY);
+}
+
+void rr_server_client_broadcast_update(struct rr_server_client *this)
+{
+    struct rr_server *server = this->server;
+
+    // 128 KB (not needed but just in case)
+    static uint8_t outgoing_message[128 * 1024 * 1024];
+    struct rr_encoder encoder;
+    rr_encoder_init(&encoder, outgoing_message);
+    rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
+
+    rr_server_client_write_message(this, encoder.start, encoder.current);
 }
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
-    puts("client tick or sometihng lol");
+    rr_server_client_broadcast_update(this);
 }
 
 int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *other, size_t size)
@@ -46,6 +67,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 rr_server_client_init(this->clients + i);
                 this->clients[i].server = this;
                 this->clients[i].file_descriptor = lws_get_socket_fd(socket);
+                this->clients[i].socket_handle = socket;
                 rr_server_client_create_player_info(this->clients + i);
                 return 0;
             }

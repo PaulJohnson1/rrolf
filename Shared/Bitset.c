@@ -7,7 +7,7 @@ int rr_bitset_get_bit(uint8_t *a, uint64_t i)
 
 int rr_bitset_get(uint8_t *a, uint64_t i)
 {
-    return (a[i >> 3] & (1 << (i & 7))) ? 1 : 0;
+    return (a[i >> 3] & (1 << (i & 7))) >> (i & 7);
 }
 
 void rr_bitset_set(uint8_t *a, uint64_t i)
@@ -32,23 +32,23 @@ void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (
         }
         if (*start)
         {
-            if ((*start & 1))
+            if (*start & 1)
                 cb(((start - original_start) << 3) + 0, captures);
-            if ((*start & 2))
+            if (*start & 2)
                 cb(((start - original_start) << 3) + 1, captures);
-            if ((*start & 4))
+            if (*start & 4)
                 cb(((start - original_start) << 3) + 2, captures);
-            if ((*start & 8))
+            if (*start & 8)
                 cb(((start - original_start) << 3) + 3, captures);
-            if ((*start & 16))
+            if (*start & 16)
                 cb(((start - original_start) << 3) + 4, captures);
-            if ((*start & 32))
+            if (*start & 32)
                 cb(((start - original_start) << 3) + 5, captures);
-            if ((*start & 64))
+            if (*start & 64)
                 cb(((start - original_start) << 3) + 6, captures);
-            if ((*start & 128))
+            if (*start & 128)
                 cb(((start - original_start) << 3) + 7, captures);
-            }
+        }
         start++;
     }
 }

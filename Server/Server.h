@@ -7,12 +7,14 @@
 #define RR_MAX_CLIENT_COUNT (16)
 
 struct lws_context;
+struct lws;
 struct rr_server;
 
 struct rr_server_client
 {
     int file_descriptor;
-    EntityIdx player_info;
+    struct lws *socket_handle;
+    struct rr_component_player_info *player_info;
     struct rr_server *server;
 };
 
@@ -28,4 +30,6 @@ struct rr_server
 
 void rr_server_init(struct rr_server *);
 void rr_server_free(struct rr_server *);
+
+// Blocking function. The only time this function will never end unless the server crashes some how (impossible because we write god tier c)
 void rr_server_run(struct rr_server *);

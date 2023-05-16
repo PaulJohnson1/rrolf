@@ -11,7 +11,7 @@ struct rr_encoder;
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
-    RR_SERVER_ONLY(uint8_t colliding_with[MAX_ENTITY_COUNT >> 3];)
+    RR_SERVER_ONLY(uint8_t colliding_with[RR_MAX_ENTITY_COUNT >> 3];)
                    EntityIdx parent_id;
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
@@ -35,6 +35,8 @@ void rr_component_physical_free(struct rr_component_physical *);
 
 RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct rr_encoder *, int is_creation);)
 RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *, struct rr_encoder *);)
+
+RR_CLIENT_ONLY(void rr_component_physical_render(struct rr_component_physical *, struct rr_renderer *));
 
 RR_DECLARE_PUBLIC_FIELD(physical, float, x)
 RR_DECLARE_PUBLIC_FIELD(physical, float, y)

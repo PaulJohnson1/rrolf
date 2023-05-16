@@ -17,3 +17,4 @@ float rr_encoder_read_float(struct rr_encoder *);
 void rr_encoder_write_uint8(struct rr_encoder *, uint8_t);
 void rr_encoder_write_varuint(struct rr_encoder *, uint32_t);
 void rr_encoder_write_float(struct rr_encoder *, float);
+

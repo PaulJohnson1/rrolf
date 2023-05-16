@@ -12,6 +12,7 @@ set(SRCS
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
+    ../Shared/SimulationCommon.c
     ../Shared/Utilities.c
     ../Shared/Vector.c)
 

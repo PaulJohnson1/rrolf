@@ -1,4 +1,4 @@
-#include <Client/Renderer.h>
+#include <Client/Renderer/Renderer.h>
 
 #include <math.h>
 #include <string.h>
@@ -7,10 +7,6 @@
 #include <emscripten.h>
 #else
 #endif
-
-#define PI 3.14159265358979323846
-#define PI_2 2.0 * 3.14159265358979323846
-
 
 void rr_renderer_init(struct rr_renderer *this)
 {
@@ -149,8 +145,8 @@ void rr_renderer_translate(struct rr_renderer *this, float x, float y)
 
 void rr_renderer_rotate(struct rr_renderer *this, float a)
 {
-    float cos_a = cos(a);
-    float sin_a = sin(a);
+    float cos_a = cosf(a);
+    float sin_a = sinf(a);
     float original0 = this->state.transform_matrix[0];
     float original1 = this->state.transform_matrix[1];
     float original3 = this->state.transform_matrix[3];
@@ -245,7 +241,7 @@ void rr_renderer_bezier_curve_to(struct rr_renderer *this, float x1, float y1, f
 }
 void rr_renderer_arc(struct rr_renderer *this, float x, float y, float r)
 {
-    rr_renderer_partial_arc(this, x, y, r, 0, 2 * PI);
+    rr_renderer_partial_arc(this, x, y, r, 0, 2 * M_PI);
 }
 
 void rr_renderer_partial_arc(struct rr_renderer *this, float x, float y, float r, float sa, float ea)

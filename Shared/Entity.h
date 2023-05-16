@@ -4,9 +4,9 @@
 
 typedef uint16_t EntityIdx;
 // most be multiple of 8 and not 0
-#define MAX_ENTITY_COUNT (512)
-#define NULL_ENTITY (0)
+#define RR_MAX_ENTITY_COUNT (512)
+#define RR_NULL_ENTITY (0)
 
-#define FOR_EACH_COMPONENT \
+#define RR_FOR_EACH_COMPONENT \
     XX(physical, 0);       \
     XX(player_info, 1);

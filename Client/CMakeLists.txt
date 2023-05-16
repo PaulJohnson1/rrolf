@@ -3,9 +3,22 @@ cmake_minimum_required(VERSION 3.16)
 include_directories(..)
 
 set(SRCS
+    Renderer/Common.c
+    Game.c
+    InputData.c
     Main.c
-    Renderer.c
+    Simulation.c
+    Socket.c
+    ../Shared/Component/Physical.c
+    ../Shared/Component/PlayerInfo.c
+    ../Shared/Bitset.c
+    ../Shared/Encoder.c
+    ../Shared/Utilities.c
+    ../Shared/Vector.c
+    ../Shared/SimulationCommon.c
 )
+
+set(CMAKE_C_FLAGS "-std=gnu11")
 
 # release by default
 if(DEBUG_BUILD)
@@ -17,7 +30,12 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main,_rr_key_event,_rr_on_socket_event_emscripten")
 endif()
 
 add_executable(rrolf-client ${SRCS})
+
+if(NOT WASM_BUILD)
+    target_link_libraries(rrolf-client websockets)
+endif()
+target_link_libraries(rrolf-client m)

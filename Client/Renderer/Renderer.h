@@ -41,6 +41,7 @@ struct rr_renderer
 
     float width;
     float height;
+    float scale;
 
     struct rr_renderer_context_state state;
 };
