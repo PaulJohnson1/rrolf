@@ -54,7 +54,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
         while (Module.HEAPU8[$1])
             string += String.fromCharCode(Module.HEAPU8[$1++]);
         console.log("connecting to socket", string);
-        let socket = window.socket = new WebSocket("ws://" + string + $2);
+        let socket = window.socket = new WebSocket("ws://" + string + + ':' + $2);
         socket.binaryType = "arraybuffer";
         socket.onopen = function()
         {
