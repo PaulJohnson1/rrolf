@@ -72,15 +72,16 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
     }, this, host, port, &incoming_data[0]);
 #else
     struct lws_context_creation_info info;
-    struct lws_protocols protocol;
+    struct lws_protocols protocols[2] = {
+        {"g", rr_on_socket_event_lws, 0, 0},
+        {NULL, NULL, 0, 0}
+    };
     memset(&info, 0, sizeof info);
-    memset(&protocol, 0, sizeof protocol);
-
-    protocol.callback = rr_on_socket_event_lws;
-    protocol.name = "g";
+    protocols[0].callback = rr_on_socket_event_lws;
+    protocols[0].name = "g";
 
 	info.port = CONTEXT_PORT_NO_LISTEN;
-	info.protocols = &protocol;
+	info.protocols = protocols;
 	info.gid = -1;
 	info.uid = -1;
     info.user = this;
