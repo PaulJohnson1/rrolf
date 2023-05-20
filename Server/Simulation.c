@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <Server/System/MapBoundary.h>
 #include <Server/System/Velocity.h>
 #include <Shared/Bitset.h>
 
@@ -117,9 +118,10 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
 
     rr_bitset_set(entities_in_view, player_info->parent_id);
     // don't add the player into the view if it is null (player died lmfao skill issue)
-    if (player_info->player_id != RR_NULL_ENTITY)
-        rr_bitset_set(entities_in_view, player_info->player_id);
-
+    if (player_info->flower_id != RR_NULL_ENTITY)
+        rr_bitset_set(entities_in_view, player_info->flower_id);
+    
+    rr_bitset_set(captures.entities_in_view, this->arena);
     rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
@@ -173,4 +175,5 @@ void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
     rr_system_velocity_tick(this);
+    rr_system_map_boundary_tick(this);
 }

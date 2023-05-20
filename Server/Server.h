@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 
 // must be multiple of 8
@@ -9,16 +10,6 @@
 struct lws_context;
 struct lws;
 struct rr_server;
-
-struct rr_server_client
-{
-    int file_descriptor;
-    struct lws *socket_handle;
-    struct rr_component_player_info *player_info;
-    struct rr_server *server;
-};
-
-void rr_server_client_init(struct rr_server_client *);
 
 struct rr_server
 {

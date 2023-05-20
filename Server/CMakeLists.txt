@@ -1,13 +1,23 @@
 project(rrolf-server)
 cmake_minimum_required(VERSION 3.16)
 include_directories(..)
+if (WINDOWS)
+    include_directories(/c/libwebsockets)
+    include_directories(/c/libwebsockets/include)
+    include_directories(/c/openssl/include)
+    include_directories(/c/libwebsockets/win32port/win32helpers)
+endif()
 
 set(SRCS
+    System/MapBoundary.c
     System/Velocity.c
     Main.c
+    Client.c
     Server.c
     Simulation.c
     SpatialHash.c
+    ../Shared/Component/Arena.c
+    ../Shared/Component/Flower.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
@@ -41,7 +51,11 @@ endif()
 
 add_executable(rrolf-server ${SRCS})
 
-target_link_libraries(rrolf-server websockets pthread m)
+if(WINDOWS)
+    target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
+    target_link_libraries(rrolf-server ws2_32 wsock32)
+endif()
+target_link_libraries(rrolf-server pthread websockets)
 
 if(WINDOWS)
     target_link_libraries(rrolf-server ws2_32 wsock32)

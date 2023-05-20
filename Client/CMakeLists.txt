@@ -1,5 +1,8 @@
-project(rrolf-client)
+set(CMAKE_SYSTEM_NAME Generic)
+
 cmake_minimum_required(VERSION 3.16)
+
+project(rrolf-client)
 include_directories(..)
 
 set(SRCS
@@ -9,6 +12,8 @@ set(SRCS
     Main.c
     Simulation.c
     Socket.c
+    ../Shared/Component/Arena.c
+    ../Shared/Component/Flower.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
@@ -18,7 +23,7 @@ set(SRCS
     ../Shared/SimulationCommon.c
 )
 
-set(CMAKE_C_FLAGS "-std=gnu11 -DRR_CLIENT")
+set(CMAKE_C_FLAGS "-DRR_CLIENT")
 
 # release by default
 if(DEBUG_BUILD)
@@ -38,4 +43,3 @@ add_executable(rrolf-client ${SRCS})
 if(NOT WASM_BUILD)
     target_link_libraries(rrolf-client websockets)
 endif()
-target_link_libraries(rrolf-client m)

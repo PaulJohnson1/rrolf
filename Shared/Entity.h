@@ -9,4 +9,6 @@ typedef uint16_t EntityIdx;
 
 #define RR_FOR_EACH_COMPONENT \
     XX(physical, 1);          \
-    XX(player_info, 2);
+    XX(player_info, 2);       \
+    XX(flower, 3)             \
+    XX(arena, 4)
