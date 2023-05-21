@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <Shared/Encoder.h>
+#include <Shared/StaticData.h>
 
 enum
 {
@@ -17,6 +18,8 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
+    for (uint64_t i = 0; i < 10; ++i)
+        this->slots->data = &PETAL_DATA[1];
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this)

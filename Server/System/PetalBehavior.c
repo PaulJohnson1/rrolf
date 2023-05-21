@@ -36,8 +36,8 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
                     struct rr_component_petal *petal = rr_simulation_add_petal(simulation, p_petal->simulation_id);
-                    petal->id = 1;
-                    petal->rarity = 2; //need fix, use setters
+                    rr_component_petal_set_id(petal, data->id);
+                    rr_component_petal_set_rarity(petal, slot->rarity);
                     petal->rotation_pos = rotationPos;
                     petal->owner = id;
                 }
@@ -75,7 +75,7 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
     struct rr_vector flower_vector;
     rr_vector_set(&position_vector, physical->x, physical->y);
     rr_vector_set(&flower_vector, flower_physical->x, flower_physical->y);
-    float holdingRadius = 50;
+    float holdingRadius = 400;
     float currAngle = player_info->global_rotation + petal->rotation_pos * 2 * M_PI / player_info->rotation_count;
     struct rr_vector chase_vector;
     rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);

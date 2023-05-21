@@ -8,6 +8,7 @@ include_directories(..)
 set(SRCS
     Renderer/Common.c
     Renderer/RenderFlower.c
+    Renderer/RenderFunctions.c
     Renderer/RenderHealth.c
     Renderer/RenderPetal.c
     Game.c
