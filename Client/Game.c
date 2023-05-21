@@ -9,6 +9,7 @@
 #endif
 
 #include <Client/Renderer/Renderer.h>
+#include <Client/Renderer/ComponentRender.h>
 #include <Client/InputData.h>
 #include <Client/Socket.h>
 #include <Client/Simulation.h>
@@ -135,6 +136,15 @@ void rr_game_tick(struct rr_game *this)
             }
             rr_renderer_free_context_state(this->renderer, &state2);
             break; //only one arena
+        }
+        for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
+        {
+            if (rr_bitset_get_bit(this->simulation->health_tracker, p) == 0)
+                continue;
+            rr_renderer_init_context_state(this->renderer, &state2);
+            rr_component_health_render(p, this->simulation, this->renderer);
+        
+            rr_renderer_free_context_state(this->renderer, &state2);
         }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {

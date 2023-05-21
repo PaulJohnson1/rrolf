@@ -12,4 +12,5 @@ typedef uint16_t EntityIdx;
     XX(player_info, 2);       \
     XX(flower, 3)             \
     XX(arena, 4)              \
-    XX(petal, 5)
+    XX(petal, 5)              \
+    XX(health, 6)

@@ -19,6 +19,7 @@ set(SRCS
     SpatialHash.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
+    ../Shared/Component/Health.c
     ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c

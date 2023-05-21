@@ -7,6 +7,9 @@ include_directories(..)
 
 set(SRCS
     Renderer/Common.c
+    Renderer/RenderFlower.c
+    Renderer/RenderHealth.c
+    Renderer/RenderPetal.c
     Game.c
     InputData.c
     Main.c
@@ -14,6 +17,7 @@ set(SRCS
     Socket.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
+    ../Shared/Component/Health.c
     ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c

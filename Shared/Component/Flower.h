@@ -23,7 +23,6 @@ void rr_component_flower_free(struct rr_component_flower *);
 
 RR_SERVER_ONLY(void rr_component_flower_write(struct rr_component_flower *, struct rr_encoder *, int is_creation);)
 RR_CLIENT_ONLY(void rr_component_flower_read(struct rr_component_flower *, struct rr_encoder *);)
-RR_CLIENT_ONLY(void rr_component_flower_render(EntityIdx, struct rr_simulation *, struct rr_renderer *);)
 
 RR_DECLARE_PUBLIC_FIELD(flower, uint8_t, face_flags)
 RR_DECLARE_PUBLIC_FIELD(flower, float, eye_angle)

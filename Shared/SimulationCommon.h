@@ -2,6 +2,7 @@
 
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
+#include <Shared/Component/Health.h>
 #include <Shared/Component/Petal.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Component/PlayerInfo.h>
