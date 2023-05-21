@@ -7,9 +7,17 @@
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
+#ifdef RR_SERVER
+#include <Server/Simulation.h>
+#endif
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
+#ifdef RR_SERVER
+    this->arena = rr_simulation_alloc_entity(this);
+    struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
+    rr_component_arena_set_radius(comp, 1650.0f);
+#endif
 }
 
 void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)

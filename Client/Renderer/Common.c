@@ -18,11 +18,13 @@ void rr_renderer_init(struct rr_renderer *this)
 void rr_renderer_init_context_state(struct rr_renderer *this, struct rr_renderer_context_state *state)
 {
     memcpy(state, &this->state, sizeof *state);
+    rr_renderer_save(this);
 }
 
 void rr_renderer_free_context_state(struct rr_renderer *this, struct rr_renderer_context_state *state)
 {
     memcpy(&this->state, state, sizeof *state);
+    rr_renderer_restore(this);
 }
 
 void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
@@ -44,7 +46,7 @@ void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
 void rr_renderer_set_line_width(struct rr_renderer *this, float w)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({Module.ctxs[$0].strokeStyle = $1 }, this->context_id, w);
+        EM_ASM({Module.ctxs[$0].lineWidth = $1 }, this->context_id, w);
 #else
 #endif 
 }

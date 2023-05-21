@@ -17,12 +17,10 @@
 #include <emscripten.h>
 void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
 {
-    /*
-    if (type == 0)
-        rr_bitset_set(&this->input_data->keys[0], key);
+    if (type == 1)
+        rr_bitset_set(this->input_data->keys, key);
     else
-        rr_bitset_unset(&this->input_data->keys[0], key);
-        */
+        rr_bitset_unset(this->input_data->keys, key);
 }
 #else
 #endif
@@ -38,9 +36,9 @@ document.oncontextmenu = function() { return false; };
         Module.ctxs = [Module.canvas.getContext('2d')];
         Module.availableCtxs = new Array(100).fill(0).map(function(_, i) { return i; });
         window.addEventListener(
-            "keydown", function({which}) { Module._rr_key_event(1, which); });
+            "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
         window.addEventListener(
-            "keyup", function({which}) { Module._rr_key_event(0, which); });
+            "keyup", function({which}) { Module._rr_key_event($0, 0, which); });
         // window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 1, button)});
         // window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 2, button)});
         // window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 0, button)});
@@ -117,12 +115,12 @@ void rr_renderer_main_loop(struct rr_game *this, float width, float height, floa
 
 int main()
 {
-    puts("client init");
-    struct rr_game game;
-    struct rr_websocket socket;
-    struct rr_renderer renderer;
-    struct rr_input_data input_data;
-    struct rr_simulation simulation;
+    puts("client init NEW");
+    static struct rr_game game;
+    static struct rr_websocket socket;
+    static struct rr_renderer renderer;
+    static struct rr_input_data input_data;
+    static struct rr_simulation simulation;
 
     rr_game_init(&game);
     rr_websocket_init(&socket);
@@ -135,6 +133,7 @@ int main()
     game.input_data = &input_data;
     game.simulation = &simulation;
     rr_main_renderer_initialize(&game);
+    rr_game_tick(&game);
 
     rr_websocket_connect_to(&socket, "localhost", 8000);
 

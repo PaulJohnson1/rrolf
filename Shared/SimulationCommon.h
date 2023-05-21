@@ -1,5 +1,9 @@
 #pragma once
 
+#include <Shared/Component/Arena.h>
+#include <Shared/Component/Flower.h>
+#include <Shared/Component/Health.h>
+#include <Shared/Component/Petal.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Component/PlayerInfo.h>
 #include <Shared/Encoder.h>
@@ -8,7 +12,7 @@
 struct rr_simulation
 {
     uint8_t entity_tracker[RR_MAX_ENTITY_COUNT >> 3];
-    // RR_CLIENT_ONLY(EntityIdx player_info) // ?????
+    RR_SERVER_ONLY(EntityIdx arena;) // maybe we can assume it's 1 if ths is messy
 
 #define XX(COMPONENT, ID) \
     uint8_t COMPONENT##_tracker[RR_MAX_ENTITY_COUNT >> 3];
