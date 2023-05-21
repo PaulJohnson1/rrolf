@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <Server/System/MapBoundary.h>
+#include <Server/System/PetalBehavior.h>
 #include <Server/System/Velocity.h>
 #include <Shared/Bitset.h>
 
@@ -174,6 +175,7 @@ void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *capture
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
+    rr_system_petal_behavior_tick(this);
     rr_system_velocity_tick(this);
     rr_system_map_boundary_tick(this);
 }

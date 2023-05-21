@@ -14,6 +14,12 @@ void rr_vector_add(struct rr_vector *this, struct rr_vector *right)
     this->y += right->y;
 }
 
+void rr_vector_sub(struct rr_vector *this, struct rr_vector *right)
+{
+    this->x -= right->x;
+    this->y -= right->y;
+}
+
 void rr_vector_scale(struct rr_vector *this, float v)
 {
     this->x *= v;
@@ -43,4 +49,10 @@ float rr_vector_get_magnitude(struct rr_vector *this)
 float rr_vector_theta(struct rr_vector *this)
 {
     return atan2f(this->y, this->x);
+}
+
+void rr_vector_from_polar(struct rr_vector *this, float radius, float angle)
+{
+    this->x = radius * cosf(angle);
+    this->y = radius * sinf(angle);
 }

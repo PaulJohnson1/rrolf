@@ -10,6 +10,7 @@ endif()
 
 set(SRCS
     System/MapBoundary.c
+    System/PetalBehavior.c
     System/Velocity.c
     Main.c
     Client.c
@@ -18,13 +19,16 @@ set(SRCS
     SpatialHash.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
+    ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
     ../Shared/SimulationCommon.c
+    ../Shared/StaticData.c
     ../Shared/Utilities.c
-    ../Shared/Vector.c)
+    ../Shared/Vector.c
+)
 
 
 set(CMAKE_C_FLAGS "-std=gnu11 -DRR_SERVER -DHSHG_D=2 -DHSHG_UNIFORM")

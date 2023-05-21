@@ -14,11 +14,14 @@ set(SRCS
     Socket.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
+    ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
+    ../Shared/StaticData.c
     ../Shared/Utilities.c
+    ../Shared/StaticData.c
     ../Shared/Vector.c
     ../Shared/SimulationCommon.c
 )

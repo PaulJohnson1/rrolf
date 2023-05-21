@@ -14,6 +14,10 @@ void rr_system_velocity_foreach_function(EntityIdx id, void *simulation)
     rr_vector_add(&physical->velocity, &physical->acceleration);
     rr_component_physical_set_x(physical, physical->x + physical->velocity.x);
     rr_component_physical_set_y(physical, physical->y + physical->velocity.y);
+    if (!rr_simulation_has_flower(simulation, id))
+        return;
+    //flower eye angle
+    rr_simulation_get_flower(simulation, id)->eye_angle = rr_vector_theta(&physical->acceleration);
 }
 
 void rr_system_velocity_tick(struct rr_simulation *simulation)

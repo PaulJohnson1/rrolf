@@ -19,6 +19,7 @@
 
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
+#include <Shared/Component/Petal.h>
 #include <Shared/Component/PlayerInfo.h>
 #include <Shared/Component/Physical.h>
 
@@ -134,6 +135,15 @@ void rr_game_tick(struct rr_game *this)
             }
             rr_renderer_free_context_state(this->renderer, &state2);
             break; //only one arena
+        }
+        for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
+        {
+            if (rr_bitset_get_bit(this->simulation->petal_tracker, p) == 0)
+                continue;
+            rr_renderer_init_context_state(this->renderer, &state2);
+            rr_component_petal_render(p, this->simulation, this->renderer);
+        
+            rr_renderer_free_context_state(this->renderer, &state2);
         }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
