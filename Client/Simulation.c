@@ -4,9 +4,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <Client/System/Interpolation.h>
 #include <Shared/Bitset.h>
 
-void rr_simulation_enitty_create_with_id(struct rr_simulation *this, EntityIdx entity)
+void rr_simulation_entity_create_with_id(struct rr_simulation *this, EntityIdx entity)
 {
     rr_bitset_set(this->entity_tracker, entity);
 }
@@ -22,7 +23,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct rr_encoder *en
         printf("deleting entity id %d\n", id);
         assert(id < RR_MAX_ENTITY_COUNT);
         assert(rr_bitset_get_bit(this->entity_tracker, id));
-        rr_bitset_unset(this->entity_tracker, id);
+        rr_simulation_free_entity(this, id);
     }
 
     while (1)
@@ -50,4 +51,9 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct rr_encoder *en
     RR_FOR_EACH_COMPONENT
 #undef XX
     }
+}
+
+void rr_simulation_tick(struct rr_simulation *this, float delta)
+{
+    rr_system_interpolation_tick(this, delta);
 }

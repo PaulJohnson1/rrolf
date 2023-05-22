@@ -1,30 +1,47 @@
-project(rrolf-client)
+set(CMAKE_SYSTEM_NAME Generic)
+
 cmake_minimum_required(VERSION 3.16)
+
+project(rrolf-client)
 include_directories(..)
 
 set(SRCS
     Renderer/Common.c
+    Renderer/RenderFlower.c
+    Renderer/RenderFunctions.c
+    Renderer/RenderHealth.c
+    Renderer/RenderMob.c
+    Renderer/RenderPetal.c
+    System/Interpolation.c
     Game.c
     InputData.c
     Main.c
     Simulation.c
     Socket.c
+    ../Shared/Component/Arena.c
+    ../Shared/Component/Flower.c
+    ../Shared/Component/Health.c
+    ../Shared/Component/Mob.c
+    ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
+    ../Shared/Component/Relations.c
     ../Shared/Bitset.c
     ../Shared/Encoder.c
+    ../Shared/StaticData.c
     ../Shared/Utilities.c
+    ../Shared/StaticData.c
     ../Shared/Vector.c
     ../Shared/SimulationCommon.c
 )
 
-set(CMAKE_C_FLAGS "-std=gnu11 -DRR_CLIENT")
+set(CMAKE_C_FLAGS "-DRR_CLIENT")
 
 # release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ffast-math -DNDEBUG")
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
@@ -38,4 +55,5 @@ add_executable(rrolf-client ${SRCS})
 if(NOT WASM_BUILD)
     target_link_libraries(rrolf-client websockets)
 endif()
+
 target_link_libraries(rrolf-client m)

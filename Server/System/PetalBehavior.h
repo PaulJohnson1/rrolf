@@ -4,4 +4,4 @@
 
 struct rr_simulation;
 
-void rr_system_velocity_tick(struct rr_simulation *);
+void rr_system_petal_behavior_tick(struct rr_simulation *);

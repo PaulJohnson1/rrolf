@@ -7,9 +7,26 @@
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
+#ifdef RR_SERVER
+#include <Server/Simulation.h>
+#endif
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
+#ifdef RR_SERVER
+    this->arena = rr_simulation_alloc_entity(this);
+    struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
+    rr_component_arena_set_radius(comp, 1650.0f);
+
+    EntityIdx mob_id = rr_simulation_alloc_entity(this);
+    struct rr_component_physical *physical = rr_simulation_add_physical(this, mob_id);
+    struct rr_component_mob *mob = rr_simulation_add_mob(this, mob_id);
+    rr_component_physical_set_radius(physical, 50);
+    rr_component_physical_set_x(physical, 500);
+    physical->mass = 0.5;
+    rr_component_mob_set_rarity(mob, rr_rarity_epic);
+    rr_component_mob_set_id(mob, rr_mob_id_baby_ant);
+#endif
 }
 
 void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
@@ -61,7 +78,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
 }
 
 #define XX(COMPONENT, ID)                                                                                        \
-    int rr_simulation_has_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                              \
+    uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                          \
     {                                                                                                            \
         assert(rr_simulation_has_entity(this, entity));                                                          \
         return rr_bitset_get(this->COMPONENT##_tracker, entity);                                                 \

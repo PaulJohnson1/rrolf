@@ -8,5 +8,11 @@ typedef uint16_t EntityIdx;
 #define RR_NULL_ENTITY (0)
 
 #define RR_FOR_EACH_COMPONENT \
-    XX(physical, 1);          \
-    XX(player_info, 2);
+    XX(arena, 1)              \
+    XX(flower, 2)             \
+    XX(health, 3)             \
+    XX(mob, 4)                \
+    XX(petal, 5)              \
+    XX(physical, 6)           \
+    XX(player_info, 7)        \
+    XX(relations, 8)

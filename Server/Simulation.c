@@ -3,6 +3,10 @@
 #include <assert.h>
 #include <string.h>
 
+#include <Server/System/CollisionDetection.h>
+#include <Server/System/CollisionResolution.h>
+#include <Server/System/MapBoundary.h>
+#include <Server/System/PetalBehavior.h>
 #include <Server/System/Velocity.h>
 #include <Shared/Bitset.h>
 
@@ -41,7 +45,7 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
 
     rr_encoder_write_varuint(encoder, id);
 
-    int is_creation = 0;
+    uint8_t is_creation = 0;
 
     if (!rr_bitset_get_bit(player_info->entities_in_view, id))
         if (rr_bitset_get_bit(new_entities_in_view, id))
@@ -117,9 +121,10 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
 
     rr_bitset_set(entities_in_view, player_info->parent_id);
     // don't add the player into the view if it is null (player died lmfao skill issue)
-    if (player_info->player_id != RR_NULL_ENTITY)
-        rr_bitset_set(entities_in_view, player_info->player_id);
-
+    if (player_info->flower_id != RR_NULL_ENTITY)
+        rr_bitset_set(entities_in_view, player_info->flower_id);
+    
+    rr_bitset_set(captures.entities_in_view, this->arena);
     rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
@@ -172,5 +177,9 @@ void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *capture
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
+    rr_system_collision_detection_tick(this);
+    rr_system_collision_resolution_tick(this);
+    rr_system_petal_behavior_tick(this);
     rr_system_velocity_tick(this);
+    rr_system_map_boundary_tick(this);
 }

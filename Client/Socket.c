@@ -100,3 +100,14 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
 
 #endif
 }
+
+void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)
+{
+#ifndef EMSCRIPTEN
+lws_write(this->socket, start, end - start, LWS_WRITE_BINARY);
+#else
+EM_ASM({
+    window.socket.send(Module.HEAPU8.subarray($0, $1));
+}, start, end);
+#endif
+}

@@ -24,3 +24,4 @@
 #endif
 
 void rr_log_hex(uint8_t *start, uint8_t *end);
+float rr_lerp(float start, float end, float t);

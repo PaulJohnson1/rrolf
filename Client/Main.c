@@ -17,12 +17,10 @@
 #include <emscripten.h>
 void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
 {
-    /*
-    if (type == 0)
-        rr_bitset_set(&this->input_data->keys[0], key);
+    if (type == 1)
+        rr_bitset_set(this->input_data->keys, key);
     else
-        rr_bitset_unset(&this->input_data->keys[0], key);
-        */
+        rr_bitset_unset(this->input_data->keys, key);
 }
 #else
 #endif
@@ -38,9 +36,9 @@ document.oncontextmenu = function() { return false; };
         Module.ctxs = [Module.canvas.getContext('2d')];
         Module.availableCtxs = new Array(100).fill(0).map(function(_, i) { return i; });
         window.addEventListener(
-            "keydown", function({which}) { Module._rr_key_event(1, which); });
+            "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
         window.addEventListener(
-            "keyup", function({which}) { Module._rr_key_event(0, which); });
+            "keyup", function({which}) { Module._rr_key_event($0, 0, which); });
         // window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 1, button)});
         // window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 2, button)});
         // window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 0, button)});
@@ -91,11 +89,14 @@ document.oncontextmenu = function() { return false; };
                 str += String.fromCharCode(char);
             return str;
         };
-        function loop()
+        function loop(time)
         {
+            if (window.start == null) window.start = time + 1;
+            const delta = Math.min(1, (time - start) / 1000);
+            start = time;
             Module.canvas.width = innerWidth * devicePixelRatio;
             Module.canvas.height = innerHeight * devicePixelRatio;
-            Module._rr_renderer_main_loop($0, Module.canvas.width, Module.canvas.height, devicePixelRatio);
+            Module._rr_renderer_main_loop($0, delta, Module.canvas.width, Module.canvas.height, devicePixelRatio);
             requestAnimationFrame(loop);
         };
         requestAnimationFrame(loop);        
@@ -103,7 +104,7 @@ document.oncontextmenu = function() { return false; };
 #endif
 }
 
-void rr_renderer_main_loop(struct rr_game *this, float width, float height, float device_pixel_ratio)
+void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float height, float device_pixel_ratio)
 {
     float a = height / 1080;
     float b = width / 1920;
@@ -111,7 +112,7 @@ void rr_renderer_main_loop(struct rr_game *this, float width, float height, floa
     this->renderer->scale = b < a ? a : b;
     this->renderer->width = width;
     this->renderer->height = height;
-    rr_game_tick(this);
+    rr_game_tick(this, delta);
 }
 
 
@@ -135,8 +136,9 @@ int main()
     game.input_data = &input_data;
     game.simulation = &simulation;
     rr_main_renderer_initialize(&game);
+    rr_game_tick(&game, 1);
 
-    rr_websocket_connect_to(&socket, "localhost", 8000);
+    rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
 
 #ifndef EMSCRIPTEN
     while (1)
