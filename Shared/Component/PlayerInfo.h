@@ -12,15 +12,16 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_player_info_petal
 {
-    int32_t cooldown_ticks;
     uint8_t is_alive;
     EntityIdx simulation_id;
+    int32_t cooldown_ticks;
 };
 
 struct rr_component_player_info_petal_slot
 {
     uint8_t rarity;
-    struct rr_petal_data *data;
+    uint32_t count;
+    struct rr_petal_data const *data;
     struct rr_component_player_info_petal petals[10];
 };
 // check if there's rr_component_player_info_set function before setting a field

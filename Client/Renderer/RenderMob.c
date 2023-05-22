@@ -5,10 +5,12 @@
 
 #include <Client/Renderer/RenderFunctions.h>
 
-void rr_component_petal_render(EntityIdx entity, struct rr_simulation *simulation, struct rr_renderer *renderer)
+void rr_component_mob_render(EntityIdx entity, struct rr_simulation *simulation, struct rr_renderer *renderer)
 {
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
+    struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
     rr_renderer_rotate(renderer, physical->angle);
-    rr_renderer_render_petal(renderer, rr_simulation_get_petal(simulation, entity)->id);
+    rr_renderer_scale(renderer, rr_mob_rarity_scaling[mob->id]);
+    rr_renderer_render_mob(renderer, rr_simulation_get_mob(simulation, entity)->id);
 }

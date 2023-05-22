@@ -4,7 +4,6 @@
 
 #include <Server/Simulation.h>
 
-#include <Shared/Component/PlayerInfo.h>
 #include <Shared/StaticData.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
@@ -20,8 +19,8 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
-        struct rr_petal_data *data = slot->data;
-        for (uint64_t inner = 0; inner < 10; ++inner)
+        struct rr_petal_data const *data = slot->data;
+        for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             ++rotationPos;
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
@@ -39,7 +38,9 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_petal_set_id(petal, data->id);
                     rr_component_petal_set_rarity(petal, slot->rarity);
                     petal->rotation_pos = rotationPos;
-                    petal->owner = id;
+                    struct rr_component_relations *relations = rr_simulation_add_relations(simulation, p_petal->simulation_id);
+                    rr_component_relations_set_owner(relations, id);
+                    rr_component_relations_set_team(relations, 1); //flower
                 }
             }
         }
@@ -54,27 +55,26 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         return;
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
-    if (!rr_simulation_has_entity(simulation, petal->owner))
+    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, id);
+    if (!rr_simulation_has_entity(simulation, relations->owner))
     {
         rr_simulation_free_entity(simulation, id);
         return;
     }
-    if (!rr_simulation_has_player_info(simulation, petal->owner))
+    if (!rr_simulation_has_player_info(simulation, relations->owner))
     {
         rr_simulation_free_entity(simulation, id);
         return;
     }
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, petal->owner);
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
     if (player_info->flower_id == 0)
     {
         rr_simulation_free_entity(simulation, id);
         return;
     }
     struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
-    struct rr_vector position_vector;
-    struct rr_vector flower_vector;
-    rr_vector_set(&position_vector, physical->x, physical->y);
-    rr_vector_set(&flower_vector, flower_physical->x, flower_physical->y);
+    struct rr_vector position_vector = {physical->x, physical->y};
+    struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
     float holdingRadius = 400;
     float currAngle = player_info->global_rotation + petal->rotation_pos * 2 * M_PI / player_info->rotation_count;
     struct rr_vector chase_vector;

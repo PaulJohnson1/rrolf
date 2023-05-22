@@ -8,9 +8,9 @@
 
 enum
 {
-    state_flags_health =        0b000001,
-    state_flags_max_health =    0b000010,
-    state_flags_all =           0b000011
+    state_flags_health =     0b000001,
+    state_flags_max_health = 0b000010,
+    state_flags_all =        0b000011
 };
 
 void rr_component_health_init(struct rr_component_health *this)
@@ -31,8 +31,18 @@ void rr_component_health_write(struct rr_component_health *this, struct rr_encod
     RR_ENCODE_PUBLIC_FIELD(max_health, float);
 }
 
-RR_DEFINE_PUBLIC_FIELD(health, float, health)
-RR_DEFINE_PUBLIC_FIELD(health, float, max_health)
+void rr_component_health_set_health(struct rr_component_health *this, float v)
+{
+    if (v > this->max_health)
+        v = this->max_health;
+    this->protocol_state |= (v != this->health) * state_flags_health;
+    this->health = v;
+}
+void rr_component_health_set_max_health(struct rr_component_health *this, float v)
+{
+    this->protocol_state |= (v != this->max_health) * state_flags_max_health;
+    this->max_health = v;
+}
 #endif
 
 #ifdef RR_CLIENT

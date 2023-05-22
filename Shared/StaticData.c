@@ -1,11 +1,14 @@
 #include <Shared/StaticData.h>
 
-struct rr_petal_data PETAL_DATA[max_petals];
+struct rr_petal_data PETAL_DATA[rr_petal_id_max] = {
+    {rr_petal_id_no_petal, 0, 0, 0},
+    {rr_petal_id_basic, 10, 10, 12},
+    {rr_petal_id_light, 7, 5, 12}
+};
 
-void rr_set_petal_data(uint32_t id, float health, float damage, uint32_t cooldown)
-{
-    PETAL_DATA[id].id = id;
-    PETAL_DATA[id].health = health;
-    PETAL_DATA[id].damage = damage;
-    PETAL_DATA[id].cooldown = cooldown;
-}
+float rr_mob_rarity_scaling[rr_rarity_max] = {
+    10, // test
+    1.1,
+    1.3,
+    1.6
+};

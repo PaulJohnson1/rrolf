@@ -42,7 +42,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         break;
     case rr_websocket_event_type_data:
     {
-        //rr_log_hex(data, data + size);
+        // rr_log_hex(data, data + size);
         struct rr_encoder encoder;
         rr_encoder_init(&encoder, data);
         switch (rr_encoder_read_uint8(&encoder))
@@ -65,7 +65,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         movement_flags |= (rr_bitset_get(this->input_data->keys, 68) || rr_bitset_get(this->input_data->keys, 39)) << 3;
         rr_encoder_write_uint8(&encoder2, movement_flags);
         rr_websocket_send(this->socket, encoder2.start, encoder2.current);
-        //send packet
+        // send packet
         break;
     }
     default:
@@ -73,18 +73,64 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
     }
 }
 
-void rr_game_tick(struct rr_game *this)
+void render_health_component(EntityIdx entity, void *_captures)
 {
-    rr_renderer_set_transform(this->renderer,1,0,0,0,1,0);
+    struct rr_game *this = _captures;
+    if (!rr_simulation_has_health(this->simulation, entity))
+        return;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(this->renderer, &state);
+    rr_component_health_render(entity, this->simulation, this->renderer);
+    rr_renderer_free_context_state(this->renderer, &state);
+}
+
+void render_mob_component(EntityIdx entity, void *_captures)
+{
+    struct rr_game *this = _captures;
+    if (!rr_simulation_has_mob(this->simulation, entity))
+        return;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(this->renderer, &state);
+    rr_component_mob_render(entity, this->simulation, this->renderer);
+    rr_renderer_free_context_state(this->renderer, &state);
+}
+
+void render_petal_component(EntityIdx entity, void *_captures)
+{
+    struct rr_game *this = _captures;
+    if (!rr_simulation_has_petal(this->simulation, entity))
+        return;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(this->renderer, &state);
+    rr_component_petal_render(entity, this->simulation, this->renderer);
+    rr_renderer_free_context_state(this->renderer, &state);
+}
+
+void render_flower_component(EntityIdx entity, void *_captures)
+{
+    struct rr_game *this = _captures;
+    if (!rr_simulation_has_flower(this->simulation, entity))
+        return;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(this->renderer, &state);
+    rr_component_flower_render(entity, this->simulation, this->renderer);
+    rr_renderer_free_context_state(this->renderer, &state);
+}
+
+void rr_game_tick(struct rr_game *this, float delta)
+{
+    rr_simulation_tick(this->simulation, delta);
+
+    rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state state1;
     struct rr_renderer_context_state state2;
     if (this->player_info == 0)
     {
-        for (EntityIdx playerInfo = 1; playerInfo < RR_MAX_ENTITY_COUNT; ++playerInfo)
+        for (EntityIdx player_info = 1; player_info < RR_MAX_ENTITY_COUNT; ++player_info)
         {
-            if (!rr_bitset_get_bit(this->simulation->player_info_tracker, playerInfo))
+            if (!rr_bitset_get_bit(this->simulation->player_info_tracker, player_info))
                 continue;
-            this->player_info = playerInfo;
+            this->player_info = player_info;
             break;
         }
     }
@@ -93,14 +139,14 @@ void rr_game_tick(struct rr_game *this)
         rr_renderer_init_context_state(this->renderer, &state1);
         struct rr_component_player_info *player_info = rr_simulation_get_player_info(this->simulation, this->player_info);
         rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
-        rr_renderer_scale(this->renderer, player_info->camera_fov * this->renderer->scale);
-        rr_renderer_translate(this->renderer, -player_info->camera_x, -player_info->camera_y);
+        rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
+        rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
             if (rr_bitset_get_bit(this->simulation->arena_tracker, p) == 0)
                 continue;
             rr_renderer_init_context_state(this->renderer, &state2);
-            //intrusive op
+            // intrusive op
             struct rr_component_arena *arena = rr_simulation_get_arena(this->simulation, p);
             rr_renderer_begin_path(this->renderer);
             rr_renderer_arc(this->renderer, 0, 0, arena->radius);
@@ -108,16 +154,14 @@ void rr_game_tick(struct rr_game *this)
             rr_renderer_fill(this->renderer);
             rr_renderer_clip(this->renderer);
 
-            struct rr_component_player_info *playerInfo = rr_simulation_get_player_info(this->simulation, this->player_info);
-
             rr_renderer_set_line_width(this->renderer, 1);
-            rr_renderer_set_stroke(this->renderer, (uint32_t)(playerInfo->camera_fov * 51) << 24);
+            rr_renderer_set_stroke(this->renderer, (uint32_t)(player_info->lerp_camera_fov * 51) << 24);
 
-            float scale = playerInfo->camera_fov * this->renderer->scale;
-            float leftX = playerInfo->camera_x - this->renderer->width / (2 * scale); 
-            float rightX = playerInfo->camera_x + this->renderer->width / (2 * scale); 
-            float topY = playerInfo->camera_y - this->renderer->height / (2 * scale); 
-            float bottomY = playerInfo->camera_y + this->renderer->height / (2 * scale); 
+            float scale = player_info->lerp_camera_fov * this->renderer->scale;
+            float leftX = player_info->lerp_camera_x - this->renderer->width / (2 * scale);
+            float rightX = player_info->lerp_camera_x + this->renderer->width / (2 * scale);
+            float topY = player_info->lerp_camera_y - this->renderer->height / (2 * scale);
+            float bottomY = player_info->lerp_camera_y + this->renderer->height / (2 * scale);
             float newLeftX = ceilf(leftX / 50) * 50;
             float newTopY = ceilf(topY / 50) * 50;
             for (; newLeftX < rightX; newLeftX += 50)
@@ -135,39 +179,18 @@ void rr_game_tick(struct rr_game *this)
                 rr_renderer_stroke(this->renderer);
             }
             rr_renderer_free_context_state(this->renderer, &state2);
-            break; //only one arena
+            break; // only one arena
         }
-        for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
-        {
-            if (rr_bitset_get_bit(this->simulation->health_tracker, p) == 0)
-                continue;
-            rr_renderer_init_context_state(this->renderer, &state2);
-            rr_component_health_render(p, this->simulation, this->renderer);
-        
-            rr_renderer_free_context_state(this->renderer, &state2);
-        }
-        for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
-        {
-            if (rr_bitset_get_bit(this->simulation->petal_tracker, p) == 0)
-                continue;
-            rr_renderer_init_context_state(this->renderer, &state2);
-            rr_component_petal_render(p, this->simulation, this->renderer);
-        
-            rr_renderer_free_context_state(this->renderer, &state2);
-        }
-        for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
-        {
-            if (rr_bitset_get_bit(this->simulation->flower_tracker, p) == 0)
-                continue;
-            rr_renderer_init_context_state(this->renderer, &state2);
-            rr_component_flower_render(p, this->simulation, this->renderer);
-        
-            rr_renderer_free_context_state(this->renderer, &state2);
-        }
+
+        rr_simulation_for_each_entity(this->simulation, this, render_health_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
     }
     this->socket->user_data = this;
     this->socket->on_event = rr_game_websocket_on_event_function;
+
 #ifndef EMSCRIPTEN
     lws_service(this->socket->socket_context, -1);
 #endif

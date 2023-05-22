@@ -8,9 +8,9 @@
 
 enum
 {
-    state_flags_face_flags =    0b000001,
-    state_flags_eye_angle =     0b000010,
-    state_flags_all =           0b000011
+    state_flags_face_flags = 0b000001,
+    state_flags_eye_angle =  0b000010,
+    state_flags_all =        0b000011
 };
 
 void rr_component_flower_init(struct rr_component_flower *this)

@@ -8,8 +8,8 @@
 
 enum
 {
-    state_flags_radius    =     0b000001,
-    state_flags_all =           0b000001
+    state_flags_radius = 0b000001,
+    state_flags_all =    0b000001
 };
 
 void rr_component_arena_init(struct rr_component_arena *this)

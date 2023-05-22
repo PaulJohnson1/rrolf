@@ -12,4 +12,4 @@ struct rr_game
 };
 
 void rr_game_init(struct rr_game *);
-void rr_game_tick(struct rr_game *);
+void rr_game_tick(struct rr_game *, float delta);

@@ -5,7 +5,7 @@
 
 // must be multiple of 8
 // max for normal players is four, developers can bypass that cap
-#define RR_MAX_CLIENT_COUNT (16)
+#define RR_MAX_CLIENT_COUNT (64)
 
 struct lws_context;
 struct lws;

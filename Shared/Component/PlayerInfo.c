@@ -10,7 +10,7 @@ enum
     state_flags_camera_x =   0b000001,
     state_flags_camera_y =   0b000010,
     state_flags_camera_fov = 0b000100,
-    state_flags_flower_id  = 0b001000,
+    state_flags_flower_id =  0b001000,
     state_flags_all =        0b001111
 };
 
@@ -19,7 +19,10 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
     for (uint64_t i = 0; i < 10; ++i)
-        this->slots->data = &PETAL_DATA[1];
+    {
+        this->slots[i].data = &PETAL_DATA[1];
+        this->slots[i].count = 1;
+    }
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this)
