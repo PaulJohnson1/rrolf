@@ -41,6 +41,9 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     struct rr_component_relations *relations = rr_simulation_add_relations(simulation, p_petal->simulation_id);
                     rr_component_relations_set_owner(relations, id);
                     rr_component_relations_set_team(relations, 1); //flower
+                    struct rr_component_health *health = rr_simulation_add_health(simulation, p_petal->simulation_id);
+                    rr_component_health_set_max_health(health, data->health);
+                    rr_component_health_set_health(health, data->health);
                 }
             }
         }
@@ -75,7 +78,7 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
     struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
     struct rr_vector position_vector = {physical->x, physical->y};
     struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
-    float holdingRadius = 400;
+    float holdingRadius = 75;
     float currAngle = player_info->global_rotation + petal->rotation_pos * 2 * M_PI / player_info->rotation_count;
     struct rr_vector chase_vector;
     rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);

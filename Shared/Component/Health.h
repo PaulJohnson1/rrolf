@@ -13,6 +13,7 @@ struct rr_component_health
                    EntityIdx parent_id;
                    float health;
                    float max_health;
+    RR_SERVER_ONLY(float damage;)
     RR_CLIENT_ONLY(float lerp_health;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };

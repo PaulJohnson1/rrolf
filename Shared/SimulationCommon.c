@@ -8,6 +8,8 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
+#include <stdlib.h>
+
 #include <Server/Simulation.h>
 #endif
 void rr_simulation_init(struct rr_simulation *this)
@@ -29,6 +31,11 @@ void rr_simulation_init(struct rr_simulation *this)
         physical->mass = 0.01f;
         rr_component_mob_set_rarity(mob, rr_rarity_epic);
         rr_component_mob_set_id(mob, rr_mob_id_baby_ant);
+        struct rr_component_health *health = rr_simulation_add_health(this, mob_id);
+        rr_component_health_set_max_health(health, 10);
+        rr_component_health_set_health(health, 10);
+        struct rr_component_relations *relations = rr_simulation_add_relations(this, mob_id);
+        rr_component_relations_set_team(relations, 0);
     }
 #endif
 }
