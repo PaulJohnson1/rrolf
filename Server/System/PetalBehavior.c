@@ -81,8 +81,8 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
     rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
     rr_vector_add(&chase_vector, &flower_vector);
     rr_vector_sub(&chase_vector, &position_vector);
-    physical->acceleration.x = chase_vector.x;
-    physical->acceleration.y = chase_vector.y;
+    physical->acceleration.x += chase_vector.x;
+    physical->acceleration.y += chase_vector.y;
 }
 
 void rr_system_petal_behavior_tick(struct rr_simulation *simulation)

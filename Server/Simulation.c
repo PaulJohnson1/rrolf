@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <Server/System/Ai.h>
 #include <Server/System/CollisionDetection.h>
 #include <Server/System/CollisionResolution.h>
 #include <Server/System/MapBoundary.h>
@@ -177,6 +178,7 @@ void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *capture
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
+    rr_system_ai_tick(this);
     rr_system_collision_detection_tick(this);
     rr_system_collision_resolution_tick(this);
     rr_system_petal_behavior_tick(this);

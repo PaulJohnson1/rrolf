@@ -20,6 +20,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
+    this->player_info->slot_count = 10;
     rr_server_client_create_flower(this);
 }
 

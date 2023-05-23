@@ -31,8 +31,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
 
         float overlap = (distance - physical1->radius - physical2->radius);
-        float v2_Coeff = 0.5f; // physical1.mass / (physical1->mass + physical2->mass);
-        float v1_Coeff = 0.5f; // physical2->mass / (physical1->mass + physical2->mass);
+        float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
+        float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
         rr_component_physical_set_x(physical1, physical1->x - overlap * delta.x / distance * v1_Coeff);
         rr_component_physical_set_y(physical1, physical1->y - overlap * delta.y / distance * v1_Coeff);
         rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
@@ -40,9 +40,9 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
 
     {
-        float v2_Coeff = 1.0f;      // 2.0f * physical1->mass / (physical1->mass + physical2->mass);
-        float v1_Coeff = 1.0f;      // 2.0f * physical2->mass / (physical1->mass + physical2->mass);
-        float v_SharedCoeff = 0.0f; //(physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
+        float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
+        float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
+        float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
 
         // struct rr_vector delta = (ball2Position - ball1Position).Normalize();
         rr_vector_normalize(&delta);

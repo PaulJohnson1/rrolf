@@ -7,7 +7,7 @@ struct rr_petal_data PETAL_DATA[rr_petal_id_max] = {
 };
 
 float rr_mob_rarity_scaling[rr_rarity_max] = {
-    10, // test
+    1,
     1.1,
     1.3,
     1.6

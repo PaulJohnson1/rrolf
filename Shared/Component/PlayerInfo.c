@@ -18,11 +18,13 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
+    #ifdef RR_SERVER
     for (uint64_t i = 0; i < 10; ++i)
     {
         this->slots[i].data = &PETAL_DATA[1];
         this->slots[i].count = 1;
     }
+    #endif
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this)

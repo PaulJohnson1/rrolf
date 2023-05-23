@@ -7,7 +7,7 @@ void rr_component_flower_render(EntityIdx entity, struct rr_simulation *simulati
 {
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
-    rr_renderer_rotate(renderer, physical->angle);
+    rr_renderer_rotate(renderer, physical->lerp_angle);
     rr_renderer_begin_path(renderer);
     rr_renderer_arc(renderer, 0, 0, physical->radius + 1.5);
     rr_renderer_set_fill(renderer, 0xffcfbb50);

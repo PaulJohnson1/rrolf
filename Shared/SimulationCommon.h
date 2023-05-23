@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Shared/Component/Ai.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
 #include <Shared/Component/Health.h>

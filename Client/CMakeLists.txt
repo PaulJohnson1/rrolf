@@ -18,6 +18,7 @@ set(SRCS
     Main.c
     Simulation.c
     Socket.c
+    ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
     ../Shared/Component/Health.c

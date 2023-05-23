@@ -10,6 +10,7 @@ endif()
 
 
 set(SRCS
+    System/Ai.c
     System/CollisionDetection.c
     System/CollisionResolution.c
     System/MapBoundary.c
@@ -20,6 +21,7 @@ set(SRCS
     Server.c
     Simulation.c
     SpatialHash.c
+    ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Flower.c
     ../Shared/Component/Health.c

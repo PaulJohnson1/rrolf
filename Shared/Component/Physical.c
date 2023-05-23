@@ -17,6 +17,7 @@ enum
 void rr_component_physical_init(struct rr_component_physical *this)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(this->mass = 1;)
 }
 
 void rr_component_physical_free(struct rr_component_physical *this)
