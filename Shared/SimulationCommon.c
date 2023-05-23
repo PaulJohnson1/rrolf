@@ -23,12 +23,8 @@ void rr_simulation_init(struct rr_simulation *this)
         struct rr_component_physical *physical = rr_simulation_add_physical(this, mob_id);
         struct rr_component_mob *mob = rr_simulation_add_mob(this, mob_id);
         rr_simulation_add_ai(this, mob_id);
-        rr_component_physical_set_radius(physical, 14);
-        rr_component_physical_set_x(physical, rand() % 800);
-        rr_component_physical_set_y(physical, rand() % 800);
-        physical->mass = 0.01f;
-        rr_component_mob_set_rarity(mob, rr_rarity_epic);
         rr_component_mob_set_id(mob, rr_mob_id_baby_ant);
+        rr_component_mob_set_rarity(mob, rr_rarity_epic);
     }
 #endif
 }
