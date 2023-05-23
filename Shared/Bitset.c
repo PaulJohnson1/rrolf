@@ -7,7 +7,7 @@ uint8_t rr_bitset_get_bit(uint8_t *a, uint64_t i)
 
 uint8_t rr_bitset_get(uint8_t *a, uint64_t i)
 {
-    return (a[i >> 3] & (1 << (i & 7))) >> (i & 7);
+    return (a[i >> 3] & (1 << (i & 7))) ? 1 : 0;
 }
 
 void rr_bitset_set(uint8_t *a, uint64_t i)
@@ -18,6 +18,14 @@ void rr_bitset_set(uint8_t *a, uint64_t i)
 void rr_bitset_unset(uint8_t *a, uint64_t i)
 {
     a[i >> 3] &= ~(1 << (i & 7));
+}
+
+void rr_bitset_maybe_set(uint8_t *a, uint64_t i, uint8_t bit)
+{
+    if (bit)
+        rr_bitset_set(a, i);
+    else
+        rr_bitset_unset(a, i);
 }
 
 void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (*cb)(uint64_t, void *))

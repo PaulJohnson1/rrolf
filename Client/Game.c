@@ -14,10 +14,9 @@
 #include <Client/Socket.h>
 #include <Client/Simulation.h>
 #include <Shared/Utilities.h>
-
-#include <Shared/Encoder.h>
 #include <Shared/Bitset.h>
-
+#include <Shared/Crypto.h>
+#include <Shared/Encoder.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
 #include <Shared/Component/Petal.h>
@@ -42,9 +41,20 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         break;
     case rr_websocket_event_type_data:
     {
-        // rr_log_hex(data, data + size);
         struct rr_encoder encoder;
         rr_encoder_init(&encoder, data);
+
+        if (!this->socket->recieved_first_packet)
+        {
+            this->socket->recieved_first_packet = 1;
+            spn_decrypt(data, size, 1);
+            this->socket->encryption_key = rr_encoder_read_uint64(&encoder);
+
+            return;
+        }
+
+        this->socket->encryption_key = spn_get_hash(this->socket->encryption_key);
+        spn_decrypt(data, size, this->socket->encryption_key);
         switch (rr_encoder_read_uint8(&encoder))
         {
         case 0:
@@ -65,7 +75,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         movement_flags |= (rr_bitset_get(this->input_data->keys, 68) || rr_bitset_get(this->input_data->keys, 39)) << 3;
         rr_encoder_write_uint8(&encoder2, movement_flags);
         rr_websocket_send(this->socket, encoder2.start, encoder2.current);
-        // send packet
         break;
     }
     default:

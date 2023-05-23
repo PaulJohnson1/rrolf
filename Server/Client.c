@@ -2,17 +2,19 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
+#include <Shared/Crypto.h>
 #include <Shared/Entity.h>
 #include <Shared/Component/PlayerInfo.h>
-
 #include <Server/Server.h>
 #include <Server/Simulation.h>
 
 void rr_server_client_init(struct rr_server_client *this)
 {
     memset(this, 0, sizeof *this);
-    puts("client connected");
+    this->encryption_key = spn_get_rand();
+    printf("client connected, encrypting with key %lu\n", this->encryption_key);
 }
 
 void rr_server_client_create_flower(struct rr_server_client *this)

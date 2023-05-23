@@ -31,6 +31,7 @@ set(SRCS
     ../Shared/Component/PlayerInfo.c
     ../Shared/Component/Relations.c
     ../Shared/Bitset.c
+    ../Shared/Crypto.c
     ../Shared/Encoder.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c

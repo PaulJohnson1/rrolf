@@ -13,11 +13,19 @@ uint8_t rr_encoder_read_uint8(struct rr_encoder *this)
     return *this->current++;
 }
 
-uint32_t rr_encoder_read_varuint(struct rr_encoder *this)
+uint64_t rr_encoder_read_uint64(struct rr_encoder *this)
+{
+    uint64_t x;
+    memcpy(&x, this->current, 8);
+    this->current += 8;
+    return x;
+}
+
+uint64_t rr_encoder_read_varuint(struct rr_encoder *this)
 {
     uint8_t byte;
-    uint32_t num = 0;
-    uint32_t count = 0;
+    uint64_t num = 0;
+    uint64_t count = 0;
 
     do
     {
@@ -42,7 +50,13 @@ void rr_encoder_write_uint8(struct rr_encoder *this, uint8_t v)
     *this->current++ = v;
 }
 
-void rr_encoder_write_varuint(struct rr_encoder *this, uint32_t v)
+void rr_encoder_write_uint64(struct rr_encoder *this, uint64_t v)
+{
+    memcpy(this->current, &v, 8);
+    this->current += 8;
+}
+
+void rr_encoder_write_varuint(struct rr_encoder *this, uint64_t v)
 {
     while (v > 127)
     {

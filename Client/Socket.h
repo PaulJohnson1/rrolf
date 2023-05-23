@@ -17,12 +17,14 @@ enum rr_websocket_event_type
 
 struct rr_websocket
 {
+    uint8_t recieved_first_packet;
     void *user_data;
     void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
 #ifndef EMSCRIPTEN
     struct lws_context *socket_context;
     struct lws *socket;
 #endif
+    uint64_t encryption_key;
 };
 
 void rr_websocket_init(struct rr_websocket *);
