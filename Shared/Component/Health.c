@@ -35,6 +35,8 @@ void rr_component_health_set_health(struct rr_component_health *this, float v)
 {
     if (v > this->max_health)
         v = this->max_health;
+    else if (v < 0)
+        v = 0;
     this->protocol_state |= (v != this->health) * state_flags_health;
     this->health = v;
 }

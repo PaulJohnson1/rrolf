@@ -34,8 +34,8 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     rr_simulation_get_physical(&this->server->simulation, flower_id)->friction = 0.9;
     rr_simulation_add_flower(&this->server->simulation, flower_id);
     struct rr_component_health *health = rr_simulation_add_health(&this->server->simulation, flower_id);
-    rr_component_health_set_health(health, 0.5);
-    rr_component_health_set_max_health(health, 1);
+    rr_component_health_set_max_health(health, 100);
+    rr_component_health_set_health(health, 100);
     struct rr_component_relations *relations = rr_simulation_add_relations(&this->server->simulation, flower_id);
     rr_component_relations_set_team(relations, 1);
     rr_component_player_info_set_flower_id(this->player_info, flower_id);

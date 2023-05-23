@@ -8,6 +8,8 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
+#include <stdlib.h>
+
 #include <Server/Simulation.h>
 #endif
 void rr_simulation_init(struct rr_simulation *this)

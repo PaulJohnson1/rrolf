@@ -1,3 +1,5 @@
+set(CMAKE_SYSTEM_NAME Generic)
+
 project(rrolf-server)
 cmake_minimum_required(VERSION 3.16)
 include_directories(..)
@@ -8,11 +10,11 @@ if (WINDOWS)
     include_directories(/c/libwebsockets/win32port/win32helpers)
 endif()
 
-
 set(SRCS
     System/Ai.c
     System/CollisionDetection.c
     System/CollisionResolution.c
+    System/Health.c
     System/MapBoundary.c
     System/PetalBehavior.c
     System/Velocity.c
@@ -39,19 +41,18 @@ set(SRCS
     ../Shared/Vector.c
 )
 
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -DRR_SERVER -DHSHG_D=2 -DHSHG_UNIFORM")
+set(CMAKE_C_FLAGS "-DRR_SERVER=1 -DHSHG_D=2 -DHSHG_UNIFORM=1")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
     # add_compile_options(-fsanitize=undefined,address)
     # add_link_options(-fsanitize=undefined,address)
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3 -ffast-math -DHSHG_NDEBUG")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3 -DHSHG_NDEBUG")
     # link time optimiations
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 if(RIVET_PRODUCTION_BUILD)
@@ -68,4 +69,8 @@ if(WINDOWS)
     target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
     target_link_libraries(rrolf-server ws2_32 wsock32)
 endif()
-target_link_libraries(rrolf-server pthread websockets m)
+target_link_libraries(rrolf-server pthread websockets)
+
+if (RIVET_PRODUCTION_BUILD OR RIVET_DEVELOPER_BUILD)
+    target_link_libraries(rrolf-server curl)
+endif()

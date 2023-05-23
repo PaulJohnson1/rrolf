@@ -6,6 +6,7 @@
 #include <Server/System/Ai.h>
 #include <Server/System/CollisionDetection.h>
 #include <Server/System/CollisionResolution.h>
+#include <Server/System/Health.h>
 #include <Server/System/MapBoundary.h>
 #include <Server/System/PetalBehavior.h>
 #include <Server/System/Velocity.h>
@@ -181,6 +182,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     rr_system_ai_tick(this);
     rr_system_collision_detection_tick(this);
     rr_system_collision_resolution_tick(this);
+    rr_system_health_tick(this);
     rr_system_petal_behavior_tick(this);
     rr_system_velocity_tick(this);
     rr_system_map_boundary_tick(this);
