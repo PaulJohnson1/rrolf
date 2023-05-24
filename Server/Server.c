@@ -8,6 +8,7 @@
 #include <Shared/Component/Physical.h>
 #include <Shared/Bitset.h>
 #include <Shared/Crypto.h>
+#include <Shared/pb.h>
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 #include <Server/Simulation.h>
@@ -26,14 +27,14 @@ void rr_server_client_free(struct rr_server_client *this)
 {
     puts("client disconnected");
     if (this->player_info->flower_id != RR_NULL_ENTITY)
-        rr_simulation_free_entity(&this->server->simulation, this->player_info->flower_id);
-    rr_simulation_free_entity(&this->server->simulation, this->player_info->parent_id);
+        rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->flower_id);
+    rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->parent_id);
 }
 
 void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *start, uint64_t size)
 {
     this->encryption_key = spn_get_hash(this->encryption_key);
-    spn_encrypt(start, size, this->encryption_key);
+    // spn_encrypt(start, size, this->encryption_key);
 }
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint64_t size)
@@ -44,12 +45,11 @@ void rr_server_client_write_message(struct rr_server_client *this, uint8_t *mess
 void rr_server_client_broadcast_update(struct rr_server_client *this)
 {
     struct rr_server *server = this->server;
-
     // 128 KB (not needed but just in case)
     static uint8_t outgoing_message[128 * 1024];
-    struct rr_encoder encoder;
-    rr_encoder_init(&encoder, outgoing_message);
-    rr_encoder_write_uint8(&encoder, 0);
+    struct proto_bug encoder;
+    proto_bug_init(&encoder, outgoing_message);
+    proto_bug_write_uint8(&encoder, 0, "header");
     rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
     rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
     rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
@@ -57,14 +57,11 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
-    if (this->player_info != NULL)
+    if (this->player_info->flower_id != RR_NULL_ENTITY)
     {
-        if (this->player_info->flower_id != 0)
-        {
-            struct rr_component_physical *flowerp = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
-            rr_component_player_info_set_camera_x(this->player_info, flowerp->x);
-            rr_component_player_info_set_camera_y(this->player_info, flowerp->y);
-        }
+        struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
+        rr_component_player_info_set_camera_x(this->player_info, physical->x);
+        rr_component_player_info_set_camera_y(this->player_info, physical->y);
     }
     rr_server_client_broadcast_update(this);
 }
@@ -86,12 +83,12 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 this->clients[i].socket_handle = socket;
 
                 // send encryption key
-                static uint8_t bytes[8];
-                struct rr_encoder encryption_key_encoder;
-                rr_encoder_init(&encryption_key_encoder, bytes);
-                rr_encoder_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key);
-                spn_encrypt(bytes, 8, 1);
-                rr_server_client_write_message(this->clients + i, bytes, 8);
+                static uint8_t bytes[4096];
+                struct proto_bug encryption_key_encoder;
+                proto_bug_init(&encryption_key_encoder, bytes);
+                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key, "encryption key");
+                // spn_encrypt(bytes, 4096, 1);
+                rr_server_client_write_message(this->clients + i, bytes, 4096);
 
                 rr_server_client_create_player_info(this->clients + i);
                 return 0;
@@ -134,20 +131,20 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             puts("null client????");
             return 0;
         }
-        struct rr_encoder encoder;
-        rr_encoder_init(&encoder, packet);
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, packet);
         // rr_log_hex(packet, packet + size);
-        switch (rr_encoder_read_uint8(&encoder))
+        switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
         {
-            if (size != 3)
+            if (size < 3)
             {
-                puts("unsafe input packet with length != 3");
+                puts("unsafe input packet with length < 3");
                 return 0;
             }
-            rr_encoder_read_uint8(&encoder);
-            uint64_t movementFlags = rr_encoder_read_uint8(&encoder);
+            proto_bug_read_uint8(&encoder, "movement type");
+            uint64_t movementFlags = proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
             float y = 0;
 
@@ -226,6 +223,7 @@ void rr_server_run(struct rr_server *this)
     info.gid = -1;
     info.uid = -1;
     info.user = this;
+    info.pt_serv_buf_size = 128 * 1024;
 
     this->server = lws_create_context(&info);
     assert(this->server);
@@ -236,8 +234,8 @@ void rr_server_run(struct rr_server *this)
         struct timeval end;
 
         gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
-        rr_server_tick(this);
         lws_service(this->server, -1);
+        rr_server_tick(this);
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);

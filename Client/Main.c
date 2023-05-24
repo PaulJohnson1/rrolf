@@ -158,7 +158,7 @@ int main()
         struct timeval start;
         struct timeval end;
         gettimeofday(&start, NULL);
-        rr_game_tick(&game);
+        rr_game_tick(&game, 0.016f);
         gettimeofday(&end, NULL);
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
         if (elapsed_time > 1000)

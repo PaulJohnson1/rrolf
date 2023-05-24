@@ -5,7 +5,7 @@
 #include <Shared/Utilities.h>
 
 struct rr_simulation;
-struct rr_encoder;
+struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 
 enum rr_ai_state
@@ -23,7 +23,7 @@ struct rr_component_ai
 };
 
 void rr_component_ai_init(struct rr_component_ai *);
-void rr_component_ai_free(struct rr_component_ai *);
+void rr_component_ai_free(struct rr_component_ai *, struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_ai_write(struct rr_component_ai *, struct rr_encoder *, int is_creation);)
-RR_CLIENT_ONLY(void rr_component_ai_read(struct rr_component_ai *, struct rr_encoder *);)
+RR_SERVER_ONLY(void rr_component_ai_write(struct rr_component_ai *, struct proto_bug *, int is_creation);)
+RR_CLIENT_ONLY(void rr_component_ai_read(struct rr_component_ai *, struct proto_bug *);)

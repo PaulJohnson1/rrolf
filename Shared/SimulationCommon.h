@@ -9,7 +9,6 @@
 #include <Shared/Component/Physical.h>
 #include <Shared/Component/PlayerInfo.h>
 #include <Shared/Component/Relations.h>
-#include <Shared/Encoder.h>
 #include <Shared/Entity.h>
 #include <Shared/Utilities.h>
 
@@ -20,6 +19,7 @@
 struct rr_simulation
 {
     uint8_t entity_tracker[RR_MAX_ENTITY_COUNT >> 3];
+    RR_SERVER_ONLY(uint8_t pending_deletions[RR_MAX_ENTITY_COUNT >> 3]);
     RR_SERVER_ONLY(EntityIdx arena;)
 
 #define XX(COMPONENT, ID) \

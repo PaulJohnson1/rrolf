@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <Shared/Encoder.h>
+#include <Shared/pb.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
@@ -18,17 +18,17 @@ void rr_component_health_init(struct rr_component_health *this)
     memset(this, 0, sizeof *this);
 }
 
-void rr_component_health_free(struct rr_component_health *this)
+void rr_component_health_free(struct rr_component_health *this, struct rr_simulation *simulation)
 {
 }
 
 #ifdef RR_SERVER
-void rr_component_health_write(struct rr_component_health *this, struct rr_encoder *encoder, int is_creation)
+void rr_component_health_write(struct rr_component_health *this, struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-    rr_encoder_write_varuint(encoder, state);
-    RR_ENCODE_PUBLIC_FIELD(health, float);
-    RR_ENCODE_PUBLIC_FIELD(max_health, float);
+    proto_bug_write_varuint(encoder, state, "health component state");
+    RR_ENCODE_PUBLIC_FIELD(health, float32);
+    RR_ENCODE_PUBLIC_FIELD(max_health, float32);
 }
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)
@@ -48,10 +48,10 @@ void rr_component_health_set_max_health(struct rr_component_health *this, float 
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_health_read(struct rr_component_health *this, struct rr_encoder *encoder)
+void rr_component_health_read(struct rr_component_health *this, struct proto_bug *encoder)
 {
-    uint64_t state = rr_encoder_read_varuint(encoder);
-    RR_DECODE_PUBLIC_FIELD(health, float);
-    RR_DECODE_PUBLIC_FIELD(max_health, float);
+    uint64_t state = proto_bug_read_varuint(encoder, "health component state");
+    RR_DECODE_PUBLIC_FIELD(health, float32);
+    RR_DECODE_PUBLIC_FIELD(max_health, float32);
 }
 #endif

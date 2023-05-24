@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <Shared/Encoder.h>
+#include <Shared/pb.h>
 
 enum
 {
@@ -20,19 +20,19 @@ void rr_component_physical_init(struct rr_component_physical *this)
     RR_SERVER_ONLY(this->mass = 1;)
 }
 
-void rr_component_physical_free(struct rr_component_physical *this)
+void rr_component_physical_free(struct rr_component_physical *this, struct rr_simulation *simulation)
 {
 }
 
 #ifdef RR_SERVER
-void rr_component_physical_write(struct rr_component_physical *this, struct rr_encoder *encoder, int is_creation)
+void rr_component_physical_write(struct rr_component_physical *this, struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-    rr_encoder_write_varuint(encoder, state);
-    RR_ENCODE_PUBLIC_FIELD(x, float);
-    RR_ENCODE_PUBLIC_FIELD(y, float);
-    RR_ENCODE_PUBLIC_FIELD(angle, float);
-    RR_ENCODE_PUBLIC_FIELD(radius, float);
+    proto_bug_write_varuint(encoder, state, "physical component state");
+    RR_ENCODE_PUBLIC_FIELD(x, float32);
+    RR_ENCODE_PUBLIC_FIELD(y, float32);
+    RR_ENCODE_PUBLIC_FIELD(angle, float32);
+    RR_ENCODE_PUBLIC_FIELD(radius, float32);
     RR_ENCODE_PUBLIC_FIELD(deletion_tick, uint8);
 }
 
@@ -44,13 +44,13 @@ RR_DEFINE_PUBLIC_FIELD(physical, uint32_t, deletion_tick)
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_physical_read(struct rr_component_physical *this, struct rr_encoder *encoder)
+void rr_component_physical_read(struct rr_component_physical *this, struct proto_bug *encoder)
 {
-    uint64_t state = rr_encoder_read_varuint(encoder);
-    RR_DECODE_PUBLIC_FIELD(x, float);
-    RR_DECODE_PUBLIC_FIELD(y, float);
-    RR_DECODE_PUBLIC_FIELD(angle, float);
-    RR_DECODE_PUBLIC_FIELD(radius, float);
+    uint64_t state = proto_bug_read_varuint(encoder, "physical component state");
+    RR_DECODE_PUBLIC_FIELD(x, float32);
+    RR_DECODE_PUBLIC_FIELD(y, float32);
+    RR_DECODE_PUBLIC_FIELD(angle, float32);
+    RR_DECODE_PUBLIC_FIELD(radius, float32);
     RR_DECODE_PUBLIC_FIELD(deletion_tick, uint8);
 }
 #endif

@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include <Server/Server.h>
-#include <Shared/Encoder.h>
 #include <Shared/Utilities.h>
 #include <Shared/StaticData.h>
 

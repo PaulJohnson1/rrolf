@@ -34,7 +34,7 @@ set(SRCS
     ../Shared/Component/Relations.c
     ../Shared/Bitset.c
     ../Shared/Crypto.c
-    ../Shared/Encoder.c
+    ../Shared/pb.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c

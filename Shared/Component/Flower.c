@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include <Shared/Encoder.h>
+#include <Shared/pb.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
@@ -18,17 +18,24 @@ void rr_component_flower_init(struct rr_component_flower *this)
     memset(this, 0, sizeof *this);
 }
 
-void rr_component_flower_free(struct rr_component_flower *this)
+void rr_component_flower_free(struct rr_component_flower *this, struct rr_simulation *simulation)
 {
+    rr_component_player_info_set_flower_id(
+        rr_simulation_get_player_info(
+            simulation, 
+            rr_simulation_get_relations(simulation, this->parent_id)->owner
+        ), 
+        RR_NULL_ENTITY
+    );
 }
 
 #ifdef RR_SERVER
-void rr_component_flower_write(struct rr_component_flower *this, struct rr_encoder *encoder, int is_creation)
+void rr_component_flower_write(struct rr_component_flower *this, struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-    rr_encoder_write_varuint(encoder, state);
+    proto_bug_write_varuint(encoder, state, "flower component state");
     RR_ENCODE_PUBLIC_FIELD(face_flags, uint8);
-    RR_ENCODE_PUBLIC_FIELD(eye_angle, float);
+    RR_ENCODE_PUBLIC_FIELD(eye_angle, float32);
 }
 
 RR_DEFINE_PUBLIC_FIELD(flower, uint8_t, face_flags)
@@ -36,10 +43,10 @@ RR_DEFINE_PUBLIC_FIELD(flower, float, eye_angle)
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_flower_read(struct rr_component_flower *this, struct rr_encoder *encoder)
+void rr_component_flower_read(struct rr_component_flower *this, struct proto_bug *encoder)
 {
-    uint64_t state = rr_encoder_read_varuint(encoder);
+    uint64_t state = proto_bug_read_varuint(encoder, "flower component state");
     RR_DECODE_PUBLIC_FIELD(face_flags, uint8);
-    RR_DECODE_PUBLIC_FIELD(eye_angle, float);
+    RR_DECODE_PUBLIC_FIELD(eye_angle, float32);
 }
 #endif

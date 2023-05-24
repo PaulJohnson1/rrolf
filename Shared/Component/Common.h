@@ -14,8 +14,8 @@
 
 #define RR_ENCODE_PUBLIC_FIELD(NAME, TYPE) \
     if (state & state_flags_##NAME)        \
-        rr_encoder_write_##TYPE(encoder, this->NAME);
+        proto_bug_write_##TYPE(encoder, this->NAME, "field " #NAME);
 
 #define RR_DECODE_PUBLIC_FIELD(NAME, TYPE) \
     if (state & state_flags_##NAME)        \
-        this->NAME = rr_encoder_read_##TYPE(encoder);
+        this->NAME = proto_bug_read_##TYPE(encoder, "field " #NAME);

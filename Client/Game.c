@@ -16,7 +16,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/Bitset.h>
 #include <Shared/Crypto.h>
-#include <Shared/Encoder.h>
+#include <Shared/pb.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
 #include <Shared/Component/Petal.h>
@@ -41,21 +41,21 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         break;
     case rr_websocket_event_type_data:
     {
-        struct rr_encoder encoder;
-        rr_encoder_init(&encoder, data);
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, data);
 
         if (!this->socket->recieved_first_packet)
         {
             this->socket->recieved_first_packet = 1;
-            spn_decrypt(data, size, 1);
-            this->socket->encryption_key = rr_encoder_read_uint64(&encoder);
+            // spn_decrypt(data, size, 1);
+            this->socket->encryption_key = proto_bug_read_uint64(&encoder, "encryption key");
 
             return;
         }
 
         this->socket->encryption_key = spn_get_hash(this->socket->encryption_key);
-        spn_decrypt(data, size, this->socket->encryption_key);
-        switch (rr_encoder_read_uint8(&encoder))
+        // spn_decrypt(data, size, this->socket->encryption_key);
+        switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
             rr_simulation_read_binary(this->simulation, &encoder);
@@ -63,11 +63,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         default:
             RR_UNREACHABLE("how'd this happen");
         }
-        struct rr_encoder encoder2;
-        static uint8_t output_packet[16];
-        rr_encoder_init(&encoder2, output_packet);
-        rr_encoder_write_uint8(&encoder2, 0);
-        rr_encoder_write_uint8(&encoder2, 0);
+        struct proto_bug encoder2;
+        static uint8_t output_packet[128 * 1024];
+        proto_bug_init(&encoder2, output_packet);
+        proto_bug_write_uint8(&encoder2, 0, "header");
+        proto_bug_write_uint8(&encoder2, 0, "movement type");
         uint8_t movement_flags = 0;
         movement_flags |= (rr_bitset_get(this->input_data->keys, 87) || rr_bitset_get(this->input_data->keys, 38)) << 0;
         movement_flags |= (rr_bitset_get(this->input_data->keys, 65) || rr_bitset_get(this->input_data->keys, 37)) << 1;
@@ -76,7 +76,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         movement_flags |= this->input_data->mouse_buttons << 4;
         movement_flags |= rr_bitset_get(this->input_data->keys, 32) << 4;
         movement_flags |= rr_bitset_get(this->input_data->keys, 16) << 5;
-        rr_encoder_write_uint8(&encoder2, movement_flags);
+        proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
         rr_websocket_send(this->socket, encoder2.start, encoder2.current);
         break;
     }

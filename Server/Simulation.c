@@ -11,6 +11,13 @@
 #include <Server/System/PetalBehavior.h>
 #include <Server/System/Velocity.h>
 #include <Shared/Bitset.h>
+#include <Shared/pb.h>
+
+void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
+{
+    assert(rr_simulation_has_entity(this, entity));
+    rr_bitset_set(this->pending_deletions, entity);
+}
 
 // will change later probably
 EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
@@ -31,7 +38,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
 struct rr_protocol_for_each_function_captures
 {
     struct rr_simulation *simulation;
-    struct rr_encoder *encoder;
+    struct proto_bug *encoder;
     struct rr_component_player_info *player_info;
     uint8_t *entities_in_view;
 };
@@ -41,11 +48,11 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     EntityIdx id = _id;
     struct rr_protocol_for_each_function_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
-    struct rr_encoder *encoder = captures->encoder;
+    struct proto_bug *encoder = captures->encoder;
     struct rr_component_player_info *player_info = captures->player_info;
     uint8_t *new_entities_in_view = captures->entities_in_view;
 
-    rr_encoder_write_varuint(encoder, id);
+    proto_bug_write_varuint(encoder, id, "entity update id");
 
     uint8_t is_creation = 0;
 
@@ -74,7 +81,7 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
 #undef XX
     }
 
-    rr_encoder_write_varuint(encoder, component_flags);
+    proto_bug_write_varuint(encoder, component_flags, "entity component flags");
 #define XX(COMPONENT, ID)            \
     if (component_flags & (1 << ID)) \
         rr_component_##COMPONENT##_write(rr_simulation_get_##COMPONENT(simulation, id), encoder, is_creation);
@@ -135,18 +142,18 @@ void rr_simulation_write_entity_deletions_function(uint64_t _id, void *_captures
     EntityIdx id = _id;
     struct rr_protocol_for_each_function_captures *captures = _captures;
     struct rr_component_player_info *player_info = captures->player_info;
-    struct rr_encoder *encoder = captures->encoder;
+    struct proto_bug *encoder = captures->encoder;
     uint8_t *new_entities_in_view = captures->entities_in_view;
 
     if (!rr_bitset_get_bit(new_entities_in_view, id))
     {
         // deletion spotted!
         rr_bitset_unset(player_info->entities_in_view, id);
-        rr_encoder_write_varuint(encoder, id);
+        proto_bug_write_varuint(encoder, id, "entity deletion id");
     }
 }
 
-void rr_simulation_write_binary(struct rr_simulation *this, struct rr_encoder *encoder, struct rr_component_player_info *player_info)
+void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *encoder, struct rr_component_player_info *player_info)
 {
     uint8_t new_entities_in_view[RR_MAX_ENTITY_COUNT >> 3];
     memset(new_entities_in_view, 0, (RR_MAX_ENTITY_COUNT >> 3) * (sizeof *new_entities_in_view));
@@ -160,10 +167,10 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct rr_encoder *e
     captures.entities_in_view = new_entities_in_view;
 
     rr_bitset_for_each_bit(&player_info->entities_in_view[0], &player_info->entities_in_view[0] + (RR_MAX_ENTITY_COUNT >> 3), &captures, rr_simulation_write_entity_deletions_function);
-    rr_encoder_write_uint8(encoder, RR_NULL_ENTITY); // null terminate deletion list
+    proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity deletion id"); // null terminate deletion list
 
     rr_bitset_for_each_bit(new_entities_in_view, new_entities_in_view + (RR_MAX_ENTITY_COUNT >> 3), &captures, rr_simulation_write_entity_function);
-    rr_encoder_write_uint8(encoder, RR_NULL_ENTITY); // null terminate update list
+    proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
 }
 
 void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
@@ -176,14 +183,24 @@ void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *capture
 #undef XX
 }
 
+void delete_pending_deletion(uint64_t i, void *captures)
+{
+    struct rr_simulation *this = captures;
+    rr_simulation_free_entity(this, i);
+}
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
     rr_system_ai_tick(this);
     rr_system_collision_detection_tick(this);
     rr_system_collision_resolution_tick(this);
-    rr_system_health_tick(this);
     rr_system_petal_behavior_tick(this);
     rr_system_velocity_tick(this);
     rr_system_map_boundary_tick(this);
+    rr_system_health_tick(this);
+
+    // delete pending deletions
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_MAX_ENTITY_COUNT >> 3), this, delete_pending_deletion);
+    memset(this->pending_deletions, 0, RR_MAX_ENTITY_COUNT >> 3);
 }

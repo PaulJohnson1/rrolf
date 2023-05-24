@@ -63,18 +63,18 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
     struct rr_component_relations *relations = rr_simulation_get_relations(simulation, id);
     if (!rr_simulation_has_entity(simulation, relations->owner))
     {
-        rr_simulation_free_entity(simulation, id);
+        rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
     if (!rr_simulation_has_player_info(simulation, relations->owner))
     {
-        rr_simulation_free_entity(simulation, id);
+        rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
     if (player_info->flower_id == 0)
     {
-        rr_simulation_free_entity(simulation, id);
+        rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
     if (petal->detached == 0)
@@ -82,7 +82,7 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
         struct rr_vector position_vector = {physical->x, physical->y};
         struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
-        float holdingRadius = 75; // lol what
+        float holdingRadius = 75;
         if (player_info->input & 1)
             holdingRadius = 150;
         else if (player_info->input & 2)

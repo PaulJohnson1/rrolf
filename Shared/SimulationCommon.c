@@ -58,7 +58,7 @@ void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
     printf("deleted entity with id %d\n", entity);
 #define XX(COMPONENT, ID)                            \
     if (rr_simulation_has_##COMPONENT(this, entity)) \
-        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity));
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
     RR_FOR_EACH_COMPONENT;
 #undef XX
 

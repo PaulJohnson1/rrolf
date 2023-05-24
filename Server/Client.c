@@ -24,7 +24,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         puts("tried to init a flower when player info is null");
         return;
     }
-    if (this->player_info->flower_id != 0)
+    if (this->player_info->flower_id != RR_NULL_ENTITY)
     {
         puts("tried to init a flower but flower already exists");
         return;
@@ -38,5 +38,6 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     rr_component_health_set_health(health, 100);
     struct rr_component_relations *relations = rr_simulation_add_relations(&this->server->simulation, flower_id);
     rr_component_relations_set_team(relations, 1);
+    rr_component_relations_set_owner(relations, this->player_info->parent_id);
     rr_component_player_info_set_flower_id(this->player_info, flower_id);
 }

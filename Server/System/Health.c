@@ -53,7 +53,7 @@ static void system_deletion_for_each_function(EntityIdx entity, void *_captures)
     if (!rr_simulation_has_health(this, entity))
         return;
     if (rr_simulation_get_health(this, entity)->health == 0)
-        rr_simulation_free_entity(this, entity);
+        rr_simulation_request_entity_deletion(this, entity);
 }
 
 void rr_system_health_tick(struct rr_simulation *this)

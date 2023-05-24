@@ -7,7 +7,7 @@
 #include <Shared/Utilities.h>
 
 struct rr_simulation;
-struct rr_encoder;
+struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_player_info_petal
@@ -46,10 +46,10 @@ struct rr_component_player_info
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *);
-void rr_component_player_info_free(struct rr_component_player_info *);
+void rr_component_player_info_free(struct rr_component_player_info *, struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_player_info_write(struct rr_component_player_info *, struct rr_encoder *, int is_creation);)
-RR_CLIENT_ONLY(void rr_component_player_info_read(struct rr_component_player_info *, struct rr_encoder *);)
+RR_SERVER_ONLY(void rr_component_player_info_write(struct rr_component_player_info *, struct proto_bug *, int is_creation);)
+RR_CLIENT_ONLY(void rr_component_player_info_read(struct rr_component_player_info *, struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_x);
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_y);

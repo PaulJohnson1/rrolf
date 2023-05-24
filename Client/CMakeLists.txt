@@ -29,12 +29,11 @@ set(SRCS
     ../Shared/Component/Relations.c
     ../Shared/Bitset.c
     ../Shared/Crypto.c
-    ../Shared/Encoder.c
+    ../Shared/pb.c
+    ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c
-    ../Shared/StaticData.c
     ../Shared/Vector.c
-    ../Shared/SimulationCommon.c
 )
 
 set(CMAKE_C_FLAGS "-DRR_CLIENT")
@@ -42,6 +41,8 @@ set(CMAKE_C_FLAGS "-DRR_CLIENT")
 # release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
+    # add_compile_options(-fsanitize=undefined,address)
+    # add_link_options(-fsanitize=undefined,address)
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ffast-math -DNDEBUG")
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
