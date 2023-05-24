@@ -29,6 +29,7 @@ struct rr_component_player_info
 {
                    EntityIdx parent_id;
                    EntityIdx flower_id; // will be 0 if nonexistant
+                   uint8_t input;
                    float global_rotation;
                    float camera_x;
     RR_CLIENT_ONLY(float lerp_camera_x;)

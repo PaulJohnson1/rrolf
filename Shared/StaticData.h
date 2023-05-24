@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-enum rr_rarity
+enum rr_rarity_id
 {
     rr_rarity_common,
     rr_rarity_unusual,
@@ -25,16 +25,13 @@ enum rr_mob_id
     rr_mob_id_max
 };
 
-// TODO: mob data
-// will do later (not yet)
-
-// struct rr_mob_data
-// {
-//     uint8_t id;
-//     float health;
-//     float damage;
-//     float radius;
-// };
+struct rr_mob_data
+{
+    uint8_t id;
+    float health;
+    float damage;
+    float radius;
+};
 
 struct rr_petal_data
 {
@@ -44,5 +41,13 @@ struct rr_petal_data
     uint32_t cooldown;
 };
 
-extern struct rr_petal_data PETAL_DATA[rr_petal_id_max];
-extern float rr_mob_rarity_scaling[rr_rarity_max];
+struct rr_mob_rarity_scale
+{
+    float health;
+    float damage;
+    float radius;
+};
+
+extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
+extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
+extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_max];

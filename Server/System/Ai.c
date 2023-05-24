@@ -21,7 +21,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         if (ai->ai_state == rr_ai_state_idle_moving)
         {
             struct rr_vector accel;
-            rr_vector_from_polar(&accel, 5.0f, physical->angle);
+            rr_vector_from_polar(&accel, 0.5f, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
         }
 
@@ -43,7 +43,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
             }
             else
             {
-                assert(0);
+                RR_UNREACHABLE("oops");
             }
         }
 

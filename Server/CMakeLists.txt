@@ -69,7 +69,7 @@ if(WINDOWS)
     target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
     target_link_libraries(rrolf-server ws2_32 wsock32)
 endif()
-target_link_libraries(rrolf-server pthread websockets)
+target_link_libraries(rrolf-server pthread websockets m)
 
 if (RIVET_PRODUCTION_BUILD OR RIVET_DEVELOPER_BUILD)
     target_link_libraries(rrolf-server curl)

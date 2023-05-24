@@ -22,6 +22,17 @@ void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
     else
         rr_bitset_unset(this->input_data->keys, key);
 }
+
+void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t button)
+{
+    this->input_data->mouse_x = x;
+    this->input_data->mouse_y = y;
+    this->input_data->mouse_state = state;
+    if (state == 1) //press down
+        this->input_data->mouse_buttons |= (1 << button);
+    else if (state == 0)
+        this->input_data->mouse_buttons &= ~(1 << button);
+}
 #else
 #endif
 
@@ -39,9 +50,9 @@ document.oncontextmenu = function() { return false; };
             "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
         window.addEventListener(
             "keyup", function({which}) { Module._rr_key_event($0, 0, which); });
-        // window.addEventListener("mousedown", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 1, button)});
-        // window.addEventListener("mousemove", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 2, button)});
-        // window.addEventListener("mouseup", function({clientX, clientY, button}){Module.___Renderer_MouseEvent(clientX*devicePixelRatio, clientY*devicePixelRatio, 0, button)});
+        window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 1, +!!button)});
+        window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 2, +!!button)});
+        window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 0, +!!button)});
         Module.paths = [... Array(100)].fill(null);
         Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -138,7 +149,8 @@ int main()
     rr_main_renderer_initialize(&game);
     rr_game_tick(&game, 1);
 
-    rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
+    // rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
+    rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
 
 #ifndef EMSCRIPTEN
     while (1)

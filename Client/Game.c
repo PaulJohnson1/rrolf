@@ -73,6 +73,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         movement_flags |= (rr_bitset_get(this->input_data->keys, 65) || rr_bitset_get(this->input_data->keys, 37)) << 1;
         movement_flags |= (rr_bitset_get(this->input_data->keys, 83) || rr_bitset_get(this->input_data->keys, 40)) << 2;
         movement_flags |= (rr_bitset_get(this->input_data->keys, 68) || rr_bitset_get(this->input_data->keys, 39)) << 3;
+        movement_flags |= this->input_data->mouse_buttons << 4;
+        movement_flags |= rr_bitset_get(this->input_data->keys, 32) << 4;
+        movement_flags |= rr_bitset_get(this->input_data->keys, 16) << 5;
         rr_encoder_write_uint8(&encoder2, movement_flags);
         rr_websocket_send(this->socket, encoder2.start, encoder2.current);
         break;

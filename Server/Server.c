@@ -18,7 +18,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
-    this->player_info->slot_count = 0;
+    this->player_info->slot_count = 10;
     rr_server_client_create_flower(this);
 }
 
@@ -90,9 +90,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 struct rr_encoder encryption_key_encoder;
                 rr_encoder_init(&encryption_key_encoder, bytes);
                 rr_encoder_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key);
-                rr_log_hex(bytes, bytes + 8);
                 spn_encrypt(bytes, 8, 1);
-                rr_log_hex(bytes, bytes + 8);
                 rr_server_client_write_message(this->clients + i, bytes, 8);
 
                 rr_server_client_create_player_info(this->clients + i);
@@ -173,6 +171,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             }
             struct rr_component_physical *physical = rr_simulation_get_physical(&this->simulation, client->player_info->flower_id);
             rr_vector_set(&physical->acceleration, x, y);
+
+            client->player_info->input = movementFlags >> 4;
             break;
         }
         case 1:

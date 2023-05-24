@@ -32,6 +32,7 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     p_petal->simulation_id = rr_simulation_alloc_entity(simulation);
                     struct rr_component_physical *physical = rr_simulation_add_physical(simulation, p_petal->simulation_id);
                     rr_component_physical_set_radius(physical, 10);
+                    physical->friction = 0.75;
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
                     struct rr_component_petal *petal = rr_simulation_add_petal(simulation, p_petal->simulation_id);
@@ -44,6 +45,7 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     struct rr_component_health *health = rr_simulation_add_health(simulation, p_petal->simulation_id);
                     rr_component_health_set_max_health(health, data->health);
                     rr_component_health_set_health(health, data->health);
+                    health->damage = data->damage;
                 }
             }
         }
@@ -75,17 +77,24 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         rr_simulation_free_entity(simulation, id);
         return;
     }
-    struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
-    struct rr_vector position_vector = {physical->x, physical->y};
-    struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
-    float holdingRadius = 75;
-    float currAngle = player_info->global_rotation + petal->rotation_pos * 2 * M_PI / player_info->rotation_count;
-    struct rr_vector chase_vector;
-    rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
-    rr_vector_add(&chase_vector, &flower_vector);
-    rr_vector_sub(&chase_vector, &position_vector);
-    physical->acceleration.x += chase_vector.x;
-    physical->acceleration.y += chase_vector.y;
+    if (petal->detached == 0)
+    {
+        struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
+        struct rr_vector position_vector = {physical->x, physical->y};
+        struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
+        float holdingRadius = 75; // lol what
+        if (player_info->input & 1)
+            holdingRadius = 150;
+        else if (player_info->input & 2)
+            holdingRadius = 45;
+        float currAngle = player_info->global_rotation + petal->rotation_pos * 2 * M_PI / player_info->rotation_count;
+        struct rr_vector chase_vector;
+        rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
+        rr_vector_add(&chase_vector, &flower_vector);
+        rr_vector_sub(&chase_vector, &position_vector);
+        physical->acceleration.x = 0.6f * chase_vector.x;
+        physical->acceleration.y = 0.6f * chase_vector.y;
+    }
 }
 
 void rr_system_petal_behavior_tick(struct rr_simulation *simulation)

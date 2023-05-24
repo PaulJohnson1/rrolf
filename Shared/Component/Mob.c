@@ -8,9 +8,9 @@
 
 enum
 {
-    state_flags_id =     0b000001,
+    state_flags_id = 0b000001,
     state_flags_rarity = 0b000010,
-    state_flags_all =    0b000011
+    state_flags_all = 0b000011
 };
 
 void rr_component_mob_init(struct rr_component_mob *this)

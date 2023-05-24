@@ -6,6 +6,15 @@
 #include <Server/Simulation.h>
 #include <Shared/Bitset.h>
 
+static uint8_t system_is_valid_collision(struct rr_simulation *this, EntityIdx a, EntityIdx b)
+{
+    if (a == b)
+        return 0;
+    if (rr_simulation_has_flower(this, a) && rr_simulation_has_petal(this, b))
+        return 0;
+    return 1;
+}
+
 struct second_for_each_function_captures
 {
     struct rr_simulation *simulation;
@@ -19,7 +28,7 @@ static void system_for_each_2nd_function(EntityIdx entity2, void *_captures)
     struct rr_simulation *this = captures->simulation;
     struct rr_component_physical *physical1 = captures->physical;
 
-    if (entity1 == entity2)
+    if (!system_is_valid_collision(this, entity1, entity2))
         return;
 
     if (!rr_simulation_has_physical(this, entity2))
@@ -31,9 +40,9 @@ static void system_for_each_2nd_function(EntityIdx entity2, void *_captures)
     if ((delta.x * delta.x + delta.y * delta.y) < collision_radius * collision_radius)
     {
         if (!rr_bitset_get_bit(physical1->collisions, entity1)
-         && !rr_bitset_get_bit(physical2->collisions, entity1)
-         && !rr_bitset_get_bit(physical1->collisions, entity2)
-         && !rr_bitset_get_bit(physical2->collisions, entity2))
+            && !rr_bitset_get_bit(physical2->collisions, entity1)
+            && !rr_bitset_get_bit(physical1->collisions, entity2)
+            && !rr_bitset_get_bit(physical2->collisions, entity2))
             rr_bitset_set(physical1->collisions, entity2);
     }
 }
@@ -41,8 +50,10 @@ static void system_for_each_2nd_function(EntityIdx entity2, void *_captures)
 static void system_for_each_function(EntityIdx entity1, void *incoming_captures)
 {
     struct rr_simulation *this = incoming_captures;
-    
+
     if (!rr_simulation_has_physical(this, entity1))
+        return;
+    if (rr_simulation_has_petal(this, entity1))
         return;
 
     struct rr_component_physical *physical1 = rr_simulation_get_physical(this, entity1);
@@ -58,7 +69,7 @@ void system_reset_colliding_with(EntityIdx entity, void *captures)
     struct rr_simulation *this = captures;
     if (!rr_simulation_has_physical(this, entity))
         return;
-    
+
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
     memset(&physical->collisions[0], 0, RR_MAX_ENTITY_COUNT >> 3);
 }

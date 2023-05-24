@@ -11,6 +11,7 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 struct rr_component_petal
 {
                    EntityIdx parent_id;
+                   uint8_t detached;
                    uint8_t id;
                    uint8_t rarity;
                    uint32_t rotation_pos;
