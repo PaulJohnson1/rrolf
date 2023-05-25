@@ -16,6 +16,13 @@
 void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
 {
     assert(rr_simulation_has_entity(this, entity));
+
+#define XX(COMPONENT, ID)                            \
+    if (rr_simulation_has_##COMPONENT(this, entity)) \
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
+    RR_FOR_EACH_COMPONENT;
+#undef XX
+
     rr_bitset_set(this->pending_deletions, entity);
 }
 

@@ -1,6 +1,7 @@
 #include <Shared/Component/Flower.h>
 
 #include <string.h>
+#include <stdio.h>
 
 #include <Shared/pb.h>
 #include <Shared/Entity.h>
@@ -9,8 +10,8 @@
 enum
 {
     state_flags_face_flags = 0b000001,
-    state_flags_eye_angle =  0b000010,
-    state_flags_all =        0b000011
+    state_flags_eye_angle = 0b000010,
+    state_flags_all = 0b000011
 };
 
 void rr_component_flower_init(struct rr_component_flower *this)
@@ -20,13 +21,14 @@ void rr_component_flower_init(struct rr_component_flower *this)
 
 void rr_component_flower_free(struct rr_component_flower *this, struct rr_simulation *simulation)
 {
+#ifdef RR_SERVER
+    printf("flower deletion: %d, %d\n", rr_simulation_get_relations(simulation, this->parent_id)->owner, this->parent_id);
     rr_component_player_info_set_flower_id(
         rr_simulation_get_player_info(
-            simulation, 
-            rr_simulation_get_relations(simulation, this->parent_id)->owner
-        ), 
-        RR_NULL_ENTITY
-    );
+            simulation,
+            rr_simulation_get_relations(simulation, this->parent_id)->owner),
+        RR_NULL_ENTITY);
+#endif
 }
 
 #ifdef RR_SERVER

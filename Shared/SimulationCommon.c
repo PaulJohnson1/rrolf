@@ -21,7 +21,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     struct rr_component_health *health = rr_simulation_add_health(this, entity);
     struct rr_component_relations *relations = rr_simulation_add_relations(this, entity);
     struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
-    //init team elsewhere
+    // init team elsewhere
     rr_component_mob_set_id(mob, mob_id);
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
@@ -56,12 +56,13 @@ void rr_simulation_init(struct rr_simulation *this)
 void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
 {
     printf("deleted entity with id %d\n", entity);
+#ifndef RR_SERVER
 #define XX(COMPONENT, ID)                            \
     if (rr_simulation_has_##COMPONENT(this, entity)) \
         rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
     RR_FOR_EACH_COMPONENT;
 #undef XX
-
+#endif
     // unset them
 #define XX(COMPONENT, ID) \
     rr_bitset_unset(this->COMPONENT##_tracker, entity);
