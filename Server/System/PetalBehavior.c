@@ -22,7 +22,7 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
         struct rr_petal_data const *data = slot->data;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
-            if (inner == 0 || 0) ++rotationPos; //clump rotpos ++
+            if (inner == 0 || data->clump_radius == 0) ++rotationPos; //clump rotpos ++
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
