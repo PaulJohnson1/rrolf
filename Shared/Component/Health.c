@@ -10,7 +10,8 @@ enum
 {
     state_flags_health =     0b000001,
     state_flags_max_health = 0b000010,
-    state_flags_all =        0b000011
+    state_flags_hidden =     0b000010,
+    state_flags_all =        0b000111
 };
 
 void rr_component_health_init(struct rr_component_health *this)
@@ -29,6 +30,7 @@ void rr_component_health_write(struct rr_component_health *this, struct proto_bu
     proto_bug_write_varuint(encoder, state, "health component state");
     RR_ENCODE_PUBLIC_FIELD(health, float32);
     RR_ENCODE_PUBLIC_FIELD(max_health, float32);
+    RR_ENCODE_PUBLIC_FIELD(hidden, uint8);
 }
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)
@@ -40,11 +42,10 @@ void rr_component_health_set_health(struct rr_component_health *this, float v)
     this->protocol_state |= (v != this->health) * state_flags_health;
     this->health = v;
 }
-void rr_component_health_set_max_health(struct rr_component_health *this, float v)
-{
-    this->protocol_state |= (v != this->max_health) * state_flags_max_health;
-    this->max_health = v;
-}
+
+RR_DEFINE_PUBLIC_FIELD(health, float, max_health)
+RR_DEFINE_PUBLIC_FIELD(health, uint8_t, hidden)
+
 #endif
 
 #ifdef RR_CLIENT
@@ -53,5 +54,6 @@ void rr_component_health_read(struct rr_component_health *this, struct proto_bug
     uint64_t state = proto_bug_read_varuint(encoder, "health component state");
     RR_DECODE_PUBLIC_FIELD(health, float32);
     RR_DECODE_PUBLIC_FIELD(max_health, float32);
+    RR_DECODE_PUBLIC_FIELD(hidden, uint8);
 }
 #endif

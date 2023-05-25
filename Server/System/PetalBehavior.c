@@ -1,6 +1,7 @@
 #include <Server/System/PetalBehavior.h>
 
 #include <math.h>
+#include <stdlib.h>
 
 #include <Server/Simulation.h>
 
@@ -30,23 +31,28 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                 {
                     p_petal->simulation_id = rr_simulation_alloc_entity(simulation);
                     struct rr_component_physical *physical = rr_simulation_add_physical(simulation, p_petal->simulation_id);
+                    struct rr_component_petal *petal = rr_simulation_add_petal(simulation, p_petal->simulation_id);
+                    struct rr_component_relations *relations = rr_simulation_add_relations(simulation, p_petal->simulation_id);
+                    struct rr_component_health *health = rr_simulation_add_health(simulation, p_petal->simulation_id);
                     rr_component_physical_set_radius(physical, 10);
-                    physical->friction = 0.75;
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
-                    struct rr_component_petal *petal = rr_simulation_add_petal(simulation, p_petal->simulation_id);
+                    rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
+                    physical->friction = 0.75;
+
                     rr_component_petal_set_id(petal, data->id);
                     rr_component_petal_set_rarity(petal, slot->rarity);
                     petal->rotation_pos = rotationPos;
                     petal->outer_pos = outer;
                     petal->inner_pos = inner;
                     petal->petal_data = data;
-                    struct rr_component_relations *relations = rr_simulation_add_relations(simulation, p_petal->simulation_id);
+                    
                     rr_component_relations_set_owner(relations, id);
                     rr_component_relations_set_team(relations, 1); //flower
-                    struct rr_component_health *health = rr_simulation_add_health(simulation, p_petal->simulation_id);
+                    
                     rr_component_health_set_max_health(health, data->health);
                     rr_component_health_set_health(health, data->health);
+                    rr_component_health_set_hidden(health, 1);
                     health->damage = data->damage;
                 }
             }
