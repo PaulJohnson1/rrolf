@@ -21,6 +21,6 @@ void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulati
     rr_renderer_set_line_width(renderer, 7);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -length, 0);
-    rr_renderer_line_to(renderer, -length + 2 * length * health->health / health->max_health, 0);
+    rr_renderer_line_to(renderer, -length + 2 * length * health->lerp_health / health->max_health, 0);
     rr_renderer_stroke(renderer);
 }

@@ -16,6 +16,7 @@ enum rr_petal_id
     rr_petal_id_no_petal,
     rr_petal_id_basic,
     rr_petal_id_light,
+    rr_petal_id_stinger,
     rr_petal_id_max
 };
 
@@ -36,9 +37,11 @@ struct rr_mob_data
 struct rr_petal_data
 {
     uint8_t id;
-    float health;
     float damage;
+    float health;
     uint32_t cooldown;
+    float clump_radius;
+    uint8_t count[rr_rarity_max];
 };
 
 struct rr_mob_rarity_scale

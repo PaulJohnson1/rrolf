@@ -12,7 +12,6 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_player_info_petal
 {
-    uint8_t is_alive;
     EntityIdx simulation_id;
     int32_t cooldown_ticks;
 };

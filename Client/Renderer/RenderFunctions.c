@@ -7,9 +7,9 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
 {
     switch (id)
     {
-    case 0:
+    case rr_petal_id_no_petal:
         break;
-    case 1:
+    case rr_petal_id_basic:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_line_width(renderer, 3);
@@ -18,12 +18,25 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
-    case 2:
+    case rr_petal_id_light:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_line_width(renderer, 3);
         rr_renderer_begin_path(renderer);
         rr_renderer_arc(renderer, 0, 0, 7);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
+    case rr_petal_id_stinger:
+        rr_renderer_set_fill(renderer, 0xff333333);
+        rr_renderer_set_stroke(renderer, 0xff292929);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer,7,0);
+        rr_renderer_line_to(renderer,-3.5,6.062177658081055);
+        rr_renderer_line_to(renderer,-3.5,-6.062178134918213);
+        rr_renderer_line_to(renderer,7,0);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;

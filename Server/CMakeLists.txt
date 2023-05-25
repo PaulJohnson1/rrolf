@@ -1,7 +1,8 @@
 set(CMAKE_SYSTEM_NAME Generic)
 
-project(rrolf-server)
 cmake_minimum_required(VERSION 3.16)
+
+project(rrolf-server)
 include_directories(..)
 if (WINDOWS)
     include_directories(/c/libwebsockets)

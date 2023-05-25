@@ -2,6 +2,15 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#define PROTO_BUG_WINDOWS
+#endif
+
 #if defined(NDEBUG) && !defined(PROTO_BUG_NDEBUG)
 #define PROTO_BUG_NDEBUG
 #endif
@@ -92,4 +101,8 @@ void proto_bug_read_string_debug(struct proto_bug *, char *, uint64_t size, char
 #define proto_bug_read_float32(this_pointer, name) proto_bug_read_float32_internal(this_pointer)
 #define proto_bug_read_float64(this_pointer, name) proto_bug_read_float64_internal(this_pointer)
 #define proto_bug_read_string(this_pointer, string_pointer, size, name) proto_bug_read_string_internal(this_pointer, string_pointer, size)
+#endif
+
+#ifdef __cplusplus
+}
 #endif

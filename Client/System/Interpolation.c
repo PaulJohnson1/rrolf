@@ -38,6 +38,14 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         player_info->lerp_camera_x = rr_lerp(player_info->lerp_camera_x, player_info->camera_x, 10 * delta);
         player_info->lerp_camera_y = rr_lerp(player_info->lerp_camera_y, player_info->camera_y, 10 * delta);
     }
+
+    if (rr_simulation_has_health(this, entity))
+    {
+        struct rr_component_health *health = rr_simulation_get_health(this, entity);
+        if (health->lerp_health == 0)
+            health->lerp_health = health->health;
+        health->lerp_health = rr_lerp(health->lerp_health, health->health, 10 * delta);
+    }
 }
 
 void rr_system_interpolation_tick(struct rr_simulation *simulation, float delta)

@@ -22,13 +22,12 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
         struct rr_petal_data const *data = slot->data;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
-            ++rotationPos;
+            if (inner == 0 || 0) ++rotationPos; //clump rotpos ++
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
-            if (!p_petal->is_alive)
+            if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
                 if(--p_petal->cooldown_ticks <= 0)
                 {
-                    p_petal->is_alive = 1;
                     p_petal->simulation_id = rr_simulation_alloc_entity(simulation);
                     struct rr_component_physical *physical = rr_simulation_add_physical(simulation, p_petal->simulation_id);
                     rr_component_physical_set_radius(physical, 10);
@@ -39,6 +38,9 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_petal_set_id(petal, data->id);
                     rr_component_petal_set_rarity(petal, slot->rarity);
                     petal->rotation_pos = rotationPos;
+                    petal->outer_pos = outer;
+                    petal->inner_pos = inner;
+                    petal->petal_data = data;
                     struct rr_component_relations *relations = rr_simulation_add_relations(simulation, p_petal->simulation_id);
                     rr_component_relations_set_owner(relations, id);
                     rr_component_relations_set_team(relations, 1); //flower
@@ -92,6 +94,12 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
         rr_vector_add(&chase_vector, &flower_vector);
         rr_vector_sub(&chase_vector, &position_vector);
+        if (petal->petal_data->clump_radius != 0.0f) //clump
+        {
+            struct rr_vector clump_vector;
+            rr_vector_from_polar(&clump_vector, petal->petal_data->clump_radius, 1.333 * currAngle + 2 * M_PI * petal->inner_pos / petal->petal_data->count[petal->rarity]); //RADIUS!
+            rr_vector_add(&chase_vector, &clump_vector);
+        }
         physical->acceleration.x = 0.6f * chase_vector.x;
         physical->acceleration.y = 0.6f * chase_vector.y;
     }

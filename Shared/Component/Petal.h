@@ -2,6 +2,7 @@
 
 #include <Shared/Component/Common.h>
 #include <Shared/Entity.h>
+#include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
 struct rr_simulation;
@@ -14,7 +15,10 @@ struct rr_component_petal
                    uint8_t detached;
                    uint8_t id;
                    uint8_t rarity;
+                   uint8_t outer_pos;
+                   uint8_t inner_pos;
                    uint32_t rotation_pos;
+    RR_SERVER_ONLY(struct rr_petal_data const *petal_data;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
