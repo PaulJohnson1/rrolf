@@ -9,6 +9,15 @@ void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulati
     struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
     if (health->hidden)
         return;
+    if (rr_simulation_has_flower(simulation, health->parent_id))
+    {
+        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, health->parent_id);
+
+        if (relations->owner == simulation->player_info)
+            if (health->health == health->max_health)
+                return;
+    }
+
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y + physical->radius + 30);
     float length = 40;
     rr_renderer_set_line_cap(renderer, 1);

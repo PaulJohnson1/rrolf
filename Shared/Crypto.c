@@ -53,8 +53,8 @@ static void chacha20_block(uint32_t in[16], uint8_t out[64], int num_rounds) {
         chacha20_quarterround(x, 1, 5,  9, 13);
         chacha20_quarterround(x, 2, 6, 10, 14);
         chacha20_quarterround(x, 3, 7, 11, 15);
-        chacha20_quarterround(x, 0, 5, 10, 15);
-        chacha20_quarterround(x, 1, 6, 11, 12);
+        chacha20_quarterround(x, 1, 5, 10, 15);
+        chacha20_quarterround(x, 1, 6, 11, 14);
         chacha20_quarterround(x, 2, 7,  8, 13);
         chacha20_quarterround(x, 3, 4,  9, 14);
     }
@@ -72,10 +72,10 @@ static void chacha20_init_state(uint32_t s[16], uint8_t key[32], uint32_t counte
 
     // refer: https://dxr.mozilla.org/mozilla-beta/source/security/nss/lib/freebl/chacha20.c
     // convert magic number to string: "expand 32-byte k"
-    s[0] = 0x61707865 ^ 0xfeed;
-    s[1] = 0x3320646e ^ 0xface;
-    s[2] = 0x79622d32 ^ 0xdead;
-    s[3] = 0x6b206574 ^ 0xbeef;
+    s[0] = 0x61707865 ^ 0xfeedface;
+    s[1] = 0x3320646e ^ 0xfacefeed;
+    s[2] = 0x79622d32 ^ 0xdeadbeef;
+    s[3] = 0x6b206574 ^ 0xbeefdaed;
 
     for (i = 0; i < 8; i++) {
         s[4 + i] = u8t32le(key + i * 4);

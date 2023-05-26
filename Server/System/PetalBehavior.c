@@ -100,12 +100,13 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
         rr_vector_add(&chase_vector, &flower_vector);
         rr_vector_sub(&chase_vector, &position_vector);
-        if (petal->petal_data->clump_radius != 0.0f) //clump
+        if (petal->petal_data->clump_radius != 0.0f) // clump
         {
             struct rr_vector clump_vector;
             rr_vector_from_polar(&clump_vector, petal->petal_data->clump_radius, 1.333 * currAngle + 2 * M_PI * petal->inner_pos / petal->petal_data->count[petal->rarity]); //RADIUS!
             rr_vector_add(&chase_vector, &clump_vector);
         }
+        rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
         physical->acceleration.x = 0.6f * chase_vector.x;
         physical->acceleration.y = 0.6f * chase_vector.y;
     }

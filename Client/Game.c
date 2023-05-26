@@ -129,6 +129,13 @@ void render_flower_component(EntityIdx entity, void *_captures)
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
+void player_info_finder(EntityIdx entity, void *captures)
+{
+    struct rr_simulation *this = captures;
+    if (rr_simulation_has_player_info(this, entity))
+        this->player_info = entity;        
+}
+
 void rr_game_tick(struct rr_game *this, float delta)
 {
     rr_simulation_tick(this->simulation, delta);
@@ -141,20 +148,11 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state state1;
     struct rr_renderer_context_state state2;
-    if (this->player_info == 0)
-    {
-        for (EntityIdx player_info = 1; player_info < RR_MAX_ENTITY_COUNT; ++player_info)
-        {
-            if (!rr_bitset_get_bit(this->simulation->player_info_tracker, player_info))
-                continue;
-            this->player_info = player_info;
-            break;
-        }
-    }
-    if (this->player_info != 0)
+    rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
+    if (this->simulation->player_info != RR_NULL_ENTITY)
     {
         rr_renderer_init_context_state(this->renderer, &state1);
-        struct rr_component_player_info *player_info = rr_simulation_get_player_info(this->simulation, this->player_info);
+        struct rr_component_player_info *player_info = rr_simulation_get_player_info(this->simulation, this->simulation->player_info);
         rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
         rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
         rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);

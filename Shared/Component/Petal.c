@@ -1,6 +1,7 @@
 #include <Shared/Component/Petal.h>
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <Shared/pb.h>
 #include <Shared/Entity.h>
@@ -16,6 +17,7 @@ enum
 void rr_component_petal_init(struct rr_component_petal *this)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(this->spin_ccw = 1 - 2 * (rand() & 1);)
 }
 
 void rr_component_petal_free(struct rr_component_petal *this, struct rr_simulation *simulation)

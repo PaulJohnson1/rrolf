@@ -12,7 +12,16 @@ struct colliding_with_captures
     struct rr_component_health *health;
 };
 
-// that's for the casting which is not impm
+static void system_default_idle_heal(EntityIdx entity, void *captures)
+{
+    struct rr_simulation *this = captures;
+    if (!rr_simulation_has_health(this, entity))
+        return;
+    struct rr_component_health *health = rr_simulation_get_health(this, entity);
+    // heal 1% of max hp per second (0.0004 is 0.01 / 25)
+    rr_component_health_set_health(health, health->health + health->max_health * 0.0004);
+}
+
 static void colliding_with_function(uint64_t i, void *_captures)
 {
     struct colliding_with_captures *captures = _captures;
@@ -58,6 +67,7 @@ static void system_deletion_for_each_function(EntityIdx entity, void *_captures)
 
 void rr_system_health_tick(struct rr_simulation *this)
 {
+    rr_simulation_for_each_entity(this, this, system_default_idle_heal);
     rr_simulation_for_each_entity(this, this, system_for_each_function);
     rr_simulation_for_each_entity(this, this, system_deletion_for_each_function);
 }
