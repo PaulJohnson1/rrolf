@@ -14,7 +14,9 @@ struct rr_component_flower
                    uint8_t face_flags;
                    float eye_angle;
     RR_CLIENT_ONLY(float eye_x;)
+    RR_CLIENT_ONLY(float lerp_eye_x;)
     RR_CLIENT_ONLY(float eye_y;)
+    RR_CLIENT_ONLY(float lerp_eye_y;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 

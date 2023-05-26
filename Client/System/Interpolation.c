@@ -2,6 +2,8 @@
 
 #include <Server/Simulation.h>
 
+#include <math.h>
+
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 #include <Shared/Component/Physical.h>
@@ -27,6 +29,19 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->lerp_x = rr_lerp(physical->lerp_x, physical->x, 10 * delta);
         physical->lerp_y = rr_lerp(physical->lerp_y, physical->y, 10 * delta);
         physical->lerp_angle = rr_lerp(physical->lerp_angle, physical->angle, 10 * delta);
+    }
+
+    if (rr_simulation_has_flower(this, entity))
+    {
+        struct rr_component_flower *flower = rr_simulation_get_flower(this, entity);
+        flower->eye_x = cosf(flower->eye_angle) * 3;
+        flower->eye_y = sinf(flower->eye_angle) * 3;
+        if (flower->lerp_eye_x == 0)
+            flower->lerp_eye_x = flower->eye_x;
+        if (flower->lerp_eye_y == 0)
+            flower->lerp_eye_y = flower->eye_y;
+        flower->lerp_eye_x = rr_lerp(flower->lerp_eye_x, flower->eye_x, 10 * delta);
+        flower->lerp_eye_y = rr_lerp(flower->lerp_eye_y, flower->eye_y, 10 * delta);
     }
 
     if (rr_simulation_has_player_info(this, entity))

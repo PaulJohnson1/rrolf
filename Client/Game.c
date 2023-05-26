@@ -49,14 +49,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         {
             this->socket->recieved_first_packet = 1;
             printf("size %lld\n", size);
-            rr_decrypt(data, size, 1);
             this->socket->encryption_key = proto_bug_read_uint64(&encoder, "encryption key");
             printf("got key %llu\n", this->socket->encryption_key);
             return;
         }
 
-        this->socket->encryption_key = rr_get_hash(this->socket->encryption_key);
-        rr_decrypt(data, size, this->socket->encryption_key);
+        this->socket->encryption_key = spn_get_hash(this->socket->encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
