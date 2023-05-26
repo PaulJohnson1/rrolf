@@ -48,7 +48,7 @@ void rr_simulation_init(struct rr_simulation *this)
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
         rr_component_physical_set_x(physical, rand() % 800);
         rr_component_physical_set_y(physical, rand() % 800);
-        physical->mass = 10.0f;
+        physical->mass = 100.0f;
     }
 #endif
 }

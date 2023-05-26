@@ -2,8 +2,11 @@
 
 #include <stdint.h>
 #include <string.h>
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+#include <malloc.h>
+#else
 #include <alloca.h>
-
+#endif
 // https://github.com/shiffthq/chacha20/blob/master/src/chacha20.c
 static inline void u32t8le(uint32_t v, uint8_t p[4]) {
     p[0] = v & 0xff;

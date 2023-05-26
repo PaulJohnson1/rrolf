@@ -24,6 +24,9 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0) ++rotationPos; //clump rotpos ++
+            //specials
+            if (data->id == rr_petal_id_faster)
+                player_info->global_rotation += 0.01;
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
@@ -37,7 +40,7 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_physical_set_radius(physical, 10);
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
-                    rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
+                    rr_component_physical_set_angle(physical, (float)rand() / (float) RAND_MAX * M_PI * 2);
                     physical->friction = 0.75;
 
                     rr_component_petal_set_id(petal, data->id);
@@ -105,6 +108,12 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
             struct rr_vector clump_vector;
             rr_vector_from_polar(&clump_vector, petal->petal_data->clump_radius, 1.333 * currAngle + 2 * M_PI * petal->inner_pos / petal->petal_data->count[petal->rarity]); //RADIUS!
             rr_vector_add(&chase_vector, &clump_vector);
+        }
+        if (petal->id == rr_petal_id_faster)
+        {
+            struct rr_vector random_vector;
+            rr_vector_from_polar(&random_vector, 10.0f, (float)rand() / (float) RAND_MAX * M_PI * 2);
+            rr_vector_add(&chase_vector, &random_vector);
         }
         rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
         physical->acceleration.x = 0.6f * chase_vector.x;
