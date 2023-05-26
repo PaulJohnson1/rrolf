@@ -1,139 +1,150 @@
 #include <Shared/Crypto.h>
 
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <string.h>
+#include <alloca.h>
 
-#include <Shared/Bitset.h>
+// https://github.com/shiffthq/chacha20/blob/master/src/chacha20.c
+static inline void u32t8le(uint32_t v, uint8_t p[4]) {
+    p[0] = v & 0xff;
+    p[1] = (v >> 8) & 0xff;
+    p[2] = (v >> 16) & 0xff;
+    p[3] = (v >> 24) & 0xff;
+}
 
-static uint8_t spn_encrypt_sbox[256] = {0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
-                                        0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
-                                        0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
-                                        0x04, 0xC7, 0x23, 0xC3, 0x18, 0x96, 0x05, 0x9A, 0x07, 0x12, 0x80, 0xE2, 0xEB, 0x27, 0xB2, 0x75,
-                                        0x09, 0x83, 0x2C, 0x1A, 0x1B, 0x6E, 0x5A, 0xA0, 0x52, 0x3B, 0xD6, 0xB3, 0x29, 0xE3, 0x2F, 0x84,
-                                        0x53, 0xD1, 0x00, 0xED, 0x20, 0xFC, 0xB1, 0x5B, 0x6A, 0xCB, 0xBE, 0x39, 0x4A, 0x4C, 0x58, 0xCF,
-                                        0xD0, 0xEF, 0xAA, 0xFB, 0x43, 0x4D, 0x33, 0x85, 0x45, 0xF9, 0x02, 0x7F, 0x50, 0x3C, 0x9F, 0xA8,
-                                        0x51, 0xA3, 0x40, 0x8F, 0x92, 0x9D, 0x38, 0xF5, 0xBC, 0xB6, 0xDA, 0x21, 0x10, 0xFF, 0xF3, 0xD2,
-                                        0xCD, 0x0C, 0x13, 0xEC, 0x5F, 0x97, 0x44, 0x17, 0xC4, 0xA7, 0x7E, 0x3D, 0x64, 0x5D, 0x19, 0x73,
-                                        0x60, 0x81, 0x4F, 0xDC, 0x22, 0x2A, 0x90, 0x88, 0x46, 0xEE, 0xB8, 0x14, 0xDE, 0x5E, 0x0B, 0xDB,
-                                        0xE0, 0x32, 0x3A, 0x0A, 0x49, 0x06, 0x24, 0x5C, 0xC2, 0xD3, 0xAC, 0x62, 0x91, 0x95, 0xE4, 0x79,
-                                        0xE7, 0xC8, 0x37, 0x6D, 0x8D, 0xD5, 0x4E, 0xA9, 0x6C, 0x56, 0xF4, 0xEA, 0x65, 0x7A, 0xAE, 0x08,
-                                        0xBA, 0x78, 0x25, 0x2E, 0x1C, 0xA6, 0xB4, 0xC6, 0xE8, 0xDD, 0x74, 0x1F, 0x4B, 0xBD, 0x8B, 0x8A,
-                                        0x70, 0x3E, 0xB5, 0x66, 0x48, 0x03, 0xF6, 0x0E, 0x61, 0x35, 0x57, 0xB9, 0x86, 0xC1, 0x1D, 0x9E,
-                                        0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
-                                        0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16};
+static inline uint32_t u8t32le(uint8_t p[4]) {
+    uint32_t value = p[3];
 
-static uint8_t spn_decrypt_sbox[256] = {0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
-                                        0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
-                                        0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E,
-                                        0x08, 0x2E, 0xA1, 0x66, 0x28, 0xD9, 0x24, 0xB2, 0x76, 0x5B, 0xA2, 0x49, 0x6D, 0x8B, 0xD1, 0x25,
-                                        0x72, 0xF8, 0xF6, 0x64, 0x86, 0x68, 0x98, 0x16, 0xD4, 0xA4, 0x5C, 0xCC, 0x5D, 0x65, 0xB6, 0x92,
-                                        0x6C, 0x70, 0x48, 0x50, 0xFD, 0xED, 0xB9, 0xDA, 0x5E, 0x15, 0x46, 0x57, 0xA7, 0x8D, 0x9D, 0x84,
-                                        0x90, 0xD8, 0xAB, 0x00, 0x8C, 0xBC, 0xD3, 0x0A, 0xF7, 0xE4, 0x58, 0x05, 0xB8, 0xB3, 0x45, 0x06,
-                                        0xD0, 0x2C, 0x1E, 0x8F, 0xCA, 0x3F, 0x0F, 0x02, 0xC1, 0xAF, 0xBD, 0x03, 0x01, 0x13, 0x8A, 0x6B,
-                                        0x3A, 0x91, 0x11, 0x41, 0x4F, 0x67, 0xDC, 0xEA, 0x97, 0xF2, 0xCF, 0xCE, 0xF0, 0xB4, 0xE6, 0x73,
-                                        0x96, 0xAC, 0x74, 0x22, 0xE7, 0xAD, 0x35, 0x85, 0xE2, 0xF9, 0x37, 0xE8, 0x1C, 0x75, 0xDF, 0x6E,
-                                        0x47, 0xF1, 0x1A, 0x71, 0x1D, 0x29, 0xC5, 0x89, 0x6F, 0xB7, 0x62, 0x0E, 0xAA, 0x18, 0xBE, 0x1B,
-                                        0xFC, 0x56, 0x3E, 0x4B, 0xC6, 0xD2, 0x79, 0x20, 0x9A, 0xDB, 0xC0, 0xFE, 0x78, 0xCD, 0x5A, 0xF4,
-                                        0x1F, 0xDD, 0xA8, 0x33, 0x88, 0x07, 0xC7, 0x31, 0xB1, 0x12, 0x10, 0x59, 0x27, 0x80, 0xEC, 0x5F,
-                                        0x60, 0x51, 0x7F, 0xA9, 0x19, 0xB5, 0x4A, 0x0D, 0x2D, 0xE5, 0x7A, 0x9F, 0x93, 0xC9, 0x9C, 0xEF,
-                                        0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61,
-                                        0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D};
+    value = (value << 8) | p[2];
+    value = (value << 8) | p[1];
+    value = (value << 8) | p[0];
 
-uint64_t spn_get_hash(uint64_t x)
+    return value;
+}
+
+static inline uint32_t rotl32(uint32_t x, int n) {
+    // http://blog.regehr.org/archives/1063
+    return x << n | (x >> (-n & 31));
+}
+
+// https://tools.ietf.org/html/rfc7539#section-2.1
+static void chacha20_quarterround(uint32_t *x, int a, int b, int c, int d) {
+    x[a] += x[b]; x[d] = rotl32(x[d] ^ x[a], 16);
+    x[c] += x[d]; x[b] = rotl32(x[b] ^ x[c], 12);
+    x[a] += x[b]; x[d] = rotl32(x[d] ^ x[a],  8);
+    x[c] += x[d]; x[b] = rotl32(x[b] ^ x[c],  7);
+}
+
+static void chacha20_serialize(uint32_t in[16], uint8_t output[64]) {
+    int i;
+    for (i = 0; i < 16; i++) {
+        u32t8le(in[i], output + (i << 2));
+    }
+}
+
+static void chacha20_block(uint32_t in[16], uint8_t out[64], int num_rounds) {
+    int i;
+    uint32_t x[16];
+
+    memcpy(x, in, sizeof(uint32_t) * 16);
+
+    for (i = num_rounds; i > 0; i -= 2) {
+        chacha20_quarterround(x, 0, 4,  8, 12);
+        chacha20_quarterround(x, 1, 5,  9, 13);
+        chacha20_quarterround(x, 2, 6, 10, 14);
+        chacha20_quarterround(x, 3, 7, 11, 15);
+        chacha20_quarterround(x, 0, 5, 10, 15);
+        chacha20_quarterround(x, 1, 6, 11, 12);
+        chacha20_quarterround(x, 2, 7,  8, 13);
+        chacha20_quarterround(x, 3, 4,  9, 14);
+    }
+
+    for (i = 0; i < 16; i++) {
+        x[i] += in[i];
+    }
+
+    chacha20_serialize(x, out);
+}
+
+// https://tools.ietf.org/html/rfc7539#section-2.3
+static void chacha20_init_state(uint32_t s[16], uint8_t key[32], uint32_t counter, uint8_t nonce[12]) {
+    int i;
+
+    // refer: https://dxr.mozilla.org/mozilla-beta/source/security/nss/lib/freebl/chacha20.c
+    // convert magic number to string: "expand 32-byte k"
+    s[0] = 0x61707865 ^ 0xfeed;
+    s[1] = 0x3320646e ^ 0xface;
+    s[2] = 0x79622d32 ^ 0xdead;
+    s[3] = 0x6b206574 ^ 0xbeef;
+
+    for (i = 0; i < 8; i++) {
+        s[4 + i] = u8t32le(key + i * 4);
+    }
+
+    s[12] = counter;
+
+    for (i = 0; i < 3; i++) {
+        s[13 + i] = u8t32le(nonce + i * 4);
+    }
+}
+
+static void ChaCha20XOR(uint8_t key[32], uint32_t counter, uint8_t nonce[12], uint8_t *in, uint8_t *out, int inlen) {
+    int i, j;
+
+    uint32_t s[16];
+    uint8_t block[64];
+
+    chacha20_init_state(s, key, counter, nonce);
+
+    for (i = 0; i < inlen; i += 64) {
+        chacha20_block(s, block, 20);
+        s[12]++;
+
+        for (j = i; j < i + 64; j++) {
+            if (j >= inlen) {
+                break;
+            }
+            out[j] = in[j] ^ block[j - i];
+        }
+    }
+}
+
+uint64_t rr_get_hash(uint64_t x)
 {
-    x++;
-    x ^= x << 13;
-    x ^= x >> 17;
+    x = (x + 1) * 100000;
+    x ^= x << 17;
+    x ^= x >> 13;
     x ^= x << 5;
-
     return x;
 }
 
-static uint64_t random_seed = 0;
+static uint64_t g_random_seed = 123123213231231123;
 
-uint64_t spn_get_rand()
+uint64_t rr_get_rand()
 {
-    return random_seed = spn_get_hash(random_seed);
+    return g_random_seed = rr_get_hash(g_random_seed);
 }
 
-static uint64_t _random_seed = 1;
-
-static uint64_t _spn_get_rand()
+void rr_encrypt(uint8_t *start, uint64_t size, uint64_t key)
 {
-    return _random_seed = spn_get_hash(_random_seed);
+    uint8_t *clone = alloca(size);
+    memcpy(clone, start, size);
+    uint64_t cipher_key[4];
+    // idk what the nonce is for but it gets initialized with random bytes
+    uint32_t nonce[3];
+    // also don't know what the point in the counter is but it is also random bytes for this
+    uint32_t counter;
+    for (uint64_t i = 0; i < 4; i++)
+        cipher_key[i] = key = rr_get_hash(key);
+    for (uint64_t i = 0; i < 3; i++)
+        nonce[i] = key = rr_get_hash(key);
+    counter = rr_get_hash(key);
+
+    ChaCha20XOR((uint8_t *)cipher_key, counter, (uint8_t *)nonce, clone, start, size);
 }
 
-static void spn_sbox(uint8_t *start, uint8_t *end, uint8_t *sbox)
+void rr_decrypt(uint8_t *start, uint64_t size, uint64_t key)
 {
-    while (start != end)
-    {
-        *start = sbox[*start];
-        start++;
-    }
-}
-
-static void spn_create_pbox(uint64_t *start, uint64_t size)
-{
-    _random_seed = 12;
-
-    for (uint64_t i = 0; i < (size << 3); i++)
-        start[i] = i;
-
-    // fisher yates shuffle
-    for (uint64_t i = 0; i < (size << 3); i++)
-    {
-        uint64_t index = _spn_get_rand() % ((size << 3) - 1);
-        uint64_t temp = start[i];
-        start[i] = start[index];
-        start[index] = temp;
-    }
-}
-
-static void spn_permute(uint8_t *start, uint64_t size, uint64_t *pbox)
-{
-    for (uint64_t i = 0; i < size << 3; i++)
-    {
-        uint8_t temp = rr_bitset_get_bit(start, pbox[i]);
-        rr_bitset_maybe_set(start, pbox[i], rr_bitset_get_bit(start, i));
-        rr_bitset_maybe_set(start, i, temp);
-    }
-}
-
-static void spn_unpermute(uint8_t *start, uint64_t size, uint64_t *pbox)
-{
-    for (int64_t i = (size << 3) - 1; i >= 0; i--)
-    {
-        uint64_t temp = rr_bitset_get_bit(start, pbox[i]);
-        rr_bitset_maybe_set(start, pbox[i], rr_bitset_get_bit(start, i));
-        rr_bitset_maybe_set(start, i, temp);
-    }
-}
-
-void spn_encrypt(uint8_t *start, uint64_t size, uint64_t key)
-{
-    uint64_t *pbox = alloca((size << 3) * sizeof(uint64_t));
-    spn_create_pbox(pbox, size);
-    for (uint64_t i = 0; i < 10; i++)
-    {
-        if (size >= 8)
-            *(uint64_t *)start ^= key;
-        spn_sbox(start, start + size, spn_encrypt_sbox);
-        spn_permute(start, size, pbox);
-    }
-}
-
-void spn_decrypt(uint8_t *start, uint64_t size, uint64_t key)
-{
-    uint64_t *pbox = alloca((size << 3) * sizeof(uint64_t));
-    spn_create_pbox(pbox, size);
-
-    for (uint64_t i = 0; i < 10; i++)
-    {
-        spn_unpermute(start, size, pbox);
-        spn_sbox(start, start + size, spn_decrypt_sbox);
-        if (size >= 8)
-            *(uint64_t *)start ^= key;
-    }
+    // encrypt and decrypt are the same
+    rr_encrypt(start, size, key);
 }

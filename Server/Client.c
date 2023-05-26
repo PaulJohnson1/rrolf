@@ -13,7 +13,7 @@
 void rr_server_client_init(struct rr_server_client *this)
 {
     memset(this, 0, sizeof *this);
-    this->encryption_key = spn_get_rand();
+    this->encryption_key = rr_get_rand();
     printf("client connected, encrypting with key %lu\n", this->encryption_key);
 }
 

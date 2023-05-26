@@ -47,7 +47,7 @@ set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
     # add_compile_options(-fsanitize=undefined,address)
     # add_link_options(-fsanitize=undefined,address)
 else()

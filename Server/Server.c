@@ -33,8 +33,8 @@ void rr_server_client_free(struct rr_server_client *this)
 
 void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *start, uint64_t size)
 {
-    this->encryption_key = spn_get_hash(this->encryption_key);
-    // spn_encrypt(start, size, this->encryption_key);
+    this->encryption_key = rr_get_hash(this->encryption_key);
+    rr_encrypt(start, size, this->encryption_key);
 }
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint64_t size)
@@ -83,12 +83,12 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 this->clients[i].socket_handle = socket;
 
                 // send encryption key
-                static uint8_t bytes[4096];
+                static uint8_t bytes[1024];
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, bytes);
                 proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key, "encryption key");
-                // spn_encrypt(bytes, 4096, 1);
-                rr_server_client_write_message(this->clients + i, bytes, 4096);
+                rr_encrypt(bytes, 1024, 1);
+                rr_server_client_write_message(this->clients + i, bytes, 1024);
 
                 rr_server_client_create_player_info(this->clients + i);
                 return 0;
@@ -223,7 +223,7 @@ void rr_server_run(struct rr_server *this)
     info.gid = -1;
     info.uid = -1;
     info.user = this;
-    info.pt_serv_buf_size = 128 * 1024;
+    info.pt_serv_buf_size = 1024 * 1024;
 
     this->server = lws_create_context(&info);
     assert(this->server);

@@ -39,8 +39,8 @@ struct rr_petal_data
     uint8_t id;
     float damage;
     float health;
-    uint32_t cooldown;
     float clump_radius;
+    uint32_t cooldown;
     uint8_t count[rr_rarity_max];
 };
 
