@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <sys/time.h>
 
 #ifndef EMSCRIPTEN
 #include <libwebsockets.h>
@@ -47,14 +48,15 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         if (!this->socket->recieved_first_packet)
         {
             this->socket->recieved_first_packet = 1;
-            // spn_decrypt(data, size, 1);
+            printf("size %lld\n", size);
+            rr_decrypt(data, size, 1);
             this->socket->encryption_key = proto_bug_read_uint64(&encoder, "encryption key");
-
+            printf("got key %llu\n", this->socket->encryption_key);
             return;
         }
 
-        this->socket->encryption_key = spn_get_hash(this->socket->encryption_key);
-        // spn_decrypt(data, size, this->socket->encryption_key);
+        this->socket->encryption_key = rr_get_hash(this->socket->encryption_key);
+        rr_decrypt(data, size, this->socket->encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
@@ -69,13 +71,13 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         proto_bug_write_uint8(&encoder2, 0, "header");
         proto_bug_write_uint8(&encoder2, 0, "movement type");
         uint8_t movement_flags = 0;
-        movement_flags |= (rr_bitset_get(this->input_data->keys, 87) || rr_bitset_get(this->input_data->keys, 38)) << 0;
-        movement_flags |= (rr_bitset_get(this->input_data->keys, 65) || rr_bitset_get(this->input_data->keys, 37)) << 1;
-        movement_flags |= (rr_bitset_get(this->input_data->keys, 83) || rr_bitset_get(this->input_data->keys, 40)) << 2;
-        movement_flags |= (rr_bitset_get(this->input_data->keys, 68) || rr_bitset_get(this->input_data->keys, 39)) << 3;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 87) || rr_bitset_get(this->input_data->keys_pressed, 38)) << 0;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 65) || rr_bitset_get(this->input_data->keys_pressed, 37)) << 1;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 83) || rr_bitset_get(this->input_data->keys_pressed, 40)) << 2;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 68) || rr_bitset_get(this->input_data->keys_pressed, 39)) << 3;
         movement_flags |= this->input_data->mouse_buttons << 4;
-        movement_flags |= rr_bitset_get(this->input_data->keys, 32) << 4;
-        movement_flags |= rr_bitset_get(this->input_data->keys, 16) << 5;
+        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
+        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
         proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
         rr_websocket_send(this->socket, encoder2.start, encoder2.current);
         break;
@@ -132,6 +134,11 @@ void render_flower_component(EntityIdx entity, void *_captures)
 void rr_game_tick(struct rr_game *this, float delta)
 {
     rr_simulation_tick(this->simulation, delta);
+
+    struct timeval start;
+    struct timeval end;
+
+    gettimeofday(&start, NULL);
 
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state state1;
@@ -206,4 +213,26 @@ void rr_game_tick(struct rr_game *this, float delta)
 #ifndef EMSCRIPTEN
     lws_service(this->socket->socket_context, -1);
 #endif
+
+    // ;
+    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186))
+        this->displaying_debug_information ^= 1;
+
+    gettimeofday(&end, NULL);
+    long time_elapsed = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+
+    if (this->displaying_debug_information)
+    {
+        struct rr_renderer_context_state state;
+        rr_renderer_init_context_state(this->renderer, &state);
+        rr_renderer_scale(this->renderer, 5);
+        static char debug_mspt[100];
+        debug_mspt[sprintf(debug_mspt, "%f mspt", (float)time_elapsed / 1000.0f)] = 0;
+        rr_renderer_fill_text(this->renderer, 0, 8, debug_mspt);
+        rr_renderer_free_context_state(this->renderer, &state);
+        // rr_renderer_stroke_text
+    }
+
+    memset(this->input_data->keys_pressed_this_tick, 0, 256 >> 3);
+    memset(this->input_data->keys_released_this_tick, 0, 256 >> 3);
 }

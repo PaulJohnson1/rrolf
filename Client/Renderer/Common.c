@@ -25,6 +25,7 @@ void rr_renderer_free_context_state(struct rr_renderer *this, struct rr_renderer
 {
     memcpy(&this->state, state, sizeof *state);
     rr_renderer_restore(this);
+    memset(state, 0, sizeof *state);
 }
 
 void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
@@ -306,5 +307,16 @@ void rr_renderer_clip(struct rr_renderer *this)
 #endif
 }
 
-void rr_renderer_fill_text(struct rr_renderer *this, char const *c) {}
-void rr_renderer_stroke_text(struct rr_renderer *this, char const *c) {}
+void rr_renderer_fill_text(struct rr_renderer *this, float x, float y, char const *c)
+{
+    EM_ASM({
+        let string = "";
+        while (Module.HEAPU8[$3])
+            string += String.fromCharCode(Module.HEAPU8[$3++]);
+        Module.ctxs[$0].fillText(string, $1, $2)
+    }, this->context_id, x, y, c);
+}
+void rr_renderer_stroke_text(struct rr_renderer *this, char const *c)
+{
+
+}

@@ -18,9 +18,15 @@
 void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
 {
     if (type == 1)
-        rr_bitset_set(this->input_data->keys, key);
+    {
+        rr_bitset_set(this->input_data->keys_pressed, key);
+        rr_bitset_set(this->input_data->keys_pressed_this_tick, key);
+    }
     else
-        rr_bitset_unset(this->input_data->keys, key);
+    {
+        rr_bitset_unset(this->input_data->keys_pressed, key);
+        rr_bitset_set(this->input_data->keys_released_this_tick, key);
+    }
 }
 
 void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t button)
@@ -103,7 +109,7 @@ document.oncontextmenu = function() { return false; };
         function loop(time)
         {
             if (window.start == null) window.start = time + 1;
-            const delta = Math.min(1, (time - start) / 1000);
+            const delta = Math.min(0.5, (time - start) / 1000);
             start = time;
             Module.canvas.width = innerWidth * devicePixelRatio;
             Module.canvas.height = innerHeight * devicePixelRatio;

@@ -85,7 +85,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
 	info.gid = -1;
 	info.uid = -1;
     info.user = this;
-    info.pt_serv_buf_size = 128 * 1024;
+    info.pt_serv_buf_size = 1024 * 1024;
     
     this->socket_context = lws_create_context(&info);
 
