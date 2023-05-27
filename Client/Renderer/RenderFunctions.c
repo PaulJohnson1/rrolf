@@ -49,6 +49,20 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_missile:
+        rr_renderer_set_fill(renderer, 0xff333333);
+        rr_renderer_set_stroke(renderer, 0xff333333);
+        rr_renderer_set_line_width(renderer, 5);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 11, 0);
+        rr_renderer_line_to(renderer, -11, -6);
+        rr_renderer_line_to(renderer, -11, 6);
+        rr_renderer_line_to(renderer, 11, 0);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }

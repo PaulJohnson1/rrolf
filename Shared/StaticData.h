@@ -18,6 +18,7 @@ enum rr_petal_id
     rr_petal_id_light,
     rr_petal_id_stinger,
     rr_petal_id_faster,
+    rr_petal_id_missile,
     rr_petal_id_max
 };
 

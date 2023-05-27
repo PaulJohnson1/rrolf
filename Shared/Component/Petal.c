@@ -22,6 +22,8 @@ void rr_component_petal_init(struct rr_component_petal *this)
 
 void rr_component_petal_free(struct rr_component_petal *this, struct rr_simulation *simulation)
 {
+    if (this->detached)
+        return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, rr_simulation_get_relations(simulation, this->parent_id)->owner);
     struct rr_component_player_info_petal *ppetal = &player_info->slots[this->outer_pos].petals[this->inner_pos];
     ppetal->simulation_id = RR_NULL_ENTITY;

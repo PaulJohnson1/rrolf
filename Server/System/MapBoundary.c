@@ -6,7 +6,7 @@
 #include <Shared/Vector.h>
 #include <Shared/Component/Physical.h>
 
-void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulation)
+static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulation)
 {
     if (!rr_simulation_has_physical(simulation, id))
         return;
