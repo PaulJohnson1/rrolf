@@ -56,3 +56,4 @@ struct rr_mob_rarity_scale
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
 extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_max];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_max + 1];

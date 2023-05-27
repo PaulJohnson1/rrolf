@@ -109,7 +109,8 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
     }
     if (petal->detached == 0)
     {
-        if (rr_simulation_has_projectile(simulation, id))
+        uint8_t is_projectile = rr_simulation_has_projectile(simulation, id);
+        if (is_projectile)
         {
             if (--rr_simulation_get_projectile(simulation, id)->shoot_delay <= 0)
             {
@@ -132,7 +133,7 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
         struct rr_vector position_vector = {physical->x, physical->y};
         struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
         float holdingRadius = 75;
-        if (player_info->input & 1)
+        if (player_info->input & 1 && !is_projectile)
             holdingRadius = 150;
         else if (player_info->input & 2)
             holdingRadius = 45;
@@ -154,7 +155,7 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
             rr_vector_from_polar(&random_vector, 10.0f, (float)rand() / (float) RAND_MAX * M_PI * 2);
             rr_vector_add(&chase_vector, &random_vector);
         }
-        if (!rr_simulation_has_projectile(simulation, id))
+        if (!is_projectile)
             rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
         else
             rr_component_physical_set_angle(physical, currAngle); 
