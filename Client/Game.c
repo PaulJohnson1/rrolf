@@ -160,17 +160,25 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             if (rr_bitset_get_bit(this->simulation->arena_tracker, p) == 0)
                 continue;
+            uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51) << 24;
+            rr_renderer_init_context_state(this->renderer, &state2);
+            rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+            rr_renderer_set_fill(this->renderer, 0xff20a464);
+            rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width, this->renderer->height);
+            rr_renderer_set_fill(this->renderer, alpha);
+            rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width, this->renderer->height);
+            rr_renderer_free_context_state(this->renderer, &state2);
             rr_renderer_init_context_state(this->renderer, &state2);
             // intrusive op
             struct rr_component_arena *arena = rr_simulation_get_arena(this->simulation, p);
             rr_renderer_begin_path(this->renderer);
             rr_renderer_arc(this->renderer, 0, 0, arena->radius);
-            rr_renderer_set_fill(this->renderer, 0xffeeeeee);
+            rr_renderer_set_fill(this->renderer, 0xff20a464);
             rr_renderer_fill(this->renderer);
             rr_renderer_clip(this->renderer);
 
             rr_renderer_set_line_width(this->renderer, 1);
-            rr_renderer_set_stroke(this->renderer, (uint32_t)(player_info->lerp_camera_fov * 51) << 24);
+            rr_renderer_set_stroke(this->renderer, alpha);
 
             float scale = player_info->lerp_camera_fov * this->renderer->scale;
             float leftX = player_info->lerp_camera_x - this->renderer->width / (2 * scale);

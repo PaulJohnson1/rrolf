@@ -11,7 +11,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_baby_ant,   1, 1, 17.5},
-    {rr_mob_id_worker_ant, 1, 1, 17.5}
+    {rr_mob_id_worker_ant, 1, 1, 17.5},
+    {rr_mob_id_centipede, 1, 1, 17.5}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_max] = {

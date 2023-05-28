@@ -156,7 +156,7 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
             rr_vector_add(&chase_vector, &random_vector);
         }
         if (!is_projectile)
-            rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
+            rr_component_physical_set_angle(physical, physical->angle + 0.04f * (float)petal->spin_ccw);
         else
             rr_component_physical_set_angle(physical, currAngle); 
         physical->acceleration.x = 0.6f * chase_vector.x;

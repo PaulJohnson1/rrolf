@@ -292,6 +292,22 @@ void rr_renderer_round_rect(struct rr_renderer *this, float x, float y, float w,
     rr_renderer_quadratic_curve_to(this, x, y, x + r, y);
 }
 
+void rr_renderer_fill_rect(struct rr_renderer *this, float x, float y, float w, float h)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({ Module.ctxs[$0].fillRect($1, $2, $3, $4); }, this->context_id, x, y, w, h);
+#else
+#endif
+}
+
+void rr_renderer_stroke_rect(struct rr_renderer *this, float x, float y, float w, float h)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({ Module.ctxs[$0].strokeRect($1, $2, $3, $4); }, this->context_id, x, y, w, h);
+#else
+#endif
+}
+
 void rr_renderer_fill(struct rr_renderer *this)
 {
 #ifdef EMSCRIPTEN
