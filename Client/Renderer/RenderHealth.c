@@ -25,14 +25,17 @@ void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulati
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
-        rr_renderer_set_fill(renderer, RR_RARITY_COLORS[mob->rarity]);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_text_size(renderer, 14);
-        rr_renderer_set_line_width(renderer, 1.68);
-        rr_renderer_set_text_align(renderer, 2);
-        rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);
-        rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);        
+        if (mob->id != rr_mob_id_centipede_body)
+        {
+            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[mob->rarity]);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_text_size(renderer, 14);
+            rr_renderer_set_line_width(renderer, 1.68);
+            rr_renderer_set_text_align(renderer, 2);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);
+            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);  
+        }      
     }
 
     rr_renderer_set_line_cap(renderer, 1);
