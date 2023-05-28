@@ -44,7 +44,7 @@ void rr_simulation_init(struct rr_simulation *this)
     rr_component_arena_set_radius(comp, 1650.0f);
     for (uint32_t i = 0; i < 50; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() & 1, rr_rarity_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
         rr_component_physical_set_x(physical, rand() % 800);
         rr_component_physical_set_y(physical, rand() % 800);

@@ -89,5 +89,5 @@ void rr_renderer_fill(struct rr_renderer *);
 void rr_renderer_stroke(struct rr_renderer *);
 void rr_renderer_clip(struct rr_renderer *);
 
-void rr_renderer_fill_text(struct rr_renderer *, float x, float y, char const *);
-void rr_renderer_stroke_text(struct rr_renderer *, char const *);
+void rr_renderer_fill_text(struct rr_renderer *, char const *, float, float);
+void rr_renderer_stroke_text(struct rr_renderer *,  char const *, float, float);

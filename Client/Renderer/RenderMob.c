@@ -2,6 +2,7 @@
 
 #include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
+#include <Shared/StaticData.h>
 
 #include <Client/Renderer/RenderFunctions.h>
 

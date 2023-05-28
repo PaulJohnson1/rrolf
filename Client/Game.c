@@ -224,7 +224,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_scale(this->renderer, 5);
         static char debug_mspt[100];
         debug_mspt[sprintf(debug_mspt, "%f mspt", (float)time_elapsed / 1000.0f)] = 0;
-        rr_renderer_fill_text(this->renderer, 0, 8, debug_mspt);
+        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 8);
         rr_renderer_free_context_state(this->renderer, &state);
         // rr_renderer_stroke_text
     }

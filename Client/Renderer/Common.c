@@ -31,7 +31,7 @@ void rr_renderer_free_context_state(struct rr_renderer *this, struct rr_renderer
 void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({Module.ctxs[$0].fillStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
+    EM_ASM({Module.ctxs[$0].fillStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
 #else
 #endif
 }
@@ -39,7 +39,7 @@ void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
 void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({Module.ctxs[$0].strokeStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
+    EM_ASM({Module.ctxs[$0].strokeStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
 #else
 #endif
 }
@@ -47,25 +47,32 @@ void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
 void rr_renderer_set_line_width(struct rr_renderer *this, float w)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({Module.ctxs[$0].lineWidth = $1 }, this->context_id, w);
+    EM_ASM({Module.ctxs[$0].lineWidth = $1 }, this->context_id, w);
 #else
 #endif 
+}
+
+void rr_renderer_set_text_size(struct rr_renderer *this, float s)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({Module.ctxs[$0].font = $1 + "px Ubuntu";}, this->context_id, s);
+#endif
 }
 
 void rr_renderer_set_line_cap(struct rr_renderer *this, uint8_t l)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            if ($1 == 0)
-                Module.ctxs[$0].lineCap = 'butt';
-            else if ($1 == 1)
-                Module.ctxs[$0].lineCap = 'round';
-            else if ($1 == 2)
-                Module.ctxs[$0].lineCap = 'square';
-            else
-                throw "line cap oopsie happened";
+    EM_ASM({
+        if ($1 == 0)
+            Module.ctxs[$0].lineCap = 'butt';
+        else if ($1 == 1)
+            Module.ctxs[$0].lineCap = 'round';
+        else if ($1 == 2)
+            Module.ctxs[$0].lineCap = 'square';
+        else
+            throw "line cap oopsie happened";
 
-        }, this->context_id, l);
+    }, this->context_id, l);
 #else
 #endif
 }
@@ -73,44 +80,44 @@ void rr_renderer_set_line_cap(struct rr_renderer *this, uint8_t l)
 void rr_renderer_set_line_join(struct rr_renderer *this, uint8_t l)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            if ($1 == 0)
-                Module.ctxs[$0].lineJoin = 'bevel';
-            else if ($1 == 1)
-                Module.ctxs[$0].lineJoin = 'round';
-            else if ($1 == 2)
-                Module.ctxs[$0].lineJoin = 'miter';
-            else
-                throw "line cap oopsie happened";
-        }, this->context_id, l);
+    EM_ASM({
+        if ($1 == 0)
+            Module.ctxs[$0].lineJoin = 'bevel';
+        else if ($1 == 1)
+            Module.ctxs[$0].lineJoin = 'round';
+        else if ($1 == 2)
+            Module.ctxs[$0].lineJoin = 'miter';
+        else
+            throw "line cap oopsie happened";
+    }, this->context_id, l);
 #else
 #endif
 }
 void rr_renderer_set_text_align(struct rr_renderer *this, uint8_t l)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            if ($1 == 0)
-                Module.ctxs[$0].textAlign = 'left';
-            else if ($1 == 1)
-                Module.ctxs[$0].textAlign = 'center';
-            else
-                Module.ctxs[$0].textAlign = 'right';
-        },this->context_id, l);
+    EM_ASM({
+        if ($1 == 0)
+            Module.ctxs[$0].textAlign = 'left';
+        else if ($1 == 1)
+            Module.ctxs[$0].textAlign = 'center';
+        else
+            Module.ctxs[$0].textAlign = 'right';
+    },this->context_id, l);
 #else
 #endif
 }
 void rr_renderer_set_text_baseline(struct rr_renderer *this, uint8_t l)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            if ($1 == 0)
-                Module.ctxs[$0].textBaseline = 'top';
-            else if ($1 == 1)
-                Module.ctxs[$0].textBaseline = 'middle';
-            else
-                Module.ctxs[$0].textBaseline = 'bottom';
-        }, this->context_id, l);
+    EM_ASM({
+        if ($1 == 0)
+            Module.ctxs[$0].textBaseline = 'top';
+        else if ($1 == 1)
+            Module.ctxs[$0].textBaseline = 'middle';
+        else
+            Module.ctxs[$0].textBaseline = 'bottom';
+    }, this->context_id, l);
 #else
 #endif
 }
@@ -118,12 +125,12 @@ void rr_renderer_set_text_baseline(struct rr_renderer *this, uint8_t l)
 void rr_renderer_update_transform(struct rr_renderer *this)
 {
 #ifdef EMSCRIPTEN
-        EM_ASM({
-            Module.ctxs[$0].setTransform($1, $2, $3, $4, $5, $6);
-        }, this->context_id, this->state.transform_matrix[0], 
-        this->state.transform_matrix[1], this->state.transform_matrix[3], 
-        this->state.transform_matrix[4], this->state.transform_matrix[2],
-        this->state.transform_matrix[5]);
+    EM_ASM({
+        Module.ctxs[$0].setTransform($1, $2, $3, $4, $5, $6);
+    }, this->context_id, this->state.transform_matrix[0], 
+    this->state.transform_matrix[1], this->state.transform_matrix[3], 
+    this->state.transform_matrix[4], this->state.transform_matrix[2],
+    this->state.transform_matrix[5]);
 #else
 #endif
 }
@@ -307,7 +314,7 @@ void rr_renderer_clip(struct rr_renderer *this)
 #endif
 }
 
-void rr_renderer_fill_text(struct rr_renderer *this, float x, float y, char const *c)
+void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x, float y)
 {
     EM_ASM({
         let string = "";
@@ -316,7 +323,12 @@ void rr_renderer_fill_text(struct rr_renderer *this, float x, float y, char cons
         Module.ctxs[$0].fillText(string, $1, $2)
     }, this->context_id, x, y, c);
 }
-void rr_renderer_stroke_text(struct rr_renderer *this, char const *c)
+void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x, float y)
 {
-
+    EM_ASM({
+        let string = "";
+        while (Module.HEAPU8[$3])
+            string += String.fromCharCode(Module.HEAPU8[$3++]);
+        Module.ctxs[$0].strokeText(string, $1, $2)
+    }, this->context_id, x, y, c);
 }
