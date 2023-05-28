@@ -13,6 +13,8 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     struct rr_simulation *this = simulation;
     if (!rr_simulation_has_ai(this, entity))
         return;
+    if (rr_simulation_has_centipede(this, entity) && rr_simulation_get_centipede(this, entity)->parent_node != RR_NULL_ENTITY)
+        return;
     struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
 
     // idle tick lol

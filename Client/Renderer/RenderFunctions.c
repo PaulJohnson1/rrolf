@@ -116,25 +116,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
-    case rr_mob_id_centipede:
-        /*
-        rr_renderer_arc(renderer, 0,-30,15,0,6.283185307179586,false);
-        rr_renderer_fill(renderer, );
-        rr_renderer_set_fill(renderer, 0xff333333);
-        rr_renderer_beginpath(renderer, );
-        rr_renderer_arc(renderer, 0,30,15,0,6.283185307179586,false);
-        rr_renderer_fill(renderer, );
-        rr_renderer_set_fill(renderer, 0xff333333);
-        rr_renderer_beginpath(renderer, );
-        rr_renderer_arc(renderer, 0,0,35,0,6.283185307179586,false);
-        rr_renderer_fill(renderer, );
-        rr_renderer_set_fill(renderer, 0xff8ac255);
-        rr_renderer_stroke(renderer, );
-        rr_renderer_set_stroke(renderer, 0xff709d45);
-        rr_renderer_set_line_width(renderer, 7);
-        rr_renderer_beginpath(renderer, );
-        */
-        //rr_renderer_settransform(renderer, -0.26301753520965576,-0.2630175054073334,0.2630175054073334,-0.26301753520965576,27.897220611572266,27.897220611572266);
+    case rr_mob_id_centipede_head:
         rr_renderer_set_fill(renderer, 0xff333333);
         rr_renderer_begin_path(renderer);
         rr_renderer_arc(renderer, 0,-30,15);
@@ -165,6 +147,22 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, 10);
         rr_renderer_quadratic_curve_to(renderer, 45,10,55,30);
+        rr_renderer_stroke(renderer);
+        break;
+    case rr_mob_id_centipede_body:
+        rr_renderer_set_fill(renderer, 0xff333333);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0,-30,15);
+        rr_renderer_fill(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0,30,15);
+        rr_renderer_fill(renderer);
+        rr_renderer_set_fill(renderer, 0xff8ac255);
+        rr_renderer_set_stroke(renderer, 0xff709d45);
+        rr_renderer_set_line_width(renderer, 7);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0,0,35);
+        rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case 2123123:

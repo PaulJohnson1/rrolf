@@ -31,6 +31,20 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
+    if (mob_id == rr_mob_id_centipede_head)
+    {   
+        EntityIdx prev_node = entity;
+        struct rr_component_centipede *centipede = rr_simulation_add_centipede(this, entity);
+        EntityIdx new_entity = RR_NULL_ENTITY;
+        for (uint64_t i = 0; i < 5; ++i)
+        {
+            new_entity = rr_simulation_alloc_mob(this, rr_mob_id_centipede_body, rarity_id);
+            centipede->child_node = new_entity;
+            centipede = rr_simulation_add_centipede(this, new_entity);
+            centipede->parent_node = entity;
+            entity = new_entity;
+        }
+    }
     return entity;
 }
 #endif
@@ -42,7 +56,7 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 450; i++)
+    for (uint32_t i = 0; i < 2; i++)
     {
         EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, rr_rarity_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);

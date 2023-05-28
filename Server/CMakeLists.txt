@@ -13,6 +13,7 @@ endif()
 
 set(SRCS
     System/Ai.c
+    System/Centipede.c
     System/CollisionDetection.c
     System/CollisionResolution.c
     System/Health.c
@@ -26,6 +27,7 @@ set(SRCS
     SpatialHash.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
+    ../Shared/Component/Centipede.c
     ../Shared/Component/Flower.c
     ../Shared/Component/Health.c
     ../Shared/Component/Mob.c

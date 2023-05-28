@@ -37,7 +37,7 @@ struct rr_component_physical
 void rr_component_physical_init(struct rr_component_physical *);
 void rr_component_physical_free(struct rr_component_physical *, struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct proto_bug *, int is_creation);)
+RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct proto_bug *, int);)
 RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *, struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(physical, float, x)

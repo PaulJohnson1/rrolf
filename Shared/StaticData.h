@@ -26,7 +26,8 @@ enum rr_mob_id
 {
     rr_mob_id_baby_ant,
     rr_mob_id_worker_ant,
-    rr_mob_id_centipede,
+    rr_mob_id_centipede_head,
+    rr_mob_id_centipede_body,
     rr_mob_id_max
 };
 
