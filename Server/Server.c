@@ -19,7 +19,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
-    this->player_info->slot_count = 3;
+    this->player_info->slot_count = 10;
     rr_server_client_create_flower(this);
 }
 
@@ -239,8 +239,8 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 1000)
-            printf("tick took %ld microseconds\n", elapsed_time);
+        // if (elapsed_time > 1000)
+            // printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }

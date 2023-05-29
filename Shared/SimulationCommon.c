@@ -51,7 +51,7 @@ void rr_simulation_init(struct rr_simulation *this)
         float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
         rr_component_physical_set_x(physical, cos(angle) * distance);
         rr_component_physical_set_y(physical, sin(angle) * distance);
-        physical->mass = 10.0f;
+        physical->mass = 100.0f;
     }
 #endif
 }

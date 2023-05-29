@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <Server/Simulation.h>
 
@@ -9,7 +10,7 @@
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
-void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
+static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
 {
     if (!rr_simulation_has_player_info(simulation, id))
         return;
@@ -24,6 +25,9 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0) ++rotationPos; //clump rotpos ++
+            //specials
+            if (data->id == rr_petal_id_faster)
+                player_info->global_rotation += 0.01;
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
@@ -37,7 +41,7 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_physical_set_radius(physical, 10);
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
-                    rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
+                    rr_component_physical_set_angle(physical, (float)rand() / (float) RAND_MAX * M_PI * 2);
                     physical->friction = 0.75;
 
                     rr_component_petal_set_id(petal, data->id);
@@ -54,6 +58,13 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
                     rr_component_health_set_health(health, data->health);
                     rr_component_health_set_hidden(health, 1);
                     health->damage = data->damage;
+
+                    if (data->id == rr_petal_id_missile)
+                    {
+                        struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, p_petal->simulation_id);
+                        projectile->shoot_delay = 75;
+                        projectile->ticks_until_death = 75;
+                    }
                 }
             }
         }
@@ -62,7 +73,18 @@ void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
     player_info->global_rotation += 0.1;
 }
 
-void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void *simulation)
+static void system_petal_detach(struct rr_simulation *simulation, EntityIdx entity)
+{
+    struct rr_component_petal *petal = rr_simulation_get_petal(simulation, entity);
+    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, entity);
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
+    petal->detached = 1;
+    struct rr_component_player_info_petal *ppetal = &player_info->slots[petal->outer_pos].petals[petal->inner_pos];
+    ppetal->simulation_id = RR_NULL_ENTITY;
+    ppetal->cooldown_ticks = petal->petal_data->cooldown;
+}
+
+static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void *simulation)
 {
     if (!rr_simulation_has_petal(simulation, id))
         return;
@@ -87,6 +109,25 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
     }
     if (petal->detached == 0)
     {
+        if (rr_simulation_has_projectile(simulation, id))
+        {
+            if (--rr_simulation_get_projectile(simulation, id)->shoot_delay <= 0)
+            {
+                switch(petal->id)
+                {
+                    case rr_petal_id_missile:
+                        if ((player_info->input & 1) == 0)
+                            break;
+                        system_petal_detach(simulation, id);
+                        rr_vector_from_polar(&physical->acceleration, 3.0f, physical->angle);
+                        rr_vector_from_polar(&physical->velocity, 20.0f, physical->angle);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
         struct rr_vector position_vector = {physical->x, physical->y};
         struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
@@ -102,13 +143,29 @@ void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void
         rr_vector_sub(&chase_vector, &position_vector);
         if (petal->petal_data->clump_radius != 0.0f) // clump
         {
+            currAngle = 1.333 * currAngle + 2 * M_PI * petal->inner_pos / petal->petal_data->count[petal->rarity];
             struct rr_vector clump_vector;
-            rr_vector_from_polar(&clump_vector, petal->petal_data->clump_radius, 1.333 * currAngle + 2 * M_PI * petal->inner_pos / petal->petal_data->count[petal->rarity]); //RADIUS!
+            rr_vector_from_polar(&clump_vector, petal->petal_data->clump_radius, currAngle); //RADIUS!
             rr_vector_add(&chase_vector, &clump_vector);
         }
-        rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
+        if (petal->id == rr_petal_id_faster)
+        {
+            struct rr_vector random_vector;
+            rr_vector_from_polar(&random_vector, 10.0f, (float)rand() / (float) RAND_MAX * M_PI * 2);
+            rr_vector_add(&chase_vector, &random_vector);
+        }
+        if (!rr_simulation_has_projectile(simulation, id))
+            rr_component_physical_set_angle(physical, physical->angle + 0.1f * (float)petal->spin_ccw);
+        else
+            rr_component_physical_set_angle(physical, currAngle); 
         physical->acceleration.x = 0.6f * chase_vector.x;
         physical->acceleration.y = 0.6f * chase_vector.y;
+    }
+    else 
+    {
+        rr_vector_from_polar(&physical->acceleration, 3.0f, physical->angle);
+        if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <= 0)
+            rr_simulation_request_entity_deletion(simulation, id);
     }
 }
 
