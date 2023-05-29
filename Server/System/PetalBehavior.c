@@ -59,10 +59,10 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     rr_component_health_set_hidden(health, 1);
                     health->damage = data->damage;
 
-                    if (data->id == rr_petal_id_missile)
+                    if (data->id == rr_petal_id_missile || data->id == rr_petal_id_peas)
                     {
                         struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, p_petal->simulation_id);
-                        projectile->shoot_delay = 75;
+                        projectile->shoot_delay = 12;
                         projectile->ticks_until_death = 75;
                     }
                 }
@@ -120,8 +120,15 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
                         if ((player_info->input & 1) == 0)
                             break;
                         system_petal_detach(simulation, id);
-                        rr_vector_from_polar(&physical->acceleration, 3.0f, physical->angle);
-                        rr_vector_from_polar(&physical->velocity, 20.0f, physical->angle);
+                        rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+                        rr_vector_from_polar(&physical->velocity, 50.0f, physical->angle);
+                        break;
+                    case rr_petal_id_peas:
+                        if ((player_info->input & 1) == 0)
+                            break;
+                        system_petal_detach(simulation, id);
+                        rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+                        rr_vector_from_polar(&physical->velocity, 50.0f, physical->angle);
                         break;
                     default:
                         break;
@@ -164,7 +171,7 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
     }
     else 
     {
-        rr_vector_from_polar(&physical->acceleration, 3.0f, physical->angle);
+        rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <= 0)
             rr_simulation_request_entity_deletion(simulation, id);
     }

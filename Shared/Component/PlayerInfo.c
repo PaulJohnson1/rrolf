@@ -21,9 +21,10 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
     #ifdef RR_SERVER
     for (uint64_t i = 0; i < 10; ++i)
     {
+        uint8_t id = 6;
         this->slots[i].rarity = 3;
-        this->slots[i].data = &RR_PETAL_DATA[3];
-        this->slots[i].count = RR_PETAL_DATA[3].count[3];
+        this->slots[i].data = &RR_PETAL_DATA[id];
+        this->slots[i].count = RR_PETAL_DATA[id].count[3];
     }
     #endif
 }

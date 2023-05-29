@@ -1,6 +1,7 @@
 #include <Shared/SimulationCommon.h>
 
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -26,8 +27,12 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
+    rr_component_physical_set_x(physical, rand() % 2000 - 1000);
+    rr_component_physical_set_y(physical, rand() % 2000 - 1000);
     physical->radius = mob_data->radius * rarity_scale->radius;
     physical->friction = 0.9;
+    physical->mass = 100.0f;
+    rr_component_physical_set_angle(physical, M_PI * 2.0f * rand() / RAND_MAX);
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
@@ -35,12 +40,17 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     {   
         EntityIdx prev_node = entity;
         struct rr_component_centipede *centipede = rr_simulation_add_centipede(this, entity);
+        struct rr_vector extension;
+        rr_vector_from_polar(&extension, physical->radius * 2, physical->angle);
         EntityIdx new_entity = RR_NULL_ENTITY;
         for (uint64_t i = 0; i < 5; ++i)
         {
             new_entity = rr_simulation_alloc_mob(this, rr_mob_id_centipede_body, rarity_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
+            struct rr_component_physical *new_phys = rr_simulation_get_physical(this, new_entity);
+            rr_component_physical_set_x(new_phys, physical->x + extension.x * (i + 1));
+            rr_component_physical_set_y(new_phys, physical->y + extension.y * (i + 1));
             centipede->parent_node = entity;
             entity = new_entity;
         }
@@ -57,13 +67,9 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 200; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 1, rr_rarity_epic);
-        struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, rand() % 2000 - 1000);
-        rr_component_physical_set_y(physical, rand() % 2000 - 1000);
-        physical->mass = 100.0f;
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, rr_rarity_epic);
     }
 #endif
 }

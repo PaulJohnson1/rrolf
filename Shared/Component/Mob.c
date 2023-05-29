@@ -42,7 +42,7 @@ void rr_component_mob_free(struct rr_component_mob *this, struct rr_simulation *
         float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t rarity = 0;
         for (uint8_t j = 0; j <= rr_rarity_max; ++j)
-            if (table[(rarity = j)] >= seed)
+            if ((seed -= table[(rarity = j)]) <= 0)
                 break;
         if (rarity == 0)
             continue;
@@ -63,7 +63,7 @@ void rr_component_mob_free(struct rr_component_mob *this, struct rr_simulation *
             rr_vector_from_polar(&drop_physical->velocity, 25, angle);
             drop_physical->friction = 0.75;
         }
-        drop_physical->radius = 20;
+        drop_physical->radius = 25;
         rr_component_drop_set_id(drop, spawn_ids[i]);
         rr_component_drop_set_rarity(drop, spawn_rarities[i]);
     }

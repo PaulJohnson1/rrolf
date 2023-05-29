@@ -10,6 +10,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_stinger,  45.0f,  2.0f,  10.0f, 100,  {1, 1, 1, 3}},
     {rr_petal_id_faster,   10.0f,  5.0f,  25.0f, 25,   {1, 1, 1, 6}},
     {rr_petal_id_missile,  75.0f,  5.0f,  15.0f, 100,  {1, 1, 1, 3}},
+    {rr_petal_id_peas,     75.0f,  5.0f,  8.0f,  100,  {4, 4, 4, 4}},
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -50,14 +51,25 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
             float start = RR_DROP_RARITY_COEFFICIENTS[drop];
             float end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
             data->loot_table[mob][drop + 1] = powf(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]) - powf(1 - (1 - start) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
+            printf("%f ", data->loot_table[mob][drop + 1]);
         }
+        puts("");
     }
 }
 
 static void init_loot_tables()
 {
-    init_loot_table(&RR_MOB_DATA[0].loot[0], 1, 0.2);
-    init_loot_table(&RR_MOB_DATA[0].loot[1], 2, 1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[0], rr_petal_id_basic, 0.2);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[1], rr_petal_id_light, 1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[2], rr_petal_id_missile, 0.05);
+
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[0], rr_petal_id_peas, 0.1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[1], rr_petal_id_missile, 0.4);
+
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[0], rr_petal_id_peas, 1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[1], rr_petal_id_light, 0.75);
+
+    init_loot_table(&RR_MOB_DATA[3].loot[0], rr_petal_id_peas, 0.5);
 }
 
 uint32_t RR_RARITY_COLORS[rr_rarity_max] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde};
