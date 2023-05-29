@@ -7,6 +7,7 @@ include_directories(..)
 
 set(SRCS
     Renderer/Common.c
+    Renderer/RenderDrop.c
     Renderer/RenderFlower.c
     Renderer/RenderFunctions.c
     Renderer/RenderHealth.c
@@ -21,6 +22,7 @@ set(SRCS
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Centipede.c
+    ../Shared/Component/Drop.c
     ../Shared/Component/Flower.c
     ../Shared/Component/Health.c
     ../Shared/Component/Mob.c

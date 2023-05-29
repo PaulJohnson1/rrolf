@@ -85,6 +85,17 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
     }
 }
 
+void render_drop_component(EntityIdx entity, void *_captures)
+{
+    struct rr_game *this = _captures;
+    if (!rr_simulation_has_drop(this->simulation, entity))
+        return;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(this->renderer, &state);
+    rr_component_drop_render(entity, this->simulation, this->renderer);
+    rr_renderer_free_context_state(this->renderer, &state);
+}
+
 void render_health_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
@@ -146,6 +157,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
 
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    this->renderer->state.filter.amount = 1;
     struct rr_renderer_context_state state1;
     struct rr_renderer_context_state state2;
     rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
@@ -207,6 +219,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 
         rr_simulation_for_each_entity(this->simulation, this, render_health_component);
         rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_drop_component);
         rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
         rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);

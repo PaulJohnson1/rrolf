@@ -26,12 +26,12 @@ static void system_for_each_2nd_function(EntityIdx entity2, void *_captures)
     struct second_for_each_function_captures *captures = _captures;
     EntityIdx entity1 = captures->physical->parent_id;
     struct rr_simulation *this = captures->simulation;
-    struct rr_component_physical *physical1 = captures->physical;
-
-    if (!system_is_valid_collision(this, entity1, entity2))
-        return;
+    struct rr_component_physical *physical1 = captures->physical;\
 
     if (!rr_simulation_has_physical(this, entity2))
+        return;
+
+    if (!system_is_valid_collision(this, entity1, entity2))
         return;
 
     struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
@@ -54,6 +54,8 @@ static void system_for_each_function(EntityIdx entity1, void *incoming_captures)
     if (!rr_simulation_has_physical(this, entity1))
         return;
     if (rr_simulation_has_petal(this, entity1))
+        return;
+    if (rr_simulation_has_drop(this, entity1))
         return;
 
     struct rr_component_physical *physical1 = rr_simulation_get_physical(this, entity1);

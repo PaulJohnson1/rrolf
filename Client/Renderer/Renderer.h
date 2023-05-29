@@ -17,7 +17,7 @@ struct rr_renderer_paint
 
 struct rr_renderer_filter
 {
-    struct rr_renderer_paint color;
+    uint32_t color;
     float amount;
 };
 

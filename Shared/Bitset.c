@@ -33,12 +33,14 @@ void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (
     uint8_t *const original_start = start;
     while (start != end)
     {
+        /*
         if ((uint64_t)start % sizeof(uint64_t) == 0)
             if ((start + 8 < end) && !*(uint64_t *)start)
             {
                 start += 8;
                 continue;
             }
+            */
         if (*start)
         {
             if (*start & 1)

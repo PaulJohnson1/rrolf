@@ -30,6 +30,12 @@ void rr_renderer_free_context_state(struct rr_renderer *this, struct rr_renderer
 
 void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
 {
+    float a = this->state.filter.amount;
+    uint32_t fc = this->state.filter.color;
+    uint8_t red = ((uint8_t) ((c >> 16) & 255) * a) + ((uint8_t) ((fc >> 16) & 255) * (1 - a));
+    uint8_t green = ((uint8_t) ((c >> 8) & 255) * a) + ((uint8_t) ((fc >> 8) & 255) * (1 - a));
+    uint8_t blue = ((uint8_t) ((c >> 0) & 255) * a) + ((uint8_t) ((fc >> 0) & 255) * (1 - a));
+    c = ((c >> 24) << 24) | (red << 16) | (green << 8) | blue;
 #ifdef EMSCRIPTEN
     EM_ASM({Module.ctxs[$0].fillStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
 #else
@@ -38,6 +44,12 @@ void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
 
 void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
 {
+    float a = this->state.filter.amount;
+    uint32_t fc = this->state.filter.color;
+    uint8_t red = ((uint8_t) ((c >> 16) & 255) * a) + ((uint8_t) ((fc >> 16) & 255) * (1 - a));
+    uint8_t green = ((uint8_t) ((c >> 8) & 255) * a) + ((uint8_t) ((fc >> 8) & 255) * (1 - a));
+    uint8_t blue = ((uint8_t) ((c >> 0) & 255) * a) + ((uint8_t) ((fc >> 0) & 255) * (1 - a));
+    c = ((c >> 24) << 24) | (red << 16) | (green << 8) | blue;
 #ifdef EMSCRIPTEN
     EM_ASM({Module.ctxs[$0].strokeStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
 #else

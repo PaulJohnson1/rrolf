@@ -52,13 +52,14 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
+    rr_static_data_init();
 #ifdef RR_SERVER
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 35; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, rr_rarity_epic);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 1, rr_rarity_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
         rr_component_physical_set_x(physical, rand() % 2000 - 1000);
         rr_component_physical_set_y(physical, rand() % 2000 - 1000);
