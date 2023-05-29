@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
@@ -26,7 +27,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
-    physical->radius = mob_data->radius * rarity_scale->radius;
+    rr_component_physical_set_radius(physical, mob_data->radius * rarity_scale->radius);
     physical->friction = 0.9;
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
@@ -42,12 +43,14 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 100; i++)
     {
         EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, rand() % 800);
-        rr_component_physical_set_y(physical, rand() % 800);
+        float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+        float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+        rr_component_physical_set_x(physical, cos(angle) * distance);
+        rr_component_physical_set_y(physical, sin(angle) * distance);
         physical->mass = 10.0f;
     }
 #endif
