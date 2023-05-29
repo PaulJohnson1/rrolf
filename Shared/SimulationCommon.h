@@ -14,18 +14,20 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
-#include <Server/SpatialHash.h>
+// #include <Server/SpatialHash.h>
+// struct hshg;
+struct rr_spatial_hash;
 #endif
 
 struct rr_simulation
 {
-    uint8_t entity_tracker[RR_MAX_ENTITY_COUNT >> 3];
-    RR_SERVER_ONLY(uint8_t pending_deletions[RR_MAX_ENTITY_COUNT >> 3]);
+    uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
+    RR_SERVER_ONLY(uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)]);
     RR_SERVER_ONLY(EntityIdx arena;)
     RR_CLIENT_ONLY(EntityIdx player_info);
 
 #define XX(COMPONENT, ID) \
-    uint8_t COMPONENT##_tracker[RR_MAX_ENTITY_COUNT >> 3];
+    uint8_t COMPONENT##_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
@@ -34,7 +36,9 @@ struct rr_simulation
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
-    RR_SERVER_ONLY(struct hshg spatial_hash_grid;)
+    // RR_SERVER_ONLY(struct hshg *hshg;)
+    RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
+    // RR_SERVER_ONLY(struct rr_spatial_hash grid;)
 };
 
 void rr_simulation_init(struct rr_simulation *);
@@ -47,6 +51,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *, void *, void (*cb)(En
 #define XX(COMPONENT, ID)                                                                              \
     uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *, EntityIdx);                          \
     struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *, EntityIdx); \
-    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *, EntityIdx);
+    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *, EntityIdx); \
+    void rr_simulation_for_each_##COMPONENT(struct rr_simulation *, void *, void (*cb)(EntityIdx, void *));
 RR_FOR_EACH_COMPONENT
 #undef XX

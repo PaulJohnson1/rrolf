@@ -12,8 +12,8 @@ int main()
 #ifndef NDEBUG
     feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
-    struct rr_server s;
-    rr_server_init(&s);
-    rr_server_run(&s);
-    rr_server_free(&s);
+    struct rr_server *s = malloc(sizeof *s);
+    rr_server_init(s);
+    rr_server_run(s);
+    rr_server_free(s);
 }

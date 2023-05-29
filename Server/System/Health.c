@@ -53,7 +53,7 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
     captures.health = health;
     captures.simulation = this;
 
-    rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_MAX_ENTITY_COUNT >> 3), &captures, colliding_with_function);
+    rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
 }
 
 static void system_deletion_for_each_function(EntityIdx entity, void *_captures)

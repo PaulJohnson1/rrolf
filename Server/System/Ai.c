@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 
 #include <Server/Simulation.h>
 #include <Shared/Entity.h>
@@ -15,7 +16,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         return;
     struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
 
-    // idle tick lol
+    // idle tick
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
         if (ai->ai_state == rr_ai_state_idle_moving)

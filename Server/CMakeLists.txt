@@ -52,9 +52,9 @@ if(DEBUG_BUILD)
     # add_compile_options(-fsanitize=undefined,address)
     # add_link_options(-fsanitize=undefined,address)
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -O3 -DHSHG_NDEBUG")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast -DHSHG_NDEBUG -march=native")
     # link time optimiations
-    # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 if(RIVET_PRODUCTION_BUILD)

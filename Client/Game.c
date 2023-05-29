@@ -229,6 +229,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         // rr_renderer_stroke_text
     }
 
-    memset(this->input_data->keys_pressed_this_tick, 0, 256 >> 3);
-    memset(this->input_data->keys_released_this_tick, 0, 256 >> 3);
+    memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
+    memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
 }

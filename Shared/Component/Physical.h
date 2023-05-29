@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Component/Common.h>
+#include <Shared/Bitset.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 #include <Shared/Utilities.h>
@@ -31,7 +32,7 @@ struct rr_component_physical
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
                    EntityIdx parent_id;
-    RR_SERVER_ONLY(uint8_t collisions[RR_MAX_ENTITY_COUNT >> 3];)
+    RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 };
 
 void rr_component_physical_init(struct rr_component_physical *);

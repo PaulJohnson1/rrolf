@@ -3,13 +3,13 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
-#include <stdlib.h>
-
+#include <Server/SpatialHash.h>
 #include <Server/Simulation.h>
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -39,10 +39,13 @@ void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
 #ifdef RR_SERVER
+    // this->hshg = hshg_create(128, 8);
+    this->grid = malloc(sizeof *this->grid);
+    rr_spatial_hash_init(this->grid);
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 10; i++)
     {
         EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
@@ -99,28 +102,43 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
     captures.user_cb = cb;
     captures.user_captures = user_captures;
 
-    rr_bitset_for_each_bit(&this->entity_tracker[0], &this->entity_tracker[0] + (RR_MAX_ENTITY_COUNT >> 3), &captures, rr_simulation_for_each_entity_function);
+    rr_bitset_for_each_bit(&this->entity_tracker[0], &this->entity_tracker[0] + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_for_each_entity_function);
 }
 
-#define XX(COMPONENT, ID)                                                                                        \
-    uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                          \
-    {                                                                                                            \
-        assert(rr_simulation_has_entity(this, entity));                                                          \
-        return rr_bitset_get(this->COMPONENT##_tracker, entity);                                                 \
-    }                                                                                                            \
-    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *this, EntityIdx entity) \
-    {                                                                                                            \
-        assert(rr_simulation_has_entity(this, entity));                                                          \
-        rr_bitset_set(this->COMPONENT##_tracker, entity);                                                        \
-        rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity);                                  \
-        this->COMPONENT##_components[entity].parent_id = entity;                                                 \
-        return rr_simulation_get_##COMPONENT(this, entity);                                                      \
-    }                                                                                                            \
-    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *this, EntityIdx entity) \
-    {                                                                                                            \
-        assert(rr_simulation_has_entity(this, entity));                                                          \
-        assert(rr_simulation_has_##COMPONENT(this, entity));                                                     \
-        return &this->COMPONENT##_components[entity];                                                            \
+#define XX(COMPONENT, ID)                                                                                                                                  \
+    void COMPONENT##for_each(uint64_t bit, void *_captures)                                                                                                \
+    {                                                                                                                                                      \
+        EntityIdx id = bit;                                                                                                                                \
+        struct rr_simulation_for_each_entity_function_captures *captures = _captures;                                                                      \
+        captures->user_cb(id, captures->user_captures);                                                                                                    \
+    }                                                                                                                                                      \
+    void rr_simulation_for_each_##COMPONENT(struct rr_simulation *this, void *user_captures, void (*cb)(EntityIdx, void *))                                                       \
+    {                                                                                                                                                      \
+        struct rr_simulation_for_each_entity_function_captures captures;                                                                                   \
+        captures.user_cb = cb;                                                                                                                             \
+        captures.user_captures = user_captures;                                                                                                            \
+                                                                                                                                                           \
+        rr_bitset_for_each_bit(&this->COMPONENT##_tracker[0], &this->COMPONENT##_tracker[0] + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, COMPONENT##for_each); \
+    }                                                                                                                                                      \
+                                                                                                                                                           \
+    uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                                                                    \
+    {                                                                                                                                                      \
+        assert(rr_simulation_has_entity(this, entity));                                                                                                    \
+        return rr_bitset_get(this->COMPONENT##_tracker, entity);                                                                                           \
+    }                                                                                                                                                      \
+    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                                           \
+    {                                                                                                                                                      \
+        assert(rr_simulation_has_entity(this, entity));                                                                                                    \
+        rr_bitset_set(this->COMPONENT##_tracker, entity);                                                                                                  \
+        rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity);                                                                            \
+        this->COMPONENT##_components[entity].parent_id = entity;                                                                                           \
+        return rr_simulation_get_##COMPONENT(this, entity);                                                                                                \
+    }                                                                                                                                                      \
+    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                                           \
+    {                                                                                                                                                      \
+        assert(rr_simulation_has_entity(this, entity));                                                                                                    \
+        assert(rr_simulation_has_##COMPONENT(this, entity));                                                                                               \
+        return &this->COMPONENT##_components[entity];                                                                                                      \
     }
 RR_FOR_EACH_COMPONENT;
 #undef XX
