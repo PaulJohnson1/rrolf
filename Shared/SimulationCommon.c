@@ -67,9 +67,9 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 200; i++)
+    for (uint32_t i = 0; i < 12; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, rr_rarity_epic);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, 6 - (rand() % 7));
     }
 #endif
 }

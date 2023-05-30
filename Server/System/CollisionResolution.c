@@ -20,7 +20,9 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_component_physical *physical1 = captures->physical;
     EntityIdx entity1 = physical1->parent_id;
     EntityIdx entity2 = i;
-    struct rr_component_physical *physical2 = rr_simulation_get_physical(captures->simulation, entity2);
+    if (rr_simulation_has_drop(this, entity2))
+        return;
+    struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
 
     struct rr_vector position1 = {physical1->x, physical1->y};
     struct rr_vector position2 = {physical2->x, physical2->y};
