@@ -15,6 +15,8 @@
 
 #include <libwebsockets.h>
 
+static uint8_t outgoing_message[1024 * 1024];
+
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
@@ -46,7 +48,6 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 {
     struct rr_server *server = this->server;
     // 128 KB (not needed but just in case)
-    static uint8_t outgoing_message[128 * 1024];
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, 0, "header");
@@ -83,12 +84,16 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 this->clients[i].socket_handle = socket;
 
                 // send encryption key
-                static uint8_t bytes[1024];
                 struct proto_bug encryption_key_encoder;
-                proto_bug_init(&encryption_key_encoder, bytes);
+                proto_bug_init(&encryption_key_encoder, outgoing_message);
                 proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key, "encryption key");
-                rr_encrypt(bytes, 1024, 1);
-                rr_server_client_write_message(this->clients + i, bytes, 1024);
+                rr_encrypt(outgoing_message, 1024, 1);
+                // TODO:
+                // rr_encrypt(outgoing_message, 1024, 21094093777837637ull);
+                // rr_encrypt(outgoing_message, 1024, 59731158950470853ull);
+                // rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
+                // rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
+                rr_server_client_write_message(this->clients + i, outgoing_message, 1024);
 
                 rr_server_client_create_player_info(this->clients + i);
                 return 0;
@@ -239,7 +244,7 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 1000)
+        if (elapsed_time > 100)
             printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);

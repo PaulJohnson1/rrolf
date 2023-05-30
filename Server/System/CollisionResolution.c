@@ -6,6 +6,15 @@
 #include <Server/Simulation.h>
 #include <Shared/Bitset.h>
 
+static uint8_t system_is_valid_collision(struct rr_simulation *this, EntityIdx a, EntityIdx b)
+{
+    if (a == b)
+        return 0;
+    if (rr_simulation_has_flower(this, a) && rr_simulation_has_petal(this, b))
+        return 0;
+    return 1;
+}
+
 struct colliding_with_captures
 {
     struct rr_simulation *simulation;
@@ -20,6 +29,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_component_physical *physical1 = captures->physical;
     EntityIdx entity1 = physical1->parent_id;
     EntityIdx entity2 = i;
+    if (!system_is_valid_collision(this, entity1, entity2))
+        return;
     struct rr_component_physical *physical2 = rr_simulation_get_physical(captures->simulation, entity2);
 
     struct rr_vector position1 = {physical1->x, physical1->y};
@@ -38,7 +49,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
         rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
         rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
     }
-
+/*
     {
         float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
         float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
@@ -60,15 +71,16 @@ static void colliding_with_function(uint64_t i, void *_captures)
                       parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff + perp2.x,
                       parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff + perp2.y);
     }
+*/
 }
 
 static void system_for_each_function(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
 
-    if (!rr_simulation_has_physical(this, entity))
-        return;
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    if (!physical->has_collisions)
+        return;
 
     struct colliding_with_captures captures;
     captures.physical = physical;
@@ -79,5 +91,5 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
 void rr_system_collision_resolution_tick(struct rr_simulation *this)
 {
-    rr_simulation_for_each_entity(this, this, system_for_each_function);
+    rr_simulation_for_each_physical(this, this, system_for_each_function);
 }

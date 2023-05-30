@@ -2,6 +2,9 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <sys/time.h>
 
 #include <Server/System/Ai.h>
 #include <Server/System/CollisionDetection.h>
@@ -13,6 +16,53 @@
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
+
+void rr_simulation_init(struct rr_simulation *this)
+{
+    memset(this, 0, sizeof *this);
+    // this->hshg = hshg_create(64, 16);
+    // assert(this->hshg);
+    // this->hshg->update = rr_simulation_tick;
+    // hshg_set_size(this->hshg, RR_MAX_ENTITY_COUNT + 1);
+    this->grid = malloc(sizeof *this->grid);
+    rr_spatial_hash_init(this->grid);
+    this->grid->simulation = this;
+    this->arena = rr_simulation_alloc_entity(this);
+    struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
+    rr_component_arena_set_radius(comp, 1650.0f);
+    for (uint32_t i = 0; i < 1000; i++)
+    {
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
+        struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+        float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+        float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+        rr_component_physical_set_x(physical, cos(angle) * distance);
+        rr_component_physical_set_y(physical, sin(angle) * distance);
+        physical->mass = 100.0f;
+    }
+}
+
+EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
+{
+    EntityIdx entity = rr_simulation_alloc_entity(this);
+
+    struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
+    struct rr_component_physical *physical = rr_simulation_add_physical(this, entity);
+    struct rr_component_health *health = rr_simulation_add_health(this, entity);
+    struct rr_component_relations *relations = rr_simulation_add_relations(this, entity);
+    struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
+    // init team elsewhere
+    rr_component_mob_set_id(mob, mob_id);
+    rr_component_mob_set_rarity(mob, rarity_id);
+    struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
+    struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
+    physical->radius = mob_data->radius * rarity_scale->radius;
+    physical->friction = 0.9;
+    rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
+    rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
+    health->damage = mob_data->damage * rarity_scale->damage;
+    return entity;
+}
 
 void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
 {
@@ -27,9 +77,9 @@ void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx
     rr_bitset_set(this->pending_deletions, entity);
 }
 
-// will change later probably
 EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
 {
+    // hshg_insert()
     for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; i++)
     {
         if (!rr_simulation_has_entity(this, i))
@@ -197,19 +247,35 @@ void delete_pending_deletion(uint64_t i, void *captures)
     rr_simulation_free_entity(this, i);
 }
 
+#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
+    {                                                                                              \
+        struct timeval start;                                                                      \
+        struct timeval end;                                                                        \
+        gettimeofday(&start, NULL);                                                                \
+        CODE;                                                                                      \
+        gettimeofday(&end, NULL);                                                                  \
+        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
+        printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                            \
+    }
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    rr_spatial_hash_reset(this->grid);
-    rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
-    rr_system_ai_tick(this);
-    rr_system_collision_detection_tick(this);
-    rr_system_collision_resolution_tick(this);
-    rr_system_petal_behavior_tick(this);
-    rr_system_velocity_tick(this);
-    rr_system_map_boundary_tick(this);
-    rr_system_health_tick(this);
-
     // delete pending deletions
-    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
-    memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+    RR_TIME_BLOCK("deletions", {
+        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
+        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+    });
+    RR_TIME_BLOCK("hash grid reset", {
+        rr_spatial_hash_reset(this->grid);
+    });
+    RR_TIME_BLOCK("protocol state reset", { rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function); });
+    RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
+    RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
+    RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
+    RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
+    RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
+    RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
+    RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
+    puts("\n\n\n");
+
 }

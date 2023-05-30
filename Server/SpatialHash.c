@@ -1,55 +1,69 @@
 #include <string.h>
 
 #include <Server/SpatialHash.h>
+#include <Shared/SimulationCommon.h>
+#include <Shared/Bitset.h>
 
-#define SPATIAL_HASH_GRID_SIZE 3;
+#define SPATIAL_HASH_GRID_SIZE 6
+#define HASH_FUNCTION(X, Y) (Y + 73 * X)
 
 void rr_spatial_hash_init(struct rr_spatial_hash *this)
 {
     memset(this, 0, sizeof *this);
 }
 
-void rr_spatial_hash_insert(struct rr_spatial_hash *this, struct rr_spatial_hash_entity entity, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
 {
-    uint32_t s_x = x >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t s_y = y >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t e_x = (x + w) >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t e_y = (y + h) >> SPATIAL_HASH_GRID_SIZE;
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    uint32_t x = (uint32_t)(physical->x);
+    uint32_t y = (uint32_t)(physical->y);
+    uint32_t w = (uint32_t)(physical->radius);
+    uint32_t h = w;
 
-    for (uint32_t y = s_y; y < e_y; y++)
-        for (uint32_t x = s_x; x < e_x; x++)
+    uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+
+    for (uint32_t y = s_y; y <= e_y; y++)
+        for (uint32_t x = s_x; x <= e_x; x++)
         {
-            uint32_t hash = (y * 123123 + x) % RR_SPATIAL_HASH_CELL_COUNT;
+            uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
             struct rr_spatial_hash_cell *cell = this->cells + hash;
-            cell->entities[cell->entities_in_use].id = entity.id;
+            cell->entities[cell->entities_in_use].id = entity;
             cell->entities_in_use++;
         }
 }
 
-void rr_spatial_hash_query(struct rr_spatial_hash *this, uint32_t x, uint32_t y, uint32_t w, uint32_t h, EntityIdx *output, uint64_t *output_size)
-{
-    uint32_t s_x = x >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t s_y = y >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t e_x = (x + w) >> SPATIAL_HASH_GRID_SIZE;
-    uint32_t e_y = (y + h) >> SPATIAL_HASH_GRID_SIZE;
 
-    for (uint32_t y = s_y; y < e_y; y++)
-        for (uint32_t x = s_x; x < e_x; x++)
+void rr_spatial_hash_query(struct rr_spatial_hash *restrict this, float fx, float fy, float fw, float fh, uint8_t *restrict output)
+{
+    uint32_t x = fx;
+    uint32_t y = fy;
+    uint32_t w = fw;
+    uint32_t h = fh;
+    // should not take in an entity id like insert does. the reason is so stuff like ai can query a large radius without a viewing entity
+    uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+
+    for (uint32_t y = s_y; y <= e_y; y++)
+        for (uint32_t x = s_x; x <= e_x; x++)
         {
-            uint32_t hash = (y * 123123 + x) % RR_SPATIAL_HASH_CELL_COUNT;
+            uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
             struct rr_spatial_hash_cell *cell = this->cells + hash;
             for (uint64_t i = 0; i < cell->entities_in_use; i++)
             {
-                if (cell->entities[i].query_id != this->query_id)
-                {
-                    cell->entities[i].query_id = this->query_id;
-                    output[*output_size] = cell->entities[i].id;
-                    ++*output_size;
-                }
+                rr_bitset_set(output, cell->entities[i].id);
+                // if (cell->entities[i].query_id != this->query_id)
+                // {
+                //     cell->entities[i].query_id = this->query_id;
+                //     output[*output_size] = cell->entities[i].id;
+                //     ++*output_size;
+                // }
             }
         }
-
-    this->query_id++;
 }
 
 void rr_spatial_hash_reset(struct rr_spatial_hash *this)
@@ -465,12 +479,13 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *this)
 
 // int
 // _hshg_insert(_hshg* const hshg, const _hshg_pos_t x _2D(, const _hshg_pos_t y)
-//     _3D(, const _hshg_pos_t z), const _hshg_pos_t r, const _hshg_entity_t ref)
+//     _3D(, const _hshg_pos_t z), const _hshg_pos_t r, const _hshg_entity_t ref, _hshg_entity_t *return_value)
 // {
 //     assert(!hshg->calling &&
 //         "hshg_insert() may not be called from any callback");
 
 //     const _hshg_entity_t idx = hshg_get_entity(hshg);
+//     *return_value = idx;
 
 //     if(idx == 0)
 //     {
@@ -569,7 +584,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *this)
 // }
 
 // void
-// _hshg_update(_hshg* const hshg)
+// _hshg_update(_hshg* const hshg, void *captures)
 // {
 //     assert(hshg->update);
 //     assert(!hshg->calling &&
@@ -590,7 +605,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *this)
 //             continue;
 //         }
 
-//         hshg->update(hshg, entity);
+//         hshg->update(hshg, entity, captures);
 //     }
 
 // #undef i

@@ -17,4 +17,4 @@ typedef uint16_t EntityIdx;
     XX(physical,    7)        \
     XX(player_info, 8)        \
     XX(relations,   9)        \
-    XX(projectile, 10)
+    XX(projectile, 10)        

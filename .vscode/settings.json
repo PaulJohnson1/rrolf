@@ -120,7 +120,8 @@
         "stdlib.h": "c",
         "alloca.h": "c",
         "time.h": "c",
-        "projectile.h": "c"
+        "projectile.h": "c",
+        "spatialhash.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"

@@ -1,0 +1,1283 @@
+--------------------------------------------------------------------------------
+Profile data file 'callgrind.out.1353754' (creator: callgrind-3.18.1)
+--------------------------------------------------------------------------------
+I1 cache: 
+D1 cache: 
+LL cache: 
+Timerange: Basic block 0 - 203543414
+Trigger: Program termination
+Profiled target:  ./a.out (PID 1353754, part 1)
+Events recorded:  Ir
+Events shown:     Ir
+Event sort order: Ir
+Thresholds:       99
+Include dirs:     
+User annotated:   
+Auto-annotation:  on
+
+--------------------------------------------------------------------------------
+Ir                   
+--------------------------------------------------------------------------------
+709,253,040 (100.0%)  PROGRAM TOTALS
+
+--------------------------------------------------------------------------------
+Ir                    file:function
+--------------------------------------------------------------------------------
+344,207,834 (48.53%)  ../Shared/Bitset.c:rr_bitset_for_each_bit'2 [/root/rrolf/Server/a.out]
+ 74,096,497 (10.45%)  ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms [/usr/lib/x86_64-linux-gnu/libc.so.6]
+ 66,274,673 ( 9.34%)  System/CollisionDetection.c:hash_grid_filter_candidates [/root/rrolf/Server/a.out]
+ 38,098,195 ( 5.37%)  SpatialHash.c:rr_spatial_hash_query [/root/rrolf/Server/a.out]
+ 36,498,609 ( 5.15%)  ../Shared/Bitset.c:rr_bitset_set [/root/rrolf/Server/a.out]
+ 31,254,468 ( 4.41%)  ../Shared/Bitset.c:rr_bitset_get [/root/rrolf/Server/a.out]
+ 20,090,364 ( 2.83%)  ../Shared/SimulationCommon.c:rr_simulation_get_physical [/root/rrolf/Server/a.out]
+  8,915,959 ( 1.26%)  ../Shared/Bitset.c:rr_bitset_for_each_bit [/root/rrolf/Server/a.out]
+  8,178,170 ( 1.15%)  ../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function [/root/rrolf/Server/a.out]
+  7,021,014 ( 0.99%)  ../Shared/SimulationCommon.c:rr_simulation_has_entity [/root/rrolf/Server/a.out]
+  6,767,447 ( 0.95%)  SpatialHash.c:rr_spatial_hash_insert [/root/rrolf/Server/a.out]
+  6,532,526 ( 0.92%)  Simulation.c:rr_simulation_alloc_entity [/root/rrolf/Server/a.out]
+  3,873,225 ( 0.55%)  ../Shared/SimulationCommon.c:rr_simulation_has_physical [/root/rrolf/Server/a.out]
+  3,485,795 ( 0.49%)  Simulation.c:rr_simulation_tick_entity_resetter_function [/root/rrolf/Server/a.out]
+  2,861,220 ( 0.40%)  ../Shared/SimulationCommon.c:rr_simulation_has_health [/root/rrolf/Server/a.out]
+  2,451,000 ( 0.35%)  ../Shared/SimulationCommon.c:physicalfor_each [/root/rrolf/Server/a.out]
+  2,345,994 ( 0.33%)  System/CollisionResolution.c:colliding_with_function [/root/rrolf/Server/a.out]
+  2,150,645 ( 0.30%)  System/Velocity.c:rr_system_velocity_foreach_function [/root/rrolf/Server/a.out]
+  2,076,000 ( 0.29%)  ../Shared/SimulationCommon.c:rr_simulation_get_health [/root/rrolf/Server/a.out]
+  1,828,454 ( 0.26%)  System/Ai.c:system_for_each_function [/root/rrolf/Server/a.out]
+  1,827,826 ( 0.26%)  ../Shared/Component/Physical.c:rr_component_physical_set_x [/root/rrolf/Server/a.out]
+  1,827,826 ( 0.26%)  ../Shared/Component/Physical.c:rr_component_physical_set_y [/root/rrolf/Server/a.out]
+  1,806,000 ( 0.25%)  System/CollisionDetection.c:system_find_collisions [/root/rrolf/Server/a.out]
+  1,763,731 ( 0.25%)  System/Health.c:system_for_each_function [/root/rrolf/Server/a.out]
+  1,569,930 ( 0.22%)  ../Shared/SimulationCommon.c:rr_simulation_has_flower [/root/rrolf/Server/a.out]
+  1,353,940 ( 0.19%)  System/MapBoundary.c:rr_system_map_boundary_foreach_function [/root/rrolf/Server/a.out]
+  1,333,731 ( 0.19%)  System/Health.c:system_default_idle_heal [/root/rrolf/Server/a.out]
+  1,320,000 ( 0.19%)  ../Shared/Component/Health.c:rr_component_health_set_health [/root/rrolf/Server/a.out]
+  1,308,347 ( 0.18%)  System/CollisionResolution.c:system_for_each_function [/root/rrolf/Server/a.out]
+  1,291,290 ( 0.18%)  ../Shared/SimulationCommon.c:rr_simulation_has_ai [/root/rrolf/Server/a.out]
+  1,291,290 ( 0.18%)  ../Shared/SimulationCommon.c:rr_simulation_has_petal [/root/rrolf/Server/a.out]
+  1,291,290 ( 0.18%)  ../Shared/SimulationCommon.c:rr_simulation_has_player_info [/root/rrolf/Server/a.out]
+  1,260,960 ( 0.18%)  ../Shared/Vector.c:rr_vector_add [/root/rrolf/Server/a.out]
+  1,204,000 ( 0.17%)  System/CollisionDetection.c:system_reset_colliding_with [/root/rrolf/Server/a.out]
+  1,118,000 ( 0.16%)  ../Shared/Vector.c:rr_vector_set [/root/rrolf/Server/a.out]
+  1,109,146 ( 0.16%)  ../Shared/Vector.c:rr_vector_get_magnitude [/root/rrolf/Server/a.out]
+  1,044,000 ( 0.15%)  ../Shared/SimulationCommon.c:rr_simulation_get_ai [/root/rrolf/Server/a.out]
+  1,038,498 ( 0.15%)  ../Shared/Vector.c:rr_vector_from_polar [/root/rrolf/Server/a.out]
+    989,731 ( 0.14%)  System/Health.c:system_deletion_for_each_function [/root/rrolf/Server/a.out]
+    974,856 ( 0.14%)  ../Shared/SimulationCommon.c:rr_simulation_get_relations [/root/rrolf/Server/a.out]
+    817,000 ( 0.12%)  System/CollisionDetection.c:system_insert_entities [/root/rrolf/Server/a.out]
+    688,903 ( 0.10%)  System/Health.c:colliding_with_function [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  ../Shared/SimulationCommon.c:rr_simulation_has_arena [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  ../Shared/SimulationCommon.c:rr_simulation_has_mob [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  ../Shared/SimulationCommon.c:rr_simulation_has_projectile [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  ../Shared/SimulationCommon.c:rr_simulation_has_relations [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  System/PetalBehavior.c:rr_system_petal_behavior_petal_movement_foreach_function [/root/rrolf/Server/a.out]
+    645,645 ( 0.09%)  System/PetalBehavior.c:rr_system_petal_reload_foreach_function [/root/rrolf/Server/a.out]
+    627,830 ( 0.09%)  ../Shared/Vector.c:rr_vector_scale [/root/rrolf/Server/a.out]
+    558,302 ( 0.08%)  ./elf/./elf/dl-lookup.c:do_lookup_x [/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2]
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: ../Shared/Component/Physical.c
+--------------------------------------------------------------------------------
+Ir                 
+
+-- line 10 ----------------------------------------
+        .               state_flags_y =             0b000010,
+        .               state_flags_angle =         0b000100,
+        .               state_flags_radius =        0b001000,
+        .               state_flags_deletion_tick = 0b010000,
+        .               state_flags_all =           0b011111
+        .           };
+        .           
+        .           void rr_component_physical_init(struct rr_component_physical *this)
+    4,000 ( 0.00%)  {
+    5,000 ( 0.00%)      memset(this, 0, sizeof *this);
+   36,000 ( 0.01%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (1,000x)
+    3,000 ( 0.00%)      RR_SERVER_ONLY(this->mass = 1;)
+    3,000 ( 0.00%)  }
+        .           
+        .           void rr_component_physical_free(struct rr_component_physical *this, struct rr_simulation *simulation)
+        .           {
+        .           }
+        .           
+        .           #ifdef RR_SERVER
+        .           void rr_component_physical_write(struct rr_component_physical *this, struct proto_bug *encoder, int is_creation)
+        .           {
+-- line 29 ----------------------------------------
+-- line 31 ----------------------------------------
+        .               proto_bug_write_varuint(encoder, state, "physical component state");
+        .               RR_ENCODE_PUBLIC_FIELD(x, float32);
+        .               RR_ENCODE_PUBLIC_FIELD(y, float32);
+        .               RR_ENCODE_PUBLIC_FIELD(angle, float32);
+        .               RR_ENCODE_PUBLIC_FIELD(radius, float32);
+        .               RR_ENCODE_PUBLIC_FIELD(deletion_tick, uint8);
+        .           }
+        .           
+1,827,826 ( 0.26%)  RR_DEFINE_PUBLIC_FIELD(physical, float, x)
+1,827,826 ( 0.26%)  RR_DEFINE_PUBLIC_FIELD(physical, float, y)
+   22,000 ( 0.00%)  RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
+        .           RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
+        .           RR_DEFINE_PUBLIC_FIELD(physical, uint32_t, deletion_tick)
+        .           #endif
+        .           
+        .           #ifdef RR_CLIENT
+        .           void rr_component_physical_read(struct rr_component_physical *this, struct proto_bug *encoder)
+        .           {
+        .               uint64_t state = proto_bug_read_varuint(encoder, "physical component state");
+-- line 49 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/Ai.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 5 ----------------------------------------
+      .           #include <assert.h>
+      .           
+      .           #include <Server/Simulation.h>
+      .           #include <Shared/Entity.h>
+      .           #include <Shared/Vector.h>
+      .           #include <Shared/Component/Physical.h>
+      .           
+      .           static void system_for_each_function(EntityIdx entity, void *simulation)
+258,258 ( 0.04%)  {
+ 86,086 ( 0.01%)      struct rr_simulation *this = simulation;
+215,215 ( 0.03%)      if (!rr_simulation_has_ai(this, entity))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_ai (43,043x)
+     43 ( 0.00%)          return;
+172,000 ( 0.02%)      struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_ai (43,000x)
+      .           
+      .               // idle tick
+      .               {
+172,000 ( 0.02%)          struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+129,000 ( 0.02%)          if (ai->ai_state == rr_ai_state_idle_moving)
+      .                   {
+      .                       struct rr_vector accel;
+179,050 ( 0.03%)              rr_vector_from_polar(&accel, 0.5f, physical->angle);
+3,376,730 ( 0.48%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_from_polar (35,810x)
+143,240 ( 0.02%)              rr_vector_add(&physical->acceleration, &accel);
+572,960 ( 0.08%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_add (35,810x)
+      .                   }
+      .           
+129,000 ( 0.02%)          if (ai->ticks_until_next_action == 0)
+      .                   {
+  5,121 ( 0.00%)              if (ai->ai_state == rr_ai_state_idle)
+      .                       {
+      .                           // move for 50 ticks
+  2,000 ( 0.00%)                  ai->ai_state = rr_ai_state_idle_moving;
+  8,000 ( 0.00%)                  ai->ticks_until_next_action = rand() % 25 + 25;
+ 57,872 ( 0.01%)  => ./stdlib/./stdlib/rand.c:rand (1,000x)
+      .           
+ 15,000 ( 0.00%)                  rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
+ 57,868 ( 0.01%)  => ./stdlib/./stdlib/rand.c:rand (1,000x)
+ 22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_angle (1,000x)
+  1,000 ( 0.00%)              }
+  2,121 ( 0.00%)              else if (ai->ai_state == rr_ai_state_idle_moving)
+      .                       {
+      .                           // stay still for 75 ticks
+  1,414 ( 0.00%)                  ai->ai_state = rr_ai_state_idle;
+  5,656 ( 0.00%)                  ai->ticks_until_next_action = rand() % 25 + 50;
+ 40,918 ( 0.01%)  => ./stdlib/./stdlib/rand.c:rand (707x)
+    707 ( 0.00%)              }
+      .                       else
+      .                       {
+      .                           RR_UNREACHABLE("oops");
+      .                       }
+  1,707 ( 0.00%)          }
+      .           
+172,000 ( 0.02%)          ai->ticks_until_next_action--;
+      .               }
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_ai_tick(struct rr_simulation *simulation)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(simulation, simulation, system_for_each_function);
+10,034,191 ( 1.41%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+    707 ( 0.00%)  <counts for unidentified lines in System/Ai.c>
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/Velocity.c
+--------------------------------------------------------------------------------
+Ir               
+
+      .           #include <Server/System/Velocity.h>
+      .           
+      .           #include <Server/Simulation.h>
+      .           
+      .           #include <Shared/Entity.h>
+      .           #include <Shared/Vector.h>
+      .           
+      .           void rr_system_velocity_foreach_function(EntityIdx id, void *simulation)
+258,258 ( 0.04%)  {
+215,215 ( 0.03%)      if (!rr_simulation_has_physical(simulation, id))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,043x)
+     43 ( 0.00%)          return;
+172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+215,000 ( 0.03%)      rr_vector_scale(&physical->velocity, physical->friction);
+602,000 ( 0.08%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_scale (43,000x)
+215,000 ( 0.03%)      rr_vector_add(&physical->velocity, &physical->acceleration);
+688,000 ( 0.10%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_add (43,000x)
+258,000 ( 0.04%)      rr_component_physical_set_x(physical, physical->x + physical->velocity.x);
+946,000 ( 0.13%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_x (43,000x)
+258,000 ( 0.04%)      rr_component_physical_set_y(physical, physical->y + physical->velocity.y);
+946,000 ( 0.13%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_y (43,000x)
+215,000 ( 0.03%)      if (rr_simulation_has_flower(simulation, id))
+1,548,000 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_flower (43,000x)
+      .                   if (physical->acceleration.x != 0.0f || physical->acceleration.y != 0.0f)
+      .                       rr_component_flower_set_eye_angle(rr_simulation_get_flower(simulation, id), rr_vector_theta(&physical->acceleration));
+215,000 ( 0.03%)      rr_vector_set(&physical->acceleration, 0, 0);
+559,000 ( 0.08%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_set (43,000x)
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_velocity_tick(struct rr_simulation *simulation)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(simulation, simulation, rr_system_velocity_foreach_function);
+11,001,034 ( 1.55%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/Health.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 8 ----------------------------------------
+      .           
+      .           struct colliding_with_captures
+      .           {
+      .               struct rr_simulation *simulation;
+      .               struct rr_component_health *health;
+      .           };
+      .           
+      .           static void system_default_idle_heal(EntityIdx entity, void *captures)
+258,258 ( 0.04%)  {
+ 86,086 ( 0.01%)      struct rr_simulation *this = captures;
+215,215 ( 0.03%)      if (!rr_simulation_has_health(this, entity))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_health (43,043x)
+     43 ( 0.00%)          return;
+172,000 ( 0.02%)      struct rr_component_health *health = rr_simulation_get_health(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_health (43,000x)
+      .               // heal 1% of max hp per second (0.0004 is 0.01 / 25)
+473,000 ( 0.07%)      rr_component_health_set_health(health, health->health + health->max_health * 0.0004);
+1,290,000 ( 0.18%)  => /root/rrolf/Server/../Shared/Component/Health.c:rr_component_health_set_health (43,000x)
+129,129 ( 0.02%)  }
+      .           
+      .           static void colliding_with_function(uint64_t i, void *_captures)
+ 93,095 ( 0.01%)  {
+ 37,238 ( 0.01%)      struct colliding_with_captures *captures = _captures;
+ 55,857 ( 0.01%)      struct rr_simulation *this = captures->simulation;
+ 74,476 ( 0.01%)      EntityIdx entity1 = captures->health->parent_id;
+ 37,238 ( 0.01%)      EntityIdx entity2 = i;
+ 93,095 ( 0.01%)      if (!rr_simulation_has_health(this, entity2))
+670,284 ( 0.09%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_health (18,619x)
+      .                   return;
+223,428 ( 0.03%)      if (rr_simulation_get_relations(this, entity2)->team == rr_simulation_get_relations(this, entity1)->team)
+446,856 ( 0.06%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_relations (37,238x)
+ 18,619 ( 0.00%)          return;
+      .               struct rr_component_health *health1 = captures->health;
+      .               struct rr_component_health *health2 = rr_simulation_get_health(this, entity2);
+      .               rr_component_health_set_health(health1, health1->health - health2->damage);
+      .               rr_component_health_set_health(health2, health2->health - health1->damage);
+ 55,857 ( 0.01%)  }
+      .           
+      .           static void system_for_each_function(EntityIdx entity, void *_captures)
+258,258 ( 0.04%)  {
+ 86,086 ( 0.01%)      struct rr_simulation *this = _captures;
+      .           
+215,215 ( 0.03%)      if (!rr_simulation_has_physical(this, entity))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,043x)
+     43 ( 0.00%)          return;
+215,000 ( 0.03%)      if (!rr_simulation_has_health(this, entity))
+1,548,000 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_health (43,000x)
+      .                   return;
+172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+172,000 ( 0.02%)      struct rr_component_health *health = rr_simulation_get_health(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_health (43,000x)
+      .           
+      .               struct colliding_with_captures captures;
+ 86,000 ( 0.01%)      captures.health = health;
+ 86,000 ( 0.01%)      captures.simulation = this;
+      .           
+344,000 ( 0.05%)      rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
+113,441,898 (15.99%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_for_each_bit'2 (43,000x)
+129,129 ( 0.02%)  }
+      .           
+      .           static void system_deletion_for_each_function(EntityIdx entity, void *_captures)
+258,258 ( 0.04%)  {
+ 86,086 ( 0.01%)      struct rr_simulation *this = _captures;
+215,215 ( 0.03%)      if (!rr_simulation_has_health(this, entity))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_health (43,043x)
+     43 ( 0.00%)          return;
+301,000 ( 0.04%)      if (rr_simulation_get_health(this, entity)->health == 0)
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_health (43,000x)
+      .                   rr_simulation_request_entity_deletion(this, entity);
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_health_tick(struct rr_simulation *this)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(this, this, system_default_idle_heal);
+6,185,120 ( 0.87%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    172 ( 0.00%)      rr_simulation_for_each_entity(this, this, system_for_each_function);
+120,831,018 (17.04%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    172 ( 0.00%)      rr_simulation_for_each_entity(this, this, system_deletion_for_each_function);
+4,551,120 ( 0.64%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: ../Shared/SimulationCommon.c
+--------------------------------------------------------------------------------
+Ir                  
+
+-- line 24 ----------------------------------------
+         .               RR_FOR_EACH_COMPONENT;
+         .           #undef XX
+         .           
+         .               // unset entity
+         .               rr_bitset_unset(this->entity_tracker, entity);
+         .           }
+         .           
+         .           int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
+ 3,009,006 ( 0.42%)  {
+ 4,012,008 ( 0.57%)      return rr_bitset_get(this->entity_tracker, entity);
+10,531,521 ( 1.48%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_get (501,501x)
+         .           }
+         .           
+         .           struct rr_simulation_for_each_entity_function_captures
+         .           {
+         .               void (*user_cb)(EntityIdx, void *);
+         .               void *user_captures;
+         .           };
+         .           
+         .           // used to convert the uint64_t index that rr_bitset_for_each_bit into an EntityIdx for the user
+         .           void rr_simulation_for_each_entity_function(uint64_t _id, void *_captures)
+ 2,152,150 ( 0.30%)  {
+   860,860 ( 0.12%)      EntityIdx id = _id;
+   860,860 ( 0.12%)      struct rr_simulation_for_each_entity_function_captures *captures = _captures;
+         .           
+ 3,013,010 ( 0.42%)      captures->user_cb(id, captures->user_captures);
+119,335,177 (16.83%)  => /root/rrolf/Server/System/Health.c:system_for_each_function (43,043x)
+74,595,123 (10.52%)  => /root/rrolf/Server/System/CollisionResolution.c:system_for_each_function (43,043x)
+21,561,791 ( 3.04%)  => /root/rrolf/Server/Simulation.c:rr_simulation_tick_entity_resetter_function (43,043x)
+ 9,505,193 ( 1.34%)  => /root/rrolf/Server/System/Velocity.c:rr_system_velocity_foreach_function (43,043x)
+ 8,538,350 ( 1.20%)  => /root/rrolf/Server/System/Ai.c:system_for_each_function (43,043x)
+ 5,269,918 ( 0.74%)  => /root/rrolf/Server/System/MapBoundary.c:rr_system_map_boundary_foreach_function (43,043x)
+ 4,689,279 ( 0.66%)  => /root/rrolf/Server/System/Health.c:system_default_idle_heal (43,043x)
+ 3,055,279 ( 0.43%)  => /root/rrolf/Server/System/Health.c:system_deletion_for_each_function (43,043x)
+ 2,195,193 ( 0.31%)  => /root/rrolf/Server/System/PetalBehavior.c:rr_system_petal_reload_foreach_function (43,043x)
+ 2,195,193 ( 0.31%)  => /root/rrolf/Server/System/PetalBehavior.c:rr_system_petal_behavior_petal_movement_foreach_function (43,043x)
+ 1,291,290 ( 0.18%)  }
+         .           
+         .           void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captures, void (*cb)(EntityIdx, void *))
+     2,580 ( 0.00%)  {
+         .               struct rr_simulation_for_each_entity_function_captures captures;
+       860 ( 0.00%)      captures.user_cb = cb;
+       860 ( 0.00%)      captures.user_captures = user_captures;
+         .           
+     2,580 ( 0.00%)      rr_bitset_for_each_bit(&this->entity_tracker[0], &this->entity_tracker[0] + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_for_each_entity_function);
+265,890,736 (37.49%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_for_each_bit (430x)
+     1,290 ( 0.00%)  }
+         .           
+         .           #define XX(COMPONENT, ID)                                                                                                                                  \
+         .               void COMPONENT##for_each(uint64_t bit, void *_captures)                                                                                                \
+         .               {                                                                                                                                                      \
+         .                   EntityIdx id = bit;                                                                                                                                \
+         .                   struct rr_simulation_for_each_entity_function_captures *captures = _captures;                                                                      \
+         .                   captures->user_cb(id, captures->user_captures);                                                                                                    \
+         .               }                                                                                                                                                      \
+-- line 66 ----------------------------------------
+-- line 87 ----------------------------------------
+         .                   return rr_simulation_get_##COMPONENT(this, entity);                                                                                                \
+         .               }                                                                                                                                                      \
+         .               struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                                           \
+         .               {                                                                                                                                                      \
+         .                   assert(rr_simulation_has_entity(this, entity));                                                                                                    \
+         .                   assert(rr_simulation_has_##COMPONENT(this, entity));                                                                                               \
+         .                   return &this->COMPONENT##_components[entity];                                                                                                      \
+         .               }
+42,083,313 ( 5.93%)  RR_FOR_EACH_COMPONENT;
+ 1,807,806 ( 0.25%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_get (86,086x)
+         .           #undef XX
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: ../Shared/Vector.c
+--------------------------------------------------------------------------------
+Ir               
+
+      .           #include <Shared/Vector.h>
+      .           
+      .           #include <math.h>
+      .           
+      .           void rr_vector_set(struct rr_vector *this, float x, float y)
+430,000 ( 0.06%)  {
+258,000 ( 0.04%)      this->x = x;
+258,000 ( 0.04%)      this->y = y;
+172,000 ( 0.02%)  }
+      .           
+      .           void rr_vector_add(struct rr_vector *this, struct rr_vector *right)
+315,240 ( 0.04%)  {
+394,050 ( 0.06%)      this->x += right->x;
+394,050 ( 0.06%)      this->y += right->y;
+157,620 ( 0.02%)  }
+      .           
+      .           void rr_vector_sub(struct rr_vector *this, struct rr_vector *right)
+      .           {
+      .               this->x -= right->x;
+      .               this->y -= right->y;
+      .           }
+      .           
+      .           void rr_vector_scale(struct rr_vector *this, float v)
+179,380 ( 0.03%)  {
+179,380 ( 0.03%)      this->x *= v;
+179,380 ( 0.03%)      this->y *= v;
+ 89,690 ( 0.01%)  }
+      .           
+      .           int rr_vector_equals(struct rr_vector *this, struct rr_vector *other)
+      .           {
+      .               return this->x == other->x && this->y == other->y;
+      .           }
+      .           
+      .           void rr_vector_normalize(struct rr_vector *this)
+      .           {
+      .               rr_vector_scale(this, 1 / sqrtf(this->x*this->x+this->y*this->y));
+      .           }
+      .           
+      .           void rr_vector_set_magnitude(struct rr_vector *this, float mag)
+  9,225 ( 0.00%)  {
+ 36,900 ( 0.01%)      rr_vector_scale(this, mag / sqrtf(this->x*this->x+this->y*this->y));
+ 25,830 ( 0.00%)  => ../Shared/Vector.c:rr_vector_scale (1,845x)
+ 14,760 ( 0.00%)  => ./math/./math/w_sqrtf_compat.c:sqrtf (1,845x)
+  5,535 ( 0.00%)  }
+      .           
+      .           float rr_vector_get_magnitude(struct rr_vector *this)
+246,476 ( 0.03%)  {
+862,670 ( 0.12%)      return sqrtf(this->x*this->x+this->y*this->y);
+492,952 ( 0.07%)  => ./math/./math/w_sqrtf_compat.c:sqrtf (61,619x)
+    660 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (1x)
+      .           }
+      .           
+      .           float rr_vector_theta(struct rr_vector *this)
+      .           {
+      .               return atan2f(this->y, this->x);
+      .           }
+      .           
+      .           void rr_vector_from_polar(struct rr_vector *this, float radius, float angle)
+214,860 ( 0.03%)  {
+358,104 ( 0.05%)      this->x = radius * cosf(angle);
+1,155,309 ( 0.16%)  => ./math/../sysdeps/ieee754/flt-32/s_cosf.c:__cosf_fma (35,810x)
+    689 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (1x)
+358,104 ( 0.05%)      this->y = radius * sinf(angle);
+1,181,545 ( 0.17%)  => ./math/../sysdeps/ieee754/flt-32/s_sinf.c:__sinf_fma (35,810x)
+    689 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (1x)
+107,430 ( 0.02%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: ../Shared/Component/Health.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 10 ----------------------------------------
+      .           {
+      .               state_flags_health =     0b000001,
+      .               state_flags_max_health = 0b000010,
+      .               state_flags_hidden =     0b000010,
+      .               state_flags_all =        0b000111
+      .           };
+      .           
+      .           void rr_component_health_init(struct rr_component_health *this)
+  4,000 ( 0.00%)  {
+  5,000 ( 0.00%)      memset(this, 0, sizeof *this);
+ 12,000 ( 0.00%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (1,000x)
+  3,000 ( 0.00%)  }
+      .           
+      .           void rr_component_health_free(struct rr_component_health *this, struct rr_simulation *simulation)
+      .           {
+      .           }
+      .           
+      .           #ifdef RR_SERVER
+      .           void rr_component_health_write(struct rr_component_health *this, struct proto_bug *encoder, int is_creation)
+      .           {
+-- line 28 ----------------------------------------
+-- line 29 ----------------------------------------
+      .               uint64_t state = this->protocol_state | (state_flags_all * is_creation);
+      .               proto_bug_write_varuint(encoder, state, "health component state");
+      .               RR_ENCODE_PUBLIC_FIELD(health, float32);
+      .               RR_ENCODE_PUBLIC_FIELD(max_health, float32);
+      .               RR_ENCODE_PUBLIC_FIELD(hidden, uint8);
+      .           }
+      .           
+      .           void rr_component_health_set_health(struct rr_component_health *this, float v)
+176,000 ( 0.02%)  {
+176,000 ( 0.02%)      if (v > this->max_health)
+172,000 ( 0.02%)          v = this->max_health;
+  3,000 ( 0.00%)      else if (v < 0)
+      .                   v = 0;
+572,000 ( 0.08%)      this->protocol_state |= (v != this->health) * state_flags_health;
+132,000 ( 0.02%)      this->health = v;
+ 88,000 ( 0.01%)  }
+      .           
+ 22,000 ( 0.00%)  RR_DEFINE_PUBLIC_FIELD(health, float, max_health)
+      .           RR_DEFINE_PUBLIC_FIELD(health, uint8_t, hidden)
+      .           
+      .           #endif
+      .           
+      .           #ifdef RR_CLIENT
+      .           void rr_component_health_read(struct rr_component_health *this, struct proto_bug *encoder)
+      .           {
+      .               uint64_t state = proto_bug_read_varuint(encoder, "health component state");
+-- line 54 ----------------------------------------
+
+  1,000 ( 0.00%)  <counts for unidentified lines in ../Shared/Component/Health.c>
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: Simulation.c
+--------------------------------------------------------------------------------
+Ir                 
+
+-- line 12 ----------------------------------------
+        .           #include <Server/System/MapBoundary.h>
+        .           #include <Server/System/PetalBehavior.h>
+        .           #include <Server/System/Velocity.h>
+        .           #include <Server/SpatialHash.h>
+        .           #include <Shared/Bitset.h>
+        .           #include <Shared/pb.h>
+        .           
+        .           void rr_simulation_init(struct rr_simulation *this)
+        4 ( 0.00%)  {
+        5 ( 0.00%)      memset(this, 0, sizeof *this);
+3,607,585 ( 0.51%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (1x)
+        .               // this->hshg = hshg_create(64, 16);
+        .               // assert(this->hshg);
+        .               // this->hshg->update = rr_simulation_tick;
+        .               // hshg_set_size(this->hshg, RR_MAX_ENTITY_COUNT + 1);
+        6 ( 0.00%)      this->grid = malloc(sizeof *this->grid);
+      290 ( 0.00%)  => ./malloc/./malloc/malloc.c:malloc (1x)
+        3 ( 0.00%)      rr_spatial_hash_init(this->grid);
+1,049,637 ( 0.15%)  => /root/rrolf/Server/SpatialHash.c:rr_spatial_hash_init (1x)
+        4 ( 0.00%)      this->grid->simulation = this;
+        5 ( 0.00%)      this->arena = rr_simulation_alloc_entity(this);
+      979 ( 0.00%)  => Simulation.c:rr_simulation_alloc_entity (1x)
+        5 ( 0.00%)      struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
+       84 ( 0.00%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_arena (1x)
+        3 ( 0.00%)      rr_component_arena_set_radius(comp, 1650.0f);
+       22 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Arena.c:rr_component_arena_set_radius (1x)
+    6,003 ( 0.00%)      for (uint32_t i = 0; i < 1000; i++)
+        .               {
+    5,000 ( 0.00%)          EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
+25,664,002 ( 3.62%)  => Simulation.c:rr_simulation_alloc_mob (1,000x)
+    4,000 ( 0.00%)          struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+   12,000 ( 0.00%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (1,000x)
+   12,008 ( 0.00%)          float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+   57,872 ( 0.01%)  => ./stdlib/./stdlib/rand.c:rand (1,000x)
+    8,000 ( 0.00%)  => ./math/./math/w_sqrt_compat.c:sqrt (1,000x)
+    1,427 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (2x)
+   12,000 ( 0.00%)          float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+   57,872 ( 0.01%)  => ./stdlib/./stdlib/rand.c:rand (1,000x)
+   12,004 ( 0.00%)          rr_component_physical_set_x(physical, cos(angle) * distance);
+   92,842 ( 0.01%)  => ./math/../sysdeps/ieee754/dbl-64/s_sin.c:__cos_fma (1,000x)
+   22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_x (1,000x)
+      641 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (1x)
+   12,004 ( 0.00%)          rr_component_physical_set_y(physical, sin(angle) * distance);
+   91,090 ( 0.01%)  => ./math/../sysdeps/ieee754/dbl-64/s_sin.c:__sin_fma (1,000x)
+   22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_y (1,000x)
+      633 ( 0.00%)  => ./elf/../sysdeps/x86_64/dl-trampoline.h:_dl_runtime_resolve_xsave (1x)
+    3,000 ( 0.00%)          physical->mass = 100.0f;
+        .               }
+        3 ( 0.00%)  }
+        .           
+        .           EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
+    6,000 ( 0.00%)  {
+    3,000 ( 0.00%)      EntityIdx entity = rr_simulation_alloc_entity(this);
+25,041,002 ( 3.53%)  => Simulation.c:rr_simulation_alloc_entity (1,000x)
+        .           
+    4,000 ( 0.00%)      struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
+   84,000 ( 0.01%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_mob (1,000x)
+    4,000 ( 0.00%)      struct rr_component_physical *physical = rr_simulation_add_physical(this, entity);
+  111,000 ( 0.02%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_physical (1,000x)
+    4,000 ( 0.00%)      struct rr_component_health *health = rr_simulation_add_health(this, entity);
+   84,000 ( 0.01%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_health (1,000x)
+    4,000 ( 0.00%)      struct rr_component_relations *relations = rr_simulation_add_relations(this, entity);
+   84,000 ( 0.01%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_relations (1,000x)
+    4,000 ( 0.00%)      struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
+   84,000 ( 0.01%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_add_ai (1,000x)
+        .               // init team elsewhere
+    4,000 ( 0.00%)      rr_component_mob_set_id(mob, mob_id);
+   22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Mob.c:rr_component_mob_set_id (1,000x)
+    4,000 ( 0.00%)      rr_component_mob_set_rarity(mob, rarity_id);
+   22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Mob.c:rr_component_mob_set_rarity (1,000x)
+    6,000 ( 0.00%)      struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
+    6,000 ( 0.00%)      struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
+    6,000 ( 0.00%)      physical->radius = mob_data->radius * rarity_scale->radius;
+    3,000 ( 0.00%)      physical->friction = 0.9;
+    6,000 ( 0.00%)      rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
+   22,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Health.c:rr_component_health_set_max_health (1,000x)
+    6,000 ( 0.00%)      rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
+   30,000 ( 0.00%)  => /root/rrolf/Server/../Shared/Component/Health.c:rr_component_health_set_health (1,000x)
+    6,000 ( 0.00%)      health->damage = mob_data->damage * rarity_scale->damage;
+    4,000 ( 0.00%)      return entity;
+        .           }
+        .           
+        .           void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
+        .           {
+        .               assert(rr_simulation_has_entity(this, entity));
+        .           
+        .           #define XX(COMPONENT, ID)                            \
+        .               if (rr_simulation_has_##COMPONENT(this, entity)) \
+-- line 71 ----------------------------------------
+-- line 72 ----------------------------------------
+        .                   rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
+        .               RR_FOR_EACH_COMPONENT;
+        .           #undef XX
+        .           
+        .               rr_bitset_set(this->pending_deletions, entity);
+        .           }
+        .           
+        .           EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
+    4,004 ( 0.00%)  {
+        .               // hshg_insert()
+3,507,504 ( 0.49%)      for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; i++)
+        .               {
+2,507,505 ( 0.35%)          if (!rr_simulation_has_entity(this, i))
+17,552,535 ( 2.47%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_entity (501,501x)
+        .                   {
+    4,004 ( 0.00%)              rr_bitset_set(this->entity_tracker, i);
+   17,017 ( 0.00%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_set (1,001x)
+    5,005 ( 0.00%)              printf("created with id %d\n", i);
+  939,903 ( 0.13%)  => ./stdio-common/./stdio-common/printf.c:printf (1,001x)
+    4,004 ( 0.00%)              return i;
+        .                   }
+  500,500 ( 0.07%)      }
+        .           
+        .               RR_UNREACHABLE("ran out of entity ids");
+        .           }
+        .           
+        .           struct rr_protocol_for_each_function_captures
+        .           {
+        .               struct rr_simulation *simulation;
+        .               struct proto_bug *encoder;
+-- line 98 ----------------------------------------
+-- line 226 ----------------------------------------
+        .               rr_bitset_for_each_bit(&player_info->entities_in_view[0], &player_info->entities_in_view[0] + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_write_entity_deletions_function);
+        .               proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity deletion id"); // null terminate deletion list
+        .           
+        .               rr_bitset_for_each_bit(new_entities_in_view, new_entities_in_view + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_write_entity_function);
+        .               proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
+        .           }
+        .           
+        .           void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
+  258,258 ( 0.04%)  {
+   86,086 ( 0.01%)      struct rr_simulation *this = captures;
+        .           #define XX(COMPONENT, ID)                            \
+        .               if (rr_simulation_has_##COMPONENT(this, entity)) \
+        .                   rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
+3,012,322 ( 0.42%)      RR_FOR_EACH_COMPONENT
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_player_info (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_ai (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_mob (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_relations (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_petal (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_projectile (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_health (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_flower (43,043x)
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_arena (43,043x)
+  516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+  516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_health (43,000x)
+  516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_relations (43,000x)
+  516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_ai (43,000x)
+  516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_mob (43,000x)
+      516 ( 0.00%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_arena (43x)
+        .           #undef XX
+  129,129 ( 0.02%)  }
+        .           
+        .           void delete_pending_deletion(uint64_t i, void *captures)
+        .           {
+        .               struct rr_simulation *this = captures;
+        .               rr_simulation_free_entity(this, i);
+        .           }
+        .           
+        .           void rr_simulation_tick(struct rr_simulation *this)
+      176 ( 0.00%)  {
+        .               // delete pending deletions
+      352 ( 0.00%)      rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
+  113,300 ( 0.02%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_for_each_bit (44x)
+      264 ( 0.00%)      memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+    1,144 ( 0.00%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (44x)
+        .           
+      132 ( 0.00%)      rr_spatial_hash_reset(this->grid);
+45,677,852 ( 6.44%)  => /root/rrolf/Server/SpatialHash.c:rr_spatial_hash_reset (44x)
+        .           
+      172 ( 0.00%)      rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function);
+23,057,632 ( 3.25%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+       86 ( 0.00%)      rr_system_ai_tick(this);
+10,034,664 ( 1.41%)  => /root/rrolf/Server/System/Ai.c:rr_system_ai_tick (43x)
+       86 ( 0.00%)      rr_system_collision_detection_tick(this);
+343,521,865 (48.43%)  => /root/rrolf/Server/System/CollisionDetection.c:rr_system_collision_detection_tick (43x)
+       86 ( 0.00%)      rr_system_collision_resolution_tick(this);
+76,091,437 (10.73%)  => /root/rrolf/Server/System/CollisionResolution.c:rr_system_collision_resolution_tick (43x)
+       86 ( 0.00%)      rr_system_petal_behavior_tick(this);
+7,382,713 ( 1.04%)  => /root/rrolf/Server/System/PetalBehavior.c:rr_system_petal_behavior_tick (43x)
+       86 ( 0.00%)      rr_system_velocity_tick(this);
+11,001,507 ( 1.55%)  => /root/rrolf/Server/System/Velocity.c:rr_system_velocity_tick (43x)
+       86 ( 0.00%)      rr_system_map_boundary_tick(this);
+6,766,232 ( 0.95%)  => /root/rrolf/Server/System/MapBoundary.c:rr_system_map_boundary_tick (43x)
+       86 ( 0.00%)      rr_system_health_tick(this);
+131,568,075 (18.55%)  => /root/rrolf/Server/System/Health.c:rr_system_health_tick (43x)
+      129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/CollisionDetection.c
+--------------------------------------------------------------------------------
+Ir                  
+
+-- line 9 ----------------------------------------
+         .           
+         .           struct physics_simulation_captures
+         .           {
+         .               struct rr_simulation *simulation;
+         .               struct rr_component_physical *physical;
+         .           };
+         .           
+         .           static void system_reset_colliding_with(EntityIdx entity, void *captures)
+   258,000 ( 0.04%)  {
+    86,000 ( 0.01%)      struct rr_simulation *this = captures;
+   215,000 ( 0.03%)      if (!rr_simulation_has_physical(this, entity))
+ 1,548,000 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,000x)
+         .                   return;
+         .           
+   172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+   516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+   258,000 ( 0.04%)      memset(&physical->collisions[0], 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+ 1,118,000 ( 0.16%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (43,000x)
+    86,000 ( 0.01%)      physical->has_collisions = 0;
+   129,000 ( 0.02%)  }
+         .           
+         .           static void system_insert_entities(EntityIdx entity, void *_captures)
+   258,000 ( 0.04%)  {
+    86,000 ( 0.01%)      struct rr_simulation *this = _captures;
+   172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+   516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+         .           
+   172,000 ( 0.02%)      rr_spatial_hash_insert(this->grid, entity);
+ 7,283,447 ( 1.03%)  => /root/rrolf/Server/SpatialHash.c:rr_spatial_hash_insert (43,000x)
+   129,000 ( 0.02%)  }
+         .           
+         .           static void hash_grid_filter_candidates(uint64_t _id, void *_captures)
+ 6,323,905 ( 0.89%)  {
+ 2,529,562 ( 0.36%)      EntityIdx entity2 = _id;
+ 2,529,562 ( 0.36%)      struct physics_simulation_captures *captures = _captures;
+         .           
+ 3,794,343 ( 0.53%)      struct rr_simulation *this = captures->simulation;
+ 3,794,343 ( 0.53%)      struct rr_component_physical *physical1 = captures->physical;
+ 3,794,343 ( 0.53%)      EntityIdx entity1 = physical1->parent_id;
+ 5,059,124 ( 0.71%)      if (entity1 == entity2)
+    41,203 ( 0.01%)          return;
+         .           
+ 4,894,312 ( 0.69%)      struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
+14,682,936 ( 2.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (1,223,578x)
+12,235,780 ( 1.73%)      struct rr_vector delta = {physical1->x - physical2->x, physical1->y - physical2->y};
+ 6,117,890 ( 0.86%)      float collision_radius = physical1->radius + physical2->radius;
+11,012,202 ( 1.55%)      if ((delta.x * delta.x + delta.y * delta.y) < collision_radius * collision_radius)
+         .               {
+   148,952 ( 0.02%)          if (entity1 < entity2) //a very sneaky optimization
+         .                   {
+    37,238 ( 0.01%)              physical1->has_collisions = 1;
+    37,238 ( 0.01%)              physical2->has_collisions = 1;
+    93,095 ( 0.01%)              rr_bitset_set(physical1->collisions, entity2);
+   316,523 ( 0.04%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_set (18,619x)
+         .                   }
+    37,238 ( 0.01%)      }
+ 3,794,343 ( 0.53%)  }
+         .           
+         .           static void system_find_collisions(EntityIdx entity1, void *_captures)
+   258,000 ( 0.04%)  {
+    86,000 ( 0.01%)      struct rr_simulation *this = _captures;
+   172,000 ( 0.02%)      struct rr_component_physical *physical1 = rr_simulation_get_physical(this, entity1);
+   516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+         .           
+   215,000 ( 0.03%)      uint8_t colliding_with[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)] = {};
+ 1,118,000 ( 0.16%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (43,000x)
+         .           
+   516,000 ( 0.07%)      rr_spatial_hash_query(this->grid, physical1->x, physical1->y, physical1->radius, physical1->radius, colliding_with);
+74,178,247 (10.46%)  => /root/rrolf/Server/SpatialHash.c:rr_spatial_hash_query (43,000x)
+         .           
+         .               struct physics_simulation_captures captures;
+    86,000 ( 0.01%)      captures.simulation = this;
+    86,000 ( 0.01%)      captures.physical = physical1;
+         .           
+   258,000 ( 0.04%)      rr_bitset_for_each_bit(colliding_with, colliding_with + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), &captures, hash_grid_filter_candidates);
+248,416,056 (35.03%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_for_each_bit'2 (43,000x)
+         .           
+         .               // for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
+         .               // {
+         .               //     if (rr_bitset_get_bit(colliding_with, i))
+         .               //     {
+         .               //         EntityIdx entity2 = i;
+         .               //         if (entity1 == entity2)
+         .               //             continue;
+-- line 81 ----------------------------------------
+-- line 87 ----------------------------------------
+         .               //         {
+         .               //             if (!rr_bitset_get_bit(physical1->collisions, entity1) && !rr_bitset_get_bit(physical2->collisions, entity1) && !rr_bitset_get_bit(physical1->collisions, entity2) && !rr_bitset_get_bit(physical2->collisions, entity2))
+         .               //             {
+         .               //                 rr_bitset_set(physical1->collisions, entity2);
+         .               //             }
+         .               //         }
+         .               //     }
+         .               // }
+   129,000 ( 0.02%)  }
+         .           
+         .           void rr_system_collision_detection_tick(struct rr_simulation *this)
+       172 ( 0.00%)  {
+       172 ( 0.00%)      rr_simulation_for_each_physical(this, this, system_reset_colliding_with);
+ 5,880,766 ( 0.83%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_physical (43x)
+       172 ( 0.00%)      rr_simulation_for_each_physical(this, this, system_insert_entities);
+10,111,213 ( 1.43%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_physical (43x)
+       172 ( 0.00%)      rr_simulation_for_each_physical(this, this, system_find_collisions);
+327,529,069 (46.18%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_physical (43x)
+       129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: ../Shared/Bitset.c
+--------------------------------------------------------------------------------
+Ir                   
+
+-- line 2 ----------------------------------------
+          .           
+          .           uint8_t rr_bitset_get_bit(uint8_t *a, uint64_t i)
+          .           {
+          .               // return a[i];
+          .               return a[i >> 3] & (1 << (i & 7));
+          .           }
+          .           
+          .           uint8_t rr_bitset_get(uint8_t *a, uint64_t i)
+  5,953,232 ( 0.84%)  {
+          .               // return a[i];
+ 25,301,236 ( 3.57%)      return (a[i >> 3] & (1 << (i & 7))) ? 1 : 0;
+          .           }
+          .           
+          .           void rr_bitset_set(uint8_t *a, uint64_t i)
+  8,587,908 ( 1.21%)  {
+          .               // a[i] = 1;
+ 23,616,747 ( 3.33%)      a[i >> 3] |= 1 << (i & 7);
+  4,293,954 ( 0.61%)  }
+          .           
+          .           void rr_bitset_unset(uint8_t *a, uint64_t i)
+          .           {
+          .               // a[i] = 0;
+          .               a[i >> 3] &= ~(1 << (i & 7));
+          .           }
+          .           
+          .           void rr_bitset_maybe_set(uint8_t *a, uint64_t i, uint8_t bit)
+-- line 27 ----------------------------------------
+-- line 28 ----------------------------------------
+          .           {
+          .               // a[i] = bit;
+          .               if (bit)
+          .                   rr_bitset_set(a, i);
+          .               else
+          .                   rr_bitset_unset(a, i);
+          .           }
+          .           void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (*cb)(uint64_t, void *))
+    781,613 ( 0.11%)  {
+          .               // uint8_t *const original_start = start;
+          .           
+          .               // // Iterate over the misaligned bytes
+          .               // while ((uint64_t)start % sizeof(uint64_t))
+          .               // {
+          .               //     if (*start)
+          .               //         cb(start - original_start, captures);
+          .               //     start++;
+-- line 44 ----------------------------------------
+-- line 90 ----------------------------------------
+          .               // // Iterate over the remaining misaligned bytes, if any
+          .               // for (uint8_t *i = start; i < end; i++)
+          .               // {
+          .               //     if (*start)
+          .               //         cb(start - original_start, captures);
+          .               //     start++;
+          .               // }
+          .           
+    223,318 ( 0.03%)      uint8_t *const original_start = start;
+114,673,793 (16.17%)      while (start != end)
+          .               {
+          .                   // if ((uint64_t)start % sizeof(uint64_t) == 0)
+          .                   //     if ((start + 8 < end) && !*(uint64_t *)start)
+          .                   //     {
+          .                   //         start += 8;
+          .                   //         continue;
+          .                   //     }
+ 85,754,112 (12.09%)          if (*start)
+          .                   {
+  6,184,180 ( 0.87%)              if (*start & 1)
+  1,789,648 ( 0.25%)                  cb(((start - original_start) << 3) + 0, captures);
+ 41,244,601 ( 5.82%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,533,299 ( 4.59%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 2)
+  1,878,584 ( 0.26%)                  cb(((start - original_start) << 3) + 1, captures);
+ 42,934,716 ( 6.05%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,334,070 ( 4.56%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (54,180x)
+  6,184,180 ( 0.87%)              if (*start & 4)
+  1,871,536 ( 0.26%)                  cb(((start - original_start) << 3) + 2, captures);
+ 43,020,483 ( 6.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,140,020 ( 4.53%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 8)
+  1,812,416 ( 0.26%)                  cb(((start - original_start) << 3) + 3, captures);
+ 41,810,642 ( 5.90%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,275,197 ( 4.55%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 16)
+  1,898,376 ( 0.27%)                  cb(((start - original_start) << 3) + 4, captures);
+ 43,295,910 ( 6.10%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,563,973 ( 4.59%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 32)
+  1,873,720 ( 0.26%)                  cb(((start - original_start) << 3) + 5, captures);
+ 43,050,037 ( 6.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,003,601 ( 4.51%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 64)
+  1,873,144 ( 0.26%)                  cb(((start - original_start) << 3) + 6, captures);
+ 42,842,402 ( 6.04%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,762,990 ( 4.62%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  6,184,180 ( 0.87%)              if (*start & 128)
+  1,894,168 ( 0.27%)                  cb(((start - original_start) << 3) + 7, captures);
+ 43,288,959 ( 6.10%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:physicalfor_each (16,125x)
+ 32,505,516 ( 4.58%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity_function (53,750x)
+  1,236,836 ( 0.17%)          }
+ 85,754,112 (12.09%)          start++;
+          .               }
+    334,977 ( 0.05%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: SpatialHash.c
+--------------------------------------------------------------------------------
+Ir                  
+
+-- line 3 ----------------------------------------
+         .           #include <Server/SpatialHash.h>
+         .           #include <Shared/SimulationCommon.h>
+         .           #include <Shared/Bitset.h>
+         .           
+         .           #define SPATIAL_HASH_GRID_SIZE 6
+         .           #define HASH_FUNCTION(X, Y) (Y + 73 * X)
+         .           
+         .           void rr_spatial_hash_init(struct rr_spatial_hash *this)
+         4 ( 0.00%)  {
+         5 ( 0.00%)      memset(this, 0, sizeof *this);
+ 1,049,625 ( 0.15%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (1x)
+         3 ( 0.00%)  }
+         .           
+         .           void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
+   258,000 ( 0.04%)  {
+   215,000 ( 0.03%)      struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+   516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+   129,000 ( 0.02%)      uint32_t x = (uint32_t)(physical->x);
+   129,000 ( 0.02%)      uint32_t y = (uint32_t)(physical->y);
+   129,000 ( 0.02%)      uint32_t w = (uint32_t)(physical->radius);
+    86,000 ( 0.01%)      uint32_t h = w;
+         .           
+   172,000 ( 0.02%)      uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+         .           
+   766,789 ( 0.11%)      for (uint32_t y = s_y; y <= e_y; y++)
+ 1,407,707 ( 0.20%)          for (uint32_t x = s_x; x <= e_x; x++)
+         .                   {
+   723,980 ( 0.10%)              uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
+   723,980 ( 0.10%)              struct rr_spatial_hash_cell *cell = this->cells + hash;
+   723,980 ( 0.10%)              cell->entities[cell->entities_in_use].id = entity;
+   579,184 ( 0.08%)              cell->entities_in_use++;
+    78,827 ( 0.01%)          }
+   129,000 ( 0.02%)  }
+         .           
+         .           
+         .           void rr_spatial_hash_query(struct rr_spatial_hash *restrict this, float fx, float fy, float fw, float fh, uint8_t *restrict output)
+   387,000 ( 0.05%)  {
+    86,000 ( 0.01%)      uint32_t x = fx;
+    86,000 ( 0.01%)      uint32_t y = fy;
+    86,000 ( 0.01%)      uint32_t w = fw;
+    86,000 ( 0.01%)      uint32_t h = fh;
+         .               // should not take in an entity id like insert does. the reason is so stuff like ai can query a large radius without a viewing entity
+   172,000 ( 0.02%)      uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
+   172,000 ( 0.02%)      uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+         .           
+   766,789 ( 0.11%)      for (uint32_t y = s_y; y <= e_y; y++)
+ 1,407,707 ( 0.20%)          for (uint32_t x = s_x; x <= e_x; x++)
+         .                   {
+   723,980 ( 0.10%)              uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
+   723,980 ( 0.10%)              struct rr_spatial_hash_cell *cell = this->cells + hash;
+19,969,980 ( 2.82%)              for (uint64_t i = 0; i < cell->entities_in_use; i++)
+         .                       {
+12,734,136 ( 1.80%)                  rr_bitset_set(output, cell->entities[i].id);
+36,080,052 ( 5.09%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_set (2,122,356x)
+         .                           // if (cell->entities[i].query_id != this->query_id)
+         .                           // {
+         .                           //     cell->entities[i].query_id = this->query_id;
+         .                           //     output[*output_size] = cell->entities[i].id;
+         .                           //     ++*output_size;
+         .                           // }
+         .                       }
+   223,623 ( 0.03%)          }
+   129,000 ( 0.02%)  }
+         .           
+         .           void rr_spatial_hash_reset(struct rr_spatial_hash *this)
+       176 ( 0.00%)  {
+       220 ( 0.00%)      memset(&this->cells, 0, sizeof this->cells);
+45,677,327 ( 6.44%)  => ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S:__memset_avx2_unaligned_erms (44x)
+       129 ( 0.00%)  }
+         .           
+         .           // /*
+         .           //  *   Copyright 2022 Franciszek Balcerak
+         .           //  *
+         .           //  *  Licensed under the Apache License, Version 2.0 (the "License");
+         .           //  *  you may not use this file except in compliance with the License.
+         .           //  *  You may obtain a copy of the License at
+         .           //  *
+-- line 80 ----------------------------------------
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/PetalBehavior.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 6 ----------------------------------------
+      .           
+      .           #include <Server/Simulation.h>
+      .           
+      .           #include <Shared/StaticData.h>
+      .           #include <Shared/Entity.h>
+      .           #include <Shared/Vector.h>
+      .           
+      .           static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulation)
+258,258 ( 0.04%)  {
+215,215 ( 0.03%)      if (!rr_simulation_has_player_info(simulation, id))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_player_info (43,043x)
+ 43,043 ( 0.01%)          return;
+      .               struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, id);
+      .               if (player_info->flower_id == 0)
+      .                   return;
+      .               uint32_t rotationPos = 0;
+      .               for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
+      .               {
+      .                   struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
+      .                   struct rr_petal_data const *data = slot->data;
+-- line 24 ----------------------------------------
+-- line 66 ----------------------------------------
+      .                                   projectile->ticks_until_death = 75;
+      .                               }
+      .                           }
+      .                       }
+      .                   }
+      .               }
+      .               player_info->rotation_count = rotationPos;
+      .               player_info->global_rotation += 0.1;
+129,129 ( 0.02%)  }
+      .           
+      .           static void system_petal_detach(struct rr_simulation *simulation, EntityIdx entity)
+      .           {
+      .               struct rr_component_petal *petal = rr_simulation_get_petal(simulation, entity);
+      .               struct rr_component_relations *relations = rr_simulation_get_relations(simulation, entity);
+      .               struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
+      .               petal->detached = 1;
+      .               struct rr_component_player_info_petal *ppetal = &player_info->slots[petal->outer_pos].petals[petal->inner_pos];
+      .               ppetal->simulation_id = RR_NULL_ENTITY;
+      .               ppetal->cooldown_ticks = petal->petal_data->cooldown;
+      .           }
+      .           
+      .           static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx id, void *simulation)
+258,258 ( 0.04%)  {
+215,215 ( 0.03%)      if (!rr_simulation_has_petal(simulation, id))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_petal (43,043x)
+ 43,043 ( 0.01%)          return;
+      .               struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
+      .               struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+      .               struct rr_component_relations *relations = rr_simulation_get_relations(simulation, id);
+      .               if (!rr_simulation_has_entity(simulation, relations->owner))
+      .               {
+      .                   rr_simulation_request_entity_deletion(simulation, id);
+      .                   return;
+      .               }
+-- line 98 ----------------------------------------
+-- line 162 ----------------------------------------
+      .                   physical->acceleration.y = 0.6f * chase_vector.y;
+      .               }
+      .               else 
+      .               {
+      .                   rr_vector_from_polar(&physical->acceleration, 3.0f, physical->angle);
+      .                   if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <= 0)
+      .                       rr_simulation_request_entity_deletion(simulation, id);
+      .               }
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_petal_behavior_tick(struct rr_simulation *simulation)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(simulation, simulation, rr_system_petal_reload_foreach_function);
+3,691,034 ( 0.52%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    172 ( 0.00%)      rr_simulation_for_each_entity(simulation, simulation, rr_system_petal_behavior_petal_movement_foreach_function);
+3,691,034 ( 0.52%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/CollisionResolution.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 2 ----------------------------------------
+      .           
+      .           #include <stdio.h>
+      .           #include <string.h>
+      .           
+      .           #include <Server/Simulation.h>
+      .           #include <Shared/Bitset.h>
+      .           
+      .           static uint8_t system_is_valid_collision(struct rr_simulation *this, EntityIdx a, EntityIdx b)
+148,952 ( 0.02%)  {
+ 74,476 ( 0.01%)      if (a == b)
+      .                   return 0;
+111,714 ( 0.02%)      if (rr_simulation_has_flower(this, a) && rr_simulation_has_petal(this, b))
+670,284 ( 0.09%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_flower (18,619x)
+      .                   return 0;
+ 18,619 ( 0.00%)      return 1;
+ 74,476 ( 0.01%)  }
+      .           
+      .           struct colliding_with_captures
+      .           {
+      .               struct rr_simulation *simulation;
+      .               struct rr_component_physical *physical;
+      .           };
+      .           
+      .           // that's for the casting which is not impm
+      .           static void colliding_with_function(uint64_t i, void *_captures)
+ 93,095 ( 0.01%)  {
+ 37,238 ( 0.01%)      struct colliding_with_captures *captures = _captures;
+ 55,857 ( 0.01%)      struct rr_simulation *this = captures->simulation;
+ 55,857 ( 0.01%)      struct rr_component_physical *physical1 = captures->physical;
+ 55,857 ( 0.01%)      EntityIdx entity1 = physical1->parent_id;
+ 37,238 ( 0.01%)      EntityIdx entity2 = i;
+130,333 ( 0.02%)      if (!system_is_valid_collision(this, entity1, entity2))
+1,098,521 ( 0.15%)  => System/CollisionResolution.c:system_is_valid_collision (18,619x)
+      .                   return;
+ 93,095 ( 0.01%)      struct rr_component_physical *physical2 = rr_simulation_get_physical(captures->simulation, entity2);
+223,428 ( 0.03%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (18,619x)
+      .           
+111,714 ( 0.02%)      struct rr_vector position1 = {physical1->x, physical1->y};
+111,714 ( 0.02%)      struct rr_vector position2 = {physical2->x, physical2->y};
+186,190 ( 0.03%)      struct rr_vector delta = {physical1->x - physical2->x, physical1->y - physical2->y};
+ 55,857 ( 0.01%)      float distance = rr_vector_get_magnitude(&delta);
+484,758 ( 0.07%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_get_magnitude (18,619x)
+ 74,476 ( 0.01%)      if (distance == 0)
+      .                   return;
+      .               {
+      .           
+111,714 ( 0.02%)          float overlap = (distance - physical1->radius - physical2->radius);
+148,952 ( 0.02%)          float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
+148,952 ( 0.02%)          float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
+223,428 ( 0.03%)          rr_component_physical_set_x(physical1, physical1->x - overlap * delta.x / distance * v1_Coeff);
+409,618 ( 0.06%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_x (18,619x)
+223,428 ( 0.03%)          rr_component_physical_set_y(physical1, physical1->y - overlap * delta.y / distance * v1_Coeff);
+409,618 ( 0.06%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_y (18,619x)
+167,571 ( 0.02%)          rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
+409,618 ( 0.06%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_x (18,619x)
+167,571 ( 0.02%)          rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
+409,618 ( 0.06%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_y (18,619x)
+      .               }
+      .           /*
+      .               {
+      .                   float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
+      .                   float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
+      .                   float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
+      .           
+      .                   // struct rr_vector delta = (ball2Position - ball1Position).Normalize();
+-- line 58 ----------------------------------------
+-- line 67 ----------------------------------------
+      .                   rr_vector_set(&physical1->velocity,
+      .                                 parallel2.x * v1_Coeff + parallel1.x * v_SharedCoeff + perp1.x,
+      .                                 parallel2.y * v1_Coeff + parallel1.y * v_SharedCoeff + perp1.y);
+      .                   rr_vector_set(&physical2->velocity,
+      .                                 parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff + perp2.x,
+      .                                 parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff + perp2.y);
+      .               }
+      .           */
+ 55,857 ( 0.01%)  }
+      .           
+      .           static void system_for_each_function(EntityIdx entity, void *_captures)
+258,258 ( 0.04%)  {
+ 86,086 ( 0.01%)      struct rr_simulation *this = _captures;
+      .           
+215,215 ( 0.03%)      if (!rr_simulation_has_physical(this, entity))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,043x)
+     43 ( 0.00%)          return;
+172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+129,000 ( 0.02%)      if (!physical->has_collisions)
+ 17,944 ( 0.00%)          return;
+      .           
+      .               struct colliding_with_captures captures;
+ 50,112 ( 0.01%)      captures.physical = physical;
+ 50,112 ( 0.01%)      captures.simulation = this;
+      .           
+200,448 ( 0.03%)      rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
+71,221,228 (10.04%)  => /root/rrolf/Server/../Shared/Bitset.c:rr_bitset_for_each_bit'2 (25,056x)
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_collision_resolution_tick(struct rr_simulation *this)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(this, this, system_for_each_function);
+76,090,964 (10.73%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+-- Auto-annotated source: System/MapBoundary.c
+--------------------------------------------------------------------------------
+Ir               
+
+-- line 2 ----------------------------------------
+      .           
+      .           #include <Server/Simulation.h>
+      .           
+      .           #include <Shared/Entity.h>
+      .           #include <Shared/Vector.h>
+      .           #include <Shared/Component/Physical.h>
+      .           
+      .           static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulation)
+258,258 ( 0.04%)  {
+215,215 ( 0.03%)      if (!rr_simulation_has_physical(simulation, id))
+1,549,548 ( 0.22%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_has_physical (43,043x)
+     43 ( 0.00%)          return;
+172,000 ( 0.02%)      struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+516,000 ( 0.07%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_get_physical (43,000x)
+      .               struct rr_vector position;
+258,000 ( 0.04%)      rr_vector_set(&position, physical->x, physical->y);
+559,000 ( 0.08%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_set (43,000x)
+301,000 ( 0.04%)      if (rr_vector_get_magnitude(&position) > 1650.0f - physical->radius)
+1,118,000 ( 0.16%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_get_magnitude (43,000x)
+      .               {
+  9,225 ( 0.00%)          rr_vector_set_magnitude(&position, 1650.0f - physical->radius);
+ 92,250 ( 0.01%)  => /root/rrolf/Server/../Shared/Vector.c:rr_vector_set_magnitude (1,845x)
+  5,535 ( 0.00%)          rr_component_physical_set_x(physical, position.x);
+ 40,590 ( 0.01%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_x (1,845x)
+  5,535 ( 0.00%)          rr_component_physical_set_y(physical, position.y);
+ 40,590 ( 0.01%)  => /root/rrolf/Server/../Shared/Component/Physical.c:rr_component_physical_set_y (1,845x)
+      .               }
+129,129 ( 0.02%)  }
+      .           
+      .           void rr_system_map_boundary_tick(struct rr_simulation *simulation)
+    172 ( 0.00%)  {
+    172 ( 0.00%)      rr_simulation_for_each_entity(simulation, simulation, rr_system_map_boundary_foreach_function);
+6,765,759 ( 0.95%)  => /root/rrolf/Server/../Shared/SimulationCommon.c:rr_simulation_for_each_entity (43x)
+    129 ( 0.00%)  }
+
+--------------------------------------------------------------------------------
+The following files chosen for auto-annotation could not be found:
+--------------------------------------------------------------------------------
+  ./elf/./elf/dl-lookup.c
+  ./string/../sysdeps/x86_64/multiarch/memset-vec-unaligned-erms.S
+
+--------------------------------------------------------------------------------
+Ir                   
+--------------------------------------------------------------------------------
+629,039,807 (88.69%)  events annotated
+

@@ -2,14 +2,13 @@
 
 #include <Shared/Entity.h>
 
-#define RR_SPATIAL_HASH_CELL_COUNT (16384)
+#define RR_SPATIAL_HASH_CELL_COUNT (256)
 
 struct rr_simulation;
 
 struct rr_spatial_hash_entity
 {
     EntityIdx id;
-    uint32_t query_id;
 };
 
 struct rr_spatial_hash_cell
@@ -22,12 +21,11 @@ struct rr_spatial_hash
 {
     struct rr_spatial_hash_cell cells[RR_SPATIAL_HASH_CELL_COUNT];
     struct rr_simulation *simulation;
-    uint32_t query_id;
 };
 
 void rr_spatial_hash_init(struct rr_spatial_hash *);
-void rr_spatial_hash_insert(struct rr_spatial_hash *, struct rr_spatial_hash_entity, uint32_t x, uint32_t y, uint32_t w, uint32_t h);
-void rr_spatial_hash_query(struct rr_spatial_hash *, uint32_t x, uint32_t y, uint32_t w, uint32_t h, EntityIdx *output, uint64_t *output_size);
+void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
+void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float, uint8_t *);
 void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // /*
@@ -262,7 +260,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // #define __hshg_update_t HSHG_NAME(update_t)
 
-// typedef void (*__hshg_update_t)(_hshg*, _hshg_entity*);
+// typedef void (*__hshg_update_t)(_hshg*, _hshg_entity*, void *);
 
 // typedef __hshg_update_t _hshg_update_t;
 
@@ -307,6 +305,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // #define __hshg_t                            \
 // {                                           \
+//     void *user;                             \
 //     _hshg_entity* entities;                 \
 //     _hshg_entity_t* const cells;            \
 //                                             \
@@ -405,7 +404,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // extern int
 // _hshg_insert(_hshg* const, const _hshg_pos_t x _2D(, const _hshg_pos_t y)
-//     _3D(, const _hshg_pos_t z), const _hshg_pos_t r, const _hshg_entity_t ref);
+//     _3D(, const _hshg_pos_t z), const _hshg_pos_t r, const _hshg_entity_t ref, _hshg_entity_t *return_value);
 
 
 
@@ -433,7 +432,7 @@ void rr_spatial_hash_reset(struct rr_spatial_hash *);
 // #define _hshg_update HSHG_NAME(update)
 
 // extern void
-// _hshg_update(_hshg* const);
+// _hshg_update(_hshg* const, void *);
 
 
 
