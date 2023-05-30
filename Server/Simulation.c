@@ -249,6 +249,7 @@ void delete_pending_deletion(uint64_t i, void *captures)
 
 #define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
     {                                                                                              \
+    /*\
         struct timeval start;                                                                      \
         struct timeval end;                                                                        \
         gettimeofday(&start, NULL);                                                                \
@@ -256,7 +257,7 @@ void delete_pending_deletion(uint64_t i, void *captures)
         gettimeofday(&end, NULL);                                                                  \
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
         printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                            \
-    }
+    */CODE;}
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
@@ -276,6 +277,5 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
-    puts("\n\n\n");
 
 }

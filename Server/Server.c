@@ -15,7 +15,13 @@
 
 #include <libwebsockets.h>
 
-static uint8_t outgoing_message[1024 * 1024];
+#ifndef NDEBUG
+#define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
+#else
+#define MESSAGE_BUFFER_SIZE (1024 * 1024)
+#endif
+
+static uint8_t outgoing_message[MESSAGE_BUFFER_SIZE];
 
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
@@ -228,7 +234,7 @@ void rr_server_run(struct rr_server *this)
     info.gid = -1;
     info.uid = -1;
     info.user = this;
-    info.pt_serv_buf_size = 1024 * 1024;
+    info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
 
     this->server = lws_create_context(&info);
     assert(this->server);

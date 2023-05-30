@@ -15,8 +15,8 @@ void rr_spatial_hash_init(struct rr_spatial_hash *this)
 void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
 {
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
-    uint32_t x = (uint32_t)(physical->x);
-    uint32_t y = (uint32_t)(physical->y);
+    uint32_t x = (uint32_t)(physical->x + 8192.0f);
+    uint32_t y = (uint32_t)(physical->y + 8192.0f);
     uint32_t w = (uint32_t)(physical->radius);
     uint32_t h = w;
 
@@ -35,11 +35,10 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
         }
 }
 
-
-void rr_spatial_hash_query(struct rr_spatial_hash *restrict this, float fx, float fy, float fw, float fh, uint8_t *restrict output)
+void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy, float fw, float fh, EntityIdx *output)
 {
-    uint32_t x = fx;
-    uint32_t y = fy;
+    uint32_t x = fx + 8192.0f;
+    uint32_t y = fy + 8192.0f;
     uint32_t w = fw;
     uint32_t h = fh;
     // should not take in an entity id like insert does. the reason is so stuff like ai can query a large radius without a viewing entity
@@ -48,6 +47,8 @@ void rr_spatial_hash_query(struct rr_spatial_hash *restrict this, float fx, floa
     uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
     uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
 
+    uint64_t output_size = 0;
+
     for (uint32_t y = s_y; y <= e_y; y++)
         for (uint32_t x = s_x; x <= e_x; x++)
         {
@@ -55,15 +56,17 @@ void rr_spatial_hash_query(struct rr_spatial_hash *restrict this, float fx, floa
             struct rr_spatial_hash_cell *cell = this->cells + hash;
             for (uint64_t i = 0; i < cell->entities_in_use; i++)
             {
-                rr_bitset_set(output, cell->entities[i].id);
-                // if (cell->entities[i].query_id != this->query_id)
-                // {
-                //     cell->entities[i].query_id = this->query_id;
-                //     output[*output_size] = cell->entities[i].id;
-                //     ++*output_size;
-                // }
+                struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, cell->entities[i].id);
+                if (physical->query_id != this->query_id)
+                {
+                    physical->query_id = this->query_id;
+                    output[output_size] = cell->entities[i].id;
+                    output_size++;
+                }
             }
         }
+
+    this->query_id++;
 }
 
 void rr_spatial_hash_reset(struct rr_spatial_hash *this)

@@ -16,10 +16,10 @@ struct proto_bug;
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
-    RR_SERVER_ONLY(uint8_t has_collisions;)
     RR_SERVER_ONLY(struct rr_vector velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint32_t query_id;)
                    uint32_t deletion_tick;
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float restitution;)
@@ -33,6 +33,7 @@ struct rr_component_physical
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
                    EntityIdx parent_id;
+    RR_SERVER_ONLY(uint8_t has_collisions;)
     RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 };
 

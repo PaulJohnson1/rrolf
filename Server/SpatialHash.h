@@ -21,11 +21,12 @@ struct rr_spatial_hash
 {
     struct rr_spatial_hash_cell cells[RR_SPATIAL_HASH_CELL_COUNT];
     struct rr_simulation *simulation;
+    uint32_t query_id;
 };
 
 void rr_spatial_hash_init(struct rr_spatial_hash *);
 void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
-void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float, uint8_t *);
+void rr_spatial_hash_query(struct rr_spatial_hash *restrict, float, float, float, float, EntityIdx *restrict);
 void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // /*

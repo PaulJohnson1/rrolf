@@ -2,11 +2,8 @@
 
 #include <stdint.h>
 #include <string.h>
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-#include <malloc.h>
-#else
-#include <alloca.h>
-#endif
+#include <stdlib.h>
+
 // https://github.com/shiffthq/chacha20/blob/master/src/chacha20.c
 static inline void u32t8le(uint32_t v, uint8_t p[4]) {
     p[0] = v & 0xff;
@@ -130,7 +127,7 @@ uint64_t rr_get_rand()
 
 void rr_encrypt(uint8_t *start, uint64_t size, uint64_t key)
 {
-    uint8_t *clone = alloca(size);
+    uint8_t *clone = malloc(size);
     memcpy(clone, start, size);
     uint64_t cipher_key[4];
     // idk what the nonce is for but it gets initialized with random bytes
@@ -144,6 +141,7 @@ void rr_encrypt(uint8_t *start, uint64_t size, uint64_t key)
     counter = rr_get_hash(key);
 
     ChaCha20XOR((uint8_t *)cipher_key, counter, (uint8_t *)nonce, clone, start, size);
+    free(clone);
 }
 
 void rr_decrypt(uint8_t *start, uint64_t size, uint64_t key)
