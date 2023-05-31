@@ -55,7 +55,7 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 static void system_deletion_for_each_function(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
-    if (rr_simulation_get_health(this, entity)->health == 0)
+    if (rr_simulation_get_health(this, entity)->health <= 0.001f)
         rr_simulation_request_entity_deletion(this, entity);
 }
 

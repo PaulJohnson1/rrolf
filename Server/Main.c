@@ -10,7 +10,7 @@
 int main()
 {
 #ifndef NDEBUG
-    feenableexcept(FE_DIVBYZERO | FE_INVALID);
+    //feenableexcept(FE_DIVBYZERO | FE_INVALID);
 #endif
     struct rr_server *s = malloc(sizeof *s);
     rr_server_init(s);
