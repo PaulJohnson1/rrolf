@@ -16,7 +16,8 @@ struct proto_bug;
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
-    RR_SERVER_ONLY(struct rr_vector velocity;)
+                   struct rr_vector velocity;
+    RR_CLIENT_ONLY(struct rr_vector velocity_lerp;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
     RR_SERVER_ONLY(uint32_t query_id;)

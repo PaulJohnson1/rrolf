@@ -47,8 +47,20 @@ RR_DEFINE_PUBLIC_FIELD(physical, uint32_t, deletion_tick)
 void rr_component_physical_read(struct rr_component_physical *this, struct proto_bug *encoder)
 {
     uint64_t state = proto_bug_read_varuint(encoder, "physical component state");
-    RR_DECODE_PUBLIC_FIELD(x, float32);
-    RR_DECODE_PUBLIC_FIELD(y, float32);
+    if (state & state_flags_x)
+    {
+        float new_x = proto_bug_read_float32(encoder, "field " "x");
+        this->velocity.x = this->x - new_x;
+        this->x = new_x;
+    }
+    if (state & state_flags_y)
+    {
+        float new_y = proto_bug_read_float32(encoder, "field " "y");
+        this->velocity.y = this->y - new_y;
+        this->y = new_y;
+    }
+    // RR_DECODE_PUBLIC_FIELD(x, float32);
+    // RR_DECODE_PUBLIC_FIELD(y, float32);
     RR_DECODE_PUBLIC_FIELD(angle, float32);
     RR_DECODE_PUBLIC_FIELD(radius, float32);
     RR_DECODE_PUBLIC_FIELD(deletion_tick, uint8);

@@ -32,13 +32,9 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
     rr_spatial_hash_insert(this->grid, entity);
 }
 
-static void hash_grid_filter_candidates(uint64_t _id, void *_captures)
+static void grid_filter_candidates(struct rr_simulation *this, EntityIdx entity2, void *_captures)
 {
-    EntityIdx entity2 = _id;
-    struct physics_simulation_captures *captures = _captures;
-
-    struct rr_simulation *this = captures->simulation;
-    struct rr_component_physical *physical1 = captures->physical;
+    struct rr_component_physical *physical1 = _captures;
     EntityIdx entity1 = physical1->parent_id;
     if (entity1 == entity2)
         return;
@@ -66,35 +62,36 @@ static void system_find_collisions(EntityIdx entity1, void *_captures)
     // null terminated array
     EntityIdx colliding_with[RR_MAX_ENTITY_COUNT + 1] = {};
 
-    rr_spatial_hash_query(this->grid, physical1->x, physical1->y, physical1->radius, physical1->radius, colliding_with);
+    // rr_spatial_hash_query(this->grid, physical1->x, physical1->y, physical1->radius, physical1->radius, colliding_with);
+    rr_spatial_hash_query(this->grid, physical1->x, physical1->y, physical1->radius, physical1->radius, physical1, grid_filter_candidates);
 
-    struct physics_simulation_captures captures;
-    captures.simulation = this;
-    captures.physical = physical1;
+    // struct physics_simulation_captures captures;
+    // captures.simulation = this;
+    // captures.physical = physical1;
 
-    // rr_bitset_for_each_bit(colliding_with, colliding_with + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), &captures, hash_grid_filter_candidates);
+    // rr_bitset_for_each_bit(colliding_with, colliding_with + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), &captures, grid_filter_candidates);
 
-    for (uint64_t i = 0;; i++)
-    {
-        if (colliding_with[i] == RR_NULL_ENTITY)
-            break;
-        EntityIdx entity2 = colliding_with[i];
-        if (entity1 == entity2)
-            continue;
+    // for (uint64_t i = 0;; i++)
+    // {
+    //     if (colliding_with[i] == RR_NULL_ENTITY)
+    //         break;
+    //     EntityIdx entity2 = colliding_with[i];
+    //     if (entity1 == entity2)
+    //         continue;
 
-        struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
-        struct rr_vector delta = {physical1->x - physical2->x, physical1->y - physical2->y};
-        float collision_radius = physical1->radius + physical2->radius;
-        if ((delta.x * delta.x + delta.y * delta.y) < collision_radius * collision_radius)
-        {
-            if (entity1 < entity2) // a very sneaky optimization
-            {
-                physical1->has_collisions = 1;
-                physical2->has_collisions = 1;
-                rr_bitset_set(physical1->collisions, entity2);
-            }
-        }
-    }
+    //     struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
+    //     struct rr_vector delta = {physical1->x - physical2->x, physical1->y - physical2->y};
+    //     float collision_radius = physical1->radius + physical2->radius;
+    //     if ((delta.x * delta.x + delta.y * delta.y) < collision_radius * collision_radius)
+    //     {
+    //         if (entity1 < entity2) // a very sneaky optimization
+    //         {
+    //             physical1->has_collisions = 1;
+    //             physical2->has_collisions = 1;
+    //             rr_bitset_set(physical1->collisions, entity2);
+    //         }
+    //     }
+    // }
 
     // for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
     // {

@@ -38,10 +38,10 @@ void rr_component_mob_free(struct rr_component_mob *this, struct rr_simulation *
     {
         if (RR_MOB_DATA[this->id].loot[i].id == 0)
             continue;
-        float seed = (float) rand() / RAND_MAX;
+        float seed = (float)rand() / (float)RAND_MAX;
         float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t rarity = 0;
-        for (uint8_t j = 0; j <= rr_rarity_max; ++j)
+        for (uint8_t j = 0; j <= rr_rarity_id_max; ++j)
             if ((seed -= table[(rarity = j)]) <= 0)
                 break;
         if (rarity == 0)

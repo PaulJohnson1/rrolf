@@ -3,18 +3,14 @@
 #include <Shared/Entity.h>
 
 #define RR_SPATIAL_HASH_CELL_COUNT (256)
+#define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (16)
 
 struct rr_simulation;
 
-struct rr_spatial_hash_entity
-{
-    EntityIdx id;
-};
-
 struct rr_spatial_hash_cell
 {
-    struct rr_spatial_hash_entity entities[RR_MAX_ENTITY_COUNT];
     uint32_t entities_in_use;
+    EntityIdx entities[RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT];
 };
 
 struct rr_spatial_hash
@@ -26,7 +22,7 @@ struct rr_spatial_hash
 
 void rr_spatial_hash_init(struct rr_spatial_hash *);
 void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
-void rr_spatial_hash_query(struct rr_spatial_hash *restrict, float, float, float, float, EntityIdx *restrict);
+void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float, void *user_captures, void (*)(struct rr_simulation *, EntityIdx, void *));
 void rr_spatial_hash_reset(struct rr_spatial_hash *);
 
 // /*

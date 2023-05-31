@@ -52,7 +52,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     petal->petal_data = data;
                     
                     rr_component_relations_set_owner(relations, id);
-                    rr_component_relations_set_team(relations, 1); //flower
+                    rr_component_relations_set_team(relations, 1); // flower
                     
                     rr_component_health_set_max_health(health, data->health);
                     rr_component_health_set_health(health, data->health);

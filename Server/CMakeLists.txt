@@ -54,6 +54,8 @@ if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
     # add_compile_options(-fsanitize=undefined,address)
     # add_link_options(-fsanitize=undefined,address)
+elseif(CALLGRIND_BUILD)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast -DHSHG_NDEBUG -march=native")
     # link time optimiations

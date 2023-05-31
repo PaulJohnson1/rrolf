@@ -34,7 +34,7 @@ void rr_simulation_init(struct rr_simulation *this)
     rr_component_arena_set_radius(comp, 1650.0f);
     for (uint32_t i = 0; i < 25; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % 3, rand() % 7);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % rr_mob_id_max, rr_rarity_id_legendary);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
         float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
         float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
@@ -42,6 +42,17 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_component_physical_set_y(physical, sin(angle) * distance);
         physical->mass = 100.0f;
     }
+
+    // for (uint32_t i = = 100.0f;
+    // }0; i < 1000; i++)
+    // {
+    //     EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
+    //     struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+    //     float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+    //     float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+    //     rr_component_physical_set_x(physical, cos(angle) * distance);
+    //     rr_component_physical_set_y(physical, sin(angle) * distance);
+    //     physical->mass 
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -64,7 +75,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
     if (mob_id == rr_mob_id_centipede_head)
-    {   
+    {
         EntityIdx prev_node = entity;
         struct rr_component_centipede *centipede = rr_simulation_add_centipede(this, entity);
         struct rr_vector extension;
@@ -268,17 +279,19 @@ void delete_pending_deletion(uint64_t i, void *captures)
     rr_simulation_free_entity(this, i);
 }
 
-#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
-    {                                                                                              \
-    /*\
-        struct timeval start;                                                                      \
-        struct timeval end;                                                                        \
-        gettimeofday(&start, NULL);                                                                \
-        CODE;                                                                                      \
-        gettimeofday(&end, NULL);                                                                  \
-        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
-        printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                            \
-    */CODE;}
+#define RR_TIME_BLOCK(LABEL, CODE)                                                                     \
+    {                                                                                                  \
+        /*                                                                                             \
+            struct timeval start;                                                                      \
+            struct timeval end;                                                                        \
+            gettimeofday(&start, NULL);                                                                \
+            CODE;                                                                                      \
+            gettimeofday(&end, NULL);                                                                  \
+            long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
+            printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
+        */                                                                                             \
+        CODE;                                                                                          \
+    }
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
@@ -300,5 +313,4 @@ void rr_simulation_tick(struct rr_simulation *this)
         rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
         memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     });
-
 }

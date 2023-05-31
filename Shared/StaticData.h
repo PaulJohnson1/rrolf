@@ -4,14 +4,14 @@
 
 enum rr_rarity_id
 {
-    rr_rarity_common,
-    rr_rarity_unusual,
-    rr_rarity_rare,
-    rr_rarity_epic,
-    rr_rarity_legendary,
-    rr_rarity_mythic,
-    rr_rarity_ultra,
-    rr_rarity_max
+    rr_rarity_id_common,
+    rr_rarity_id_unusual,
+    rr_rarity_id_rare,
+    rr_rarity_id_epic,
+    rr_rarity_id_legendary,
+    rr_rarity_id_mythic,
+    rr_rarity_id_ultra,
+    rr_rarity_id_max
 };
 
 enum rr_petal_id
@@ -38,7 +38,7 @@ enum rr_mob_id
 struct rr_loot_data
 {
     enum rr_petal_id id;
-    float loot_table[rr_rarity_max][rr_rarity_max + 1];
+    float loot_table[rr_rarity_id_max][rr_rarity_id_max + 1];
 };
 
 struct rr_mob_data
@@ -57,7 +57,7 @@ struct rr_petal_data
     float health;
     float clump_radius;
     uint32_t cooldown;
-    uint8_t count[rr_rarity_max];
+    uint8_t count[rr_rarity_id_max];
 };
 
 struct rr_mob_rarity_scale
@@ -69,10 +69,10 @@ struct rr_mob_rarity_scale
 
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
 extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
-extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_max];
-extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_max + 1];
+extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
-extern uint32_t RR_RARITY_COLORS[rr_rarity_max];
-extern char const *RR_RARITY_NAMES[rr_rarity_max];
+extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
+extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
 void rr_static_data_init();
