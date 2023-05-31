@@ -1,9 +1,10 @@
 #include <Server/Server.h>
-#include <Server/Client.h>
 
 #include <assert.h>
 #include <sys/time.h>
 #include <unistd.h>
+
+#include <libwebsockets.h>
 
 #include <Shared/Component/Physical.h>
 #include <Shared/Bitset.h>
@@ -11,9 +12,8 @@
 #include <Shared/pb.h>
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
+#include <Server/Client.h>
 #include <Server/Simulation.h>
-
-#include <libwebsockets.h>
 
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
