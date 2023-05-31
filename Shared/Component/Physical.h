@@ -17,7 +17,7 @@ struct proto_bug;
 struct rr_component_physical
 {
                    struct rr_vector velocity;
-    RR_CLIENT_ONLY(struct rr_vector velocity_lerp;)
+    RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
     RR_SERVER_ONLY(uint32_t query_id;)

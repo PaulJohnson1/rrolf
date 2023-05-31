@@ -19,6 +19,7 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, 
     exclude(drop, petal);
     exclude(drop, flower);
     exclude(drop, drop);
+    exclude(drop, mob);
 #undef exclude
 
     return 1;

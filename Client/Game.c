@@ -85,11 +85,21 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
     }
 }
 
+struct render_component_captures
+{
+    struct rr_game *game;
+    float delta;
+    float time;
+};
+
 void render_drop_component(EntityIdx entity, void *_captures)
 {
-    struct rr_game *this = _captures;
+    struct render_component_captures *captures = _captures;
+    struct rr_game *this = captures->game;
     if (!rr_simulation_has_drop(this->simulation, entity))
         return;
+    float delta = captures->delta;
+    float time = captures->time;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     rr_component_drop_render(entity, this->simulation, this->renderer);
@@ -98,9 +108,12 @@ void render_drop_component(EntityIdx entity, void *_captures)
 
 void render_health_component(EntityIdx entity, void *_captures)
 {
-    struct rr_game *this = _captures;
+    struct render_component_captures *captures = _captures;
+    struct rr_game *this = captures->game;
     if (!rr_simulation_has_health(this->simulation, entity))
         return;
+    float delta = captures->delta;
+    float time = captures->time;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     rr_component_health_render(entity, this->simulation, this->renderer);
@@ -109,20 +122,26 @@ void render_health_component(EntityIdx entity, void *_captures)
 
 void render_mob_component(EntityIdx entity, void *_captures)
 {
-    struct rr_game *this = _captures;
+    struct render_component_captures *captures = _captures;
+    struct rr_game *this = captures->game;
     if (!rr_simulation_has_mob(this->simulation, entity))
         return;
+    float delta = captures->delta;
+    float time = captures->time;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_mob_render(entity, this->simulation, this->renderer);
+    rr_component_mob_render(entity, this->simulation, this->renderer, delta, time);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
 void render_petal_component(EntityIdx entity, void *_captures)
 {
-    struct rr_game *this = _captures;
+    struct render_component_captures *captures = _captures;
+    struct rr_game *this = captures->game;
     if (!rr_simulation_has_petal(this->simulation, entity))
         return;
+    float delta = captures->delta;
+    float time = captures->time;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     rr_component_petal_render(entity, this->simulation, this->renderer);
@@ -131,9 +150,12 @@ void render_petal_component(EntityIdx entity, void *_captures)
 
 void render_flower_component(EntityIdx entity, void *_captures)
 {
-    struct rr_game *this = _captures;
+    struct render_component_captures *captures = _captures;
+    struct rr_game *this = captures->game;
     if (!rr_simulation_has_flower(this->simulation, entity))
         return;
+    float delta = captures->delta;
+    float time = captures->time;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     rr_component_flower_render(entity, this->simulation, this->renderer);
@@ -217,11 +239,18 @@ void rr_game_tick(struct rr_game *this, float delta)
             break; // only one arena
         }
 
-        rr_simulation_for_each_entity(this->simulation, this, render_health_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_drop_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
+        double time = start.tv_sec * 1000000 + start.tv_usec;
+
+        struct render_component_captures captures;
+        captures.delta = delta;
+        captures.game = this;
+        captures.time = sin(time / 100000);
+
+        rr_simulation_for_each_entity(this->simulation, &captures, render_health_component);
+        rr_simulation_for_each_entity(this->simulation, &captures, render_mob_component);
+        rr_simulation_for_each_entity(this->simulation, &captures, render_drop_component);
+        rr_simulation_for_each_entity(this->simulation, &captures, render_petal_component);
+        rr_simulation_for_each_entity(this->simulation, &captures, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
     }
     this->socket->user_data = this;
@@ -231,8 +260,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     lws_service(this->socket->socket_context, -1);
 #endif
 
-    // ;
-    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186))
+    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; https://prod.liveshare.vsengsaas.visualstudio.com/join?E83446F43E6B349EC5E210138E3240970528*/))
         this->displaying_debug_information ^= 1;
 
     gettimeofday(&end, NULL);

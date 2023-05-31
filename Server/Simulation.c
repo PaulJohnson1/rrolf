@@ -18,6 +18,14 @@
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
 
+void move_up_temp_test(EntityIdx entity, void *_captures)
+{
+    struct rr_simulation *this = _captures;
+    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    rr_component_physical_set_x(physical, 1000);
+    rr_component_physical_set_y(physical, 0);
+}
+
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -32,16 +40,13 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    for (uint32_t i = 0; i < 25; i++)
-    {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rand() % rr_mob_id_max, rr_rarity_id_legendary);
-        struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-        float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
-        float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
-        rr_component_physical_set_x(physical, cos(angle) * distance);
-        rr_component_physical_set_y(physical, sin(angle) * distance);
-        physical->mass = 100.0f;
-    }
+    // for (uint32_t i = 0; i < 25; i++)
+    // {
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_centipede_head, rr_rarity_id_common);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+    physical->mass = 100.0f;
+    // }
+    rr_simulation_for_each_centipede(this, this, move_up_temp_test);
 
     // for (uint32_t i = = 100.0f;
     // }0; i < 1000; i++)
@@ -52,7 +57,7 @@ void rr_simulation_init(struct rr_simulation *this)
     //     float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
     //     rr_component_physical_set_x(physical, cos(angle) * distance);
     //     rr_component_physical_set_y(physical, sin(angle) * distance);
-    //     physical->mass 
+    //     physical->mass
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -93,6 +98,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
             entity = new_entity;
         }
     }
+
     return entity;
 }
 

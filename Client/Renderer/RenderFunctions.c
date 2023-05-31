@@ -36,10 +36,10 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_line_width(renderer, 3);
         rr_renderer_set_line_join(renderer, 1);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer,7,0);
-        rr_renderer_line_to(renderer,-3.5,6.062177658081055);
-        rr_renderer_line_to(renderer,-3.5,-6.062178134918213);
-        rr_renderer_line_to(renderer,7,0);
+        rr_renderer_move_to(renderer, 7, 0);
+        rr_renderer_line_to(renderer, -3.5, 6.062177658081055);
+        rr_renderer_line_to(renderer, -3.5, -6.062178134918213);
+        rr_renderer_line_to(renderer, 7, 0);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
@@ -71,7 +71,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_line_width(renderer, 3);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,0,7);
+        rr_renderer_arc(renderer, 0, 0, 7);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
@@ -108,7 +108,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
     }
 }
 
-void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
+void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float animation_value)
 {
     switch (id)
     {
@@ -118,11 +118,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5);
+        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5 + animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5);
+        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5 - animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff454545);
         rr_renderer_set_fill(renderer, 0xff555555);
@@ -143,11 +143,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5);
+        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5 + animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5);
+        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5 - animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff454545);
         rr_renderer_set_fill(renderer, 0xff555555);
@@ -158,50 +158,58 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id)
         break;
     case rr_mob_id_centipede_head:
         rr_renderer_set_fill(renderer, 0xff333333);
+        // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,-30,15);
+        rr_renderer_arc(renderer, animation_value, -30, 15);
         rr_renderer_fill(renderer);
+        // side circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,30,15);
+        rr_renderer_arc(renderer, -animation_value, 30, 15);
         rr_renderer_fill(renderer);
+        // antennae circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55,30,5);
+        rr_renderer_arc(renderer, 55 - animation_value * 2, -30, 5);
         rr_renderer_fill(renderer);
+        // antennae circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55,-30,5);
+        rr_renderer_arc(renderer, 55 + animation_value * 2, 30, 5);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);
         rr_renderer_set_line_width(renderer, 7);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,0,35);
+        rr_renderer_arc(renderer, 0, 0, 35);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff333333);
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_line_width(renderer, 3);
+        // antennae line a
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 25,-10);
-        rr_renderer_quadratic_curve_to(renderer, 45,-10,55,-30);
+        rr_renderer_move_to(renderer, 25, -10);
+        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55 - animation_value * 2, -30);
         rr_renderer_stroke(renderer);
+        // antennae line b
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, 10);
-        rr_renderer_quadratic_curve_to(renderer, 45,10,55,30);
+        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55 + animation_value * 2, 30);
         rr_renderer_stroke(renderer);
         break;
     case rr_mob_id_centipede_body:
         rr_renderer_set_fill(renderer, 0xff333333);
+        // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,-30,15);
+        rr_renderer_arc(renderer, animation_value, -30, 15);
         rr_renderer_fill(renderer);
+        // antennae circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,30,15);
+        rr_renderer_arc(renderer, -animation_value, 30, 15);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);
         rr_renderer_set_line_width(renderer, 7);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0,0,35);
+        rr_renderer_arc(renderer, 0, 0, 35);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;

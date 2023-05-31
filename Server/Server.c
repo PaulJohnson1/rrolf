@@ -18,12 +18,13 @@
 #include <libwebsockets.h>
 
 #ifndef NDEBUG
+// I thought this was the solution to the mystery bug
 #define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
 #else
 #define MESSAGE_BUFFER_SIZE (1024 * 1024)
 #endif
-
-static uint8_t outgoing_message[MESSAGE_BUFFER_SIZE];
+static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
+static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
@@ -49,7 +50,7 @@ void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *st
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint64_t size)
 {
-    lws_write(this->socket_handle, message_start, size, LWS_WRITE_BINARY);
+    lws_write(this->socket_handle, message_start, size, LWS_WRITE_BINARY); // @longjmp do you realise that for lws_write you need to allocate more bytes
 }
 
 void rr_server_client_broadcast_update(struct rr_server_client *this)

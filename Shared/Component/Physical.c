@@ -50,12 +50,16 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     if (state & state_flags_x)
     {
         float new_x = proto_bug_read_float32(encoder, "field " "x");
+        if (this->x == 0)
+            this->x = new_x;
         this->velocity.x = this->x - new_x;
         this->x = new_x;
     }
     if (state & state_flags_y)
     {
         float new_y = proto_bug_read_float32(encoder, "field " "y");
+        if (this->y == 0)
+            this->y = new_y;
         this->velocity.y = this->y - new_y;
         this->y = new_y;
     }

@@ -34,7 +34,7 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8
     this->input_data->mouse_x = x;
     this->input_data->mouse_y = y;
     this->input_data->mouse_state = state;
-    if (state == 1) //press down
+    if (state == 1) // press down
         this->input_data->mouse_buttons |= (1 << button);
     else if (state == 0)
         this->input_data->mouse_buttons &= ~(1 << button);
@@ -46,7 +46,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
 {
 #ifdef EMSCRIPTEN
     EM_ASM({
-document.oncontextmenu = function() { return false; };
+        document.oncontextmenu = function() { return false; };
         Module.canvas = document.createElement("canvas");
         Module.canvas.id = "canvas";
         document.body.appendChild(Module.canvas);
@@ -56,9 +56,9 @@ document.oncontextmenu = function() { return false; };
             "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
         window.addEventListener(
             "keyup", function({which}) { Module._rr_key_event($0, 0, which); });
-        window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 1, +!!button)});
-        window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 2, +!!button)});
-        window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX*devicePixelRatio, clientY*devicePixelRatio, 0, +!!button)});
+        window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)});
+        window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 2, +!!button)});
+        window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)});
         Module.paths = [... Array(100)].fill(null);
         Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -108,7 +108,8 @@ document.oncontextmenu = function() { return false; };
         };
         function loop(time)
         {
-            if (window.start == null) window.start = time + 1;
+            if (window.start == null)
+                window.start = time + 1;
             const delta = Math.min(0.5, (time - start) / 1000);
             start = time;
             Module.canvas.width = innerWidth * devicePixelRatio;
@@ -116,8 +117,9 @@ document.oncontextmenu = function() { return false; };
             Module._rr_renderer_main_loop($0, delta, Module.canvas.width, Module.canvas.height, devicePixelRatio);
             requestAnimationFrame(loop);
         };
-        requestAnimationFrame(loop);        
-    }, this);
+        requestAnimationFrame(loop);
+    },
+           this);
 #endif
 }
 
@@ -131,7 +133,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     this->renderer->height = height;
     rr_game_tick(this, delta);
 }
-
 
 int main()
 {
