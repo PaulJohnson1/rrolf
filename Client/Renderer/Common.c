@@ -344,12 +344,14 @@ void rr_renderer_clip(struct rr_renderer *this)
 
 void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x, float y)
 {
+#ifdef EMSCRIPTEN
     EM_ASM({
         let string = "";
         while (Module.HEAPU8[$3])
             string += String.fromCharCode(Module.HEAPU8[$3++]);
         Module.ctxs[$0].fillText(string, $1, $2)
     }, this->context_id, x, y, c);
+#endif
 }
 void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x, float y)
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Component/Common.h>
+#include <Shared/Bitset.h>
 #include <Shared/Entity.h>
 #include <Shared/StaticData.h>
 #include <Shared/Vector.h>
@@ -39,7 +40,7 @@ struct rr_component_player_info
                    uint64_t protocol_state;
                    uint32_t slot_count;
                    uint32_t rotation_count;
-    RR_SERVER_ONLY(uint8_t entities_in_view[RR_MAX_ENTITY_COUNT >> 3];)
+    RR_SERVER_ONLY(uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
                    struct rr_component_player_info_petal_slot slots[10];
     
 };

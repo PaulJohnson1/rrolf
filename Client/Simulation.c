@@ -8,6 +8,11 @@
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
 
+void rr_simulation_init(struct rr_simulation *this)
+{
+    memset(this, 0, sizeof *this);
+}
+
 void rr_simulation_entity_create_with_id(struct rr_simulation *this, EntityIdx entity)
 {
     rr_bitset_set(this->entity_tracker, entity);

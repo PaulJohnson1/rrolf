@@ -156,7 +156,7 @@ int main()
     rr_game_tick(&game, 1);
 
     rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
-    // rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
+    //rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
 
 #ifndef EMSCRIPTEN
     while (1)

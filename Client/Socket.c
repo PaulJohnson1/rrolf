@@ -47,7 +47,7 @@ void rr_websocket_init(struct rr_websocket *this)
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16_t port)
 {
-    static uint8_t incoming_data[128 * 1024];
+    static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
     EM_ASM({
         let string = "";
