@@ -96,32 +96,58 @@ void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (
     // }
 
     uint8_t *const original_start = start;
-    while (start != end)
+
+    while ((uint64_t) start % sizeof(uint64_t))
     {
-        // if ((uint64_t)start % sizeof(uint64_t) == 0)
-        //     if ((start + 8 < end) && !*(uint64_t *)start)
-        //     {
-        //         start += 8;
-        //         continue;
-        //     }
+        if (start == end)
+            return;
         if (*start)
         {
             if (*start & 1)
-                cb(((start - original_start) << 3) + 0, captures);
+                cb(((start - original_start) << 3) | 0, captures);
             if (*start & 2)
-                cb(((start - original_start) << 3) + 1, captures);
+                cb(((start - original_start) << 3) | 1, captures);
             if (*start & 4)
-                cb(((start - original_start) << 3) + 2, captures);
+                cb(((start - original_start) << 3) | 2, captures);
             if (*start & 8)
-                cb(((start - original_start) << 3) + 3, captures);
+                cb(((start - original_start) << 3) | 3, captures);
             if (*start & 16)
-                cb(((start - original_start) << 3) + 4, captures);
+                cb(((start - original_start) << 3) | 4, captures);
             if (*start & 32)
-                cb(((start - original_start) << 3) + 5, captures);
+                cb(((start - original_start) << 3) | 5, captures);
             if (*start & 64)
-                cb(((start - original_start) << 3) + 6, captures);
+                cb(((start - original_start) << 3) | 6, captures);
             if (*start & 128)
-                cb(((start - original_start) << 3) + 7, captures);
+                cb(((start - original_start) << 3) | 7, captures);
+        }
+        start++;
+    }
+
+    while (start != end)
+    {
+        if ((start + 8 < end) && !*(uint64_t *)start)
+        {
+            start += 8;
+            continue;
+        }
+        if (*start)
+        {
+            if (*start & 1)
+                cb(((start - original_start) << 3) | 0, captures);
+            if (*start & 2)
+                cb(((start - original_start) << 3) | 1, captures);
+            if (*start & 4)
+                cb(((start - original_start) << 3) | 2, captures);
+            if (*start & 8)
+                cb(((start - original_start) << 3) | 3, captures);
+            if (*start & 16)
+                cb(((start - original_start) << 3) | 4, captures);
+            if (*start & 32)
+                cb(((start - original_start) << 3) | 5, captures);
+            if (*start & 64)
+                cb(((start - original_start) << 3) | 6, captures);
+            if (*start & 128)
+                cb(((start - original_start) << 3) | 7, captures);
         }
         start++;
     }

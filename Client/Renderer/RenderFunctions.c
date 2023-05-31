@@ -118,11 +118,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5 + animation_value);
+        rr_renderer_quadratic_curve_to(renderer, 11, -10 + animation_value, 22, -5 + animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5 - animation_value);
+        rr_renderer_quadratic_curve_to(renderer, 11, 10 - animation_value, 22, 5 - animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff454545);
         rr_renderer_set_fill(renderer, 0xff555555);
@@ -143,11 +143,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10, 22, -5 + animation_value);
+        rr_renderer_quadratic_curve_to(renderer, 11, -10 + animation_value, 22, -5 + animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10, 22, 5 - animation_value);
+        rr_renderer_quadratic_curve_to(renderer, 11, 10 + animation_value, 22, 5 - animation_value);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff454545);
         rr_renderer_set_fill(renderer, 0xff555555);
@@ -160,11 +160,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_value, -30, 15);
+        rr_renderer_arc(renderer, animation_value * 2, -30, 15);
         rr_renderer_fill(renderer);
         // side circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_value, 30, 15);
+        rr_renderer_arc(renderer, -animation_value * 2, 30, 15);
         rr_renderer_fill(renderer);
         // antennae circle a
         rr_renderer_begin_path(renderer);
@@ -187,12 +187,12 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         // antennae line a
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, -10);
-        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55 - animation_value * 2, -30);
+        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55 - animation_value, -30);
         rr_renderer_stroke(renderer);
         // antennae line b
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, 10);
-        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55 + animation_value * 2, 30);
+        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55 + animation_value, 30);
         rr_renderer_stroke(renderer);
         break;
     case rr_mob_id_centipede_body:

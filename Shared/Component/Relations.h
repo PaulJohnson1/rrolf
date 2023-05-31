@@ -13,11 +13,14 @@ struct rr_component_relations
                    EntityIdx parent_id;
                    EntityIdx owner;
                    uint32_t team;
+    RR_SERVER_ONLY(EntityIdx root_owner;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
 void rr_component_relations_init(struct rr_component_relations *);
 void rr_component_relations_free(struct rr_component_relations *, struct rr_simulation *);
+
+RR_SERVER_ONLY(void rr_component_relations_update_root_owner(struct rr_simulation *, struct rr_component_relations *);)
 
 RR_SERVER_ONLY(void rr_component_relations_write(struct rr_component_relations *, struct proto_bug *, int);)
 RR_CLIENT_ONLY(void rr_component_relations_read(struct rr_component_relations *, struct proto_bug *);)

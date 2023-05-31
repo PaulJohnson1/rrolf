@@ -247,9 +247,9 @@ void rr_game_tick(struct rr_game *this, float delta)
         captures.time = sin(time / 100000);
 
         rr_simulation_for_each_entity(this->simulation, &captures, render_health_component);
-        rr_simulation_for_each_entity(this->simulation, &captures, render_mob_component);
         rr_simulation_for_each_entity(this->simulation, &captures, render_drop_component);
         rr_simulation_for_each_entity(this->simulation, &captures, render_petal_component);
+        rr_simulation_for_each_entity(this->simulation, &captures, render_mob_component);
         rr_simulation_for_each_entity(this->simulation, &captures, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
     }
@@ -260,7 +260,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     lws_service(this->socket->socket_context, -1);
 #endif
 
-    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; https://prod.liveshare.vsengsaas.visualstudio.com/join?E83446F43E6B349EC5E210138E3240970528*/))
+    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; */))
         this->displaying_debug_information ^= 1;
 
     gettimeofday(&end, NULL);

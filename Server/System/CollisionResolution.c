@@ -1,3 +1,5 @@
+#include <Server/System/CollisionResolution.h>
+
 #include <Server/System/CollisionDetection.h>
 
 #include <stdio.h>

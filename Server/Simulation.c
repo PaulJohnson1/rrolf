@@ -40,24 +40,24 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    // for (uint32_t i = 0; i < 25; i++)
-    // {
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_centipede_head, rr_rarity_id_common);
-    struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-    physical->mass = 100.0f;
-    // }
-    rr_simulation_for_each_centipede(this, this, move_up_temp_test);
+    // // for (uint32_t i = 0; i < 25; i++)
+    // // {
+    // EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_centipede_head, rr_rarity_id_common);
+    // struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+    // physical->mass = 100.0f;
+    // // }
+    // rr_simulation_for_each_centipede(this, this, move_up_temp_test);
 
-    // for (uint32_t i = = 100.0f;
-    // }0; i < 1000; i++)
-    // {
-    //     EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_epic);
-    //     struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-    //     float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
-    //     float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
-    //     rr_component_physical_set_x(physical, cos(angle) * distance);
-    //     rr_component_physical_set_y(physical, sin(angle) * distance);
-    //     physical->mass
+    for (uint32_t i = 0; i < 25; i++)
+    {
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, i % 3, rand() % rr_rarity_id_max);
+        struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
+        float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+        float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+        rr_component_physical_set_x(physical, cos(angle) * distance);
+        rr_component_physical_set_y(physical, sin(angle) * distance);
+        physical->mass = 100.0f;
+    }
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -285,19 +285,18 @@ void delete_pending_deletion(uint64_t i, void *captures)
     rr_simulation_free_entity(this, i);
 }
 
-#define RR_TIME_BLOCK(LABEL, CODE)                                                                     \
-    {                                                                                                  \
-        /*                                                                                             \
-            struct timeval start;                                                                      \
-            struct timeval end;                                                                        \
-            gettimeofday(&start, NULL);                                                                \
-            CODE;                                                                                      \
-            gettimeofday(&end, NULL);                                                                  \
-            long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
-            printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
-        */                                                                                             \
-        CODE;                                                                                          \
+//#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
+    {                                                                                              \
+                                                                                                   \
+        struct timeval start;                                                                      \
+        struct timeval end;                                                                        \
+        gettimeofday(&start, NULL);                                                                \
+        CODE;                                                                                      \
+        gettimeofday(&end, NULL);                                                                  \
+        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
+        printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
     }
+ #define RR_TIME_BLOCK(_, CODE) {CODE; };
 
 void rr_simulation_tick(struct rr_simulation *this)
 {

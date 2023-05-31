@@ -13,6 +13,7 @@ struct rr_component_health
                    uint8_t hidden;
                    EntityIdx parent_id;
                    float health;
+    RR_SERVER_ONLY(EntityIdx last_damaged_by;)
     RR_CLIENT_ONLY(float lerp_health;)
                    float max_health;
     RR_SERVER_ONLY(float damage;)
