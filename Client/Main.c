@@ -156,11 +156,11 @@ int main()
     rr_main_renderer_initialize(&game);
     rr_game_tick(&game, 1);
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+//#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
-#else
-    rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
-#endif
+//#else
+    //rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
+//#endif
 
 #ifndef EMSCRIPTEN
     while (1)

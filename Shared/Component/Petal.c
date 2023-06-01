@@ -25,10 +25,9 @@ void rr_component_petal_free(struct rr_component_petal *this, struct rr_simulati
 #ifdef RR_SERVER
     if (this->detached)
         return;
-    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, this->parent_id);
-    if (!rr_simulation_has_entity(simulation, relations->owner))
+    if (!rr_simulation_has_entity(simulation, this->player_info))
         return;
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, this->player_info);
     struct rr_component_player_info_petal *ppetal = &player_info->slots[this->outer_pos].petals[this->inner_pos];
     ppetal->simulation_id = RR_NULL_ENTITY;
     ppetal->cooldown_ticks = player_info->slots[this->outer_pos].data->cooldown;

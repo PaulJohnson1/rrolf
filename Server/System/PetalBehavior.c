@@ -50,6 +50,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     petal->outer_pos = outer;
                     petal->inner_pos = inner;
                     petal->petal_data = data;
+                    petal->player_info = id;
                     
                     rr_component_relations_set_owner(relations, player_info->flower_id); //flower owns petal, not player
                     rr_component_relations_set_team(relations, 1); // flower
@@ -63,7 +64,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     {
                         struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, p_petal->simulation_id);
                         projectile->shoot_delay = 12;
-                        projectile->ticks_until_death = 75;
                     }
                 }
             }
@@ -76,8 +76,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
 static void system_petal_detach(struct rr_simulation *simulation, EntityIdx entity)
 {
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, entity);
-    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, entity);
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
+
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, petal->player_info);
     petal->detached = 1;
     struct rr_component_player_info_petal *ppetal = &player_info->slots[petal->outer_pos].petals[petal->inner_pos];
     ppetal->simulation_id = RR_NULL_ENTITY;
@@ -96,23 +96,20 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
         rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
-    if (!rr_simulation_has_player_info(simulation, relations->owner))
+    if (!rr_simulation_has_entity(simulation, petal->player_info))
     {
         rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, relations->owner);
-    if (player_info->flower_id == 0)
-    {
-        rr_simulation_request_entity_deletion(simulation, id);
-        return;
-    }
+    struct rr_component_flower *flower = rr_simulation_get_flower(simulation, relations->owner);
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, petal->player_info);
     if (petal->detached == 0)
     {
         uint8_t is_projectile = rr_simulation_has_projectile(simulation, id);
         if (is_projectile)
         {
-            if (--rr_simulation_get_projectile(simulation, id)->shoot_delay <= 0)
+            struct rr_component_projectile *projectile = rr_simulation_get_projectile(simulation, id);
+            if (--projectile->shoot_delay <= 0)
             {
                 switch(petal->id)
                 {
@@ -122,13 +119,15 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
                         system_petal_detach(simulation, id);
                         rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
                         rr_vector_from_polar(&physical->velocity, 50.0f, physical->angle);
+                        projectile->ticks_until_death = 75;
                         break;
                     case rr_petal_id_peas:
                         if ((player_info->input & 1) == 0)
                             break;
                         system_petal_detach(simulation, id);
                         rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
-                        rr_vector_from_polar(&physical->velocity, 50.0f, physical->angle);
+                        rr_vector_from_polar(&physical->velocity, 100.0f, physical->angle);
+                        projectile->ticks_until_death = 25;
                         break;
                     default:
                         break;

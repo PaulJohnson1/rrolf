@@ -29,14 +29,16 @@ static void colliding_with_function(uint64_t i, void *_captures)
     EntityIdx entity2 = i;
     if (!rr_simulation_has_health(this, entity2))
         return;
-    if (rr_simulation_get_relations(this, entity2)->team == rr_simulation_get_relations(this, entity1)->team)
+    struct rr_component_relations *relations1 = rr_simulation_get_relations(this, entity1);
+    struct rr_component_relations *relations2 = rr_simulation_get_relations(this, entity2);
+    if (relations1->team == relations2->team)
         return;
     struct rr_component_health *health1 = captures->health;
     struct rr_component_health *health2 = rr_simulation_get_health(this, entity2);
     rr_component_health_set_health(health1, health1->health - health2->damage);
     rr_component_health_set_health(health2, health2->health - health1->damage);
-    health1->last_damaged_by = entity2;
-    health2->last_damaged_by = entity1;
+    health1->last_damaged_by = relations1->owner || entity2;
+    health2->last_damaged_by = relations1->owner || entity1;
 }
 
 static void system_for_each_function(EntityIdx entity, void *_captures)

@@ -33,6 +33,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float lerp_y;)
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
+    RR_CLIENT_ONLY(float animation;)
                    EntityIdx parent_id;
     RR_SERVER_ONLY(uint8_t has_collisions;)
     RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
