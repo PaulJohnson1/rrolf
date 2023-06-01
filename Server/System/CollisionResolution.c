@@ -16,11 +16,11 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, 
     if (rr_simulation_has_##component_a(this, b) && rr_simulation_has_##component_b(this, a)) \
         return 0;
 
-    exclude(petal, flower);
-    exclude(petal, petal);
-    exclude(drop, petal);
-    exclude(drop, flower);
     exclude(drop, drop);
+    exclude(drop, petal);
+    exclude(petal, petal);
+    exclude(petal, flower);
+    exclude(drop, flower);
     exclude(drop, mob);
 #undef exclude
 
@@ -92,14 +92,19 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
     struct rr_simulation *this = _captures;
 
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
-    if (!physical->has_collisions)
-        return;
+    // if (!physical->has_collisions)
+    //     return;
 
     struct colliding_with_captures captures;
     captures.physical = physical;
     captures.simulation = this;
 
-    rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
+    for (uint64_t i = 0; i < physical->colliding_with_size; ++i)
+    {
+        colliding_with_function(physical->colliding_with[i], &captures);
+    }
+
+    //rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
 }
 
 void rr_system_collision_resolution_tick(struct rr_simulation *this)

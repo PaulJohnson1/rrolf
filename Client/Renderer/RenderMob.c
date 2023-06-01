@@ -17,6 +17,5 @@ void rr_component_mob_render(EntityIdx entity, struct rr_simulation *simulation,
     rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[mob->rarity].radius);
     if (physical->animation > 2 * M_PI)
         physical->animation = fmod(physical->animation, 2 * M_PI);
-    // scale by 1 or -1 so that centipede legs move opposite
     rr_renderer_render_mob(renderer, mob->id, sin(physical->animation));
 }

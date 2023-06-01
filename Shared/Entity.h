@@ -3,9 +3,9 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-// must be multiple of 8 and not 0
 #define RR_MAX_ENTITY_COUNT (2048)
 #define RR_NULL_ENTITY (0)
+#define RR_MAX_COLLISION_COUNT (128)
 
 #define RR_FOR_EACH_COMPONENT \
     XX(ai,          1)        \

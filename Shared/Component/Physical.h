@@ -13,6 +13,15 @@
 struct rr_simulation;
 struct proto_bug;
 
+struct rr_component_physical_spatial_hash_bounds
+{
+    uint32_t sx;
+    uint32_t ex;
+    uint32_t sy;
+    uint32_t ey;
+    uint8_t inserted;
+};
+
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
@@ -21,6 +30,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
     RR_SERVER_ONLY(uint32_t query_id;)
+    RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
                    uint32_t deletion_tick;
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float restitution;)
@@ -35,8 +45,10 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
                    EntityIdx parent_id;
-    RR_SERVER_ONLY(uint8_t has_collisions;)
-    RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    // RR_SERVER_ONLY(uint8_t has_collisions;)
+    // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    RR_SERVER_ONLY(uint32_t colliding_with_size;)
+    RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
 
 void rr_component_physical_init(struct rr_component_physical *);

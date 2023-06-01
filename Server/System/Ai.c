@@ -32,17 +32,17 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         {
             if (ai->ai_state == rr_ai_state_idle)
             {
-                // move for 50 ticks
+                // move
                 ai->ai_state = rr_ai_state_idle_moving;
-                ai->ticks_until_next_action = rand() % 25 + 25;
+                ai->ticks_until_next_action = rand() % 25 + 75;
 
                 rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
             }
             else if (ai->ai_state == rr_ai_state_idle_moving)
             {
-                // stay still for 75 ticks
+                // stay still
                 ai->ai_state = rr_ai_state_idle;
-                ai->ticks_until_next_action = rand() % 25 + 50;
+                ai->ticks_until_next_action = rand() % 25 + 25;
             }
             else
             {

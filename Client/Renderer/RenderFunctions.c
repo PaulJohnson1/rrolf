@@ -160,19 +160,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_value * 2, -30, 15);
+        rr_renderer_arc(renderer, animation_value * 3, -30, 15);
         rr_renderer_fill(renderer);
         // side circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_value * 2, 30, 15);
-        rr_renderer_fill(renderer);
-        // antennae circle a
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55, -30, 5);
-        rr_renderer_fill(renderer);
-        // antennae circle b
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55, 30, 5);
+        rr_renderer_arc(renderer, -animation_value * 3, 30, 15);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);
@@ -184,26 +176,39 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_stroke(renderer, 0xff333333);
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_line_width(renderer, 3);
+        struct rr_renderer_context_state state_rotation;
+        rr_renderer_init_context_state(renderer, &state_rotation);
+        rr_renderer_rotate(renderer, animation_value / 10);
+        rr_renderer_set_fill(renderer, 0xff333333);
+        // antennae circle a
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 55 + animation_value * 2, -30, 5);
+        rr_renderer_fill(renderer);
+        // antennae circle b
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 55 - animation_value * 2, 30, 5);
+        rr_renderer_fill(renderer);
         // antennae line a
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, -10);
-        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55, -30);
+        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55 + animation_value * 2, -30);
         rr_renderer_stroke(renderer);
         // antennae line b
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25, 10);
-        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55, 30);
+        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55 - animation_value * 2, 30);
         rr_renderer_stroke(renderer);
+        rr_renderer_free_context_state(renderer, &state_rotation);
         break;
     case rr_mob_id_centipede_body:
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_value, -30, 15);
+        rr_renderer_arc(renderer, animation_value * 2, -30, 15);
         rr_renderer_fill(renderer);
         // antennae circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_value, 30, 15);
+        rr_renderer_arc(renderer, -animation_value * 2, 30, 15);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);

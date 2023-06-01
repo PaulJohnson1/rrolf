@@ -2,8 +2,8 @@
 
 #include <stdint.h>
 
-#define RR_BITSET_ROUND(x) ((x + 7) >> 3)
-// #define RR_BITSET_ROUND(x) (x)
+// #define RR_BITSET_ROUND(x) ((x + 7) >> 3)
+#define RR_BITSET_ROUND(x) (x)
 
 // May return any number that is 1, 2, 4, 8, 16, 32, 64, 128.
 uint8_t rr_bitset_get_bit(uint8_t *, uint64_t);

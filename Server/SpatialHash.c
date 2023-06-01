@@ -19,12 +19,12 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
     uint32_t x = (uint32_t)(physical->x + 8192.0f);
     uint32_t y = (uint32_t)(physical->y + 8192.0f);
     uint32_t w = (uint32_t)(physical->radius);
-    uint32_t h = w;
 
-    uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_x = (physical->bounds.sx = ((x - w) >> SPATIAL_HASH_GRID_SIZE));
+    uint32_t s_y = (physical->bounds.sy = ((y - w) >> SPATIAL_HASH_GRID_SIZE));
+    uint32_t e_x = (physical->bounds.ex = ((x + w) >> SPATIAL_HASH_GRID_SIZE));
+    uint32_t e_y = (physical->bounds.ey = ((y + w) >> SPATIAL_HASH_GRID_SIZE));
+    physical->bounds.inserted = 1;
 
     for (uint32_t y = s_y; y <= e_y; y++)
         for (uint32_t x = s_x; x <= e_x; x++)
@@ -33,8 +33,49 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
             struct rr_spatial_hash_cell *cell = this->cells + hash;
             if (cell->entities_in_use >= RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT)
                 continue;
-            cell->entities[cell->entities_in_use] = entity;
-            cell->entities_in_use++;
+            cell->entities[cell->entities_in_use++] = entity;
+        }
+}
+
+void rr_spatial_hash_update(struct rr_spatial_hash *this, EntityIdx entity)
+{
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    // force positions unsigned for a significantly better hash function
+    uint32_t x = (uint32_t)(physical->x + 8192.0f);
+    uint32_t y = (uint32_t)(physical->y + 8192.0f);
+    uint32_t w = (uint32_t)(physical->radius);
+
+    uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_y = ((y - w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_y = ((y + w) >> SPATIAL_HASH_GRID_SIZE);
+    if (s_x == physical->bounds.sx && e_x == physical->bounds.ex
+     && s_y == physical->bounds.sy && e_y == physical->bounds.ey)
+        return;
+    for (uint32_t y = physical->bounds.sy; y <= physical->bounds.ey; y++)
+        for (uint32_t x = physical->bounds.sx; x <= physical->bounds.ex; x++)
+        {
+            uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
+            struct rr_spatial_hash_cell *cell = this->cells + hash;
+            for (uint32_t i = 0; i < cell->entities_in_use; ++i)
+                if (cell->entities[i] == physical->parent_id)
+                {
+                    if (cell->entities_in_use == 1)
+                        cell->entities_in_use = 0;
+                    else
+                        cell->entities[i] = cell->entities[--cell->entities_in_use];
+                    break;
+                }
+        }
+    
+    for (uint32_t y = s_y; y <= e_y; y++)
+        for (uint32_t x = s_x; x <= e_x; x++)
+        {
+            uint32_t hash = HASH_FUNCTION(x, y) % RR_SPATIAL_HASH_CELL_COUNT;
+            struct rr_spatial_hash_cell *cell = this->cells + hash;
+            if (cell->entities_in_use >= RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT)
+                continue;
+            cell->entities[cell->entities_in_use++] = entity;
         }
 }
 
@@ -88,5 +129,7 @@ void rr_spatial_hash_find_possible_collisions(struct rr_spatial_hash *this, void
 
 void rr_spatial_hash_reset(struct rr_spatial_hash *this)
 {
-    memset(&this->cells, 0, sizeof this->cells);
+    for (uint64_t i = 0; i < RR_SPATIAL_HASH_CELL_COUNT; i++)
+        this->cells[i].entities_in_use = 0;
+    //memset(&this->cells, 0, sizeof this->cells);
 }

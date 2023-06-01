@@ -57,7 +57,7 @@ if(DEBUG_BUILD)
 elseif(CALLGRIND_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast -DHSHG_NDEBUG -march=native")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast -DHSHG_NDEBUG")
     # link time optimiations
     if(WINDOWS)
     else()

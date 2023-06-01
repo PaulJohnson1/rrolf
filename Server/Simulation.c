@@ -40,17 +40,17 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    // // for (uint32_t i = 0; i < 25; i++)
-    // // {
+    // for (uint32_t i = 0; i < 25; i++)
+    // {
     // EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_centipede_head, rr_rarity_id_common);
     // struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
     // physical->mass = 100.0f;
-    // // }
+    // }
     // rr_simulation_for_each_centipede(this, this, move_up_temp_test);
 
-    for (uint32_t i = 0; i < 25; i++)
+    for (uint32_t i = 0; i < 1000; i++)
     {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, i % 3, rand() % rr_rarity_id_max);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_id_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
         float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
         float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
@@ -296,17 +296,14 @@ void delete_pending_deletion(uint64_t i, void *captures)
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
         printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
     }
- #define RR_TIME_BLOCK(_, CODE) {CODE; };
+#define RR_TIME_BLOCK(_, CODE) {CODE; };
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
     // delete pending deletions
-    RR_TIME_BLOCK("hash grid reset", {
-        rr_spatial_hash_reset(this->grid);
-    });
     RR_TIME_BLOCK("protocol state reset", { rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function); });
-    RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
+    RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
@@ -314,7 +311,6 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("deletions", {
-        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
         rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
         memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     });
