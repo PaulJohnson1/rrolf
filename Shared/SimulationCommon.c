@@ -11,6 +11,7 @@
 void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
 {
     printf("deleted entity with id %d\n", entity);
+    assert(rr_simulation_has_entity(this, entity));
 #ifndef RR_SERVER
 #define XX(COMPONENT, ID)                            \
     if (rr_simulation_has_##COMPONENT(this, entity)) \

@@ -67,7 +67,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
-    if (this->player_info->flower_id != RR_NULL_ENTITY)
+    if (rr_simulation_has_entity(&this->server->simulation, this->player_info->flower_id))
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
         rr_component_player_info_set_camera_x(this->player_info, physical->x);

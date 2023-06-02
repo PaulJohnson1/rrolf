@@ -48,7 +48,7 @@ void rr_simulation_init(struct rr_simulation *this)
     // }
     // rr_simulation_for_each_centipede(this, this, move_up_temp_test);
 
-    for (uint32_t i = 0; i < 1000; i++)
+    for (uint32_t i = 0; i < 10; i++)
     {
         EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_id_epic);
         struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
@@ -104,20 +104,13 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
 
 void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
 {
+    printf("request deletion of entity %u\n", entity);
     assert(rr_simulation_has_entity(this, entity));
-
-#define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(this, entity)) \
-        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
     rr_bitset_set(this->pending_deletions, entity);
 }
 
 EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
 {
-    // hshg_insert()
     for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; i++)
     {
         if (!rr_simulation_has_entity(this, i))
@@ -282,6 +275,13 @@ void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *capture
 void delete_pending_deletion(uint64_t i, void *captures)
 {
     struct rr_simulation *this = captures;
+    assert(rr_simulation_has_entity(this, i));
+#define XX(COMPONENT, ID)                            \
+    if (rr_simulation_has_##COMPONENT(this, i)) \
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, i), this);
+    RR_FOR_EACH_COMPONENT;
+#undef XX
+
     rr_simulation_free_entity(this, i);
 }
 
@@ -301,6 +301,10 @@ void delete_pending_deletion(uint64_t i, void *captures)
 void rr_simulation_tick(struct rr_simulation *this)
 {
     // delete pending deletions
+    RR_TIME_BLOCK("deletions", {
+        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
+        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
+    });
     RR_TIME_BLOCK("protocol state reset", { rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function); });
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
@@ -310,8 +314,4 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
-    RR_TIME_BLOCK("deletions", {
-        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
-        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
-    });
 }
