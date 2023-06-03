@@ -36,6 +36,8 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
     struct rr_simulation *this = captures;
     assert(rr_simulation_has_entity(this, i));
 
+    RR_SERVER_ONLY(rr_bitset_set(this->recently_deleted, i);)
+
 #define XX(COMPONENT, ID)                       \
     if (rr_simulation_has_##COMPONENT(this, i)) \
         rr_bitset_unset(this->COMPONENT##_tracker, i);
@@ -49,6 +51,7 @@ struct rr_simulation_for_each_entity_function_captures
 {
     void (*user_cb)(EntityIdx, void *);
     void *user_captures;
+    struct rr_simulation *simulation;
 };
 
 // used to convert the uint64_t index that rr_bitset_for_each_bit into an EntityIdx for the user
@@ -74,6 +77,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
     {                                                                                                                                                                  \
         EntityIdx id = bit;                                                                                                                                            \
         struct rr_simulation_for_each_entity_function_captures *captures = _captures;                                                                                  \
+        assert(rr_simulation_has_##COMPONENT(captures->simulation, id));                                                                                               \
         captures->user_cb(id, captures->user_captures);                                                                                                                \
     }                                                                                                                                                                  \
     void rr_simulation_for_each_##COMPONENT(struct rr_simulation *this, void *user_captures, void (*cb)(EntityIdx, void *))                                            \
@@ -81,7 +85,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
         struct rr_simulation_for_each_entity_function_captures captures;                                                                                               \
         captures.user_cb = cb;                                                                                                                                         \
         captures.user_captures = user_captures;                                                                                                                        \
-                                                                                                                                                                       \
+        captures.simulation = this;                                                                                                                                    \
         rr_bitset_for_each_bit(&this->COMPONENT##_tracker[0], &this->COMPONENT##_tracker[0] + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, COMPONENT##for_each); \
     }                                                                                                                                                                  \
                                                                                                                                                                        \

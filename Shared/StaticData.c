@@ -71,18 +71,18 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 
 static void init_loot_tables()
 {
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[0], rr_petal_id_basic, 0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[1], rr_petal_id_light, 0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[2], rr_petal_id_missile, 0.05);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[3], rr_petal_id_peas, 0.1);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[0], rr_petal_id_basic, 0.25);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[1], rr_petal_id_light, 0.25);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[2], rr_petal_id_missile, 0.05);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_baby_ant].loot[3], rr_petal_id_peas, 0.1);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[0], rr_petal_id_peas, 0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[1], rr_petal_id_missile, 0.4);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[0], rr_petal_id_peas, 0.1);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_worker_ant].loot[1], rr_petal_id_missile, 0.4);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[0], rr_petal_id_peas, 1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[1], rr_petal_id_light, 0.75);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[0], rr_petal_id_peas, 1);
+    // init_loot_table(&RR_MOB_DATA[rr_mob_id_centipede_head].loot[1], rr_petal_id_light, 0.75);
 
-    init_loot_table(&RR_MOB_DATA[3].loot[0], rr_petal_id_peas, 0.5);
+    // init_loot_table(&RR_MOB_DATA[3].loot[0], rr_petal_id_peas, 0.5);
 }
 
 void rr_static_data_init()

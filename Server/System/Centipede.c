@@ -9,8 +9,6 @@
 
 void rr_system_centipede_foreach_function(EntityIdx id, void *simulation)
 {
-    if (!rr_simulation_has_centipede(simulation, id))
-        return;
     struct rr_component_centipede *centipede = rr_simulation_get_centipede(simulation, id);
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
     struct rr_vector parent_vector = {physical->x, physical->y};
@@ -35,5 +33,5 @@ void rr_system_centipede_foreach_function(EntityIdx id, void *simulation)
 
 void rr_system_centipede_tick(struct rr_simulation *simulation)
 {
-    rr_simulation_for_each_entity(simulation, simulation, rr_system_centipede_foreach_function);
+    rr_simulation_for_each_centipede(simulation, simulation, rr_system_centipede_foreach_function);
 }

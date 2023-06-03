@@ -31,13 +31,15 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     }
     case rr_ai_state_idle:
         break;
+    case rr_ai_state_spin2team:
+        
+
     case rr_ai_state_attacking:
     {
         ai->ticks_until_next_action = 10; // when the ai is done being pissed, wait a little until the next action
-        // target died (what a noob)
-        if (!rr_simulation_has_entity(this, ai->target_entity))
+        if (!rr_simulation_has_entity(this, ai->target_entity)) // target died (what a noob)
         {
-            ai->ai_state = rr_ai_state_idle;
+            ai->ai_state = rr_ai_state_spin2team;
             ai->target_entity = RR_NULL_ENTITY; // you really don't want the entity being reallocated and then the mob goes sicko mode
             break;
         }
@@ -45,7 +47,6 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         struct rr_component_physical *target_physical = rr_simulation_get_physical(this, ai->target_entity);
         struct rr_vector delta = {target_physical->x - physical->x, target_physical->y - physical->y};
         rr_vector_set_magnitude(&delta, 0.75f);
-        //rr_vector_scale(&delta, -1);
         rr_vector_add(&physical->acceleration, &delta);
         rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
     }

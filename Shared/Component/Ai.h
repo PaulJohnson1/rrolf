@@ -12,7 +12,8 @@ enum rr_ai_state : uint8_t
 {
     rr_ai_state_idle,
     rr_ai_state_idle_moving,
-    rr_ai_state_attacking
+    rr_ai_state_attacking,
+    rr_ai_state_spin2team
 };
 
 enum rr_ai_type : uint8_t

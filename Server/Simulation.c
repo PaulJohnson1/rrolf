@@ -32,23 +32,12 @@ void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
     rr_static_data_init();
-    // this->hshg = hshg_create(64, 16);
-    // assert(this->hshg);
-    // this->hshg->update = rr_simulation_tick;
-    // hshg_set_size(this->hshg, RR_MAX_ENTITY_COUNT + 1);
     this->grid = malloc(sizeof *this->grid);
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
-    // for (uint32_t i = 0; i < 25; i++)
-    // {
-    // EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_centipede_head, rr_rarity_id_common);
-    // struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-    // physical->mass = 100.0f;
-    // }
-    // rr_simulation_for_each_centipede(this, this, move_up_temp_test);
 }
 
 static void spawn_random_mob(struct rr_simulation *this)
@@ -131,6 +120,8 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
     {
         if (!rr_simulation_has_entity(this, i))
         {
+            if (rr_bitset_get_bit(this->recently_deleted, i))
+                continue;
             rr_bitset_set(this->entity_tracker, i);
             printf("created with id %d\n", i);
             return i;
@@ -278,8 +269,6 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
 }
 
-
-
 //#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
     {                                                                                              \
                                                                                                    \
@@ -296,6 +285,12 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
         CODE;                  \
     };
 
+static void mob_counter(EntityIdx i, void *a)
+{
+    EntityIdx *count = a;
+    ++*count;
+}
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
@@ -306,13 +301,15 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
-    // delete pending deletions
-    RR_TIME_BLOCK("deletions", {
-        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
-        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
-        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
-    });
 
-        for (uint32_t i = 0; i < 100; i++)
+    EntityIdx mobs_in_use = 0;
+    rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
+    if (mobs_in_use <= 100)
         spawn_random_mob(this);
+
+    // delete pending deletions
+    memset(this->recently_deleted, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->recently_deleted);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
+    memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
 }

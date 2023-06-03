@@ -23,6 +23,7 @@ struct rr_simulation
 {
     uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
+    RR_SERVER_ONLY(uint8_t recently_deleted[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(EntityIdx arena;)
     RR_CLIENT_ONLY(EntityIdx player_info);
 

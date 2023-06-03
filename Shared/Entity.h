@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define RR_MAX_ENTITY_COUNT (4096)
+#define RR_MAX_ENTITY_COUNT (1024)
 #define RR_NULL_ENTITY (0)
 #define RR_MAX_COLLISION_COUNT (128)
 

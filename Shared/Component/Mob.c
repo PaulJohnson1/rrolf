@@ -63,7 +63,7 @@ void rr_component_mob_free(struct rr_component_mob *this, struct rr_simulation *
             rr_vector_from_polar(&drop_physical->velocity, 25, angle);
             drop_physical->friction = 0.75;
         }
-        drop_physical->radius = 25;
+        rr_component_physical_set_radius(drop_physical, 25);
         rr_component_drop_set_id(drop, spawn_ids[i]);
         rr_component_drop_set_rarity(drop, spawn_rarities[i]);
     }
