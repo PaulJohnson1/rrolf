@@ -51,7 +51,7 @@ static void spawn_random_mob(struct rr_simulation *this)
         id = rr_mob_id_worker_ant;
     else if (r -= 0.30, r < 0)
         id = rr_mob_id_hornet;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rr_rarity_id_epic);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rand() % rr_rarity_id_max);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -78,6 +78,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
+
+    rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
     switch (mob_id)
     {
     case rr_mob_id_hornet:

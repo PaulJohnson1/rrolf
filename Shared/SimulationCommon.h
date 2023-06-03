@@ -19,6 +19,12 @@
 struct rr_spatial_hash;
 #endif
 
+enum rr_simulation_team_id : uint8_t
+{
+    rr_simulation_team_id_mobs,
+    rr_simulation_team_id_players
+};
+
 struct rr_simulation
 {
     uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];

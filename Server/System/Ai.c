@@ -83,7 +83,6 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
     case rr_ai_state_attacking:
     {
-        ai->ticks_until_next_action = rand() % 10 + 25;         // when the ai is done being pissed, wait a little until the next action
         if (!rr_simulation_has_entity(this, ai->target_entity)) // target died (what a noob)
         {
             ai->ai_state = rr_ai_state_spin2team;
@@ -95,8 +94,11 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
         if (ai->ai_aggro_type == rr_ai_aggro_type_hornet)
             if (delta.x * delta.x + delta.y * delta.y <= 500 * 500)
+            {
                 break;
-        //if and only if aggro type is hornet and is too close then break
+            }
+        ai->ticks_until_next_action = rand() % 10 + 25; // when the ai is done being pissed, wait a little until the next action
+        // if and only if aggro type is hornet and is too close then break
         rr_vector_set_magnitude(&delta, 0.75f);
         rr_vector_add(&physical->acceleration, &delta);
     }
@@ -121,6 +123,42 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
             ai->ticks_until_next_action = 50;
             break;
         case rr_ai_state_attacking:
+            if (ai->ai_aggro_type == rr_ai_aggro_type_hornet)
+            {
+                //spawn a missile
+                EntityIdx petal_id = rr_simulation_alloc_entity(simulation);
+                struct rr_component_physical *physical2 = rr_simulation_add_physical(simulation, petal_id);
+                struct rr_component_petal *petal = rr_simulation_add_petal(simulation, petal_id);
+                struct rr_component_relations *relations = rr_simulation_add_relations(simulation, petal_id);
+                struct rr_component_health *health = rr_simulation_add_health(simulation, petal_id); 
+                struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, petal_id);
+
+                rr_component_physical_set_x(physical2, physical->x);
+                rr_component_physical_set_y(physical2, physical->y);
+                rr_component_physical_set_angle(physical2, physical->angle);
+                rr_component_physical_set_radius(physical2, 10);
+                physical2->friction = 0.75f;
+                physical2->mass = 0.05f;
+                rr_vector_from_polar(&physical2->acceleration, 100, physical->angle);
+
+                rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
+                rr_component_relations_set_owner(relations, ai->parent_id);
+
+                rr_component_petal_set_id(petal, rr_petal_id_missile);
+                rr_component_petal_set_rarity(petal, rr_rarity_id_unusual); // need fix later
+                petal->detached = 1;
+
+                rr_component_health_set_max_health(health, 100);
+                rr_component_health_set_health(health, 100);
+                health->damage = 1.0f;
+                rr_component_health_set_hidden(health, 1);
+
+                projectile->ticks_until_death = 50;
+                
+                ai->ticks_until_next_action = 50;
+
+                rr_vector_from_polar(&physical->acceleration, -2, physical->angle); //recoil
+            }
             break;
         }
     }

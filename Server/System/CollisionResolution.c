@@ -10,6 +10,9 @@
 
 static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, EntityIdx b)
 {
+    if (rr_simulation_get_relations(this, a)->team != rr_simulation_get_relations(this, b)->team)
+        return 1;
+
 #define exclude(component_a, component_b)                                                     \
     if (rr_simulation_has_##component_a(this, a) && rr_simulation_has_##component_b(this, b)) \
         return 0;                                                                             \
@@ -53,15 +56,14 @@ static void colliding_with_function(uint64_t i, void *_captures)
     float distance = rr_vector_get_magnitude(&delta);
     if (distance == 0)
         return;
-    {
-        float overlap = (distance - physical1->radius - physical2->radius);
-        float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
-        float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
-        rr_component_physical_set_x(physical1, physical1->x - overlap * delta.x / distance * v1_Coeff);
-        rr_component_physical_set_y(physical1, physical1->y - overlap * delta.y / distance * v1_Coeff);
-        rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
-        rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
-    }
+
+    float overlap = (distance - physical1->radius - physical2->radius);
+    float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
+    float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
+    rr_component_physical_set_x(physical1, physical1->x - overlap * delta.x / distance * v1_Coeff);
+    rr_component_physical_set_y(physical1, physical1->y - overlap * delta.y / distance * v1_Coeff);
+    rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
+    rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
     /*
         {
             float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
