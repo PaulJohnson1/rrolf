@@ -153,11 +153,10 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     uint8_t is_creation = 0;
 
     if (!rr_bitset_get_bit(player_info->entities_in_view, id))
-        if (rr_bitset_get_bit(new_entities_in_view, id))
-        {
-            is_creation = 1;
-            rr_bitset_set(player_info->entities_in_view, id);
-        }
+    {
+        is_creation = 1;
+        rr_bitset_set(player_info->entities_in_view, id);
+    }
 
     uint32_t component_flags = 0;
     if (is_creation)
@@ -201,6 +200,8 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity, voi
     struct rr_simulation *simulation = captures->simulation;
 
     if (!rr_simulation_has_physical(simulation, entity))
+        return;
+    if (rr_bitset_get(simulation->pending_deletions, entity))
         return;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
 
@@ -308,8 +309,8 @@ void rr_simulation_tick(struct rr_simulation *this)
         spawn_random_mob(this);
 
     // delete pending deletions
-    memset(this->recently_deleted, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->recently_deleted);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+    memset(this->recently_deleted, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->recently_deleted);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
 }

@@ -264,8 +264,8 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 100)
-            printf("tick took %ld microseconds\n", elapsed_time);
+        //if (elapsed_time > 100)
+            //printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }
