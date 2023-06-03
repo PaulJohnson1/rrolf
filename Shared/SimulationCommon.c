@@ -104,7 +104,11 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
     }                                                                                                                                                                  \
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *this, EntityIdx entity)                                                       \
     {                                                                                                                                                                  \
+        if (!rr_simulation_has_entity(this, entity)) \
+            printf("missing entity on %d\n", entity); \
         assert(rr_simulation_has_entity(this, entity));                                                                                                                \
+        if (!rr_simulation_has_##COMPONENT(this, entity)) \
+            printf("missing component on %d\n", entity); \
         assert(rr_simulation_has_##COMPONENT(this, entity));                                                                                                           \
         return &this->COMPONENT##_components[entity];                                                                                                                  \
     }
