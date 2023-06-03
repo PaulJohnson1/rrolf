@@ -8,30 +8,41 @@
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 
-void rr_simulation_free_entity(struct rr_simulation *this, EntityIdx entity)
-{
-    printf("deleted entity with id %d\n", entity);
-    assert(rr_simulation_has_entity(this, entity));
-#ifndef RR_SERVER
-#define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(this, entity)) \
-        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, entity), this);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-#endif
-    // unset them
-#define XX(COMPONENT, ID) \
-    rr_bitset_unset(this->COMPONENT##_tracker, entity);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
-    // unset entity
-    rr_bitset_unset(this->entity_tracker, entity);
-}
-
 int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
 {
     return rr_bitset_get(this->entity_tracker, entity);
+}
+
+void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
+{
+    printf("request deletion of entity %u\n", entity);
+    assert(rr_simulation_has_entity(this, entity));
+    rr_bitset_set(this->pending_deletions, entity);
+}
+
+void __rr_simulation_pending_deletion_free_components(uint64_t i, void *captures)
+{
+    struct rr_simulation *this = captures;
+    assert(rr_simulation_has_entity(this, i));
+#define XX(COMPONENT, ID)                       \
+    if (rr_simulation_has_##COMPONENT(this, i)) \
+        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, i), this);
+    RR_FOR_EACH_COMPONENT;
+#undef XX
+}
+
+void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
+{
+    struct rr_simulation *this = captures;
+    assert(rr_simulation_has_entity(this, i));
+
+#define XX(COMPONENT, ID)                       \
+    if (rr_simulation_has_##COMPONENT(this, i)) \
+        rr_bitset_unset(this->COMPONENT##_tracker, i);
+    RR_FOR_EACH_COMPONENT;
+#undef XX
+
+    rr_bitset_unset(this->entity_tracker, i);
 }
 
 struct rr_simulation_for_each_entity_function_captures

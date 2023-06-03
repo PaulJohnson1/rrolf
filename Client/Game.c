@@ -64,7 +64,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
             RR_UNREACHABLE("how'd this happen");
         }
         struct proto_bug encoder2;
-        static uint8_t output_packet[128 * 1024];
         proto_bug_init(&encoder2, output_packet);
         proto_bug_write_uint8(&encoder2, 0, "header");
         proto_bug_write_uint8(&encoder2, 0, "movement type");
@@ -234,6 +233,14 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; */))
         this->displaying_debug_information ^= 1;
+
+    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 13 /* enter */))
+    {
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, output_packet);
+        proto_bug_write_uint8(&encoder, 1, "header");
+        rr_websocket_send(this->socket, encoder.start, encoder.current);
+    }
 
     gettimeofday(&end, NULL);
     long time_elapsed = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);

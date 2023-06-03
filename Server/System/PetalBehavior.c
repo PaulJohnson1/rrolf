@@ -15,7 +15,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
     if (!rr_simulation_has_player_info(simulation, id))
         return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, id);
-    if (player_info->flower_id == 0)
+    if (player_info->flower_id == RR_NULL_ENTITY)
         return;
     uint32_t rotationPos = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)

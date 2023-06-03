@@ -26,6 +26,8 @@ void move_up_temp_test(EntityIdx entity, void *_captures)
     rr_component_physical_set_y(physical, 0);
 }
 
+static void spawn_random_mob(struct rr_simulation *this);
+
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -47,17 +49,18 @@ void rr_simulation_init(struct rr_simulation *this)
     // physical->mass = 100.0f;
     // }
     // rr_simulation_for_each_centipede(this, this, move_up_temp_test);
+}
 
-    for (uint32_t i = 0; i < 10; i++)
-    {
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, rr_mob_id_baby_ant, rr_rarity_id_epic);
-        struct rr_component_physical *physical = rr_simulation_get_physical(this, mob_id);
-        float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
-        float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
-        rr_component_physical_set_x(physical, cos(angle) * distance);
-        rr_component_physical_set_y(physical, sin(angle) * distance);
-        physical->mass = 100.0f;
-    }
+static void spawn_random_mob(struct rr_simulation *this)
+{
+    // promote to double for accuracy, demote to float once finished
+    float r = ((double)rand() / (double)RAND_MAX);
+    uint8_t id = rr_mob_id_centipede_head;
+    if (r -= 0.45, r < 0)
+        id = rr_mob_id_baby_ant;
+    else if (r -= 0.45, r < 0)
+        id = rr_mob_id_worker_ant;
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rr_rarity_id_epic);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -74,13 +77,33 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
+    float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+    float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+    rr_component_physical_set_x(physical, cos(angle) * distance);
+    rr_component_physical_set_y(physical, sin(angle) * distance);
     physical->radius = mob_data->radius * rarity_scale->radius;
     physical->friction = 0.9;
+    physical->mass = 100.0f;
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
+    switch (mob_id)
+    {
+    case rr_mob_id_centipede_head:
+    case rr_mob_id_worker_ant:
+        ai->ai_type = rr_ai_type_neutral;
+        break;
+    case rr_mob_id_centipede_body:
+    case rr_mob_id_baby_ant:
+        ai->ai_type = rr_ai_type_passive;
+        break;
+    default:
+        RR_UNREACHABLE("forgot to set ai type");
+    };
+
     if (mob_id == rr_mob_id_centipede_head)
     {
+        ai->ai_type = rr_ai_type_neutral;
         EntityIdx prev_node = entity;
         struct rr_component_centipede *centipede = rr_simulation_add_centipede(this, entity);
         struct rr_vector extension;
@@ -100,13 +123,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     }
 
     return entity;
-}
-
-void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
-{
-    printf("request deletion of entity %u\n", entity);
-    assert(rr_simulation_has_entity(this, entity));
-    rr_bitset_set(this->pending_deletions, entity);
 }
 
 EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
@@ -262,28 +278,7 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
 }
 
-void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
-{
-    struct rr_simulation *this = captures;
-#define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(this, entity)) \
-        rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
-    RR_FOR_EACH_COMPONENT
-#undef XX
-}
 
-void delete_pending_deletion(uint64_t i, void *captures)
-{
-    struct rr_simulation *this = captures;
-    assert(rr_simulation_has_entity(this, i));
-#define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(this, i)) \
-        rr_component_##COMPONENT##_free(rr_simulation_get_##COMPONENT(this, i), this);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
-    rr_simulation_free_entity(this, i);
-}
 
 //#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
     {                                                                                              \
@@ -296,16 +291,13 @@ void delete_pending_deletion(uint64_t i, void *captures)
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
         printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
     }
-#define RR_TIME_BLOCK(_, CODE) {CODE; };
+#define RR_TIME_BLOCK(_, CODE) \
+    {                          \
+        CODE;                  \
+    };
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    // delete pending deletions
-    RR_TIME_BLOCK("deletions", {
-        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, delete_pending_deletion);
-        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
-    });
-    RR_TIME_BLOCK("protocol state reset", { rr_simulation_for_each_entity(this, this, rr_simulation_tick_entity_resetter_function); });
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
@@ -314,4 +306,13 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
+    // delete pending deletions
+    RR_TIME_BLOCK("deletions", {
+        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+        rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
+        memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
+    });
+
+        for (uint32_t i = 0; i < 100; i++)
+        spawn_random_mob(this);
 }

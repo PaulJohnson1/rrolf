@@ -10,7 +10,9 @@
         "vector": "c",
         "string_view": "c",
         "initializer_list": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "entity.h": "c",
+        "physical.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"

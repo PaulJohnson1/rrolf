@@ -188,9 +188,9 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
         }
         case 1:
         {
-            if (size != 1)
+            if (size < 1)
             {
-                puts("someone sent a spawn packet with size != 1");
+                puts("someone sent a spawn packet with size < 1");
                 return 0;
             }
             rr_server_client_create_flower(client);
@@ -216,12 +216,24 @@ void rr_server_free(struct rr_server *this)
     lws_context_destroy(this->server);
 }
 
+static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
+{
+    struct rr_simulation *this = captures;
+#define XX(COMPONENT, ID)                            \
+    if (rr_simulation_has_##COMPONENT(this, entity)) \
+        rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
+    RR_FOR_EACH_COMPONENT
+#undef XX
+}
+
 void rr_server_tick(struct rr_server *this)
 {
     rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
             rr_server_client_tick(this->clients + i);
+
+    rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
 }
 
 void rr_server_run(struct rr_server *this)

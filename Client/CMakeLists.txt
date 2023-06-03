@@ -41,6 +41,7 @@ set(SRCS
 )
 
 set(CMAKE_C_FLAGS "-DRR_CLIENT")
+set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)

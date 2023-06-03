@@ -43,7 +43,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (rr_simulation_has_ai(this, entity1))
     {
         struct rr_component_ai *ai = rr_simulation_get_ai(this, entity1);
-        if (rr_simulation_has_entity(this, ai->target_entity))
+        if (rr_simulation_has_entity(this, ai->target_entity)) //probably replaced by a is null check
             return;
         if (rr_simulation_has_petal(this, entity2))
         {
@@ -56,7 +56,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
             ai->target_entity = entity2;
             printf("%u ai found new target %u", entity1, ai->target_entity);
         }
-
+        if (ai->ai_type == rr_ai_type_neutral)
+            ai->ai_state = rr_ai_state_attacking;
     }
     if (rr_simulation_has_ai(this, entity2))
     {
@@ -74,6 +75,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
             ai->target_entity = entity1;
             printf("%u ai found new target %u", entity2, ai->target_entity);
         }
+        if (ai->ai_type == rr_ai_type_neutral)
+            ai->ai_state = rr_ai_state_attacking;
     }
 }
 

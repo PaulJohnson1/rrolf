@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 
+uint8_t output_packet[128 * 1024] = {0};
+
 #ifdef EMSCRIPTEN
 void rr_on_socket_event_emscripten(struct rr_websocket *this, enum rr_websocket_event_type type, void *data, uint64_t data_size)
 {

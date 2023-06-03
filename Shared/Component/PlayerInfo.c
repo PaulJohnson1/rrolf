@@ -22,7 +22,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
     for (uint64_t i = 0; i < 10; ++i)
     {
         uint8_t id = rr_petal_id_peas;
-        uint8_t rarity = rr_rarity_id_ultra;
+        uint8_t rarity = rr_rarity_id_common;
         this->slots[i].rarity = rarity;
         this->slots[i].data = &RR_PETAL_DATA[id];
         this->slots[i].count = RR_PETAL_DATA[id].count[rarity];

@@ -28,7 +28,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
             break;
         assert(id < RR_MAX_ENTITY_COUNT);
         assert(rr_bitset_get_bit(this->entity_tracker, id));
-        rr_simulation_free_entity(this, id);
+        rr_simulation_request_entity_deletion(this, id);
     }
 
     while (1)
@@ -61,4 +61,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
     rr_system_interpolation_tick(this, delta);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
+    memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
 }

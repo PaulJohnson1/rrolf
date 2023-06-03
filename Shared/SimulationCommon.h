@@ -16,15 +16,13 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
-// #include <Server/SpatialHash.h>
-// struct hshg;
 struct rr_spatial_hash;
 #endif
 
 struct rr_simulation
 {
     uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    RR_SERVER_ONLY(uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)]);
+    uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     RR_SERVER_ONLY(EntityIdx arena;)
     RR_CLIENT_ONLY(EntityIdx player_info);
 
@@ -44,11 +42,13 @@ struct rr_simulation
 };
 
 void rr_simulation_init(struct rr_simulation *);
-
-void rr_simulation_free_entity(struct rr_simulation *, EntityIdx);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
-
+void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
 void rr_simulation_for_each_entity(struct rr_simulation *, void *, void (*cb)(EntityIdx, void *));
+
+// internal use
+void __rr_simulation_pending_deletion_free_components(uint64_t, void *);
+void __rr_simulation_pending_deletion_unset_entity(uint64_t, void *);
 
 #define XX(COMPONENT, ID)                                                                              \
     uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *, EntityIdx);                          \

@@ -22,12 +22,12 @@ void rr_component_flower_init(struct rr_component_flower *this)
 void rr_component_flower_free(struct rr_component_flower *this, struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    printf("flower deletion: %d, %d\n", rr_simulation_get_relations(simulation, this->parent_id)->owner, this->parent_id);
-    rr_component_player_info_set_flower_id(
-        rr_simulation_get_player_info(
-            simulation,
-            rr_simulation_get_relations(simulation, this->parent_id)->owner),
-        RR_NULL_ENTITY);
+    if (rr_simulation_has_entity(simulation, rr_simulation_get_relations(simulation, this->parent_id)->owner))
+        rr_component_player_info_set_flower_id(
+            rr_simulation_get_player_info(
+                simulation,
+                rr_simulation_get_relations(simulation, this->parent_id)->owner),
+            RR_NULL_ENTITY);
 #endif
 }
 

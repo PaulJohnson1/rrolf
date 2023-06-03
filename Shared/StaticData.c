@@ -10,7 +10,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_stinger,  120.0f, 2.0f,  10.0f, 100,  {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_faster,   10.0f,  5.0f,  25.0f, 25,   {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile,  75.0f,  5.0f,  15.0f, 25,   {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_peas,     75.0f,  5.0f,  8.0f,  25,   {4, 4, 4, 4, 4, 4, 5}},
+    {rr_petal_id_peas,     15.0f,  5.0f,  8.0f,  25,   {4, 4, 4, 4, 4, 4, 5}},
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
