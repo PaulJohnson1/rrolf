@@ -22,7 +22,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this)
     #ifdef RR_SERVER
     for (uint64_t i = 0; i < 10; ++i)
     {
-        uint8_t id = rand() % rr_rarity_id_max;
+        uint8_t id = rr_petal_id_missile;
         uint8_t rarity = rr_rarity_id_mythic;
         this->slots[i].rarity = rarity;
         this->slots[i].data = &RR_PETAL_DATA[id];

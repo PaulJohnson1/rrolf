@@ -45,10 +45,12 @@ static void spawn_random_mob(struct rr_simulation *this)
     // promote to double for accuracy, demote to float once finished
     float r = ((double)rand() / (double)RAND_MAX);
     uint8_t id = rr_mob_id_centipede_head;
-    if (r -= 0.45, r < 0)
+    if (r -= 0.30, r < 0)
         id = rr_mob_id_baby_ant;
-    else if (r -= 0.45, r < 0)
+    else if (r -= 0.30, r < 0)
         id = rr_mob_id_worker_ant;
+    else if (r -= 0.30, r < 0)
+        id = rr_mob_id_hornet;
     EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rr_rarity_id_epic);
 }
 
@@ -78,6 +80,9 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     health->damage = mob_data->damage * rarity_scale->damage;
     switch (mob_id)
     {
+    case rr_mob_id_hornet:
+        ai->ai_type = rr_ai_type_aggressive;
+        break;
     case rr_mob_id_centipede_head:
     case rr_mob_id_worker_ant:
         ai->ai_type = rr_ai_type_neutral;
