@@ -9,7 +9,7 @@ struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 
-struct rr_component_petal
+struct rr_component_petal// stop check discord
 {
                    EntityIdx parent_id;
     RR_SERVER_ONLY(EntityIdx player_info;)

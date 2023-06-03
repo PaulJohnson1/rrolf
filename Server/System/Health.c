@@ -49,12 +49,12 @@ static void colliding_with_function(uint64_t i, void *_captures)
         {
             struct rr_component_relations *relations = rr_simulation_get_relations(this, entity2);
             ai->target_entity = relations->owner;
-            printf("%u ai found new target %u", entity1, ai->target_entity);
+            printf("%u ai found new target %u\n", entity1, ai->target_entity);
         }
         else // allows for mob targeting
         {
             ai->target_entity = entity2;
-            printf("%u ai found new target %u", entity1, ai->target_entity);
+            printf("%u ai found new target %u\n", entity1, ai->target_entity);
         }
         if (ai->ai_type == rr_ai_type_neutral)
             ai->ai_state = rr_ai_state_attacking;

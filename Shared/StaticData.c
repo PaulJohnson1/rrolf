@@ -18,7 +18,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_worker_ant,     62.5, 10, 17.5f, {}},
     {rr_mob_id_centipede_head, 25,   10, 35.0f, {}},
     {rr_mob_id_centipede_body, 25,   10, 35.0f, {}},
-    {rr_mob_id_hornet,         37.5, 50, 35.0f, {}}
+    {rr_mob_id_hornet,         37.5, 50, 25.0f, {}}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {

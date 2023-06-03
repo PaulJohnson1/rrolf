@@ -95,6 +95,21 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
         RR_UNREACHABLE("forgot to set ai type");
     };
 
+    switch (mob_id)
+    {
+    case rr_mob_id_hornet:
+        ai->ai_aggro_type = rr_ai_aggro_type_hornet;
+        break;
+    case rr_mob_id_centipede_head:
+    case rr_mob_id_worker_ant:
+    case rr_mob_id_centipede_body:
+    case rr_mob_id_baby_ant:
+        ai->ai_aggro_type = rr_ai_aggro_type_default;
+        break;
+    default:
+        RR_UNREACHABLE("forgot to set ai aggro type");
+    };
+
     if (mob_id == rr_mob_id_centipede_head)
     {
         ai->ai_type = rr_ai_type_neutral;

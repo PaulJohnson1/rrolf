@@ -101,7 +101,6 @@ static void rr_system_petal_behavior_petal_movement_foreach_function(EntityIdx i
         rr_simulation_request_entity_deletion(simulation, id);
         return;
     }
-    struct rr_component_flower *flower = rr_simulation_get_flower(simulation, relations->owner);
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, petal->player_info);
     if (petal->detached == 0)
     {

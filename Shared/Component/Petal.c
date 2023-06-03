@@ -26,7 +26,7 @@ void rr_component_petal_free(struct rr_component_petal *this, struct rr_simulati
     if (this->detached)
         return;
     if (!rr_simulation_has_entity(simulation, this->player_info))
-        return;
+        return; // stop check discord
     if (!rr_simulation_has_player_info(simulation, this->player_info))
         return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, this->player_info);
