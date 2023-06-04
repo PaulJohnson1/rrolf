@@ -12,6 +12,8 @@
 #define PROTO_BUG_ALLOCA(size) _alloca(size)
 #endif
 
+#include <Shared/MagicNumber.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -66,30 +68,31 @@ extern "C"
 
     void proto_bug_write_uint8_internal(struct proto_bug *self, uint8_t data)
     {
-        *self->current++ = data;
+        *self->current++ = data ^ RR_SECRET8 ^ 0;
     }
     void proto_bug_write_uint16_internal(struct proto_bug *self, uint16_t data)
     {
-        proto_bug_write_uint8_internal(self, (data & 0xff00) >> 8);
-        proto_bug_write_uint8_internal(self, data & 0xff);
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 1 ^ ((data & 0xff00) >> 8));
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 2 ^ (data & 0xff));
     }
     void proto_bug_write_uint32_internal(struct proto_bug *self, uint32_t data)
     {
-        proto_bug_write_uint8_internal(self, (data & 0xff000000) >> 24);
-        proto_bug_write_uint8_internal(self, (data & 0x00ff0000) >> 16);
-        proto_bug_write_uint8_internal(self, (data & 0x0000ff00) >> 8);
-        proto_bug_write_uint8_internal(self, data & 0xff);
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 3 ^ ((data & 0xff000000) >> 24));
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 4 ^ ((data & 0x00ff0000) >> 16));
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 5 ^ ((data & 0x0000ff00) >> 8));
+        proto_bug_write_uint8_internal(self, RR_SECRET32 ^ 6 ^ (data & 0xff));
     }
     void proto_bug_write_uint64_internal(struct proto_bug *self, uint64_t data)
     {
-        proto_bug_write_uint8_internal(self, (data & 0xff00000000000000ull) >> 56ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff000000000000ull) >> 48ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff0000000000ull) >> 40ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff00000000ull) >> 32ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff000000ull) >> 24ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff0000ull) >> 16ull);
-        proto_bug_write_uint8_internal(self, (data & 0xff00ull) >> 8ull);
-        proto_bug_write_uint8_internal(self, data & 0xffull);
+        data += 18446744073709551604ull ^ 100ull;
+        proto_bug_write_uint8_internal(self, ((data & 0xff00000000000000ull) >> 56ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff000000000000ull) >> 48ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff0000000000ull) >> 40ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff00000000ull) >> 32ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff000000ull) >> 24ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff0000ull) >> 16ull));
+        proto_bug_write_uint8_internal(self, ((data & 0xff00ull) >> 8ull));
+        proto_bug_write_uint8_internal(self, (data & 0xffull));
     }
     void proto_bug_write_float32_internal(struct proto_bug *self, float data)
     {
@@ -105,10 +108,10 @@ extern "C"
     {
         while (data > 127ull)
         {
-            proto_bug_write_uint8_internal(self, data | 128ull);
+            proto_bug_write_uint8_internal(self, (data << 1) | 1);
             data >>= 7ull;
         }
-        proto_bug_write_uint8_internal(self, data);
+        proto_bug_write_uint8_internal(self, data << 1);
     }
     void proto_bug_write_string_internal(struct proto_bug *self, char const *string, uint64_t size)
     {
@@ -118,38 +121,39 @@ extern "C"
 
     uint8_t proto_bug_read_uint8_internal(struct proto_bug *self)
     {
-        return *self->current++;
+        return RR_SECRET8 ^ 0 ^ *self->current++;
     }
     uint16_t proto_bug_read_uint16_internal(struct proto_bug *self)
     {
         uint16_t data = 0;
-        data |= (uint16_t)proto_bug_read_uint8_internal(self) << 8;
-        data |= (uint16_t)proto_bug_read_uint8_internal(self);
+        data |= RR_SECRET32 ^ 1 ^ ((uint16_t)proto_bug_read_uint8_internal(self) << 8);
+        data |= RR_SECRET32 ^ 2 ^ ((uint16_t)proto_bug_read_uint8_internal(self));
 
         return data;
     }
     uint32_t proto_bug_read_uint32_internal(struct proto_bug *self)
     {
         uint32_t data = 0;
-        data |= (uint32_t)proto_bug_read_uint8_internal(self) << 24;
-        data |= (uint32_t)proto_bug_read_uint8_internal(self) << 16;
-        data |= (uint32_t)proto_bug_read_uint8_internal(self) << 8;
-        data |= (uint32_t)proto_bug_read_uint8_internal(self);
+        data |= RR_SECRET32 ^ 3 ^ ((uint32_t)proto_bug_read_uint8_internal(self) << 24);
+        data |= RR_SECRET32 ^ 4 ^ ((uint32_t)proto_bug_read_uint8_internal(self) << 16);
+        data |= RR_SECRET32 ^ 5 ^ ((uint32_t)proto_bug_read_uint8_internal(self) << 8);
+        data |= RR_SECRET32 ^ 6 ^ ((uint32_t)proto_bug_read_uint8_internal(self));
 
         return data;
     }
     uint64_t proto_bug_read_uint64_internal(struct proto_bug *self)
     {
         uint64_t data = 0;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 56ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 48ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 40ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 32ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 24ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 16ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self) << 8ull;
-        data |= (uint64_t)proto_bug_read_uint8_internal(self);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 56ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 48ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 40ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 32ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 24ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 16ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self) << 8ull);
+        data |= ((uint64_t)proto_bug_read_uint8_internal(self));
 
+        data -= 18446744073709551604ull ^ 100ull;
         return data;
     }
     float proto_bug_read_float32_internal(struct proto_bug *self)
@@ -175,9 +179,9 @@ extern "C"
         do
         {
             byte = proto_bug_read_uint8_internal(self);
-            data |= (byte & 127ull) << shift;
+            data |= ((byte & 254ull) << shift) >> 1;
             shift += 7ull;
-        } while (byte & 128ull);
+        } while (byte & 1ull);
 
         return data;
     }
