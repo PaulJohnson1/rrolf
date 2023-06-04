@@ -6,6 +6,9 @@
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
+#define FOR_EACH_PUBLIC_FIELD \
+    X(radius, float32) 
+
 enum
 {
     state_flags_radius = 0b000001,
@@ -26,7 +29,9 @@ void rr_component_arena_write(struct rr_component_arena *this, struct proto_bug 
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "arena component state");
-    RR_ENCODE_PUBLIC_FIELD(radius, float32);
+#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 
 RR_DEFINE_PUBLIC_FIELD(arena, float, radius)
@@ -36,6 +41,8 @@ RR_DEFINE_PUBLIC_FIELD(arena, float, radius)
 void rr_component_arena_read(struct rr_component_arena *this, struct proto_bug *encoder)
 {
     uint64_t state = proto_bug_read_varuint(encoder, "arena component state");
-    RR_DECODE_PUBLIC_FIELD(radius, float32);
+#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 #endif

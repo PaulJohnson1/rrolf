@@ -145,7 +145,9 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
             if (rr_bitset_get_bit(this->recently_deleted, i))
                 continue;
             rr_bitset_set(this->entity_tracker, i);
+#ifndef NDEBUG
             printf("created with id %d\n", i);
+#endif
             return i;
         }
     }

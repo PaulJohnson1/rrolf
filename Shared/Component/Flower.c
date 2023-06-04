@@ -7,10 +7,14 @@
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
+#define FOR_EACH_PUBLIC_FIELD \
+    X(face_flags, uint8) \
+    X(eye_angle, float32) 
+
 enum
 {
-    state_flags_face_flags = 0b000001,
-    state_flags_eye_angle = 0b000010,
+    state_flags_eye_angle = 0b000001,
+    state_flags_face_flags = 0b000010,
     state_flags_all = 0b000011
 };
 
@@ -36,8 +40,9 @@ void rr_component_flower_write(struct rr_component_flower *this, struct proto_bu
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "flower component state");
-    RR_ENCODE_PUBLIC_FIELD(face_flags, uint8);
-    RR_ENCODE_PUBLIC_FIELD(eye_angle, float32);
+#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 
 RR_DEFINE_PUBLIC_FIELD(flower, uint8_t, face_flags)
@@ -48,7 +53,8 @@ RR_DEFINE_PUBLIC_FIELD(flower, float, eye_angle)
 void rr_component_flower_read(struct rr_component_flower *this, struct proto_bug *encoder)
 {
     uint64_t state = proto_bug_read_varuint(encoder, "flower component state");
-    RR_DECODE_PUBLIC_FIELD(face_flags, uint8);
-    RR_DECODE_PUBLIC_FIELD(eye_angle, float32);
+#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 #endif

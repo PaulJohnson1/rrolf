@@ -6,11 +6,6 @@
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
-enum
-{
-    state_flags_all = 0b000000
-};
-
 void rr_component_ai_init(struct rr_component_ai *this)
 {
     memset(this, 0, sizeof *this);

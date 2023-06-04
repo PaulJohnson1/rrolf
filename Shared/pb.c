@@ -84,7 +84,7 @@ extern "C"
     }
     void proto_bug_write_uint64_internal(struct proto_bug *self, uint64_t data)
     {
-        data += 18446744073709551604ull ^ 100ull;
+        data += 18446744073709551604ull ^ 100ull; // make it wraparound since javascript can't do uint64 wraparound very well
         proto_bug_write_uint8_internal(self, ((data & 0xff00000000000000ull) >> 56ull));
         proto_bug_write_uint8_internal(self, ((data & 0xff000000000000ull) >> 48ull));
         proto_bug_write_uint8_internal(self, ((data & 0xff0000000000ull) >> 40ull));
