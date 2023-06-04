@@ -1,13 +1,13 @@
 #include <Server/System/PetalBehavior.h>
 
 #include <math.h>
-#include <stdlib.h>
 #include <stdio.h>
 
 #include <Server/Simulation.h>
 
 #include <Shared/StaticData.h>
 #include <Shared/Entity.h>
+#include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
 static void system_petal_detach(struct rr_simulation *simulation, struct rr_component_petal *petal, struct rr_component_player_info *player_info,
@@ -77,7 +77,7 @@ static void system_flower_petal_movement_logic(struct rr_simulation *simulation,
     if (petal->id == rr_petal_id_faster)
     {
         struct rr_vector random_vector;
-        rr_vector_from_polar(&random_vector, 10.0f, (float)rand() / (float)RAND_MAX * M_PI * 2);
+        rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
     if (!is_projectile)
@@ -134,7 +134,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     rr_component_physical_set_radius(physical, 10);
                     rr_component_physical_set_x(physical, player_info->camera_x);
                     rr_component_physical_set_y(physical, player_info->camera_y);
-                    rr_component_physical_set_angle(physical, (float)rand() / (float)RAND_MAX * M_PI * 2);
+                    rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
+                    physical->mass = 5;
                     physical->friction = 0.75;
 
                     rr_component_petal_set_id(petal, data->id);

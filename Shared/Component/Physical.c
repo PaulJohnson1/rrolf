@@ -33,14 +33,14 @@ void rr_component_physical_write(struct rr_component_physical *this, struct prot
     /* no-reorder */RR_ENCODE_PUBLIC_FIELD(y, float32);
     RR_ENCODE_PUBLIC_FIELD(angle, float32);
     RR_ENCODE_PUBLIC_FIELD(radius, float32);
-    RR_ENCODE_PUBLIC_FIELD(deletion_tick, uint8);
+    RR_ENCODE_PUBLIC_FIELD(damage_animation_tick, uint8);
 }
 
 RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
 RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
-RR_DEFINE_PUBLIC_FIELD(physical, uint32_t, deletion_tick)
+RR_DEFINE_PUBLIC_FIELD(physical, uint8_t, damage_animation_tick)
 #endif
 
 #ifdef RR_CLIENT
@@ -65,7 +65,7 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     }
     RR_DECODE_PUBLIC_FIELD(angle, float32);
     RR_DECODE_PUBLIC_FIELD(radius, float32);
-    RR_DECODE_PUBLIC_FIELD(deletion_tick, uint8);
+    RR_DECODE_PUBLIC_FIELD(damage_animation_tick, uint8);
 }
 #endif
 

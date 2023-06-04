@@ -56,6 +56,7 @@ void rr_renderer_set_stroke(struct rr_renderer *, uint32_t);
 
 void rr_renderer_set_line_width(struct rr_renderer *, float);
 void rr_renderer_set_text_size(struct rr_renderer *, float);
+void rr_renderer_set_global_alpha(struct rr_renderer *, float);
 
 void rr_renderer_set_line_cap(struct rr_renderer *, uint8_t);
 void rr_renderer_set_line_join(struct rr_renderer *, uint8_t);

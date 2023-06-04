@@ -44,6 +44,8 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
     if (rr_simulation_has_centipede(this, entity) && rr_simulation_get_centipede(this, entity)->parent_node != RR_NULL_ENTITY)
         return;
+    if (rr_simulation_get_health(this, entity)->health < 0.0001f)
+        return;
     struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
 
@@ -125,6 +127,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         case rr_ai_state_attacking:
             if (ai->ai_aggro_type == rr_ai_aggro_type_hornet)
             {
+                struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
                 //spawn a missile
                 EntityIdx petal_id = rr_simulation_alloc_entity(simulation);
                 struct rr_component_physical *physical2 = rr_simulation_add_physical(simulation, petal_id);
@@ -138,19 +141,19 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 rr_component_physical_set_angle(physical2, physical->angle);
                 rr_component_physical_set_radius(physical2, 10);
                 physical2->friction = 0.75f;
-                physical2->mass = 0.05f;
+                physical2->mass = 10.0f;
                 rr_vector_from_polar(&physical2->acceleration, 100, physical->angle);
 
                 rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
                 rr_component_relations_set_owner(relations, ai->parent_id);
 
                 rr_component_petal_set_id(petal, rr_petal_id_missile);
-                rr_component_petal_set_rarity(petal, rr_rarity_id_unusual); // need fix later
+                rr_component_petal_set_rarity(petal, mob->rarity); // need fix later
                 petal->detached = 1;
 
-                rr_component_health_set_max_health(health, 100);
-                rr_component_health_set_health(health, 100);
-                health->damage = 1.0f;
+                rr_component_health_set_max_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
+                rr_component_health_set_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
+                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.1f;
                 rr_component_health_set_hidden(health, 1);
 
                 projectile->ticks_until_death = 50;

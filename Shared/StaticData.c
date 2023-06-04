@@ -7,7 +7,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, 0.0f,   0.0f,  0.0f,  0,    {                   }},
     {rr_petal_id_basic,    10.0f,  10.0f, 0.0f,  37,   {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_light,    7.0f,   5.0f,  0.0f,  12,   {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_stinger,  35.0f,  8.0f,  10.0f, 113,  {1, 1, 1, 1, 1, 3, 5}},
+    {rr_petal_id_stinger,  35.0f,  2.0f,  10.0f, 113,  {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_faster,   7.0f,   5.0f,  25.0f, 20,   {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile,  20.0f,  10.0f, 15.0f, 75,   {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas,     10.0f,  5.0f,  8.0f,  25,   {4, 4, 4, 4, 4, 4, 5}},
@@ -23,22 +23,22 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 
 float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     1,
-    2,
+    1.5,
+    2.5,
     4,
-    8,
-    16,
-    32,
-    64
+    6,
+    9,
+    14
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1, 1, 1},
-    {2, 2, 1.1},
-    {5, 5, 1.3},
-    {10, 10, 1.6},
-    {25, 25, 2.5},
-    {100, 100, 4.0},
-    {300, 300, 6.0}
+    {1.0, 1.0, 1.0},
+    {2.5, 1.6, 1.1},
+    {4.5, 2.6, 1.3},
+    {9.0, 4.5, 1.6},
+    {15,  8.0, 2.5},
+    {25,  13,  4.0},
+    {50,  25,  6.0}
 };
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75};

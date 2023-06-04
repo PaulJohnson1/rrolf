@@ -16,6 +16,7 @@
 #include <Server/System/Velocity.h>
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
+#include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
 void move_up_temp_test(EntityIdx entity, void *_captures)
@@ -42,8 +43,7 @@ void rr_simulation_init(struct rr_simulation *this)
 
 static void spawn_random_mob(struct rr_simulation *this)
 {
-    // promote to double for accuracy, demote to float once finished
-    float r = ((double)rand() / (double)RAND_MAX);
+    float r = rr_frand();
     uint8_t id = rr_mob_id_centipede_head;
     if (r -= 0.30, r < 0)
         id = rr_mob_id_baby_ant;
@@ -68,8 +68,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
-    float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
-    float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
+    float distance = sqrt(rr_frand()) * 1650.0f;
+    float angle = rr_frand() * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
     physical->radius = mob_data->radius * rarity_scale->radius;

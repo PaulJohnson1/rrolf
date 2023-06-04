@@ -31,7 +31,6 @@ struct rr_component_physical
     RR_SERVER_ONLY(uint64_t protocol_state;)
     RR_SERVER_ONLY(uint32_t query_id;)
     RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
-                   uint32_t deletion_tick;
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float restitution;)
     RR_SERVER_ONLY(float friction;)
@@ -44,6 +43,8 @@ struct rr_component_physical
                    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
+    RR_CLIENT_ONLY(float lerp_damage_animation_tick;)
+                   uint8_t damage_animation_tick;
                    EntityIdx parent_id;
     // RR_SERVER_ONLY(uint8_t has_collisions;)
     // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
@@ -61,4 +62,4 @@ RR_DECLARE_PUBLIC_FIELD(physical, float, x)
 RR_DECLARE_PUBLIC_FIELD(physical, float, y)
 RR_DECLARE_PUBLIC_FIELD(physical, float, angle)
 RR_DECLARE_PUBLIC_FIELD(physical, float, radius)
-RR_DECLARE_PUBLIC_FIELD(physical, uint32_t, deletion_tick)
+RR_DECLARE_PUBLIC_FIELD(physical, uint8_t, damage_animation_tick)

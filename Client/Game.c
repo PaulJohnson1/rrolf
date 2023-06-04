@@ -157,7 +157,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     double time = start.tv_sec * 1000000 + start.tv_usec;
 
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
-    this->renderer->state.filter.amount = 1;
+    this->renderer->state.filter.amount = 0;
     struct rr_renderer_context_state state1;
     struct rr_renderer_context_state state2;
     rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
@@ -168,6 +168,11 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
         rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
         rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
+        if (player_info->flower_id != RR_NULL_ENTITY)
+        {
+            if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->damage_animation_tick != 0)
+                rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
+        }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
             if (rr_bitset_get_bit(this->simulation->arena_tracker, p) == 0)
