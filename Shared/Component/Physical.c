@@ -6,12 +6,12 @@
 
 enum
 {
-    state_flags_y =             0b000001,
-    state_flags_x =             0b000010,
-    state_flags_radius =         0b000100,
-    state_flags_deletion_tick =        0b001000,
+    state_flags_y = 0b000001,
+    state_flags_x = 0b000010,
+    state_flags_radius = 0b000100,
+    state_flags_deletion_tick = 0b001000,
     state_flags_angle = 0b010000,
-    state_flags_all =           0b011111
+    state_flags_all = 0b011111
 };
 
 void rr_component_physical_init(struct rr_component_physical *this)
