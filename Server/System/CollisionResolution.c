@@ -10,8 +10,6 @@
 
 static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, EntityIdx b)
 {
-    if (rr_simulation_get_relations(this, a)->team != rr_simulation_get_relations(this, b)->team)
-        return 1;
 
 #define exclude(component_a, component_b)                                                     \
     if (rr_simulation_has_##component_a(this, a) && rr_simulation_has_##component_b(this, b)) \
@@ -21,10 +19,12 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, 
 
     exclude(drop, drop);
     exclude(drop, petal);
-    exclude(petal, petal);
-    exclude(petal, flower);
     exclude(drop, flower);
     exclude(drop, mob);
+    if (rr_simulation_get_relations(this, a)->team != rr_simulation_get_relations(this, b)->team)
+        return 1; //only drop doesn't care about team
+    exclude(petal, petal);
+    exclude(petal, flower);
 #undef exclude
 
     return 1;

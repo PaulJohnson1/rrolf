@@ -7,8 +7,8 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(rarity, uint8) \
-    X(id, uint8) 
+    X(rarity, uint8)          \
+    X(id, uint8)
 
 enum
 {
@@ -17,9 +17,12 @@ enum
     state_flags_all = 0b000011
 };
 
-void rr_component_drop_init(struct rr_component_drop *this)
+void rr_component_drop_init(struct rr_component_drop *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(
+        this->ticks_until_despawn = 25 * 15; // scale seconds by 25 but we do a little trolling
+    )
 }
 
 void rr_component_drop_free(struct rr_component_drop *this, struct rr_simulation *simulation)

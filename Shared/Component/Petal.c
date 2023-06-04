@@ -8,8 +8,8 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(id, uint8) \
-    X(rarity, uint8) 
+    X(rarity, uint8) \
+    X(id, uint8) 
 
 enum
 {
@@ -18,7 +18,7 @@ enum
     state_flags_all =    0b000011
 };
 
-void rr_component_petal_init(struct rr_component_petal *this)
+void rr_component_petal_init(struct rr_component_petal *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->spin_ccw = 1 - 2 * (rand() & 1);)

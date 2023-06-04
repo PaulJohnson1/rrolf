@@ -100,7 +100,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this, void *user_captur
     {                                                                                                                                                                  \
         assert(rr_simulation_has_entity(this, entity));                                                                                                                \
         rr_bitset_set(this->COMPONENT##_tracker, entity);                                                                                                              \
-        rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity);                                                                                        \
+        rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity, this);                                                                                        \
         this->COMPONENT##_components[entity].parent_id = entity;                                                                                                       \
         return rr_simulation_get_##COMPONENT(this, entity);                                                                                                            \
     }                                                                                                                                                                  \

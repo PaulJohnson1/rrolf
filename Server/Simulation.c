@@ -10,14 +10,15 @@
 #include <Server/System/Centipede.h>
 #include <Server/System/CollisionDetection.h>
 #include <Server/System/CollisionResolution.h>
+#include <Server/System/Drops.h>
 #include <Server/System/Health.h>
 #include <Server/System/MapBoundary.h>
 #include <Server/System/PetalBehavior.h>
 #include <Server/System/Velocity.h>
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
-#include <Shared/Utilities.h>
 #include <Shared/pb.h>
+#include <Shared/Utilities.h>
 
 void move_up_temp_test(EntityIdx entity, void *_captures)
 {
@@ -43,6 +44,7 @@ void rr_simulation_init(struct rr_simulation *this)
 
 static void spawn_random_mob(struct rr_simulation *this)
 {
+    // promote to double for accuracy, demote to float once finished
     float r = rr_frand();
     uint8_t id = rr_mob_id_centipede_head;
     if (r -= 0.30, r < 0)
@@ -68,7 +70,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale = RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
-    float distance = sqrt(rr_frand()) * 1650.0f;
+    float distance = sqrt(rr_frand()) * rr_simulation_get_arena(this, 1)->radius;
     float angle = rr_frand() * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
@@ -320,6 +322,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 {
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
+    RR_TIME_BLOCK("drops", { rr_system_drops_tick(this); });
     RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });

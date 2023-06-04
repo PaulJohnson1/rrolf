@@ -7,21 +7,23 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(health, float32) \
+    X(max_health, float32) \
     X(hidden, uint8) \
-    X(max_health, float32) 
+    X(health, float32) 
 
 enum
 {
-    state_flags_health = 0b001,
-    state_flags_max_health = 0b010,
-    state_flags_hidden = 0b100,
+    state_flags_hidden = 0b001,
+    state_flags_health = 0b010,
+    state_flags_max_health = 0b100,
     state_flags_all = 0b111
 };
 
-void rr_component_health_init(struct rr_component_health *this)
+void rr_component_health_init(struct rr_component_health *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
+    this->health = 1;
+    this->max_health = 1;
 }
 
 void rr_component_health_free(struct rr_component_health *this, struct rr_simulation *simulation)
@@ -40,6 +42,8 @@ void rr_component_health_write(struct rr_component_health *this, struct proto_bu
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)
 {
+    if (this->health == 0)
+        return;
     if (v > this->max_health)
         v = this->max_health;
     else if (v < 0)

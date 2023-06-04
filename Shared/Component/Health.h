@@ -19,7 +19,7 @@ struct rr_component_health
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_health_init(struct rr_component_health *);
+void rr_component_health_init(struct rr_component_health *, struct rr_simulation *);
 void rr_component_health_free(struct rr_component_health *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_health_write(struct rr_component_health *, struct proto_bug *, int);)

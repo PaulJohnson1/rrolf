@@ -75,6 +75,24 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_leaf:
+        rr_renderer_set_stroke(renderer, 0xff2e933c);
+        rr_renderer_set_fill(renderer, 0xff39b54a);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -20, 0);
+        rr_renderer_line_to(renderer, -15, 0);
+        rr_renderer_bezier_curve_to(renderer,-10,-12,5,-12,15,0);
+        rr_renderer_bezier_curve_to(renderer,5,12,-10,12,-15,0);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -9, 0);
+        rr_renderer_quadratic_curve_to(renderer,0,-1.5,7.5,0);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }
@@ -89,6 +107,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
     {
         if (id == rr_petal_id_missile)
             rr_renderer_rotate(renderer, 1);
+        else if (id == rr_petal_id_leaf)
+            rr_renderer_rotate(renderer, -1);
         rr_renderer_render_petal(renderer, id);
     }
     else
@@ -101,6 +121,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
             rr_renderer_translate(renderer, r, 0);
             if (id == rr_petal_id_missile)
                 rr_renderer_rotate(renderer, 1);
+            else if (id == rr_petal_id_leaf)
+                rr_renderer_rotate(renderer, -1);
             rr_renderer_render_petal(renderer, id);
             rr_renderer_free_context_state(renderer, &state);
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);

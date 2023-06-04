@@ -19,7 +19,7 @@ struct rr_component_projectile
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_projectile_init(struct rr_component_projectile *);
+void rr_component_projectile_init(struct rr_component_projectile *, struct rr_simulation *);
 void rr_component_projectile_free(struct rr_component_projectile *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_projectile_write(struct rr_component_projectile *, struct proto_bug *, int);)

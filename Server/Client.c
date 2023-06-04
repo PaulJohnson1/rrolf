@@ -34,7 +34,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     struct rr_component_physical *physical = rr_simulation_add_physical(&this->server->simulation, flower_id);
     struct rr_component_health *health = rr_simulation_add_health(&this->server->simulation, flower_id);
     struct rr_component_relations *relations = rr_simulation_add_relations(&this->server->simulation, flower_id);
-    float distance = sqrt((float)rand() / (float)RAND_MAX) * 1650.0f;
+    float distance = sqrt((float)rand() / (float)RAND_MAX) * rr_simulation_get_arena(&this->server->simulation, 1)->radius;
     float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
@@ -44,7 +44,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     rr_simulation_add_flower(&this->server->simulation, flower_id);
     rr_component_health_set_max_health(health, 1000);
     rr_component_health_set_health(health, 1000);
-    rr_component_relations_set_team(relations, flower_id + 3/*rr_simulation_team_id_players*/);
+    rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, this->player_info->parent_id);
     rr_component_player_info_set_camera_x(this->player_info, physical->x);
     rr_component_player_info_set_camera_y(this->player_info, physical->y);

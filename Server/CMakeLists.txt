@@ -16,6 +16,7 @@ set(SRCS
     System/Centipede.c
     System/CollisionDetection.c
     System/CollisionResolution.c
+    System/Drops.c
     System/Health.c
     System/MapBoundary.c
     System/PetalBehavior.c

@@ -23,6 +23,7 @@ enum rr_petal_id
     rr_petal_id_faster,
     rr_petal_id_missile,
     rr_petal_id_peas,
+    rr_petal_id_leaf,
     rr_petal_id_max
 };
 

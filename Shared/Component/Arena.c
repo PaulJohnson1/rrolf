@@ -15,7 +15,7 @@ enum
     state_flags_all =    0b000001
 };
 
-void rr_component_arena_init(struct rr_component_arena *this)
+void rr_component_arena_init(struct rr_component_arena *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
 }

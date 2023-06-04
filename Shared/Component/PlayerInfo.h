@@ -45,7 +45,7 @@ struct rr_component_player_info
     
 };
 
-void rr_component_player_info_init(struct rr_component_player_info *);
+void rr_component_player_info_init(struct rr_component_player_info *, struct rr_simulation *);
 void rr_component_player_info_free(struct rr_component_player_info *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_player_info_write(struct rr_component_player_info *, struct proto_bug *, int);)

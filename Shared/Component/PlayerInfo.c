@@ -7,28 +7,28 @@
 #include <Shared/StaticData.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(camera_fov, float32) \
     X(camera_y, float32) \
+    X(camera_x, float32) \
     X(flower_id, varuint) \
-    X(camera_x, float32) 
+    X(camera_fov, float32) 
 
 enum
 {
-    state_flags_camera_fov = 0b000001,
-    state_flags_flower_id = 0b000010,
+    state_flags_camera_x = 0b000001,
+    state_flags_camera_fov = 0b000010,
     state_flags_camera_y = 0b000100,
-    state_flags_camera_x = 0b001000,
+    state_flags_flower_id = 0b001000,
     state_flags_all = 0b001111
 };
 
-void rr_component_player_info_init(struct rr_component_player_info *this)
+void rr_component_player_info_init(struct rr_component_player_info *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
     #ifdef RR_SERVER
     for (uint64_t i = 0; i < 10; ++i)
     {
-        uint8_t id = rr_petal_id_stinger;//rand() % (rr_petal_id_max - 1) + 1;
+        uint8_t id = rand() % (rr_petal_id_max - 1) + 1;
         uint8_t rarity = rr_rarity_id_ultra;
         this->slots[i].rarity = rarity;
         this->slots[i].data = &RR_PETAL_DATA[id];

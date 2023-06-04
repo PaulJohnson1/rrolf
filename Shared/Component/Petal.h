@@ -19,7 +19,7 @@ struct rr_component_petal
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_petal_init(struct rr_component_petal *);
+void rr_component_petal_init(struct rr_component_petal *, struct rr_simulation *);
 void rr_component_petal_free(struct rr_component_petal *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_petal_write(struct rr_component_petal *, struct proto_bug *, int);)

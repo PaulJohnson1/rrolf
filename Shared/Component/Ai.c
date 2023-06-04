@@ -6,7 +6,7 @@
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
-void rr_component_ai_init(struct rr_component_ai *this)
+void rr_component_ai_init(struct rr_component_ai *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
 }

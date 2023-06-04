@@ -13,10 +13,11 @@ struct rr_component_drop
                    EntityIdx parent_id;
                    uint8_t id;
                    uint8_t rarity;
+    RR_SERVER_ONLY(int32_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_drop_init(struct rr_component_drop *);
+void rr_component_drop_init(struct rr_component_drop *, struct rr_simulation *);
 void rr_component_drop_free(struct rr_component_drop *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_drop_write(struct rr_component_drop *, struct proto_bug *, int);)

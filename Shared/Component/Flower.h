@@ -20,7 +20,7 @@ struct rr_component_flower
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_flower_init(struct rr_component_flower *);
+void rr_component_flower_init(struct rr_component_flower *, struct rr_simulation *);
 void rr_component_flower_free(struct rr_component_flower *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_flower_write(struct rr_component_flower *, struct proto_bug *, int);)

@@ -18,7 +18,7 @@ enum
     state_flags_all = 0b000011
 };
 
-void rr_component_flower_init(struct rr_component_flower *this)
+void rr_component_flower_init(struct rr_component_flower *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
 }

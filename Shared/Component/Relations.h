@@ -17,7 +17,7 @@ struct rr_component_relations
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_relations_init(struct rr_component_relations *);
+void rr_component_relations_init(struct rr_component_relations *, struct rr_simulation *);
 void rr_component_relations_free(struct rr_component_relations *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_relations_update_root_owner(struct rr_simulation *, struct rr_component_relations *);)

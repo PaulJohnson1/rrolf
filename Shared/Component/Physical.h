@@ -52,7 +52,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
 
-void rr_component_physical_init(struct rr_component_physical *);
+void rr_component_physical_init(struct rr_component_physical *, struct rr_simulation *);
 void rr_component_physical_free(struct rr_component_physical *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct proto_bug *, int);)

@@ -109,6 +109,11 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
     {
         struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
         struct rr_petal_data const *data = slot->data;
+        if (data->id == rr_petal_id_leaf)
+        {
+            struct rr_component_health *player_health = rr_simulation_get_health(simulation, player_info->flower_id);
+            rr_component_health_set_health(player_health, player_health->health + 20);
+        }
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0)
@@ -142,7 +147,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     rr_component_petal_set_rarity(petal, slot->rarity);
 
                     rr_component_relations_set_owner(relations, player_info->flower_id); // flower owns petal, not player
-                    rr_component_relations_set_team(relations, player_info->flower_id + 3 /*rr_simulation_team_id_players*/);
+                    rr_component_relations_set_team(relations, rr_simulation_team_id_players);
 
                     float scale = RR_PETAL_RARITY_SCALE[slot->rarity];
 

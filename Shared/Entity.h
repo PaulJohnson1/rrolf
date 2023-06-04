@@ -8,15 +8,15 @@ typedef uint16_t EntityIdx;
 #define RR_MAX_COLLISION_COUNT (128)
 
 #define RR_FOR_EACH_COMPONENT \
-    XX(player_info, 6) \
-    XX(health, 3) \
-    XX(projectile, 5) \
-    XX(centipede, 9) \
-    XX(arena, 11) \
-    XX(petal, 1) \
-    XX(flower, 12) \
-    XX(physical, 4) \
-    XX(drop, 2) \
+    XX(player_info, 3) \
+    XX(petal, 5) \
+    XX(arena, 10) \
+    XX(projectile, 4) \
+    XX(centipede, 1) \
+    XX(ai, 6) \
     XX(relations, 8) \
-    XX(mob, 7) \
-    XX(ai, 10) 
+    XX(mob, 9) \
+    XX(health, 11) \
+    XX(flower, 7) \
+    XX(physical, 12) \
+    XX(drop, 2) 

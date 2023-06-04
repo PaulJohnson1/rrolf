@@ -1,8 +1,9 @@
 #include <Client/Renderer/ComponentRender.h>
 
+#include <math.h>
+
 #include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
-
 #include <Client/Renderer/RenderFunctions.h>
 
 void rr_component_drop_render(EntityIdx entity, struct rr_simulation *simulation, struct rr_renderer *renderer)
@@ -12,6 +13,9 @@ void rr_component_drop_render(EntityIdx entity, struct rr_simulation *simulation
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
     rr_renderer_rotate(renderer, physical->lerp_angle + physical->lerp_radius * 0.25);
     rr_renderer_scale(renderer, physical->lerp_radius * 0.04);
+    rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.1);
+    if (physical->lerp_damage_animation_tick > 0)
+        rr_renderer_scale(renderer, 1 - (5 - physical->lerp_damage_animation_tick) * 0.2);
     rr_renderer_set_fill(renderer, RR_RARITY_COLORS[drop->rarity]);
     renderer->state.filter.amount = 0.2;
     rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[drop->rarity]);

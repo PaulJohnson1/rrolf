@@ -15,7 +15,7 @@ struct rr_component_arena
     RR_SERVER_ONLY(uint64_t protocol_state;)
 };
 
-void rr_component_arena_init(struct rr_component_arena *);
+void rr_component_arena_init(struct rr_component_arena *, struct rr_simulation *);
 void rr_component_arena_free(struct rr_component_arena *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_arena_write(struct rr_component_arena *, struct proto_bug *, int);)

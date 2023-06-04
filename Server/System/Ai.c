@@ -139,7 +139,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 rr_component_physical_set_x(physical2, physical->x);
                 rr_component_physical_set_y(physical2, physical->y);
                 rr_component_physical_set_angle(physical2, physical->angle);
-                rr_component_physical_set_radius(physical2, 10);
+                rr_component_physical_set_radius(physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
                 physical2->friction = 0.75f;
                 physical2->mass = 10.0f;
                 rr_vector_from_polar(&physical2->acceleration, 100, physical->angle);
@@ -153,7 +153,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
                 rr_component_health_set_max_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
                 rr_component_health_set_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
-                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.1f;
+                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.01f;
                 rr_component_health_set_hidden(health, 1);
 
                 projectile->ticks_until_death = 50;
