@@ -7,8 +7,8 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(hidden, uint8) \
     X(health, float32) \
+    X(hidden, uint8) \
     X(max_health, float32) 
 
 enum

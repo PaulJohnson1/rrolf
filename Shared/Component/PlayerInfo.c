@@ -7,10 +7,10 @@
 #include <Shared/StaticData.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
+    X(camera_fov, float32) \
     X(camera_y, float32) \
     X(flower_id, varuint) \
-    X(camera_x, float32) \
-    X(camera_fov, float32) 
+    X(camera_x, float32) 
 
 enum
 {
