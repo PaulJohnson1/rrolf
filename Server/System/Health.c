@@ -21,7 +21,7 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
         rr_component_physical_set_damage_animation_tick(physical, physical->damage_animation_tick - 1);
 
     // heal 1% of max hp per second (0.0004 is 0.01 / 25)
-    if (health->health >= 0.0001f)
+    if (health->health > 0)
         rr_component_health_set_health(health, health->health + health->max_health * 0.0004);
     else
         if (physical->damage_animation_tick == 0)
@@ -44,7 +44,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_component_health *health2 = rr_simulation_get_health(this, entity2);
     struct rr_component_physical *physical1 = rr_simulation_get_physical(this, entity1);
     struct rr_component_physical *physical2 = rr_simulation_get_physical(this, entity2);
-    if (health2->health < 0.0001f)
+    if (health2->health == 0)
         return;
     uint8_t bypass = rr_simulation_has_petal(this, entity1) || rr_simulation_has_petal(this, entity2);
     if (physical1->damage_animation_tick == 0 || bypass)
@@ -54,21 +54,20 @@ static void colliding_with_function(uint64_t i, void *_captures)
         if (rr_simulation_has_ai(this, entity1))
         {
             struct rr_component_ai *ai = rr_simulation_get_ai(this, entity1);
-            if (rr_simulation_has_entity(this, ai->target_entity)) //probably replaced by a is null check
-                return;
-            if (rr_simulation_has_petal(this, entity2))
+            if (ai->target_entity == RR_NULL_ENTITY) //probably replaced by a is null check
             {
-                struct rr_component_relations *relations = rr_simulation_get_relations(this, entity2);
-                ai->target_entity = relations->owner;
-                printf("%u ai found new target %u\n", entity1, ai->target_entity);
+                if (rr_simulation_has_petal(this, entity2))
+                {
+                    struct rr_component_relations *relations = rr_simulation_get_relations(this, entity2);
+                    ai->target_entity = relations->owner;
+                }
+                else // allows for mob targeting
+                {
+                    ai->target_entity = entity2;
+                }
+                if (ai->ai_type == rr_ai_type_neutral)
+                    ai->ai_state = rr_ai_state_attacking;
             }
-            else // allows for mob targeting
-            {
-                ai->target_entity = entity2;
-                printf("%u ai found new target %u\n", entity1, ai->target_entity);
-            }
-            if (ai->ai_type == rr_ai_type_neutral)
-                ai->ai_state = rr_ai_state_attacking;
         }
     }
     if (physical2->damage_animation_tick == 0 || bypass)
@@ -78,21 +77,20 @@ static void colliding_with_function(uint64_t i, void *_captures)
         if (rr_simulation_has_ai(this, entity2))
         {
             struct rr_component_ai *ai = rr_simulation_get_ai(this, entity2);
-            if (rr_simulation_has_entity(this, ai->target_entity))
-                return;
-            if (rr_simulation_has_petal(this, entity1))
+            if (ai->target_entity == RR_NULL_ENTITY) //probably replaced by a is null check
             {
-                struct rr_component_relations *relations = rr_simulation_get_relations(this, entity1);
-                ai->target_entity = relations->owner;
-                printf("%u ai found new target %u", entity2, ai->target_entity);
+                if (rr_simulation_has_petal(this, entity1))
+                {
+                    struct rr_component_relations *relations = rr_simulation_get_relations(this, entity1);
+                    ai->target_entity = relations->owner;
+                }
+                else
+                {
+                    ai->target_entity = entity1;
+                }
+                if (ai->ai_type == rr_ai_type_neutral)
+                    ai->ai_state = rr_ai_state_attacking;
             }
-            else
-            {
-                ai->target_entity = entity1;
-                printf("%u ai found new target %u", entity2, ai->target_entity);
-            }
-            if (ai->ai_type == rr_ai_type_neutral)
-                ai->ai_state = rr_ai_state_attacking;
         }
     }
 }
@@ -105,7 +103,7 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
     struct rr_component_health *health = rr_simulation_get_health(this, entity);
 
-    if (health->health < 0.0001f)
+    if (health->health == 0)
         return;
 
     struct colliding_with_captures captures;

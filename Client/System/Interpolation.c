@@ -36,7 +36,7 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->animation += (2 * (physical->parent_id % 2) - 1) * delta * (rr_vector_get_magnitude(&physical->lerp_velocity) + 1) * 2;
         if (physical->damage_animation_tick == 5)
             physical->lerp_damage_animation_tick = 5;
-        physical->lerp_damage_animation_tick = rr_lerp(physical->lerp_damage_animation_tick, physical->damage_animation_tick, 10 * delta);
+        physical->lerp_damage_animation_tick = rr_lerp(physical->lerp_damage_animation_tick, 0, 10 * delta);
     }
 
     if (rr_simulation_has_flower(this, entity))

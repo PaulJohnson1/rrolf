@@ -27,6 +27,8 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    if (rr_simulation_has_health(this, entity) && rr_simulation_get_health(this, entity)->health == 0)
+        return;
 
     rr_spatial_hash_insert(this->grid, entity);
 }
@@ -51,14 +53,6 @@ static void find_collisions(struct rr_simulation *this)
     rr_spatial_hash_find_possible_collisions(this->grid, NULL, grid_filter_candidates);
 }
 
-static void system_find_collisions(EntityIdx entity1, void *_captures)
-{
-    struct rr_simulation *this = _captures;
-    struct rr_component_physical *physical1 = rr_simulation_get_physical(this, entity1);
-
-    // null terminated array
-    EntityIdx colliding_with[RR_MAX_ENTITY_COUNT + 1] = {};
-}
 
 static void update_spatial_hash_entities(EntityIdx entity, void *_captures)
 {

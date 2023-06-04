@@ -1,6 +1,7 @@
 #include <Shared/Utilities.h>
 
 #include <math.h>
+#include <stdlib.h>
 
 void rr_log_hex(uint8_t *start, uint8_t *end)
 {
@@ -28,4 +29,9 @@ float rr_angle_lerp(float start, float end, float t)
             end += 2 * M_PI;
         return fmod((end - start) * t + start + 2 * M_PI, 2 * M_PI);
     }
+}
+
+float rr_frand()
+{
+    return (float) rand() / RAND_MAX;
 }

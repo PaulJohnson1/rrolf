@@ -168,6 +168,11 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
         rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
         rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
+        if (player_info->flower_id != RR_NULL_ENTITY)
+        {
+            if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->damage_animation_tick != 0)
+                rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
+        }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
             if (rr_bitset_get_bit(this->simulation->arena_tracker, p) == 0)

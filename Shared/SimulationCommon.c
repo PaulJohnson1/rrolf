@@ -15,7 +15,7 @@ int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
 
 void rr_simulation_request_entity_deletion(struct rr_simulation *this, EntityIdx entity)
 {
-    printf("request deletion of entity %u\n", entity);
+    //printf("request deletion of entity %u\n", entity);
     assert(rr_simulation_has_entity(this, entity));
     rr_bitset_set(this->pending_deletions, entity);
 }

@@ -19,6 +19,11 @@ void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulati
     }
 
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y + physical->radius + 30);
+    if (rr_simulation_get_health(simulation, entity)->health == 0)
+    {
+        rr_renderer_set_global_alpha(renderer, (physical->lerp_damage_animation_tick) * 0.2);
+        rr_renderer_scale(renderer, 1 + (6 - physical->lerp_damage_animation_tick) * 0.15);
+    }
     float length = 40;
 
     if (rr_simulation_has_mob(simulation, health->parent_id))

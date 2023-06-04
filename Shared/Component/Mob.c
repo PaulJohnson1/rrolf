@@ -7,7 +7,7 @@
 #include <Shared/SimulationCommon.h>
 
 #ifdef RR_SERVER
-#include <stdlib.h>
+#include <Shared/Utilities.h>
 #include <math.h>
 
 #include <Server/Simulation.h>
@@ -38,7 +38,7 @@ void rr_component_mob_free(struct rr_component_mob *this, struct rr_simulation *
     {
         if (RR_MOB_DATA[this->id].loot[i].id == 0)
             continue;
-        float seed = (float)rand() / (float)RAND_MAX;
+        float seed = rr_frand();
         float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t rarity = 0;
         for (uint8_t j = 0; j <= rr_rarity_id_max; ++j)
