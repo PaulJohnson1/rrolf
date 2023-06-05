@@ -35,3 +35,12 @@ float rr_frand()
 {
     return (double)rand() / (double)RAND_MAX;
 }
+
+float rr_fclamp(float v, float s, float e)
+{
+    if (v < s)
+        v = s;
+    else if (v > e)
+        v = e;
+    return v;
+}

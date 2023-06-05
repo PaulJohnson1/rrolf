@@ -23,7 +23,8 @@
 #define RR_SERVER_ONLY(...)
 #endif
 
-void rr_log_hex(uint8_t *start, uint8_t *end);
-float rr_lerp(float start, float end, float t);
-float rr_angle_lerp(float start, float end, float t);
+void rr_log_hex(uint8_t *, uint8_t *);
+float rr_lerp(float, float, float);
+float rr_angle_lerp(float, float, float);
 float rr_frand();
+float rr_fclamp(float, float, float);

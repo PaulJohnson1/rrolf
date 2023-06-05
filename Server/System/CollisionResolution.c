@@ -65,6 +65,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
         rr_component_physical_set_x(physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
         rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
     }
+    /*
     {
         float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
         float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
@@ -87,6 +88,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                         (parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
                         (parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
     }
+    */
 }
 
 static void system_for_each_function(EntityIdx entity, void *_captures)

@@ -11,6 +11,7 @@
 
 #include <Client/Renderer/Renderer.h>
 #include <Client/Renderer/ComponentRender.h>
+#include <Client/Ui/Engine.h>
 #include <Client/InputData.h>
 #include <Client/Socket.h>
 #include <Client/Simulation.h>
@@ -27,6 +28,15 @@
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
+    this->global_container = rr_ui_init_container();
+    this->global_container->container = this->global_container;
+    /*
+    struct rr_ui_element *button_test = rr_ui_init_respawn_button();
+    rr_ui_container_add_element(this->global_container, button_test);
+    */
+    rr_ui_container_add_element(this->global_container, rr_ui_set_justify(
+        rr_ui_make_v_container(1, 0, 200, 2, rr_ui_init_text("You Died Noob", 48), rr_ui_init_respawn_button())
+        , 1, 1));
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -170,8 +180,13 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
         if (player_info->flower_id != RR_NULL_ENTITY)
         {
+            this->global_container->elements.elements[0]->hidden = 1;
             if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->damage_animation_tick != 0)
                 rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
+        }
+        else
+        {
+            this->global_container->elements.elements[0]->hidden = 0;
         }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
@@ -228,6 +243,12 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
         rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
+
+        this->global_container->on_render(this->global_container, this);
+    }
+    else
+    {
+        this->global_container->elements.elements[0]->hidden = 0;
     }
     this->socket->user_data = this;
     this->socket->on_event = rr_game_websocket_on_event_function;
@@ -264,4 +285,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
+    this->input_data->mouse_buttons_this_tick = 0;
+    this->input_data->mouse_state_this_tick = 0;
 }

@@ -8,6 +8,8 @@ struct rr_input_data
 {
     uint8_t mouse_buttons;
     uint8_t mouse_state;
+    uint8_t mouse_state_this_tick;
+    uint8_t mouse_buttons_this_tick;
     float mouse_x;
     float mouse_y;
     uint8_t keys_pressed[RR_BITSET_ROUND(256)];

@@ -15,15 +15,14 @@ void rr_component_flower_render(EntityIdx entity, struct rr_simulation *simulati
         rr_renderer_set_global_alpha(renderer, (physical->lerp_damage_animation_tick) * 0.2);
         rr_renderer_scale(renderer, 1 + (6 - physical->lerp_damage_animation_tick) * 0.15);
     }
-    rr_renderer_rotate(renderer, physical->lerp_angle);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 0, 0, physical->radius + 1.5);
-    rr_renderer_set_fill(renderer, 0xffcfbb50);
-    rr_renderer_fill(renderer);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 0, 0, physical->radius - 1.5);
+    rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
+    rr_renderer_rotate(renderer, physical->lerp_angle);
+    rr_renderer_set_line_width(renderer, 3);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, physical->radius);
     rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
     rr_renderer_scale(renderer, physical->radius / 25);
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);

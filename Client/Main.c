@@ -35,9 +35,15 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8
     this->input_data->mouse_y = y;
     this->input_data->mouse_state = state;
     if (state == 1) // press down
+    {
         this->input_data->mouse_buttons |= (1 << button);
+        this->input_data->mouse_buttons_this_tick |= (1 << button);
+    }
     else if (state == 0)
+    {
         this->input_data->mouse_buttons &= ~(1 << button);
+        this->input_data->mouse_buttons_this_tick |= (1 << button);
+    }
 }
 #else
 #endif
@@ -128,9 +134,13 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     float a = height / 1080;
     float b = width / 1920;
 
-    this->renderer->scale = b < a ? a : b;
+    float scale = (this->renderer->scale = b < a ? a : b);
     this->renderer->width = width;
     this->renderer->height = height;
+    this->global_container->x = width * 0.5 / scale;
+    this->global_container->y = height * 0.5 / scale;
+    this->global_container->width = width / scale;
+    this->global_container->height = height / scale;
     rr_game_tick(this, delta);
 }
 
@@ -142,6 +152,7 @@ int main()
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
     static struct rr_simulation simulation;
+    rr_main_renderer_initialize(&game);
 
     rr_game_init(&game);
     rr_websocket_init(&socket);
@@ -153,13 +164,12 @@ int main()
     game.renderer = &renderer;
     game.input_data = &input_data;
     game.simulation = &simulation;
-    rr_main_renderer_initialize(&game);
     rr_game_tick(&game, 1);
 
 //#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    // rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
+    rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
 //#else
-    rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
+    // rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
 //#endif
 
 #ifndef EMSCRIPTEN

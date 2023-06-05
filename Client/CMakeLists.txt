@@ -14,6 +14,11 @@ set(SRCS
     Renderer/RenderMob.c
     Renderer/RenderPetal.c
     System/Interpolation.c
+    Ui/Button.c
+    Ui/Container.c
+    Ui/Element.c
+    Ui/Engine.c
+    Ui/Text.c
     Game.c
     InputData.c
     Main.c

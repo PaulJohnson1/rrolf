@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <string.h>
+#include <Shared/Utilities.h>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -25,16 +26,15 @@ void rr_renderer_free_context_state(struct rr_renderer *this, struct rr_renderer
 {
     memcpy(&this->state, state, sizeof *state);
     rr_renderer_restore(this);
-    memset(state, 0, sizeof *state);
 }
 
 void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
 {
     float a = this->state.filter.amount;
     uint32_t fc = this->state.filter.color;
-    uint8_t red = ((uint8_t) ((c >> 16) & 255) * (1 - a)) + ((uint8_t) ((fc >> 16) & 255) * a);
-    uint8_t green = ((uint8_t) ((c >> 8) & 255) * (1 - a)) + ((uint8_t) ((fc >> 8) & 255) * a);
-    uint8_t blue = ((uint8_t) ((c >> 0) & 255) * (1 - a)) + ((uint8_t) ((fc >> 0) & 255) * a);
+    uint8_t red = rr_fclamp((((c >> 16) & 255) * (1 - a) + ((fc >> 16) & 255) * a), 0, 255);
+    uint8_t green = rr_fclamp((((c >> 8) & 255) * (1 - a) + ((fc >> 8) & 255) * a), 0, 255);
+    uint8_t blue = rr_fclamp((((c >> 0) & 255) * (1 - a) + ((fc >> 0) & 255) * a), 0, 255);
     c = ((c >> 24) << 24) | (red << 16) | (green << 8) | blue;
 #ifdef EMSCRIPTEN
     EM_ASM({Module.ctxs[$0].fillStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
@@ -46,9 +46,9 @@ void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
 {
     float a = this->state.filter.amount;
     uint32_t fc = this->state.filter.color;
-    uint8_t red = ((uint8_t) ((c >> 16) & 255) * (1 - a)) + ((uint8_t) ((fc >> 16) & 255) * a);
-    uint8_t green = ((uint8_t) ((c >> 8) & 255) * (1 - a)) + ((uint8_t) ((fc >> 8) & 255) * a);
-    uint8_t blue = ((uint8_t) ((c >> 0) & 255) * (1 - a)) + ((uint8_t) ((fc >> 0) & 255) * a);
+    uint8_t red = rr_fclamp((((c >> 16) & 255) * (1 - a) + ((fc >> 16) & 255) * a), 0, 255);
+    uint8_t green = rr_fclamp((((c >> 8) & 255) * (1 - a) + ((fc >> 8) & 255) * a), 0, 255);
+    uint8_t blue = rr_fclamp((((c >> 0) & 255) * (1 - a) + ((fc >> 0) & 255) * a), 0, 255);
     c = ((c >> 24) << 24) | (red << 16) | (green << 8) | blue;
 #ifdef EMSCRIPTEN
     EM_ASM({Module.ctxs[$0].strokeStyle = `rgba(${$1 >> 16 & 255}, ${$1 >> 8 & 255}, ${$1 & 255}, ${($1 >> 24 & 255) / 255})` }, this->context_id, c);
@@ -371,4 +371,17 @@ void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x, f
         Module.ctxs[$0].strokeText(string, $1, $2)
     }, this->context_id, x, y, c);
 #endif
+}
+
+float rr_renderer_get_text_size(char const *c)
+{
+#ifdef EMSCRIPTEN
+    return EM_ASM_DOUBLE({
+        let string = "";
+        while (Module.HEAPU8[$0])
+            string += String.fromCharCode(Module.HEAPU8[$0++]);
+        Module.ctxs[0].font = '1px Ubuntu';
+        return Module.ctxs[0].measureText(string).width;
+    }, c);
+#endif    
 }

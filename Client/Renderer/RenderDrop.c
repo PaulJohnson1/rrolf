@@ -22,6 +22,7 @@ void rr_component_drop_render(EntityIdx entity, struct rr_simulation *simulation
     rr_renderer_set_line_width(renderer, 5);
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_set_line_join(renderer, 1);
+    rr_renderer_begin_path(renderer);
     rr_renderer_fill_rect(renderer, -25, -25, 50, 50);
     rr_renderer_stroke_rect(renderer, -25, -25, 50, 50);
     renderer->state.filter.amount = 0;

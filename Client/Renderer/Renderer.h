@@ -92,3 +92,5 @@ void rr_renderer_clip(struct rr_renderer *);
 
 void rr_renderer_fill_text(struct rr_renderer *, char const *, float, float);
 void rr_renderer_stroke_text(struct rr_renderer *,  char const *, float, float);
+
+float rr_renderer_get_text_size(char const *);
