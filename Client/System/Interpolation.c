@@ -31,6 +31,8 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->lerp_y = rr_lerp(physical->lerp_y, physical->y, 10 * delta);
         physical->lerp_velocity.x = rr_lerp(physical->lerp_velocity.x, physical->velocity.x, 5 * delta);
         physical->lerp_velocity.y = rr_lerp(physical->lerp_velocity.y, physical->velocity.y, 5 * delta);
+        if (physical->lerp_angle == 0)
+            physical->lerp_angle = physical->angle;
         physical->lerp_angle = rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
         physical->lerp_radius = rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
         physical->animation += (2 * (physical->parent_id % 2) - 1) * delta * (rr_vector_get_magnitude(&physical->lerp_velocity) * (1 - rr_simulation_has_drop(this, entity)) + 1) * 2;

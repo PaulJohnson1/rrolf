@@ -4,10 +4,10 @@
 #include <math.h>
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
-    {rr_petal_id_no_petal, 0.0f,   0.0f,  0.0f,  0,    {                   }},
+    {rr_petal_id_no_petal, 0.0f,   0.0f,  0.0f,  0,    {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic,    10.0f,  10.0f, 0.0f,  37,   {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_light,    7.0f,   5.0f,  0.0f,  12,   {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_stinger,  35.0f,  2.0f,  10.0f, 0,    {1, 1, 1, 1, 1, 3, 5}},
+    {rr_petal_id_stinger,  35.0f,  2.0f,  10.0f, 113,  {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_faster,   7.0f,   5.0f,  25.0f, 20,   {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile,  20.0f,  10.0f, 15.0f, 75,   {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas,     10.0f,  5.0f,  8.0f,  25,   {4, 4, 4, 4, 4, 4, 5}},
@@ -45,8 +45,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75};
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 5, 7, 8, 20, 25};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {5, 2, 3, 5, 5, 5, 10};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 10, 20, 5, 5};
+uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {5, 5, 5, 5, 5, 5, 5};
 
 static void init_rarity_coefficients()
 {

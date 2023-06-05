@@ -30,13 +30,18 @@ void rr_game_init(struct rr_game *this)
     memset(this, 0, sizeof *this);
     this->global_container = rr_ui_init_container();
     this->global_container->container = this->global_container;
-    /*
-    struct rr_ui_element *button_test = rr_ui_init_respawn_button();
-    rr_ui_container_add_element(this->global_container, button_test);
-    */
-    rr_ui_container_add_element(this->global_container, rr_ui_set_justify(
-        rr_ui_make_v_container(1, 0, 200, 2, rr_ui_init_text("You Died Noob", 48), rr_ui_init_respawn_button())
-        , 1, 1));
+    rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(1, 0, 200, 2,
+                rr_ui_init_text("rrolf", 72),
+                rr_ui_set_justify(
+                    rr_ui_make_h_container(1, 0, 50, 2,
+                        rr_ui_init_text("Spawn In", 48),
+                        rr_ui_init_respawn_button()
+                ), 1, 1)
+            )
+        , 1, 1)
+    );
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -239,8 +244,8 @@ void rr_game_tick(struct rr_game *this, float delta)
 
         rr_simulation_for_each_entity(this->simulation, this, render_health_component);
         rr_simulation_for_each_entity(this->simulation, this, render_drop_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
         rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
         rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
 
