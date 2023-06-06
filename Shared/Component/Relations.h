@@ -14,7 +14,7 @@ struct rr_component_relations
                    EntityIdx owner;
                    uint32_t team;
     RR_SERVER_ONLY(EntityIdx root_owner;)
-    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 
 void rr_component_relations_init(struct rr_component_relations *, struct rr_simulation *);

@@ -28,7 +28,7 @@ struct rr_component_physical
                    struct rr_vector velocity;
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
-    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint32_t protocol_state;)
     RR_SERVER_ONLY(uint32_t query_id;)
     RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
     RR_SERVER_ONLY(float mass;)
@@ -45,8 +45,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float lerp_server_animation_tick;)
                    uint8_t server_animation_tick;
-    RR_SERVER_ONLY(uint8_t pending_delete:4;)
-    RR_SERVER_ONLY(uint8_t called_dtor:4;)
+    RR_SERVER_ONLY(uint8_t called_dtor;)
                    EntityIdx parent_id;
     // RR_SERVER_ONLY(uint8_t has_collisions;)
     // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)

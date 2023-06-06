@@ -1,5 +1,7 @@
 #include <Client/Ui/Engine.h>
 
+#include <stdio.h>
+
 struct rr_ui_element *rr_ui_make_v_container(uint8_t h_justify, float outer_spacing, float inner_spacing, uint32_t count, ...)
 {
     va_list args;
@@ -11,11 +13,13 @@ struct rr_ui_element *rr_ui_make_v_container(uint8_t h_justify, float outer_spac
     for (uint32_t i = 0; i < count; ++i)
     {
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
-        element->y = height + element->height / 2;
+        element->lerp_y = element->y = height + element->height / 2;
+        element->lerp_x = element->x = (1 - h_justify) * (element->width / 2 + outer_spacing);
+
         element->container = c;
         element->h_justify = h_justify;
         element->v_justify = 0;
-        element->x = (1 - h_justify) * (element->width / 2 + outer_spacing);
+
         height += element->height + inner_spacing;
         if (element->width > width)
             width = element->width;
@@ -46,11 +50,14 @@ struct rr_ui_element *rr_ui_make_h_container(uint8_t v_justify, float outer_spac
     for (uint32_t i = 0; i < count; ++i)
     {
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
-        element->x = width + element->width / 2;
+        element->lerp_x = element->x = width + element->width / 2;
+        element->lerp_y = element->y = (1 - v_justify) * (element->height / 2 + outer_spacing);
+        //printf("element %f %f %f\n", element->x, element->y, element->width);
+
         element->container = c;
         element->v_justify = v_justify;
         element->h_justify = 0;
-        element->y = (1 - v_justify) * (element->height / 2 + outer_spacing);
+
         width += element->width + inner_spacing;
         if (element->height > height)
             height = element->height;

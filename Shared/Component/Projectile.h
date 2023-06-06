@@ -16,7 +16,7 @@ struct rr_component_projectile
     RR_SERVER_ONLY(int32_t ticks_until_death;)
                    
     RR_SERVER_ONLY(struct rr_projectile_data const *projectile_data;)
-    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 
 void rr_component_projectile_init(struct rr_component_projectile *, struct rr_simulation *);

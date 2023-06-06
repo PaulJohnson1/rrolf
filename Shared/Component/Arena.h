@@ -12,7 +12,7 @@ struct rr_component_arena
 {
                    EntityIdx parent_id;
                    float radius;
-    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint16_t protocol_state;)
 };
 
 void rr_component_arena_init(struct rr_component_arena *, struct rr_simulation *);

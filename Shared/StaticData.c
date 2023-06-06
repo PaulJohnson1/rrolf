@@ -9,19 +9,19 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_light,    7.0f,   5.0f,  0.0f,  12,   {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock,     5.0f,   80.0f, 0.0f,  100,  {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger,  35.0f,  2.0f,  10.0f, 113,  {1, 1, 1, 1, 1, 3, 5}},
-    {rr_petal_id_faster,   7.0f,   5.0f,  25.0f, 20,   {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_faster,   7.0f,   5.0f,  15.0f, 20,   {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile,  20.0f,  10.0f, 15.0f, 75,   {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas,     10.0f,  5.0f,  8.0f,  25,   {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf,     7.0f,   7.0f,  8.0f,  25,   {1, 1, 1, 1, 1, 1, 2}},
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_baby_ant,       25,   10, 17.5f, {}},
-    {rr_mob_id_worker_ant,     62.5, 10, 17.5f, {}},
-    {rr_mob_id_rock,           100,  10, 27.5f, {}},
-    {rr_mob_id_centipede_head, 25,   10, 35.0f, {}},
-    {rr_mob_id_centipede_body, 25,   10, 35.0f, {}},
-    {rr_mob_id_hornet,         37.5, 50, 25.0f, {}}
+    {rr_mob_id_baby_ant,       25,   10, 16.0f, {}},
+    {rr_mob_id_worker_ant,     62.5, 10, 16.0f, {}},
+    {rr_mob_id_rock,           100,  10, 26.0f, {}},
+    {rr_mob_id_centipede_head, 25,   10, 36.0f, {}},
+    {rr_mob_id_centipede_body, 25,   10, 36.0f, {}},
+    {rr_mob_id_hornet,         37.5, 50, 26.0f, {}}
 };
 
 float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {

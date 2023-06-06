@@ -328,9 +328,14 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id, void *_s
 {
     struct rr_simulation *simulation = _simulation;
     //THIS ONE COUNTS THE PHYSICAL ANIMATION        
-    if (rr_simulation_has_physical(simulation, id) && rr_simulation_get_physical(simulation, id)->called_dtor == 1)
-        return;
-    return __rr_simulation_pending_deletion_free_components(id, simulation);
+    if (rr_simulation_has_physical(simulation, id))
+    {
+        if (rr_simulation_get_physical(simulation, id)->called_dtor == 1)
+            return;
+        else
+            rr_bitset_unset(simulation->pending_deletions, id);
+    }
+    __rr_simulation_pending_deletion_free_components(id, simulation);
 }
 
 void rr_simulation_tick(struct rr_simulation *this)

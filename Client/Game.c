@@ -42,6 +42,69 @@ void rr_game_init(struct rr_game *this)
             )
         , 1, 1)
     );
+    rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(1, 20, 20, 2,
+                rr_ui_make_h_container(1, 0, 20, 10,
+                    rr_ui_init_loadout_button(0, 1),
+                    rr_ui_init_loadout_button(1, 1),
+                    rr_ui_init_loadout_button(2, 1),
+                    rr_ui_init_loadout_button(3, 1),
+                    rr_ui_init_loadout_button(4, 1),
+                    rr_ui_init_loadout_button(5, 1),
+                    rr_ui_init_loadout_button(6, 1),
+                    rr_ui_init_loadout_button(7, 1),
+                    rr_ui_init_loadout_button(8, 1),
+                    rr_ui_init_loadout_button(9, 1)
+                ),
+                rr_ui_make_h_container(1, 0, 20, 10,
+                    rr_ui_init_loadout_button(0, 0),
+                    rr_ui_init_loadout_button(1, 0),
+                    rr_ui_init_loadout_button(2, 0),
+                    rr_ui_init_loadout_button(3, 0),
+                    rr_ui_init_loadout_button(4, 0),
+                    rr_ui_init_loadout_button(5, 0),
+                    rr_ui_init_loadout_button(6, 0),
+                    rr_ui_init_loadout_button(7, 0),
+                    rr_ui_init_loadout_button(8, 0),
+                    rr_ui_init_loadout_button(9, 0)
+                )
+            )
+        , 1, 2)
+    );
+    rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(1, 20, 20, 2,
+                rr_ui_init_text("Wave 69", 36),
+                rr_ui_make_h_container(1, 0, 20, 4,
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(0, 0),
+                        rr_ui_init_mob_button(0, 1),
+                        rr_ui_init_mob_button(0, 2),
+                        rr_ui_init_mob_button(0, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(1, 0),
+                        rr_ui_init_mob_button(1, 1),
+                        rr_ui_init_mob_button(1, 2),
+                        rr_ui_init_mob_button(1, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(2, 0),
+                        rr_ui_init_mob_button(2, 1),
+                        rr_ui_init_mob_button(2, 2),
+                        rr_ui_init_mob_button(2, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(3, 0),
+                        rr_ui_init_mob_button(3, 1),
+                        rr_ui_init_mob_button(3, 2),
+                        rr_ui_init_mob_button(3, 3)
+                    )
+                )
+            )
+        , 1, 0)
+    );
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -185,13 +248,13 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
         if (player_info->flower_id != RR_NULL_ENTITY)
         {
-            this->global_container->elements.elements[0]->hidden = 1;
+            ((struct rr_ui_container_metadata *) this->global_container->misc_data)->elements.elements[0]->hidden = 1;
             if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->server_animation_tick != 0)
                 rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
         }
         else
         {
-            this->global_container->elements.elements[0]->hidden = 0;
+            ((struct rr_ui_container_metadata *) this->global_container->misc_data)->elements.elements[0]->hidden = 0;
         }
         for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
         {
@@ -253,7 +316,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else
     {
-        this->global_container->elements.elements[0]->hidden = 0;
+        ((struct rr_ui_container_metadata *) this->global_container->misc_data)->elements.elements[0]->hidden = 0;
     }
     this->socket->user_data = this;
     this->socket->on_event = rr_game_websocket_on_event_function;
