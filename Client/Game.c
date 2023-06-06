@@ -244,8 +244,8 @@ void rr_game_tick(struct rr_game *this, float delta)
 
         rr_simulation_for_each_entity(this->simulation, this, render_health_component);
         rr_simulation_for_each_entity(this->simulation, this, render_drop_component);
-        rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
         rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
+        rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
         rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
         rr_renderer_free_context_state(this->renderer, &state1);
 

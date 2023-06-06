@@ -10,6 +10,7 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 enum rr_ai_state : uint8_t
 {
+    rr_ai_state_static,
     rr_ai_state_idle,
     rr_ai_state_idle_moving,
     rr_ai_state_attacking,
@@ -19,6 +20,7 @@ enum rr_ai_state : uint8_t
 enum rr_ai_type : uint8_t
 {
     // does nothing, even if attacked
+    rr_ai_type_static,
     rr_ai_type_passive,
     // runs towards attackers
     rr_ai_type_neutral,

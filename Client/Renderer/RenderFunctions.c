@@ -30,6 +30,20 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_rock:
+        rr_renderer_set_stroke(renderer, 0xff606060);
+        rr_renderer_set_fill(renderer, 0xff777777);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer,12.138091087341309,0);
+        rr_renderer_line_to(renderer,3.8414306640625,12.377452850341797);
+        rr_renderer_line_to(renderer,-11.311542510986328,7.916932582855225);
+        rr_renderer_line_to(renderer,-11.461170196533203,-7.836822032928467);
+        rr_renderer_line_to(renderer,4.538298606872559,-13.891617774963379);
+        rr_renderer_line_to(renderer,12.138091087341309,0);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     case rr_petal_id_stinger:
         rr_renderer_set_fill(renderer, 0xff333333);
         rr_renderer_set_stroke(renderer, 0xff292929);
@@ -176,6 +190,23 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_set_fill(renderer, 0xff555555);
         rr_renderer_begin_path(renderer);
         rr_renderer_arc(renderer, 0, 0, 14);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
+    case rr_mob_id_rock:
+        rr_renderer_set_stroke(renderer, 0xff606060);
+        rr_renderer_set_fill(renderer, 0xff777777);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer,26.010194778442383,0);
+        rr_renderer_line_to(renderer,16.60860824584961,21.803756713867188);
+        rr_renderer_line_to(renderer,-6.666966915130615,28.138700485229492);
+        rr_renderer_line_to(renderer,-27.351072311401367,12.396180152893066);
+        rr_renderer_line_to(renderer,-28.353946685791016,-13.58041763305664);
+        rr_renderer_line_to(renderer,-6.243117332458496,-28.680421829223633);
+        rr_renderer_line_to(renderer,19.496023178100586,-23.961515426635742);
+        rr_renderer_line_to(renderer,26.010194778442383,0);
+        rr_renderer_line_to(renderer,16.60860824584961,21.803756713867188); //you need to overshoot by one for linecap to work
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;

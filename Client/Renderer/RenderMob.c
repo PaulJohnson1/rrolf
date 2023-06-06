@@ -25,5 +25,6 @@ void rr_component_mob_render(EntityIdx entity, struct rr_simulation *simulation,
     }
     if (physical->animation > 2 * M_PI)
         physical->animation = fmod(physical->animation, 2 * M_PI);
-    rr_renderer_render_mob(renderer, mob->id, sin(physical->animation));
+    float sinusoid_animation = sin(physical->animation);
+    rr_renderer_render_mob(renderer, mob->id, sinusoid_animation);
 }

@@ -9,6 +9,7 @@
 void rr_component_ai_init(struct rr_component_ai *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(this->ai_state = rr_ai_state_idle;)
 }
 
 void rr_component_ai_free(struct rr_component_ai *this, struct rr_simulation *simulation)

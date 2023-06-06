@@ -47,12 +47,14 @@ static void spawn_random_mob(struct rr_simulation *this)
     // promote to double for accuracy, demote to float once finished
     float r = rr_frand();
     uint8_t id = rr_mob_id_centipede_head;
-    if (r -= 0.30, r < 0)
+    if (r -= 0.25, r < 0)
         id = rr_mob_id_baby_ant;
-    else if (r -= 0.30, r < 0)
+    else if (r -= 0.25, r < 0)
         id = rr_mob_id_worker_ant;
-    else if (r -= 0.30, r < 0)
-        id = rr_mob_id_hornet;
+    else if (r -= 0.25, r < 0)
+        id = rr_mob_id_rock;
+    else if (r -= 0.15, r < 0)
+        id = rr_mob_id_centipede_head;
     EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rand() % rr_rarity_id_max);
 }
 
@@ -76,7 +78,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_physical_set_y(physical, sin(angle) * distance);
     physical->radius = mob_data->radius * rarity_scale->radius;
     physical->friction = 0.9;
-    physical->mass = 100.0f;
+    physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health, mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
@@ -84,6 +86,9 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
     switch (mob_id)
     {
+    case rr_mob_id_rock:
+        ai->ai_type = rr_ai_type_static;
+        break;
     case rr_mob_id_hornet:
         ai->ai_type = rr_ai_type_aggressive;
         break;
@@ -105,6 +110,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
         ai->ai_aggro_type = rr_ai_aggro_type_hornet;
         break;
     case rr_mob_id_centipede_head:
+    case rr_mob_id_rock:
     case rr_mob_id_worker_ant:
     case rr_mob_id_centipede_body:
     case rr_mob_id_baby_ant:
@@ -323,9 +329,9 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("drops", { rr_system_drops_tick(this); });
-    RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
+    RR_TIME_BLOCK("collision_resolution", { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });

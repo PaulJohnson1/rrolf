@@ -19,6 +19,7 @@ enum rr_petal_id
     rr_petal_id_no_petal,
     rr_petal_id_basic,
     rr_petal_id_light,
+    rr_petal_id_rock,
     rr_petal_id_stinger,
     rr_petal_id_faster,
     rr_petal_id_missile,
@@ -31,6 +32,7 @@ enum rr_mob_id
 {
     rr_mob_id_baby_ant,
     rr_mob_id_worker_ant,
+    rr_mob_id_rock,
     rr_mob_id_centipede_head,
     rr_mob_id_centipede_body,
     rr_mob_id_hornet,

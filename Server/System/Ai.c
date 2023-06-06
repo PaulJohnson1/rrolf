@@ -51,6 +51,9 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
     switch (ai->ai_type)
     {
+    case rr_ai_type_static:
+        ai->ai_state = rr_ai_state_static;
+        break;
     case rr_ai_type_aggressive:
     {
         if (ai->ai_state == rr_ai_state_attacking)
@@ -70,6 +73,8 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     // tick the current state
     switch (ai->ai_state)
     {
+    case rr_ai_state_static:
+        break;
     case rr_ai_state_idle_moving:
     {
         struct rr_vector accel;
@@ -111,6 +116,8 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         // find new state based on the type
         switch (ai->ai_state)
         {
+        case rr_ai_state_static:
+            break;
         case rr_ai_state_idle_moving:
             ai->ai_state = rr_ai_state_idle;
             ai->ticks_until_next_action = rand() % 10 + 25;
