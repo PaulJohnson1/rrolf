@@ -9,13 +9,13 @@ static void drop_despawn_tick(EntityIdx entity, void *_captures)
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
     if (drop->ticks_until_despawn-- == 0)
     {
-        rr_component_physical_set_damage_animation_tick(physical, 5);
+        rr_component_physical_set_server_animation_tick(physical, 5);
         return;
     }
-    if (physical->damage_animation_tick > 0)
+    if (physical->server_animation_tick > 0)
     {
-        rr_component_physical_set_damage_animation_tick(physical, physical->damage_animation_tick - 1);
-        if (physical->damage_animation_tick == 0)
+        rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);
+        if (physical->server_animation_tick == 0)
             rr_simulation_request_entity_deletion(this, entity);
     }
 }

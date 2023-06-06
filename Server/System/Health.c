@@ -17,14 +17,14 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     struct rr_simulation *this = captures;
     struct rr_component_health *health = rr_simulation_get_health(this, entity);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
-    if (physical->damage_animation_tick > 0)
-        rr_component_physical_set_damage_animation_tick(physical, physical->damage_animation_tick - 1);
+    if (physical->server_animation_tick > 0)
+        rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);
 
     // heal 1% of max hp per second (0.0004 is 0.01 / 25)
     if (health->health > 0)
         rr_component_health_set_health(health, health->health + health->max_health * 0.0004);
     else
-        if (physical->damage_animation_tick == 0)
+        if (physical->server_animation_tick == 0)
             rr_simulation_request_entity_deletion(this, entity);
 }
 
@@ -35,7 +35,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     EntityIdx entity1 = captures->health->parent_id;
     EntityIdx entity2 = i;
     if (!rr_simulation_has_health(this, entity2))
-        return;
+        return; 
     struct rr_component_relations *relations1 = rr_simulation_get_relations(this, entity1);
     struct rr_component_relations *relations2 = rr_simulation_get_relations(this, entity2);
     if (relations1->team == relations2->team)
@@ -47,10 +47,13 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (health2->health == 0)
         return;
     uint8_t bypass = rr_simulation_has_petal(this, entity1) || rr_simulation_has_petal(this, entity2);
-    if (physical1->damage_animation_tick == 0 || bypass)
+    if (physical1->server_animation_tick == 0 || bypass)
     {
         rr_component_health_set_health(health1, health1->health - health2->damage);
-        rr_component_physical_set_damage_animation_tick(physical1, 5);
+        rr_component_physical_set_server_animation_tick(physical1, 5);
+        if (health1->health == 0)
+            __rr_simulation_pending_deletion_free_components(entity1, this);
+
         if (rr_simulation_has_ai(this, entity1))
         {
             struct rr_component_ai *ai = rr_simulation_get_ai(this, entity1);
@@ -70,10 +73,13 @@ static void colliding_with_function(uint64_t i, void *_captures)
             }
         }
     }
-    if (physical2->damage_animation_tick == 0 || bypass)
+    if (physical2->server_animation_tick == 0 || bypass)
     {
         rr_component_health_set_health(health2, health2->health - health1->damage);
-        rr_component_physical_set_damage_animation_tick(physical2, 5);
+        rr_component_physical_set_server_animation_tick(physical2, 5);
+        if (health2->health == 0)
+            __rr_simulation_pending_deletion_free_components(entity2, this);
+            
         if (rr_simulation_has_ai(this, entity2))
         {
             struct rr_component_ai *ai = rr_simulation_get_ai(this, entity2);

@@ -22,7 +22,7 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulati
             if (petal->detached && health->health != 0)
             {
                 rr_component_health_set_health(health, 0);
-                rr_component_physical_set_damage_animation_tick(physical, 6);
+                rr_component_physical_set_server_animation_tick(physical, 6);
             }
         }
         rr_vector_set_magnitude(&position, arena->radius - physical->radius);

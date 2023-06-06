@@ -186,7 +186,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (player_info->flower_id != RR_NULL_ENTITY)
         {
             this->global_container->elements.elements[0]->hidden = 1;
-            if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->damage_animation_tick != 0)
+            if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->server_animation_tick != 0)
                 rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
         }
         else
