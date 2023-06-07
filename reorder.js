@@ -155,13 +155,13 @@ function modify_file(name, cb)
     fs.writeFileSync(name, data, "utf8");
 }
 
-modify_file("/Shared/Entity.h", modify_component_list);
-modify_file("/Shared/Component/Arena.c", modify_field_list);
-modify_file("/Shared/Component/Drop.c", modify_field_list);
-modify_file("/Shared/Component/Flower.c", modify_field_list);
-modify_file("/Shared/Component/Health.c", modify_field_list);
-modify_file("/Shared/Component/Mob.c", modify_field_list);
-modify_file("/Shared/Component/Petal.c", modify_field_list);
-modify_file("/Shared/Component/Physical.c", modify_field_list);
+modify_file("/Shared/Entity.h",               modify_component_list);
+modify_file("/Shared/Component/Arena.c",      modify_field_list);
+modify_file("/Shared/Component/Drop.c",       modify_field_list);
+modify_file("/Shared/Component/Flower.c",     modify_field_list);
+modify_file("/Shared/Component/Health.c",     modify_field_list);
+modify_file("/Shared/Component/Mob.c",        modify_field_list);
+modify_file("/Shared/Component/Petal.c",      modify_field_list);
+modify_file("/Shared/Component/Physical.c",   modify_field_list);
 modify_file("/Shared/Component/PlayerInfo.c", modify_field_list);
-modify_file("/Shared/Component/Relations.c", modify_field_list);
+modify_file("/Shared/Component/Relations.c",  modify_field_list);

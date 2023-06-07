@@ -63,13 +63,26 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         if (!this->socket->recieved_first_packet)
         {
             this->socket->recieved_first_packet = 1;
-            rr_decrypt(data, size, 1);
-            this->socket->encryption_key = proto_bug_read_uint64(&encoder, "encryption key");
+            rr_decrypt(data, 1024, 21094093777837637ull);
+            rr_decrypt(data, 8, 1);
+            rr_decrypt(data, 1024, 59731158950470853ull);
+            rr_decrypt(data, 1024, 64709235936361169ull);
+            rr_decrypt(data, 1024, 59013169977270713ull);
+            uint64_t verification = proto_bug_read_uint64(&encoder, "verification");
+            proto_bug_read_uint32(&encoder, "useless bytes");
+            this->socket->clientbound_encryption_key = proto_bug_read_uint64(&encoder, "c encryption key");
+            this->socket->serverbound_encryption_key = proto_bug_read_uint64(&encoder, "s encryption key");
+            struct proto_bug verify_encoder;
+            proto_bug_init(&verify_encoder, output_packet);
+            proto_bug_write_uint64(&verify_encoder, rr_get_rand(), "useless bytes");
+            proto_bug_write_uint64(&verify_encoder, verification, "verification");
+            rr_websocket_send(this->socket, verify_encoder.start, verify_encoder.current);
+            this->socket_ready = 1;
             return;
         }
 
-        this->socket->encryption_key = rr_get_hash(this->socket->encryption_key);
-        rr_decrypt(data, size, this->socket->encryption_key);
+        this->socket->clientbound_encryption_key = rr_get_hash(this->socket->clientbound_encryption_key);
+        rr_decrypt(data, size, this->socket->clientbound_encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:

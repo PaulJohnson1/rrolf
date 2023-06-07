@@ -196,6 +196,18 @@ extern "C"
 
     void proto_bug_assert_valid_debug_header(struct proto_bug *self, enum encoding_type expected_encoding_type, char const *name, char const *file, uint32_t line)
     {
+        uint64_t magic = proto_bug_read_uint64_internal(self);
+        if (magic != 0x1234567890abcdefull)
+        {
+            assertion_fail_message[sprintf(assertion_fail_message, "proto_bug exception: read invalid data (maybe OOB)\n"
+                                                                   "invalid read at: %s:%u\n"
+                                                                   "expected: %llX; encountered: %llX\n",
+                                           file, line,
+                                           0x1234567890abcdefull, magic)] = 0;
+
+            fputs(assertion_fail_message, stderr);
+            abort();
+        }
         // explicit casting because of c++
         enum encoding_type received_encoding_type = (enum encoding_type)proto_bug_read_uint8_internal(self);
         uint64_t name_size = proto_bug_read_varuint_internal(self);
@@ -222,6 +234,7 @@ extern "C"
 
     void proto_bug_write_debug_header(struct proto_bug *self, enum encoding_type encoding_type, char const *name, char const *file, uint32_t line)
     {
+        proto_bug_write_uint64_internal(self, 0x1234567890abcdefull);
         proto_bug_write_uint8_internal(self, encoding_type);
         uint64_t name_size = strlen(name);
         uint64_t file_size = strlen(file);

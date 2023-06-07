@@ -8,8 +8,8 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(eye_angle, float32) \
-    X(face_flags, uint8) 
+    X(face_flags, uint8) \
+    X(eye_angle, float32) 
 
 enum
 {
