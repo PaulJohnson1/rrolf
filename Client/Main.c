@@ -25,7 +25,7 @@ void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
     else
     {
         rr_bitset_unset(this->input_data->keys_pressed, key);
-        rr_bitset_set(this->input_data->keys_released_this_tick, key);
+        rr_bitset_unset(this->input_data->keys_released_this_tick, key);
     }
 }
 
@@ -42,7 +42,7 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8
     else if (state == 0)
     {
         this->input_data->mouse_buttons &= ~(1 << button);
-        this->input_data->mouse_buttons_this_tick |= (1 << button);
+        this->input_data->mouse_buttons_this_tick &= ~(1 << button);
     }
 }
 #else
@@ -137,8 +137,8 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     float scale = (this->renderer->scale = b < a ? a : b);
     this->renderer->width = width;
     this->renderer->height = height;
-    this->global_container->x = width * 0.5 / scale;
-    this->global_container->y = height * 0.5 / scale;
+    this->global_container->lerp_x = this->global_container->x = width * 0.5 / scale;
+    this->global_container->lerp_y = this->global_container->y = height * 0.5 / scale;
     this->global_container->width = width / scale;
     this->global_container->height = height / scale;
     rr_game_tick(this, delta);

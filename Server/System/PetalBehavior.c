@@ -95,7 +95,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
         for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
         {
             struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
-            struct rr_petal_data const *data = slot->data;
+            struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
             for (uint64_t inner = 0; inner < slot->count; ++inner)
             {
                 slot->petals[inner].simulation_id = RR_NULL_ENTITY;
@@ -108,12 +108,13 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
-        struct rr_petal_data const *data = slot->data;
+        struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         if (data->id == rr_petal_id_leaf)
         {
             struct rr_component_health *player_health = rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(player_health, player_health->health + 20);
         }
+        uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0)
@@ -129,6 +130,9 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             }
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
+                uint8_t cd = ((float) p_petal->cooldown_ticks / data->cooldown) * 255;
+                if (cd > max_cd)
+                    max_cd = cd;
                 if (--p_petal->cooldown_ticks <= 0)
                 {
                     p_petal->simulation_id = rr_simulation_alloc_entity(simulation);

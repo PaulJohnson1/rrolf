@@ -13,7 +13,7 @@ struct rr_component_mob
                    EntityIdx parent_id;
                    uint8_t id;
                    uint8_t rarity;
-    RR_SERVER_ONLY(uint64_t protocol_state;)
+    RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 
 void rr_component_mob_init(struct rr_component_mob *, struct rr_simulation *);

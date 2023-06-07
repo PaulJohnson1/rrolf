@@ -29,7 +29,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
-    this->player_info->slot_count = 5;
+    rr_component_player_info_set_slot_count(this->player_info, 10);
     // rr_server_client_create_flower(this);
 }
 
@@ -225,6 +225,41 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             }
             rr_server_client_create_flower(client);
             // ctor player
+            break;
+        }
+        case 2:
+        {
+            if (size < 2)
+            {
+                puts("someone sent a petal switch packet with size < 2");
+                return 0;
+            }
+            uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
+            struct rr_component_player_info_petal_slot *slot = &client->player_info->slots[pos];
+            struct rr_component_player_info_petal_slot *s_slot = &client->player_info->secondary_slots[pos];
+            for (uint32_t i = 0; i < slot->count; ++i)
+            {
+                EntityIdx id = slot->petals[i].simulation_id;
+                if (id != RR_NULL_ENTITY && rr_simulation_has_entity(&this->simulation, id))
+                {
+                    struct rr_component_physical *physical = rr_simulation_get_physical(&this->simulation, id);
+                    struct rr_component_health *health = rr_simulation_get_health(&this->simulation, id);
+
+                    rr_component_health_set_health(health, 0);
+                    rr_component_physical_set_server_animation_tick(physical, 6);
+                }
+
+            }
+            uint8_t temp = slot->id;
+            slot->id = s_slot->id;
+            s_slot->id = temp;
+            temp = slot->rarity;
+            slot->rarity = s_slot->rarity;
+            s_slot->rarity = temp;
+
+            slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
+            for (uint32_t i = 0; i < slot->count; ++i)
+                slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
         }
         }
     }
@@ -295,8 +330,8 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        //if (elapsed_time > 100)
-            //printf("tick took %ld microseconds\n", elapsed_time);
+        if (elapsed_time > 100)
+            printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }

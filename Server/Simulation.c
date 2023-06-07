@@ -324,6 +324,20 @@ static void mob_counter(EntityIdx i, void *a)
     ++*count;
 }
 
+static void rr_simulation_pending_deletion_free_components(uint64_t id, void *_simulation)
+{
+    struct rr_simulation *simulation = _simulation;
+    //THIS ONE COUNTS THE PHYSICAL ANIMATION        
+    if (rr_simulation_has_physical(simulation, id))
+    {
+        if (rr_simulation_get_physical(simulation, id)->called_dtor == 1)
+            return;
+        else
+            rr_bitset_unset(simulation->pending_deletions, id);
+    }
+    __rr_simulation_pending_deletion_free_components(id, simulation);
+}
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
@@ -342,7 +356,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         spawn_random_mob(this);
 
     // delete pending deletions
-    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, rr_simulation_pending_deletion_free_components);
     memset(this->recently_deleted, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->recently_deleted);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);
