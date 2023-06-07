@@ -43,8 +43,8 @@ void rr_server_client_free(struct rr_server_client *this)
 
 void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *start, uint64_t size)
 {
-    this->encryption_key = rr_get_hash(this->encryption_key);
-    rr_encrypt(start, size, this->encryption_key);
+    this->clientbound_encryption_key = rr_get_hash(this->clientbound_encryption_key);
+    rr_encrypt(start, size, this->clientbound_encryption_key);
 }
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint64_t size)
@@ -94,13 +94,15 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].encryption_key, "encryption key");
-                rr_encrypt(outgoing_message, 1024, 1);
-                // TODO:
-                // rr_encrypt(outgoing_message, 1024, 21094093777837637ull);
-                // rr_encrypt(outgoing_message, 1024, 59731158950470853ull);
-                // rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
-                // rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
+                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].requested_verification, "verification");
+                proto_bug_write_uint32(&encryption_key_encoder, rr_get_rand(), "useless bytes");
+                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].clientbound_encryption_key, "c encryption key");
+                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].serverbound_encryption_key, "s encryption key");
+                rr_encrypt(outgoing_message, 1024, 21094093777837637ull);
+                rr_encrypt(outgoing_message, 8, 1);
+                rr_encrypt(outgoing_message, 1024, 59731158950470853ull);
+                rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
+                rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
                 rr_server_client_write_message(this->clients + i, outgoing_message, 1024);
 
                 rr_server_client_create_player_info(this->clients + i);
@@ -129,7 +131,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
         if (size == 0)
             break;
         struct rr_server_client *client = NULL;
-        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+        uint64_t i = 0;
+        for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
             if (!rr_bitset_get(this->clients_in_use, i))
                 continue;
@@ -144,9 +147,37 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             puts("null client????");
             return 0;
         }
+
+        rr_decrypt(packet, size, client->serverbound_encryption_key);
+        client->serverbound_encryption_key = rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
+
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
-        // rr_log_hex(packet, packet + size);
+        
+        if (!client->received_first_packet)
+        {
+            client->received_first_packet = 1;
+            if (size < 16)
+            {
+                puts("skid gaming1");
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */, (uint8_t *)"script kiddie1", sizeof "script kiddie");
+                return 1;
+            }
+
+            proto_bug_read_uint64(&encoder, "useless bytes");
+            uint64_t received_verification = proto_bug_read_uint64(&encoder, "verification");
+            if (received_verification != client->requested_verification)
+            {
+                puts("skid gaming1");
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie2", sizeof "script kiddie");
+                return 1;
+            }
+
+            puts("socket verified");
+            client->verified = 1;
+
+            return 0;
+        }
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:

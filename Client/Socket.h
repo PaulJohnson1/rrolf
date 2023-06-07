@@ -26,7 +26,8 @@ struct rr_websocket
     struct lws_context *socket_context;
     struct lws *socket;
 #endif
-    uint64_t encryption_key;
+    uint64_t clientbound_encryption_key;
+    uint64_t serverbound_encryption_key;
 };
 
 void rr_websocket_init(struct rr_websocket *);

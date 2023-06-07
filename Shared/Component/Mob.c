@@ -15,13 +15,13 @@
 #endif
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(id, uint8) \
-    X(rarity, uint8) 
+    X(rarity, uint8) \
+    X(id, uint8) 
 
 enum
 {
-    state_flags_rarity = 0b000001,
-    state_flags_id = 0b000010,
+    state_flags_id = 0b000001,
+    state_flags_rarity = 0b000010,
     state_flags_all = 0b000011
 };
 

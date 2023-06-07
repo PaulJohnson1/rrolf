@@ -1,13 +1,15 @@
 #include <Client/Socket.h>
 
+#include <stdio.h>
+#include <string.h>
+
 #ifndef EMSCRIPTEN
 #include <libwebsockets.h>
 #else
 #include <emscripten.h>
 #endif
 
-#include <stdio.h>
-#include <string.h>
+#include <Shared/Crypto.h>
 
 uint8_t output_packet[128 * 1024] = {0};
 
@@ -106,6 +108,8 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
 
 void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)
 {
+    rr_encrypt(start, end - start, this->serverbound_encryption_key);
+    this->serverbound_encryption_key = rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
 #ifndef EMSCRIPTEN
 lws_write(this->socket, start, end - start, LWS_WRITE_BINARY);
 #else
