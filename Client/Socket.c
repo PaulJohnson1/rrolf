@@ -54,25 +54,27 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
     static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
     EM_ASM({
-        let string = "";
-        while (Module.HEAPU8[$1])
-            string += String.fromCharCode(Module.HEAPU8[$1++]);
-        console.log("connecting to socket", string);
-        let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
-        socket.binaryType = "arraybuffer";
-        socket.onopen = function()
-        {
-            Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
-        };
-        socket.onclose = function()
-        {
-            Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
-        };
-        socket.onmessage = function(event)
-        {
-            Module.HEAPU8.set(new Uint8Array(event.data), $3);
-            Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
-        };
+        setTimeout(function() {
+            let string = "";
+            while (Module.HEAPU8[$1])
+                string += String.fromCharCode(Module.HEAPU8[$1++]);
+            console.log("connecting to socket", string);
+            let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
+            socket.binaryType = "arraybuffer";
+            socket.onopen = function()
+            {
+                Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
+            };
+            socket.onclose = function()
+            {
+                Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
+            };
+            socket.onmessage = function(event)
+            {
+                Module.HEAPU8.set(new Uint8Array(event.data), $3);
+                Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
+            };
+        }, 1000);
     }, this, host, port, &incoming_data[0]);
 #else
     struct lws_context_creation_info info;

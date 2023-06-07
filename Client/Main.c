@@ -148,29 +148,20 @@ int main()
 {
     puts("client init");
     static struct rr_game game;
-    static struct rr_websocket socket;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
     static struct rr_simulation simulation;
     rr_main_renderer_initialize(&game);
 
     rr_game_init(&game);
-    rr_websocket_init(&socket);
     rr_renderer_init(&renderer);
     rr_input_data_init(&input_data);
     rr_simulation_init(&simulation);
 
-    game.socket = &socket;
     game.renderer = &renderer;
     game.input_data = &input_data;
     game.simulation = &simulation;
     rr_game_tick(&game, 1);
-
-//#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    rr_websocket_connect_to(&socket, "127.0.0.1", 8000);
-//#else
-    // rr_websocket_connect_to(&socket, "45.79.197.197", 8000);
-//#endif
 
 #ifndef EMSCRIPTEN
     while (1)

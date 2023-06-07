@@ -51,8 +51,16 @@ static void respawn_button_event(struct rr_ui_element *this, uint8_t type, struc
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
         proto_bug_write_uint8(&encoder, 1, "header");
-        rr_websocket_send(game->socket, encoder.start, encoder.current);
+        rr_websocket_send(&game->socket, encoder.start, encoder.current);
     }
+}
+
+static void find_server_button_event(struct rr_ui_element *this, uint8_t event_type, struct rr_game *game, void *_captures)
+{
+    if (game->socket_pending)
+        return;
+    if (event_type == 1)
+        rr_game_connect_socket(game);
 }
 
 static void petal_switch_button_event(struct rr_ui_element *this, uint8_t type, struct rr_game *game, void *_captures)
@@ -63,7 +71,7 @@ static void petal_switch_button_event(struct rr_ui_element *this, uint8_t type, 
         proto_bug_init(&encoder, output_packet);
         proto_bug_write_uint8(&encoder, 2, "header");
         proto_bug_write_uint8(&encoder, *(uint8_t *) _captures, "petal switch");
-        rr_websocket_send(game->socket, encoder.start, encoder.current);
+        rr_websocket_send(&game->socket, encoder.start, encoder.current);
     }
 }
 
@@ -189,6 +197,20 @@ struct rr_ui_element *rr_ui_init_respawn_button()
     data->line_width = 6;
     data->text = "Respawn";
     element->width = 100;
+    element->height = 40;
+    return element;
+}
+
+struct rr_ui_element *rr_ui_init_find_server_button()
+{
+    struct rr_ui_element *element = rr_ui_init_button();
+    struct button_metadata *data = element->misc_data;
+    data->on_event = find_server_button_event;
+    data->fill_style = 0xff1dd129;
+    data->round_radius = 6;
+    data->line_width = 6;
+    data->text = "Find server";
+    element->width = 140;
     element->height = 40;
     return element;
 }
