@@ -45,19 +45,18 @@ struct rr_ui_element
 
 void ui_translate(struct rr_ui_element *, struct rr_renderer *);
 
-struct rr_ui_element *rr_ui_init_element();
+struct rr_ui_element *rr_ui_element_init();
 
-struct rr_ui_element *rr_ui_init_button();
-struct rr_ui_element *rr_ui_init_respawn_button();
-struct rr_ui_element *rr_ui_init_find_server_button();
-struct rr_ui_element *rr_ui_init_loadout_button(uint8_t, uint8_t);
-struct rr_ui_element *rr_ui_init_mob_button(uint8_t, uint8_t);
-struct rr_ui_element *rr_ui_init_inventory_button(uint8_t, uint8_t);
+struct rr_ui_element *rr_ui_button_init();
+struct rr_ui_element *rr_ui_respawn_button_init();
+struct rr_ui_element *rr_ui_find_server_button_init();
+struct rr_ui_element *rr_ui_loadout_button_init(uint8_t, uint8_t);
+struct rr_ui_element *rr_ui_mob_button_init(uint8_t, uint8_t);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 
-struct rr_ui_element *rr_ui_init_container();
+struct rr_ui_element *rr_ui_container_init();
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
-struct rr_ui_element *rr_ui_init_text(char const *, float);
+struct rr_ui_element *rr_ui_text_init(char const *, float);
 
-struct rr_ui_element *rr_ui_init_text_input(float, float, uint8_t);
+struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);

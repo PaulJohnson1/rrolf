@@ -187,45 +187,18 @@ static void mob_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
-static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
-{
-    struct rr_game *game = _game;
-    struct rr_renderer *renderer = game->renderer;
-    struct mob_button_metadata *data = this->misc_data;
-    struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(renderer, &state);
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[data->rarity]);
-    rr_renderer_set_line_width(renderer, this->width * 0.1);
-    renderer->state.filter.amount = 0.2;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[data->rarity]);
-    ui_translate(this, renderer);
-    rr_renderer_scale(renderer, renderer->scale);
-
-    rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 5);
-    rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    rr_renderer_clip(renderer);
-    rr_renderer_scale(renderer, this->width * 0.02);
-    
-    renderer->state.filter.amount = 0;
-    rr_renderer_render_static_petal(renderer, data->id, data->rarity);
-    
-    rr_renderer_free_context_state(renderer, &state);
-}
-
-struct rr_ui_element *rr_ui_init_button()
+struct rr_ui_element *rr_ui_button_init()
 {
     struct button_metadata *data = malloc(sizeof *data);
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = button_on_render;
     element->misc_data = data;
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_respawn_button()
+struct rr_ui_element *rr_ui_respawn_button_init()
 {
-    struct rr_ui_element *element = rr_ui_init_button();
+    struct rr_ui_element *element = rr_ui_button_init();
     struct button_metadata *data = element->misc_data;
     data->on_event = respawn_button_event;
     data->fill_style = 0xff1dd129;
@@ -237,9 +210,9 @@ struct rr_ui_element *rr_ui_init_respawn_button()
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_find_server_button()
+struct rr_ui_element *rr_ui_find_server_button_init()
 {
-    struct rr_ui_element *element = rr_ui_init_button();
+    struct rr_ui_element *element = rr_ui_button_init();
     struct button_metadata *data = element->misc_data;
     data->on_event = find_server_button_event;
     data->fill_style = 0xff1dd129;
@@ -252,9 +225,9 @@ struct rr_ui_element *rr_ui_init_find_server_button()
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_loadout_button(uint8_t pos, uint8_t main)
+struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main)
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct loadout_button_metadata *data = malloc(sizeof *data);
     data->position = pos;
     data->main_loadout = main;
@@ -265,9 +238,9 @@ struct rr_ui_element *rr_ui_init_loadout_button(uint8_t pos, uint8_t main)
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_mob_button(uint8_t id, uint8_t rarity)
+struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct mob_button_metadata *data = malloc(sizeof *data);
     data->id = id;
     data->rarity = rarity;

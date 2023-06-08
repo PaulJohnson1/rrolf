@@ -32,10 +32,10 @@ static void text_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
-struct rr_ui_element *rr_ui_init_text(char const *str, float size)
+struct rr_ui_element *rr_ui_text_init(char const *str, float size)
 {
     struct text_metadata *data = malloc(sizeof *data);
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = text_on_render;
     data->text = str;
     element->height = size;

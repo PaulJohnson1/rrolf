@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-struct rr_ui_element *rr_ui_make_v_container(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
+struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
 {
     va_list args;
     va_start(args, count);
@@ -38,7 +38,7 @@ struct rr_ui_element *rr_ui_make_v_container(struct rr_ui_element *c, float oute
     return c;
 }
 
-struct rr_ui_element *rr_ui_make_h_container(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
+struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
 {
     va_list args;
     va_start(args, count);
