@@ -46,7 +46,7 @@ set(SRCS
     ../Shared/Vector.c
 )
 
-set(CMAKE_C_FLAGS "-DRR_CLIENT")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_CLIENT")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default

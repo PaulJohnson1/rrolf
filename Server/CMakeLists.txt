@@ -48,14 +48,14 @@ set(SRCS
     ../Shared/Vector.c
 )
 
-set(CMAKE_C_FLAGS "-DRR_SERVER=1 -DHSHG_D=2 -DHSHG_UNIFORM=1")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1 -DHSHG_D=2 -DHSHG_UNIFORM=1")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3 -gdwarf-4")
-    # add_compile_options(-fsanitize=undefined,address)
-    # add_link_options(-fsanitize=undefined,address)
+    add_compile_options(-fsanitize=undefined,address)
+    add_link_options(-fsanitize=undefined,address)
 elseif(CALLGRIND_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
 else()

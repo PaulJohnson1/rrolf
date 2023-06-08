@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/time.h>
+#include <inttypes.h>
 
 #include <Server/System/Ai.h>
 #include <Server/System/Centipede.h>
@@ -43,7 +44,7 @@ void rr_simulation_init(struct rr_simulation *this)
 
 #define XX(COMPONENT, ID)                       \
     printf(#COMPONENT); \
-    printf(" size is %d\n", sizeof(this->COMPONENT##_components[0]));
+    printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
     RR_FOR_EACH_COMPONENT;
 #undef XX
 }

@@ -28,8 +28,8 @@ struct rr_component_player_info_petal_slot
 
 struct rr_component_player_info
 {
-                   EntityIdx parent_id;
-                   EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
+                   struct rr_component_player_info_petal_slot slots[10];
+                   struct rr_component_player_info_petal_slot secondary_slots[10];
     RR_SERVER_ONLY(float global_rotation;)
                    float camera_x;
     RR_CLIENT_ONLY(float lerp_camera_x;)
@@ -38,17 +38,18 @@ struct rr_component_player_info
                    float camera_fov;
     RR_CLIENT_ONLY(float lerp_camera_fov;)
     RR_SERVER_ONLY(uint32_t protocol_state;)
+                   uint32_t inv[rr_petal_id_max][rr_rarity_id_max];
+                   EntityIdx parent_id;
+                   EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
+    RR_SERVER_ONLY(uint16_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
                    uint8_t slot_count;
-    RR_SERVER_ONLY(uint16_t rotation_count;)
     RR_SERVER_ONLY(uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
-                   struct rr_component_player_info_petal_slot slots[10];
-                   struct rr_component_player_info_petal_slot secondary_slots[10];
-    
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *, struct rr_simulation *);
 void rr_component_player_info_free(struct rr_component_player_info *, struct rr_simulation *);
+void rr_component_player_info_signal_inv_update(struct rr_component_player_info *this);
 
 RR_SERVER_ONLY(void rr_component_player_info_write(struct rr_component_player_info *, struct proto_bug *, int);)
 RR_CLIENT_ONLY(void rr_component_player_info_read(struct rr_component_player_info *, struct proto_bug *);)

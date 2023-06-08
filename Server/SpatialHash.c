@@ -16,9 +16,9 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
 {
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
     // force positions unsigned for a significantly better hash function
-    uint32_t x = (uint32_t)(physical->x + RR_ARENA_RADIUS);
-    uint32_t y = (uint32_t)(physical->y + RR_ARENA_RADIUS);
-    struct rr_spatial_hash_cell *cell = &this->cells[x >> SPATIAL_HASH_GRID_SIZE][y >> SPATIAL_HASH_GRID_SIZE];
+    uint32_t x = (uint32_t)(physical->x + 8192.0f);
+    uint32_t y = (uint32_t)(physical->y + 8192.0f);
+    struct rr_spatial_hash_cell *cell = &this->cells[(x >> SPATIAL_HASH_GRID_SIZE) % RR_SPATIAL_HASH_GRID_LENGTH][(y >> SPATIAL_HASH_GRID_SIZE) % RR_SPATIAL_HASH_GRID_LENGTH];
     cell->entities[cell->entities_in_use++] = entity;
 }
 

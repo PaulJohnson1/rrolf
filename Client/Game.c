@@ -427,5 +427,5 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 8000);
+    rr_websocket_connect_to(&this->socket, "45.79.197.197", 8000);
 }
