@@ -252,12 +252,12 @@ struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
 
 struct rr_ui_element *rr_ui_init_inventory_button(uint8_t id, uint8_t rarity)
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct mob_button_metadata *data = malloc(sizeof *data);
     data->id = id;
     data->rarity = rarity;
     element->width = element->height = 60;
-    element->on_render = inventory_button_on_render;
+    element->on_render = mob_button_on_render;
     element->misc_data = data;
     return element;
 }

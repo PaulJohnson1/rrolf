@@ -69,7 +69,7 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
     data->id = id;
     for (uint64_t mob = 0; mob < rr_rarity_id_max; ++mob)
     {
-        uint64_t cap = mob != 0 ? mob : 1;
+        uint64_t cap = mob != 0 ? mob : mob > rr_rarity_id_legendary ? rr_rarity_id_legendary : mob;
         data->loot_table[mob][0] = pow(1 - seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
         for (uint64_t drop = 0; drop <= cap; ++drop)
         {

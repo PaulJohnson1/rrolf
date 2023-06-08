@@ -40,6 +40,12 @@ void rr_simulation_init(struct rr_simulation *this)
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, 1650.0f);
+
+#define XX(COMPONENT, ID)                       \
+    printf(#COMPONENT); \
+    printf(" size is %d\n", sizeof(this->COMPONENT##_components[0]));
+    RR_FOR_EACH_COMPONENT;
+#undef XX
 }
 
 static void spawn_random_mob(struct rr_simulation *this)
@@ -324,6 +330,30 @@ static void mob_counter(EntityIdx i, void *a)
     ++*count;
 }
 
+static void rr_simulation_pending_deletion_free_components(uint64_t id, void *_simulation)
+{
+    struct rr_simulation *simulation = _simulation;
+    if (rr_simulation_has_physical(simulation, id))
+    {
+        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+        if (physical->has_deletion_animation)
+        {
+            __rr_simulation_pending_deletion_free_components(id, _simulation);
+            rr_bitset_unset(simulation->pending_deletions, id);
+            rr_component_physical_set_server_animation_tick(physical, 5);
+        }
+        else if (physical->server_animation_tick != 0)
+        {
+            rr_bitset_unset(simulation->pending_deletions, id);  
+            rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);  
+        }        
+    }
+    else
+    {
+        __rr_simulation_pending_deletion_free_components(id, _simulation);
+    }
+}
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
     RR_TIME_BLOCK("collision_detection", { rr_system_collision_detection_tick(this); });
@@ -342,7 +372,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         spawn_random_mob(this);
 
     // delete pending deletions
-    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, rr_simulation_pending_deletion_free_components);
     memset(this->recently_deleted, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->recently_deleted);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);

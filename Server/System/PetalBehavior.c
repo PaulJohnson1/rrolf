@@ -62,16 +62,16 @@ static void system_flower_petal_movement_logic(struct rr_simulation *simulation,
         holdingRadius = 150;
     else if (player_info->input & 2)
         holdingRadius = 45;
-    float currAngle = player_info->global_rotation + rotation_pos * 2 * M_PI / player_info->rotation_count;
+    float curr_angle = player_info->global_rotation + rotation_pos * 2 * M_PI / player_info->rotation_count;
     struct rr_vector chase_vector;
-    rr_vector_from_polar(&chase_vector, holdingRadius, currAngle);
+    rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
     rr_vector_add(&chase_vector, &flower_vector);
     rr_vector_sub(&chase_vector, &position_vector);
     if (petal_data->clump_radius != 0.0f && petal_data->count[petal->rarity] != 1)
     {
-        currAngle = 1.333 * currAngle + 2 * M_PI * inner_pos / petal_data->count[petal->rarity];
+        curr_angle = 1.333 * curr_angle + 2 * M_PI * inner_pos / petal_data->count[petal->rarity];
         struct rr_vector clump_vector;
-        rr_vector_from_polar(&clump_vector, petal_data->clump_radius, currAngle);
+        rr_vector_from_polar(&clump_vector, petal_data->clump_radius, curr_angle);
         rr_vector_add(&chase_vector, &clump_vector);
     }
     if (petal->id == rr_petal_id_faster)
@@ -83,7 +83,7 @@ static void system_flower_petal_movement_logic(struct rr_simulation *simulation,
     if (!is_projectile)
         rr_component_physical_set_angle(physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
-        rr_component_physical_set_angle(physical, currAngle);
+        rr_component_physical_set_angle(physical, curr_angle);
     physical->acceleration.x = 0.6f * chase_vector.x;
     physical->acceleration.y = 0.6f * chase_vector.y;
 }

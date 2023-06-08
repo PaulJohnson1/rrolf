@@ -18,11 +18,12 @@ void rr_component_physical_init(struct rr_component_physical *this, struct rr_si
 {
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->mass = 1;)
+    RR_SERVER_ONLY(this->has_deletion_animation = 1;)
 }
 
 void rr_component_physical_free(struct rr_component_physical *this, struct rr_simulation *simulation)
 {
-    RR_SERVER_ONLY(this->called_dtor = 1;)
+    RR_SERVER_ONLY(this->has_deletion_animation = 0;)
 }
 
 #ifdef RR_SERVER
