@@ -57,7 +57,7 @@ static void find_collisions(struct rr_simulation *this)
 static void update_spatial_hash_entities(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
-    rr_spatial_hash_update(this->grid, entity);
+    rr_spatial_hash_insert(this->grid, entity);
 }
 
 void rr_system_collision_detection_tick(struct rr_simulation *this)

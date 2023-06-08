@@ -18,9 +18,14 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     struct rr_component_health *health = rr_simulation_get_health(this, entity);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
 
+
     // heal 1% of max hp per second (0.0004 is 0.01 / 25)
     if (health->health > 0)
+    {
         rr_component_health_set_health(health, health->health + health->max_health * 0.0004);
+        if (physical->server_animation_tick > 0)
+            rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);
+    }
     else
         rr_simulation_request_entity_deletion(this, entity);
 }
@@ -47,6 +52,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (physical1->server_animation_tick == 0 || bypass)
     {
         rr_component_health_set_health(health1, health1->health - health2->damage);
+        rr_component_physical_set_server_animation_tick(physical1, 5);
 
         if (rr_simulation_has_ai(this, entity1))
         {
@@ -70,6 +76,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (physical2->server_animation_tick == 0 || bypass)
     {
         rr_component_health_set_health(health2, health2->health - health1->damage);
+        rr_component_physical_set_server_animation_tick(physical2, 5);
             
         if (rr_simulation_has_ai(this, entity2))
         {
@@ -109,10 +116,11 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
     for (uint32_t i = 0; i < physical->colliding_with_size; ++i)
         colliding_with_function(physical->colliding_with[i], &captures);
+    // rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
 }
 
 void rr_system_health_tick(struct rr_simulation *this)
 {
-    rr_simulation_for_each_health(this, this, system_for_each_function);
     rr_simulation_for_each_health(this, this, system_default_idle_heal);
+    rr_simulation_for_each_health(this, this, system_for_each_function);
 }

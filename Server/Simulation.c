@@ -39,7 +39,7 @@ void rr_simulation_init(struct rr_simulation *this)
     this->grid->simulation = this;
     this->arena = rr_simulation_alloc_entity(this);
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
-    rr_component_arena_set_radius(comp, 1650.0f);
+    rr_component_arena_set_radius(comp, RR_ARENA_RADIUS);
 
 #define XX(COMPONENT, ID)                       \
     printf(#COMPONENT); \

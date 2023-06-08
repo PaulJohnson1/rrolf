@@ -41,7 +41,14 @@ void rr_component_physical_write(struct rr_component_physical *this, struct prot
 RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
-RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
+//RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
+void rr_component_physical_set_radius(struct rr_component_physical *this, float r)
+{
+    if (r > (1 << 8))
+        printf("radius cannot exceed %d\n", 1 << 8);
+    this->protocol_state |= (r == this->radius) * state_flags_radius;
+    this->radius = r;
+}
 RR_DEFINE_PUBLIC_FIELD(physical, uint8_t, server_animation_tick)
 #endif
 
@@ -72,5 +79,3 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     RR_DECODE_PUBLIC_FIELD(server_animation_tick, uint8);
 }
 #endif
-
-
