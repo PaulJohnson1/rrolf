@@ -52,6 +52,7 @@ struct rr_ui_element *rr_ui_init_respawn_button();
 struct rr_ui_element *rr_ui_init_find_server_button();
 struct rr_ui_element *rr_ui_init_loadout_button(uint8_t, uint8_t);
 struct rr_ui_element *rr_ui_init_mob_button(uint8_t, uint8_t);
+struct rr_ui_element *rr_ui_init_inventory_button(uint8_t, uint8_t);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_init_container();

@@ -83,6 +83,41 @@ void rr_game_init(struct rr_game *this)
         , 1, 2)
     );
     /*
+    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(rr_ui_init_container(), 10, 20, 2,
+                rr_ui_init_text("Inventory", 24),
+                rr_ui_make_h_container(rr_ui_init_container(), 0, 10, 4,
+                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
+                        rr_ui_init_inventory_button(0, 0),
+                        rr_ui_init_inventory_button(0, 1),
+                        rr_ui_init_inventory_button(0, 2),
+                        rr_ui_init_inventory_button(0, 3)
+                    ),
+                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
+                        rr_ui_init_inventory_button(1, 0),
+                        rr_ui_init_inventory_button(1, 1),
+                        rr_ui_init_inventory_button(1, 2),
+                        rr_ui_init_inventory_button(1, 3)
+                    ),
+                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
+                        rr_ui_init_inventory_button(2, 0),
+                        rr_ui_init_inventory_button(2, 1),
+                        rr_ui_init_inventory_button(2, 2),
+                        rr_ui_init_inventory_button(2, 3)
+                    ),
+                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
+                        rr_ui_init_inventory_button(3, 0),
+                        rr_ui_init_inventory_button(3, 1),
+                        rr_ui_init_inventory_button(3, 2),
+                        rr_ui_init_inventory_button(3, 3)
+                    )
+                )
+            )
+        , 0, 2)
+    );
+    */
+    /*
     rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_make_v_container(1, 20, 20, 2,
