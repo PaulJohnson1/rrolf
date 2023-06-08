@@ -16,15 +16,9 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulati
     if (rr_vector_get_magnitude(&position) > arena->radius - physical->radius)
     {
         if (rr_simulation_has_petal(this, id))
-        {
-            struct rr_component_petal *petal = rr_simulation_get_petal(this, id);
-            struct rr_component_health *health = rr_simulation_get_health(this, id);
-            if (petal->detached && health->health != 0)
-            {
-                rr_component_health_set_health(health, 0);
-                rr_component_physical_set_server_animation_tick(physical, 6);
-            }
-        }
+            if (rr_simulation_get_petal(this, id)->detached)
+                rr_simulation_request_entity_deletion(this, id);
+
         rr_vector_set_magnitude(&position, arena->radius - physical->radius);
         rr_component_physical_set_x(physical, position.x);
         rr_component_physical_set_y(physical, position.y);

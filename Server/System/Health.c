@@ -109,11 +109,10 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
     for (uint32_t i = 0; i < physical->colliding_with_size; ++i)
         colliding_with_function(physical->colliding_with[i], &captures);
-    // rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
 }
 
 void rr_system_health_tick(struct rr_simulation *this)
 {
-    rr_simulation_for_each_health(this, this, system_default_idle_heal);
     rr_simulation_for_each_health(this, this, system_for_each_function);
+    rr_simulation_for_each_health(this, this, system_default_idle_heal);
 }

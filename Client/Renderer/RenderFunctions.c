@@ -49,6 +49,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_stroke(renderer, 0xff292929);
         rr_renderer_set_line_width(renderer, 3);
         rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 7, 0);
         rr_renderer_line_to(renderer, -3.5, 6.062177658081055);
