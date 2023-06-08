@@ -51,8 +51,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_set_health(health1, health1->health - health2->damage);
         rr_component_physical_set_server_animation_tick(physical1, 5);
-        if (health1->health == 0)
-            __rr_simulation_pending_deletion_free_components(entity1, this);
 
         if (rr_simulation_has_ai(this, entity1))
         {
@@ -77,8 +75,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_set_health(health2, health2->health - health1->damage);
         rr_component_physical_set_server_animation_tick(physical2, 5);
-        if (health2->health == 0)
-            __rr_simulation_pending_deletion_free_components(entity2, this);
             
         if (rr_simulation_has_ai(this, entity2))
         {

@@ -20,11 +20,12 @@ static void container_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(game->renderer, &state);
 }
 
-void rr_ui_container_add_element(struct rr_ui_element *this, struct rr_ui_element *add)
+struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this, struct rr_ui_element *add)
 {
     struct rr_ui_container_metadata *data = this->misc_data;
     data->elements.elements[data->elements.size++] = add;
     add->container = this;
+    return add;
 }
 
 struct rr_ui_element *rr_ui_init_container()

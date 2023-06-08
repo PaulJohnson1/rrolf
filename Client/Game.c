@@ -30,72 +30,93 @@ void rr_game_init(struct rr_game *this)
     memset(this, 0, sizeof *this);
     this->global_container = rr_ui_init_container();
     this->global_container->container = this->global_container;
-    rr_ui_container_add_element(this->global_container,
-                                rr_ui_set_justify(
-                                    rr_ui_make_v_container(1, 0, 200, 2,
-                                                           rr_ui_init_text("rrolf", 72),
-                                                           rr_ui_set_justify(
-                                                               rr_ui_make_h_container(1, 0, 50, 2,
-                                                                                      rr_ui_init_text("Spawn In", 48),
-                                                                                      rr_ui_init_respawn_button()),
-                                                               1, 1)),
-                                    1, 1));
-    rr_ui_container_add_element(this->global_container,
-                                rr_ui_make_v_container(1, 0, 0, 1,
-                                                       rr_ui_make_h_container(1, 0, 0, 1,
-                                                                              rr_ui_init_find_server_button())));
-    rr_ui_container_add_element(this->global_container,
-                                rr_ui_set_justify(
-                                    rr_ui_make_v_container(1, 20, 20, 2,
-                                                           rr_ui_make_h_container(1, 0, 20, 10,
-                                                                                  rr_ui_init_loadout_button(0, 1),
-                                                                                  rr_ui_init_loadout_button(1, 1),
-                                                                                  rr_ui_init_loadout_button(2, 1),
-                                                                                  rr_ui_init_loadout_button(3, 1),
-                                                                                  rr_ui_init_loadout_button(4, 1),
-                                                                                  rr_ui_init_loadout_button(5, 1),
-                                                                                  rr_ui_init_loadout_button(6, 1),
-                                                                                  rr_ui_init_loadout_button(7, 1),
-                                                                                  rr_ui_init_loadout_button(8, 1),
-                                                                                  rr_ui_init_loadout_button(9, 1)),
-                                                           rr_ui_make_h_container(1, 0, 20, 10,
-                                                                                  rr_ui_init_loadout_button(0, 0),
-                                                                                  rr_ui_init_loadout_button(1, 0),
-                                                                                  rr_ui_init_loadout_button(2, 0),
-                                                                                  rr_ui_init_loadout_button(3, 0),
-                                                                                  rr_ui_init_loadout_button(4, 0),
-                                                                                  rr_ui_init_loadout_button(5, 0),
-                                                                                  rr_ui_init_loadout_button(6, 0),
-                                                                                  rr_ui_init_loadout_button(7, 0),
-                                                                                  rr_ui_init_loadout_button(8, 0),
-                                                                                  rr_ui_init_loadout_button(9, 0))),
-                                    1, 2));
-    rr_ui_container_add_element(this->global_container,
-                                rr_ui_set_justify(
-                                    rr_ui_make_v_container(1, 20, 20, 2,
-                                                           rr_ui_init_text("Wave 69", 36),
-                                                           rr_ui_make_h_container(1, 0, 20, 4,
-                                                                                  rr_ui_make_v_container(1, 0, -40, 4,
-                                                                                                         rr_ui_init_mob_button(0, 0),
-                                                                                                         rr_ui_init_mob_button(0, 1),
-                                                                                                         rr_ui_init_mob_button(0, 2),
-                                                                                                         rr_ui_init_mob_button(0, 3)),
-                                                                                  rr_ui_make_v_container(1, 0, -40, 4,
-                                                                                                         rr_ui_init_mob_button(1, 0),
-                                                                                                         rr_ui_init_mob_button(1, 1),
-                                                                                                         rr_ui_init_mob_button(1, 2),
-                                                                                                         rr_ui_init_mob_button(1, 3)),
-                                                                                  rr_ui_make_v_container(1, 0, -40, 4,
-                                                                                                         rr_ui_init_mob_button(2, 0),
-                                                                                                         rr_ui_init_mob_button(2, 1),
-                                                                                                         rr_ui_init_mob_button(2, 2),
-                                                                                                         rr_ui_init_mob_button(2, 3)),
-                                                                                  rr_ui_make_v_container(1, 0, -40, 4,
-                                                                                                         rr_ui_init_mob_button(3, 0),
-                                                                                                         rr_ui_init_mob_button(3, 1),
-                                                                                                         rr_ui_init_mob_button(3, 2),
-                                                                                                         rr_ui_init_mob_button(3, 3)))),
-                                    1, 0));
+    this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(rr_ui_init_container(), 0, 15, 2,
+                rr_ui_init_text("rrolf", 72),
+                rr_ui_make_h_container(rr_ui_init_container(), 0, 50, 2,
+                    rr_ui_init_text("Spawn In", 48),
+                    rr_ui_init_respawn_button()
+                )
+            )
+        , 1, 1)
+    );
+    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(rr_ui_init_container(), 0, 15, 2,
+                rr_ui_init_text("rrolf", 72),
+                rr_ui_make_h_container(rr_ui_init_container(), 0, 15, 2,
+                    rr_ui_init_text_input(360, 40, 15),
+                    rr_ui_init_find_server_button()
+                )
+            )
+        , 1, 1)
+    ); 
+    this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(rr_ui_init_container(), 20, 20, 2,
+                rr_ui_make_h_container(rr_ui_init_container(), 0, 20, 10,
+                    rr_ui_init_loadout_button(0, 1),
+                    rr_ui_init_loadout_button(1, 1),
+                    rr_ui_init_loadout_button(2, 1),
+                    rr_ui_init_loadout_button(3, 1),
+                    rr_ui_init_loadout_button(4, 1),
+                    rr_ui_init_loadout_button(5, 1),
+                    rr_ui_init_loadout_button(6, 1),
+                    rr_ui_init_loadout_button(7, 1),
+                    rr_ui_init_loadout_button(8, 1),
+                    rr_ui_init_loadout_button(9, 1)
+                ),
+                rr_ui_make_h_container(rr_ui_init_container(), 0, 20, 10,
+                    rr_ui_init_loadout_button(0, 0),
+                    rr_ui_init_loadout_button(1, 0),
+                    rr_ui_init_loadout_button(2, 0),
+                    rr_ui_init_loadout_button(3, 0),
+                    rr_ui_init_loadout_button(4, 0),
+                    rr_ui_init_loadout_button(5, 0),
+                    rr_ui_init_loadout_button(6, 0),
+                    rr_ui_init_loadout_button(7, 0),
+                    rr_ui_init_loadout_button(8, 0),
+                    rr_ui_init_loadout_button(9, 0)
+                )
+            )
+        , 1, 2)
+    );
+    /*
+    rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_make_v_container(1, 20, 20, 2,
+                rr_ui_init_text("Wave 69", 36),
+                rr_ui_make_h_container(1, 0, 20, 4,
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(0, 0),
+                        rr_ui_init_mob_button(0, 1),
+                        rr_ui_init_mob_button(0, 2),
+                        rr_ui_init_mob_button(0, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(1, 0),
+                        rr_ui_init_mob_button(1, 1),
+                        rr_ui_init_mob_button(1, 2),
+                        rr_ui_init_mob_button(1, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(2, 0),
+                        rr_ui_init_mob_button(2, 1),
+                        rr_ui_init_mob_button(2, 2),
+                        rr_ui_init_mob_button(2, 3)
+                    ),
+                    rr_ui_make_v_container(1, 0, -40, 4,
+                        rr_ui_init_mob_button(3, 0),
+                        rr_ui_init_mob_button(3, 1),
+                        rr_ui_init_mob_button(3, 2),
+                        rr_ui_init_mob_button(3, 3)
+                    )
+                )
+            )
+        , 1, 0)
+    );
+    */
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -235,7 +256,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
-    rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);    
     if (this->socket_ready)
     {
         rr_simulation_tick(this->simulation, delta);
@@ -253,13 +274,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
             if (player_info->flower_id != RR_NULL_ENTITY)
             {
-                ((struct rr_ui_container_metadata *)this->global_container->misc_data)->elements.elements[0]->hidden = 1;
                 if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->server_animation_tick != 0)
                     rr_renderer_translate(this->renderer, rr_frand() * 5.0f, rr_frand() * 5.0f);
-            }
-            else
-            {
-                ((struct rr_ui_container_metadata *)this->global_container->misc_data)->elements.elements[0]->hidden = 0;
             }
             for (EntityIdx p = 1; p < RR_MAX_ENTITY_COUNT; ++p)
             {
@@ -318,8 +334,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_free_context_state(this->renderer, &state1);
         }
     }
-    else
-        ((struct rr_ui_container_metadata *)this->global_container->misc_data)->elements.elements[0]->hidden = 0;
     if (this->socket_ready)
     {
 #ifndef EMSCRIPTEN
@@ -336,6 +350,15 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_write_uint8(&encoder, 1, "header");
             rr_websocket_send(&this->socket, encoder.start, encoder.current);
         }
+    }
+    this->ui_elements.respawn_label->hidden = 1;
+    this->ui_elements.title_screen->hidden = 0;
+    if (this->socket_ready)
+    {
+        this->ui_elements.title_screen->hidden = 1;
+        if (this->simulation->player_info != RR_NULL_ENTITY)
+            if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
+                this->ui_elements.respawn_label->hidden = 0;
     }
 
     this->global_container->on_render(this->global_container, this);

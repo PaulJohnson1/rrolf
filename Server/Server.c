@@ -234,6 +234,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 puts("someone sent a petal switch packet with size < 2");
                 return 0;
             }
+            if (client->player_info->flower_id == RR_NULL_ENTITY)
+                return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             struct rr_component_player_info_petal_slot *slot = &client->player_info->slots[pos];
             struct rr_component_player_info_petal_slot *s_slot = &client->player_info->secondary_slots[pos];

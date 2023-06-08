@@ -55,6 +55,8 @@ struct rr_ui_element *rr_ui_init_mob_button(uint8_t, uint8_t);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_init_container();
-void rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
+struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_init_text(char const *, float);
+
+struct rr_ui_element *rr_ui_init_text_input(float, float, uint8_t);

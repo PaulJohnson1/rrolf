@@ -19,6 +19,7 @@ set(SRCS
     Ui/Element.c
     Ui/Engine.c
     Ui/Text.c
+    Ui/TextInput.c
     Game.c
     InputData.c
     Main.c
