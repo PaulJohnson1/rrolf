@@ -178,18 +178,18 @@ static void mob_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
-struct rr_ui_element *rr_ui_init_button()
+struct rr_ui_element *rr_ui_button_init()
 {
     struct button_metadata *data = malloc(sizeof *data);
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = button_on_render;
     element->misc_data = data;
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_respawn_button()
+struct rr_ui_element *rr_ui_respawn_button_init()
 {
-    struct rr_ui_element *element = rr_ui_init_button();
+    struct rr_ui_element *element = rr_ui_button_init();
     struct button_metadata *data = element->misc_data;
     data->on_event = respawn_button_event;
     data->fill_style = 0xff1dd129;
@@ -201,9 +201,9 @@ struct rr_ui_element *rr_ui_init_respawn_button()
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_find_server_button()
+struct rr_ui_element *rr_ui_find_server_button_init()
 {
-    struct rr_ui_element *element = rr_ui_init_button();
+    struct rr_ui_element *element = rr_ui_button_init();
     struct button_metadata *data = element->misc_data;
     data->on_event = find_server_button_event;
     data->fill_style = 0xff1dd129;
@@ -215,9 +215,9 @@ struct rr_ui_element *rr_ui_init_find_server_button()
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_loadout_button(uint8_t pos, uint8_t main)
+struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main)
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct loadout_button_metadata *data = malloc(sizeof *data);
     data->position = pos;
     data->main_loadout = main;
@@ -228,9 +228,9 @@ struct rr_ui_element *rr_ui_init_loadout_button(uint8_t pos, uint8_t main)
     return element;
 }
 
-struct rr_ui_element *rr_ui_init_mob_button(uint8_t id, uint8_t rarity)
+struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct mob_button_metadata *data = malloc(sizeof *data);
     data->id = id;
     data->rarity = rarity;

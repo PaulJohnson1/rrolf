@@ -28,56 +28,56 @@
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
-    this->global_container = rr_ui_init_container();
+    this->global_container = rr_ui_container_init();
     this->global_container->container = this->global_container;
     this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_make_v_container(rr_ui_init_container(), 0, 15, 2,
-                rr_ui_init_text("rrolf", 72),
-                rr_ui_make_h_container(rr_ui_init_container(), 0, 50, 2,
-                    rr_ui_init_text("Spawn In", 48),
-                    rr_ui_init_respawn_button()
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+                rr_ui_text_init("rrolf", 72),
+                rr_ui_h_container_init(rr_ui_container_init(), 0, 50, 2,
+                    rr_ui_text_init("Spawn In", 48),
+                    rr_ui_respawn_button_init()
                 )
             )
         , 1, 1)
     );
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_make_v_container(rr_ui_init_container(), 0, 15, 2,
-                rr_ui_init_text("rrolf", 72),
-                rr_ui_make_h_container(rr_ui_init_container(), 0, 15, 2,
-                    rr_ui_init_text_input(360, 40, 15),
-                    rr_ui_init_find_server_button()
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+                rr_ui_text_init("rrolf", 72),
+                rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
+                    rr_ui_text_input_init(360, 40, 15),
+                    rr_ui_find_server_button_init()
                 )
             )
         , 1, 1)
     ); 
     this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_make_v_container(rr_ui_init_container(), 20, 20, 2,
-                rr_ui_make_h_container(rr_ui_init_container(), 0, 20, 10,
-                    rr_ui_init_loadout_button(0, 1),
-                    rr_ui_init_loadout_button(1, 1),
-                    rr_ui_init_loadout_button(2, 1),
-                    rr_ui_init_loadout_button(3, 1),
-                    rr_ui_init_loadout_button(4, 1),
-                    rr_ui_init_loadout_button(5, 1),
-                    rr_ui_init_loadout_button(6, 1),
-                    rr_ui_init_loadout_button(7, 1),
-                    rr_ui_init_loadout_button(8, 1),
-                    rr_ui_init_loadout_button(9, 1)
+            rr_ui_v_container_init(rr_ui_container_init(), 20, 20, 2,
+                rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
+                    rr_ui_loadout_button_init(0, 1),
+                    rr_ui_loadout_button_init(1, 1),
+                    rr_ui_loadout_button_init(2, 1),
+                    rr_ui_loadout_button_init(3, 1),
+                    rr_ui_loadout_button_init(4, 1),
+                    rr_ui_loadout_button_init(5, 1),
+                    rr_ui_loadout_button_init(6, 1),
+                    rr_ui_loadout_button_init(7, 1),
+                    rr_ui_loadout_button_init(8, 1),
+                    rr_ui_loadout_button_init(9, 1)
                 ),
-                rr_ui_make_h_container(rr_ui_init_container(), 0, 20, 10,
-                    rr_ui_init_loadout_button(0, 0),
-                    rr_ui_init_loadout_button(1, 0),
-                    rr_ui_init_loadout_button(2, 0),
-                    rr_ui_init_loadout_button(3, 0),
-                    rr_ui_init_loadout_button(4, 0),
-                    rr_ui_init_loadout_button(5, 0),
-                    rr_ui_init_loadout_button(6, 0),
-                    rr_ui_init_loadout_button(7, 0),
-                    rr_ui_init_loadout_button(8, 0),
-                    rr_ui_init_loadout_button(9, 0)
+                rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
+                    rr_ui_loadout_button_init(0, 0),
+                    rr_ui_loadout_button_init(1, 0),
+                    rr_ui_loadout_button_init(2, 0),
+                    rr_ui_loadout_button_init(3, 0),
+                    rr_ui_loadout_button_init(4, 0),
+                    rr_ui_loadout_button_init(5, 0),
+                    rr_ui_loadout_button_init(6, 0),
+                    rr_ui_loadout_button_init(7, 0),
+                    rr_ui_loadout_button_init(8, 0),
+                    rr_ui_loadout_button_init(9, 0)
                 )
             )
         , 1, 2)
@@ -85,32 +85,32 @@ void rr_game_init(struct rr_game *this)
     /*
     rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_make_v_container(1, 20, 20, 2,
-                rr_ui_init_text("Wave 69", 36),
-                rr_ui_make_h_container(1, 0, 20, 4,
-                    rr_ui_make_v_container(1, 0, -40, 4,
-                        rr_ui_init_mob_button(0, 0),
-                        rr_ui_init_mob_button(0, 1),
-                        rr_ui_init_mob_button(0, 2),
-                        rr_ui_init_mob_button(0, 3)
+            rr_ui_v_container_init(1, 20, 20, 2,
+                rr_ui_text_init("Wave 69", 36),
+                rr_ui_h_container_init(1, 0, 20, 4,
+                    rr_ui_v_container_init(1, 0, -40, 4,
+                        rr_ui_mob_button_init(0, 0),
+                        rr_ui_mob_button_init(0, 1),
+                        rr_ui_mob_button_init(0, 2),
+                        rr_ui_mob_button_init(0, 3)
                     ),
-                    rr_ui_make_v_container(1, 0, -40, 4,
-                        rr_ui_init_mob_button(1, 0),
-                        rr_ui_init_mob_button(1, 1),
-                        rr_ui_init_mob_button(1, 2),
-                        rr_ui_init_mob_button(1, 3)
+                    rr_ui_v_container_init(1, 0, -40, 4,
+                        rr_ui_mob_button_init(1, 0),
+                        rr_ui_mob_button_init(1, 1),
+                        rr_ui_mob_button_init(1, 2),
+                        rr_ui_mob_button_init(1, 3)
                     ),
-                    rr_ui_make_v_container(1, 0, -40, 4,
-                        rr_ui_init_mob_button(2, 0),
-                        rr_ui_init_mob_button(2, 1),
-                        rr_ui_init_mob_button(2, 2),
-                        rr_ui_init_mob_button(2, 3)
+                    rr_ui_v_container_init(1, 0, -40, 4,
+                        rr_ui_mob_button_init(2, 0),
+                        rr_ui_mob_button_init(2, 1),
+                        rr_ui_mob_button_init(2, 2),
+                        rr_ui_mob_button_init(2, 3)
                     ),
-                    rr_ui_make_v_container(1, 0, -40, 4,
-                        rr_ui_init_mob_button(3, 0),
-                        rr_ui_init_mob_button(3, 1),
-                        rr_ui_init_mob_button(3, 2),
-                        rr_ui_init_mob_button(3, 3)
+                    rr_ui_v_container_init(1, 0, -40, 4,
+                        rr_ui_mob_button_init(3, 0),
+                        rr_ui_mob_button_init(3, 1),
+                        rr_ui_mob_button_init(3, 2),
+                        rr_ui_mob_button_init(3, 3)
                     )
                 )
             )

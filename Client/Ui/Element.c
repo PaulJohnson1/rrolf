@@ -23,7 +23,7 @@ void ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
 }
 
 
-struct rr_ui_element *rr_ui_init_element()
+struct rr_ui_element *rr_ui_element_init()
 {
     struct rr_ui_element *element = malloc(sizeof *element);
     memset(element, 0, sizeof *element);

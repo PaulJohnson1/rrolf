@@ -28,9 +28,9 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this, st
     return add;
 }
 
-struct rr_ui_element *rr_ui_init_container()
+struct rr_ui_element *rr_ui_container_init()
 {
-    struct rr_ui_element *element = rr_ui_init_element();
+    struct rr_ui_element *element = rr_ui_element_init();
     struct rr_ui_container_metadata *data = malloc(sizeof *data);
     data->elements.size = 0;
     element->misc_data = data;
