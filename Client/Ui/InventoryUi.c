@@ -55,7 +55,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     if (game->simulation->player_info == RR_NULL_ENTITY)
         return;
     uint32_t count = rr_simulation_get_player_info(game->simulation, game->simulation->player_info)->inv[data->id][data->rarity];
-    if (count == 15)
+    if (count == 0)
         return;
     struct rr_renderer_context_state state;
     struct rr_renderer_context_state state2;
