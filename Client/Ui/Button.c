@@ -199,7 +199,7 @@ struct rr_ui_element *rr_ui_button_init()
 struct rr_ui_element *rr_ui_respawn_button_init()
 {
     struct rr_ui_element *element = rr_ui_button_init();
-    struct button_metadata *data = element->misc_data;
+    struct button_metadata *data = element->misc_data; /* BUTTON INIT MALLOCS THE DATA, REMEMBER TO FREE IF USING IT */
     data->on_event = respawn_button_event;
     data->fill_style = 0xff1dd129;
     data->round_radius = 6;

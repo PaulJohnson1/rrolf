@@ -84,9 +84,11 @@ void rr_game_init(struct rr_game *this)
     );
 
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_inventory_container_init(),
-        0, 2)
+        rr_ui_pad(
+            rr_ui_set_justify(
+                rr_ui_paired_button_init(rr_ui_inventory_container_init()),
+            0, 2),
+        15)
     );
     /*
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 

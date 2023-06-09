@@ -82,3 +82,10 @@ struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, uint8_t h_justi
     c->y = (1 - v_justify) * c->height / 2;
     return c;
 }
+
+struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
+{ 
+    c->x += (1 - c->h_justify) * pad;
+    c->y += (1 - c->v_justify) * pad;
+    return c;
+}
