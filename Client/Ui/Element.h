@@ -15,7 +15,7 @@ enum rr_ui_type
 struct rr_ui_element_vector
 {
     uint32_t size;
-    struct rr_ui_element *elements[16];//some max size
+    struct rr_ui_element *elements[128];//some max size
 };
 
 struct rr_ui_container_metadata
@@ -55,6 +55,7 @@ struct rr_ui_element *rr_ui_mob_button_init(uint8_t, uint8_t);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_container_init();
+struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_text_init(char const *, float);

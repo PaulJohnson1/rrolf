@@ -52,14 +52,16 @@ void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy, flo
 
 void rr_spatial_hash_find_possible_collisions(struct rr_spatial_hash *this, void *user_captures, void (*cb)(struct rr_simulation *, EntityIdx, EntityIdx, void *))
 {
-    for (uint64_t i = 0; i < RR_SPATIAL_HASH_GRID_LENGTH - 1; ++i)
+    for (uint64_t i = 1; i < RR_SPATIAL_HASH_GRID_LENGTH - 1; ++i)
     {
         for (uint64_t j = 0; j < RR_SPATIAL_HASH_GRID_LENGTH - 1; ++j)
         {
             struct rr_spatial_hash_cell *cell1 = &this->cells[i][j];
-            struct rr_spatial_hash_cell *cell2 = &this->cells[i][j+1];
-            struct rr_spatial_hash_cell *cell3 = &this->cells[i+1][j];
-            struct rr_spatial_hash_cell *cell4 = &this->cells[i+1][j+1];
+            struct rr_spatial_hash_cell *cell2 = &this->cells[i-1][j];
+            struct rr_spatial_hash_cell *cell3 = &this->cells[i-1][j+1];
+            struct rr_spatial_hash_cell *cell4 = &this->cells[i][j+1];
+            struct rr_spatial_hash_cell *cell5 = &this->cells[i+1][j+1];
+            struct rr_spatial_hash_cell *cell6 = &this->cells[i+1][j];
             for (uint32_t k = 0; k < cell1->entities_in_use; ++k)
             {
                 EntityIdx ent1 = cell1->entities[k];
@@ -74,7 +76,57 @@ void rr_spatial_hash_find_possible_collisions(struct rr_spatial_hash *this, void
 
                 for (uint32_t l = 0; l < cell4->entities_in_use; ++l)
                     cb(this->simulation, ent1, cell4->entities[l], user_captures);
+                
+                for (uint32_t l = 0; l < cell5->entities_in_use; ++l)
+                    cb(this->simulation, ent1, cell5->entities[l], user_captures);
+                
+                for (uint32_t l = 0; l < cell6->entities_in_use; ++l)
+                    cb(this->simulation, ent1, cell6->entities[l], user_captures);
             }
+        }
+    }
+    for (uint64_t j = 0; j < RR_SPATIAL_HASH_GRID_LENGTH - 1; ++j)
+    {
+        struct rr_spatial_hash_cell *cell1 = &this->cells[0][j];
+        struct rr_spatial_hash_cell *cell4 = &this->cells[0][j+1];
+        struct rr_spatial_hash_cell *cell5 = &this->cells[1][j+1];
+        struct rr_spatial_hash_cell *cell6 = &this->cells[1][j];
+        for (uint32_t k = 0; k < cell1->entities_in_use; ++k)
+        {
+            EntityIdx ent1 = cell1->entities[k];
+            for (uint32_t l = k + 1; l < cell1->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell1->entities[l], user_captures);
+
+            for (uint32_t l = 0; l < cell4->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell4->entities[l], user_captures);
+            
+            for (uint32_t l = 0; l < cell5->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell5->entities[l], user_captures);
+            
+            for (uint32_t l = 0; l < cell6->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell6->entities[l], user_captures);
+        }
+    }
+    for (uint64_t j = 0; j < RR_SPATIAL_HASH_GRID_LENGTH - 1; ++j)
+    {
+        struct rr_spatial_hash_cell *cell1 = &this->cells[RR_SPATIAL_HASH_GRID_LENGTH - 1][j];
+        struct rr_spatial_hash_cell *cell2 = &this->cells[RR_SPATIAL_HASH_GRID_LENGTH - 2][j];
+        struct rr_spatial_hash_cell *cell3 = &this->cells[RR_SPATIAL_HASH_GRID_LENGTH - 1][j+1];
+        struct rr_spatial_hash_cell *cell4 = &this->cells[RR_SPATIAL_HASH_GRID_LENGTH - 1][j+1];
+        for (uint32_t k = 0; k < cell1->entities_in_use; ++k)
+        {
+            EntityIdx ent1 = cell1->entities[k];
+            for (uint32_t l = k + 1; l < cell1->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell1->entities[l], user_captures);
+            
+            for (uint32_t l = 0; l < cell2->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell2->entities[l], user_captures);
+            
+            for (uint32_t l = 0; l < cell3->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell3->entities[l], user_captures);
+
+            for (uint32_t l = 0; l < cell4->entities_in_use; ++l)
+                cb(this->simulation, ent1, cell4->entities[l], user_captures);
         }
     }
 }

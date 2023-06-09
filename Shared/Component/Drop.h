@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Component/Common.h>
+#include <Shared/Bitset.h>
 #include <Shared/Entity.h>
 #include <Shared/Utilities.h>
 
@@ -15,6 +16,8 @@ struct rr_component_drop
                    uint8_t rarity;
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
+    RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    
 };
 
 void rr_component_drop_init(struct rr_component_drop *, struct rr_simulation *);

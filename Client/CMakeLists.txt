@@ -18,6 +18,7 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/InventoryUi.c
     Ui/Text.c
     Ui/TextInput.c
     Game.c

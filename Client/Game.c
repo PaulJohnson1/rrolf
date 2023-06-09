@@ -82,6 +82,12 @@ void rr_game_init(struct rr_game *this)
             )
         , 1, 2)
     );
+
+    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_inventory_container_init(),
+        0, 2)
+    );
     /*
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
@@ -427,5 +433,5 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
-    rr_websocket_connect_to(&this->socket, "45.79.197.197", 8000);
+    rr_websocket_connect_to(&this->socket, "127.0.0.1", 8000);
 }
