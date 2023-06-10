@@ -230,6 +230,7 @@ struct rr_simulation_find_entities_in_view_for_each_function_captures
     int32_t view_x;
     int32_t view_y;
     uint8_t *entities_in_view;
+    struct rr_component_player_info *player_info;
     struct rr_simulation *simulation;
 };
 
@@ -250,6 +251,14 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity, voi
         return;
 
     rr_bitset_set(captures->entities_in_view, entity);
+    if (rr_simulation_has_drop(simulation, entity))
+    {
+        struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
+        if (rr_bitset_get(drop->picked_up_this_tick, captures->player_info->parent_id))
+            drop->protocol_state |= 4;
+        else
+            drop->protocol_state &= 3;
+    }
 }
 
 void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_component_player_info *player_info, uint8_t *entities_in_view)
@@ -261,6 +270,7 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
     captures.view_x = (int32_t)player_info->camera_x;
     captures.view_y = (int32_t)player_info->camera_y;
     captures.entities_in_view = entities_in_view;
+    captures.player_info = player_info;
     captures.simulation = this;
 
     rr_bitset_set(entities_in_view, player_info->parent_id);

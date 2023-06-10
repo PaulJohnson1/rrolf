@@ -13,10 +13,12 @@ struct rr_component_drop
 {
                    EntityIdx parent_id;
                    uint8_t id;
-                   uint8_t rarity;
+                   uint8_t rarity:7;
+    RR_CLIENT_ONLY(uint8_t hidden:1;)
+    RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    RR_SERVER_ONLY(uint8_t picked_up_this_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
-    RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     
 };
 

@@ -14,7 +14,11 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
     struct rr_simulation *this = captures->simulation;
     EntityIdx drop_id = captures->self;
     struct rr_component_drop *drop = rr_simulation_get_drop(this, drop_id);
-    if (rr_bitset_get(drop->picked_up_by, flower))
+
+    struct rr_component_relations *flower_relations = rr_simulation_get_relations(this, flower);
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, flower_relations->owner);
+
+    if (rr_bitset_get(drop->picked_up_by, flower_relations->owner))
         return;
     struct rr_component_physical *physical = rr_simulation_get_physical(this, drop_id);
 
@@ -23,9 +27,8 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
     struct rr_vector delta = {physical->x - flower_physical->x, physical->y - flower_physical->y};
     if (rr_vector_get_magnitude(&delta) > 100)
         return;
-    rr_bitset_set(drop->picked_up_by, flower);
-    struct rr_component_relations *flower_relations = rr_simulation_get_relations(this, flower);
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, flower_relations->owner);
+    rr_bitset_set(drop->picked_up_by, flower_relations->owner);
+    rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
     ++player_info->inv[drop->id][drop->rarity];
     rr_component_player_info_signal_inv_update(player_info);
 }

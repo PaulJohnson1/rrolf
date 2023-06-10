@@ -293,6 +293,8 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *
 #undef XX
     if (rr_simulation_has_physical(this, entity))
         rr_simulation_get_physical(this, entity)->ticked_animation = 0;
+    if (rr_simulation_has_drop(this, entity))
+        memset(&rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0, sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
 }
 
 void rr_server_tick(struct rr_server *this)

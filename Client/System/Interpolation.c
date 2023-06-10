@@ -36,18 +36,22 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->lerp_angle = rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
         physical->lerp_radius = rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
         physical->animation += (2 * (physical->parent_id % 2) - 1) * delta * (rr_vector_get_magnitude(&physical->lerp_velocity) * (1 - rr_simulation_has_drop(this, entity)) + 1) * 2;
-        if (physical->server_animation_tick == 5)
+        if (!rr_simulation_has_drop(this, entity) || rr_simulation_get_drop(this, entity)->hidden == 0)
         {
-            if (physical->animation_started == 0)
+            if (physical->server_animation_tick == 5)
             {
-                physical->lerp_server_animation_tick = 5;
-                physical->animation_started = 1;
+                if (physical->animation_started == 0)
+                {
+                    physical->lerp_server_animation_tick = 5;
+                    physical->animation_started = 1;
+                }
             }
+            else
+                physical->animation_started = 0;
+            physical->lerp_server_animation_tick = rr_lerp(physical->lerp_server_animation_tick, 0, 10 * delta);
         }
         else
-            physical->animation_started = 0;
-        
-        physical->lerp_server_animation_tick = rr_lerp(physical->lerp_server_animation_tick, 0, 10 * delta);
+            physical->lerp_server_animation_tick = rr_lerp(physical->lerp_server_animation_tick, 5, 10 * delta);
     }
 
     if (rr_simulation_has_flower(this, entity))

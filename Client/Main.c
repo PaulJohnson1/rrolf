@@ -88,7 +88,6 @@ void rr_main_renderer_initialize(struct rr_game *this)
             if (Module.availableCtxs.length)
             {
                 const index = Module.availableCtxs.shift();
-                console.log("i" + index);
                 if (index == 0)
                     return 0; // used for the main ctx, because that has special behavior
                 const ocanvas = new OffscreenCanvas(1, 1);

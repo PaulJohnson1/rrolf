@@ -169,9 +169,7 @@ void rr_game_init(struct rr_game *this)
             rr_renderer_init(&this->static_petals[i][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[i][rarity], 50, 50);
             rr_renderer_translate(&this->static_petals[i][rarity], 25, 25);
-            //rr_renderer_fill_rect(&this->static_petals[i][rarity], -20, -20, 40, 40);
             rr_renderer_render_static_petal(&this->static_petals[i][rarity], i, rarity);
-            //printf("%d %d\n", this->static_petals[i][rarity].context_id, 15);
         }
     }
 }
@@ -314,7 +312,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);    
-    if (this->socket_ready)
+    if (this->socket_ready & 0)
     {
         rr_simulation_tick(this->simulation, delta);
 
