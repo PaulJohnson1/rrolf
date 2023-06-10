@@ -10,6 +10,7 @@
 #endif
 
 #include <Client/Renderer/Renderer.h>
+#include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/ComponentRender.h>
 #include <Client/Ui/Engine.h>
 #include <Client/InputData.h>
@@ -160,6 +161,19 @@ void rr_game_init(struct rr_game *this)
         , 1, 0)
     );
     */
+   //init ctxs
+    for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+    {
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            rr_renderer_init(&this->static_petals[i][rarity]);
+            rr_renderer_set_dimensions(&this->static_petals[i][rarity], 50, 50);
+            rr_renderer_translate(&this->static_petals[i][rarity], 25, 25);
+            //rr_renderer_fill_rect(&this->static_petals[i][rarity], -20, -20, 40, 40);
+            rr_renderer_render_static_petal(&this->static_petals[i][rarity], i, rarity);
+            //printf("%d %d\n", this->static_petals[i][rarity].context_id, 15);
+        }
+    }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -237,7 +251,7 @@ void render_drop_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_drop_render(entity, this->simulation, this->renderer);
+    rr_component_drop_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
@@ -248,7 +262,7 @@ void render_health_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_health_render(entity, this->simulation, this->renderer);
+    rr_component_health_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
@@ -259,7 +273,7 @@ void render_mob_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_mob_render(entity, this->simulation, this->renderer);
+    rr_component_mob_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
@@ -270,7 +284,7 @@ void render_petal_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_petal_render(entity, this->simulation, this->renderer);
+    rr_component_petal_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
@@ -281,7 +295,7 @@ void render_flower_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
-    rr_component_flower_render(entity, this->simulation, this->renderer);
+    rr_component_flower_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
@@ -339,6 +353,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_renderer_arc(this->renderer, 0, 0, arena->radius);
                 rr_renderer_set_fill(this->renderer, 0xff20a464);
                 rr_renderer_fill(this->renderer);
+                /*
                 rr_renderer_clip(this->renderer);
 
                 rr_renderer_set_line_width(this->renderer, 1);
@@ -365,6 +380,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                     rr_renderer_line_to(this->renderer, rightX, newTopY);
                     rr_renderer_stroke(this->renderer);
                 }
+                */
                 rr_renderer_free_context_state(this->renderer, &state2);
                 break; // only one arena
             }

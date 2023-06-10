@@ -14,6 +14,18 @@ void rr_renderer_init(struct rr_renderer *this)
     memset(this, 0, sizeof(*this));
     this->state.transform_matrix[0] = 1;
     this->state.transform_matrix[4] = 1;
+#ifdef EMSCRIPTEN
+    this->context_id = EM_ASM_INT({ return Module.addCtx(); });
+#endif
+}
+
+void rr_renderer_set_dimensions(struct rr_renderer *this, float w, float h)
+{
+    this->width = w;
+    this->height = h;
+#ifdef EMSCRIPTEN
+    EM_ASM({ Module.ctxs[$0].canvas.width = $1; Module.ctxs[$0].canvas.height = $2; }, this->context_id, w, h);
+#endif
 }
 
 void rr_renderer_init_context_state(struct rr_renderer *this, struct rr_renderer_context_state *state)
@@ -310,6 +322,15 @@ void rr_renderer_round_rect(struct rr_renderer *this, float x, float y, float w,
     rr_renderer_quadratic_curve_to(this, x, y + h, x, y + h - r);
     rr_renderer_line_to(this, x, y + r);
     rr_renderer_quadratic_curve_to(this, x, y, x + r, y);
+}
+
+void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *image)
+{
+
+#ifdef EMSCRIPTEN
+    EM_ASM({ Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas, -Module.ctxs[$1].canvas.width / 2, -Module.ctxs[$1].canvas.height / 2); }, this->context_id, image->context_id);
+#else
+#endif    
 }
 
 void rr_renderer_fill_rect(struct rr_renderer *this, float x, float y, float w, float h)

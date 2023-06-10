@@ -47,6 +47,7 @@ struct rr_renderer
 };
 
 void rr_renderer_init(struct rr_renderer *);
+void rr_renderer_set_dimensions(struct rr_renderer *, float, float);
 
 void rr_renderer_init_context_state(struct rr_renderer *, struct rr_renderer_context_state *);
 void rr_renderer_free_context_state(struct rr_renderer *, struct rr_renderer_context_state *);
@@ -83,6 +84,8 @@ void rr_renderer_partial_arc(struct rr_renderer *, float, float, float, float, f
 void rr_renderer_ellipse(struct rr_renderer *, float, float, float, float);
 void rr_renderer_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_round_rect(struct rr_renderer *, float, float, float, float, float);
+
+void rr_renderer_draw_image(struct rr_renderer *, struct rr_renderer *);
 
 void rr_renderer_fill_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_stroke_rect(struct rr_renderer *, float, float, float, float);

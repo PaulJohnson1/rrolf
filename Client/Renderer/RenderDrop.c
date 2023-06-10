@@ -2,12 +2,15 @@
 
 #include <math.h>
 
+#include <Client/Game.h>
 #include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Renderer/RenderFunctions.h>
 
-void rr_component_drop_render(EntityIdx entity, struct rr_simulation *simulation, struct rr_renderer *renderer)
+void rr_component_drop_render(EntityIdx entity, struct rr_game *game)
 {
+    struct rr_simulation *simulation = game->simulation;
+    struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
     struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
     rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
@@ -26,5 +29,6 @@ void rr_component_drop_render(EntityIdx entity, struct rr_simulation *simulation
     rr_renderer_fill_rect(renderer, -25, -25, 50, 50);
     rr_renderer_stroke_rect(renderer, -25, -25, 50, 50);
     renderer->state.filter.amount = 0;
-    rr_renderer_render_static_petal(renderer, drop->id, drop->rarity);
+    rr_renderer_draw_image(renderer, &game->static_petals[drop->id][drop->rarity]);
+    //rr_renderer_render_static_petal(renderer, drop->id, drop->rarity);
 }

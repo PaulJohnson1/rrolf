@@ -5,6 +5,8 @@
 
 #include <Shared/pb.h>
 #include <Shared/StaticData.h>
+#include <Shared/Component/Health.h>
+#include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
     X(camera_x, float32)      \
@@ -53,6 +55,10 @@ void rr_component_player_info_init(struct rr_component_player_info *this, struct
 
 void rr_component_player_info_free(struct rr_component_player_info *this, struct rr_simulation *simulation)
 {
+#ifdef RR_SERVER
+    if (this->flower_id != RR_NULL_ENTITY)
+        rr_component_health_set_health(rr_simulation_get_health(simulation, this->flower_id), 0);
+#endif
 }
 
 #ifdef RR_SERVER

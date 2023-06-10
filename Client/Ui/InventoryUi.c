@@ -77,7 +77,8 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_scale(renderer, this->width * 0.02);
     
     renderer->state.filter.amount = 0;
-    rr_renderer_render_static_petal(renderer, data->id, data->rarity);
+    rr_renderer_draw_image(renderer, &game->static_petals[data->id][data->rarity]);
+    //rr_renderer_render_static_petal(renderer, data->id, data->rarity);
     rr_renderer_free_context_state(renderer, &state2);
     renderer->state.filter.amount = 0;
 

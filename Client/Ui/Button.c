@@ -151,7 +151,8 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
         rr_renderer_scale(renderer, 1.2);
     
     renderer->state.filter.amount = 0;
-    rr_renderer_render_static_petal(renderer, id, rarity);
+    rr_renderer_draw_image(renderer, &game->static_petals[id][rarity]);
+    //rr_renderer_render_static_petal(renderer, id, rarity);
     
     rr_renderer_free_context_state(renderer, &state);
 }

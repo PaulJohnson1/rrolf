@@ -28,17 +28,29 @@ void rr_spatial_hash_update(struct rr_spatial_hash *this, EntityIdx entity)
 {
 }
 
-void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy, float fw, float fh, void *user_captures, void (*cb)(struct rr_simulation *, EntityIdx, void *))
+void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy, float fw, float fh, void *user_captures, void (*cb)(EntityIdx, void *))
 {
-    uint32_t x = fx + RR_ARENA_RADIUS;
-    uint32_t y = fy + RR_ARENA_RADIUS;
+    uint32_t x = fmaxf(fx + RR_ARENA_RADIUS - fw, 0);
+    uint32_t y = fmaxf(fy + RR_ARENA_RADIUS - fh, 0);
     uint32_t w = fw;
     uint32_t h = fh;
     // should not take in an entity id like insert does. the reason is so stuff like ai can query a large radius without a viewing entity
-    uint32_t s_x = ((x - w) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t s_y = ((y - h) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t e_x = ((x + w) >> SPATIAL_HASH_GRID_SIZE);
-    uint32_t e_y = ((y + h) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_x = ((x) >> SPATIAL_HASH_GRID_SIZE);
+    if (s_x)
+        s_x -= 1;
+
+    uint32_t s_y = ((y) >> SPATIAL_HASH_GRID_SIZE);
+    if (s_y)
+        s_y -= 1;
+
+    uint32_t e_x = ((x + 2 * w) >> SPATIAL_HASH_GRID_SIZE);
+    if (e_x < RR_SPATIAL_HASH_GRID_LENGTH - 2)
+        e_x += 2;
+    else
+        e_x = RR_SPATIAL_HASH_GRID_LENGTH - 1;
+    uint32_t e_y = ((y + 2 * h) >> SPATIAL_HASH_GRID_SIZE);
+    if (e_y < RR_SPATIAL_HASH_GRID_LENGTH - 1)
+        e_y += 1;
 
     for (uint32_t y = s_y; y <= e_y; y++)
         for (uint32_t x = s_x; x <= e_x; x++)
@@ -46,8 +58,7 @@ void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy, flo
             struct rr_spatial_hash_cell *cell = &this->cells[x][y];
             for (uint64_t i = 0; i < cell->entities_in_use; i++)
             {
-                struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, cell->entities[i]);
-                cb(this->simulation, physical->parent_id, user_captures);
+                cb(cell->entities[i], user_captures);
             }
         }
 }

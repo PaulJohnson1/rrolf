@@ -37,7 +37,16 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->lerp_radius = rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
         physical->animation += (2 * (physical->parent_id % 2) - 1) * delta * (rr_vector_get_magnitude(&physical->lerp_velocity) * (1 - rr_simulation_has_drop(this, entity)) + 1) * 2;
         if (physical->server_animation_tick == 5)
-            physical->lerp_server_animation_tick = 5;
+        {
+            if (physical->animation_started == 0)
+            {
+                physical->lerp_server_animation_tick = 5;
+                physical->animation_started = 1;
+            }
+        }
+        else
+            physical->animation_started = 0;
+        
         physical->lerp_server_animation_tick = rr_lerp(physical->lerp_server_animation_tick, 0, 10 * delta);
     }
 

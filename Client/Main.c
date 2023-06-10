@@ -57,7 +57,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
         Module.canvas.id = "canvas";
         document.body.appendChild(Module.canvas);
         Module.ctxs = [Module.canvas.getContext('2d')];
-        Module.availableCtxs = new Array(100).fill(0).map(function(_, i) { return i; });
+        Module.availableCtxs = new Array(128).fill(0).map(function(_, i) { return i; });
         window.addEventListener(
             "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
         window.addEventListener(
@@ -65,8 +65,8 @@ void rr_main_renderer_initialize(struct rr_game *this)
         window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)});
         window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 2, +!!button)});
         window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)});
-        Module.paths = [... Array(100)].fill(null);
-        Module.availablePaths = new Array(100).fill(0).map(function(_, i) { return i; });
+        Module.paths = new Array(128).fill(null);
+        Module.availablePaths = new Array(128).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
         {
             if (Module.availablePaths.length)
@@ -88,9 +88,10 @@ void rr_main_renderer_initialize(struct rr_game *this)
             if (Module.availableCtxs.length)
             {
                 const index = Module.availableCtxs.shift();
+                console.log("i" + index);
                 if (index == 0)
                     return 0; // used for the main ctx, because that has special behavior
-                const ocanvas = new OffscreenCanvas(0, 0);
+                const ocanvas = new OffscreenCanvas(1, 1);
                 Module.ctxs[index] = ocanvas.getContext('2d');
                 return index;
             }
@@ -153,8 +154,8 @@ int main()
     static struct rr_simulation simulation;
     rr_main_renderer_initialize(&game);
 
-    rr_game_init(&game);
     rr_renderer_init(&renderer);
+    rr_game_init(&game);
     rr_input_data_init(&input_data);
     rr_simulation_init(&simulation);
 

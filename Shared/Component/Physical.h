@@ -43,14 +43,16 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float lerp_server_animation_tick;)
-                   uint8_t server_animation_tick:7;
+                   uint8_t server_animation_tick:6;
+    RR_CLIENT_ONLY(uint8_t animation_started:1;)
+    RR_SERVER_ONLY(uint8_t ticked_animation:1;)
     RR_SERVER_ONLY(uint8_t has_deletion_animation:1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
                    EntityIdx parent_id;
     // RR_SERVER_ONLY(uint8_t has_collisions;)
     // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
-    RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
+    RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT / 4];)
 };
 
 void rr_component_physical_init(struct rr_component_physical *, struct rr_simulation *);

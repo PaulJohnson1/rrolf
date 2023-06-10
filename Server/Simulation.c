@@ -54,15 +54,15 @@ static void spawn_random_mob(struct rr_simulation *this)
     // promote to double for accuracy, demote to float once finished
     float r = rr_frand();
     uint8_t id = rr_mob_id_centipede_head;
-    if (r -= 0.25, r < 0)
+    if (r -= 0, r < 0)
         id = rr_mob_id_baby_ant;
-    else if (r -= 0.25, r < 0)
+    else if (r -= 1, r < 0)
         id = rr_mob_id_worker_ant;
     else if (r -= 0.25, r < 0)
         id = rr_mob_id_rock;
     else if (r -= 0.15, r < 0)
         id = rr_mob_id_centipede_head;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rand() % rr_rarity_id_max);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rr_rarity_id_common);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -238,10 +238,9 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity, voi
     struct rr_simulation_find_entities_in_view_for_each_function_captures *captures = data;
     struct rr_simulation *simulation = captures->simulation;
 
-    if (!rr_simulation_has_physical(simulation, entity))
+    if (!rr_simulation_has_entity(simulation, entity))
         return;
-    if (rr_bitset_get(simulation->pending_deletions, entity))
-        return;
+
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
 
     if (physical->x + physical->radius < captures->view_x - captures->view_width ||
@@ -270,7 +269,10 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
     rr_bitset_set(captures.entities_in_view, this->arena);
-    rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    //rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    rr_spatial_hash_query(this->grid, player_info->camera_x, player_info->camera_y, 
+    640.0f / player_info->camera_fov, 360.0f / player_info->camera_fov, 
+    &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 void rr_simulation_write_entity_deletions_function(uint64_t _id, void *_captures)
@@ -342,11 +344,13 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id, void *_s
             __rr_simulation_pending_deletion_free_components(id, _simulation);
             rr_bitset_unset(simulation->pending_deletions, id);
             rr_component_physical_set_server_animation_tick(physical, 5);
+            physical->ticked_animation = 1;
         }
-        else if (physical->server_animation_tick != 0)
+        else if (physical->server_animation_tick != 0 && physical->ticked_animation == 0)
         {
             rr_bitset_unset(simulation->pending_deletions, id);  
             rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);  
+            physical->ticked_animation = 1;
         }        
     }
     else
@@ -369,7 +373,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 
     EntityIdx mobs_in_use = 0;
     rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-    if (mobs_in_use <= 100)
+    if (mobs_in_use <= 250)
         spawn_random_mob(this);
 
     // delete pending deletions

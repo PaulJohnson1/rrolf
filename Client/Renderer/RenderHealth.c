@@ -1,10 +1,13 @@
 #include <Client/Renderer/ComponentRender.h>
 
+#include <Client/Game.h>
 #include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
 
-void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulation, struct rr_renderer *renderer)
+void rr_component_health_render(EntityIdx entity, struct rr_game *game)
 {
+    struct rr_simulation *simulation = game->simulation;
+    struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, entity);
     struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
     if (health->hidden)
@@ -26,7 +29,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_simulation *simulati
     }
     float length = 40;
 
-    if (rr_simulation_has_mob(simulation, health->parent_id))
+    if (rr_simulation_has_mob(simulation, health->parent_id) * 0)
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;

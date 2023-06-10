@@ -291,6 +291,8 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
+    if (rr_simulation_has_physical(this, entity))
+        rr_simulation_get_physical(this, entity)->ticked_animation = 0;
 }
 
 void rr_server_tick(struct rr_server *this)
@@ -299,7 +301,6 @@ void rr_server_tick(struct rr_server *this)
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
             rr_server_client_tick(this->clients + i);
-
     rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
 }
 

@@ -4,6 +4,8 @@
 #include <Client/Ui/Element.h>
 #include <Client/Socket.h>
 
+#include <Shared/StaticData.h>
+
 struct rr_global_elements
 {
     struct rr_ui_element *respawn_label;
@@ -17,6 +19,7 @@ struct rr_game
 {
     struct rr_websocket socket;
     struct rr_renderer *renderer;
+    struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
     struct rr_ui_element *global_container;
