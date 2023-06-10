@@ -62,7 +62,7 @@ static void spawn_random_mob(struct rr_simulation *this)
         id = rr_mob_id_rock;
     else if (r -= 0.15, r < 0)
         id = rr_mob_id_centipede_head;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rr_rarity_id_common);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rand() % rr_rarity_id_max);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)

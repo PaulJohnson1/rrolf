@@ -312,7 +312,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);    
-    if (this->socket_ready & 0)
+    if (this->socket_ready)
     {
         rr_simulation_tick(this->simulation, delta);
 

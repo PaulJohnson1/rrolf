@@ -40,12 +40,7 @@ static void grid_filter_candidates(struct rr_simulation *this, EntityIdx entity1
     struct rr_vector delta = {physical1->x - physical2->x, physical1->y - physical2->y};
     float collision_radius = physical1->radius + physical2->radius;
     if ((delta.x * delta.x + delta.y * delta.y) < collision_radius * collision_radius)
-    {
-        for (uint64_t i = 0; i < physical1->colliding_with_size; ++i)
-            if (physical1->colliding_with[i] == entity2)
-                return;
         physical1->colliding_with[physical1->colliding_with_size++] = entity2;
-    }
 }
 
 static void find_collisions(struct rr_simulation *this)

@@ -29,7 +29,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     }
     float length = 40;
 
-    if (rr_simulation_has_mob(simulation, health->parent_id) * 0)
+    if (rr_simulation_has_mob(simulation, health->parent_id))
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
