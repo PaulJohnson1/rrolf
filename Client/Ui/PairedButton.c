@@ -14,6 +14,8 @@ struct paired_button_metadata
 
 static void paired_button_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct paired_button_metadata *data = this->misc_data;

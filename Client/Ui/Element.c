@@ -10,6 +10,8 @@
 
 static void default_on_render(struct rr_ui_element *this, void *_captures)
 {
+    if (this->hidden)
+        return;
     //does nothing
     return;
 }
@@ -22,6 +24,14 @@ void ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
     (this->lerp_y + (this->v_justify - 1) * this->container->height / 2) * renderer->scale); // necessary btw
 }
 
+static void ui_choose_element_on_render(struct rr_ui_element *this, void *_game)
+{
+    struct rr_ui_choose_element_metadata *data = this->misc_data;
+    if (this->hidden)
+        data->b->on_render(data->b, _game);
+    else
+        data->a->on_render(data->a, _game);
+}
 
 struct rr_ui_element *rr_ui_element_init()
 {
@@ -32,3 +42,16 @@ struct rr_ui_element *rr_ui_element_init()
     return element;
 }
 
+struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *a, struct rr_ui_element *b)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    struct rr_ui_choose_element_metadata *data = malloc(sizeof *data);
+    data->a = a;
+    data->b = b;
+    element->misc_data = data;
+    element->width = a->width > b->width ? a->width : b->width;
+    element->height = a->height > b->height ? a->height : b->height;
+    element->on_render = ui_choose_element_on_render;
+    element->hidden = rand() & 1;
+    return element;
+}

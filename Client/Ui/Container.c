@@ -7,17 +7,29 @@
 
 static void container_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer_context_state state;
     struct rr_ui_container_metadata *data = this->misc_data;
-    rr_renderer_init_context_state(game->renderer, &state);
-    ui_translate(this, game->renderer);
-    //if (this->container != this)
-        //rr_renderer_fill_rect(game->renderer, -this->width / 2, -this->height / 2, this->width, this->height);
+    struct rr_renderer *renderer = game->renderer;
+    rr_renderer_init_context_state(renderer, &state);
+    ui_translate(this, renderer);
+    if (data->fill_color != 0x00000000)
+    {
+        rr_renderer_set_fill(renderer, data->fill_color);
+        renderer->state.filter.amount = 0.2;
+        rr_renderer_set_stroke(renderer, data->fill_color);
+        rr_renderer_set_line_width(renderer, 6);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_fill_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height);
+        rr_renderer_stroke_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height);
+        renderer->state.filter.amount = 0;
+    }
     for (uint32_t i = 0; i < data->elements.size; ++i)
-        if(data->elements.elements[i]->hidden == 0)
-            data->elements.elements[i]->on_render(data->elements.elements[i], game);
-    rr_renderer_free_context_state(game->renderer, &state);
+        data->elements.elements[i]->on_render(data->elements.elements[i], game);
+    rr_renderer_free_context_state(renderer, &state);
 }
 
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this, struct rr_ui_element *add)

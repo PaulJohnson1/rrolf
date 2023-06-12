@@ -89,3 +89,9 @@ struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
     c->y += (1 - c->v_justify) * pad;
     return c;
 }
+
+struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *c, uint32_t color)
+{ 
+    ((struct rr_ui_container_metadata *) c->misc_data)->fill_color = color;
+    return c;
+}

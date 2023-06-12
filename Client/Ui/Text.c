@@ -14,6 +14,8 @@ struct text_metadata
 
 static void text_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct text_metadata *data = this->misc_data;

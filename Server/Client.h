@@ -2,6 +2,12 @@
 
 #include <stdint.h>
 
+struct rr_server_client_loadout_petal
+{
+    uint8_t id;
+    uint8_t rarity;
+};
+
 struct rr_server_client
 {
     uint64_t clientbound_encryption_key;
@@ -13,6 +19,9 @@ struct rr_server_client
     int file_descriptor;
     uint8_t received_first_packet:1;
     uint8_t verified:1;
+
+    rr_server_client_loadout_petal loadout[20];
+    char client_nickname[16];
 };
 
 void rr_server_client_init(struct rr_server_client *);

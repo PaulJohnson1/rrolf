@@ -21,9 +21,16 @@ struct rr_ui_element_vector
 struct rr_ui_container_metadata
 {
     uint8_t is_horizontal;
+    uint32_t fill_color;
     float inner_spacing;
     float outer_spacing;
     struct rr_ui_element_vector elements;
+};
+
+struct rr_ui_choose_element_metadata
+{
+    struct rr_ui_element *a;
+    struct rr_ui_element *b;
 };
 
 struct rr_ui_element
@@ -46,6 +53,7 @@ struct rr_ui_element
 void ui_translate(struct rr_ui_element *, struct rr_renderer *);
 
 struct rr_ui_element *rr_ui_element_init();
+struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_button_init();
 struct rr_ui_element *rr_ui_respawn_button_init();
@@ -62,3 +70,5 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct
 struct rr_ui_element *rr_ui_text_init(char const *, float);
 
 struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);
+
+struct rr_ui_element *rr_ui_flower_icon_init(float);

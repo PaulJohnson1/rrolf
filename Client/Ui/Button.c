@@ -77,6 +77,8 @@ static void petal_switch_button_event(struct rr_ui_element *this, uint8_t type, 
 
 static void button_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct button_metadata *data = this->misc_data;
@@ -111,6 +113,8 @@ static void button_on_render(struct rr_ui_element *this, void *_game)
 
 static void server_connection_button_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct button_metadata *data = this->misc_data;
     data->text = game->socket_pending ? "Connecting..." : "Find Server";
@@ -120,6 +124,8 @@ static void server_connection_button_on_render(struct rr_ui_element *this, void 
 
 static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct loadout_button_metadata *data = this->misc_data;
@@ -159,6 +165,8 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
 
 static void mob_button_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->misc_data;

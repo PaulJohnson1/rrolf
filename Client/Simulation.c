@@ -10,7 +10,7 @@
 #include <Shared/pb.h>
 
 long last = 0;
-
+int ttt = 0;
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -73,8 +73,9 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
     long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
     //printf("tick took %ld microseconds\n", elapsed_time);
     long now_time = (end.tv_sec) * 1000000 + (end.tv_usec);
-    if (now_time - last > 60 * 1000) printf("%ld ms tick\n", (now_time - last) / 1000);
-    last = now_time;
+    if (ttt++ == 10) 
+    {printf("%ld ms tick\n", (now_time - last) / 10000);ttt=0;last = now_time;}
+    
 }
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)

@@ -17,6 +17,8 @@ struct rr_ui_text_input_metadata
 
 static void text_input_on_render(struct rr_ui_element *this, void *_game)
 {
+    if (this->hidden)
+        return;
     struct rr_game *game = _game;
     struct rr_renderer_context_state state;
     struct rr_ui_text_input_metadata *data = this->misc_data;

@@ -44,11 +44,62 @@ void rr_game_init(struct rr_game *this)
     );
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 3,
                 rr_ui_text_init("rrolf", 72),
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
                     rr_ui_text_input_init(360, 40, 15),
                     rr_ui_find_server_button_init()
+                ),
+                rr_ui_set_background(
+                    rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 2,
+                        rr_ui_text_init("Squad", 24),
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 4,
+                            rr_ui_set_background(
+                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
+                                    rr_ui_choose_element_init(
+                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
+                                            rr_ui_flower_icon_init(25),
+                                            rr_ui_text_init("Flower", 16)
+                                        ),
+                                        rr_ui_text_init("Empty", 16)
+                                    )
+                                ), 0xff0245ba
+                            ),
+                            rr_ui_set_background(
+                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
+                                    rr_ui_choose_element_init(
+                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
+                                            rr_ui_flower_icon_init(25),
+                                            rr_ui_text_init("Flower", 16)
+                                        ),
+                                        rr_ui_text_init("Empty", 16)
+                                    )
+                                ), 0xff0245ba
+                            ),
+                            rr_ui_set_background(
+                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
+                                    rr_ui_choose_element_init(
+                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
+                                            rr_ui_flower_icon_init(25),
+                                            rr_ui_text_init("Flower", 16)
+                                        ),
+                                        rr_ui_text_init("Empty", 16)
+                                    )
+                                ), 0xff0245ba
+                            ),
+                            rr_ui_set_background(
+                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
+                                    rr_ui_choose_element_init(
+                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
+                                            rr_ui_flower_icon_init(25),
+                                            rr_ui_text_init("Flower", 16)
+                                        ),
+                                        rr_ui_text_init("Empty", 16)
+                                    )
+                                ), 0xff0245ba
+                            )
+                        )
+                    ), 0xff0459de
                 )
             )
         , 1, 1)

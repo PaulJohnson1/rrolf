@@ -18,6 +18,7 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/Icon.c
     Ui/InventoryUi.c
     Ui/PairedButton.c
     Ui/Text.c
