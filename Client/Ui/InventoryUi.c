@@ -136,6 +136,5 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     element->width = (rr_rarity_id_max) * (width + pad) + pad;
     element->height = (rr_petal_id_max - 1) * (width + pad) + pad;
     rr_ui_pad(rr_ui_set_justify(element, 0, 2), 15);
-    printf("PIN %f %f\n", element->x, element->y);
     return element;
 }

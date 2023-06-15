@@ -63,33 +63,7 @@ void rr_game_init(struct rr_game *this)
     ); 
     this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 20, 20, 3,
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
-                    rr_ui_loadout_button_init(0, 1),
-                    rr_ui_loadout_button_init(1, 1),
-                    rr_ui_loadout_button_init(2, 1),
-                    rr_ui_loadout_button_init(3, 1),
-                    rr_ui_loadout_button_init(4, 1),
-                    rr_ui_loadout_button_init(5, 1),
-                    rr_ui_loadout_button_init(6, 1),
-                    rr_ui_loadout_button_init(7, 1),
-                    rr_ui_loadout_button_init(8, 1),
-                    rr_ui_loadout_button_init(9, 1)
-                ),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
-                    rr_ui_loadout_button_init(0, 0),
-                    rr_ui_loadout_button_init(1, 0),
-                    rr_ui_loadout_button_init(2, 0),
-                    rr_ui_loadout_button_init(3, 0),
-                    rr_ui_loadout_button_init(4, 0),
-                    rr_ui_loadout_button_init(5, 0),
-                    rr_ui_loadout_button_init(6, 0),
-                    rr_ui_loadout_button_init(7, 0),
-                    rr_ui_loadout_button_init(8, 0),
-                    rr_ui_loadout_button_init(9, 0)
-                ),
-                rr_ui_wave_ui_init()
-            )
+            rr_ui_loadout_container_init()
         , 1, 2)
     );
 
@@ -100,77 +74,13 @@ void rr_game_init(struct rr_game *this)
             0, 2),
         15)
     );
-    /*
-    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
+
+    this->ui_elements.wave_info = rr_ui_container_add_element(this->global_container,
         rr_ui_set_justify(
-            rr_ui_make_v_container(rr_ui_init_container(), 10, 20, 2,
-                rr_ui_init_text("Inventory", 24),
-                rr_ui_make_h_container(rr_ui_init_container(), 0, 10, 4,
-                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
-                        rr_ui_init_inventory_button(0, 0),
-                        rr_ui_init_inventory_button(0, 1),
-                        rr_ui_init_inventory_button(0, 2),
-                        rr_ui_init_inventory_button(0, 3)
-                    ),
-                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
-                        rr_ui_init_inventory_button(1, 0),
-                        rr_ui_init_inventory_button(1, 1),
-                        rr_ui_init_inventory_button(1, 2),
-                        rr_ui_init_inventory_button(1, 3)
-                    ),
-                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
-                        rr_ui_init_inventory_button(2, 0),
-                        rr_ui_init_inventory_button(2, 1),
-                        rr_ui_init_inventory_button(2, 2),
-                        rr_ui_init_inventory_button(2, 3)
-                    ),
-                    rr_ui_make_v_container(rr_ui_init_container(), 0, 10, 4,
-                        rr_ui_init_inventory_button(3, 0),
-                        rr_ui_init_inventory_button(3, 1),
-                        rr_ui_init_inventory_button(3, 2),
-                        rr_ui_init_inventory_button(3, 3)
-                    )
-                )
-            )
-        , 0, 2)
-    );
-    */
-    /*
-    rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_v_container_init(1, 20, 20, 2,
-                rr_ui_text_init("Wave 69", 36),
-                rr_ui_h_container_init(1, 0, 20, 4,
-                    rr_ui_v_container_init(1, 0, -40, 4,
-                        rr_ui_mob_button_init(0, 0),
-                        rr_ui_mob_button_init(0, 1),
-                        rr_ui_mob_button_init(0, 2),
-                        rr_ui_mob_button_init(0, 3)
-                    ),
-                    rr_ui_v_container_init(1, 0, -40, 4,
-                        rr_ui_mob_button_init(1, 0),
-                        rr_ui_mob_button_init(1, 1),
-                        rr_ui_mob_button_init(1, 2),
-                        rr_ui_mob_button_init(1, 3)
-                    ),
-                    rr_ui_v_container_init(1, 0, -40, 4,
-                        rr_ui_mob_button_init(2, 0),
-                        rr_ui_mob_button_init(2, 1),
-                        rr_ui_mob_button_init(2, 2),
-                        rr_ui_mob_button_init(2, 3)
-                    ),
-                    rr_ui_v_container_init(1, 0, -40, 4,
-                        rr_ui_mob_button_init(3, 0),
-                        rr_ui_mob_button_init(3, 1),
-                        rr_ui_mob_button_init(3, 2),
-                        rr_ui_mob_button_init(3, 3)
-                    )
-                )
-            )
+            rr_ui_wave_container_init()
         , 1, 0)
     );
-    */
-   //init ctxs
+
     for (uint32_t i = 0; i < rr_petal_id_max; ++i)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)

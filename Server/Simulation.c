@@ -52,18 +52,25 @@ void rr_simulation_init(struct rr_simulation *this)
 
 static void spawn_random_mob(struct rr_simulation *this)
 {
+    float rarity_seed = rr_frand();
+    uint8_t rarity = 0;
+    for (; rarity < rr_rarity_id_max - 1; ++rarity)
+    {
+        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, rr_simulation_get_arena(this, 1)->wave)) > rarity_seed)
+            break;
+    }
     // promote to double for accuracy, demote to float once finished
     float r = rr_frand();
     uint8_t id = rr_mob_id_centipede_head;
-    if (r -= 0, r < 0)
+    if (r -= 0.2, r < 0)
         id = rr_mob_id_baby_ant;
-    else if (r -= 1, r < 0)
+    else if (r -= 0.2, r < 0)
         id = rr_mob_id_worker_ant;
     else if (r -= 0.25, r < 0)
         id = rr_mob_id_rock;
     else if (r -= 0.15, r < 0)
         id = rr_mob_id_centipede_head;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rand() % rr_rarity_id_max);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob_id, enum rr_rarity_id rarity_id)
@@ -386,12 +393,13 @@ void rr_simulation_tick(struct rr_simulation *this)
     if (arena->wave_tick == 500)
     {
         arena->wave_tick = 0;
+        rr_component_arena_set_wave(arena, arena->wave + 1);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
     EntityIdx mobs_in_use = 0;
     rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-    if (mobs_in_use <= 250)
+    if (mobs_in_use <= 20)
         spawn_random_mob(this);
 
     // delete pending deletions

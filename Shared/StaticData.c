@@ -75,7 +75,7 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
         {
             float start = RR_DROP_RARITY_COEFFICIENTS[drop];
             float end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
-            data->loot_table[mob][drop + 1] = pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]) - pow(1 - (1 - start) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
+            data->loot_table[mob][drop + 1] = pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
             printf("%f ", data->loot_table[mob][drop + 1]);
         }
         puts("");

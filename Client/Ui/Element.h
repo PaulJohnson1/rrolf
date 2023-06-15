@@ -40,6 +40,7 @@ struct rr_ui_element
     uint8_t h_justify;
     uint8_t v_justify;
     uint8_t hidden;
+    uint8_t is_resizable_container;
     float x;
     float y;
     float lerp_x;
@@ -63,20 +64,16 @@ struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct r
 struct rr_ui_element *rr_ui_button_init();
 struct rr_ui_element *rr_ui_respawn_button_init();
 struct rr_ui_element *rr_ui_find_server_button_init();
-struct rr_ui_element *rr_ui_loadout_button_init(uint8_t, uint8_t);
-struct rr_ui_element *rr_ui_mob_button_init(uint8_t, uint8_t);
 struct rr_ui_element *rr_ui_paired_button_init(struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_container_init();
-struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_text_init(char const *, float);
 
 struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);
 
-struct rr_ui_element *rr_ui_flower_icon_init(float);
-
+struct rr_ui_element *rr_ui_inventory_container_init();
+struct rr_ui_element *rr_ui_loadout_container_init();
 struct rr_ui_element *rr_ui_squad_container_init(uint8_t);
-
-struct rr_ui_element *rr_ui_wave_ui_init();
+struct rr_ui_element *rr_ui_wave_container_init();

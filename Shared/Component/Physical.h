@@ -52,7 +52,7 @@ struct rr_component_physical
     // RR_SERVER_ONLY(uint8_t has_collisions;)
     // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
-    RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT / 4];)
+    RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
 
 void rr_component_physical_init(struct rr_component_physical *, struct rr_simulation *);

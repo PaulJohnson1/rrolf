@@ -50,5 +50,6 @@ struct rr_ui_element *rr_ui_container_init()
     data->elements.size = 0;
     element->misc_data = data;
     element->on_render = container_on_render;
+    element->is_resizable_container = 1;
     return element;
 }

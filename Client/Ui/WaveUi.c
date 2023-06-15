@@ -5,6 +5,7 @@
 
 #include <Client/Game.h>
 #include <Client/Simulation.h>
+#include <Client/Ui/Engine.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Renderer/RenderFunctions.h>
 
@@ -17,6 +18,35 @@ struct mob_button_metadata
     uint8_t rarity;
     float lerp_width;
 };
+
+static void wave_text_on_render(struct rr_ui_element *this, void *_game)
+{
+    if (this->hidden)
+        return;
+    struct rr_game *game = _game;
+    if (!game->simulation_ready)
+        return;
+    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
+    struct rr_renderer *renderer = game->renderer;
+    struct text_metadata *data = this->misc_data;
+    char out[12];
+    sprintf(&out, "Wave %d", arena->wave);
+    this->width = rr_renderer_get_text_size((char const *) &out);
+
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(renderer, &state);
+    ui_translate(this, renderer);
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_set_stroke(renderer, 0xff000000);
+    rr_renderer_set_text_size(renderer, this->height);
+    rr_renderer_set_line_width(renderer, this->height * 0.12);
+    rr_renderer_set_text_align(renderer, 1);
+    rr_renderer_set_text_baseline(renderer, 1);
+    rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_free_context_state(renderer, &state);
+}
 
 static void mob_button_on_render(struct rr_ui_element *this, void *_game)
 {
@@ -69,7 +99,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
-struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
+static struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     struct mob_button_metadata *data = malloc(sizeof *data);
@@ -81,11 +111,29 @@ struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
     return element;
 }
 
-struct rr_ui_element *rr_ui_wave_ui_init()
+static struct rr_ui_element *rr_ui_wave_bar_init()
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->width = 200;
     element->height = 15;
     element->on_render = wave_bar_on_render;
     return element;
+}
+
+static struct rr_ui_element *rr_ui_wave_text_init(float size)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->height = size;
+    element->on_render = wave_text_on_render;
+    return element;
+}
+
+struct rr_ui_element *rr_ui_wave_container_init()
+{
+    return rr_ui_set_justify(
+        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+            rr_ui_wave_text_init(36),
+            rr_ui_wave_bar_init()
+        )
+    , 1, 1);
 }
