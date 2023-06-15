@@ -20,9 +20,12 @@ set(SRCS
     Ui/Engine.c
     Ui/Icon.c
     Ui/InventoryUi.c
+    Ui/LoadoutUi.c
     Ui/PairedButton.c
+    Ui/SquadUi.c
     Ui/Text.c
     Ui/TextInput.c
+    Ui/WaveUi.c
     Game.c
     InputData.c
     Main.c

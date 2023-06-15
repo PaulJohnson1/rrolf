@@ -66,13 +66,28 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
-    if (rr_simulation_has_entity(&this->server->simulation, this->player_info->flower_id))
+    if (this->server->simulation_active)
     {
-        struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
-        rr_component_player_info_set_camera_x(this->player_info, physical->x);
-        rr_component_player_info_set_camera_y(this->player_info, physical->y);
+        if (rr_simulation_has_entity(&this->server->simulation, this->player_info->flower_id))
+        {
+            struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
+            rr_component_player_info_set_camera_x(this->player_info, physical->x);
+            rr_component_player_info_set_camera_y(this->player_info, physical->y);
+        }
+        rr_server_client_broadcast_update(this);
     }
-    rr_server_client_broadcast_update(this);
+    else
+    {
+        // 128 KB (not needed but just in case)
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, outgoing_message);
+        proto_bug_write_uint8(&encoder, 69, "header");
+        for (uint32_t i = 0; i < 4; ++i)
+            proto_bug_write_uint8(&encoder, rr_bitset_get(&this->server->clients_in_use[0], i), "bitbit");
+        rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
+        rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
+        //send squad info
+    }
 }
 
 int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *packet, size_t size)
@@ -82,6 +97,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
+        if (this->simulation_active)
+            return 0;
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
@@ -104,8 +121,6 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
                 rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
                 rr_server_client_write_message(this->clients + i, outgoing_message, 1024);
-
-                rr_server_client_create_player_info(this->clients + i);
                 return 0;
             }
         RR_UNREACHABLE("max clients reached");
@@ -299,15 +314,32 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *
 
 void rr_server_tick(struct rr_server *this)
 {
-    rr_simulation_tick(&this->simulation);
+    if (this->simulation_active)
+        rr_simulation_tick(&this->simulation);
+    uint32_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
+        {
             rr_server_client_tick(this->clients + i);
-    rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+            ++client_count;
+        }
+    if (this->simulation_active)
+        rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+    else if (client_count == 2)
+    {
+        this->simulation_active = 1;
+        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+        if (rr_bitset_get(this->clients_in_use, i))
+        {
+            rr_server_client_create_player_info(this->clients + i);
+            rr_server_client_create_flower(this->clients + i);
+        }
+    }
 }
 
 void rr_server_run(struct rr_server *this)
 {
+    //this->simulation_active = 1;
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
 
@@ -331,12 +363,13 @@ void rr_server_run(struct rr_server *this)
 
         gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
         lws_service(this->server, -1);
+        puts("peace"); //buggy (fix)
         rr_server_tick(this);
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 100)
-            printf("tick took %ld microseconds\n", elapsed_time);
+        //if (elapsed_time > 100)
+            //printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }

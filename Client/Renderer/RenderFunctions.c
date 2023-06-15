@@ -333,3 +333,17 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         break;
     }
 }
+
+void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
+{
+    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
+    renderer->state.filter.amount = 0.2;
+    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[rarity]);
+    rr_renderer_set_line_width(renderer, 6);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_round_rect(renderer, -30, -30, 60, 60, 6);
+    rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
+    renderer->state.filter.amount = 0;
+    rr_renderer_clip(renderer);
+}

@@ -7,12 +7,16 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(radius, float32) 
+    X(radius, float32) \
+    X(wave_tick, varuint) \
+    X(wave, varuint) 
 
 enum
 {
     state_flags_radius = 0b000001,
-    state_flags_all =    0b000001
+    state_flags_wave_tick = 0b000010,
+    state_flags_wave = 0b000100,
+    state_flags_all =    0b000111
 };
 
 void rr_component_arena_init(struct rr_component_arena *this, struct rr_simulation *simulation)
@@ -35,6 +39,8 @@ void rr_component_arena_write(struct rr_component_arena *this, struct proto_bug 
 }
 
 RR_DEFINE_PUBLIC_FIELD(arena, float, radius)
+RR_DEFINE_PUBLIC_FIELD(arena, uint16_t, wave_tick)
+RR_DEFINE_PUBLIC_FIELD(arena, uint16_t, wave)
 #endif
 
 #ifdef RR_CLIENT

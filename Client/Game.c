@@ -44,7 +44,7 @@ void rr_game_init(struct rr_game *this)
     );
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 3,
+            rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 3,
                 rr_ui_text_init("rrolf", 72),
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
                     rr_ui_text_input_init(360, 40, 15),
@@ -53,51 +53,11 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_set_background(
                     rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 2,
                         rr_ui_text_init("Squad", 24),
-                        rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 4,
-                            rr_ui_set_background(
-                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
-                                    rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
-                                            rr_ui_flower_icon_init(25),
-                                            rr_ui_text_init("Flower", 16)
-                                        ),
-                                        rr_ui_text_init("Empty", 16)
-                                    )
-                                ), 0xff0245ba
-                            ),
-                            rr_ui_set_background(
-                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
-                                    rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
-                                            rr_ui_flower_icon_init(25),
-                                            rr_ui_text_init("Flower", 16)
-                                        ),
-                                        rr_ui_text_init("Empty", 16)
-                                    )
-                                ), 0xff0245ba
-                            ),
-                            rr_ui_set_background(
-                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
-                                    rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
-                                            rr_ui_flower_icon_init(25),
-                                            rr_ui_text_init("Flower", 16)
-                                        ),
-                                        rr_ui_text_init("Empty", 16)
-                                    )
-                                ), 0xff0245ba
-                            ),
-                            rr_ui_set_background(
-                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
-                                    rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2,
-                                            rr_ui_flower_icon_init(25),
-                                            rr_ui_text_init("Flower", 16)
-                                        ),
-                                        rr_ui_text_init("Empty", 16)
-                                    )
-                                ), 0xff0245ba
-                            )
+                        rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 4,
+                            rr_ui_squad_container_init(0),
+                            rr_ui_squad_container_init(1),
+                            rr_ui_squad_container_init(2),
+                            rr_ui_squad_container_init(3)
                         )
                     ), 0xff0459de
                 )
@@ -106,7 +66,7 @@ void rr_game_init(struct rr_game *this)
     ); 
     this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 20, 20, 2,
+            rr_ui_v_container_init(rr_ui_container_init(), 20, 20, 3,
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
                     rr_ui_loadout_button_init(0, 1),
                     rr_ui_loadout_button_init(1, 1),
@@ -130,7 +90,8 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_loadout_button_init(7, 0),
                     rr_ui_loadout_button_init(8, 0),
                     rr_ui_loadout_button_init(9, 0)
-                )
+                ),
+                rr_ui_wave_ui_init()
             )
         , 1, 2)
     );
@@ -231,9 +192,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
     switch (type)
     {
     case rr_websocket_event_type_open:
+        this->socket_pending = 0;
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
+        //memset the clients
         puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
@@ -267,7 +230,13 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
+            this->simulation_ready = 1;
             rr_simulation_read_binary(this->simulation, &encoder);
+            break;
+        case 69:
+            for (uint32_t i = 0; i < 4; ++i)
+                this->squad_members[i].in_use = proto_bug_read_uint8(&encoder, "bitbit");
+            //seend squad info
             break;
         default:
             RR_UNREACHABLE("how'd this happen");
@@ -363,7 +332,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);    
-    if (this->socket_ready)
+    if (this->simulation_ready)
     {
         rr_simulation_tick(this->simulation, delta);
 
@@ -398,6 +367,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_renderer_init_context_state(this->renderer, &state2);
                 // intrusive op
                 struct rr_component_arena *arena = rr_simulation_get_arena(this->simulation, p);
+                printf("lol %d\n", arena->wave_tick);
                 rr_renderer_begin_path(this->renderer);
                 rr_renderer_arc(this->renderer, 0, 0, arena->radius);
                 rr_renderer_set_fill(this->renderer, 0xff20a464);
@@ -451,7 +421,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; */))
             this->displaying_debug_information ^= 1;
 
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 13 /* enter */))
+        if (this->simulation_ready && rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 13 /* enter */))
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
@@ -461,7 +431,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     this->ui_elements.respawn_label->hidden = 1;
     this->ui_elements.title_screen->hidden = 0;
-    if (this->socket_ready)
+    if (this->simulation_ready)
     {
         this->ui_elements.title_screen->hidden = 1;
         if (this->simulation->player_info != RR_NULL_ENTITY)
@@ -496,6 +466,7 @@ void rr_game_connect_socket(struct rr_game *this)
 {
     memset(this->simulation, 0, sizeof *this->simulation);
     this->socket_ready = 0;
+    this->simulation_ready = 0;
     this->socket_pending = 1;
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;

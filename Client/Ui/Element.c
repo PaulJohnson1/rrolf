@@ -24,9 +24,10 @@ void ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
     (this->lerp_y + (this->v_justify - 1) * this->container->height / 2) * renderer->scale); // necessary btw
 }
 
-static void ui_choose_element_on_render(struct rr_ui_element *this, void *_game)
+void rr_ui_choose_element_on_render(struct rr_ui_element *this, void *_game)
 {
     struct rr_ui_choose_element_metadata *data = this->misc_data;
+    struct rr_game *game = _game;
     if (this->hidden)
         data->b->on_render(data->b, _game);
     else
@@ -51,7 +52,7 @@ struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *a, struct 
     element->misc_data = data;
     element->width = a->width > b->width ? a->width : b->width;
     element->height = a->height > b->height ? a->height : b->height;
-    element->on_render = ui_choose_element_on_render;
+    element->on_render = rr_ui_choose_element_on_render;
     element->hidden = rand() & 1;
     return element;
 }

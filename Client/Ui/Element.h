@@ -31,6 +31,7 @@ struct rr_ui_choose_element_metadata
 {
     struct rr_ui_element *a;
     struct rr_ui_element *b;
+    uint8_t info;
 };
 
 struct rr_ui_element
@@ -54,6 +55,7 @@ void ui_translate(struct rr_ui_element *, struct rr_renderer *);
 
 struct rr_ui_element *rr_ui_element_init();
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *);
+void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
 
 struct rr_ui_element *rr_ui_button_init();
 struct rr_ui_element *rr_ui_respawn_button_init();
@@ -72,3 +74,7 @@ struct rr_ui_element *rr_ui_text_init(char const *, float);
 struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);
 
 struct rr_ui_element *rr_ui_flower_icon_init(float);
+
+struct rr_ui_element *rr_ui_squad_container_init(uint8_t);
+
+struct rr_ui_element *rr_ui_wave_ui_init();

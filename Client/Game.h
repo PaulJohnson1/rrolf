@@ -6,6 +6,11 @@
 
 #include <Shared/StaticData.h>
 
+struct rr_game_squad_client
+{
+    uint8_t in_use;
+};
+
 struct rr_global_elements
 {
     struct rr_ui_element *respawn_label;
@@ -27,6 +32,8 @@ struct rr_game
     uint8_t displaying_debug_information:1;
     uint8_t socket_ready:1;
     uint8_t socket_pending:1;
+    uint8_t simulation_ready:1;
+    struct rr_game_squad_client squad_members[4];
 };
 
 void rr_game_init(struct rr_game *);

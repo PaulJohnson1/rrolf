@@ -138,10 +138,6 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
     struct rr_component_player_info_petal_slot *slot = data->main_loadout ? &player_info->slots[data->position] : &player_info->secondary_slots[data->position];
     uint8_t id = slot->id;
     uint8_t rarity = slot->rarity;
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
-    rr_renderer_set_line_width(renderer, this->width * 0.1);
-    renderer->state.filter.amount = 0.2;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[rarity]);
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
@@ -149,16 +145,9 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
         if (game->input_data->mouse_buttons_this_tick & 1)
             data->on_event(this, 1, game, &data->position);
     }    
-    rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 5);
-    rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    if (data->main_loadout)
-        rr_renderer_scale(renderer, 1.2);
-    
-    renderer->state.filter.amount = 0;
+    rr_renderer_scale(renderer, this->width / 60);
+    rr_renderer_render_background(renderer, rarity);
     rr_renderer_draw_image(renderer, &game->static_petals[id][rarity]);
-    //rr_renderer_render_static_petal(renderer, id, rarity);
     
     rr_renderer_free_context_state(renderer, &state);
 }
@@ -172,24 +161,13 @@ static void mob_button_on_render(struct rr_ui_element *this, void *_game)
     struct mob_button_metadata *data = this->misc_data;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[data->rarity]);
-    rr_renderer_set_line_width(renderer, this->width * 0.1);
-    renderer->state.filter.amount = 0.2;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[data->rarity]);
-    ui_translate(this, renderer);
-    rr_renderer_scale(renderer, renderer->scale);
-
-    rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 5);
-    rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    rr_renderer_clip(renderer);
+    rr_renderer_scale(renderer, this->width / 60);
+    rr_renderer_render_background(renderer, data->rarity);
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
     rr_renderer_scale(renderer, this->width * 0.01 * mob_radius / RR_MOB_DATA[data->id].radius);
     
-    renderer->state.filter.amount = 0;
     rr_renderer_rotate(renderer, -M_PI / 4);
     rr_renderer_render_mob(renderer, data->id, 0);
     

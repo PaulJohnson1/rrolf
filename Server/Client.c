@@ -32,6 +32,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         puts("tried to init a flower but flower already exists");
         return;
     }
+    puts("creating flower");
     EntityIdx flower_id = rr_simulation_alloc_entity(&this->server->simulation);
     struct rr_component_physical *physical = rr_simulation_add_physical(&this->server->simulation, flower_id);
     struct rr_component_health *health = rr_simulation_add_health(&this->server->simulation, flower_id);
