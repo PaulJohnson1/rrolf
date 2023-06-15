@@ -20,6 +20,7 @@ set(SRCS
     System/Health.c
     System/MapBoundary.c
     System/PetalBehavior.c
+    System/Respawn.c
     System/Velocity.c
     Main.c
     Client.c

@@ -363,7 +363,6 @@ void rr_server_run(struct rr_server *this)
 
         gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
         lws_service(this->server, -1);
-        puts("peace"); //buggy (fix)
         rr_server_tick(this);
         gettimeofday(&end, NULL);
 

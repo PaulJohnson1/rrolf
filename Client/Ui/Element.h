@@ -51,11 +51,14 @@ struct rr_ui_element
     void *misc_data;
 };
 
+/* "primitives" */
 void ui_translate(struct rr_ui_element *, struct rr_renderer *);
+uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
+void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
 
+/* inits */
 struct rr_ui_element *rr_ui_element_init();
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *);
-void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
 
 struct rr_ui_element *rr_ui_button_init();
 struct rr_ui_element *rr_ui_respawn_button_init();
@@ -63,7 +66,6 @@ struct rr_ui_element *rr_ui_find_server_button_init();
 struct rr_ui_element *rr_ui_loadout_button_init(uint8_t, uint8_t);
 struct rr_ui_element *rr_ui_mob_button_init(uint8_t, uint8_t);
 struct rr_ui_element *rr_ui_paired_button_init(struct rr_ui_element *);
-uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_container_init();
 struct rr_ui_element *rr_ui_inventory_container_init();

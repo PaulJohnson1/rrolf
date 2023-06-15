@@ -7,7 +7,6 @@
 #include <Server/Simulation.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
-#include <Shared/Component/Physical.h>
 
 struct aggressive_find_target_captures
 {

@@ -34,11 +34,8 @@ void rr_game_init(struct rr_game *this)
     this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_init("rrolf", 72),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 50, 2,
-                    rr_ui_text_init("Spawn In", 48),
-                    rr_ui_respawn_button_init()
-                )
+                rr_ui_text_init("You died", 72),
+                rr_ui_text_init("You will spawn back in next wave", 36)
             )
         , 1, 1)
     );
@@ -367,7 +364,6 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_renderer_init_context_state(this->renderer, &state2);
                 // intrusive op
                 struct rr_component_arena *arena = rr_simulation_get_arena(this->simulation, p);
-                printf("lol %d\n", arena->wave_tick);
                 rr_renderer_begin_path(this->renderer);
                 rr_renderer_arc(this->renderer, 0, 0, arena->radius);
                 rr_renderer_set_fill(this->renderer, 0xff20a464);

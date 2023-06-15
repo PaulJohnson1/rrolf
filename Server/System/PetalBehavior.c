@@ -185,8 +185,10 @@ static void system_non_player_owned_petal_movement_logic(EntityIdx id, void *sim
     struct rr_component_relations *relations = rr_simulation_get_relations(simulation, id);
     if (petal->detached == 0) // it's mob owned if this is true
     {
-        if (!rr_simulation_has_entity(simulation, relations->owner))
+        if (!rr_simulation_has_entity(simulation, relations->owner) || physical->has_deletion_animation == 0)
         {
+            struct rr_component_health *health = rr_simulation_get_health(simulation, id);
+            rr_component_health_set_health(health, 0);
             rr_simulation_request_entity_deletion(simulation, id);
             return;
         }

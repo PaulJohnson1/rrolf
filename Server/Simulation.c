@@ -15,6 +15,7 @@
 #include <Server/System/Health.h>
 #include <Server/System/MapBoundary.h>
 #include <Server/System/PetalBehavior.h>
+#include <Server/System/Respawn.h>
 #include <Server/System/Velocity.h>
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
@@ -382,8 +383,11 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (arena->wave_tick == 100)
+    if (arena->wave_tick == 500)
+    {
         arena->wave_tick = 0;
+        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+    }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
     EntityIdx mobs_in_use = 0;
     rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
