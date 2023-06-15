@@ -36,9 +36,12 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
 void rr_server_client_free(struct rr_server_client *this)
 {
     puts("client disconnected");
-    if (this->player_info->flower_id != RR_NULL_ENTITY)
-        rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->flower_id);
-    rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->parent_id);
+    if (this->server->simulation_active)
+    {
+        if (this->player_info->flower_id != RR_NULL_ENTITY)
+            rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->flower_id);
+        (&this->server->simulation, this->player_info->parent_id);
+    }
 }
 
 void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *start, uint64_t size)

@@ -59,6 +59,8 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
             while (Module.HEAPU8[$1])
                 string += String.fromCharCode(Module.HEAPU8[$1++]);
             console.log("connecting to socket", string);
+            if (window.socket)
+                window.socket.close();
             let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
             socket.binaryType = "arraybuffer";
             socket.onopen = function()
@@ -74,7 +76,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
                 Module.HEAPU8.set(new Uint8Array(event.data), $3);
                 Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
             };
-        }, 1000);
+        }, 0);
     }, this, host, port, &incoming_data[0]);
 #else
     struct lws_context_creation_info info;
