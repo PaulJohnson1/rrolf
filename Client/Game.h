@@ -8,7 +8,8 @@
 
 struct rr_game_squad_client
 {
-    uint8_t in_use;
+    uint8_t in_use:1;
+    uint8_t ready:1;
 };
 
 struct rr_global_elements
@@ -33,6 +34,7 @@ struct rr_game
     uint8_t socket_ready:1;
     uint8_t socket_pending:1;
     uint8_t simulation_ready:1;
+    int8_t ticks_until_game_start;
     struct rr_game_squad_client squad_members[4];
 };
 

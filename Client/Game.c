@@ -31,6 +31,17 @@ void rr_game_init(struct rr_game *this)
     memset(this, 0, sizeof *this);
     this->global_container = rr_ui_container_init();
     this->global_container->container = this->global_container;
+
+    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
+        rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 3,
+            rr_ui_text_init("rrolf", 72),
+            rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
+                rr_ui_text_input_init(360, 40, 15),
+                rr_ui_find_server_button_init()
+            ),
+            rr_ui_squad_container_init()
+        )
+    );
     this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
@@ -39,28 +50,7 @@ void rr_game_init(struct rr_game *this)
             )
         , 1, 1)
     );
-    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 3,
-                rr_ui_text_init("rrolf", 72),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
-                    rr_ui_text_input_init(360, 40, 15),
-                    rr_ui_find_server_button_init()
-                ),
-                rr_ui_set_background(
-                    rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 2,
-                        rr_ui_text_init("Squad", 24),
-                        rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 4,
-                            rr_ui_squad_container_init(0),
-                            rr_ui_squad_container_init(1),
-                            rr_ui_squad_container_init(2),
-                            rr_ui_squad_container_init(3)
-                        )
-                    ), 0xff0459de
-                )
-            )
-        , 1, 1)
-    ); 
+     
     this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_loadout_container_init()
@@ -141,9 +131,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
             rr_simulation_read_binary(this->simulation, &encoder);
             break;
         case 69:
+            this->ticks_until_game_start = proto_bug_read_uint8(&encoder, "countdown");
             for (uint32_t i = 0; i < 4; ++i)
+            {
                 this->squad_members[i].in_use = proto_bug_read_uint8(&encoder, "bitbit");
-            //seend squad info
+                this->squad_members[i].ready = proto_bug_read_uint8(&encoder, "ready");
+            }
             break;
         default:
             RR_UNREACHABLE("how'd this happen");
@@ -335,6 +328,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_websocket_send(&this->socket, encoder.start, encoder.current);
         }
     }
+
     this->ui_elements.respawn_label->hidden = 1;
     this->ui_elements.title_screen->hidden = 0;
     if (this->simulation_ready)
@@ -345,6 +339,11 @@ void rr_game_tick(struct rr_game *this, float delta)
                 this->ui_elements.respawn_label->hidden = 0;
     }
 
+    struct rr_ui_container_metadata *data = this->global_container->misc_data;
+
+    for (uint32_t i = 0; i < data->elements.size; ++i)
+        if (data->elements.elements[i]->is_resizable_container)
+            rr_ui_container_refactor(data->elements.elements[i]);
     this->global_container->on_render(this->global_container, this);
 
     gettimeofday(&end, NULL);

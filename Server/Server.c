@@ -40,7 +40,7 @@ void rr_server_client_free(struct rr_server_client *this)
     {
         if (this->player_info->flower_id != RR_NULL_ENTITY)
             rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->flower_id);
-        (&this->server->simulation, this->player_info->parent_id);
+        rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->parent_id);
     }
 }
 
@@ -85,8 +85,12 @@ void rr_server_client_tick(struct rr_server_client *this)
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, 69, "header");
+        proto_bug_write_uint8(&encoder, this->server->ticks_until_simulation_create, "countdown");
         for (uint32_t i = 0; i < 4; ++i)
+        {
             proto_bug_write_uint8(&encoder, rr_bitset_get(&this->server->clients_in_use[0], i), "bitbit");
+            proto_bug_write_uint8(&encoder, this->server->clients[i].ready, "ready");
+        }
         rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
         //send squad info
@@ -281,6 +285,10 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             for (uint32_t i = 0; i < slot->count; ++i)
                 slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
         }
+        case 69:
+        {
+            client->ready ^= 1;
+        }
         }
     }
     default:
@@ -318,25 +326,39 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *
 void rr_server_tick(struct rr_server *this)
 {
     if (this->simulation_active)
-        rr_simulation_tick(&this->simulation);
-    uint32_t client_count = 0;
+        rr_simulation_tick(&this->simulation);\
+    
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
-        {
             rr_server_client_tick(this->clients + i);
-            ++client_count;
-        }
+
     if (this->simulation_active)
         rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
-    else if (client_count == 2)
+    else
     {
-        this->simulation_active = 1;
+        uint8_t all_ready = 1;
+        uint8_t count = 0;
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-        if (rr_bitset_get(this->clients_in_use, i))
+            if (rr_bitset_get(this->clients_in_use, i))
+            {
+                ++count;
+                all_ready &= this->clients[i].ready;
+            }
+        if (count && all_ready)
         {
-            rr_server_client_create_player_info(this->clients + i);
-            rr_server_client_create_flower(this->clients + i);
+            if (--this->ticks_until_simulation_create == 0)
+            {
+                this->simulation_active = 1;
+                for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+                    if (rr_bitset_get(this->clients_in_use, i))
+                    {
+                        rr_server_client_create_player_info(this->clients + i);
+                        rr_server_client_create_flower(this->clients + i);
+                    }
+            }
         }
+        else
+            this->ticks_until_simulation_create = 125;
     }
 }
 
@@ -358,6 +380,7 @@ void rr_server_run(struct rr_server *this)
 
     this->server = lws_create_context(&info);
     assert(this->server);
+    this->ticks_until_simulation_create = 125;
 
     while (1)
     {

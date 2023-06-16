@@ -19,6 +19,7 @@ struct rr_server_client
     int file_descriptor;
     uint8_t received_first_packet:1;
     uint8_t verified:1;
+    uint8_t ready:1;
 
     struct rr_server_client_loadout_petal loadout[20];
     char client_nickname[16];

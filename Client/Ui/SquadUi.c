@@ -79,7 +79,34 @@ static void flower_icon_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
-struct rr_ui_element *rr_ui_flower_icon_init(float radius)
+static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
+{
+    struct rr_game *game = _game;
+    if (!game->socket_ready || game->ticks_until_game_start == 125)
+        return;
+    struct rr_renderer *renderer = game->renderer;
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(renderer, &state);
+    char out[16];
+    sprintf(&out[0], "Starting in %d", 1 + game->ticks_until_game_start / 25);
+    this->width = rr_renderer_get_text_size((char const *) &out) * this->height;
+    printf("size is %f\n", this->width);
+    ui_translate(this, renderer);
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_set_fill(renderer, 0xff1dd129);
+    renderer->state.filter.amount += 0.2;
+    rr_renderer_set_stroke(renderer, 0xff1dd129);
+    rr_renderer_set_text_size(renderer, this->height);
+    rr_renderer_set_line_width(renderer, this->height * 0.12);
+    rr_renderer_set_text_align(renderer, 1);
+    rr_renderer_set_text_baseline(renderer, 1);
+
+    rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_free_context_state(renderer, &state);
+}
+
+static struct rr_ui_element *rr_ui_flower_icon_init(float radius)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->width = element->height = radius * 2;
@@ -87,7 +114,16 @@ struct rr_ui_element *rr_ui_flower_icon_init(float radius)
     return element;
 }
 
-struct rr_ui_element *rr_ui_squad_container_init(uint8_t spot)
+static struct rr_ui_element *rr_ui_countdown_timer_init()
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->height = 16;
+    element->width = rr_renderer_get_text_size((char const *) "Starting in 5") * element->height;
+    element->on_render = countdown_text_on_render;
+    return element;
+}
+
+static struct rr_ui_element *rr_ui_squad_player_container_init(uint8_t spot)
 {
     struct rr_ui_element *a = rr_ui_v_container_init(
         rr_ui_container_init(), 10, 10, 2,
@@ -103,5 +139,23 @@ struct rr_ui_element *rr_ui_squad_container_init(uint8_t spot)
         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
             choose
         ), 0xff0245ba
+    );
+}
+
+struct rr_ui_element *rr_ui_squad_container_init()
+{
+    return rr_ui_set_background(
+        rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
+            rr_ui_text_init("Squad", 24),
+            rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 4,
+                rr_ui_squad_player_container_init(0),
+                rr_ui_squad_player_container_init(1),
+                rr_ui_squad_player_container_init(2),
+                rr_ui_squad_player_container_init(3)
+            ),
+            rr_ui_set_justify(
+                rr_ui_countdown_timer_init()
+            , 2, 2)
+        ), 0xff0459de
     );
 }
