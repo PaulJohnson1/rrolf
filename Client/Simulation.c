@@ -65,6 +65,8 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
     RR_FOR_EACH_COMPONENT
 #undef XX
     }
+
+    this->game_over = proto_bug_read_uint8(encoder, "game over");
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) * sizeof *this->pending_deletions);

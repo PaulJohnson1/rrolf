@@ -43,9 +43,8 @@ struct rr_simulation
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
-    // RR_SERVER_ONLY(struct hshg *hshg;)
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
-    // RR_SERVER_ONLY(struct rr_spatial_hash grid;)
+                   uint8_t game_over;
 };
 
 void rr_simulation_init(struct rr_simulation *);

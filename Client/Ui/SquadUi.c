@@ -16,7 +16,7 @@ static void squad_container_on_render(struct rr_ui_element *this, void *_game)
 {
     struct rr_game *game = _game;
     struct rr_ui_choose_element_metadata *data = this->misc_data;
-    this->hidden = 1 - game->squad_members[data->info].in_use;
+    this->hidden = (1 - game->squad_members[data->info].in_use) || (1 - game->socket_ready);
     rr_ui_choose_element_on_render(this, _game);
 }
 
@@ -90,7 +90,6 @@ static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
     char out[16];
     sprintf(&out[0], "Starting in %d", 1 + game->ticks_until_game_start / 25);
     this->width = rr_renderer_get_text_size((char const *) &out) * this->height;
-    printf("size is %f\n", this->width);
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0xff1dd129);

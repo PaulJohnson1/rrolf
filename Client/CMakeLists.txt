@@ -18,6 +18,7 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/InGameSquadUi.c
     Ui/InventoryUi.c
     Ui/LoadoutUi.c
     Ui/PairedButton.c

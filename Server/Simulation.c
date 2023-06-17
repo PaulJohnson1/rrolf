@@ -327,6 +327,7 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
 
     rr_bitset_for_each_bit(new_entities_in_view, new_entities_in_view + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_write_entity_function);
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
+    proto_bug_write_uint8(encoder, this->game_over, "game over");
 }
 
 //#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \

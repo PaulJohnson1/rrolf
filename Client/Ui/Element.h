@@ -47,6 +47,7 @@ struct rr_ui_element
     float lerp_y;
     float width;
     float height;
+    float animation_timer;
     void (*on_render)(struct rr_ui_element *, void *);
     struct rr_ui_element *container;
     void *misc_data;
@@ -76,3 +77,5 @@ struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_loadout_container_init();
 struct rr_ui_element *rr_ui_squad_container_init();
 struct rr_ui_element *rr_ui_wave_container_init();
+
+struct rr_ui_element *rr_ui_abandon_game_button_init();

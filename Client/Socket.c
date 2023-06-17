@@ -54,29 +54,27 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
     static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
     EM_ASM({
-        setTimeout(function() {
-            let string = "";
-            while (Module.HEAPU8[$1])
-                string += String.fromCharCode(Module.HEAPU8[$1++]);
-            console.log("connecting to socket", string);
-            if (window.socket)
-                window.socket.close();
-            let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
-            socket.binaryType = "arraybuffer";
-            socket.onopen = function()
-            {
-                Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
-            };
-            socket.onclose = function()
-            {
-                Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
-            };
-            socket.onmessage = async function(event)
-            {
-                Module.HEAPU8.set(new Uint8Array(event.data), $3);
-                Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
-            };
-        }, 0);
+        let string = "";
+        while (Module.HEAPU8[$1])
+            string += String.fromCharCode(Module.HEAPU8[$1++]);
+        console.log("connecting to socket", string);
+        if (window.socket)
+            window.socket.close();
+        let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
+        socket.binaryType = "arraybuffer";
+        socket.onopen = function()
+        {
+            Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
+        };
+        socket.onclose = function()
+        {
+            Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
+        };
+        socket.onmessage = async function(event)
+        {
+            Module.HEAPU8.set(new Uint8Array(event.data), $3);
+            Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
+        };
     }, this, host, port, &incoming_data[0]);
 #else
     struct lws_context_creation_info info;
@@ -107,6 +105,17 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
     connection_info.protocol = "g";
     this->socket = lws_client_connect_via_info(&connection_info);
 
+#endif
+}
+
+void rr_websocket_disconnect(struct rr_websocket *this)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({
+        if (window.socket)
+            window.socket.close();
+    });
+#else
 #endif
 }
 

@@ -71,6 +71,14 @@ void rr_game_init(struct rr_game *this)
         , 1, 0)
     );
 
+    this->ui_elements.in_game_squad_info = rr_ui_container_add_element(this->global_container,
+        rr_ui_pad(
+            rr_ui_set_justify(
+                rr_ui_abandon_game_button_init()
+            , 0, 0)
+        , 15)
+    );
+
     for (uint32_t i = 0; i < rr_petal_id_max; ++i)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -330,13 +338,19 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
 
     this->ui_elements.respawn_label->hidden = 1;
+    this->ui_elements.loadout->hidden = 1;
     this->ui_elements.title_screen->hidden = 0;
+    this->ui_elements.in_game_squad_info->hidden = 1;
     if (this->simulation_ready)
     {
         this->ui_elements.title_screen->hidden = 1;
         if (this->simulation->player_info != RR_NULL_ENTITY)
+        {
+            this->ui_elements.in_game_squad_info->hidden = 0;
+            this->ui_elements.loadout->hidden = 0;
             if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
                 this->ui_elements.respawn_label->hidden = 0;
+        }
     }
 
     struct rr_ui_container_metadata *data = this->global_container->misc_data;
