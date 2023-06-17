@@ -17,7 +17,7 @@ enum
     state_flags_id = 0b000001,
     state_flags_rarity = 0b000010,
     state_flags_hidden = 0b000100,
-    state_flags_all = 0b000011
+    state_flags_all = 0b000111
 };
 
 void rr_component_drop_init(struct rr_component_drop *this, struct rr_simulation *simulation)
@@ -36,12 +36,13 @@ void rr_component_drop_free(struct rr_component_drop *this, struct rr_simulation
 void rr_component_drop_write(struct rr_component_drop *this, struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-
+    if (rr_bitset_get(&this->picked_up_this_tick[0], this->inspecting))
+        state |= state_flags_hidden;
     proto_bug_write_varuint(encoder, state, "drop component state");
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
     if (state & state_flags_hidden)
-        proto_bug_write_uint8(encoder, 1, "drop hidden");
+        proto_bug_write_uint8(encoder, rr_bitset_get(&this->picked_up_by[0], this->inspecting), "drop hidden");
 #undef X
     
 
@@ -59,6 +60,9 @@ void rr_component_drop_read(struct rr_component_drop *this, struct proto_bug *en
     FOR_EACH_PUBLIC_FIELD
 #undef X
     if (state & state_flags_hidden)
+    {
         this->hidden = proto_bug_read_uint8(encoder, "drop hidden");
+        printf("Fdsadfsadf %d\n", this->hidden);
+    }
 }
 #endif

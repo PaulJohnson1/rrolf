@@ -20,6 +20,7 @@ struct rr_global_elements
     struct rr_ui_element *wave_info;
     struct rr_ui_element *inventory;
     struct rr_ui_element *in_game_squad_info;
+    struct rr_ui_element *game_over;
 };
 
 struct rr_game

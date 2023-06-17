@@ -262,7 +262,8 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity, voi
     if (rr_simulation_has_drop(simulation, entity))
     {
         struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
-        if (rr_bitset_get(drop->picked_up_this_tick, captures->player_info->parent_id))
+        drop->inspecting = captures->player_info->parent_id;
+        if (rr_bitset_get(&drop->picked_up_this_tick[0], drop->inspecting))
             drop->protocol_state |= 4;
         else
             drop->protocol_state &= 3;
@@ -390,19 +391,30 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
-    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
-    if (arena->wave_tick == min * 15 * 25)
+    if (!this->game_over)
     {
-        arena->wave_tick = 0;
-        rr_component_arena_set_wave(arena, arena->wave + 1);
-        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+        uint8_t any_alive = 0;
+
+        for (uint32_t i = 0; i < sizeof this->flower_tracker; ++i)
+            any_alive |= this->flower_tracker[i];
+        
+        if (!any_alive)
+            this->game_over = 1;
+        
+        struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+        uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
+        if (arena->wave_tick == min * 15 * 25)
+        {
+            arena->wave_tick = 0;
+            rr_component_arena_set_wave(arena, arena->wave + 1);
+            RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+        }
+        rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
+        EntityIdx mobs_in_use = 0;
+        rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
+        if (mobs_in_use <= 20)
+            spawn_random_mob(this);
     }
-    rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
-    EntityIdx mobs_in_use = 0;
-    rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-    if (mobs_in_use <= 20)
-        spawn_random_mob(this);
 
     // delete pending deletions
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, rr_simulation_pending_deletion_free_components);

@@ -42,11 +42,21 @@ void rr_game_init(struct rr_game *this)
             rr_ui_squad_container_init()
         )
     );
+
     this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
                 rr_ui_text_init("You died", 72),
                 rr_ui_text_init("You will spawn back in next wave", 36)
+            )
+        , 1, 1)
+    );
+
+    this->ui_elements.game_over = rr_ui_container_add_element(this->global_container, 
+        rr_ui_set_justify(
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+                rr_ui_text_init("Game Over", 72),
+                rr_ui_text_init("You many now exit the squad", 36)
             )
         , 1, 1)
     );
@@ -341,6 +351,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->ui_elements.loadout->hidden = 1;
     this->ui_elements.title_screen->hidden = 0;
     this->ui_elements.in_game_squad_info->hidden = 1;
+    this->ui_elements.game_over->hidden = 1;
     if (this->simulation_ready)
     {
         this->ui_elements.title_screen->hidden = 1;
@@ -349,7 +360,10 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->ui_elements.in_game_squad_info->hidden = 0;
             this->ui_elements.loadout->hidden = 0;
             if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
-                this->ui_elements.respawn_label->hidden = 0;
+            {
+                this->ui_elements.respawn_label->hidden = this->simulation->game_over;
+                this->ui_elements.game_over->hidden = 1 - this->simulation->game_over;
+            }
         }
     }
 

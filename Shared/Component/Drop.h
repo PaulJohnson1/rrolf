@@ -19,7 +19,7 @@ struct rr_component_drop
     RR_SERVER_ONLY(uint8_t picked_up_this_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
-    
+    RR_SERVER_ONLY(EntityIdx inspecting;)
 };
 
 void rr_component_drop_init(struct rr_component_drop *, struct rr_simulation *);
