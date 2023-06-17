@@ -80,8 +80,10 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
+    uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
+    float capac = min * 5 * 25;
     rr_renderer_init_context_state(renderer, &state);
-    rr_renderer_set_stroke(renderer, 0xff666666);
+    rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 15);
     rr_renderer_set_line_cap(renderer, 1);
     ui_translate(this, renderer);
@@ -90,12 +92,23 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_move_to(renderer, -100, 0);
     rr_renderer_line_to(renderer, 100, 0);
     rr_renderer_stroke(renderer);
-    rr_renderer_set_stroke(renderer, 0xff999999);
+    rr_renderer_set_stroke(renderer, 0xff75dd34);
     rr_renderer_set_line_width(renderer, 12);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -100, 0);
-    rr_renderer_line_to(renderer, -100 + 0.4 * arena->wave_tick, 0);
+    float pct = (arena->wave_tick / capac) > 1 ? 1 : arena->wave_tick / capac;
+    rr_renderer_line_to(renderer, -100 + 200 * (pct), 0);
     rr_renderer_stroke(renderer);
+    if (arena->wave_tick > capac)
+    {
+        pct = (arena->wave_tick * 0.5 / capac - 0.5);
+        rr_renderer_set_stroke(renderer, 0xffbfeb2f);
+        rr_renderer_set_line_width(renderer, 9);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -100, 0);
+        rr_renderer_line_to(renderer, -100 + 200 * (pct), 0);
+        rr_renderer_stroke(renderer);
+    }
     rr_renderer_free_context_state(renderer, &state);
 }
 

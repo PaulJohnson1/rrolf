@@ -1,6 +1,7 @@
 #include <Server/Server.h>
 
 #include <assert.h>
+#include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -326,25 +327,35 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *
 void rr_server_tick(struct rr_server *this)
 {
     if (this->simulation_active)
-        rr_simulation_tick(&this->simulation);\
+        rr_simulation_tick(&this->simulation);
     
+    uint8_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
+        {
             rr_server_client_tick(this->clients + i);
+            ++client_count;
+        }
 
     if (this->simulation_active)
-        rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+    {
+        if (!client_count)
+        {
+            this->simulation_active = 0;
+            free(this->simulation.grid);
+            rr_simulation_init(&this->simulation);
+        }
+        else
+            rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+    }
     else
     {
         uint8_t all_ready = 1;
-        uint8_t count = 0;
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (rr_bitset_get(this->clients_in_use, i))
-            {
-                ++count;
                 all_ready &= this->clients[i].ready;
-            }
-        if (count && all_ready)
+
+        if (client_count && all_ready)
         {
             if (--this->ticks_until_simulation_create == 0)
             {

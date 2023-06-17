@@ -390,7 +390,8 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (arena->wave_tick == 500)
+    uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
+    if (arena->wave_tick == min * 15 * 25)
     {
         arena->wave_tick = 0;
         rr_component_arena_set_wave(arena, arena->wave + 1);
