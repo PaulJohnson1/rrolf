@@ -80,7 +80,8 @@ void rr_renderer_line_to(struct rr_renderer *, float, float);
 void rr_renderer_quadratic_curve_to(struct rr_renderer *, float, float, float, float);
 void rr_renderer_bezier_curve_to(struct rr_renderer *, float, float, float, float, float, float);
 void rr_renderer_arc(struct rr_renderer *, float, float, float);
-void rr_renderer_partial_arc(struct rr_renderer *, float, float, float, float, float);
+void rr_renderer_reverse_arc(struct rr_renderer *, float, float, float);
+void rr_renderer_partial_arc(struct rr_renderer *, float, float, float, float, float, uint8_t);
 void rr_renderer_ellipse(struct rr_renderer *, float, float, float, float);
 void rr_renderer_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_round_rect(struct rr_renderer *, float, float, float, float, float);
@@ -92,6 +93,7 @@ void rr_renderer_stroke_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_fill(struct rr_renderer *);
 void rr_renderer_stroke(struct rr_renderer *);
 void rr_renderer_clip(struct rr_renderer *);
+void rr_renderer_clip2(struct rr_renderer *);
 
 void rr_renderer_fill_text(struct rr_renderer *, char const *, float, float);
 void rr_renderer_stroke_text(struct rr_renderer *,  char const *, float, float);

@@ -283,13 +283,18 @@ void rr_renderer_bezier_curve_to(struct rr_renderer *this, float x1, float y1, f
 }
 void rr_renderer_arc(struct rr_renderer *this, float x, float y, float r)
 {
-    rr_renderer_partial_arc(this, x, y, r, 0, 2 * M_PI);
+    rr_renderer_partial_arc(this, x, y, r, 0, 2 * M_PI, 0);
 }
 
-void rr_renderer_partial_arc(struct rr_renderer *this, float x, float y, float r, float sa, float ea)
+void rr_renderer_reverse_arc(struct rr_renderer *this, float x, float y, float r)
+{
+    rr_renderer_partial_arc(this, x, y, r, 2 * M_PI, 0, 1);
+}
+
+void rr_renderer_partial_arc(struct rr_renderer *this, float x, float y, float r, float sa, float ea, uint8_t ccw)
 {
 #ifdef EMSCRIPTEN
-    EM_ASM({ Module.ctxs[$0].arc($1, $2, $3, $4, $5); }, this->context_id, x, y, r, sa, ea);
+    EM_ASM({ Module.ctxs[$0].arc($1, $2, $3, $4, $5, !!$6); }, this->context_id, x, y, r, sa, ea, ccw);
 #else
 #endif
 }
@@ -367,6 +372,14 @@ void rr_renderer_clip(struct rr_renderer *this)
 {
 #ifdef EMSCRIPTEN
     EM_ASM({ Module.ctxs[$0].clip(); }, this->context_id);
+#else
+#endif
+}
+
+void rr_renderer_clip2(struct rr_renderer *this)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({ Module.ctxs[$0].clip("evenodd"); }, this->context_id);
 #else
 #endif
 }

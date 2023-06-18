@@ -75,7 +75,8 @@ static void button_on_render(struct rr_ui_element *this, void *_game)
             data->on_event(this, 1, game, NULL);
         if (game->input_data->mouse_buttons & 1)
             renderer->state.filter.amount += 0.2;
-    }    
+    }
+    this->width = rr_renderer_get_text_size(data->text) * this->height * 0.5 + 20;
     rr_renderer_set_fill(renderer, data->fill_style);
     rr_renderer_set_line_width(renderer, data->line_width);
     renderer->state.filter.amount += 0.2;

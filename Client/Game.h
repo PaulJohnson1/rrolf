@@ -37,6 +37,7 @@ struct rr_game
     uint8_t socket_pending:1;
     uint8_t simulation_ready:1;
     int8_t ticks_until_game_start;
+    float expanding_circle_radius;
     struct rr_game_squad_client squad_members[4];
 };
 

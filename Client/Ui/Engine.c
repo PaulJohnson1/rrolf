@@ -127,8 +127,8 @@ static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, 
     {
         struct rr_ui_element *element = data->elements.elements[i];
 
-        element->y = height + element->height / 2;
-        element->x = (1 - element->h_justify) * (element->width / 2 + outer_spacing);
+        element->lerp_y = element->y = height + element->height / 2;
+        element->lerp_x = element->x = (1 - element->h_justify) * (element->width / 2 + outer_spacing);
 
         height += element->height + inner_spacing;
         if (element->width > width)

@@ -249,8 +249,64 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
-    rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);    
+    rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    struct rr_renderer_context_state grand_state;
+    rr_renderer_init_context_state(this->renderer, &grand_state);
+    //render off-game elements
+    struct rr_ui_container_metadata *data = this->global_container->misc_data;
+
+    for (uint32_t i = 0; i < data->elements.size; ++i)
+        if (data->elements.elements[i]->is_resizable_container)
+            rr_ui_container_refactor(data->elements.elements[i]);
+    //this->global_container->on_render(this->global_container, this);
+    {
+        struct rr_renderer_context_state pre_state;
+        rr_renderer_init_context_state(this->renderer, &pre_state);
+        rr_renderer_translate(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5);
+        this->ui_elements.title_screen->on_render(this->ui_elements.title_screen, this);
+        rr_renderer_free_context_state(this->renderer, &pre_state);
+    }
+    this->ui_elements.respawn_label->hidden = 1;
+    this->ui_elements.loadout->hidden = 1;
+    this->ui_elements.title_screen->hidden = 0;
+    this->ui_elements.in_game_squad_info->hidden = 1;
+    this->ui_elements.game_over->hidden = 1;
     if (this->simulation_ready)
+    {
+        this->expanding_circle_radius += 1500 * delta;
+        if (this->expanding_circle_radius > 1500)
+        {
+            this->expanding_circle_radius = 1500;
+            this->ui_elements.title_screen->hidden = 1;
+        }
+        if (this->simulation->player_info != RR_NULL_ENTITY)
+        {
+            this->ui_elements.in_game_squad_info->hidden = 0;
+            this->ui_elements.loadout->hidden = 0;
+            if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
+            {
+                this->ui_elements.respawn_label->hidden = this->simulation->game_over;
+                this->ui_elements.game_over->hidden = 1 - this->simulation->game_over;
+            }
+        }
+    }
+    else
+    {
+        this->expanding_circle_radius -= 1500 * delta;
+        if (this->expanding_circle_radius < 0)
+            this->expanding_circle_radius = 0;
+    }
+    if (this->expanding_circle_radius > 0 && this->expanding_circle_radius < 1500)
+    {
+        rr_renderer_begin_path(this->renderer);
+        rr_renderer_set_fill(this->renderer, 0xff20a464);
+        rr_renderer_arc(this->renderer, this->renderer->width / 2, this->renderer->height / 2, this->expanding_circle_radius * this->renderer->scale);
+        rr_renderer_fill(this->renderer);
+        rr_renderer_clip(this->renderer);
+    }
+    printf("eradsdsd %f\n", this->expanding_circle_radius);
+    
+    if (this->expanding_circle_radius > 0)
     {
         rr_simulation_tick(this->simulation, delta);
 
@@ -328,7 +384,19 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
             rr_renderer_free_context_state(this->renderer, &state1);
         }
+        {
+            struct rr_renderer_context_state pre_state;
+            rr_renderer_init_context_state(this->renderer, &pre_state);
+            rr_renderer_translate(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5);
+            this->ui_elements.loadout->on_render(this->ui_elements.loadout, this);
+            this->ui_elements.respawn_label->on_render(this->ui_elements.respawn_label, this);
+            this->ui_elements.in_game_squad_info->on_render(this->ui_elements.in_game_squad_info, this);
+            this->ui_elements.wave_info->on_render(this->ui_elements.wave_info, this);
+            this->ui_elements.game_over->on_render(this->ui_elements.game_over, this);
+            rr_renderer_free_context_state(this->renderer, &pre_state);
+        }
     }
+
     if (this->socket_ready)
     {
 #ifndef EMSCRIPTEN
@@ -347,33 +415,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
     }
 
-    this->ui_elements.respawn_label->hidden = 1;
-    this->ui_elements.loadout->hidden = 1;
-    this->ui_elements.title_screen->hidden = 0;
-    this->ui_elements.in_game_squad_info->hidden = 1;
-    this->ui_elements.game_over->hidden = 1;
-    if (this->simulation_ready)
-    {
-        this->ui_elements.title_screen->hidden = 1;
-        if (this->simulation->player_info != RR_NULL_ENTITY)
-        {
-            this->ui_elements.in_game_squad_info->hidden = 0;
-            this->ui_elements.loadout->hidden = 0;
-            if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
-            {
-                this->ui_elements.respawn_label->hidden = this->simulation->game_over;
-                this->ui_elements.game_over->hidden = 1 - this->simulation->game_over;
-            }
-        }
-    }
-
-    struct rr_ui_container_metadata *data = this->global_container->misc_data;
-
-    for (uint32_t i = 0; i < data->elements.size; ++i)
-        if (data->elements.elements[i]->is_resizable_container)
-            rr_ui_container_refactor(data->elements.elements[i]);
-    this->global_container->on_render(this->global_container, this);
-
     gettimeofday(&end, NULL);
     long time_elapsed = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
 
@@ -388,6 +429,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_free_context_state(this->renderer, &state);
         // rr_renderer_stroke_text
     }
+    rr_renderer_free_context_state(this->renderer, &grand_state);
 
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
