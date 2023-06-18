@@ -75,6 +75,7 @@ struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);
 
 struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_loadout_container_init();
+struct rr_ui_element *rr_ui_title_screen_loadout_container_init();
 struct rr_ui_element *rr_ui_squad_container_init();
 struct rr_ui_element *rr_ui_wave_container_init();
 

@@ -29,17 +29,19 @@
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
+
     this->global_container = rr_ui_container_init();
     this->global_container->container = this->global_container;
 
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
-        rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 3,
+        rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
             rr_ui_text_init("rrolf", 72),
             rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
                 rr_ui_text_input_init(360, 40, 15),
                 rr_ui_find_server_button_init()
             ),
-            rr_ui_squad_container_init()
+            rr_ui_squad_container_init(),
+            rr_ui_title_screen_loadout_container_init()
         )
     );
 
@@ -97,6 +99,7 @@ void rr_game_init(struct rr_game *this)
             rr_renderer_set_dimensions(&this->static_petals[i][rarity], 50, 50);
             rr_renderer_translate(&this->static_petals[i][rarity], 25, 25);
             rr_renderer_render_static_petal(&this->static_petals[i][rarity], i, rarity);
+            this->inventory[i][rarity] = 10;
         }
     }
 }
@@ -264,6 +267,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_init_context_state(this->renderer, &pre_state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5);
         this->ui_elements.title_screen->on_render(this->ui_elements.title_screen, this);
+        this->ui_elements.inventory->on_render(this->ui_elements.inventory, this);
         rr_renderer_free_context_state(this->renderer, &pre_state);
     }
     this->ui_elements.respawn_label->hidden = 1;
@@ -271,6 +275,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->ui_elements.title_screen->hidden = 0;
     this->ui_elements.in_game_squad_info->hidden = 1;
     this->ui_elements.game_over->hidden = 1;
+    this->ui_elements.inventory->hidden = this->simulation_ready;
     if (this->simulation_ready)
     {
         this->expanding_circle_radius += 1500 * delta;

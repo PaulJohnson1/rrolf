@@ -6,6 +6,12 @@
 
 #include <Shared/StaticData.h>
 
+struct rr_game_loadout_petal
+{
+    uint8_t id;
+    uint8_t rarity;
+};
+
 struct rr_game_squad_client
 {
     uint8_t in_use:1;
@@ -39,6 +45,8 @@ struct rr_game
     int8_t ticks_until_game_start;
     float expanding_circle_radius;
     struct rr_game_squad_client squad_members[4];
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    struct rr_game_loadout_petal loadout[20];
 };
 
 void rr_game_init(struct rr_game *);

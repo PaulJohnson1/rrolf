@@ -5,6 +5,7 @@
 
 #include <Client/Game.h>
 #include <Client/Simulation.h>
+#include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Ui/Engine.h>
@@ -16,8 +17,26 @@ struct inventory_button_metadata
     uint8_t id;
     uint8_t rarity;
     float lerp_width;
+    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
     float count;
 };
+
+static void inventory_button_on_event(struct rr_ui_element *this, uint8_t type, struct rr_game *game, void *_captures)
+{
+    if (type == 1) //mouse_down
+    {
+        struct inventory_button_metadata *data = this->misc_data;
+        for (uint8_t i = 0; i < 20; ++i)
+        {
+            if (game->loadout[i].id == 0)
+            {
+                game->loadout[i].id = data->id;
+                game->loadout[i].rarity = data->rarity;
+                return;
+            }
+        }
+    }
+}
 
 static void inventory_container_on_render(struct rr_ui_element *this, void *_game)
 {
@@ -56,9 +75,8 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     struct rr_game *game = _game;
     struct rr_renderer *renderer = game->renderer;
     struct inventory_button_metadata *data = this->misc_data;
-    if (game->simulation->player_info == RR_NULL_ENTITY)
-        return;
-    uint32_t count = rr_simulation_get_player_info(game->simulation, game->simulation->player_info)->inv[data->id][data->rarity];
+
+    uint32_t count = game->inventory[data->id][data->rarity];
     if (count == 0)
         return;
     struct rr_renderer_context_state state;
@@ -70,6 +88,13 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[data->rarity]);
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
+    if (rr_button_is_touching_mouse(this, game))
+    {
+        if (game->input_data->mouse_buttons_this_tick & 1)
+            data->on_event(this, 1, game, NULL);
+        if (game->input_data->mouse_buttons & 1)
+            renderer->state.filter.amount += 0.2;
+    }
 
     rr_renderer_init_context_state(renderer, &state2);
     rr_renderer_begin_path(renderer);
@@ -110,6 +135,7 @@ static struct rr_ui_element *rr_ui_inventory_button_init(uint8_t id, uint8_t rar
     data->id = id;
     data->rarity = rarity;
     data->count = 0;
+    data->on_event = inventory_button_on_event;
     element->width = element->height = width;
 
     element->h_justify = 0;

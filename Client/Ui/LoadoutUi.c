@@ -13,12 +13,22 @@
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
 
+struct title_screen_loadout_button_metadata
+{
+    uint8_t position;
+    uint8_t row;
+    uint8_t prev_id;
+    float lerp_width;
+    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
+};
+
 struct loadout_button_metadata
 {
     uint8_t position;
     uint8_t main_loadout;
-    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
+    uint8_t prev_id;
     float lerp_width;
+    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
 };
 
 static void petal_switch_button_event(struct rr_ui_element *this, uint8_t type, struct rr_game *game, void *_captures)
@@ -32,6 +42,17 @@ static void petal_switch_button_event(struct rr_ui_element *this, uint8_t type, 
         rr_websocket_send(&game->socket, encoder.start, encoder.current);
     }
 }
+
+static void petal_remove_button_event(struct rr_ui_element *this, uint8_t type, struct rr_game *game, void *_captures)
+{
+    if (type == 1) //mouse_down
+    {
+        struct title_screen_loadout_button_metadata *data = this->misc_data;
+        uint8_t pos = data->position + data->row * 10;
+        game->loadout[pos].id = 0;
+    }
+}
+
 
 static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
 {
@@ -63,6 +84,49 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_free_context_state(renderer, &state);
 }
 
+static void title_screen_loadout_button_on_render(struct rr_ui_element *this, void *_game)
+{
+    if (this->hidden)
+        return;
+    struct rr_game *game = _game;
+    struct rr_renderer *renderer = game->renderer;
+    struct title_screen_loadout_button_metadata *data = this->misc_data;
+    struct rr_renderer_context_state state;
+
+    rr_renderer_init_context_state(renderer, &state);
+    uint8_t pos = data->row * 10 + data->position;
+    uint8_t id = game->loadout[pos].id;
+    uint8_t rarity = game->loadout[pos].rarity;
+    if (id == 0)
+    {
+        this->animation_timer += 10;
+        if (this->animation_timer >= 100)
+        {
+            this->animation_timer = 100;
+            return;
+        }
+    }
+    else
+    {
+        data->prev_id = id;
+        this->animation_timer -= 10;
+        if (this->animation_timer <= 0)
+            this->animation_timer = 0;
+    }
+    ui_translate(this, renderer);
+    rr_renderer_scale(renderer, renderer->scale * (1 - this->animation_timer / 100));
+    if (rr_button_is_touching_mouse(this, game))
+    {
+        if (game->input_data->mouse_buttons_this_tick & 1)
+            data->on_event(this, 1, game, &data->position);
+    }    
+    rr_renderer_scale(renderer, this->width / 60);
+    rr_renderer_render_background(renderer, rarity);
+    rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][rarity]);
+    
+    rr_renderer_free_context_state(renderer, &state);
+}
+
 static struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main)
 {
     struct rr_ui_element *element = rr_ui_element_init();
@@ -72,6 +136,19 @@ static struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main
     data->on_event = petal_switch_button_event;
     element->width = element->height = main ? 60 : 50;
     element->on_render = loadout_button_on_render;
+    element->misc_data = data;
+    return element;
+}
+
+static struct rr_ui_element *title_screen_loadout_button_init(uint8_t pos, uint8_t row)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    struct title_screen_loadout_button_metadata *data = malloc(sizeof *data);
+    data->position = pos;
+    data->row = row;
+    data->on_event = petal_remove_button_event;
+    element->width = element->height = row ? 50 : 60;
+    element->on_render = title_screen_loadout_button_on_render;
     element->misc_data = data;
     return element;
 }
@@ -102,6 +179,36 @@ struct rr_ui_element *rr_ui_loadout_container_init()
             rr_ui_loadout_button_init(7, 0),
             rr_ui_loadout_button_init(8, 0),
             rr_ui_loadout_button_init(9, 0)
+        )
+    );
+}
+
+struct rr_ui_element *rr_ui_title_screen_loadout_container_init()
+{
+    return rr_ui_v_container_init(rr_ui_container_init(), 20, 20, 2,
+        rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
+            title_screen_loadout_button_init(0, 0),
+            title_screen_loadout_button_init(1, 0),
+            title_screen_loadout_button_init(2, 0),
+            title_screen_loadout_button_init(3, 0),
+            title_screen_loadout_button_init(4, 0),
+            title_screen_loadout_button_init(5, 0),
+            title_screen_loadout_button_init(6, 0),
+            title_screen_loadout_button_init(7, 0),
+            title_screen_loadout_button_init(8, 0),
+            title_screen_loadout_button_init(9, 0)
+        ),
+        rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 10,
+            title_screen_loadout_button_init(0, 1),
+            title_screen_loadout_button_init(1, 1),
+            title_screen_loadout_button_init(2, 1),
+            title_screen_loadout_button_init(3, 1),
+            title_screen_loadout_button_init(4, 1),
+            title_screen_loadout_button_init(5, 1),
+            title_screen_loadout_button_init(6, 1),
+            title_screen_loadout_button_init(7, 1),
+            title_screen_loadout_button_init(8, 1),
+            title_screen_loadout_button_init(9, 1)
         )
     );
 }
