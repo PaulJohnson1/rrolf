@@ -88,8 +88,8 @@ static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
     char out[16];
-    sprintf(&out[0], "Starting in %d", 1 + game->ticks_until_game_start / 25);
-    this->width = rr_renderer_get_text_size((char const *) &out) * this->height;
+    out[sprintf(out, "Starting in %d", 1 + game->ticks_until_game_start / 25)] = 0;
+    this->width = rr_renderer_get_text_size(out) * this->height;
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0xff1dd129);
@@ -100,8 +100,8 @@ static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_text_align(renderer, 1);
     rr_renderer_set_text_baseline(renderer, 1);
 
-    rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
-    rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_stroke_text(renderer, out, 0, 0);
+    rr_renderer_fill_text(renderer, out, 0, 0);
     rr_renderer_free_context_state(renderer, &state);
 }
 
@@ -117,7 +117,7 @@ static struct rr_ui_element *rr_ui_countdown_timer_init()
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->height = 16;
-    element->width = rr_renderer_get_text_size((char const *) "Starting in 5") * element->height;
+    element->width = rr_renderer_get_text_size("Starting in 5") * element->height;
     element->on_render = countdown_text_on_render;
     return element;
 }

@@ -41,6 +41,7 @@ set(SRCS
     ../Shared/Component/Projectile.c
     ../Shared/Component/Relations.c
     ../Shared/Bitset.c
+    ../Shared/cJSON.c
     ../Shared/Crypto.c
     ../Shared/pb.c
     ../Shared/SimulationCommon.c
@@ -71,12 +72,9 @@ else()
     endif()
 endif()
 
-if(RIVET_PRODUCTION_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_PRODUCTION_BUILD")
-endif()
-
-if(RIVET_DEVELOPER_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_DEVELOPER_BUILD")
+if(RIVET_BUILD)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_BUILD")
+    set(SRCS ${SRCS} ../Shared/Rivet.c)
 endif()
 
 add_executable(rrolf-server ${SRCS})

@@ -36,12 +36,12 @@ float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.5, 1.6, 1.1},
-    {4.5, 2.6, 1.3},
-    {9.0, 4.5, 1.5},
-    {15,  8.0, 1.8},
-    {25,  13,  2.2},
-    {50,  25,  2.5}
+    {2.5, 1.6, 1.2},
+    {4.5, 2.6, 1.8},
+    {9.0, 4.5, 2.8},
+    {15,  8.0, 4.2},
+    {25,  13,  6},
+    {50,  25,  10.8}
 };
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75};

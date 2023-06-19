@@ -1,9 +1,9 @@
 FROM ubuntu AS builder
 RUN echo test
-RUN apt-get update && apt-get install --yes make cmake clang libwebsocketpp-dev libboost-dev libcurl4-openssl-dev ca-certificates libwebsockets-dev
+RUN apt-get update && apt-get install --yes make cmake clang libwebsockets-dev libcurl4-openssl-dev ca-certificates
 WORKDIR /usr/src
 COPY . .
-RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_PRODUCTION_BUILD=1 && make
+RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 && make
 FROM ubuntu
 RUN apt-get update && apt-get install --yes ca-certificates libwebsockets-dev
 WORKDIR /usr/src/app

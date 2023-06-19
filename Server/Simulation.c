@@ -402,7 +402,7 @@ void rr_simulation_tick(struct rr_simulation *this)
             this->game_over = 1;
         
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-        uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
+        uint32_t min = 6 < arena->wave ? 6 : arena->wave;
         if (arena->wave_tick == min * 15 * 25)
         {
             arena->wave_tick = 0;
