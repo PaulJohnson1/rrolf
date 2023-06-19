@@ -6,10 +6,12 @@
 #include <Client/Game.h>
 #include <Client/Simulation.h>
 #include <Client/InputData.h>
+#include <Client/Socket.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Ui/Engine.h>
 
+#include <Shared/pb.h>
 #include <Shared/StaticData.h>
 
 struct inventory_button_metadata
@@ -32,6 +34,7 @@ static void inventory_button_on_event(struct rr_ui_element *this, uint8_t type, 
             {
                 game->loadout[i].id = data->id;
                 game->loadout[i].rarity = data->rarity;
+                game->protocol_state |= 1 << i;
                 return;
             }
         }

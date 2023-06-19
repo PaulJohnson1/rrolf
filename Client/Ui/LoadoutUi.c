@@ -50,6 +50,7 @@ static void petal_remove_button_event(struct rr_ui_element *this, uint8_t type, 
         struct title_screen_loadout_button_metadata *data = this->misc_data;
         uint8_t pos = data->position + data->row * 10;
         game->loadout[pos].id = 0;
+        game->protocol_state |= 1 << pos;
     }
 }
 
@@ -78,9 +79,16 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
             data->on_event(this, 1, game, &data->position);
     }    
     rr_renderer_scale(renderer, this->width / 60);
-    rr_renderer_render_background(renderer, rarity);
-    rr_renderer_draw_image(renderer, &game->static_petals[id][rarity]);
-    
+    if (id == 0)
+    {
+        rr_renderer_render_background(renderer, 255);
+    }
+    else
+    {
+        rr_renderer_render_background(renderer, rarity);
+        rr_renderer_draw_image(renderer, &game->static_petals[id][rarity]);
+    }
+
     rr_renderer_free_context_state(renderer, &state);
 }
 
@@ -93,7 +101,6 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
     struct title_screen_loadout_button_metadata *data = this->misc_data;
     struct rr_renderer_context_state state;
 
-    rr_renderer_init_context_state(renderer, &state);
     uint8_t pos = data->row * 10 + data->position;
     uint8_t id = game->loadout[pos].id;
     uint8_t rarity = game->loadout[pos].rarity;
@@ -101,10 +108,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
     {
         this->animation_timer += 10;
         if (this->animation_timer >= 100)
-        {
             this->animation_timer = 100;
-            return;
-        }
     }
     else
     {
@@ -113,17 +117,23 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
         if (this->animation_timer <= 0)
             this->animation_timer = 0;
     }
+    rr_renderer_init_context_state(renderer, &state);
     ui_translate(this, renderer);
-    rr_renderer_scale(renderer, renderer->scale * (1 - this->animation_timer / 100));
+    rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
     {
         if (game->input_data->mouse_buttons_this_tick & 1)
             data->on_event(this, 1, game, &data->position);
     }    
     rr_renderer_scale(renderer, this->width / 60);
-    rr_renderer_render_background(renderer, rarity);
-    rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][rarity]);
-    
+    rr_renderer_render_background(renderer, 255);
+    if (data->prev_id != 0)
+    {
+        rr_renderer_scale(renderer, (1 - this->animation_timer / 100));
+        rr_renderer_render_background(renderer, rarity);
+        rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][rarity]);
+    }
+
     rr_renderer_free_context_state(renderer, &state);
 }
 

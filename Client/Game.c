@@ -32,6 +32,7 @@ void rr_game_init(struct rr_game *this)
 
     this->global_container = rr_ui_container_init();
     this->global_container->container = this->global_container;
+    this->protocol_state = (1 << 20) - 1;
 
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
         rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
@@ -148,34 +149,58 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
+        {
             this->simulation_ready = 1;
             rr_simulation_read_binary(this->simulation, &encoder);
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 0, "header");
+            proto_bug_write_uint8(&encoder2, 0, "movement type");
+            uint8_t movement_flags = 0;
+            movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 87) || rr_bitset_get(this->input_data->keys_pressed, 38)) << 0;
+            movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 65) || rr_bitset_get(this->input_data->keys_pressed, 37)) << 1;
+            movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 83) || rr_bitset_get(this->input_data->keys_pressed, 40)) << 2;
+            movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 68) || rr_bitset_get(this->input_data->keys_pressed, 39)) << 3;
+            movement_flags |= this->input_data->mouse_buttons << 4;
+            movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
+            movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
+            proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
+            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             break;
+        }
         case 69:
+        {
             this->ticks_until_game_start = proto_bug_read_uint8(&encoder, "countdown");
             for (uint32_t i = 0; i < 4; ++i)
             {
                 this->squad_members[i].in_use = proto_bug_read_uint8(&encoder, "bitbit");
                 this->squad_members[i].ready = proto_bug_read_uint8(&encoder, "ready");
+                for (uint32_t j = 0; j < 20; ++j)
+                {
+                    this->squad_members[i].loadout[j].id = proto_bug_read_uint8(&encoder, "id");
+                    this->squad_members[i].loadout[j].rarity = proto_bug_read_uint8(&encoder, "rar");
+                }
             }
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 70, "header");
+            for (uint32_t i = 0; i < 20; ++i)
+            {
+                if (this->protocol_state | (1 << i))
+                {
+                    proto_bug_write_uint8(&encoder2, i + 1, "pos");
+                    proto_bug_write_uint8(&encoder2, this->loadout[i].id, "id");
+                    proto_bug_write_uint8(&encoder2, this->loadout[i].rarity, "rar");
+                }
+            }
+            proto_bug_write_uint8(&encoder2, 0, "pos");
+            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            this->protocol_state = 0;
             break;
+        }
         default:
             RR_UNREACHABLE("how'd this happen");
         }
-        struct proto_bug encoder2;
-        proto_bug_init(&encoder2, output_packet);
-        proto_bug_write_uint8(&encoder2, 0, "header");
-        proto_bug_write_uint8(&encoder2, 0, "movement type");
-        uint8_t movement_flags = 0;
-        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 87) || rr_bitset_get(this->input_data->keys_pressed, 38)) << 0;
-        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 65) || rr_bitset_get(this->input_data->keys_pressed, 37)) << 1;
-        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 83) || rr_bitset_get(this->input_data->keys_pressed, 40)) << 2;
-        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 68) || rr_bitset_get(this->input_data->keys_pressed, 39)) << 3;
-        movement_flags |= this->input_data->mouse_buttons << 4;
-        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
-        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
-        proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
-        rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
         break;
     }
     default:
@@ -261,7 +286,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     for (uint32_t i = 0; i < data->elements.size; ++i)
         if (data->elements.elements[i]->is_resizable_container)
             rr_ui_container_refactor(data->elements.elements[i]);
-    //this->global_container->on_render(this->global_container, this);
     {
         struct rr_renderer_context_state pre_state;
         rr_renderer_init_context_state(this->renderer, &pre_state);
@@ -301,15 +325,15 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (this->expanding_circle_radius < 0)
             this->expanding_circle_radius = 0;
     }
+
     if (this->expanding_circle_radius > 0 && this->expanding_circle_radius < 1500)
     {
         rr_renderer_begin_path(this->renderer);
         rr_renderer_set_fill(this->renderer, 0xff20a464);
-        rr_renderer_arc(this->renderer, this->renderer->width / 2, this->renderer->height / 2, this->expanding_circle_radius * this->renderer->scale);
+        rr_renderer_arc(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5, this->expanding_circle_radius * this->renderer->scale);
         rr_renderer_fill(this->renderer);
         rr_renderer_clip(this->renderer);
     }
-    printf("eradsdsd %f\n", this->expanding_circle_radius);
     
     if (this->expanding_circle_radius > 0)
     {

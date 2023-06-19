@@ -35,22 +35,6 @@ void rr_component_player_info_init(struct rr_component_player_info *this, struct
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
-#ifdef RR_SERVER
-    for (uint64_t i = 0; i < 10; ++i)
-    {
-        uint8_t id = rand() % (rr_petal_id_max - 1) + 1;
-        uint8_t rarity = rr_rarity_id_ultra;
-        this->slots[i].rarity = rarity;
-        this->slots[i].id = id;
-        // this->slots[i].data = &RR_PETAL_DATA[id];
-        this->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        id = rand() % (rr_petal_id_max - 1) + 1;
-        rarity = rr_rarity_id_ultra;
-        this->secondary_slots[i].rarity = rarity;
-        this->secondary_slots[i].id = id;
-        // this->slots[i].data = &RR_PETAL_DATA[id];
-    }
-#endif
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this, struct rr_simulation *simulation)

@@ -17,9 +17,9 @@ struct rr_server_client
     struct rr_component_player_info *player_info;
     struct rr_server *server;
     int file_descriptor;
-    uint8_t received_first_packet:1;
-    uint8_t verified:1;
-    uint8_t ready:1;
+    uint8_t received_first_packet;
+    uint8_t verified;
+    uint8_t ready;
 
     struct rr_server_client_loadout_petal loadout[20];
     char client_nickname[16];

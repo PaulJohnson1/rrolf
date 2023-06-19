@@ -14,8 +14,9 @@ struct rr_game_loadout_petal
 
 struct rr_game_squad_client
 {
-    uint8_t in_use:1;
-    uint8_t ready:1;
+    uint8_t in_use;
+    uint8_t ready;
+    struct rr_game_loadout_petal loadout[20];
 };
 
 struct rr_global_elements
@@ -46,7 +47,9 @@ struct rr_game
     float expanding_circle_radius;
     struct rr_game_squad_client squad_members[4];
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    //stuff
     struct rr_game_loadout_petal loadout[20];
+    uint32_t protocol_state;
 };
 
 void rr_game_init(struct rr_game *);
