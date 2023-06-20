@@ -51,13 +51,13 @@
 [cdn]
 	# Command to run before uploading the site to Rivet. This can be used to
 	# build any JavaScript bundles or generate assets.
-	build_command = "cd Client && rm -rf build/ && mkdir build; cd build && cmake .. -DWASM_BUILD=1 -DRIVET_PRODUCTION_BUILD=1 && make && mv rrolf-client ../public/rrolf-client && mv rrolf-client.wasm ../public/rrolf-client.wasm"
-
+	build_command = "echo nothing"
+	
 	# The folder to upload to Rivet.
 	#
 	# If you're hosting a website, ensure that `index.html` is in the root of
 	# this folder.
-	build_output = "Client/public/"
+	build_output = "RivetStaticPage"
 
 [kv]
 

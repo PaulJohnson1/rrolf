@@ -15,6 +15,7 @@
 #include <Shared/Vector.h>
 #include <Server/Client.h>
 #include <Server/Simulation.h>
+#include <Server/Logs.h>
 
 #include <libwebsockets.h>
 
@@ -94,7 +95,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         }
         rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
-        //send squad info
+        // send squad info
     }
 }
 
@@ -115,6 +116,11 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 this->clients[i].server = this;
                 this->clients[i].file_descriptor = lws_get_socket_fd(socket);
                 this->clients[i].socket_handle = socket;
+                lws_get_peer_simple(socket, this->clients[i].ip_address, 100);
+                char log[100] = {"ip: `"};
+                strcat(log, this->clients[i].ip_address);
+                strcat(log, "`");
+                rr_discord_webhook_log("player status", "client connected", log, 0x44ff44);
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
@@ -143,6 +149,10 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 {
                     rr_bitset_unset(this->clients_in_use, i);
                     rr_server_client_free(this->clients + i);
+                    char log[100] = {"ip: `"};
+                    strcat(log, this->clients[i].ip_address);
+                    strcat(log, "`");
+                    rr_discord_webhook_log("player status", "client disconnected", log, 0xff4444);
                     return 0;
                 }
             }
@@ -176,7 +186,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
 
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
-        
+
         if (!client->received_first_packet)
         {
             client->received_first_packet = 1;
@@ -273,7 +283,6 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                     rr_component_health_set_health(health, 0);
                     rr_component_physical_set_server_animation_tick(physical, 6);
                 }
-
             }
             uint8_t temp = slot->id;
             slot->id = s_slot->id;
@@ -328,7 +337,7 @@ void rr_server_tick(struct rr_server *this)
 {
     if (this->simulation_active)
         rr_simulation_tick(&this->simulation);
-    
+
     uint8_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i))
@@ -375,7 +384,7 @@ void rr_server_tick(struct rr_server *this)
 
 void rr_server_run(struct rr_server *this)
 {
-    //this->simulation_active = 1;
+    // this->simulation_active = 1;
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
 
@@ -404,8 +413,8 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        //if (elapsed_time > 100)
-            //printf("tick took %ld microseconds\n", elapsed_time);
+        // if (elapsed_time > 100)
+        // printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }

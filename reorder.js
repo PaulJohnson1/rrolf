@@ -1,4 +1,5 @@
 const fs = require("fs");
+const crypto = require("crypto");
 
 const filePath = "Shared/Entity.h";
 
@@ -10,6 +11,16 @@ function shuffleArray(array)
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
+}
+
+function modify_magic_number(data)
+{
+    return `#pragma once
+
+#define RR_SECRET64 (${crypto.randomBytes(8).readBigUInt64LE().toString()}ull)
+#define RR_SECRET32 (RR_SECRET64 & 4294967295u)
+#define RR_SECRET8 (RR_SECRET32 & 255)
+    `    
 }
 
 function modify_component_list(data)
@@ -156,6 +167,7 @@ function modify_file(name, cb)
 }
 
 modify_file("/Shared/Entity.h",               modify_component_list);
+modify_file("/Shared/MagicNumber.h",          modify_magic_number);
 modify_file("/Shared/Component/Arena.c",      modify_field_list);
 modify_file("/Shared/Component/Drop.c",       modify_field_list);
 modify_file("/Shared/Component/Flower.c",     modify_field_list);

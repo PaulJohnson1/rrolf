@@ -43,6 +43,8 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
     rr_component_arena_set_radius(comp, RR_ARENA_RADIUS);
 
+    printf("simulation size: %lu\n", sizeof *this);
+
 #define XX(COMPONENT, ID)                       \
     printf(#COMPONENT); \
     printf(" size is %lu\n", sizeof *this->COMPONENT##_components);

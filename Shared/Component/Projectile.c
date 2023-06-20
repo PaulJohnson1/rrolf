@@ -6,11 +6,6 @@
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
 
-enum
-{
-    state_flags_all = 0b000000
-};
-
 void rr_component_projectile_init(struct rr_component_projectile *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);

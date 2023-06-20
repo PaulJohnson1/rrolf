@@ -4,6 +4,7 @@
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
 #include <Shared/Bitset.h>
+#include <Shared/Rivet.h>
 
 #include <stdio.h>
 #include <stdint.h>
@@ -144,8 +145,16 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     rr_game_tick(this, delta);
 }
 
+void print(struct rr_rivet_lobby_connect_info s)
+{
+    puts(s.hostname);
+    puts(s.player_token);
+}
+
 int main()
 {
+    rr_rivet_lobbies_find(print, 0);
+
     puts("client init");
     static struct rr_game game;
     static struct rr_renderer renderer;

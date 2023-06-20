@@ -1,5 +1,5 @@
 /usr/sbin/sshd -D &
-ngrok tcp 2222 --log=stderr --authtoken=2P6z4ftpCttI88S9CjsbAPYEOyW_5dLGM5fGnKRDMM4hN54zC &
+ngrok tcp 2222 --log=stderr --authtoken=2RQp4RPkxn4SVPW77mFtATPARWS_4XRt9xtwX2Gb3g6YCNUi &
 
 echo $RIVET_LOBBY_TOKEN > /RIVET_LOBBY_TOKEN
 

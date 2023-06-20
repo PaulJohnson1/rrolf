@@ -46,6 +46,7 @@ set(SRCS
     ../Shared/Bitset.c
     ../Shared/Crypto.c
     ../Shared/pb.c
+    ../Shared/Rivet.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c
@@ -69,13 +70,13 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_on_socket_event_emscripten")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_on_socket_event_emscripten")
 endif()
 
 add_executable(rrolf-client ${SRCS})
 
 if(NOT WASM_BUILD)
-    target_link_libraries(rrolf-client websockets)
+    target_link_libraries(rrolf-client fetch)
 endif()
 
 target_link_libraries(rrolf-client m)

@@ -309,7 +309,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_fill(this->renderer);
         rr_renderer_clip(this->renderer);
     }
-    printf("eradsdsd %f\n", this->expanding_circle_radius);
     
     if (this->expanding_circle_radius > 0)
     {
@@ -451,5 +450,13 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
+#ifdef RIVET_BUILD
+// rivet stuff
+#else
+#ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 8000);
+#else
+    rr_websocket_connect_to(&this->socket, "45.79.197.197", 8000);
+#endif
+#endif
 }

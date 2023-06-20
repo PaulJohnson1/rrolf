@@ -1,4 +1,5 @@
 build/
+frontend_release_build/
 
 rrolf-client
 rrolf-client.wasm

@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 project(rrolf-server)
 include_directories(..)
 if (WINDOWS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_WINDOWS")
     include_directories(/c/libwebsockets)
     include_directories(/c/libwebsockets/include)
     include_directories(/c/openssl/include)
@@ -50,7 +51,7 @@ set(SRCS
     ../Shared/Vector.c
 )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1 -DHSHG_D=2 -DHSHG_UNIFORM=1")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1")
 set(CMAKE_C_COMPILER "clang")
 
 # release by default
@@ -62,9 +63,9 @@ if(DEBUG_BUILD)
         add_link_options(-fsanitize=undefined,address)
     endif()
 elseif(CALLGRIND_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -march=native")
 else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast -DHSHG_NDEBUG")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -Ofast")
     # link time optimiations
     if(WINDOWS)
     else()

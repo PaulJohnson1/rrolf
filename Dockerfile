@@ -3,19 +3,17 @@ RUN echo test
 RUN apt-get update && apt-get install --yes make cmake clang libwebsockets-dev libcurl4-openssl-dev ca-certificates
 WORKDIR /usr/src
 COPY . .
-RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 && make
+RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make
 FROM ubuntu
-RUN apt-get update && apt-get install --yes ca-certificates libwebsockets-dev
+RUN apt-get update && apt-get install --yes ca-certificates libwebsockets-dev libcurl4-openssl-dev
 WORKDIR /usr/src/app
-# COPY --from=builder /usr/src/rrolf-server .
-COPY --from=builder /usr/src/ .
+COPY --from=builder /usr/src/rrolf-server .
 # maybe a better way? I don't want to copy every SO
-COPY --from=builder /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
+# COPY --from=builder /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
 CMD ./rrolf-server
 
-
-# # a simple ssh server
-# # FROM ubuntu
+# a simple ssh server
+# FROM ubuntu
 # RUN apt-get update
 # RUN apt-get install --yes --no-install-recommends openssh-server wget unzip
 # RUN mkdir /var/run/sshd
