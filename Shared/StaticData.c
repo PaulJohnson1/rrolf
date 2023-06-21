@@ -46,6 +46,10 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde, 0xffde1f1f, 0xff1fdbde, 0xffff2b75};
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {"Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
+char const *RR_PETAL_NAMES[rr_petal_id_max] = {"","Basic","Light","Rock","Stinger","Faster","Missile","Peas","Leaf"};
+char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {"","It's just a petal","No fee, I'm traveling light","Dwayne","Ow that hurts","Gotta go fast","ICBM approved","Where are the zombies?","Probably the most normal petal there is. Oh wait"};
+
+
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 10, 20, 5, 5};
 uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {5, 5, 5, 5, 5, 5, 5};

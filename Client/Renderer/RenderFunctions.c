@@ -338,9 +338,9 @@ void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
 {
     if (rarity == 255)
     {
-        rr_renderer_set_fill(renderer, 0xffaaaaaa);
+        rr_renderer_set_fill(renderer, 0xffcccccc);
         renderer->state.filter.amount = 0.2;
-        rr_renderer_set_stroke(renderer, 0xffaaaaaa);
+        rr_renderer_set_stroke(renderer, 0xffcccccc);
         rr_renderer_set_line_width(renderer, 6);
         rr_renderer_begin_path(renderer);
         rr_renderer_round_rect(renderer, -30, -30, 60, 60, 6);

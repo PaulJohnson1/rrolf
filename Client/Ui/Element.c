@@ -43,6 +43,14 @@ struct rr_ui_element *rr_ui_element_init()
     return element;
 }
 
+struct rr_ui_element *rr_ui_static_space_init(float s)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->width = element->height = s;
+    element->on_render = default_on_render;
+    return element;
+}
+
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *a, struct rr_ui_element *b)
 {
     struct rr_ui_element *element = rr_ui_element_init();

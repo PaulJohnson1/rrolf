@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 #include <sys/time.h>
 
 #ifndef EMSCRIPTEN
@@ -36,7 +37,7 @@ void rr_game_init(struct rr_game *this)
 
     this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
         rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
-            rr_ui_text_init("rrolf", 72),
+            rr_ui_text_init("rrolf", 72, 0xffffffff),
             rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
                 rr_ui_text_input_init(360, 40, 15),
                 rr_ui_find_server_button_init()
@@ -49,8 +50,8 @@ void rr_game_init(struct rr_game *this)
     this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_init("You died", 72),
-                rr_ui_text_init("You will spawn back in next wave", 36)
+                rr_ui_text_init("You died", 72, 0xffffffff),
+                rr_ui_text_init("You will spawn back in next wave", 36, 0xffffffff)
             )
         , 1, 1)
     );
@@ -58,8 +59,8 @@ void rr_game_init(struct rr_game *this)
     this->ui_elements.game_over = rr_ui_container_add_element(this->global_container, 
         rr_ui_set_justify(
             rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_init("Game Over", 72),
-                rr_ui_text_init("You many now exit the squad", 36)
+                rr_ui_text_init("Game Over", 72, 0xffffffff),
+                rr_ui_text_init("You many now exit the squad", 36, 0xffffffff)
             )
         , 1, 1)
     );
@@ -92,15 +93,43 @@ void rr_game_init(struct rr_game *this)
         , 15)
     );
 
-    for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            rr_renderer_init(&this->static_petals[i][rarity]);
-            rr_renderer_set_dimensions(&this->static_petals[i][rarity], 50, 50);
-            rr_renderer_translate(&this->static_petals[i][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[i][rarity], i, rarity);
-            this->inventory[i][rarity] = 10;
+            rr_renderer_init(&this->static_petals[id][rarity]);
+            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
+            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
+            rr_renderer_render_static_petal(&this->static_petals[id][rarity], id, rarity);
+            this->inventory[id][rarity] = 10;
+            char *cd = malloc((sizeof *cd) * 8);
+            cd[sprintf(cd, "%.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
+            char *hp = malloc((sizeof *hp) * 8);
+            hp[sprintf(hp, "%.1f", RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity])] = 0;
+            char *dmg = malloc((sizeof *dmg) * 8);
+            dmg[sprintf(dmg, "%.1f", RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] / RR_PETAL_DATA[id].count[rarity])] = 0;
+            rr_ui_container_refactor(this->petal_tooltips[id][rarity] = rr_ui_set_background(rr_ui_v_container_init(rr_ui_container_init(), 10, 5, 6,
+                    rr_ui_h_container_init(rr_ui_flex_container_init(), 0, 20, 2,
+                        rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), 0, 0),
+                        rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 2, 0)
+                    ),
+                    rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16, RR_RARITY_COLORS[rarity]), 0, 0),
+                    rr_ui_static_space_init(10),
+                    rr_ui_set_justify(rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), 0, 0),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Health: ", 12, 0xff44ff44),
+                            rr_ui_text_init(hp, 12, 0xff44ff44)
+                        )
+                    , 0, 0),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Damage: ", 12, 0xffff4444),
+                            rr_ui_text_init(dmg, 12, 0xffff4444)
+                        )
+                    , 0, 0)
+                )
+            , 0x80000000));
         }
     }
 }
@@ -284,7 +313,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct rr_ui_container_metadata *data = this->global_container->misc_data;
 
     for (uint32_t i = 0; i < data->elements.size; ++i)
-        if (data->elements.elements[i]->is_resizable_container)
+        if (data->elements.elements[i]->container_flags & 1)
             rr_ui_container_refactor(data->elements.elements[i]);
     {
         struct rr_renderer_context_state pre_state;

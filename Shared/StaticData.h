@@ -72,6 +72,8 @@ struct rr_mob_rarity_scale
 };
 
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
+extern char const *RR_PETAL_NAMES[rr_petal_id_max];
+extern char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max];
 extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern float RR_PETAL_RARITY_SCALE[rr_rarity_id_max];

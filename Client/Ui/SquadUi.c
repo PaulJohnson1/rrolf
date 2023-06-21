@@ -36,6 +36,7 @@ static void flower_icon_on_render(struct rr_ui_element *this, void *_game)
     struct rr_game *game = _game;
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
+    struct squad_container_metadata *spot = this->misc_data;
     rr_renderer_init_context_state(renderer, &state);
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
@@ -84,7 +85,7 @@ static void flower_icon_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -6, 10);
-    rr_renderer_quadratic_curve_to(renderer, 0, 15, 6, 10);
+    rr_renderer_quadratic_curve_to(renderer, 0, (5 + 10 * game->squad_members[spot->pos].ready), 6, 10);
     rr_renderer_stroke(renderer);
     rr_renderer_free_context_state(renderer, &state);
 }
@@ -103,8 +104,7 @@ static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
     ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0xff1dd129);
-    renderer->state.filter.amount += 0.2;
-    rr_renderer_set_stroke(renderer, 0xff1dd129);
+    rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_text_size(renderer, this->height);
     rr_renderer_set_line_width(renderer, this->height * 0.12);
     rr_renderer_set_text_align(renderer, 1);
@@ -154,11 +154,14 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this, void *_ga
     rr_renderer_free_context_state(renderer, &state);
 }
 
-static struct rr_ui_element *rr_ui_flower_icon_init(float radius)
+static struct rr_ui_element *rr_ui_flower_icon_init(float radius, uint8_t spot)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->width = element->height = radius * 2;
     element->on_render = flower_icon_on_render;
+    struct squad_container_metadata *data = malloc(sizeof *data);
+    data->pos = spot;
+    element->misc_data = data;
     return element;
 }
 
@@ -188,8 +191,8 @@ static struct rr_ui_element *rr_ui_squad_player_container_init(uint8_t spot)
 {
     struct rr_ui_element *a = rr_ui_v_container_init(
         rr_ui_container_init(), 10, 10, 3,
-        rr_ui_flower_icon_init(25),
-        rr_ui_text_init("Flower", 16),
+        rr_ui_flower_icon_init(25, spot),
+        rr_ui_text_init("Flower", 16, 0xffffffff),
         rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 4,
             rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 5,
                 rr_ui_squad_loadout_icon_init(spot, 0, 0),
@@ -221,7 +224,7 @@ static struct rr_ui_element *rr_ui_squad_player_container_init(uint8_t spot)
             )
         )
     );
-    struct rr_ui_element *b = rr_ui_text_init("Empty", 16);
+    struct rr_ui_element *b = rr_ui_text_init("Empty", 16, 0xffffffff);
     struct rr_ui_element *choose = rr_ui_choose_element_init(a, b);
     struct rr_ui_choose_element_metadata *data = choose->misc_data;
     data->info = spot;
@@ -237,7 +240,7 @@ struct rr_ui_element *rr_ui_squad_container_init()
 {
     return rr_ui_set_background(
         rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
-            rr_ui_text_init("Squad", 24),
+            rr_ui_text_init("Squad", 24, 0xffffffff),
             rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 4,
                 rr_ui_squad_player_container_init(0),
                 rr_ui_squad_player_container_init(1),

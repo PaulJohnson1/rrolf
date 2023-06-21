@@ -40,7 +40,7 @@ struct rr_ui_element
     uint8_t h_justify;
     uint8_t v_justify;
     uint8_t hidden;
-    uint8_t is_resizable_container;
+    uint8_t container_flags;
     float x;
     float y;
     float lerp_x;
@@ -50,6 +50,7 @@ struct rr_ui_element
     float animation_timer;
     void (*on_render)(struct rr_ui_element *, void *);
     struct rr_ui_element *container;
+    struct rr_ui_element *tooltip; //shouldn't be an element tbh
     void *misc_data;
 };
 
@@ -60,6 +61,7 @@ void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
 
 /* inits */
 struct rr_ui_element *rr_ui_element_init();
+struct rr_ui_element *rr_ui_static_space_init(float);
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_button_init();
@@ -67,9 +69,10 @@ struct rr_ui_element *rr_ui_find_server_button_init();
 struct rr_ui_element *rr_ui_paired_button_init(struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_container_init();
+struct rr_ui_element *rr_ui_flex_container_init();
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
-struct rr_ui_element *rr_ui_text_init(char const *, float);
+struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
 
 struct rr_ui_element *rr_ui_text_input_init(float, float, uint8_t);
 

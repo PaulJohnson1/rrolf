@@ -80,53 +80,77 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     struct inventory_button_metadata *data = this->misc_data;
 
     uint32_t count = game->inventory[data->id][data->rarity];
-    if (count == 0)
-        return;
+    for (uint8_t i = 0; i < 20; ++i)
+    {
+        if (game->loadout[i].id == data->id && game->loadout[i].rarity == data->rarity)
+            --count;
+    }
     struct rr_renderer_context_state state;
     struct rr_renderer_context_state state2;
     rr_renderer_init_context_state(renderer, &state);
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[data->rarity]);
-    rr_renderer_set_line_width(renderer, this->width * 0.1);
-    renderer->state.filter.amount = 0.2;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[data->rarity]);
     ui_translate(this, renderer);
-    rr_renderer_scale(renderer, renderer->scale);
-    if (rr_button_is_touching_mouse(this, game))
+
+    if (count == 0)
     {
-        if (game->input_data->mouse_buttons_this_tick & 1)
-            data->on_event(this, 1, game, NULL);
-        if (game->input_data->mouse_buttons & 1)
-            renderer->state.filter.amount += 0.2;
+        rr_renderer_scale(renderer, renderer->scale * this->width / 60);
+        rr_renderer_render_background(renderer, 255);
     }
+    else
+    {
+        rr_renderer_init_context_state(renderer, &state2);
+        if (rr_button_is_touching_mouse(this, game))
+        {
+            if (game->input_data->mouse_buttons_this_tick & 1)
+                data->on_event(this, 1, game, NULL);
+            if (game->input_data->mouse_buttons & 1)
+                renderer->state.filter.amount += 0.2;
+            else
+            {
+                //render a tooltip ez
+                this->tooltip = game->petal_tooltips[data->id][data->rarity];
+                struct rr_renderer_context_state state3;
+                rr_renderer_init_context_state(renderer, &state3);
+                float width = this->tooltip->width;
+                float height = this->tooltip->height;
+                float pad = 10;
+                float *matrix = renderer->state.transform_matrix;
+                float x = matrix[2];
+                float y = matrix[5];
+                if (y - this->height * 0.5 - pad - height - pad > 0)
+                {
+                    rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));
+                    this->tooltip->on_render(this->tooltip, game);
+                }
+                else
+                {
+                    rr_renderer_translate(renderer, 0, renderer->scale * (this->height * 0.5 + pad + height * 0.5));
+                    this->tooltip->on_render(this->tooltip, game);
+                }
+                rr_renderer_free_context_state(renderer, &state3);
+            }
+        }
+        rr_renderer_scale(renderer, renderer->scale * this->width / 60);
+        rr_renderer_render_background(renderer, data->rarity);
+        
+        renderer->state.filter.amount = 0;
+        rr_renderer_draw_image(renderer, &game->static_petals[data->id][data->rarity]);
+        rr_renderer_free_context_state(renderer, &state2);
+        renderer->state.filter.amount = 0;
 
-    rr_renderer_init_context_state(renderer, &state2);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 5);
-    rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    rr_renderer_clip(renderer);
+        rr_renderer_translate(renderer, 20, -20);
+        rr_renderer_rotate(renderer, 0.5);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_text_align(renderer, 1);
+        rr_renderer_set_text_baseline(renderer, 1);
+        rr_renderer_set_text_size(renderer, 15);
+        rr_renderer_set_line_width(renderer, 15 * 0.12);
 
-    rr_renderer_scale(renderer, this->width * 0.02);
-    
-    renderer->state.filter.amount = 0;
-    rr_renderer_draw_image(renderer, &game->static_petals[data->id][data->rarity]);
-    //rr_renderer_render_static_petal(renderer, data->id, data->rarity);
-    rr_renderer_free_context_state(renderer, &state2);
-    renderer->state.filter.amount = 0;
-
-    rr_renderer_translate(renderer, 20, -20);
-    rr_renderer_rotate(renderer, 0.5);
-    rr_renderer_set_fill(renderer, 0xffffffff);
-    rr_renderer_set_stroke(renderer, 0xff222222);
-    rr_renderer_set_text_align(renderer, 1);
-    rr_renderer_set_text_baseline(renderer, 1);
-    rr_renderer_set_text_size(renderer, 15);
-    rr_renderer_set_line_width(renderer, 15 * 0.12);
-
-    char out[12];
-    sprintf(&out[0], "x%d", count);
-    rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
-    rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+        char out[12];
+        sprintf(&out[0], "x%d", count);
+        rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
+        rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+    }
     
     rr_renderer_free_context_state(renderer, &state);
 }
