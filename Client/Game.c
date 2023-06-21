@@ -103,7 +103,7 @@ void rr_game_init(struct rr_game *this)
             rr_renderer_render_static_petal(&this->static_petals[id][rarity], id, rarity);
             this->inventory[id][rarity] = 10;
             char *cd = malloc((sizeof *cd) * 8);
-            cd[sprintf(cd, "%.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
+            cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
             char *hp = malloc((sizeof *hp) * 8);
             hp[sprintf(hp, "%.1f", RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity])] = 0;
             char *dmg = malloc((sizeof *dmg) * 8);

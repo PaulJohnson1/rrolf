@@ -106,11 +106,9 @@ void rr_main_renderer_initialize(struct rr_game *this)
         };
         Module.ReadCstr = function(ptr)
         {
-            let str = "";
-            let char;
-            while ((char = Module.HEAPU8[ptr++]))
-                str += String.fromCharCode(char);
-            return str;
+            const start = ptr;
+            while (Module.HEAPU8[ptr++]);
+            return new TextDecoder().decode(Module.HEAPU8.subarray(start, ptr));
         };
         function loop(time)
         {

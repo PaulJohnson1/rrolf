@@ -22,6 +22,8 @@ void ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
     this->lerp_y = rr_lerp(this->lerp_y, this->y, 0.2);
     rr_renderer_translate(renderer, (this->lerp_x + (this->h_justify - 1) * this->container->width / 2) * renderer->scale, 
     (this->lerp_y + (this->v_justify - 1) * this->container->height / 2) * renderer->scale); // necessary btw
+    this->abs_x = renderer->state.transform_matrix[2];
+    this->abs_y = renderer->state.transform_matrix[5];
 }
 
 void rr_ui_choose_element_on_render(struct rr_ui_element *this, void *_game)

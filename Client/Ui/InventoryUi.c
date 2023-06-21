@@ -116,6 +116,14 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
                 float *matrix = renderer->state.transform_matrix;
                 float x = matrix[2];
                 float y = matrix[5];
+                if (x - width / 2 < 10)
+                {
+                    rr_renderer_translate(renderer, 10 + width / 2 - x, 0);
+                }
+                else if (x + width / 2 > renderer->width - 10)
+                {
+                    rr_renderer_translate(renderer, renderer->width - width / 2 - 10 - x, 0);
+                }
                 if (y - this->height * 0.5 - pad - height - pad > 0)
                 {
                     rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));

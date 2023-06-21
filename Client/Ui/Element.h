@@ -45,6 +45,8 @@ struct rr_ui_element
     float y;
     float lerp_x;
     float lerp_y;
+    float abs_x;
+    float abs_y;
     float width;
     float height;
     float animation_timer;
