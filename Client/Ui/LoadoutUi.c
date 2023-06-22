@@ -81,25 +81,7 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
         {
             //render a tooltip ez
             this->tooltip = game->petal_tooltips[id][rarity];
-            struct rr_renderer_context_state state3;
-            rr_renderer_init_context_state(renderer, &state3);
-            float width = this->tooltip->width;
-            float height = this->tooltip->height;
-            float pad = 10;
-            float *matrix = renderer->state.transform_matrix;
-            float x = matrix[2];
-            float y = matrix[5];
-            if (y - this->height * 0.5 - pad - height - pad > 0)
-            {
-                rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));
-                this->tooltip->on_render(this->tooltip, game);
-            }
-            else
-            {
-                rr_renderer_translate(renderer, 0, renderer->scale * (this->height * 0.5 + pad + height * 0.5));
-                this->tooltip->on_render(this->tooltip, game);
-            }
-            rr_renderer_free_context_state(renderer, &state3);
+            rr_ui_render_tooltip(this, game);
         }
     }    
     rr_renderer_scale(renderer, this->width / 60);
@@ -152,25 +134,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
         {
             //render a tooltip ez
             this->tooltip = game->petal_tooltips[id][rarity];
-            struct rr_renderer_context_state state3;
-            rr_renderer_init_context_state(renderer, &state3);
-            float width = this->tooltip->width;
-            float height = this->tooltip->height;
-            float pad = 10;
-            float *matrix = renderer->state.transform_matrix;
-            float x = matrix[2];
-            float y = matrix[5];
-            if (y - this->height * 0.5 - pad - height - pad > 0)
-            {
-                rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));
-                this->tooltip->on_render(this->tooltip, game);
-            }
-            else
-            {
-                rr_renderer_translate(renderer, 0, renderer->scale * (this->height * 0.5 + pad + height * 0.5));
-                this->tooltip->on_render(this->tooltip, game);
-            }
-            rr_renderer_free_context_state(renderer, &state3);
+            rr_ui_render_tooltip(this, game);
         }
     }    
     rr_renderer_scale(renderer, this->width / 60);

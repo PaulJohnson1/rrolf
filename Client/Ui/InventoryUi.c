@@ -108,33 +108,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
             {
                 //render a tooltip ez
                 this->tooltip = game->petal_tooltips[data->id][data->rarity];
-                struct rr_renderer_context_state state3;
-                rr_renderer_init_context_state(renderer, &state3);
-                float width = this->tooltip->width;
-                float height = this->tooltip->height;
-                float pad = 10;
-                float *matrix = renderer->state.transform_matrix;
-                float x = matrix[2];
-                float y = matrix[5];
-                if (x - width / 2 < 10)
-                {
-                    rr_renderer_translate(renderer, 10 + width / 2 - x, 0);
-                }
-                else if (x + width / 2 > renderer->width - 10)
-                {
-                    rr_renderer_translate(renderer, renderer->width - width / 2 - 10 - x, 0);
-                }
-                if (y - this->height * 0.5 - pad - height - pad > 0)
-                {
-                    rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));
-                    this->tooltip->on_render(this->tooltip, game);
-                }
-                else
-                {
-                    rr_renderer_translate(renderer, 0, renderer->scale * (this->height * 0.5 + pad + height * 0.5));
-                    this->tooltip->on_render(this->tooltip, game);
-                }
-                rr_renderer_free_context_state(renderer, &state3);
+                rr_ui_render_tooltip(this, game);
             }
         }
         rr_renderer_scale(renderer, renderer->scale * this->width / 60);

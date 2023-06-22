@@ -60,6 +60,7 @@ struct rr_ui_element
 void ui_translate(struct rr_ui_element *, struct rr_renderer *);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
+void rr_ui_render_tooltip(struct rr_ui_element *, struct rr_game *);
 
 /* inits */
 struct rr_ui_element *rr_ui_element_init();

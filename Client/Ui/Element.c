@@ -36,6 +36,29 @@ void rr_ui_choose_element_on_render(struct rr_ui_element *this, void *_game)
         data->a->on_render(data->a, _game);
 }
 
+void rr_ui_render_tooltip(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_renderer *renderer = game->renderer;
+    struct rr_renderer_context_state state3;
+    rr_renderer_init_context_state(renderer, &state3);
+    float width = this->tooltip->width;
+    float height = this->tooltip->height;
+    float pad = 10;
+    float *matrix = renderer->state.transform_matrix;
+    float x = matrix[2];
+    float y = matrix[5];
+    if (x - width / 2 < 10)
+        rr_renderer_translate(renderer, renderer->scale * (10 + width / 2) - x, 0);
+    else if (x + width / 2 > renderer->width - 10)
+        rr_renderer_translate(renderer, renderer->width - renderer->scale * (width / 2) - 10 - x, 0);
+    if (y - this->height * 0.5 - pad - height > pad)
+        rr_renderer_translate(renderer, 0, renderer->scale * (-this->height * 0.5 - pad - height * 0.5));
+    else if (y + this->height * 0.5 + pad + height < renderer->height - pad)
+        rr_renderer_translate(renderer, 0, renderer->scale * (this->height * 0.5 + pad + height * 0.5));
+    this->tooltip->on_render(this->tooltip, game);
+    rr_renderer_free_context_state(renderer, &state3);
+}
+
 struct rr_ui_element *rr_ui_element_init()
 {
     struct rr_ui_element *element = malloc(sizeof *element);
