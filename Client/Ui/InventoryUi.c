@@ -53,16 +53,6 @@ static void inventory_container_on_render(struct rr_ui_element *this, void *_gam
     rr_renderer_init_context_state(renderer, &state);
     ui_translate(this, renderer);
 
-    rr_renderer_init_context_state(renderer, &state2);
-    rr_renderer_scale(renderer, renderer->scale);
-    rr_renderer_set_fill(renderer, 0xffaaaaaa);
-    rr_renderer_set_stroke(renderer, 0xff999999);
-    rr_renderer_set_line_width(renderer, 8);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 8);
-    rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    rr_renderer_free_context_state(renderer, &state2);
     //if (this->container != this)
         //rr_renderer_fill_rect(game->renderer, -this->width / 2, -this->height / 2, this->width, this->height);
     for (uint32_t i = 0; i < data->elements.size; ++i)
@@ -168,8 +158,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
             e->lerp_y = e->y = (id - 1) * (width + pad) + width / 2 + pad;
         }
 
-    element->width = (rr_rarity_id_max) * (width + pad) + pad;
+    element->width = (rr_rarity_id_max) * (width + pad) + pad + 2 * pad + 10;
     element->height = (rr_petal_id_max - 1) * (width + pad) + pad;
-    rr_ui_pad(rr_ui_set_justify(element, 0, 2), 15);
     return element;
 }

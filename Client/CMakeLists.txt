@@ -22,6 +22,7 @@ set(SRCS
     Ui/InventoryUi.c
     Ui/LoadoutUi.c
     Ui/PairedButton.c
+    Ui/ScrollContainer.c
     Ui/SquadUi.c
     Ui/Text.c
     Ui/TextInput.c
@@ -69,7 +70,7 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_on_socket_event_emscripten")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_wheel_event,_rr_on_socket_event_emscripten")
 endif()
 
 add_executable(rrolf-client ${SRCS})

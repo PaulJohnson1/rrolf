@@ -29,7 +29,7 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
         return;
     rr_bitset_set(drop->picked_up_by, flower_relations->owner);
     rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
-    ++player_info->inv[drop->id][drop->rarity];
+    //++player_info->inv[drop->id][drop->rarity];
     rr_component_player_info_signal_inv_update(player_info);
 }
 

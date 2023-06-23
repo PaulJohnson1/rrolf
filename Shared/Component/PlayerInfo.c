@@ -22,8 +22,7 @@ enum
     state_flags_camera_y = 0b000100,
     state_flags_slot_count = 0b001000,
     state_flags_camera_x = 0b010000,
-    state_flags_inv = 0b100000,
-    state_flags_all = 0b111111
+    state_flags_all = 0b011111
 };
 
 void rr_component_player_info_signal_inv_update(struct rr_component_player_info *this)
@@ -62,11 +61,6 @@ void rr_component_player_info_write(struct rr_component_player_info *this, struc
         proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
         proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity, "p_rar");
     }
-
-    if (state & state_flags_inv)
-        for (uint64_t p = 0; p < rr_petal_id_max; p++)
-            for (uint64_t r = 0; r < rr_rarity_id_max; r++)
-                proto_bug_write_varuint(encoder, this->inv[p][r], "inv data");
 }
 
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_x)
@@ -93,10 +87,5 @@ void rr_component_player_info_read(struct rr_component_player_info *this, struct
         this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
         this->secondary_slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
     }
-
-    if (state & state_flags_inv)
-        for (uint64_t p = 0; p < rr_petal_id_max; p++)
-            for (uint64_t r = 0; r < rr_rarity_id_max; r++)
-                this->inv[p][r] = proto_bug_read_varuint(encoder, "inv data");
 }
 #endif
