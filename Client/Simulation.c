@@ -38,6 +38,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
         rr_simulation_request_entity_deletion(this, id);
     }
 
+    //assuming that player info is written first (is it though)
     while (1)
     {
         id = proto_bug_read_varuint(encoder, "entity update id");
@@ -66,6 +67,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
 #undef XX
     }
 
+    this->player_info = proto_bug_read_varuint(encoder, "pinfo id");
     this->game_over = proto_bug_read_uint8(encoder, "game over");
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components);
     rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_unset_entity);

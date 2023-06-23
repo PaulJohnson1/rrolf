@@ -12,7 +12,6 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     struct rr_component_flower *flower = rr_simulation_get_flower(simulation, entity);
     renderer->state.filter.color = 0xffff0000;
     renderer->state.filter.amount = physical->lerp_server_animation_tick * 0.08;
-    rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
     if (rr_simulation_get_health(simulation, entity)->health == 0)
     {
         rr_renderer_set_global_alpha(renderer, (physical->lerp_server_animation_tick) * 0.2);

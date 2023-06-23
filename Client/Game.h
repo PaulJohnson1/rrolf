@@ -45,6 +45,7 @@ struct rr_game
     int8_t ticks_until_game_start;
     float expanding_circle_radius;
     struct rr_game_squad_client squad_members[4];
+    EntityIdx player_infos[4];
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];

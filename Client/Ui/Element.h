@@ -86,3 +86,4 @@ struct rr_ui_element *rr_ui_squad_container_init();
 struct rr_ui_element *rr_ui_wave_container_init();
 
 struct rr_ui_element *rr_ui_abandon_game_button_init();
+struct rr_ui_element *in_game_player_ui_init(uint8_t);

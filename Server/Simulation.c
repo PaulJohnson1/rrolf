@@ -316,6 +316,14 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
     memset(new_entities_in_view, 0, (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)) * (sizeof *new_entities_in_view));
 
     rr_simulation_find_entities_in_view(this, player_info, &new_entities_in_view[0]);
+    for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
+        if (rr_bitset_get_bit(this->player_info_tracker, i))
+        {
+            rr_bitset_set(new_entities_in_view, i);
+            struct rr_component_player_info *p_info = rr_simulation_get_player_info(this, i);
+            if (p_info->flower_id != RR_NULL_ENTITY)
+                rr_bitset_set(new_entities_in_view, p_info->flower_id);
+        }
 
     struct rr_protocol_for_each_function_captures captures;
     captures.simulation = this;
@@ -328,6 +336,7 @@ void rr_simulation_write_binary(struct rr_simulation *this, struct proto_bug *en
 
     rr_bitset_for_each_bit(new_entities_in_view, new_entities_in_view + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, rr_simulation_write_entity_function);
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY, "entity update id"); // null terminate update list
+    proto_bug_write_varuint(encoder, player_info->parent_id, "pinfo id"); // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");
 }
 

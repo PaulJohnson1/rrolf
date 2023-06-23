@@ -86,11 +86,23 @@ void rr_game_init(struct rr_game *this)
     );
 
     this->ui_elements.in_game_squad_info = rr_ui_container_add_element(this->global_container,
-        rr_ui_pad(
-            rr_ui_set_justify(
-                rr_ui_abandon_game_button_init()
-            , 0, 0)
-        , 15)
+        rr_ui_set_justify(
+            rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
+                rr_ui_set_justify(
+                    rr_ui_abandon_game_button_init()
+                , 0, 0),
+                rr_ui_static_space_init(50),
+                rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                    rr_ui_static_space_init(50),
+                    rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 4,
+                        in_game_player_ui_init(0),
+                        in_game_player_ui_init(1),
+                        in_game_player_ui_init(2),
+                        in_game_player_ui_init(3)
+                    )
+                )
+            )
+        , 0, 0)
     );
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
@@ -244,6 +256,8 @@ void render_drop_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_drop_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
@@ -255,6 +269,8 @@ void render_health_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y + physical->radius + 30);
     rr_component_health_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
@@ -266,6 +282,8 @@ void render_mob_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_mob_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
@@ -277,6 +295,8 @@ void render_petal_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_petal_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
@@ -288,15 +308,21 @@ void render_flower_component(EntityIdx entity, void *_captures)
         return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_flower_render(entity, this);
     rr_renderer_free_context_state(this->renderer, &state);
 }
 
-void player_info_finder(EntityIdx entity, void *captures)
+void player_info_finder(struct rr_game *this)
 {
-    struct rr_simulation *this = captures;
-    if (rr_simulation_has_player_info(this, entity))
-        this->player_info = entity;
+    struct rr_simulation *simulation = this->simulation;
+    uint8_t counter = 1;
+    memset(&this->player_infos, 0, sizeof this->player_infos);
+    this->player_infos[0] = this->simulation->player_info;
+    for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; ++i)
+        if (rr_bitset_get(simulation->player_info_tracker, i) && i != this->simulation->player_info)
+            this->player_infos[counter++] = i;
 }
 
 void rr_game_tick(struct rr_game *this, float delta)
@@ -339,6 +365,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
         if (this->simulation->player_info != RR_NULL_ENTITY)
         {
+            player_info_finder(this); //list player infos in order
             this->ui_elements.in_game_squad_info->hidden = 0;
             this->ui_elements.loadout->hidden = 0;
             if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
@@ -371,7 +398,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
         struct rr_renderer_context_state state2;
-        rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
+        //rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
         if (this->simulation->player_info != RR_NULL_ENTITY)
         {
             rr_renderer_init_context_state(this->renderer, &state1);
