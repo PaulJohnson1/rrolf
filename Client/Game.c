@@ -72,11 +72,13 @@ void rr_game_init(struct rr_game *this)
     );
 
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
-        rr_ui_pad(
-            rr_ui_set_justify(
-                rr_ui_scroll_container_init(rr_ui_inventory_container_init(), 400, 0xffff0000)
-            , 0, 2)
-        , 15)
+    rr_ui_set_background(
+        rr_ui_set_justify(
+            rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 2,
+                rr_ui_inventory_container_init(),
+                rr_ui_crafting_ui_init()
+            )
+        , 0, 2), 0xffff0000)
     );
     /*
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
@@ -104,10 +106,10 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
                     rr_ui_static_space_init(50),
                     rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 4,
-                        in_game_player_ui_init(0),
-                        in_game_player_ui_init(1),
-                        in_game_player_ui_init(2),
-                        in_game_player_ui_init(3)
+                        rr_ui_in_game_player_ui_init(0),
+                        rr_ui_in_game_player_ui_init(1),
+                        rr_ui_in_game_player_ui_init(2),
+                        rr_ui_in_game_player_ui_init(3)
                     )
                 )
             )
@@ -116,13 +118,13 @@ void rr_game_init(struct rr_game *this)
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
+        this->inventory[id][0] = 10000000;
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
             rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
             rr_renderer_render_static_petal(&this->static_petals[id][rarity], id, rarity);
-            this->inventory[id][rarity] = 10;
             char *cd = malloc((sizeof *cd) * 8);
             cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
             char *hp = malloc((sizeof *hp) * 8);

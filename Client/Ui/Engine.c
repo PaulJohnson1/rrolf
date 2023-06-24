@@ -79,6 +79,39 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float oute
     return c;
 }
 
+struct rr_ui_element *rr_ui_grid_container_init(struct rr_ui_element *c, uint8_t row, uint8_t col, float outer_spacing, float inner_spacing, struct rr_ui_element *(*ctor)(uint8_t, uint8_t))
+{
+    struct rr_ui_element *base = ctor(0, 0);
+    c->width = base->width * col + inner_spacing * (col - 1) + outer_spacing * 2;
+    c->height = base->height * row + inner_spacing * (row - 1) + outer_spacing * 2;
+    rr_ui_container_add_element(c, base);
+    base->lerp_x = base->x = outer_spacing + 0 * (base->width + inner_spacing) + base->width / 2;
+    base->lerp_y = base->y = outer_spacing + 0 * (base->height + inner_spacing) + base->height / 2;
+    for (uint8_t y = 1; y < col; ++y)
+    {
+        base = ctor(0, y);
+        rr_ui_container_add_element(c, base);
+        base->lerp_x = base->x = outer_spacing + y * (base->width + inner_spacing) + base->width / 2;
+        base->lerp_y = base->y = outer_spacing + 0 * (base->height + inner_spacing) + base->height / 2;
+    }
+    for (uint8_t x = 1; x < row; ++x)
+    {
+        for (uint8_t y = 0; y < col; ++y)
+        {
+            base = ctor(x, y);
+            rr_ui_container_add_element(c, base);
+            base->lerp_x = base->x = outer_spacing + y * (base->width + inner_spacing) + base->width / 2;
+            base->lerp_y = base->y = outer_spacing + x * (base->height + inner_spacing) + base->height / 2;
+        }
+    }
+    c->container_flags |= 2;
+    struct rr_ui_container_metadata *data = c->misc_data;
+    data->is_horizontal = 0;
+    data->outer_spacing = outer_spacing;
+    data->inner_spacing = inner_spacing;
+    return c;
+}
+
 struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, uint8_t h_justify, uint8_t v_justify)
 {
     c->h_justify = h_justify;
@@ -180,7 +213,7 @@ void rr_ui_container_refactor(struct rr_ui_element *c)
     for (uint64_t i = 0; i < data->elements.size; ++i)
     {
         struct rr_ui_element *element = data->elements.elements[i];
-        if (element->container_flags & 1)
+        if (element->container_flags == 1)
         {
             struct rr_ui_container_metadata *element_data = (element->misc_data);
             if (element_data->is_horizontal)

@@ -14,15 +14,6 @@
 #include <Shared/pb.h>
 #include <Shared/StaticData.h>
 
-struct button_metadata
-{
-    uint32_t fill_style;
-    float line_width;
-    float round_radius;
-    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
-    char *text;
-};
-
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *this, struct rr_game *game)
 {
     float *matrix = game->renderer->state.transform_matrix;

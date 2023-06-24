@@ -115,7 +115,7 @@ struct rr_ui_element *rr_ui_abandon_game_button_init()
     return element;
 }
 
-struct rr_ui_element *in_game_player_ui_init(uint8_t pos)
+struct rr_ui_element *rr_ui_in_game_player_ui_init(uint8_t pos)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = in_game_player_ui_on_render;

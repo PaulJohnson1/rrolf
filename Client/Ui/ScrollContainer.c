@@ -33,11 +33,11 @@ static void scroll_container_on_render(struct rr_ui_element *this, void *_game)
         data->current_y += game->input_data->scroll_delta * 0.1;
         if (data->current_y < 0)
             data->current_y = 0;
-        else if (data->current_y > data->containing->height - this->height + 10)
-            data->current_y = data->containing->height - this->height + 10;
+        else if (data->current_y > data->containing->height - this->height)
+            data->current_y = data->containing->height - this->height;
     }
     data->lerp_current_y = rr_lerp(data->lerp_current_y, data->current_y, 0.1);
-    if (data->background != 0x00000000)
+    if (data->background != 0x12345678)
     {
         struct rr_renderer_context_state state2;
         rr_renderer_init_context_state(renderer, &state2);
@@ -68,8 +68,8 @@ static void scroll_container_on_render(struct rr_ui_element *this, void *_game)
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_line_width(renderer, 10);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, this->width / 2 - 15, -this->height / 2 + 10);
-        rr_renderer_line_to(renderer, this->width / 2 - 15, -this->height / 2 + (this->height - 20) * (this->height - 20) / data->containing->height + 10);
+        rr_renderer_move_to(renderer, this->width / 2 - 15, -this->height / 2 + 20);
+        rr_renderer_line_to(renderer, this->width / 2 - 15, -this->height / 2 + (this->height - 30) * (this->height - 30) / data->containing->height + 20);
         rr_renderer_stroke(renderer);
         rr_renderer_free_context_state(renderer, &state2);
     }
@@ -82,11 +82,9 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *element,
     struct rr_ui_element *this = rr_ui_element_init();
     struct scroll_container_metadata *data = malloc(sizeof *data);
     element->container = this;
-    rr_ui_pad(
-        rr_ui_set_justify(
-            element
-        , 0, 0)
-    , pad);
+    rr_ui_set_justify(
+        element
+    , 0, 0);
     data->current_y = 0;
     data->containing = element;
     data->background = background;

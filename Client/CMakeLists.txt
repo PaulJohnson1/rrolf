@@ -16,6 +16,7 @@ set(SRCS
     System/Interpolation.c
     Ui/Button.c
     Ui/Container.c
+    Ui/Crafting.c
     Ui/Element.c
     Ui/Engine.c
     Ui/InGameSquadUi.c

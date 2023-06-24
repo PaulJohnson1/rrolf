@@ -27,6 +27,15 @@ struct rr_ui_container_metadata
     struct rr_ui_element_vector elements;
 };
 
+struct button_metadata
+{
+    uint32_t fill_style;
+    float line_width;
+    float round_radius;
+    void (*on_event)(struct rr_ui_element *, uint8_t, struct rr_game *, void *);
+    char *text;
+};
+
 struct rr_ui_choose_element_metadata
 {
     struct rr_ui_element *a;
@@ -87,4 +96,8 @@ struct rr_ui_element *rr_ui_squad_container_init();
 struct rr_ui_element *rr_ui_wave_container_init();
 
 struct rr_ui_element *rr_ui_abandon_game_button_init();
-struct rr_ui_element *in_game_player_ui_init(uint8_t);
+struct rr_ui_element *rr_ui_in_game_player_ui_init(uint8_t);
+
+struct rr_ui_element *rr_ui_crafting_ui_init();
+struct rr_ui_element *rr_ui_crafting_button_init();
+struct rr_ui_element *rr_ui_crafting_inventory_container_init();
