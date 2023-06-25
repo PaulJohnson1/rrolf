@@ -14,7 +14,6 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game)
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, entity);
     renderer->state.filter.color = 0xffff0000;
     renderer->state.filter.amount = physical->lerp_server_animation_tick * 0.08;
-    rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     if (rr_simulation_get_health(simulation, entity)->health == 0)
     {

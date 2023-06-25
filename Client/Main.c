@@ -38,13 +38,18 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8
     if (state == 1) // press down
     {
         this->input_data->mouse_buttons |= (1 << button);
-        this->input_data->mouse_buttons_this_tick |= (1 << button);
     }
     else if (state == 0)
     {
         this->input_data->mouse_buttons &= ~(1 << button);
-        this->input_data->mouse_buttons_this_tick &= ~(1 << button);
+        //this->input_data->mouse_buttons_this_tick &= ~(1 << button);
+        this->input_data->mouse_buttons_this_tick |= (1 << button);
     }
+}
+
+void rr_wheel_event(struct rr_game *this, float delta)
+{
+    this->input_data->scroll_delta = delta;
 }
 #else
 #endif
@@ -66,6 +71,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
         window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)});
         window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 2, +!!button)});
         window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)});
+        window.addEventListener("wheel", function({deltaY}){Module._rr_wheel_event($0, deltaY)});
         Module.paths = new Array(128).fill(null);
         Module.availablePaths = new Array(128).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -107,11 +113,9 @@ void rr_main_renderer_initialize(struct rr_game *this)
         };
         Module.ReadCstr = function(ptr)
         {
-            let str = "";
-            let char;
-            while ((char = Module.HEAPU8[ptr++]))
-                str += String.fromCharCode(char);
-            return str;
+            const start = ptr;
+            while (Module.HEAPU8[ptr++]);
+            return new TextDecoder().decode(Module.HEAPU8.subarray(start, ptr));
         };
         function loop(time)
         {
@@ -143,6 +147,7 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     this->global_container->width = width / scale;
     this->global_container->height = height / scale;
     rr_game_tick(this, delta);
+    this->input_data->scroll_delta = 0;
 }
 
 void print(struct rr_rivet_lobby_connect_info s)

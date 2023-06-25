@@ -13,6 +13,7 @@ struct rr_input_data
     uint8_t mouse_buttons_this_tick;
     float mouse_x;
     float mouse_y;
+    float scroll_delta;
     uint8_t keys_pressed[RR_BITSET_ROUND(256)];
     // c version of addeventlistener("keydown")
     uint8_t keys_pressed_this_tick[RR_BITSET_ROUND(256)];

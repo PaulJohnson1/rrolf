@@ -18,7 +18,6 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
     renderer->state.filter.color = 0xffff0000;
     renderer->state.filter.amount = physical->lerp_server_animation_tick * 0.08;
 
-    rr_renderer_translate(renderer, physical->lerp_x, physical->lerp_y);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[mob->rarity].radius);
     if (rr_simulation_get_health(simulation, entity)->health == 0)

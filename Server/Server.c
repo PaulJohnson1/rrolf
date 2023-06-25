@@ -32,6 +32,14 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
     rr_component_player_info_set_slot_count(this->player_info, 10);
+    for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
+    {
+        uint8_t id = this->player_info->slots[i].id = this->loadout[i].id;
+        uint8_t rarity = this->player_info->slots[i].rarity = this->loadout[i].rarity;
+        this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
+        this->player_info->secondary_slots[i].id = this->loadout[i + 10].id;
+        this->player_info->secondary_slots[i].rarity = this->loadout[i + 10].rarity;
+    }
     // rr_server_client_create_flower(this);
 }
 
@@ -92,6 +100,11 @@ void rr_server_client_tick(struct rr_server_client *this)
         {
             proto_bug_write_uint8(&encoder, rr_bitset_get(&this->server->clients_in_use[0], i), "bitbit");
             proto_bug_write_uint8(&encoder, this->server->clients[i].ready, "ready");
+            for (uint8_t j = 0; j < 20; ++j)
+            {
+                proto_bug_write_uint8(&encoder, this->server->clients[i].loadout[j].id, "id");
+                proto_bug_write_uint8(&encoder, this->server->clients[i].loadout[j].rarity, "rar");
+            }
         }
         rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
@@ -294,10 +307,25 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
             for (uint32_t i = 0; i < slot->count; ++i)
                 slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
+            break;
         }
         case 69:
         {
             client->ready ^= 1;
+            break;
+        }
+        case 70:
+        {
+            if (size < 2)
+                return 0;
+            uint8_t pos = proto_bug_read_uint8(&encoder, "pos");
+            while (pos)
+            {
+                client->loadout[pos - 1].id = proto_bug_read_uint8(&encoder, "id");
+                client->loadout[pos - 1].rarity = proto_bug_read_uint8(&encoder, "rar");
+                pos = proto_bug_read_uint8(&encoder, "pos");
+            }
+            break;
         }
         }
     }

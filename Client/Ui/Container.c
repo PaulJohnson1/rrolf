@@ -20,14 +20,19 @@ static void container_on_render(struct rr_ui_element *this, void *_game)
     {
         rr_renderer_init_context_state(renderer, &state2);
         rr_renderer_set_fill(renderer, data->fill_color);
-        renderer->state.filter.amount = 0.2;
-        rr_renderer_set_stroke(renderer, data->fill_color);
         rr_renderer_scale(renderer, renderer->scale);
-        rr_renderer_set_line_width(renderer, 6);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_fill_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height);
-        rr_renderer_stroke_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 6);
+        rr_renderer_fill(renderer);
+        if (data->fill_color > 0xff000000)
+        {
+            renderer->state.filter.amount = 0.2;
+            rr_renderer_set_stroke(renderer, data->fill_color);
+            rr_renderer_set_line_width(renderer, 6);
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
+            rr_renderer_stroke(renderer);
+        }
         rr_renderer_free_context_state(renderer, &state2);
     }
     for (uint32_t i = 0; i < data->elements.size; ++i)
@@ -50,6 +55,13 @@ struct rr_ui_element *rr_ui_container_init()
     data->elements.size = 0;
     element->misc_data = data;
     element->on_render = container_on_render;
-    element->is_resizable_container = 1;
+    element->container_flags |= 1;
+    return element;
+}
+
+struct rr_ui_element *rr_ui_flex_container_init()
+{
+    struct rr_ui_element *element = rr_ui_container_init();
+    element->container_flags |= 2;
     return element;
 }

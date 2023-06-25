@@ -35,22 +35,6 @@ void rr_component_player_info_init(struct rr_component_player_info *this, struct
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
-#ifdef RR_SERVER
-    for (uint64_t i = 0; i < 10; ++i)
-    {
-        uint8_t id = rand() % (rr_petal_id_max - 1) + 1;
-        uint8_t rarity = rr_rarity_id_ultra;
-        this->slots[i].rarity = rarity;
-        this->slots[i].id = id;
-        // this->slots[i].data = &RR_PETAL_DATA[id];
-        this->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        id = rand() % (rr_petal_id_max - 1) + 1;
-        rarity = rr_rarity_id_ultra;
-        this->secondary_slots[i].rarity = rarity;
-        this->secondary_slots[i].id = id;
-        // this->slots[i].data = &RR_PETAL_DATA[id];
-    }
-#endif
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this, struct rr_simulation *simulation)
@@ -78,11 +62,6 @@ void rr_component_player_info_write(struct rr_component_player_info *this, struc
         proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
         proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity, "p_rar");
     }
-
-    if (state & state_flags_inv)
-        for (uint64_t p = 0; p < rr_petal_id_max; p++)
-            for (uint64_t r = 0; r < rr_rarity_id_max; r++)
-                proto_bug_write_varuint(encoder, this->inv[p][r], "inv data");
 }
 
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_x)
@@ -109,10 +88,5 @@ void rr_component_player_info_read(struct rr_component_player_info *this, struct
         this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
         this->secondary_slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
     }
-
-    if (state & state_flags_inv)
-        for (uint64_t p = 0; p < rr_petal_id_max; p++)
-            for (uint64_t r = 0; r < rr_rarity_id_max; r++)
-                this->inv[p][r] = proto_bug_read_varuint(encoder, "inv data");
 }
 #endif

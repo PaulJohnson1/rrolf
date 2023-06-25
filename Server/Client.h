@@ -23,7 +23,6 @@ struct rr_server_client
     uint8_t received_first_packet:1;
     uint8_t verified:1;
     uint8_t ready:1;
-
 };
 
 void rr_server_client_init(struct rr_server_client *);

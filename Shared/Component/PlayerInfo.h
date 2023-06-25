@@ -38,7 +38,6 @@ struct rr_component_player_info
                    float camera_fov;
     RR_CLIENT_ONLY(float lerp_camera_fov;)
     RR_SERVER_ONLY(uint32_t protocol_state;)
-                   uint32_t inv[rr_petal_id_max][rr_rarity_id_max];
                    EntityIdx parent_id;
                    EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
     RR_SERVER_ONLY(uint16_t rotation_count;)

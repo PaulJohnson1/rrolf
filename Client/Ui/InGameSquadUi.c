@@ -1,11 +1,14 @@
 #include <Client/Ui/Element.h>
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Renderer/ComponentRender.h>
 
 struct abandon_game_button_metadata
 {
@@ -64,13 +67,69 @@ static void abandon_game_button_on_render(struct rr_ui_element *this, void *_gam
     rr_renderer_free_context_state(renderer, &state);
 }
 
+static void in_game_player_ui_on_render(struct rr_ui_element *this, void *_game)
+{
+    struct rr_game *game = _game;
+    struct rr_renderer *renderer = game->renderer;
+    uint8_t pos = (uint8_t) this->misc_data;
+    if (game->player_infos[pos] == RR_NULL_ENTITY)
+        return;
+    struct rr_component_player_info *player_info = rr_simulation_get_player_info(game->simulation, game->player_infos[pos]);
+    struct rr_renderer_context_state state;
+    rr_renderer_init_context_state(renderer, &state);
+    ui_translate(this, renderer);
+    rr_renderer_scale(renderer, renderer->scale);
+    if (pos == 0)
+        rr_renderer_scale(renderer, 1.2);
+
+    rr_renderer_set_stroke(renderer, 0xff222222);
+    rr_renderer_set_line_width(renderer, 25);
+    rr_renderer_set_line_cap(renderer, 1);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, -100, 0);
+    rr_renderer_line_to(renderer, 100, 0);
+    rr_renderer_stroke(renderer);
+    if (player_info->flower_id != RR_NULL_ENTITY)
+    {
+        struct rr_component_health *health = rr_simulation_get_health(game->simulation, player_info->flower_id);
+        rr_renderer_set_stroke(renderer, 0xff75dd34);
+        rr_renderer_set_line_width(renderer, 20);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -50, 0);
+        rr_renderer_line_to(renderer, -50 + 150 * health->health / health->max_health, 0);
+        rr_renderer_stroke(renderer);
+        rr_renderer_translate(renderer, -100, 0);
+        rr_component_flower_render(player_info->flower_id, game);
+    }
+    rr_renderer_free_context_state(renderer, &state);
+}
+
 struct rr_ui_element *rr_ui_abandon_game_button_init()
 {
-    struct abandon_game_button_metadata *data = malloc(sizeof *data);
     struct rr_ui_element *element = rr_ui_element_init();
+    struct abandon_game_button_metadata *data = malloc(sizeof *data);
     element->on_render = abandon_game_button_on_render;
     element->misc_data = data;
     data->on_event = abandon_game_on_event;
     element->width = element->height = 30;
     return element;
+}
+
+struct rr_ui_element *rr_ui_in_game_player_ui_init(uint8_t pos)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->on_render = in_game_player_ui_on_render;
+    element->misc_data = (void *) pos;
+    element->width = 200;
+    element->height = 50;
+    if (pos == 0)
+    {
+        element->width *= 1.2;
+        element->height *= 1.2;
+    }
+    return rr_ui_pad(
+        rr_ui_set_justify(
+            element, 0, 0
+        ),
+    50);
 }
