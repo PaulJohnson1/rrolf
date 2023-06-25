@@ -1,15 +1,13 @@
-FROM ubuntu AS builder
-RUN echo test
-RUN apt-get update && apt-get install --yes make cmake clang libwebsockets-dev libcurl4-openssl-dev ca-certificates
+FROM alpine AS builder
+RUN apk update && apk add --no-cache llvm-dev make cmake clang libwebsockets-dev curl-dev musl-dev
 WORKDIR /usr/src
 COPY . .
 RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make
-FROM ubuntu
-RUN apt-get update && apt-get install --yes ca-certificates libwebsockets-dev libcurl4-openssl-dev
+
+FROM alpine
+RUN apk update && apk add --no-cache ca-certificates curl-dev libwebsockets && apk cache clean
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/rrolf-server .
-# maybe a better way? I don't want to copy every SO
-# COPY --from=builder /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
 CMD ./rrolf-server
 
 # a simple ssh server
@@ -31,10 +29,3 @@ CMD ./rrolf-server
 
 # COPY start.sh /
 # CMD ["/bin/bash", "/start.sh"]
-
-# FROM alpine:3.14
-# RUN apk --no-cache add curl
-# WORKDIR /app
-# RUN echo 'echo "Env:"; env; echo "resolv.conf"; cat /etc/resolv.conf; READY_URL="$RIVET_MATCHMAKER_API_URL/lobbies/ready"; echo "Sending ready to $READY_URL"; curl --fail --insecure --request POST --header "Content-Type: application/json" --header "Authorization: Bearer $RIVET_TOKEN" --data "{}" "$READY_URL"; echo "Success"; echo "Waiting indefinitely"; tail -f /dev/null;' > ./run.sh
-# RUN chmod +x ./run.sh
-# CMD ["sh", "-ecx", "/app/run.sh"]

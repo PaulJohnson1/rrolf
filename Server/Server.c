@@ -391,7 +391,7 @@ void rr_server_run(struct rr_server *this)
     struct lws_protocols protocols[2] = {
         {"g", rr_server_lws_callback_function, 0, 0},
         {NULL, NULL, 0, 0}};
-    info.port = 8000;
+    info.port = 1234;
     info.protocols = &protocols[0];
     info.gid = -1;
     info.uid = -1;
@@ -413,8 +413,8 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&end, NULL);
 
         long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        // if (elapsed_time > 100)
-        // printf("tick took %ld microseconds\n", elapsed_time);
+        if (elapsed_time > 1000)
+        printf("tick took %ld microseconds\n", elapsed_time);
         long to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }

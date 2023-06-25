@@ -153,8 +153,6 @@ void print(struct rr_rivet_lobby_connect_info s)
 
 int main()
 {
-    rr_rivet_lobbies_find(print, 0);
-
     puts("client init");
     static struct rr_game game;
     static struct rr_renderer renderer;
@@ -188,6 +186,5 @@ int main()
     }
 #endif
 
-    puts("main end (shouldn't see this hopefully)");
     return 0;
 }

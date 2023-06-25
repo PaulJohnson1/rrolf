@@ -39,9 +39,6 @@ void sigint_handle(int s)
 int main()
 {
     signal(SIGINT, sigint_handle);
-#ifndef NDEBUG
-    feenableexcept(FE_DIVBYZERO | FE_INVALID);
-#endif
     curl_global_init(CURL_GLOBAL_ALL);
     char startup_message[1000] = {0};
     char *version_name = getenv("RIVET_VERSION_NAME");

@@ -25,6 +25,7 @@
 #include <Shared/Component/Petal.h>
 #include <Shared/Component/PlayerInfo.h>
 #include <Shared/Component/Physical.h>
+#include <Shared/Rivet.h>
 
 void rr_game_init(struct rr_game *this)
 {
@@ -451,12 +452,22 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
 #ifdef RIVET_BUILD
-// rivet stuff
+    rr_rivet_lobbies_find(&this->socket);
 #else
 #ifdef RR_WINDOWS
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 8000);
+    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
 #else
-    rr_websocket_connect_to(&this->socket, "45.79.197.197", 8000);
+    rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 #endif
+}
+
+void rr_rivet_lobby_on_find(char *s, uint16_t port, void *captures)
+{
+    printf("connecting to lobby wss://%s:%u\n", s, port);
+    struct rr_websocket *socket = captures;
+    if (port == 443)
+        rr_websocket_connect_to(socket, s, port, 1);
+    else
+        rr_websocket_connect_to(socket, s, port, 0);
 }

@@ -49,7 +49,7 @@ void rr_websocket_init(struct rr_websocket *this)
     memset(this, 0, sizeof *this);
 }
 
-void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16_t port)
+void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16_t port, int secure)
 {
     static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
@@ -60,7 +60,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
         console.log("connecting to socket", string);
         if (window.socket)
             window.socket.close();
-        let socket = window.socket = new WebSocket("ws://" + string + ':' + $2);
+        let socket = window.socket = new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);
         socket.binaryType = "arraybuffer";
         socket.onopen = function()
         {
@@ -75,7 +75,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
             Module.HEAPU8.set(new Uint8Array(event.data), $3);
             Module._rr_on_socket_event_emscripten($0, 2, $3, new Uint8Array(event.data).length);
         };
-    }, this, host, port, &incoming_data[0]);
+    }, this, host, port, &incoming_data[0], secure);
 #else
     struct lws_context_creation_info info;
     struct lws_protocols protocols[2] = {

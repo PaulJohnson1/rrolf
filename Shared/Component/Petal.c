@@ -13,8 +13,8 @@
 
 enum
 {
-    state_flags_rarity =     0b000001,
-    state_flags_id = 0b000010,
+    state_flags_id =     0b000001,
+    state_flags_rarity = 0b000010,
     state_flags_all =    0b000011
 };
 

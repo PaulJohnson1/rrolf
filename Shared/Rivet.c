@@ -37,14 +37,12 @@ void rr_rivet_lobbies_ready(char const *lobby_token)
 // public token: pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw
 // user must free result
 
-void rivet_lobby_on_find(char *s, uint16_t port)
-{
-    puts("Found lobby");
-    printf("wss://%s:%u\n", s, port);
-}
+// user must define this function.
+void rr_rivet_lobby_on_find(char *s, uint16_t port, void *captures);
 
-void rr_rivet_lobbies_find(void (*cb)(struct rr_rivet_lobby_connect_info), void *captures)
+void rr_rivet_lobbies_find(void *captures)
 {
+    puts("finding rivet lobby");
     #ifdef WASM_BUILD
         EM_ASM({
             fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
@@ -61,10 +59,11 @@ void rr_rivet_lobbies_find(void (*cb)(struct rr_rivet_lobby_connect_info), void 
             .then(json =>
             {
                 const host = json.ports.default.hostname;
-                const pointer = _malloc(host.length);
+                const pointer = _malloc(host.length + 1);
                 for (let i = 0; i < host.length; i++)
                     HEAPU8[pointer + i] = host[i].charCodeAt();
-                Module._rivet_lobby_on_find(pointer, json.ports.default.port);
+                pointer[host.length] = 0;
+                Module._rr_rivet_lobby_on_find(pointer, json.ports.default.port, $0);
             });
         }, captures);
     #endif

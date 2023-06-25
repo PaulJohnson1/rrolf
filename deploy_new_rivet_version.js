@@ -90,7 +90,7 @@ async function rr_discord_webhook_log(name, value, color = 0xff0000)
 }
 
 (async () => {
-    await rr_discord_webhook_log("version deploying", `usually takes one minute`, 0x0000ff);
+    await rr_discord_webhook_log("version deploying", `usually takes 30 seconds`, 0x0000ff);
     try
     {
         obfuscate();

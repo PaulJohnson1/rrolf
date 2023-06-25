@@ -7,8 +7,8 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(team, varuint) \
-    X(owner, varuint) 
+    X(owner, varuint) \
+    X(team, varuint) 
 
 enum
 {

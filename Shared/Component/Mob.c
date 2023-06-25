@@ -15,8 +15,8 @@
 #endif
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(rarity, uint8) \
-    X(id, uint8) 
+    X(id, uint8) \
+    X(rarity, uint8) 
 
 enum
 {
