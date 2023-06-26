@@ -21,6 +21,7 @@ struct rr_websocket
 {
     uint8_t recieved_first_packet;
     void *user_data;
+    char *rivet_player_token;
     void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
 #ifndef EMSCRIPTEN
     struct lws_context *socket_context;

@@ -6,13 +6,18 @@
 
 enum
 {
-    state_flags_y = 0b00001,
-    state_flags_angle = 0b00010,
-    state_flags_x = 0b00100,
-    state_flags_radius = 0b01000,
-    state_flags_server_animation_tick = 0b10000,
+    state_flags_server_animation_tick = 0b00001,
+    state_flags_x = 0b00010,
+    state_flags_radius = 0b00100,
+    state_flags_angle = 0b01000,
+    state_flags_y = 0b10000,
     state_flags_all = 0b11111
 };
+
+#define FOR_EACH_PUBLIC_FIELD \
+    X(server_animation_tick, uint8) \
+    X(angle, float32) \
+    X(radius, float32) 
 
 void rr_component_physical_init(struct rr_component_physical *this, struct rr_simulation *simulation)
 {
@@ -33,15 +38,15 @@ void rr_component_physical_write(struct rr_component_physical *this, struct prot
     proto_bug_write_varuint(encoder, state, "physical component state");
     /* no-reorder */ RR_ENCODE_PUBLIC_FIELD(x, float32);
     /* no-reorder */ RR_ENCODE_PUBLIC_FIELD(y, float32);
-    RR_ENCODE_PUBLIC_FIELD(angle, float32);
-    RR_ENCODE_PUBLIC_FIELD(radius, float32);
-    RR_ENCODE_PUBLIC_FIELD(server_animation_tick, uint8);
+#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 
 RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
-//RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
+// RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
 void rr_component_physical_set_radius(struct rr_component_physical *this, float r)
 {
     if (r > (1 << 8))
@@ -58,8 +63,7 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     uint64_t state = proto_bug_read_varuint(encoder, "physical component state");
     if (state & state_flags_x)
     {
-        float new_x = proto_bug_read_float32(encoder, "field "
-                                                      "x");
+        float new_x = proto_bug_read_float32(encoder, "field x");
         if (this->x == 0)
             this->x = new_x;
         this->velocity.x = this->x - new_x;
@@ -67,217 +71,14 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     }
     if (state & state_flags_y)
     {
-        float new_y = proto_bug_read_float32(encoder, "field "
-                                                      "y");
+        float new_y = proto_bug_read_float32(encoder, "field y");
         if (this->y == 0)
             this->y = new_y;
         this->velocity.y = this->y - new_y;
         this->y = new_y;
     }
-    RR_DECODE_PUBLIC_FIELD(angle, float32);
-    RR_DECODE_PUBLIC_FIELD(radius, float32);
-    RR_DECODE_PUBLIC_FIELD(server_animation_tick, uint8);
+#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

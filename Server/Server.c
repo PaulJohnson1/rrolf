@@ -162,6 +162,9 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 if (this->clients[i].file_descriptor == file_descriptor)
                 {
                     rr_bitset_unset(this->clients_in_use, i);
+#ifdef RIVET_BUILD
+                    rr_rivet_players_disconnected(getenv("RIVET_LOBBY_TOKEN"), this->clients[i].rivet_player_token);
+#endif
                     rr_server_client_free(this->clients + i);
                     char log[100] = {"ip: `"};
                     strcat(log, this->clients[i].ip_address);
@@ -206,7 +209,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             client->received_first_packet = 1;
             if (size < 16)
             {
-                puts("skid gaming1");
+                fputs("skid gaming1", stderr);
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */, (uint8_t *)"script kiddie1", sizeof "script kiddie");
                 return 1;
             }
@@ -215,8 +218,26 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             uint64_t received_verification = proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
-                puts("skid gaming1");
+                fputs("skid gaming2", stderr);
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie2", sizeof "script kiddie");
+                return 1;
+            }
+
+            uint64_t encountered_size = proto_bug_read_varuint(&encoder, "rivet token size");
+            if (16 + encountered_size >= size)
+            {
+                printf("%lu %lu\n", size, encountered_size);
+                fputs("skid gaming3", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie3", sizeof "script kiddie");
+                return 1;
+            }
+            this->clients[i].rivet_player_token = malloc(encountered_size + 1);
+            this->clients[i].rivet_player_token[encountered_size] = 0; // don't forget the null terminator lol
+            proto_bug_read_string(&encoder, this->clients[i].rivet_player_token, encountered_size, "rivet token");
+            if (!rr_rivet_players_connected(getenv("RIVET_LOBBY_TOKEN"), this->clients[i].rivet_player_token))
+            {
+                fputs("skid gaming4", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie4", sizeof "script kiddie");
                 return 1;
             }
 
@@ -380,6 +401,9 @@ void rr_server_tick(struct rr_server *this)
         if (!client_count)
         {
             this->simulation_active = 0;
+#ifdef RIVET_BUILD
+            exit(123123);
+#endif
             free(this->simulation.grid);
             rr_simulation_init(&this->simulation);
         }
@@ -449,7 +473,8 @@ void rr_server_run(struct rr_server *this)
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
         if (elapsed_time > 200)
             fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
-        uint64_t to_sleep = 40000 - elapsed_time;
-        usleep(to_sleep > 0 ? to_sleep : 0);
+        int64_t to_sleep = 40000 - elapsed_time;
+        if (to_sleep > 0)
+            usleep(to_sleep);
     }
 }

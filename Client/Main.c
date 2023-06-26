@@ -177,10 +177,10 @@ int main()
         gettimeofday(&start, NULL);
         rr_game_tick(&game, 0.016f);
         gettimeofday(&end, NULL);
-        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+        int64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
         if (elapsed_time > 1000)
             printf("tick took %ld microseconds\n", elapsed_time);
-        long to_sleep = 16666 - elapsed_time;
+        int64_t to_sleep = 16666 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }
 #endif

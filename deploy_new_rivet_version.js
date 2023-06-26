@@ -103,9 +103,8 @@ async function rr_discord_webhook_log(name, value, color = 0xff0000)
         return;
     }
     await rr_discord_webhook_log("version deployed", `namespace: \`${namespace}\`
-    version: \`${version || "default"}\`
-    \`obfuscation    time\`: \`${obfuscate_time / 1000}s\`
-    \`frontend_build time\`: \`${frontend_build_time / 1000}s\`
-    \`deploy         time\`: \`${deploy_time / 1000}s\`
-    `, 0x00ff00);
+version: \`${version || "default"}\`
+\`obfuscation    time\`: \`${obfuscate_time / 1000}s\`
+\`frontend_build time\`: \`${frontend_build_time / 1000}s\`
+\`deploy         time\`: \`${deploy_time / 1000}s\``, 0x00ff00);
 })();

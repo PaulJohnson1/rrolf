@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #ifndef PROTO_BUG_WINDOWS
 #include <alloca.h>
 #define PROTO_BUG_ALLOCA(size) alloca(size)
@@ -201,7 +202,7 @@ extern "C"
         {
             assertion_fail_message[sprintf(assertion_fail_message, "proto_bug exception: read invalid data (maybe OOB)\n"
                                                                    "invalid read at: %s:%u\n"
-                                                                   "expected: %llX; encountered: %llX\n",
+                                                                   "expected: %llX; encountered: %" PRIu64 "X\n",
                                            file, line,
                                            0x1234567890abcdefull, magic)] = 0;
 

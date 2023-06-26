@@ -191,6 +191,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
             proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(), "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification, "verification");
+            uint64_t token_size = strlen(this->socket.rivet_player_token);
+            proto_bug_write_varuint(&verify_encoder, token_size, "rivet token size");
+            proto_bug_write_string(&verify_encoder, this->socket.rivet_player_token, token_size, "rivet token");
             rr_websocket_send(&this->socket, verify_encoder.start, verify_encoder.current);
             this->socket_ready = 1;
             return;
@@ -560,4 +563,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures)
         rr_websocket_connect_to(socket, s, port, 1);
     else
         rr_websocket_connect_to(socket, s, port, 0);
+    free(s);
+    // socket->rivet_player_token = strdup(token);
+    // free(token);
+    socket->rivet_player_token = token;
 }

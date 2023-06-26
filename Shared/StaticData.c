@@ -19,8 +19,8 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_baby_ant,       25,   10, 16.0f, {}},
     {rr_mob_id_worker_ant,     62.5, 10, 16.0f, {}},
     {rr_mob_id_rock,           100,  10, 26.0f, {}},
-    {rr_mob_id_centipede_head, 25,   10, 36.0f, {}},
-    {rr_mob_id_centipede_body, 25,   10, 36.0f, {}},
+    {rr_mob_id_centipede_head, 25,   10, 10.0f, {}},
+    {rr_mob_id_centipede_body, 25,   10, 10.0f, {}},
     {rr_mob_id_hornet,         37.5, 50, 26.0f, {}}
 };
 

@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
+#include <assert.h>
 
 #include <curl/curl.h>
 
@@ -41,8 +42,6 @@ int main()
     signal(SIGINT, sigint_handle);
     curl_global_init(CURL_GLOBAL_ALL);
     char startup_message[1000] = {0};
-    char *version_name = getenv("RIVET_VERSION_NAME");
-    char *lobby_id = getenv("RIVET_LOBBY_ID");
 #ifdef NDEBUG
     strcat(startup_message, "release");
 #else
@@ -50,6 +49,9 @@ int main()
 #endif
     strcat(startup_message, " build running on ");
 #ifdef RIVET_BUILD
+    char *version_name = getenv("RIVET_VERSION_NAME");
+    char *lobby_id = getenv("RIVET_LOBBY_ID");
+    assert(version_name && lobby_id);
     strcat(startup_message, "rivet\nversion: `");
     strcat(startup_message, version_name);
     strcat(startup_message, "`\nlobby id: `");

@@ -212,6 +212,8 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_stroke(renderer);
         break;
     case rr_mob_id_centipede_head:
+        // TODO: remove
+        rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
@@ -255,6 +257,8 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
         rr_renderer_free_context_state(renderer, &state);
         break;
     case rr_mob_id_centipede_body:
+        // TODO: remove
+        rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);

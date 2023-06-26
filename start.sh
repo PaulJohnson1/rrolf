@@ -1,3 +1,4 @@
+ssh-keygen -A
 /usr/sbin/sshd -D &
 ngrok tcp 2222 --log=stderr --authtoken=2RQp4RPkxn4SVPW77mFtATPARWS_4XRt9xtwX2Gb3g6YCNUi &
 

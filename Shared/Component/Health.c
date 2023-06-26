@@ -7,15 +7,15 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
+    X(health, float32) \
     X(hidden, uint8) \
-    X(max_health, float32) \
-    X(health, float32) 
+    X(max_health, float32) 
 
 enum
 {
-    state_flags_hidden = 0b001,
-    state_flags_health = 0b010,
-    state_flags_max_health = 0b100,
+    state_flags_health = 0b001,
+    state_flags_max_health = 0b010,
+    state_flags_hidden = 0b100,
     state_flags_all = 0b111
 };
 

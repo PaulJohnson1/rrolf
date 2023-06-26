@@ -290,10 +290,7 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
     rr_bitset_set(captures.entities_in_view, this->arena);
-    //rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
-    rr_spatial_hash_query(this->grid, player_info->camera_x, player_info->camera_y, 
-    640.0f / player_info->camera_fov, 360.0f / player_info->camera_fov, 
-    &captures, rr_simulation_find_entities_in_view_for_each_function);
+    rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 void rr_simulation_write_entity_deletions_function(uint64_t _id, void *_captures)
@@ -404,17 +401,21 @@ void rr_simulation_tick(struct rr_simulation *this)
 
     if (!this->game_over)
     {
-        uint8_t any_alive = 0;
+        int any_alive = 0;
 
         for (uint32_t i = 0; i < sizeof this->flower_tracker; ++i)
-            any_alive |= this->flower_tracker[i];
-        
+            if (this->flower_tracker[i])
+            {
+                any_alive = 1;
+                break;
+            }
+
         if (!any_alive)
             this->game_over = 1;
         
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-        uint32_t min = 6 < arena->wave ? 6 : arena->wave;
-        if (arena->wave_tick == min * 15 * 25)
+        // end of wave
+        if (arena->wave_tick == 60 * 25)
         {
             arena->wave_tick = 0;
             rr_component_arena_set_wave(arena, arena->wave + 1);
@@ -423,7 +424,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
         EntityIdx mobs_in_use = 0;
         rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-        if (mobs_in_use <= 20)
+        if (mobs_in_use <= 50 + arena->wave)
             spawn_random_mob(this);
     }
 

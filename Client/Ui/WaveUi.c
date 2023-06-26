@@ -30,7 +30,7 @@ static void wave_text_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer *renderer = game->renderer;
     struct text_metadata *data = this->misc_data;
     char out[12];
-    sprintf(&out, "Wave %d", arena->wave);
+    out[sprintf(&out, "Wave %d", arena->wave)] = 0;
     this->width = rr_renderer_get_text_size((char const *) &out);
 
     struct rr_renderer_context_state state;

@@ -66,9 +66,14 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16
         {
             Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
         };
-        socket.onclose = function()
+        socket.onclose = function(a, b)
         {
+            console.log("close", a, b);
             Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
+        };
+        socket.onerror = function(a, b)
+        {
+            console.log("error", a, b);
         };
         socket.onmessage = async function(event)
         {
@@ -117,6 +122,8 @@ void rr_websocket_disconnect(struct rr_websocket *this)
     });
 #else
 #endif
+
+    free(this->rivet_player_token);
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)
