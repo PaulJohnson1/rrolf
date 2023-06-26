@@ -7,13 +7,13 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(team, varuint) \
-    X(owner, varuint) 
+    X(owner, varuint) \
+    X(team, varuint) 
 
 enum
 {
-    state_flags_team = 0b000001,
-    state_flags_owner =  0b000010,
+    state_flags_owner = 0b000001,
+    state_flags_team =  0b000010,
     state_flags_all =   0b000011
 };
 

@@ -7,12 +7,15 @@
 
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifndef WASM_BUILD
 #include <curl/curl.h>
 #else
 #include <emscripten/fetch.h>
 #endif
+
+#include <Shared/cJSON.h>
 
 #define RR_RIVET_CURL_PROLOGUE                                       \
     {                                                                \
@@ -46,7 +49,18 @@ void rr_rivet_lobbies_ready(char const *lobby_token)
 void rr_rivet_lobbies_set_closed(char const *lobby_token, int closed)
 {
 #ifdef RR_SERVER
+    cJSON *root = cJSON_CreateObject();
+    cJSON_AddBoolToObject(root, "is_closed", closed);
+    char *post_data = cJSON_Print(root);
 
+    RR_RIVET_CURL_PROLOGUE
+    curl_easy_setopt(curl, CURLOPT_PUT, 1);
+    curl_easy_setopt(curl, CURLOPT_URL, "https://matchmaker.api.rivet.gg/v1/lobbies/closed");
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data);
+    RR_RIVET_CURL_EPILOGUE
+
+    free(post_data);
+    cJSON_Delete(root);
 #endif
 }
 
@@ -64,11 +78,11 @@ void rr_rivet_lobbies_find(void *captures)
             method : "POST",
             body : '{"game_modes":["default"]}'
         })
-            .then(r = >
+            .then(r =>
                       {
                           return r.json();
                       })
-            .then(json = >
+            .then(json =>
                          {
                              const host = json.ports.default.hostname;
                              const token = json.ports.default.hostname;

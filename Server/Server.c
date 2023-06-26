@@ -399,6 +399,7 @@ void rr_server_tick(struct rr_server *this)
             {
                 this->simulation_active = 1;
 #ifdef RIVET_BUILD
+                // players cannot join in the middle of a game (simulation)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif

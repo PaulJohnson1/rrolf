@@ -17,7 +17,7 @@
 	# The hardware to provide for lobbies.
 	#
 	# Available tiers: https://docs.rivet.gg/serverless-lobbies/concepts/available-tiers
-	tier = "basic-1d16"
+	tier = "basic-1d1"
 
 # Which regions the game should be available in.
 #

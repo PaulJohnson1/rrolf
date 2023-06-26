@@ -13,9 +13,9 @@
 
 enum
 {
-    state_flags_wave = 0b000001,
-    state_flags_radius = 0b000010,
-    state_flags_wave_tick = 0b000100,
+    state_flags_radius = 0b000001,
+    state_flags_wave_tick = 0b000010,
+    state_flags_wave = 0b000100,
     state_flags_all =    0b000111
 };
 

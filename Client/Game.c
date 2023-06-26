@@ -555,7 +555,6 @@ void rr_game_connect_socket(struct rr_game *this)
 
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures)
 {
-    printf("connecting to lobby wss://%s:%u\n", s, port);
     struct rr_websocket *socket = captures;
     if (port == 443)
         rr_websocket_connect_to(socket, s, port, 1);

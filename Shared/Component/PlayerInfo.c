@@ -9,20 +9,20 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
+    X(slot_count, varuint) \
+    X(flower_id, varuint) \
     X(camera_x, float32) \
     X(camera_fov, float32) \
-    X(camera_y, float32) \
-    X(slot_count, varuint) \
-    X(flower_id, varuint) 
+    X(camera_y, float32) 
 
 enum
 {
-    state_flags_camera_x = 0b000001,
-    state_flags_camera_fov = 0b000010,
-    state_flags_camera_y = 0b000100,
-    state_flags_inv = 0b001000,
-    state_flags_slot_count = 0b010000,
-    state_flags_flower_id = 0b100000,
+    state_flags_flower_id = 0b000001,
+    state_flags_camera_x = 0b000010,
+    state_flags_inv = 0b000100,
+    state_flags_slot_count = 0b001000,
+    state_flags_camera_fov = 0b010000,
+    state_flags_camera_y = 0b100000,
     state_flags_all = 0b111111
 };
 

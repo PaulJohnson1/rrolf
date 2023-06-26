@@ -51,13 +51,13 @@ void rr_websocket_init(struct rr_websocket *this)
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16_t port, int secure)
 {
+    printf("connecting to server ws%s://%s:%u\n", secure ? "s" : "", host, port);
     static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
     EM_ASM({
         let string = "";
         while (Module.HEAPU8[$1])
             string += String.fromCharCode(Module.HEAPU8[$1++]);
-        console.log("connecting to socket", string);
         if (window.socket)
             window.socket.close();
         let socket = window.socket = new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);

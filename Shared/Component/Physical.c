@@ -6,9 +6,9 @@
 
 enum
 {
-    state_flags_x = 0b00001,
-    state_flags_y = 0b00010,
-    state_flags_angle = 0b00100,
+    state_flags_y = 0b00001,
+    state_flags_angle = 0b00010,
+    state_flags_x = 0b00100,
     state_flags_radius = 0b01000,
     state_flags_server_animation_tick = 0b10000,
     state_flags_all = 0b11111
@@ -79,6 +79,20 @@ void rr_component_physical_read(struct rr_component_physical *this, struct proto
     RR_DECODE_PUBLIC_FIELD(server_animation_tick, uint8);
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
