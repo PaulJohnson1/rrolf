@@ -42,8 +42,8 @@ function build_frontend()
   
     spawnSync("make", [], {stdio: "inherit"});
   
-    fs.copyFileSync("rrolf-client", "../RivetStaticPage/rrolf-client");
-    fs.copyFileSync("rrolf-client.wasm", "../RivetStaticPage/rrolf-client.wasm");
+    // fs.copyFileSync("rrolf-client", "../RivetStaticPage/rrolf-client");
+    // fs.copyFileSync("rrolf-client.wasm", "../RivetStaticPage/rrolf-client.wasm");
   
     // nginx
     fs.copyFileSync("rrolf-client", "/var/www/html/rrolf-client");

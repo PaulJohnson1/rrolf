@@ -150,12 +150,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     this->input_data->scroll_delta = 0;
 }
 
-void print(struct rr_rivet_lobby_connect_info s)
-{
-    puts(s.hostname);
-    puts(s.player_token);
-}
-
 int main()
 {
     puts("client init");

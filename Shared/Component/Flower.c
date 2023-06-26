@@ -8,13 +8,13 @@
 #include <Shared/SimulationCommon.h>
 
 #define FOR_EACH_PUBLIC_FIELD \
-    X(eye_angle, float32) \
-    X(face_flags, uint8) 
+    X(face_flags, uint8) \
+    X(eye_angle, float32) 
 
 enum
 {
-    state_flags_face_flags = 0b000001,
-    state_flags_eye_angle = 0b000010,
+    state_flags_eye_angle = 0b000001,
+    state_flags_face_flags = 0b000010,
     state_flags_all = 0b000011
 };
 

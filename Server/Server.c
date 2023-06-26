@@ -13,6 +13,7 @@
 #include <Shared/pb.h>
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
+#include <Shared/Rivet.h>
 #include <Server/Client.h>
 #include <Server/Simulation.h>
 #include <Server/Logs.h>
@@ -397,6 +398,10 @@ void rr_server_tick(struct rr_server *this)
             if (--this->ticks_until_simulation_create == 0)
             {
                 this->simulation_active = 1;
+#ifdef RIVET_BUILD
+                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
+                rr_rivet_lobbies_set_closed(lobby_token, 1);
+#endif
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
@@ -440,10 +445,10 @@ void rr_server_run(struct rr_server *this)
         rr_server_tick(this);
         gettimeofday(&end, NULL);
 
-        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 1000)
-        printf("tick took %ld microseconds\n", elapsed_time);
-        long to_sleep = 40000 - elapsed_time;
+        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+        if (elapsed_time > 200)
+            fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        uint64_t to_sleep = 40000 - elapsed_time;
         usleep(to_sleep > 0 ? to_sleep : 0);
     }
 }

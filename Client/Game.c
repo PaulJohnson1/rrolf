@@ -75,9 +75,8 @@ void rr_game_init(struct rr_game *this)
     this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
     rr_ui_set_background(
         rr_ui_set_justify(
-            rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 2,
-                rr_ui_inventory_container_init(),
-                rr_ui_crafting_ui_init()
+            rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 1,
+                rr_ui_inventory_container_init()
             )
         , 0, 2), 0xffff0000)
     );
@@ -119,9 +118,9 @@ void rr_game_init(struct rr_game *this)
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
-        this->inventory[id][0] = 10000000;
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
+            this->inventory[id][rarity] = rr_rarity_id_max - rarity;
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
             rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
@@ -554,7 +553,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #endif
 }
 
-void rr_rivet_lobby_on_find(char *s, uint16_t port, void *captures)
+void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures)
 {
     printf("connecting to lobby wss://%s:%u\n", s, port);
     struct rr_websocket *socket = captures;
