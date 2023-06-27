@@ -113,6 +113,11 @@ void rr_server_client_tick(struct rr_server_client *this)
     }
 }
 
+static void delete_entity_function(EntityIdx entity, void *_captures)
+{
+    rr_simulation_request_entity_deletion(_captures, entity);
+}
+
 int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *packet, size_t size)
 {
     struct rr_server *this = (struct rr_server *)lws_context_user(lws_get_context(socket));
@@ -223,6 +228,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 return 1;
             }
 
+#ifdef RIVET_BUILD
             uint64_t encountered_size = proto_bug_read_varuint(&encoder, "rivet token size");
             if (16 + encountered_size >= size)
             {
@@ -240,6 +246,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie4", sizeof "script kiddie");
                 return 1;
             }
+#endif
 
             puts("socket verified");
             client->verified = 1;
@@ -331,6 +338,42 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
             break;
         }
+        case 3:
+        {
+#ifndef RIVET_BUILD
+            if (size < 2)
+                return 0;
+            puts("cheat used");
+            uint8_t cheat_type = proto_bug_read_uint8(&encoder, "cheat type");
+            if (cheat_type == 1)
+            {
+                puts("incr");
+                // increment
+                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                rr_component_arena_set_wave_tick(arena, 0);
+                rr_component_arena_set_wave(arena, arena->wave + 1);
+                rr_simulation_for_each_mob(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_drop(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_petal(&this->simulation, &this->simulation, delete_entity_function);
+            }
+            if (cheat_type == 2)
+            {
+                puts("decr");
+                // decrement
+                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                rr_component_arena_set_wave_tick(arena, 0);
+                rr_component_arena_set_wave(arena, arena->wave - 1);
+                rr_simulation_for_each_mob(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_drop(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_petal(&this->simulation, &this->simulation, delete_entity_function);
+            }
+            if (cheat_type == 3)
+            {
+
+            }
+            break;
+#endif
+        }
         case 69:
         {
             client->ready ^= 1;
@@ -338,11 +381,23 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
         }
         case 70:
         {
-            if (size < 2)
+            uint64_t local_size = size - 1;
+            size -= 1;
+            if (local_size == 0)
+                return 0;
+
+            local_size -= 1;
+            if (local_size == 0)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "pos");
             while (pos)
             {
+                if (pos > 20)
+                    return 0;
+
+                local_size -= 3;
+                if (local_size == 0)
+                    return 0;
                 client->loadout[pos - 1].id = proto_bug_read_uint8(&encoder, "id");
                 client->loadout[pos - 1].rarity = proto_bug_read_uint8(&encoder, "rar");
                 pos = proto_bug_read_uint8(&encoder, "pos");
@@ -422,6 +477,7 @@ void rr_server_tick(struct rr_server *this)
             if (--this->ticks_until_simulation_create == 0)
             {
                 this->simulation_active = 1;
+                rr_simulation_init(&this->simulation);
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
@@ -436,13 +492,17 @@ void rr_server_tick(struct rr_server *this)
             }
         }
         else
-            this->ticks_until_simulation_create = 125;
+            this->ticks_until_simulation_create =
+#ifdef RIVET_BUILD
+                125
+#else
+                25;
+#endif
     }
 }
 
 void rr_server_run(struct rr_server *this)
 {
-    // this->simulation_active = 1;
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
 
@@ -458,9 +518,13 @@ void rr_server_run(struct rr_server *this)
 
     this->server = lws_create_context(&info);
     assert(this->server);
-    this->ticks_until_simulation_create = 125;
-
-    while (1)
+    this->ticks_until_simulation_create =
+#ifdef RIVET_BUILD
+        125
+#else
+        24;
+#endif
+        while (1)
     {
         struct timeval start;
         struct timeval end;

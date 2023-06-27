@@ -40,13 +40,14 @@ void rr_simulation_init(struct rr_simulation *this)
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;
     this->arena = rr_simulation_alloc_entity(this);
-    struct rr_component_arena *comp = rr_simulation_add_arena(this, this->arena);
-    rr_component_arena_set_radius(comp, RR_ARENA_RADIUS);
+    struct rr_component_arena *arena_component = rr_simulation_add_arena(this, this->arena);
+    rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
+    rr_component_arena_set_wave(arena_component, 1);
 
     printf("simulation size: %lu\n", sizeof *this);
 
-#define XX(COMPONENT, ID)                       \
-    printf(#COMPONENT); \
+#define XX(COMPONENT, ID) \
+    printf(#COMPONENT);   \
     printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
     RR_FOR_EACH_COMPONENT;
 #undef XX
@@ -56,14 +57,23 @@ static void spawn_random_mob(struct rr_simulation *this)
 {
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
-    for (; rarity < rr_rarity_id_max - 1; ++rarity)
+    // for (; rarity < rr_rarity_id_max - 1; ++rarity)
+    // {
+    //     if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, rr_simulation_get_arena(this, 1)->wave)) > rarity_seed)
+    //         break;
+    // }
+    float rarity_rand = rr_frand();
+    for (uint64_t i = 0; i < rr_rarity_id_max; i++)
     {
-        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, rr_simulation_get_arena(this, 1)->wave)) > rarity_seed)
+        float to_square = (((float)rr_simulation_get_arena(this, 1)->wave - 12.0f * i) / 5.0f);
+        if (rarity_rand -= expf(-0.5f * to_square * to_square / 5.0f), rarity_rand < 0.0f)
+        {
+            rarity = i < 0.0f ? 0 : (i < rr_rarity_id_max ? i : rr_rarity_id_ultra);
             break;
+        }
     }
-    // promote to double for accuracy, demote to float once finished
     float r = rr_frand();
-    uint8_t id = rr_mob_id_centipede_head;
+    uint8_t id = rr_mob_id_hornet;
     if (r -= 0.2, r < 0)
         id = rr_mob_id_baby_ant;
     else if (r -= 0.2, r < 0)
@@ -290,7 +300,7 @@ void rr_simulation_find_entities_in_view(struct rr_simulation *this, struct rr_c
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
     rr_bitset_set(captures.entities_in_view, this->arena);
-    rr_simulation_for_each_entity(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    rr_simulation_for_each_physical(this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 void rr_simulation_write_entity_deletions_function(uint64_t _id, void *_captures)
@@ -376,10 +386,10 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id, void *_s
         }
         else if (physical->server_animation_tick != 0 && physical->ticked_animation == 0)
         {
-            rr_bitset_unset(simulation->pending_deletions, id);  
-            rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);  
+            rr_bitset_unset(simulation->pending_deletions, id);
+            rr_component_physical_set_server_animation_tick(physical, physical->server_animation_tick - 1);
             physical->ticked_animation = 1;
-        }        
+        }
     }
     else
     {
@@ -412,7 +422,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 
         if (!any_alive)
             this->game_over = 1;
-        
+
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
         // end of wave
         if (arena->wave_tick == 60 * 25)
@@ -424,7 +434,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
         EntityIdx mobs_in_use = 0;
         rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-        if (mobs_in_use <= 50 + arena->wave)
+        if (mobs_in_use <= 200)
             spawn_random_mob(this);
     }
 

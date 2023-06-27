@@ -36,52 +36,42 @@ void rr_game_init(struct rr_game *this)
     this->global_container->container = this->global_container;
     this->protocol_state = (1 << 20) - 1;
 
-    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container, 
-        rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
-            rr_ui_text_init("rrolf", 72, 0xffffffff),
-            rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_input_init(360, 40, 15),
-                rr_ui_find_server_button_init()
-            ),
-            rr_ui_squad_container_init(),
-            rr_ui_title_screen_loadout_container_init()
-        )
-    );
+    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container,
+                                                                 rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
+                                                                                        rr_ui_text_init("rrolf", 72, 0xffffffff),
+                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
+                                                                                                               rr_ui_text_input_init(360, 40, 15),
+                                                                                                               rr_ui_find_server_button_init()),
+                                                                                        rr_ui_squad_container_init(),
+                                                                                        rr_ui_title_screen_loadout_container_init()));
 
-    this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_init("You died", 72, 0xffffffff),
-                rr_ui_text_init("You will spawn back in next wave", 36, 0xffffffff)
-            )
-        , 1, 1)
-    );
+    this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container,
+                                                                  rr_ui_set_justify(
+                                                                      rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+                                                                                             rr_ui_text_init("You died", 72, 0xffffffff),
+                                                                                             rr_ui_text_init("You will spawn back in next wave", 36, 0xffffffff)),
+                                                                      1, 1));
 
-    this->ui_elements.game_over = rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                rr_ui_text_init("Game Over", 72, 0xffffffff),
-                rr_ui_text_init("You many now exit the squad", 36, 0xffffffff)
-            )
-        , 1, 1)
-    );
-     
-    this->ui_elements.loadout = rr_ui_container_add_element(this->global_container, 
-        rr_ui_set_justify(
-            rr_ui_loadout_container_init()
-        , 1, 2)
-    );
+    this->ui_elements.game_over = rr_ui_container_add_element(this->global_container,
+                                                              rr_ui_set_justify(
+                                                                  rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
+                                                                                         rr_ui_text_init("Game Over", 72, 0xffffffff),
+                                                                                         rr_ui_text_init("You many now exit the squad", 36, 0xffffffff)),
+                                                                  1, 1));
 
-    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
-    rr_ui_set_background(
-        rr_ui_set_justify(
-            rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 1,
-                rr_ui_inventory_container_init()
-            )
-        , 0, 2), 0xffff0000)
-    );
+    this->ui_elements.loadout = rr_ui_container_add_element(this->global_container,
+                                                            rr_ui_set_justify(
+                                                                rr_ui_loadout_container_init(), 1, 2));
+
+    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container,
+                                                              rr_ui_set_background(
+                                                                  rr_ui_set_justify(
+                                                                      rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 1,
+                                                                                             rr_ui_inventory_container_init()),
+                                                                      0, 2),
+                                                                  0xffff0000));
     /*
-    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container, 
+    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container,
         rr_ui_pad(
             rr_ui_set_justify(
                 rr_ui_paired_button_init(rr_ui_inventory_container_init()),
@@ -91,30 +81,23 @@ void rr_game_init(struct rr_game *this)
     */
 
     this->ui_elements.wave_info = rr_ui_container_add_element(this->global_container,
-        rr_ui_set_justify(
-            rr_ui_wave_container_init()
-        , 1, 0)
-    );
+                                                              rr_ui_set_justify(
+                                                                  rr_ui_wave_container_init(), 1, 0));
 
     this->ui_elements.in_game_squad_info = rr_ui_container_add_element(this->global_container,
-        rr_ui_set_justify(
-            rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
-                rr_ui_set_justify(
-                    rr_ui_abandon_game_button_init()
-                , 0, 0),
-                rr_ui_static_space_init(50),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                    rr_ui_static_space_init(50),
-                    rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 4,
-                        rr_ui_in_game_player_ui_init(0),
-                        rr_ui_in_game_player_ui_init(1),
-                        rr_ui_in_game_player_ui_init(2),
-                        rr_ui_in_game_player_ui_init(3)
-                    )
-                )
-            )
-        , 0, 0)
-    );
+                                                                       rr_ui_set_justify(
+                                                                           rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
+                                                                                                  rr_ui_set_justify(
+                                                                                                      rr_ui_abandon_game_button_init(), 0, 0),
+                                                                                                  rr_ui_static_space_init(50),
+                                                                                                  rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                                                                                                                         rr_ui_static_space_init(50),
+                                                                                                                         rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 4,
+                                                                                                                                                rr_ui_in_game_player_ui_init(0),
+                                                                                                                                                rr_ui_in_game_player_ui_init(1),
+                                                                                                                                                rr_ui_in_game_player_ui_init(2),
+                                                                                                                                                rr_ui_in_game_player_ui_init(3)))),
+                                                                           0, 0));
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
@@ -132,27 +115,23 @@ void rr_game_init(struct rr_game *this)
             char *dmg = malloc((sizeof *dmg) * 8);
             dmg[sprintf(dmg, "%.1f", RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] / RR_PETAL_DATA[id].count[rarity])] = 0;
             rr_ui_container_refactor(this->petal_tooltips[id][rarity] = rr_ui_set_background(rr_ui_v_container_init(rr_ui_container_init(), 10, 5, 6,
-                    rr_ui_h_container_init(rr_ui_flex_container_init(), 0, 20, 2,
-                        rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), 0, 0),
-                        rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 2, 0)
-                    ),
-                    rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16, RR_RARITY_COLORS[rarity]), 0, 0),
-                    rr_ui_static_space_init(10),
-                    rr_ui_set_justify(rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), 0, 0),
-                    rr_ui_set_justify(
-                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                            rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                            rr_ui_text_init(hp, 12, 0xff44ff44)
-                        )
-                    , 0, 0),
-                    rr_ui_set_justify(
-                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                            rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                            rr_ui_text_init(dmg, 12, 0xffff4444)
-                        )
-                    , 0, 0)
-                )
-            , 0x80000000));
+                                                                                                                    rr_ui_h_container_init(rr_ui_flex_container_init(), 0, 20, 2,
+                                                                                                                                           rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), 0, 0),
+                                                                                                                                           rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 2, 0)),
+                                                                                                                    rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16, RR_RARITY_COLORS[rarity]), 0, 0),
+                                                                                                                    rr_ui_static_space_init(10),
+                                                                                                                    rr_ui_set_justify(rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), 0, 0),
+                                                                                                                    rr_ui_set_justify(
+                                                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                                                                                                                                               rr_ui_text_init("Health: ", 12, 0xff44ff44),
+                                                                                                                                               rr_ui_text_init(hp, 12, 0xff44ff44)),
+                                                                                                                        0, 0),
+                                                                                                                    rr_ui_set_justify(
+                                                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                                                                                                                                               rr_ui_text_init("Damage: ", 12, 0xffff4444),
+                                                                                                                                               rr_ui_text_init(dmg, 12, 0xffff4444)),
+                                                                                                                        0, 0)),
+                                                                                             0x80000000));
         }
     }
 }
@@ -167,7 +146,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
-        //memset the clients
+        // memset the clients
         puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
@@ -191,9 +170,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
             proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(), "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification, "verification");
+#ifdef RIVET_BUILD
             uint64_t token_size = strlen(this->socket.rivet_player_token);
             proto_bug_write_varuint(&verify_encoder, token_size, "rivet token size");
             proto_bug_write_string(&verify_encoder, this->socket.rivet_player_token, token_size, "rivet token");
+#endif
             rr_websocket_send(&this->socket, verify_encoder.start, verify_encoder.current);
             this->socket_ready = 1;
             return;
@@ -349,7 +330,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state grand_state;
     rr_renderer_init_context_state(this->renderer, &grand_state);
-    //render off-game elements
+    // render off-game elements
     struct rr_ui_container_metadata *data = this->global_container->misc_data;
 
     for (uint32_t i = 0; i < data->elements.size; ++i)
@@ -379,7 +360,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
         if (this->simulation->player_info != RR_NULL_ENTITY)
         {
-            player_info_finder(this); //list player infos in order
+            player_info_finder(this); // list player infos in order
             this->ui_elements.in_game_squad_info->hidden = 0;
             this->ui_elements.loadout->hidden = 0;
             if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
@@ -404,7 +385,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_fill(this->renderer);
         rr_renderer_clip(this->renderer);
     }
-    
+
     if (this->expanding_circle_radius > 0)
     {
         rr_simulation_tick(this->simulation, delta);
@@ -412,7 +393,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
         struct rr_renderer_context_state state2;
-        //rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
+        // rr_simulation_for_each_entity(this->simulation, this->simulation, player_info_finder);
         if (this->simulation->player_info != RR_NULL_ENTITY)
         {
             rr_renderer_init_context_state(this->renderer, &state1);
@@ -504,7 +485,30 @@ void rr_game_tick(struct rr_game *this, float delta)
 
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 186 /* ; */))
             this->displaying_debug_information ^= 1;
-
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 75 /* k */))
+        {
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, 3, "header");
+            proto_bug_write_uint8(&encoder, 2, "cheat type");
+            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+        }
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 76 /* l */))
+        {
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, 3, "header");
+            proto_bug_write_uint8(&encoder, 1, "cheat type");
+            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+        }
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 86 /* v */))
+        {
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, 3, "header");
+            proto_bug_write_uint8(&encoder, 3, "cheat type");
+            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+        }
         if (this->simulation_ready && rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 13 /* enter */))
         {
             struct proto_bug encoder;
@@ -551,7 +555,8 @@ void rr_game_connect_socket(struct rr_game *this)
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
 #else
-    rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
+    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
+    // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 #endif
 }
@@ -564,7 +569,9 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures)
     else
         rr_websocket_connect_to(socket, s, port, 0);
     free(s);
-    // socket->rivet_player_token = strdup(token);
-    // free(token);
+// socket->rivet_player_token = strdup(token);
+// free(token);
+#ifdef RIVET_BUILD
     socket->rivet_player_token = token;
+#endif
 }

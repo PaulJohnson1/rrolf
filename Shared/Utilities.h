@@ -4,9 +4,9 @@
 #include <stdio.h>
 
 #ifndef NDEBUG
-#define RR_UNREACHABLE(MESSAGE) \
-    fputs(#MESSAGE, stderr);    \
-    assert(0)
+#define RR_UNREACHABLE(MESSAGE)   \
+    fputs(MESSAGE "\n", stderr); \
+    abort()
 #else
 #define RR_UNREACHABLE(MESSAGE) __builtin_unreachable()
 #endif

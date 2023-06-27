@@ -122,8 +122,9 @@ void rr_websocket_disconnect(struct rr_websocket *this)
     });
 #else
 #endif
-
+#ifdef RIVET_BUILD
     free(this->rivet_player_token);
+#endif
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)

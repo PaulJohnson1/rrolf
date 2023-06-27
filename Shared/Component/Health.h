@@ -10,13 +10,14 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_health
 {
-                   uint8_t hidden;
-    RR_SERVER_ONLY(uint8_t protocol_state;)
-                   EntityIdx parent_id;
+    RR_SERVER_ONLY(uint64_t protocol_state;)
                    float health;
     RR_CLIENT_ONLY(float lerp_health;)
                    float max_health;
     RR_SERVER_ONLY(float damage;)
+                   EntityIdx parent_id;
+                   uint8_t hidden:1;
+                   uint8_t damage_paused:1;
 };
 
 void rr_component_health_init(struct rr_component_health *, struct rr_simulation *);

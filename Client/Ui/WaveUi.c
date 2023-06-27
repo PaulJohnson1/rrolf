@@ -30,7 +30,7 @@ static void wave_text_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer *renderer = game->renderer;
     struct text_metadata *data = this->misc_data;
     char out[12];
-    out[sprintf(&out, "Wave %d", arena->wave)] = 0;
+    out[sprintf(out, "Wave %d", arena->wave)] = 0;
     this->width = rr_renderer_get_text_size((char const *) &out);
 
     struct rr_renderer_context_state state;
@@ -80,8 +80,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
-    uint32_t min = 6 * (arena->wave > 6) + arena->wave * (arena->wave <= 6);
-    float capac = min * 5 * 25;
+    float capac = 60 * 5 * 25;
     rr_renderer_init_context_state(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 15);

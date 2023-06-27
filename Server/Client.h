@@ -17,13 +17,15 @@ struct rr_server_client
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
     struct rr_server *server;
+#ifdef RIVET_BUILD
     char *rivet_player_token;
+#endif
     int file_descriptor;
     char ip_address[100];
     char client_nickname[16];
-    uint8_t received_first_packet:1;
-    uint8_t verified:1;
-    uint8_t ready:1;
+    uint8_t received_first_packet : 1;
+    uint8_t verified : 1;
+    uint8_t ready : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);

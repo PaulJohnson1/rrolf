@@ -46,7 +46,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
 
     rr_simulation_add_flower(&this->server->simulation, flower_id);
     rr_component_health_set_max_health(health, 100000);
-    rr_component_health_set_health(health, 100000);
+    rr_component_health_set_health(health, 1000000);
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, this->player_info->parent_id);
     rr_component_player_info_set_camera_x(this->player_info, physical->x);
