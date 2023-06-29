@@ -16,6 +16,8 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
     struct rr_component_drop *drop = rr_simulation_get_drop(this, drop_id);
 
     struct rr_component_relations *flower_relations = rr_simulation_get_relations(this, flower);
+    if (!rr_simulation_has_entity(this, flower_relations->owner))
+        return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, flower_relations->owner);
 
     if (rr_bitset_get(drop->picked_up_by, flower_relations->owner))

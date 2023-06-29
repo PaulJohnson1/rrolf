@@ -64,14 +64,18 @@ void rr_main_renderer_initialize(struct rr_game *this)
         document.body.appendChild(Module.canvas);
         Module.ctxs = [Module.canvas.getContext('2d')];
         Module.availableCtxs = new Array(128).fill(0).map(function(_, i) { return i; });
-        window.addEventListener(
-            "keydown", function({which}) { Module._rr_key_event($0, 1, which); });
-        window.addEventListener(
-            "keyup", function({which}) { Module._rr_key_event($0, 0, which); });
-        window.addEventListener("mousedown", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)});
-        window.addEventListener("mousemove", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 2, +!!button)});
-        window.addEventListener("mouseup", function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)});
-        window.addEventListener("wheel", function({deltaY}){Module._rr_wheel_event($0, deltaY)});
+        window.onkeydown = function({which, repeat}) { if (!repeat) Module._rr_key_event($0, 1, which); };
+        window.onkeyup = function({which}) { Module._rr_key_event($0, 0, which); };
+        window.onmousedown = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)};
+        window.onmousemove = function({clientX, clientY, button}){
+            // could be `Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)`
+            // but is not since js -> wasm calls are pretty expensive
+            HEAPF32[$1 >> 2] = clientX * devicePixelRatio;
+            HEAPF32[(4 + $1) >> 2] = clientY * devicePixelRatio;
+            HEAPU8[$2] = 2;
+         };
+        window.onmouseup = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)};
+        window.onwheel = function({deltaY}){Module._rr_wheel_event($0, deltaY)};
         Module.paths = new Array(128).fill(null);
         Module.availablePaths = new Array(128).fill(0).map(function(_, i) { return i; });
         Module.addPath = function()
@@ -130,7 +134,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
         };
         requestAnimationFrame(loop);
     },
-           this);
+           this, &this->input_data->mouse_x, &this->input_data->mouse_state);
 #endif
 }
 

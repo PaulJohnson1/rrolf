@@ -3,6 +3,7 @@
 #include <Client/Game.h>
 #include <Client/Simulation.h>
 #include <Client/Renderer/Renderer.h>
+#include <Shared/StaticData.h>
 
 void rr_component_health_render(EntityIdx entity, struct rr_game *game)
 {
@@ -21,7 +22,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
                 return;
     }
 
-    if (rr_simulation_get_health(simulation, entity)->health == 0)
+    if (health->health == 0)
     {
         rr_renderer_set_global_alpha(renderer, (physical->lerp_server_animation_tick) * 0.2);
         rr_renderer_scale(renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
@@ -32,8 +33,9 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
-        if (mob->id != rr_mob_id_centipede_body)
+        if (mob->id != rr_mob_id_spinosaurus_body)
         {
+            // mob rarity
             rr_renderer_set_fill(renderer, RR_RARITY_COLORS[mob->rarity]);
             rr_renderer_set_stroke(renderer, 0xff222222);
             rr_renderer_set_text_size(renderer, 14);
@@ -41,10 +43,28 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
             rr_renderer_set_text_align(renderer, 2);
             rr_renderer_set_text_baseline(renderer, 0);
             rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);
-            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);  
-        }      
+            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity], length, 6);
+
+            // mob name
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff000000);
+            rr_renderer_set_text_size(renderer, 12);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[mob->id], -length, -18);
+            rr_renderer_fill_text(renderer, RR_MOB_NAMES[mob->id], -length, -18);
+        }
+        else
+            length *= 0.5f;
     }
 
+    if (rr_simulation_has_mob(simulation, health->parent_id))
+    {
+        struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
+        if (mob->id == rr_mob_id_spinosaurus_body)
+            if (health->health == health->max_health)
+                return;
+    }
+    // the health bar
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 10);

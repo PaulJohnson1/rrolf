@@ -105,7 +105,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     if (count == 0)
     {
         rr_renderer_scale(renderer, renderer->scale * this->width / 60);
-        rr_renderer_render_background(renderer, 255);
+        rr_renderer_render_background(renderer, game, 255);
     }
     else
     {
@@ -124,7 +124,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
             }
         }
         rr_renderer_scale(renderer, renderer->scale * this->width / 60);
-        rr_renderer_render_background(renderer, data->rarity);
+        rr_renderer_render_background(renderer, game, data->rarity);
         
         renderer->state.filter.amount = 0;
         rr_renderer_draw_image(renderer, &game->static_petals[data->id][data->rarity]);

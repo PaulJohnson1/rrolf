@@ -58,14 +58,14 @@ static void mob_button_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
     rr_renderer_scale(renderer, this->width / 60);
-    rr_renderer_render_background(renderer, data->rarity);
+    rr_renderer_render_background(renderer, game, data->rarity);
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
     rr_renderer_scale(renderer, this->width * 0.01 * mob_radius / RR_MOB_DATA[data->id].radius);
     
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
-    rr_renderer_render_mob(renderer, data->id, 0);
+    rr_renderer_render_mob(renderer, game, data->id, 0);
     
     rr_renderer_free_context_state(renderer, &state);
 }
@@ -80,7 +80,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
-    float capac = 60 * 5 * 25;
+    float capac = 15 * 5 * 25;
     rr_renderer_init_context_state(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 15);

@@ -86,12 +86,10 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
     }    
     rr_renderer_scale(renderer, this->width / 60);
     if (id == 0)
-    {
-        rr_renderer_render_background(renderer, 255);
-    }
+        rr_renderer_render_background(renderer, game, 255);
     else
     {
-        rr_renderer_render_background(renderer, rarity);
+        rr_renderer_render_background(renderer, game, rarity);
         rr_renderer_draw_image(renderer, &game->static_petals[id][rarity]);
     }
 
@@ -138,11 +136,11 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
         }
     }    
     rr_renderer_scale(renderer, this->width / 60);
-    rr_renderer_render_background(renderer, 255);
+    rr_renderer_render_background(renderer, game, 255);
     if (data->prev_id != 0)
     {
         rr_renderer_scale(renderer, (1 - this->animation_timer / 100));
-        rr_renderer_render_background(renderer, rarity);
+        rr_renderer_render_background(renderer, game, rarity);
         rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][rarity]);
     }
 

@@ -2,7 +2,7 @@
 
 #include <Shared/Utilities.h>
 
-#if defined(RIVET_BUILD) && !defined(WASM_BUILD)
+#if defined(RIVET_BUILD) && !defined(EMSCRIPTEN)
 // you're welcome bismuth
 #include <curl/curl.h>
 #endif

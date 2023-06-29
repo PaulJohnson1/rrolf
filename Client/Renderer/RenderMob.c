@@ -28,5 +28,12 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
     if (physical->animation > 2 * M_PI)
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sin(physical->animation);
-    rr_renderer_render_mob(renderer, mob->id, sinusoid_animation);
+
+
+    // #ifndef NDEBUG
+    // rr_renderer_set_stroke(renderer, 0xff0000ff);
+    // rr_renderer_set_line_width(renderer, 1.0f);
+    // rr_renderer_arc(0, 0, size)
+    // #endif
+    rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation);
 }

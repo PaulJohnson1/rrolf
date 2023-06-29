@@ -98,13 +98,13 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         struct rr_component_physical *target_physical = rr_simulation_get_physical(this, ai->target_entity);
         struct rr_vector delta = {target_physical->x - physical->x, target_physical->y - physical->y};
         rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
-        if (ai->ai_aggro_type == rr_ai_aggro_type_hornet)
+        if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             if (delta.x * delta.x + delta.y * delta.y <= 500 * 500)
             {
                 break;
             }
         ai->ticks_until_next_action = rand() % 10 + 25; // when the ai is done being pissed, wait a little until the next action
-        // if and only if aggro type is hornet and is too close then break
+        // if and only if aggro type is pteranodon and is too close then break
         rr_vector_set_magnitude(&delta, 0.75f);
         rr_vector_add(&physical->acceleration, &delta);
     }
@@ -131,7 +131,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
             ai->ticks_until_next_action = 50;
             break;
         case rr_ai_state_attacking:
-            if (ai->ai_aggro_type == rr_ai_aggro_type_hornet)
+            if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             {
                 struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
                 //spawn a missile

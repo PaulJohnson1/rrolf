@@ -87,7 +87,7 @@ static void crafting_ui_on_render(struct rr_ui_element *this, void *_game)
                     renderer->state.filter.amount = 0.2;
                 }
 
-                rr_renderer_render_background(renderer, game->crafting_data.crafting_rarity);
+                rr_renderer_render_background(renderer, game, game->crafting_data.crafting_rarity);
                 
                 rr_renderer_draw_image(renderer, &game->static_petals[game->crafting_data.crafting_id][game->crafting_data.crafting_rarity]);
 
@@ -122,7 +122,7 @@ static void crafting_ui_on_render(struct rr_ui_element *this, void *_game)
         float *matrix = game->renderer->state.transform_matrix;
         uint8_t pressed = fabsf(game->input_data->mouse_x - matrix[2]) < 60 * matrix[0] / 2 && fabsf(game->input_data->mouse_y - matrix[5]) < 60 * matrix[4] / 2;
         rr_renderer_init_context_state(renderer, &state1);
-        rr_renderer_render_background(renderer, game->crafting_data.crafting_rarity + 1);
+        rr_renderer_render_background(renderer, game, game->crafting_data.crafting_rarity + 1);
                 
         rr_renderer_draw_image(renderer, &game->static_petals[game->crafting_data.crafting_id][game->crafting_data.crafting_rarity + 1]);
         rr_renderer_free_context_state(renderer, &state1);

@@ -148,7 +148,7 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this, void *_ga
     rr_renderer_scale(renderer, renderer->scale * (1 - this->animation_timer / 100));
 
     rr_renderer_scale(renderer, this->width / 60);
-    rr_renderer_render_background(renderer, rarity);
+    rr_renderer_render_background(renderer, game, rarity);
     rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][rarity]);
     
     rr_renderer_free_context_state(renderer, &state);

@@ -10,10 +10,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifndef WASM_BUILD
+#ifndef EMSCRIPTEN
 #include <curl/curl.h>
 #else
-#include <emscripten/fetch.h>
 #endif
 
 #include <Shared/cJSON.h>
@@ -111,7 +110,7 @@ void rr_rivet_players_disconnected(char const *lobby_token, char const *player_t
 void rr_rivet_lobbies_find(void *captures)
 {
     puts("finding rivet lobby");
-#ifdef WASM_BUILD
+#ifdef EMSCRIPTEN
     EM_ASM({
         fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
             headers : {

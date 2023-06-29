@@ -73,15 +73,15 @@ static void spawn_random_mob(struct rr_simulation *this)
         }
     }
     float r = rr_frand();
-    uint8_t id = rr_mob_id_hornet;
+    uint8_t id = rr_mob_id_pteranodon;
     if (r -= 0.2, r < 0)
-        id = rr_mob_id_baby_ant;
+        id = rr_mob_id_baby_triceratops;
     else if (r -= 0.2, r < 0)
-        id = rr_mob_id_worker_ant;
+        id = rr_mob_id_trex;
     else if (r -= 0.25, r < 0)
-        id = rr_mob_id_rock;
+        id = rr_mob_id_prototaxite;
     else if (r -= 0.15, r < 0)
-        id = rr_mob_id_centipede_head;
+        id = rr_mob_id_spinosaurus_head;
     EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity);
 }
 
@@ -113,18 +113,18 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
     switch (mob_id)
     {
-    case rr_mob_id_rock:
+    case rr_mob_id_prototaxite:
         ai->ai_type = rr_ai_type_static;
         break;
-    case rr_mob_id_hornet:
+    case rr_mob_id_pteranodon:
         ai->ai_type = rr_ai_type_aggressive;
         break;
-    case rr_mob_id_centipede_head:
-    case rr_mob_id_worker_ant:
+    case rr_mob_id_spinosaurus_head:
+    case rr_mob_id_trex:
         ai->ai_type = rr_ai_type_neutral;
         break;
-    case rr_mob_id_centipede_body:
-    case rr_mob_id_baby_ant:
+    case rr_mob_id_spinosaurus_body:
+    case rr_mob_id_baby_triceratops:
         ai->ai_type = rr_ai_type_passive;
         break;
     default:
@@ -133,21 +133,21 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
 
     switch (mob_id)
     {
-    case rr_mob_id_hornet:
-        ai->ai_aggro_type = rr_ai_aggro_type_hornet;
+    case rr_mob_id_pteranodon:
+        ai->ai_aggro_type = rr_ai_aggro_type_pteranodon;
         break;
-    case rr_mob_id_centipede_head:
-    case rr_mob_id_rock:
-    case rr_mob_id_worker_ant:
-    case rr_mob_id_centipede_body:
-    case rr_mob_id_baby_ant:
+    case rr_mob_id_spinosaurus_head:
+    case rr_mob_id_prototaxite:
+    case rr_mob_id_trex:
+    case rr_mob_id_spinosaurus_body:
+    case rr_mob_id_baby_triceratops:
         ai->ai_aggro_type = rr_ai_aggro_type_default;
         break;
     default:
         RR_UNREACHABLE("forgot to set ai aggro type");
     };
 
-    if (mob_id == rr_mob_id_centipede_head)
+    if (mob_id == rr_mob_id_spinosaurus_head)
     {
         ai->ai_type = rr_ai_type_neutral;
         EntityIdx prev_node = entity;
@@ -157,7 +157,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
         EntityIdx new_entity = RR_NULL_ENTITY;
         for (uint64_t i = 0; i < 5; ++i)
         {
-            new_entity = rr_simulation_alloc_mob(this, rr_mob_id_centipede_body, rarity_id);
+            new_entity = rr_simulation_alloc_mob(this, rr_mob_id_spinosaurus_body, rarity_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
             struct rr_component_physical *new_phys = rr_simulation_get_physical(this, new_entity);
@@ -425,7 +425,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
         // end of wave
-        if (arena->wave_tick == 60 * 25)
+        if (arena->wave_tick == 15 * 25)
         {
             arena->wave_tick = 0;
             rr_component_arena_set_wave(arena, arena->wave + 1);

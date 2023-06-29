@@ -87,6 +87,7 @@ void rr_renderer_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_round_rect(struct rr_renderer *, float, float, float, float, float);
 
 void rr_renderer_draw_image(struct rr_renderer *, struct rr_renderer *);
+void rr_renderer_draw_svg(struct rr_renderer *, char *svg, float x, float y);
 
 void rr_renderer_fill_rect(struct rr_renderer *, float, float, float, float);
 void rr_renderer_stroke_rect(struct rr_renderer *, float, float, float, float);

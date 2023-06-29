@@ -34,7 +34,7 @@ void rr_component_player_info_signal_inv_update(struct rr_component_player_info 
 void rr_component_player_info_init(struct rr_component_player_info *this, struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    this->camera_fov = 1.0f;
+    this->camera_fov = 0.9f;
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this, struct rr_simulation *simulation)

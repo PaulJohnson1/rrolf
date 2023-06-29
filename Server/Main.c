@@ -39,7 +39,7 @@ void sigint_handle(int s)
 
 int main()
 {
-    signal(SIGINT, sigint_handle);
+    // signal(SIGINT, sigint_handle);
     curl_global_init(CURL_GLOBAL_ALL);
     char startup_message[1000] = {0};
 #ifdef NDEBUG

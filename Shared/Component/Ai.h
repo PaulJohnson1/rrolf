@@ -30,7 +30,7 @@ enum rr_ai_type : uint8_t
 enum rr_ai_aggro_type : uint8_t
 {
     rr_ai_aggro_type_default,
-    rr_ai_aggro_type_hornet
+    rr_ai_aggro_type_pteranodon
 };
 
 struct rr_component_ai

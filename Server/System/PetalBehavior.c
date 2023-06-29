@@ -123,7 +123,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             if (data->id == rr_petal_id_faster)
                 player_info->global_rotation += 0.01;
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
-            if (p_petal->simulation_id != RR_NULL_ENTITY && (!rr_simulation_has_entity(simulation, p_petal->simulation_id) || rr_simulation_get_physical(simulation, p_petal->simulation_id)->has_deletion_animation == 0))
+            if (p_petal->simulation_id != RR_NULL_ENTITY && (!rr_simulation_has_entity(simulation, p_petal->simulation_id) || !rr_simulation_has_petal(simulation, p_petal->simulation_id) || rr_simulation_get_physical(simulation, p_petal->simulation_id)->has_deletion_animation == 0))
             {
                 p_petal->simulation_id = RR_NULL_ENTITY;
                 p_petal->cooldown_ticks = data->cooldown;

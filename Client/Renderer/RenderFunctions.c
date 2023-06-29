@@ -4,9 +4,10 @@
 #include <stdio.h>
 
 #include <Client/Renderer/Renderer.h>
+#include <Client/Game.h>
 #include <Shared/StaticData.h>
 
-void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
+void rr_renderer_render_petal(struct rr_renderer *renderer, struct rr_game *game, uint8_t id)
 {
     switch (id)
     {
@@ -15,97 +16,97 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
     case rr_petal_id_basic:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 10);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 10.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_light:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 7);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_rock:
         rr_renderer_set_stroke(renderer, 0xff606060);
         rr_renderer_set_fill(renderer, 0xff777777);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer,12.138091087341309,0);
-        rr_renderer_line_to(renderer,3.8414306640625,12.377452850341797);
-        rr_renderer_line_to(renderer,-11.311542510986328,7.916932582855225);
-        rr_renderer_line_to(renderer,-11.461170196533203,-7.836822032928467);
-        rr_renderer_line_to(renderer,4.538298606872559,-13.891617774963379);
-        rr_renderer_line_to(renderer,12.138091087341309,0);
+        rr_renderer_move_to(renderer, 12.138091087341309f, 0.0f);
+        rr_renderer_line_to(renderer, 3.8414306640625f, 12.377452850341797f);
+        rr_renderer_line_to(renderer, -11.311542510986328f, 7.916932582855225f);
+        rr_renderer_line_to(renderer, -11.461170196533203f, -7.836822032928467f);
+        rr_renderer_line_to(renderer, 4.538298606872559f, -13.891617774963379f);
+        rr_renderer_line_to(renderer, 12.138091087341309f, 0.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_stinger:
         rr_renderer_set_fill(renderer, 0xff333333);
         rr_renderer_set_stroke(renderer, 0xff292929);
-        rr_renderer_set_line_width(renderer, 3);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_width(renderer, 3.0f);
+        rr_renderer_set_line_join(renderer, 1.0f);
+        rr_renderer_set_line_cap(renderer, 1.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 7, 0);
-        rr_renderer_line_to(renderer, -3.5, 6.062177658081055);
-        rr_renderer_line_to(renderer, -3.5, -6.062178134918213);
-        rr_renderer_line_to(renderer, 7, 0);
+        rr_renderer_move_to(renderer, 7.0f, 0.0f);
+        rr_renderer_line_to(renderer, -3.5f, 6.062177658081055f);
+        rr_renderer_line_to(renderer, -3.5f, -6.062178134918213f);
+        rr_renderer_line_to(renderer, 7.0f, 0.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_faster:
         rr_renderer_set_stroke(renderer, 0xffcecfa3);
         rr_renderer_set_fill(renderer, 0xfffeffc9);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 7);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_missile:
         rr_renderer_set_fill(renderer, 0xff333333);
         rr_renderer_set_stroke(renderer, 0xff333333);
-        rr_renderer_set_line_width(renderer, 5);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_width(renderer, 5.0f);
+        rr_renderer_set_line_join(renderer, 1.0f);
+        rr_renderer_set_line_cap(renderer, 1.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 11, 0);
-        rr_renderer_line_to(renderer, -11, -6);
-        rr_renderer_line_to(renderer, -11, 6);
-        rr_renderer_line_to(renderer, 11, 0);
+        rr_renderer_move_to(renderer, 11.0f, 0.0f);
+        rr_renderer_line_to(renderer, -11.0f, -6.0f);
+        rr_renderer_line_to(renderer, -11.0f, 6.0f);
+        rr_renderer_line_to(renderer, 11.0f, 0.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_peas:
         rr_renderer_set_stroke(renderer, 0xff709d45);
         rr_renderer_set_fill(renderer, 0xff8ac255);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 7);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_leaf:
         rr_renderer_set_stroke(renderer, 0xff2e933c);
         rr_renderer_set_fill(renderer, 0xff39b54a);
-        rr_renderer_set_line_width(renderer, 3);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_width(renderer, 3.0f);
+        rr_renderer_set_line_join(renderer, 1.0f);
+        rr_renderer_set_line_cap(renderer, 1.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, -20, 0);
-        rr_renderer_line_to(renderer, -15, 0);
-        rr_renderer_bezier_curve_to(renderer,-10,-12,5,-12,15,0);
-        rr_renderer_bezier_curve_to(renderer,5,12,-10,12,-15,0);
+        rr_renderer_move_to(renderer, -20.0f, 0.0f);
+        rr_renderer_line_to(renderer, -15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, -10.0f, -12.0f, 5.0f, -12.0f, 15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, 5.0f, 12.0f, -10.0f, 12.0f, -15.0f, 0.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, -9, 0);
-        rr_renderer_quadratic_curve_to(renderer,0,-1.5,7.5,0);
+        rr_renderer_move_to(renderer, -9.0f, 0.0f);
+        rr_renderer_quadratic_curve_to(renderer, 0.0f, -1.5f, 7.5f, 0.0f);
         rr_renderer_stroke(renderer);
         break;
     default:
@@ -113,223 +114,270 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
     }
 }
 
-void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, uint8_t rarity)
+void rr_renderer_render_static_petal(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, uint8_t rarity)
 {
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas)
-        rr_renderer_rotate(renderer, 1 - M_PI / 4);
+        rr_renderer_rotate(renderer, 1.0f - M_PI / 4.0f);
     if (count == 1)
     {
         if (id == rr_petal_id_missile)
-            rr_renderer_rotate(renderer, 1);
+            rr_renderer_rotate(renderer, 1.0f);
         else if (id == rr_petal_id_leaf)
-            rr_renderer_rotate(renderer, -1);
-        rr_renderer_render_petal(renderer, id);
+            rr_renderer_rotate(renderer, -1.0f);
+        rr_renderer_render_petal(renderer, game, id);
     }
     else
     {
         struct rr_renderer_context_state state;
-        float r = RR_PETAL_DATA[id].clump_radius == 0 ? 10 : RR_PETAL_DATA[id].clump_radius;
+        float r = RR_PETAL_DATA[id].clump_radius == 0.0f ? 10.0f : RR_PETAL_DATA[id].clump_radius;
         for (uint32_t i = 0; i < count; ++i)
         {
             rr_renderer_init_context_state(renderer, &state);
-            rr_renderer_translate(renderer, r, 0);
+            rr_renderer_translate(renderer, r, 0.0f);
             if (id == rr_petal_id_missile)
-                rr_renderer_rotate(renderer, 1);
+                rr_renderer_rotate(renderer, 1.0f);
             else if (id == rr_petal_id_leaf)
-                rr_renderer_rotate(renderer, -1);
-            rr_renderer_render_petal(renderer, id);
+                rr_renderer_rotate(renderer, -1.0f);
+            rr_renderer_render_petal(renderer, game, id);
             rr_renderer_free_context_state(renderer, &state);
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);
         }
     }
 }
 
-void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float animation_value)
+void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, float animation_tick)
 {
     struct rr_renderer_context_state state;
     switch (id)
     {
-    case rr_mob_id_baby_ant:
-        rr_renderer_set_stroke(renderer, 0xff292929);
-        rr_renderer_set_line_width(renderer, 7);
+    case rr_mob_id_baby_triceratops:
+        // eyes
+        rr_renderer_scale(renderer, 0.4f);
         rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_stroke(renderer, 0xff555555);
+        rr_renderer_set_fill(renderer, 0xff444444);
+        rr_renderer_set_line_width(renderer, 1.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10 + animation_value, 22, -5 + animation_value);
-        rr_renderer_stroke(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10 - animation_value, 22, 5 - animation_value);
-        rr_renderer_stroke(renderer);
-        rr_renderer_set_stroke(renderer, 0xff454545);
-        rr_renderer_set_fill(renderer, 0xff555555);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 14);
+        rr_renderer_ellipse(renderer, 45.0f, 15.0f, 5.0f, 4.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_ellipse(renderer, 45.0f, -15.0f, 5.0f, 4.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+
+        // large horn
+        rr_renderer_set_fill(renderer, 0xff666666);
+        rr_renderer_set_stroke(renderer, 0xff555555);
+        rr_renderer_set_line_width(renderer, 5.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 65.0f, 0.0f);
+        rr_renderer_line_to(renderer, 50.0f, 5.0f);
+        rr_renderer_line_to(renderer, 50.0f, -5.0f);
+        rr_renderer_line_to(renderer, 65.0f, 0.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+
+        // draw head
+        rr_renderer_set_fill(renderer, 0xff90c743);
+        rr_renderer_set_stroke(renderer, 0xff80b733);
+        rr_renderer_set_line_width(renderer, 5.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_ellipse(renderer, 25.0f, 0.0f, 30.0f, 20.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+
+        // head horns
+        rr_renderer_set_fill(renderer, 0xff666666);
+        rr_renderer_set_stroke(renderer, 0xff555555);
+        rr_renderer_set_line_width(renderer, 1.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 30.0f, 5.0f);
+        rr_renderer_quadratic_curve_to(renderer, 25.0f, 20.0f, 60.0f, 15.0f);
+        rr_renderer_quadratic_curve_to(renderer, 20.0f, 5.0f, 0.0f, 5.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 30.0f, -5.0f);
+        rr_renderer_quadratic_curve_to(renderer, 25.0f, -20.0f, 60.0f, -15.0f);
+        rr_renderer_quadratic_curve_to(renderer, 20.0f, -5.0f, 0.0f, -5.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+
+        // draw body
+        rr_renderer_set_fill(renderer, 0xff90c743);
+        rr_renderer_set_stroke(renderer, 0xff80b733);
+        rr_renderer_set_line_width(renderer, 10.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 32.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
         break;
-    case rr_mob_id_worker_ant:
-        rr_renderer_set_stroke(renderer, 0xff454545);
-        rr_renderer_set_fill(renderer, 0xff555555);
-        rr_renderer_set_line_width(renderer, 7);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -16, 0, 10);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-        rr_renderer_set_stroke(renderer, 0xff292929);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0, -7);
-        rr_renderer_quadratic_curve_to(renderer, 11, -10 + animation_value, 22, -5 + animation_value);
-        rr_renderer_stroke(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0, 7);
-        rr_renderer_quadratic_curve_to(renderer, 11, 10 + animation_value, 22, 5 - animation_value);
-        rr_renderer_stroke(renderer);
-        rr_renderer_set_stroke(renderer, 0xff454545);
-        rr_renderer_set_fill(renderer, 0xff555555);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 14);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
+    case rr_mob_id_trex:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
+        rr_renderer_draw_image(renderer, &game->mob_trex_legs[0]);
+        rr_renderer_free_context_state(renderer, &state);
+
+        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
+        rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
+        rr_renderer_free_context_state(renderer, &state);
+
+        rr_renderer_draw_image(renderer, &game->mob_trex_tail_bottom);
+        rr_renderer_draw_image(renderer, &game->mob_trex_body);
+        rr_renderer_draw_image(renderer, &game->mob_trex_tail_top);
+        rr_renderer_draw_image(renderer, &game->mob_trex_body_line);
+        rr_renderer_draw_image(renderer, &game->mob_trex_head);
         break;
-    case rr_mob_id_rock:
-        rr_renderer_set_stroke(renderer, 0xff606060);
-        rr_renderer_set_fill(renderer, 0xff777777);
-        rr_renderer_set_line_width(renderer, 3);
+    case rr_mob_id_prototaxite:
+        // draw stalk
+        rr_renderer_scale(renderer, 1.4f);
+        rr_renderer_set_line_cap(renderer, 1.0f);
+        rr_renderer_set_stroke(renderer, 0xffcda459);
+        rr_renderer_set_line_width(renderer, 10.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer,26.010194778442383,0);
-        rr_renderer_line_to(renderer,16.60860824584961,21.803756713867188);
-        rr_renderer_line_to(renderer,-6.666966915130615,28.138700485229492);
-        rr_renderer_line_to(renderer,-27.351072311401367,12.396180152893066);
-        rr_renderer_line_to(renderer,-28.353946685791016,-13.58041763305664);
-        rr_renderer_line_to(renderer,-6.243117332458496,-28.680421829223633);
-        rr_renderer_line_to(renderer,19.496023178100586,-23.961515426635742);
-        rr_renderer_line_to(renderer,26.010194778442383,0);
-        rr_renderer_line_to(renderer,16.60860824584961,21.803756713867188); //you need to overshoot by one for linecap to work
-        rr_renderer_fill(renderer);
+        rr_renderer_move_to(renderer, 0.0f, 0.0f);
+        rr_renderer_line_to(renderer, 0.0f, 10.0f);
         rr_renderer_stroke(renderer);
+
+        rr_renderer_set_stroke(renderer, 0xffedc479);
+        rr_renderer_set_line_width(renderer, 7.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 0.0f, 0.0f);
+        rr_renderer_line_to(renderer, 0.0f, 10.0f);
+        rr_renderer_stroke(renderer);
+
+        // draw top
+        rr_renderer_set_fill(renderer, 0xffee3024);
+        rr_renderer_set_stroke(renderer, 0xffad0806);
+        rr_renderer_set_line_width(renderer, 4.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 0.0f, 4.0f);
+        rr_renderer_quadratic_curve_to(renderer, 16.0f, 4.0f, 16.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, 16.0f, -8.0f, 9.0f, -11.0f, 5.0f, -11.0f);
+        rr_renderer_bezier_curve_to(renderer, -5.0f, -11.0f, -16.0f, -9.0f, -16.0f, -5.0f);
+        rr_renderer_quadratic_curve_to(renderer, -16.0f, 4.0f, 0.0f, 4.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+
+        rr_renderer_set_fill(renderer, 0xffff7f7f);
+        rr_renderer_set_stroke(renderer, 0xffcd2826);
+        rr_renderer_set_line_width(renderer, 2.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, -2.0f, -5.0f, 4.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 10.0f, -3.0f, 2.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, -10.0f, -2.0f, 1.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 3.0f, -0.0f, 1.0f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, -9.0f, -6.0f, 1.5f);
+        rr_renderer_stroke(renderer);
+        rr_renderer_fill(renderer);
         break;
-    case rr_mob_id_centipede_head:
+    case rr_mob_id_spinosaurus_head:
         // TODO: remove
         rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_value * 3, -30, 15);
+        rr_renderer_arc(renderer, animation_tick * 3.0f, -30.0f, 15.0f);
         rr_renderer_fill(renderer);
         // side circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_value * 3, 30, 15);
+        rr_renderer_arc(renderer, -animation_tick * 3.0f, 30.0f, 15.0f);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);
-        rr_renderer_set_line_width(renderer, 7);
+        rr_renderer_set_line_width(renderer, 7.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 35);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 35.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         rr_renderer_set_stroke(renderer, 0xff333333);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_set_line_cap(renderer, 1.0f);
+        rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_init_context_state(renderer, &state);
-        rr_renderer_rotate(renderer, animation_value / 10);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // antennae circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55 + animation_value * 2, -30, 5);
+        rr_renderer_arc(renderer, 55.0f + animation_tick * 2.0f, -30.0f, 5.0f);
         rr_renderer_fill(renderer);
         // antennae circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55 - animation_value * 2, 30, 5);
+        rr_renderer_arc(renderer, 55.0f - animation_tick * 2.0f, 30.0f, 5.0f);
         rr_renderer_fill(renderer);
         // antennae line a
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 25, -10);
-        rr_renderer_quadratic_curve_to(renderer, 45, -10, 55 + animation_value * 2, -30);
+        rr_renderer_move_to(renderer, 25.0f, -10.0f);
+        rr_renderer_quadratic_curve_to(renderer, 45.0f, -10.0f, 55.0f + animation_tick * 2.0f, -30.0f);
         rr_renderer_stroke(renderer);
         // antennae line b
         rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 25, 10);
-        rr_renderer_quadratic_curve_to(renderer, 45, 10, 55 - animation_value * 2, 30);
+        rr_renderer_move_to(renderer, 25.0f, 10.0f);
+        rr_renderer_quadratic_curve_to(renderer, 45.0f, 10.0f, 55.0f - animation_tick * 2.0f, 30.0f);
         rr_renderer_stroke(renderer);
         rr_renderer_free_context_state(renderer, &state);
         break;
-    case rr_mob_id_centipede_body:
+    case rr_mob_id_spinosaurus_body:
         // TODO: remove
         rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_value * 2, -30, 15);
+        rr_renderer_arc(renderer, animation_tick * 2.0f, -30.0f, 15.0f);
         rr_renderer_fill(renderer);
         // antennae circle b
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_value * 2, 30, 15);
+        rr_renderer_arc(renderer, -animation_tick * 2.0f, 30.0f, 15.0f);
         rr_renderer_fill(renderer);
         rr_renderer_set_fill(renderer, 0xff8ac255);
         rr_renderer_set_stroke(renderer, 0xff709d45);
-        rr_renderer_set_line_width(renderer, 7);
+        rr_renderer_set_line_width(renderer, 7.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 35);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 35.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
-    case rr_mob_id_hornet:
-        rr_renderer_set_fill(renderer, 0xff333333);
-        rr_renderer_set_stroke(renderer, 0xff333333);
-        rr_renderer_set_line_width(renderer, 5);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_begin_path(renderer);
-        //stinger
-        rr_renderer_init_context_state(renderer, &state); // not defined
-        rr_renderer_translate(renderer, -25, 0);
-        rr_renderer_rotate(renderer, animation_value / 10);
-        rr_renderer_move_to(renderer,-22,0);
-        rr_renderer_line_to(renderer,0,-6);
-        rr_renderer_line_to(renderer,0,6);
-        rr_renderer_line_to(renderer,-22,0);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-        rr_renderer_free_context_state(renderer, &state);
-        rr_renderer_set_fill(renderer, 0xffffd363);
-        //body
-        rr_renderer_begin_path(renderer);
-        rr_renderer_ellipse(renderer,0,0,30,20);
-        rr_renderer_fill(renderer);
-        rr_renderer_set_fill(renderer, 0xff333333);
+    case rr_mob_id_pteranodon:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
         rr_renderer_init_context_state(renderer, &state);
-        rr_renderer_clip(renderer);
-        //stripes
-        rr_renderer_fill_rect(renderer,-30,-20,10,40);
-        rr_renderer_fill_rect(renderer,-10,-20,10,40);
-        rr_renderer_fill_rect(renderer,10,-20,10,40);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer, 40.0f, 30.0f);
+        rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
         rr_renderer_free_context_state(renderer, &state);
-        rr_renderer_set_stroke(renderer, 0xffd3ad46);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_ellipse(renderer,0,0,30,20);
-        rr_renderer_stroke(renderer);
-        rr_renderer_set_stroke(renderer, 0xff333333);
-        rr_renderer_set_line_width(renderer, 3);
-        //antennae
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer,25,5);
-        rr_renderer_quadratic_curve_to(renderer,40,10,50,15);
-        rr_renderer_quadratic_curve_to(renderer,40,5,25,5);
-        rr_renderer_move_to(renderer,25,-5);
-        rr_renderer_quadratic_curve_to(renderer,40,-10,50,-15);
-        rr_renderer_quadratic_curve_to(renderer,40,-5,25,-5);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
+        
+        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_rotate(renderer, animation_tick * -0.1f);
+        rr_renderer_translate(renderer, -40.0f, 30.0f);
+        rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
+        rr_renderer_free_context_state(renderer, &state);
+        
+        rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_line_width(renderer, 7);
+        rr_renderer_set_line_width(renderer, 7.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 7);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
@@ -338,29 +386,29 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, uint8_t id, float anim
     }
 }
 
-void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
+void rr_renderer_render_background(struct rr_renderer *renderer, struct rr_game *game, uint8_t rarity)
 {
     if (rarity == 255)
     {
         rr_renderer_set_fill(renderer, 0xffcccccc);
-        renderer->state.filter.amount = 0.2;
+        renderer->state.filter.amount = 0.2f;
         rr_renderer_set_stroke(renderer, 0xffcccccc);
-        rr_renderer_set_line_width(renderer, 6);
+        rr_renderer_set_line_width(renderer, 6.0f);
         rr_renderer_begin_path(renderer);
-        rr_renderer_round_rect(renderer, -30, -30, 60, 60, 6);
+        rr_renderer_round_rect(renderer, -30.0f, -30.0f, 60.0f, 60.0f, 6.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
-        renderer->state.filter.amount = 0;
+        renderer->state.filter.amount = 0.0f;
         return;
     }
     rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
-    renderer->state.filter.amount = 0.2;
+    renderer->state.filter.amount = 0.2f;
     rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[rarity]);
-    rr_renderer_set_line_width(renderer, 6);
+    rr_renderer_set_line_width(renderer, 6.0f);
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -30, -30, 60, 60, 6);
+    rr_renderer_round_rect(renderer, -30.0f, -30.0f, 60.0f, 60.0f, 6.0f);
     rr_renderer_fill(renderer);
     rr_renderer_stroke(renderer);
     rr_renderer_clip(renderer);
-    renderer->state.filter.amount = 0;
+    renderer->state.filter.amount = 0.0f;
 }
