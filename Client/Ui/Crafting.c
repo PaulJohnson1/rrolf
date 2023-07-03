@@ -64,7 +64,7 @@ static void crafting_ui_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer_context_state state;
     struct rr_renderer_context_state state1;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (game->crafting_data.success_count == 0)
     {

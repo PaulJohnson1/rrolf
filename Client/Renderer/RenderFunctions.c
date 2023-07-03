@@ -148,71 +148,23 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, struct rr_gam
 
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, float animation_tick)
 {
+    struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
+
+    rr_renderer_init_context_state(renderer, &original_state);
     switch (id)
     {
-    case rr_mob_id_baby_triceratops:
-        // eyes
-        rr_renderer_scale(renderer, 0.4f);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_set_stroke(renderer, 0xff555555);
-        rr_renderer_set_fill(renderer, 0xff444444);
-        rr_renderer_set_line_width(renderer, 1.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_ellipse(renderer, 45.0f, 15.0f, 5.0f, 4.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_ellipse(renderer, 45.0f, -15.0f, 5.0f, 4.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
+    case rr_mob_id_triceratops:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[0]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[1]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[2]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[3]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[4]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[5]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops[6]);
 
-        // large horn
-        rr_renderer_set_fill(renderer, 0xff666666);
-        rr_renderer_set_stroke(renderer, 0xff555555);
-        rr_renderer_set_line_width(renderer, 5.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 65.0f, 0.0f);
-        rr_renderer_line_to(renderer, 50.0f, 5.0f);
-        rr_renderer_line_to(renderer, 50.0f, -5.0f);
-        rr_renderer_line_to(renderer, 65.0f, 0.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-
-        // draw head
-        rr_renderer_set_fill(renderer, 0xff90c743);
-        rr_renderer_set_stroke(renderer, 0xff80b733);
-        rr_renderer_set_line_width(renderer, 5.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_ellipse(renderer, 25.0f, 0.0f, 30.0f, 20.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-
-        // head horns
-        rr_renderer_set_fill(renderer, 0xff666666);
-        rr_renderer_set_stroke(renderer, 0xff555555);
-        rr_renderer_set_line_width(renderer, 1.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 30.0f, 5.0f);
-        rr_renderer_quadratic_curve_to(renderer, 25.0f, 20.0f, 60.0f, 15.0f);
-        rr_renderer_quadratic_curve_to(renderer, 20.0f, 5.0f, 0.0f, 5.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 30.0f, -5.0f);
-        rr_renderer_quadratic_curve_to(renderer, 25.0f, -20.0f, 60.0f, -15.0f);
-        rr_renderer_quadratic_curve_to(renderer, 20.0f, -5.0f, 0.0f, -5.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-
-        // draw body
-        rr_renderer_set_fill(renderer, 0xff90c743);
-        rr_renderer_set_stroke(renderer, 0xff80b733);
-        rr_renderer_set_line_width(renderer, 10.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0.0f, 0.0f, 32.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
         break;
     case rr_mob_id_trex:
         rr_renderer_rotate(renderer, M_PI / 2);
@@ -234,60 +186,10 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         rr_renderer_draw_image(renderer, &game->mob_trex_body_line);
         rr_renderer_draw_image(renderer, &game->mob_trex_head);
         break;
-    case rr_mob_id_prototaxite:
-        // draw stalk
-        rr_renderer_scale(renderer, 1.4f);
-        rr_renderer_set_line_cap(renderer, 1.0f);
-        rr_renderer_set_stroke(renderer, 0xffcda459);
-        rr_renderer_set_line_width(renderer, 10.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0.0f, 0.0f);
-        rr_renderer_line_to(renderer, 0.0f, 10.0f);
-        rr_renderer_stroke(renderer);
-
-        rr_renderer_set_stroke(renderer, 0xffedc479);
-        rr_renderer_set_line_width(renderer, 7.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0.0f, 0.0f);
-        rr_renderer_line_to(renderer, 0.0f, 10.0f);
-        rr_renderer_stroke(renderer);
-
-        // draw top
-        rr_renderer_set_fill(renderer, 0xffee3024);
-        rr_renderer_set_stroke(renderer, 0xffad0806);
-        rr_renderer_set_line_width(renderer, 4.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 0.0f, 4.0f);
-        rr_renderer_quadratic_curve_to(renderer, 16.0f, 4.0f, 16.0f, 0.0f);
-        rr_renderer_bezier_curve_to(renderer, 16.0f, -8.0f, 9.0f, -11.0f, 5.0f, -11.0f);
-        rr_renderer_bezier_curve_to(renderer, -5.0f, -11.0f, -16.0f, -9.0f, -16.0f, -5.0f);
-        rr_renderer_quadratic_curve_to(renderer, -16.0f, 4.0f, 0.0f, 4.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-
-        rr_renderer_set_fill(renderer, 0xffff7f7f);
-        rr_renderer_set_stroke(renderer, 0xffcd2826);
-        rr_renderer_set_line_width(renderer, 2.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -2.0f, -5.0f, 4.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 10.0f, -3.0f, 2.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -10.0f, -2.0f, 1.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 3.0f, -0.0f, 1.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -9.0f, -6.0f, 1.5f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
+    case rr_mob_id_stump:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_draw_image(renderer, &game->mob_stump);
         break;
     case rr_mob_id_spinosaurus_head:
         // TODO: remove
@@ -372,6 +274,16 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         break;
+    case rr_mob_id_dakotaraptor:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[0]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[1]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[2]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[3]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[4]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[5]);
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
@@ -384,6 +296,8 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
     default:
         break;
     }
+
+    rr_renderer_free_context_state(renderer, &original_state);
 }
 
 void rr_renderer_render_background(struct rr_renderer *renderer, struct rr_game *game, uint8_t rarity)

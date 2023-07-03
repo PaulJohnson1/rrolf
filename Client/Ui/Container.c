@@ -15,7 +15,7 @@ static void container_on_render(struct rr_ui_element *this, void *_game)
     struct rr_ui_container_metadata *data = this->misc_data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     if (data->fill_color != 0x00000000)
     {
         rr_renderer_init_context_state(renderer, &state2);
@@ -51,7 +51,7 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this, st
 struct rr_ui_element *rr_ui_container_init()
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct rr_ui_container_metadata *data = malloc(sizeof *data);
+    struct rr_ui_container_metadata *data = calloc(1, sizeof *data);
     data->elements.size = 0;
     element->misc_data = data;
     element->on_render = container_on_render;

@@ -71,7 +71,7 @@ static void inventory_container_on_render(struct rr_ui_element *this, void *_gam
     struct rr_renderer_context_state state2;
     struct rr_ui_container_metadata *data = this->misc_data;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
 
     //if (this->container != this)
         //rr_renderer_fill_rect(game->renderer, -this->width / 2, -this->height / 2, this->width, this->height);
@@ -100,7 +100,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer_context_state state;
     struct rr_renderer_context_state state2;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
 
     if (count == 0)
     {
@@ -152,7 +152,7 @@ static void inventory_button_on_render(struct rr_ui_element *this, void *_game)
 static struct rr_ui_element *rr_ui_inventory_button_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct inventory_button_metadata *data = malloc(sizeof *data);
+    struct inventory_button_metadata *data = calloc(1, sizeof *data);
     data->id = id + 1;
     data->rarity = rarity;
     data->count = 0;
@@ -169,7 +169,7 @@ static struct rr_ui_element *rr_ui_inventory_button_init(uint8_t id, uint8_t rar
 static struct rr_ui_element *rr_ui_crafting_inventory_button_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct inventory_button_metadata *data = malloc(sizeof *data);
+    struct inventory_button_metadata *data = calloc(1, sizeof *data);
     data->id = id + 1;
     data->rarity = rarity;
     data->count = 0;

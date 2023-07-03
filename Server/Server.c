@@ -87,6 +87,7 @@ void rr_server_client_tick(struct rr_server_client *this)
             struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
             rr_component_player_info_set_camera_x(this->player_info, physical->x);
             rr_component_player_info_set_camera_y(this->player_info, physical->y);
+            rr_vector_set(&physical->acceleration, this->player_accel_x, this->player_accel_y);
         }
         rr_server_client_broadcast_update(this);
     }
@@ -285,9 +286,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 x *= 0.70710678118;
                 y *= 0.70710678118;
             }
-            struct rr_component_physical *physical = rr_simulation_get_physical(&this->simulation, client->player_info->flower_id);
-            rr_vector_set(&physical->acceleration, x, y);
-
+            client->player_accel_x = x;
+            client->player_accel_y = y;
             client->player_info->input = movementFlags >> 4;
             break;
         }
@@ -369,7 +369,6 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             }
             if (cheat_type == 3)
             {
-
             }
             break;
 #endif
@@ -496,8 +495,9 @@ void rr_server_tick(struct rr_server *this)
 #ifdef RIVET_BUILD
                 125
 #else
-                25;
+                2
 #endif
+                ;
     }
 }
 
@@ -522,9 +522,10 @@ void rr_server_run(struct rr_server *this)
 #ifdef RIVET_BUILD
         125
 #else
-        24;
+        24
 #endif
-        while (1)
+        ;
+    while (1)
     {
         struct timeval start;
         struct timeval end;

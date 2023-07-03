@@ -16,7 +16,7 @@ static void default_on_render(struct rr_ui_element *this, void *_captures)
     return;
 }
 
-void ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
+void rr_ui_translate(struct rr_ui_element *this, struct rr_renderer *renderer)
 {
     this->lerp_x = rr_lerp(this->lerp_x, this->x, 0.2);
     this->lerp_y = rr_lerp(this->lerp_y, this->y, 0.2);
@@ -61,8 +61,7 @@ void rr_ui_render_tooltip(struct rr_ui_element *this, struct rr_game *game)
 
 struct rr_ui_element *rr_ui_element_init()
 {
-    struct rr_ui_element *element = malloc(sizeof *element);
-    memset(element, 0, sizeof *element);
+    struct rr_ui_element *element = calloc(1, sizeof *element);
     element->h_justify = 1;
     element->v_justify = 1;
     return element;
@@ -79,13 +78,13 @@ struct rr_ui_element *rr_ui_static_space_init(float s)
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *a, struct rr_ui_element *b)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct rr_ui_choose_element_metadata *data = malloc(sizeof *data);
+    struct rr_ui_choose_element_metadata *data = calloc(1, sizeof *data);
     data->a = a;
     data->b = b;
     element->misc_data = data;
     element->width = a->width > b->width ? a->width : b->width;
     element->height = a->height > b->height ? a->height : b->height;
     element->on_render = rr_ui_choose_element_on_render;
-    element->hidden = rand() & 1;
+    element->hidden = 1;
     return element;
 }

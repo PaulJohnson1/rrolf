@@ -66,7 +66,7 @@ struct rr_ui_element
 };
 
 /* "primitives" */
-void ui_translate(struct rr_ui_element *, struct rr_renderer *);
+void rr_ui_translate(struct rr_ui_element *, struct rr_renderer *);
 uint8_t rr_button_is_touching_mouse(struct rr_ui_element *, struct rr_game *);
 void rr_ui_choose_element_on_render(struct rr_ui_element *, void *);
 void rr_ui_render_tooltip(struct rr_ui_element *, struct rr_game *);
@@ -96,7 +96,7 @@ struct rr_ui_element *rr_ui_squad_container_init();
 struct rr_ui_element *rr_ui_wave_container_init();
 
 struct rr_ui_element *rr_ui_abandon_game_button_init();
-struct rr_ui_element *rr_ui_in_game_player_ui_init(uint8_t);
+struct rr_ui_element *rr_ui_in_game_player_ui_init(uint64_t);
 
 struct rr_ui_element *rr_ui_crafting_ui_init();
 struct rr_ui_element *rr_ui_crafting_button_init();

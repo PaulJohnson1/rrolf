@@ -58,7 +58,7 @@ static void button_on_render(struct rr_ui_element *this, void *_game)
     struct button_metadata *data = this->misc_data;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
     {
@@ -101,7 +101,7 @@ static void server_connection_button_on_render(struct rr_ui_element *this, void 
 
 struct rr_ui_element *rr_ui_button_init()
 {
-    struct button_metadata *data = malloc(sizeof *data);
+    struct button_metadata *data = calloc(1, sizeof *data);
     struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = button_on_render;
     element->misc_data = data;

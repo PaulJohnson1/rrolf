@@ -38,7 +38,7 @@ static void flower_icon_on_render(struct rr_ui_element *this, void *_game)
     struct rr_renderer *renderer = game->renderer;
     struct squad_container_metadata *spot = this->misc_data;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
@@ -101,7 +101,7 @@ static void countdown_text_on_render(struct rr_ui_element *this, void *_game)
     char out[16];
     out[sprintf(out, "Starting in %d", 1 + game->ticks_until_game_start / 25)] = 0;
     this->width = rr_renderer_get_text_size(out) * this->height;
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0xff1dd129);
     rr_renderer_set_stroke(renderer, 0xff222222);
@@ -144,7 +144,7 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this, void *_ga
             this->animation_timer = 0;
     }
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale * (1 - this->animation_timer / 100));
 
     rr_renderer_scale(renderer, this->width / 60);
@@ -159,7 +159,7 @@ static struct rr_ui_element *rr_ui_flower_icon_init(float radius, uint8_t spot)
     struct rr_ui_element *element = rr_ui_element_init();
     element->width = element->height = radius * 2;
     element->on_render = flower_icon_on_render;
-    struct squad_container_metadata *data = malloc(sizeof *data);
+    struct squad_container_metadata *data = calloc(1, sizeof *data);
     data->pos = spot;
     element->misc_data = data;
     return element;
@@ -168,7 +168,7 @@ static struct rr_ui_element *rr_ui_flower_icon_init(float radius, uint8_t spot)
 static struct rr_ui_element *rr_ui_squad_loadout_icon_init(uint8_t client, uint8_t row, uint8_t col)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct squad_petal_metadata *data = malloc(sizeof *data);
+    struct squad_petal_metadata *data = calloc(1, sizeof *data);
     data->client = client;
     data->row = row;
     data->col = col;
@@ -227,6 +227,7 @@ static struct rr_ui_element *rr_ui_squad_player_container_init(uint8_t spot)
     struct rr_ui_element *b = rr_ui_text_init("Empty", 16, 0xffffffff);
     struct rr_ui_element *choose = rr_ui_choose_element_init(a, b);
     struct rr_ui_choose_element_metadata *data = choose->misc_data;
+    b->container = choose;
     data->info = spot;
     choose->on_render = squad_container_on_render;
     return rr_ui_set_background(

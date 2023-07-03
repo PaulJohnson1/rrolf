@@ -29,11 +29,10 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sin(physical->animation);
 
-
-    // #ifndef NDEBUG
-    // rr_renderer_set_stroke(renderer, 0xff0000ff);
-    // rr_renderer_set_line_width(renderer, 1.0f);
-    // rr_renderer_arc(0, 0, size)
-    // #endif
     rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation);
+    rr_renderer_set_stroke(renderer, 0xff00ff00);
+    rr_renderer_set_line_width(renderer, 1.0f);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, physical->radius);
+    rr_renderer_stroke(renderer);
 }

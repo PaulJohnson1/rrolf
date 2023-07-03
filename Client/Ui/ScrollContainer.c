@@ -27,7 +27,7 @@ static void scroll_container_on_render(struct rr_ui_element *this, void *_game)
     struct scroll_container_metadata *data = this->misc_data;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     if (rr_button_is_touching_mouse(this, game))
     {
         data->current_y += game->input_data->scroll_delta * 0.1;
@@ -80,7 +80,7 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *element,
 {
     float pad = 10;
     struct rr_ui_element *this = rr_ui_element_init();
-    struct scroll_container_metadata *data = malloc(sizeof *data);
+    struct scroll_container_metadata *data = calloc(1, sizeof *data);
     element->container = this;
     rr_ui_set_justify(
         element

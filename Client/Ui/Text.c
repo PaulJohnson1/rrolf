@@ -22,7 +22,7 @@ static void text_on_render(struct rr_ui_element *this, void *_game)
     struct text_metadata *data = this->misc_data;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, data->fill);
     rr_renderer_set_stroke(renderer, 0xff000000);
@@ -37,7 +37,7 @@ static void text_on_render(struct rr_ui_element *this, void *_game)
 
 struct rr_ui_element *rr_ui_text_init(char const *str, float size, uint32_t fill)
 {
-    struct text_metadata *data = malloc(sizeof *data);
+    struct text_metadata *data = calloc(1, sizeof *data);
     struct rr_ui_element *element = rr_ui_element_init();
     element->on_render = text_on_render;
     data->text = str;

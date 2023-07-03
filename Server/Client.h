@@ -16,6 +16,8 @@ struct rr_server_client
     uint64_t requested_verification;
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
+    float player_accel_x;
+    float player_accel_y;
     struct rr_server *server;
 #ifdef RIVET_BUILD
     char *rivet_player_token;

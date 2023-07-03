@@ -447,4 +447,5 @@ float rr_renderer_get_text_size(char const *c)
     },
                          c);
 #endif
+    return 0.0f;
 }

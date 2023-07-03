@@ -12,6 +12,16 @@
 #ifndef EMSCRIPTEN
 #include <sys/time.h>
 #include <unistd.h>
+#include <pthread.h>
+
+static void *socket_thread(void *arg)
+{
+    struct rr_game *game = arg;
+    rr_game_connect_socket(game);
+
+    return 0;
+}
+
 #endif
 
 #ifdef EMSCRIPTEN
@@ -42,7 +52,7 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state, uint8
     else if (state == 0)
     {
         this->input_data->mouse_buttons &= ~(1 << button);
-        //this->input_data->mouse_buttons_this_tick &= ~(1 << button);
+        // this->input_data->mouse_buttons_this_tick &= ~(1 << button);
         this->input_data->mouse_buttons_this_tick |= (1 << button);
     }
 }
@@ -64,16 +74,21 @@ void rr_main_renderer_initialize(struct rr_game *this)
         document.body.appendChild(Module.canvas);
         Module.ctxs = [Module.canvas.getContext('2d')];
         Module.availableCtxs = new Array(128).fill(0).map(function(_, i) { return i; });
-        window.onkeydown = function({which, repeat}) { if (!repeat) Module._rr_key_event($0, 1, which); };
+        window.onkeydown = function({which, repeat})
+        {
+            if (!repeat)
+                Module._rr_key_event($0, 1, which);
+        };
         window.onkeyup = function({which}) { Module._rr_key_event($0, 0, which); };
         window.onmousedown = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)};
-        window.onmousemove = function({clientX, clientY, button}){
+        window.onmousemove = function({clientX, clientY, button})
+        {
             // could be `Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)`
             // but is not since js -> wasm calls are pretty expensive
             HEAPF32[$1 >> 2] = clientX * devicePixelRatio;
             HEAPF32[(4 + $1) >> 2] = clientY * devicePixelRatio;
             HEAPU8[$2] = 2;
-         };
+        };
         window.onmouseup = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)};
         window.onwheel = function({deltaY}){Module._rr_wheel_event($0, deltaY)};
         Module.paths = new Array(128).fill(null);
@@ -118,7 +133,8 @@ void rr_main_renderer_initialize(struct rr_game *this)
         Module.ReadCstr = function(ptr)
         {
             const start = ptr;
-            while (Module.HEAPU8[ptr++]);
+            while (Module.HEAPU8[ptr++])
+                ;
             return new TextDecoder().decode(Module.HEAPU8.subarray(start, ptr));
         };
         function loop(time)
@@ -174,6 +190,13 @@ int main()
     rr_game_tick(&game, 1);
 
 #ifndef EMSCRIPTEN
+    pthread_t socket_tid;
+
+    if (pthread_create(&socket_tid, NULL, rr_create_game_thread, &game) != 0)
+    {
+        fputs("Failed to create game thread\n", stderr);
+        return 1;
+    }
     while (1)
     {
         struct timeval start;
@@ -185,7 +208,9 @@ int main()
         if (elapsed_time > 1000)
             printf("tick took %ld microseconds\n", elapsed_time);
         int64_t to_sleep = 16666 - elapsed_time;
-        usleep(to_sleep > 0 ? to_sleep : 0);
+        if (to_sleep > 0)
+            usleep(to_sleep);
+        // otherwise don't even call the function
     }
 #endif
 

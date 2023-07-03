@@ -30,12 +30,15 @@ enum rr_petal_id
 
 enum rr_mob_id
 {
-    rr_mob_id_baby_triceratops, // was baby ant
+    rr_mob_id_triceratops,
     rr_mob_id_trex,
-    rr_mob_id_prototaxite, // was rock
-    rr_mob_id_spinosaurus_head, // was centipede
+    rr_mob_id_stump,
+    rr_mob_id_spinosaurus_head,
     rr_mob_id_spinosaurus_body,
-    rr_mob_id_pteranodon, // was hornet
+    rr_mob_id_pteranodon,
+    rr_mob_id_dakotaraptor,
+    // todo: add the rest
+
     rr_mob_id_max
 };
 

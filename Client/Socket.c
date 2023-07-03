@@ -21,6 +21,7 @@ void rr_on_socket_event_emscripten(struct rr_websocket *this, enum rr_websocket_
 #else
 int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason, void *user, void *in, size_t size)
 {
+    printf("cb called reason: %u", reason);
     struct rr_websocket *this = lws_context_user(lws_get_context(wsi));
 
     switch (reason)
@@ -36,8 +37,10 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason, vo
         break;
     case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
         fputs((char *)in, stderr);
-        puts("");
+        fputs("\n", stderr);
         abort();
+        break;
+    default:
         break;
     }
     return 0;
@@ -52,8 +55,8 @@ void rr_websocket_init(struct rr_websocket *this)
 void rr_websocket_connect_to(struct rr_websocket *this, char const *host, uint16_t port, int secure)
 {
     printf("connecting to server ws%s://%s:%u\n", secure ? "s" : "", host, port);
-    static uint8_t incoming_data[1024 * 1024];
 #ifdef EMSCRIPTEN
+    static uint8_t incoming_data[1024 * 1024];
     EM_ASM({
         let string = "";
         while (Module.HEAPU8[$1])

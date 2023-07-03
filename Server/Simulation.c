@@ -72,16 +72,22 @@ static void spawn_random_mob(struct rr_simulation *this)
             break;
         }
     }
-    float r = rr_frand();
-    uint8_t id = rr_mob_id_pteranodon;
-    if (r -= 0.2, r < 0)
-        id = rr_mob_id_baby_triceratops;
-    else if (r -= 0.2, r < 0)
-        id = rr_mob_id_trex;
-    else if (r -= 0.25, r < 0)
-        id = rr_mob_id_prototaxite;
-    else if (r -= 0.15, r < 0)
-        id = rr_mob_id_spinosaurus_head;
+    // float r = rr_frand();
+    // uint8_t id = rr_mob_id_pteranodon;
+    // if (r -= 0.2, r < 0)
+    //     id = rr_mob_id_triceratops;
+    // else if (r -= 0.2, r < 0)
+    //     id = rr_mob_id_trex;
+    // else if (r -= 0.25, r < 0)
+    //     id = rr_mob_id_stump;
+    // else if (r -= 0.15, r < 0)
+    //     id = rr_mob_id_spinosaurus_head;
+    uint8_t id = rr_mob_id_stump;
+    // uint8_t id = rand() % rr_mob_id_max;
+    // if (id == rr_mob_id_spinosaurus_body)
+    //     id = rr_mob_id_stump;
+    // if (id == rr_mob_id_spinosaurus_head)
+    //     id = rr_mob_id_stump;
     EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity);
 }
 
@@ -103,7 +109,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     float angle = rr_frand() * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
-    physical->radius = mob_data->radius * rarity_scale->radius;
+    rr_component_physical_set_radius(physical, mob_data->radius * rarity_scale->radius);
     physical->friction = 0.9;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
     rr_component_health_set_max_health(health, mob_data->health * rarity_scale->health);
@@ -113,18 +119,20 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
     rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
     switch (mob_id)
     {
-    case rr_mob_id_prototaxite:
+    case rr_mob_id_stump:
+        rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
         ai->ai_type = rr_ai_type_static;
         break;
     case rr_mob_id_pteranodon:
+    case rr_mob_id_dakotaraptor:
+    case rr_mob_id_trex:
         ai->ai_type = rr_ai_type_aggressive;
         break;
     case rr_mob_id_spinosaurus_head:
-    case rr_mob_id_trex:
         ai->ai_type = rr_ai_type_neutral;
-        break;
+
     case rr_mob_id_spinosaurus_body:
-    case rr_mob_id_baby_triceratops:
+    case rr_mob_id_triceratops:
         ai->ai_type = rr_ai_type_passive;
         break;
     default:
@@ -137,10 +145,11 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, enum rr_mob_id mob
         ai->ai_aggro_type = rr_ai_aggro_type_pteranodon;
         break;
     case rr_mob_id_spinosaurus_head:
-    case rr_mob_id_prototaxite:
+    case rr_mob_id_stump:
     case rr_mob_id_trex:
     case rr_mob_id_spinosaurus_body:
-    case rr_mob_id_baby_triceratops:
+    case rr_mob_id_triceratops:
+    case rr_mob_id_dakotaraptor:
         ai->ai_aggro_type = rr_ai_aggro_type_default;
         break;
     default:

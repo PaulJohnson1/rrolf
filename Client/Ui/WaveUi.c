@@ -35,7 +35,7 @@ static void wave_text_on_render(struct rr_ui_element *this, void *_game)
 
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_set_stroke(renderer, 0xff000000);
@@ -85,7 +85,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 15);
     rr_renderer_set_line_cap(renderer, 1);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -100, 0);
@@ -114,7 +114,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
 static struct rr_ui_element *rr_ui_mob_button_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct mob_button_metadata *data = malloc(sizeof *data);
+    struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
     element->width = element->height = 60;

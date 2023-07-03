@@ -71,7 +71,7 @@ static void loadout_button_on_render(struct rr_ui_element *this, void *_game)
     struct rr_component_player_info_petal_slot *slot = data->main_loadout ? &player_info->slots[data->position] : &player_info->secondary_slots[data->position];
     uint8_t id = slot->id;
     uint8_t rarity = slot->rarity;
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
     {
@@ -122,7 +122,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
             this->animation_timer = 0;
     }
     rr_renderer_init_context_state(renderer, &state);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
     {
@@ -150,7 +150,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this, vo
 static struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct loadout_button_metadata *data = malloc(sizeof *data);
+    struct loadout_button_metadata *data = calloc(1, sizeof *data);
     data->position = pos;
     data->main_loadout = main;
     data->on_event = petal_switch_button_event;
@@ -163,7 +163,7 @@ static struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos, uint8_t main
 static struct rr_ui_element *title_screen_loadout_button_init(uint8_t pos, uint8_t row)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct title_screen_loadout_button_metadata *data = malloc(sizeof *data);
+    struct title_screen_loadout_button_metadata *data = calloc(1, sizeof *data);
     data->position = pos;
     data->row = row;
     data->on_event = petal_remove_button_event;

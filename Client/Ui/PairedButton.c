@@ -25,7 +25,7 @@ static void paired_button_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_line_width(renderer, 6);
     renderer->state.filter.amount = 0.2;
     rr_renderer_set_stroke(renderer, 0xff999999);
-    ui_translate(this, renderer);
+    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_button_is_touching_mouse(this, game))
     {
@@ -48,7 +48,7 @@ static void paired_button_on_render(struct rr_ui_element *this, void *_game)
 struct rr_ui_element *rr_ui_paired_button_init(struct rr_ui_element *pair)
 {
     struct rr_ui_element *element = rr_ui_element_init();
-    struct paired_button_metadata *data = malloc(sizeof *data);
+    struct paired_button_metadata *data = calloc(1, sizeof *data);
     data->pair = pair;
     element->width = 60;
     element->height = 60;

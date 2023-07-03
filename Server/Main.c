@@ -74,7 +74,7 @@ int main()
 #else
 
 #endif
-    struct rr_server *s = malloc(sizeof *s);
+    struct rr_server *s = calloc(1, sizeof *s);
     rr_server_init(s);
     rr_server_run(s);
     rr_server_free(s);

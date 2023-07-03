@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <sys/time.h>
 
 #include <Client/System/Interpolation.h>
@@ -38,7 +39,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
         rr_simulation_request_entity_deletion(this, id);
     }
 
-    //assuming that player info is written first (is it though)
+    // assuming that player info is written first (is it though)
     while (1)
     {
         id = proto_bug_read_varuint(encoder, "entity update id");
@@ -56,14 +57,14 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
 #define XX(COMPONENT, ID)            \
     if (component_flags & (1 << ID)) \
         rr_simulation_add_##COMPONENT(this, id);
-    RR_FOR_EACH_COMPONENT
+            RR_FOR_EACH_COMPONENT
 #undef XX
         }
 
-#define XX(COMPONENT, ID)\
-    if (component_flags & (1 << ID))\
+#define XX(COMPONENT, ID)            \
+    if (component_flags & (1 << ID)) \
         rr_component_##COMPONENT##_read(rr_simulation_get_##COMPONENT(this, id), encoder);
-    RR_FOR_EACH_COMPONENT
+        RR_FOR_EACH_COMPONENT
 #undef XX
     }
 
@@ -75,14 +76,17 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
 
     gettimeofday(&end, NULL);
     long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    //printf("tick took %ld microseconds\n", elapsed_time);
+    // printf("tick took %ld microseconds\n", elapsed_time);
     long now_time = (end.tv_sec) * 1000000 + (end.tv_usec);
-    if (ttt++ == 10) 
-    {printf("%ld ms tick\n", (now_time - last) / 10000);ttt=0;last = now_time;}
-    
+    if (ttt++ == 10)
+    {
+        printf("%ld ms tick\n", (now_time - last) / 10000);
+        ttt = 0;
+        last = now_time;
+    }
 }
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
-    rr_system_interpolation_tick(this, delta);
+    rr_system_interpolation_tick(this, 1 - powf(0.9f, delta * 10));
 }

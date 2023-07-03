@@ -55,6 +55,11 @@ struct rr_game
     struct rr_renderer mob_trex_tail_top;
     struct rr_renderer mob_trex_head;
 
+    struct rr_renderer mob_triceratops[7];
+
+    struct rr_renderer mob_dakotaraptor[6];
+
+    struct rr_renderer mob_stump;
 
     struct rr_game_squad_client squad_members[4];
     struct rr_global_elements ui_elements;
