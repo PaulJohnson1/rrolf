@@ -18,8 +18,6 @@
 #include <Server/Simulation.h>
 #include <Server/Logs.h>
 
-#include <libwebsockets.h>
-
 #ifndef NDEBUG
 #define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
 #else
@@ -140,7 +138,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 char log[100] = {"ip: `"};
                 strcat(log, this->clients[i].ip_address);
                 strcat(log, "`");
-                rr_discord_webhook_log("player status", "client connected", log, 0x44ff44);
+                //rr_discord_webhook_log("player status", "client connected", log, 0x44ff44);
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
@@ -175,7 +173,7 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                     char log[100] = {"ip: `"};
                     strcat(log, this->clients[i].ip_address);
                     strcat(log, "`");
-                    rr_discord_webhook_log("player status", "client disconnected", log, 0xff4444);
+                    //rr_discord_webhook_log("player status", "client disconnected", log, 0xff4444);
                     return 0;
                 }
             }
@@ -415,6 +413,7 @@ void rr_server_init(struct rr_server *this)
 {
     printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
+    rr_static_data_init();
     rr_simulation_init(&this->simulation);
 }
 

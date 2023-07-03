@@ -160,12 +160,8 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width, float
     float b = width / 1920;
 
     float scale = (this->renderer->scale = b < a ? a : b);
-    this->renderer->width = width;
-    this->renderer->height = height;
-    this->global_container->lerp_x = this->global_container->x = width * 0.5 / scale;
-    this->global_container->lerp_y = this->global_container->y = height * 0.5 / scale;
-    this->global_container->width = width / scale;
-    this->global_container->height = height / scale;
+    this->renderer->width = this->window->width = this->window->abs_width = width;
+    this->renderer->height = this->window->height = this->window->abs_height = height;
     rr_game_tick(this, delta);
     this->input_data->scroll_delta = 0;
 }

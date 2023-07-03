@@ -98,7 +98,12 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
             for (uint64_t inner = 0; inner < slot->count; ++inner)
             {
-                slot->petals[inner].simulation_id = RR_NULL_ENTITY;
+                if (slot->petals[inner].simulation_id != RR_NULL_ENTITY)
+                {
+                    struct rr_component_health *health = rr_simulation_get_health(simulation, slot->petals[inner].simulation_id);
+                    rr_component_health_set_health(health, 0);
+                    slot->petals[inner].simulation_id = RR_NULL_ENTITY;
+                }
                 slot->petals[inner].cooldown_ticks = data->cooldown;
             }
         }
@@ -123,7 +128,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             if (data->id == rr_petal_id_faster)
                 player_info->global_rotation += 0.01;
             struct rr_component_player_info_petal *p_petal = &slot->petals[inner];
-            if (p_petal->simulation_id != RR_NULL_ENTITY && (!rr_simulation_has_entity(simulation, p_petal->simulation_id) || !rr_simulation_has_petal(simulation, p_petal->simulation_id) || rr_simulation_get_physical(simulation, p_petal->simulation_id)->has_deletion_animation == 0))
+            if (p_petal->simulation_id != RR_NULL_ENTITY && (!rr_simulation_has_entity(simulation, p_petal->simulation_id) || !rr_simulation_get_physical(simulation, p_petal->simulation_id)->has_deletion_animation))
             {
                 p_petal->simulation_id = RR_NULL_ENTITY;
                 p_petal->cooldown_ticks = data->cooldown;
@@ -160,7 +165,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale * data->damage / slot->count;
 
-                    if (data->id == rr_petal_id_missile || data->id == rr_petal_id_peas)
+                    if (data->id == rr_petal_id_missile || data->id == rr_petal_id_peas || data->id == rr_petal_id_egg)
                     {
                         struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, p_petal->simulation_id);
                         projectile->shoot_delay = 12;
@@ -169,8 +174,26 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             }
             else
             {
+                if (rr_simulation_has_mob(simulation, p_petal->simulation_id))
+                    continue; //player spawned mob
                 system_flower_petal_movement_logic(simulation, p_petal->simulation_id, player_info,
                                                    rotation_pos, outer, inner, data);
+                if (data->id == rr_petal_id_egg)
+                {
+                    struct rr_component_projectile *projectile = rr_simulation_get_projectile(simulation, p_petal->simulation_id);
+                    if (projectile->shoot_delay > 0)
+                        continue;
+                    rr_simulation_get_petal(simulation, p_petal->simulation_id)->detached = 1;
+                    struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, p_petal->simulation_id);
+                    rr_simulation_request_entity_deletion(simulation, p_petal->simulation_id);
+                    
+                    EntityIdx mob_id = p_petal->simulation_id = rr_simulation_alloc_mob(simulation, rr_mob_id_trex, slot->rarity);
+                    struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, mob_id);
+                    struct rr_component_relations *mob_team = rr_simulation_get_relations(simulation, mob_id);
+                    rr_component_physical_set_x(mob_physical, petal_physical->x);
+                    rr_component_physical_set_y(mob_physical, petal_physical->y);
+                    rr_component_relations_set_team(mob_team, rr_simulation_team_id_players);
+                }
             }
         }
     }

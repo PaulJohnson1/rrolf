@@ -21,6 +21,10 @@ static void aggressive_find_target(EntityIdx i, void *_captures)
 
     struct rr_simulation *this = captures->simulation;
     struct rr_component_ai *ai = captures->ai;
+    struct rr_component_relations *relations_1 = rr_simulation_get_relations(this, i);
+    struct rr_component_relations *relations_2 = rr_simulation_get_relations(this, ai->parent_id);
+    if (relations_1->team == relations_2->team)
+        return;
 
     struct rr_component_physical *ai_physical = rr_simulation_get_physical(this, ai->parent_id);
     struct rr_component_physical *flower_physical = rr_simulation_get_physical(this, i);
@@ -63,7 +67,11 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         captures.simulation = this;
         captures.closest_distance = 1500.0f * 1500.0f; // ai detection range
 
-        rr_simulation_for_each_flower(this, &captures, aggressive_find_target);
+        if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_mobs)
+            rr_simulation_for_each_flower(this, &captures, aggressive_find_target);
+        else
+            rr_simulation_for_each_mob(this, &captures, aggressive_find_target);
+        break;
     }
     default:
         break;
@@ -91,7 +99,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     {
         if (!rr_simulation_has_entity(this, ai->target_entity)) // target died (what a noob)
         {
-            ai->ai_state = rr_ai_state_spin2team;
+            // ai->ai_state = rr_ai_state_spin2team;
             ai->target_entity = RR_NULL_ENTITY; // you really don't want the entity being reallocated and then the mob goes sicko mode
             break;
         }
@@ -104,7 +112,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 break;
             }
         ai->ticks_until_next_action = rand() % 10 + 25; // when the ai is done being pissed, wait a little until the next action
-        // if and only if aggro type is pteranodon and is too close then break
+        // if and only if aggro type is hornet and is too close then break
         rr_vector_set_magnitude(&delta, 0.75f);
         rr_vector_add(&physical->acceleration, &delta);
     }
@@ -146,11 +154,11 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 rr_component_physical_set_y(physical2, physical->y);
                 rr_component_physical_set_angle(physical2, physical->angle);
                 rr_component_physical_set_radius(physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-                physical2->friction = 0.45f;
-                physical2->mass = 10.0f;
+                physical2->friction = 0.75f;
+                physical2->mass = 2.0f;
                 rr_vector_from_polar(&physical2->acceleration, 100, physical->angle);
 
-                rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
+                rr_component_relations_set_team(relations, rr_simulation_get_relations(simulation, entity)->team);
                 rr_component_relations_set_owner(relations, ai->parent_id);
 
                 rr_component_petal_set_id(petal, rr_petal_id_missile);
@@ -159,7 +167,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
                 rr_component_health_set_max_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
                 rr_component_health_set_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
-                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.01f;
+                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.1f;
                 rr_component_health_set_hidden(health, 1);
 
                 projectile->ticks_until_death = 50;

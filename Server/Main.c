@@ -5,7 +5,9 @@
 #include <signal.h>
 #include <assert.h>
 
+#ifdef RIVET_BUILD
 #include <curl/curl.h>
+#endif
 
 #include <Server/Logs.h>
 #include <Server/Server.h>
@@ -34,13 +36,17 @@ void sigint_handle(int s)
 #endif
         ;
 #endif
+#ifdef RIVET_BUILD
     rr_discord_webhook_log("server status", "server shutdown", log, 0xff2222);
+#endif
 }
 
 int main()
 {
     // signal(SIGINT, sigint_handle);
+#ifdef RIVET_BUILD
     curl_global_init(CURL_GLOBAL_ALL);
+#endif
     char startup_message[1000] = {0};
 #ifdef NDEBUG
     strcat(startup_message, "release");
@@ -62,8 +68,8 @@ int main()
 #else
     strcat(startup_message, " linux");
 #endif
-    rr_discord_webhook_log("server status", "server startup", startup_message, 0x4000ff);
 #ifdef RIVET_BUILD
+    rr_discord_webhook_log("server status", "server startup", startup_message, 0x4000ff);
     char const *lobby_token = getenv("RIVET_LOBBY_TOKEN");
     if (!lobby_token)
     {

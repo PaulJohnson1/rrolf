@@ -31,73 +31,143 @@
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
-
-    this->global_container = rr_ui_container_init();
-    this->global_container->container = this->global_container;
-    this->protocol_state = (1 << 20) - 1;
-
-    this->ui_elements.title_screen = rr_ui_container_add_element(this->global_container,
-                                                                 rr_ui_v_container_init(rr_ui_container_init(), 15, 25, 4,
-                                                                                        rr_ui_text_init("rrolf", 72, 0xffffffff),
-                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 2,
-                                                                                                               rr_ui_text_input_init(360, 40, 15),
-                                                                                                               rr_ui_find_server_button_init()),
-                                                                                        rr_ui_squad_container_init(),
-                                                                                        rr_ui_title_screen_loadout_container_init()));
-
-    this->ui_elements.respawn_label = rr_ui_container_add_element(this->global_container,
-                                                                  rr_ui_set_justify(
-                                                                      rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                                                                                             rr_ui_text_init("You died", 72, 0xffffffff),
-                                                                                             rr_ui_text_init("You will spawn back in next wave", 36, 0xffffffff)),
-                                                                      1, 1));
-
-    this->ui_elements.game_over = rr_ui_container_add_element(this->global_container,
-                                                              rr_ui_set_justify(
-                                                                  rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 2,
-                                                                                         rr_ui_text_init("Game Over", 72, 0xffffffff),
-                                                                                         rr_ui_text_init("You many now exit the squad", 36, 0xffffffff)),
-                                                                  1, 1));
-
-    this->ui_elements.loadout = rr_ui_container_add_element(this->global_container,
-                                                            rr_ui_set_justify(
-                                                                rr_ui_loadout_container_init(), 1, 2));
-
-    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container,
-                                                              rr_ui_set_background(
-                                                                  rr_ui_set_justify(
-                                                                      rr_ui_h_container_init(rr_ui_container_init(), 15, 15, 1,
-                                                                                             rr_ui_inventory_container_init()),
-                                                                      0, 2),
-                                                                  0xffff0000));
-    /*
-    this->ui_elements.inventory = rr_ui_container_add_element(this->global_container,
-        rr_ui_pad(
-            rr_ui_set_justify(
-                rr_ui_paired_button_init(rr_ui_inventory_container_init()),
-            0, 2),
-        15)
+this->window = rr_ui_container_init();
+    this->window->container = this->window;
+    this->window->h_justify = this->window->v_justify = 1;
+    this->window->resizeable = 0;
+    this->true_ptr = 1;
+    rr_ui_container_add_element(this->window, 
+        rr_ui_link_toggle(
+            rr_ui_set_background(
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 6,
+                    rr_ui_text_init("rrolf", 96, 0xffffffff),
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 20, 2,
+                        rr_ui_text_init("Enter game here", 36, 0xffffffff),
+                        rr_ui_labeled_button_init("Join", 36, NULL)
+                    ),
+                    rr_ui_set_background(
+                        rr_ui_link_toggle(rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 2,
+                            rr_ui_text_init("Squad", 18, 0xffffffff),
+                            rr_ui_h_container_init(rr_ui_container_init(), 10, 20, 4,
+                                squad_player_container_init(&this->squad_members[0]),
+                                squad_player_container_init(&this->squad_members[1]),
+                                squad_player_container_init(&this->squad_members[2]),
+                                squad_player_container_init(&this->squad_members[3])
+                            )
+                        ), &this->socket_ready)
+                    , 0xff00ff00),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_title_screen_loadout_button_init(0),
+                        rr_ui_title_screen_loadout_button_init(1),
+                        rr_ui_title_screen_loadout_button_init(2),
+                        rr_ui_title_screen_loadout_button_init(3),
+                        rr_ui_title_screen_loadout_button_init(4),
+                        rr_ui_title_screen_loadout_button_init(5),
+                        rr_ui_title_screen_loadout_button_init(6),
+                        rr_ui_title_screen_loadout_button_init(7),
+                        rr_ui_title_screen_loadout_button_init(8),
+                        rr_ui_title_screen_loadout_button_init(9)
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_title_screen_loadout_button_init(10),
+                        rr_ui_title_screen_loadout_button_init(11),
+                        rr_ui_title_screen_loadout_button_init(12),
+                        rr_ui_title_screen_loadout_button_init(13),
+                        rr_ui_title_screen_loadout_button_init(14),
+                        rr_ui_title_screen_loadout_button_init(15),
+                        rr_ui_title_screen_loadout_button_init(16),
+                        rr_ui_title_screen_loadout_button_init(17),
+                        rr_ui_title_screen_loadout_button_init(18),
+                        rr_ui_title_screen_loadout_button_init(19)
+                    ),
+                    rr_ui_text_init("powered by rivet.gg", 15, 0xffffffff)
+                )   
+            , 0x00000000)
+        , &this->simulation_not_ready)
     );
-    */
-
-    this->ui_elements.wave_info = rr_ui_container_add_element(this->global_container,
-                                                              rr_ui_set_justify(
-                                                                  rr_ui_wave_container_init(), 1, 0));
-
-    this->ui_elements.in_game_squad_info = rr_ui_container_add_element(this->global_container,
-                                                                       rr_ui_set_justify(
-                                                                           rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 3,
-                                                                                                  rr_ui_set_justify(
-                                                                                                      rr_ui_abandon_game_button_init(), 0, 0),
-                                                                                                  rr_ui_static_space_init(50),
-                                                                                                  rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                                                                                                                         rr_ui_static_space_init(50),
-                                                                                                                         rr_ui_v_container_init(rr_ui_container_init(), 0, 15, 4,
-                                                                                                                                                rr_ui_in_game_player_ui_init(0),
-                                                                                                                                                rr_ui_in_game_player_ui_init(1),
-                                                                                                                                                rr_ui_in_game_player_ui_init(2),
-                                                                                                                                                rr_ui_in_game_player_ui_init(3)))),
-                                                                           0, 0));
+    rr_ui_container_add_element(this->window,
+        rr_ui_link_toggle(
+            rr_ui_pad(rr_ui_set_justify(rr_ui_inventory_container_init(), -1, 1), 20)
+        , &this->simulation_not_ready)
+    );
+    rr_ui_container_add_element(this->window,
+        rr_ui_link_toggle(
+            rr_ui_set_justify(
+                rr_ui_v_container_init(rr_ui_container_init(), 15, 15, 2,
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_loadout_button_init(0),
+                        rr_ui_loadout_button_init(1),
+                        rr_ui_loadout_button_init(2),
+                        rr_ui_loadout_button_init(3),
+                        rr_ui_loadout_button_init(4),
+                        rr_ui_loadout_button_init(5),
+                        rr_ui_loadout_button_init(6),
+                        rr_ui_loadout_button_init(7),
+                        rr_ui_loadout_button_init(8),
+                        rr_ui_loadout_button_init(9)
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_loadout_button_init(10),
+                        rr_ui_loadout_button_init(11),
+                        rr_ui_loadout_button_init(12),
+                        rr_ui_loadout_button_init(13),
+                        rr_ui_loadout_button_init(14),
+                        rr_ui_loadout_button_init(15),
+                        rr_ui_loadout_button_init(16),
+                        rr_ui_loadout_button_init(17),
+                        rr_ui_loadout_button_init(18),
+                        rr_ui_loadout_button_init(19)
+                    )
+                )
+            , 0, 1)
+        , &this->simulation_ready)
+    );
+    
+    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
+    {
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            this->inventory[id][rarity] = rand() % 10;
+            rr_renderer_init(&this->static_petals[id][rarity]);
+            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
+            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
+            rr_renderer_render_static_petal(&this->static_petals[id][rarity], id, rarity);
+            char *cd = malloc((sizeof *cd) * 16);
+            if (id == rr_petal_id_missile || id == rr_petal_id_peas)
+                cd[sprintf(cd, "↻ %.1f + 0.5s", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
+            else
+                cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
+            char *hp = malloc((sizeof *hp) * 16);
+            hp[sprintf(hp, "%.1f", RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity])] = 0;
+            char *dmg = malloc((sizeof *dmg) * 16);
+            dmg[sprintf(dmg, "%.1f", RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] / RR_PETAL_DATA[id].count[rarity])] = 0;
+            this->petal_tooltips[id][rarity] = rr_ui_set_background(rr_ui_v_container_init(rr_ui_container_init(), 10, 5, 6,
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 20, 2,
+                        rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), -1, 0),
+                        rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 1, 0)
+                    ),
+                    rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16, RR_RARITY_COLORS[rarity]), -1, 0),
+                    rr_ui_static_space_init(10),
+                    rr_ui_set_justify(rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), -1, 0),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Health: ", 12, 0xff44ff44),
+                            rr_ui_text_init(hp, 12, 0xff44ff44)
+                        )
+                    , -1, 0),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Damage: ", 12, 0xffff4444),
+                            rr_ui_text_init(dmg, 12, 0xffff4444)
+                        )
+                    , -1, 0)
+                )
+            , 0x80000000);
+            rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_set_justify(this->petal_tooltips[id][rarity], -1, -1), &this->false_ptr));
+            this->petal_tooltips[id][rarity]->poll_events = rr_ui_no_focus;
+            //remember that these don't have a container
+        }
+    }
 
     rr_renderer_init(&this->mob_pteranodon_wings[0]);
     rr_renderer_set_dimensions(&this->mob_pteranodon_wings[0], 800, 600);
@@ -208,49 +278,6 @@ void rr_game_init(struct rr_game *this)
     rr_renderer_draw_svg(&this->tiles[2], "<svg version=\"1.1\" viewBox=\"0.0 0.0 256.0 256.0\" fill=\"none\" stroke=\"none\" stroke-linecap=\"square\" stroke-miterlimit=\"10\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\"><clipPath id=\"p.0\"><path d=\"m0 0l256.0 0l0 256.0l-256.0 0l0 -256.0z\" clip-rule=\"nonzero\"/></clipPath><g clip-path=\"url(#p.0)\"><path fill=\"#45230a\" d=\"m0 0l256.0 0l0 256.0l-256.0 0z\" fill-rule=\"evenodd\"/><path fill=\"#321a07\" d=\"m217.4393 -18.927248c-17.203476 8.458613 -28.702087 19.64065 -39.56778 37.847504c-10.865692 18.206852 -6.3025513 52.90005 -25.626389 71.393616c-19.323853 18.493568 -66.94898 20.787506 -90.316666 39.567787c-23.367683 18.780273 -32.686203 55.910645 -49.889446 73.11389c-17.20324 17.203232 -47.882454 15.769669 -53.329998 30.105545c-5.447544 14.335876 3.011303 49.458572 20.644728 55.909714c17.633427 6.451172 63.36519 -1.7200317 85.15584 -17.202759c21.790642 -15.482727 20.356613 -55.336533 45.58805 -75.69362c25.231438 -20.357086 83.03593 -22.794022 105.80056 -46.448883c22.764633 -23.65487 17.771072 -75.40946 30.787231 -95.4803c13.016144 -20.070835 41.575226 -10.608612 47.309723 -24.944723c5.734497 -14.336111 -0.14346313 -53.043987 -12.902771 -61.071945c-12.759308 -8.027962 -46.4496 4.445566 -63.653076 12.904181z\" fill-rule=\"evenodd\"/><path fill=\"#321a07\" d=\"m217.43959 -275.75314c-17.203476 8.458618 -28.702087 19.640656 -39.56778 37.847504c-10.865692 18.206848 -6.3025513 52.90004 -25.626404 71.393616c-19.323837 18.49356 -66.948975 20.78749 -90.31666 39.567772c-23.367687 18.780281 -32.686203 55.910652 -49.889446 73.11389c-17.203241 17.203243 -49.31602 13.968914 -53.33 30.105556c-4.013977 16.13664 11.612692 60.263134 29.246117 66.714294c17.633427 6.4511566 56.197365 -10.723858 76.55444 -28.007349c20.357079 -17.283493 20.356613 -55.336525 45.58805 -75.6936c25.23143 -20.357082 83.035934 -22.794025 105.80057 -46.448895c22.764618 -23.654854 17.771057 -75.40946 30.787216 -95.48029c13.016174 -20.070831 41.575256 -10.608612 47.309723 -24.944717c5.734497 -14.336121 -0.14346313 -53.04399 -12.902771 -61.071945c-12.759308 -8.027954 -46.449585 4.4455566 -63.65306 12.904175z\" fill-rule=\"evenodd\"/><path fill=\"#321a07\" d=\"m229.49844 222.38637c-17.203476 8.458618 -28.702087 19.640656 -39.56778 37.84752c-10.865692 18.206848 -6.3025513 52.900024 -25.626389 71.393616c-19.323853 18.49356 -66.94898 20.787476 -90.316666 39.56778c-23.367687 18.780273 -32.686207 55.910645 -49.889446 73.11389c-17.203241 17.203217 -49.316017 13.968903 -53.33 30.10553c-4.013983 16.136658 11.612688 60.263153 29.246115 66.714325c17.633427 6.451111 56.197365 -10.723877 76.55444 -28.007385c20.357079 -17.283478 20.356613 -55.336517 45.58805 -75.6936c25.231438 -20.357056 83.03593 -22.794006 105.80056 -46.448883c22.764633 -23.654846 17.771072 -75.409454 30.787231 -95.480286c13.016144 -20.070831 41.575226 -10.608612 47.309723 -24.944733c5.734497 -14.336121 -0.14346313 -53.043976 -12.902771 -61.071945c-12.759308 -8.027954 -46.4496 4.445572 -63.653076 12.904175z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m42.931473 36.232136l0 0c-5.401081 -12.950424 0.7047653 -27.82021 13.637798 -33.212597l0 0c6.210659 -2.5895154 13.197285 -2.6024776 19.422901 -0.036034822c6.2256165 2.5664427 11.18026 7.502061 13.773949 13.721075l0 0c5.401085 12.950424 -0.7047653 27.82021 -13.6377945 33.212597l0 0c-12.933033 5.3923874 -27.795769 -0.7346153 -33.196854 -13.6850395z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m148.35013 222.41435l0 0c-6.2099457 -14.881241 0.8054352 -31.96492 15.669296 -38.15747l0 0c7.137863 -2.9737701 15.16803 -2.986908 22.323944 -0.03652954c7.1559296 2.9503784 12.85141 8.622589 15.833527 15.768814l0 0c6.2099457 14.881241 -0.8054352 31.964935 -15.669281 38.15747l0 0c-14.863861 6.1925507 -31.94754 -0.85102844 -38.157486 -15.732285z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m133.22778 80.03296l0 0c-6.209938 -14.881241 0.8054352 -31.964931 15.669296 -38.15748l0 0c7.1378784 -2.9737663 15.168045 -2.9869041 22.32396 -0.03652954c7.1559143 2.9503746 12.851395 8.622589 15.833527 15.768814l0 0c6.2099304 14.881248 -0.80545044 31.964935 -15.669296 38.15748l0 0c-14.863861 6.1925507 -31.94754 -0.8510361 -38.157486 -15.732285z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m61.64274 150.345l0 0c-6.209942 -14.881256 0.805439 -31.964935 15.669289 -38.157486l0 0c7.1378784 -2.9737625 15.168045 -2.9869003 22.32396 -0.03652954c7.1559143 2.9503784 12.851402 8.622589 15.833519 15.768814l0 0c6.2099457 14.881256 -0.8054352 31.964935 -15.669289 38.157486l0 0c-14.863853 6.1925507 -31.94754 -0.8510437 -38.15748 -15.732285z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m54.39244 228.49184l0 0c-5.331505 -12.776474 0.6897354 -27.441788 13.448814 -32.755905l0 0c6.1271286 -2.5519257 13.0203705 -2.5620117 19.1633 -0.028060913c6.1429214 2.533966 11.032333 7.4044037 13.592606 13.539871l0 0c5.331505 12.776489 -0.6897354 27.441803 -13.448814 32.75592l0 0c-12.759087 5.314102 -27.4244 -0.7353363 -32.755905 -13.511826z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m193.31322 201.96231l0 0c-4.1138763 -9.8541565 0.53248596 -21.163376 10.377945 -25.259842l0 0c4.727951 -1.9671936 10.047043 -1.9739838 14.78714 -0.01889038c4.740097 1.9551086 8.512909 5.71196 10.488449 10.444092l0 0c4.1138763 9.854141 -0.5325012 21.16336 -10.377945 25.259842l0 0c-9.845459 4.096466 -21.161728 -0.5710449 -25.275589 -10.425201z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m111.79016 83.1202l0 0c-4.1138687 -9.854149 0.5325012 -21.163368 10.377953 -25.259842l0 0c4.7279587 -1.9671974 10.04705 -1.9739914 14.7871475 -0.018886566c4.740082 1.9551048 8.512894 5.711952 10.488449 10.44408l0 0c4.113861 9.8541565 -0.5325012 21.163368 -10.37796 25.259842l0 0c-9.845451 4.0964813 -21.16172 -0.5710449 -25.275589 -10.425194z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m23.396812 101.975845l0 0c-4.1138687 -9.854149 0.5324993 -21.163368 10.377953 -25.259842l0 0c4.727955 -1.9672012 10.047047 -1.9739914 14.78714 -0.01889038c4.740093 1.9551086 8.512901 5.711952 10.488453 10.444084l0 0c4.1138687 9.8541565 -0.5325012 21.163368 -10.377953 25.259842l0 0c-9.845455 4.0964737 -21.161722 -0.5710449 -25.275593 -10.425194z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m20.908766 120.19032l0 0c-2.7396812 -6.5578384 0.3484974 -14.0879135 6.8976364 -16.818893l0 0c3.14501 -1.31147 6.6838436 -1.3182068 9.837996 -0.018745422c3.1541557 1.299469 5.6652603 3.7986908 6.9809036 6.947876l0 0c2.7396812 6.5578384 -0.3484993 14.0879135 -6.89764 16.818901l0 0c-6.549139 2.7309875 -14.079216 -0.37129974 -16.818895 -6.929138z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m65.64437 59.48691l0 0c-2.7396774 -6.5578384 0.3485031 -14.0879135 6.897644 -16.818897l0 0c3.1450043 -1.3114624 6.683838 -1.3182068 9.83799 -0.018741608c3.1541595 1.2994652 5.6652603 3.7986908 6.9809036 6.947876l0 0c2.7396774 6.5578384 -0.34849548 14.0879135 -6.8976364 16.818897l0 0c-6.549141 2.73098 -14.079216 -0.3712921 -16.818901 -6.9291344z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m117.75986 21.75183l0 0c-2.7396774 -6.5578375 0.34849548 -14.087914 6.8976364 -16.818897l0 0c3.145012 -1.3114643 6.6838455 -1.3182056 9.838005 -0.01874113c3.1541443 1.2994647 5.6652527 3.7986903 6.980896 6.9478745l0 0c2.739685 6.5578375 -0.34849548 14.087914 -6.897644 16.818897l0 0c-6.5491333 2.7309818 -14.079208 -0.37129593 -16.818893 -6.9291344z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m136.20746 228.65016l0 0c-2.739685 -6.557831 0.34849548 -14.087906 6.897629 -16.818893l0 0c3.1450043 -1.3114624 6.683838 -1.3182068 9.837997 -0.018737793c3.1541595 1.299469 5.665268 3.7986908 6.9809113 6.947876l0 0c2.7396698 6.557831 -0.34851074 14.087906 -6.897644 16.818893l0 0c-6.5491486 2.7309875 -14.079224 -0.3712921 -16.818893 -6.929138z\" fill-rule=\"evenodd\"/><path fill=\"#371d08\" d=\"m218.37997 120.19032l0 0c-2.7396698 -6.5578384 0.34851074 -14.0879135 6.897644 -16.818893l0 0c3.1450043 -1.31147 6.683838 -1.3182068 9.837997 -0.018745422c3.1541595 1.299469 5.665268 3.7986908 6.980896 6.947876l0 0c2.739685 6.5578384 -0.34849548 14.0879135 -6.897629 16.818901l0 0c-6.5491486 2.7309875 -14.079224 -0.37129974 -16.818909 -6.929138z\" fill-rule=\"evenodd\"/><path fill=\"#ffffff\" fill-opacity=\"0.05\" d=\"m0 0l256.0 0l0 256.0l-256.0 0z\" fill-rule=\"evenodd\"/></g></svg>", 0, 0);
 
     this->tiles_size = 3;
-
-    /*
-    rr_renderer_init(&this->tiles[111111111]);
-    rr_renderer_set_dimensions(&this->tiles[11111111], 800, 600);
-    rr_renderer_draw_svg(&this->tiles[1111111], "", 0, 0);
-
-    */
-
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-    {
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-        {
-            this->inventory[id][rarity] = rr_rarity_id_max - rarity;
-            rr_renderer_init(&this->static_petals[id][rarity]);
-            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
-            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[id][rarity], this, id, rarity);
-            static char cd[100] = {0};
-            sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1);
-            static char hp[100] = {0};
-            sprintf(hp, "%.1f", RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity]);
-            static char dmg[100] = {0};
-            sprintf(dmg, "%.1f", RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] / RR_PETAL_DATA[id].count[rarity]);
-            rr_ui_container_refactor(this->petal_tooltips[id][rarity] = rr_ui_set_background(rr_ui_v_container_init(rr_ui_container_init(), 10, 5, 6,
-                                                                                                                    rr_ui_h_container_init(rr_ui_flex_container_init(), 0, 20, 2,
-                                                                                                                                           rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), 0, 0),
-                                                                                                                                           rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 2, 0)),
-                                                                                                                    rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16, RR_RARITY_COLORS[rarity]), 0, 0),
-                                                                                                                    rr_ui_static_space_init(10),
-                                                                                                                    rr_ui_set_justify(rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), 0, 0),
-                                                                                                                    rr_ui_set_justify(
-                                                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                                                                                                                                               rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                                                                                                                                               rr_ui_text_init(hp, 12, 0xff44ff44)),
-                                                                                                                        0, 0),
-                                                                                                                    rr_ui_set_justify(
-                                                                                                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 2,
-                                                                                                                                               rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                                                                                                                               rr_ui_text_init(dmg, 12, 0xffff4444)),
-                                                                                                                        0, 0)),
-                                                                                             0x80000000));
-        }
-    }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void *data, void *captures, uint64_t size)
@@ -448,62 +475,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct rr_renderer_context_state grand_state;
     rr_renderer_init_context_state(this->renderer, &grand_state);
     // render off-game elements
-    struct rr_ui_container_metadata *data = this->global_container->misc_data;
 
-    for (uint32_t i = 0; i < data->elements.size; ++i)
-        if (data->elements.elements[i]->container_flags & 1)
-            rr_ui_container_refactor(data->elements.elements[i]);
-    {
-        struct rr_renderer_context_state pre_state;
-        rr_renderer_init_context_state(this->renderer, &pre_state);
-        rr_renderer_translate(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5);
-        this->ui_elements.title_screen->on_render(this->ui_elements.title_screen, this);
-        this->ui_elements.inventory->on_render(this->ui_elements.inventory, this);
-        rr_renderer_free_context_state(this->renderer, &pre_state);
-    }
-    this->ui_elements.respawn_label->hidden = 1;
-    this->ui_elements.loadout->hidden = 1;
-    this->ui_elements.title_screen->hidden = 0;
-    this->ui_elements.in_game_squad_info->hidden = 1;
-    this->ui_elements.game_over->hidden = 1;
-    this->ui_elements.inventory->hidden = this->simulation_ready;
     if (this->simulation_ready)
-    {
-        this->expanding_circle_radius += 1500 * delta;
-        if (this->expanding_circle_radius > 1500)
-        {
-            this->expanding_circle_radius = 1500;
-            this->ui_elements.title_screen->hidden = 1;
-        }
-        if (this->simulation->player_info != RR_NULL_ENTITY)
-        {
-            player_info_finder(this); // list player infos in order
-            this->ui_elements.in_game_squad_info->hidden = 0;
-            this->ui_elements.loadout->hidden = 0;
-            if (rr_simulation_get_player_info(this->simulation, this->simulation->player_info)->flower_id == RR_NULL_ENTITY)
-            {
-                this->ui_elements.respawn_label->hidden = this->simulation->game_over;
-                this->ui_elements.game_over->hidden = 1 - this->simulation->game_over;
-            }
-        }
-    }
-    else
-    {
-        this->expanding_circle_radius -= 1500 * delta;
-        if (this->expanding_circle_radius < 0)
-            this->expanding_circle_radius = 0;
-    }
-
-    if (this->expanding_circle_radius > 0 && this->expanding_circle_radius < 1500)
-    {
-        rr_renderer_begin_path(this->renderer);
-        rr_renderer_set_fill(this->renderer, 0xffdb7100);
-        rr_renderer_arc(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5, this->expanding_circle_radius * this->renderer->scale);
-        rr_renderer_fill(this->renderer);
-        rr_renderer_clip(this->renderer);
-    }
-
-    if (this->expanding_circle_radius > 0)
     {
         rr_simulation_tick(this->simulation, delta);
 
@@ -588,19 +561,21 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
             rr_renderer_free_context_state(this->renderer, &state1);
         }
-        {
-            struct rr_renderer_context_state pre_state;
-            rr_renderer_init_context_state(this->renderer, &pre_state);
-            rr_renderer_translate(this->renderer, this->renderer->width * 0.5, this->renderer->height * 0.5);
-            this->ui_elements.loadout->on_render(this->ui_elements.loadout, this);
-            this->ui_elements.respawn_label->on_render(this->ui_elements.respawn_label, this);
-            this->ui_elements.in_game_squad_info->on_render(this->ui_elements.in_game_squad_info, this);
-            this->ui_elements.wave_info->on_render(this->ui_elements.wave_info, this);
-            this->ui_elements.game_over->on_render(this->ui_elements.game_over, this);
-            rr_renderer_free_context_state(this->renderer, &pre_state);
-        }
     }
+    //ui
+    this->simulation_not_ready = this->simulation_ready == 0;
+    this->prev_focused = this->focused;
+    rr_ui_container_refactor(this->window);
+    this->window->poll_events(this->window, this);
+    rr_ui_render_element(this->window, this);
+    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+            this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
 
+    if (this->focused != NULL) 
+        this->focused->on_event(this->focused, this);
+    if (this->prev_focused != this->focused && this->prev_focused != NULL)
+        this->prev_focused->on_event(this->prev_focused, this);
     if (this->socket_ready)
     {
 #ifndef EMSCRIPTEN
