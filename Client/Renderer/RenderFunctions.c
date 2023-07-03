@@ -284,6 +284,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[3]);
         rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[4]);
         rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[5]);
+        break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);

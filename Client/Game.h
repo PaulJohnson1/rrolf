@@ -61,6 +61,8 @@ struct rr_game
 
     struct rr_renderer mob_stump;
 
+    struct rr_renderer tiles[3];
+
     struct rr_game_squad_client squad_members[4];
     struct rr_global_elements ui_elements;
     struct rr_websocket socket;
@@ -71,6 +73,7 @@ struct rr_game
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
     struct rr_ui_element *global_container;
+    uint64_t tiles_size;
     float expanding_circle_radius;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t protocol_state;

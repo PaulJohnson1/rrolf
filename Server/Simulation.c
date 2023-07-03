@@ -443,7 +443,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
         EntityIdx mobs_in_use = 0;
         rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-        if (mobs_in_use <= 200 && arena ->wave_wick % 8 == 0)
+        if (mobs_in_use <= 200 && arena ->wave_tick % 8 == 0)
             spawn_random_mob(this);
     }
 
