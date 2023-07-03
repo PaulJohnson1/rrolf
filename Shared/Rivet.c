@@ -13,6 +13,7 @@
 #ifndef EMSCRIPTEN
 #include <curl/curl.h>
 #else
+#include <emscripten.h>
 #endif
 
 #include <Shared/cJSON.h>

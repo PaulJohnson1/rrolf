@@ -82,12 +82,12 @@ static void spawn_random_mob(struct rr_simulation *this)
     //     id = rr_mob_id_stump;
     // else if (r -= 0.15, r < 0)
     //     id = rr_mob_id_spinosaurus_head;
-    uint8_t id = rr_mob_id_stump;
-    // uint8_t id = rand() % rr_mob_id_max;
-    // if (id == rr_mob_id_spinosaurus_body)
-    //     id = rr_mob_id_stump;
-    // if (id == rr_mob_id_spinosaurus_head)
-    //     id = rr_mob_id_stump;
+    // uint8_t id = rr_mob_id_stump;
+    uint8_t id = rand() % rr_mob_id_max;
+    if (id == rr_mob_id_spinosaurus_body)
+        id = rr_mob_id_stump;
+    if (id == rr_mob_id_spinosaurus_head)
+        id = rr_mob_id_stump;
     EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity);
 }
 
@@ -443,7 +443,7 @@ void rr_simulation_tick(struct rr_simulation *this)
         rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
         EntityIdx mobs_in_use = 0;
         rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-        if (mobs_in_use <= 200)
+        if (mobs_in_use <= 200 && arena ->wave_wick % 8 == 0)
             spawn_random_mob(this);
     }
 
