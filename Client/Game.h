@@ -61,7 +61,9 @@ struct rr_game
 
     struct rr_renderer mob_stump;
 
+    // background
     struct rr_renderer tiles[3];
+    struct rr_renderer background_features[9];
 
     struct rr_game_squad_client squad_members[4];
     struct rr_global_elements ui_elements;

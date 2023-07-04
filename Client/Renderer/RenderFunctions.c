@@ -192,7 +192,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         rr_renderer_draw_image(renderer, &game->mob_stump);
         break;
     case rr_mob_id_spinosaurus_head:
-        // TODO: remove
         rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a
@@ -237,7 +236,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         rr_renderer_free_context_state(renderer, &state);
         break;
     case rr_mob_id_spinosaurus_body:
-        // TODO: remove
         rr_renderer_scale(renderer, 10.0f / 36.0f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // side circle a

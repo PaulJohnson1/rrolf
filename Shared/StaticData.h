@@ -37,7 +37,6 @@ enum rr_mob_id
     rr_mob_id_spinosaurus_body,
     rr_mob_id_pteranodon,
     rr_mob_id_dakotaraptor,
-    // todo: add the rest
 
     rr_mob_id_max
 };
