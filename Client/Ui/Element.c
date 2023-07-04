@@ -73,8 +73,6 @@ uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)
 
 void rr_ui_element_check_if_focused(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (this == game->window)
-        return;
     if (rr_ui_mouse_over(this, game))
         game->focused = this;
     else if (game->focused == this)

@@ -331,7 +331,7 @@ this->window = rr_ui_container_init();
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50, 50);
             rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[id][rarity], this, id, rarity);
+            rr_renderer_render_static_petal(&this->static_petals[id][rarity], id, rarity);
             static char cd[100] = {0};
             sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1);
             static char hp[100] = {0};
@@ -619,28 +619,36 @@ void rr_game_tick(struct rr_game *this, float delta)
                 }
             }
 
-#define render_map_feature                                                                              \
-    struct rr_renderer_context_state state;                                                             \
-    float theta = ((double)(uint32_t)(rr_get_hash(i + 200000))) / ((double)UINT32_MAX) * (M_PI * 2);    \
-    float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) / ((double)UINT32_MAX)) * 1650.0;     \
-    float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) / ((double)UINT32_MAX) * (M_PI * 2); \
-    float x = distance * sinf(theta);                                                                   \
-    float y = distance * cosf(theta);                                                                   \
-    rr_renderer_init_context_state(this->renderer, &state);                                             \
-    rr_renderer_translate(this->renderer, x, y);                                                        \
-    rr_renderer_rotate(this->renderer, rotation);                                                       \
-    rr_renderer_draw_image(this->renderer, &this->background_features[selected_feature]);               \
+#define render_map_feature                                                                                 \
+    struct rr_renderer_context_state state;                                                                \
+    float theta = ((double)(uint32_t)(rr_get_hash(i + 200000))) / ((double)UINT32_MAX) * (M_PI * 2);       \
+    float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) / ((double)UINT32_MAX)) * 1650.0; \
+    float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) / ((double)UINT32_MAX) * (M_PI * 2);    \
+    float x = distance * sinf(theta);                                                                      \
+    float y = distance * cosf(theta);                                                                      \
+    if (x < leftX)                                                                                         \
+        continue;                                                                                          \
+    if (x > rightX)                                                                                        \
+        continue;                                                                                          \
+    if (y < topY)                                                                                          \
+        continue;                                                                                          \
+    if (y > bottomY)                                                                                       \
+        continue;                                                                                          \
+    rr_renderer_init_context_state(this->renderer, &state);                                                \
+    rr_renderer_translate(this->renderer, x, y);                                                           \
+    rr_renderer_rotate(this->renderer, rotation);                                                          \
+    rr_renderer_draw_image(this->renderer, &this->background_features[selected_feature]);                  \
     rr_renderer_free_context_state(this->renderer, &state);
 
             // draw background features
-            for (uint64_t i = 0; i < 400; i++)
+            for (uint64_t i = 0; i < 50; i++)
             {
                 uint64_t selected_feature = rr_get_hash(i) % 8;
                 render_map_feature
             }
 
             // trees over everything
-            for (uint64_t i = 100; i < 103; i++)
+            for (uint64_t i = 0; i < 2; i++)
             {
                 uint64_t selected_feature = 8;
                 render_map_feature
@@ -666,7 +674,13 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_ui_render_element(this->window, this);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            if (this->petal_tooltips[id][rarity]->hidden == &this->true_ptr)
+            {
+                printf("gee %d %d %f %f\n", id, rarity, this->petal_tooltips[id][rarity]->abs_x, this->petal_tooltips[id][rarity]->abs_y);
+            }
             this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
+        }
 
     if (this->focused != NULL) 
         this->focused->on_event(this->focused, this);

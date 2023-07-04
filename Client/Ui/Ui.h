@@ -82,3 +82,5 @@ struct rr_ui_element *rr_ui_inventory_container_init();
 
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t);
 struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
+
+struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
