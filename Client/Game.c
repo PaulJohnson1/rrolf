@@ -606,7 +606,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 #define render_map_feature                                                                              \
     struct rr_renderer_context_state state;                                                             \
     float theta = ((double)(uint32_t)(rr_get_hash(i + 200000))) / ((double)UINT32_MAX) * (M_PI * 2);    \
-    float distance = ((double)(uint32_t)(rr_get_hash(i + 300000))) / ((double)UINT32_MAX) * 1650.0;     \
+    float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) / ((double)UINT32_MAX)) * 1650.0;     \
     float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) / ((double)UINT32_MAX) * (M_PI * 2); \
     float x = distance * sinf(theta);                                                                   \
     float y = distance * cosf(theta);                                                                   \
@@ -617,14 +617,14 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_free_context_state(this->renderer, &state);
 
             // draw background features
-            for (uint64_t i = 0; i < 100; i++)
+            for (uint64_t i = 0; i < 400; i++)
             {
                 uint64_t selected_feature = rr_get_hash(i) % 8;
                 render_map_feature
             }
 
             // trees over everything
-            for (uint64_t i = 100; i < 110; i++)
+            for (uint64_t i = 100; i < 103; i++)
             {
                 uint64_t selected_feature = 8;
                 render_map_feature
