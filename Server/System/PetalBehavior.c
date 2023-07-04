@@ -175,7 +175,11 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id, void *simulati
             else
             {
                 if (rr_simulation_has_mob(simulation, p_petal->simulation_id))
+                {
+                    if (inner == 0 || data->clump_radius == 0)
+                        --rotation_pos; // clump rotpos --
                     continue; //player spawned mob
+                }
                 system_flower_petal_movement_logic(simulation, p_petal->simulation_id, player_info,
                                                    rotation_pos, outer, inner, data);
                 if (data->id == rr_petal_id_egg)

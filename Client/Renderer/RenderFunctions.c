@@ -148,6 +148,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
                 rr_renderer_rotate(renderer, 1.0f);
             else if (id == rr_petal_id_leaf)
                 rr_renderer_rotate(renderer, -1.0f);
+            else if (id == rr_petal_id_stinger && rarity == rr_rarity_id_ultra)
+                rr_renderer_rotate(renderer, M_PI);
             rr_renderer_render_petal(renderer, id);
             rr_renderer_free_context_state(renderer, &state);
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);

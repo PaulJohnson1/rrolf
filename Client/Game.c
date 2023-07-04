@@ -412,7 +412,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
             proto_bug_write_uint8(&encoder2, 70, "header");
             for (uint32_t i = 0; i < 20; ++i)
             {
-                if (this->protocol_state | (1 << i))
+                if (this->protocol_state & (1 << i))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1, "pos");
                     proto_bug_write_uint8(&encoder2, this->loadout[i].id, "id");

@@ -56,21 +56,9 @@ static void spawn_random_mob(struct rr_simulation *this)
 {
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
-    // for (; rarity < rr_rarity_id_max - 1; ++rarity)
-    // {
-    //     if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, rr_simulation_get_arena(this, 1)->wave)) > rarity_seed)
-    //         break;
-    // }
-    float rarity_rand = rr_frand();
-    for (uint64_t i = 0; i < rr_rarity_id_max; i++)
-    {
-        float to_square = (((float)rr_simulation_get_arena(this, 1)->wave - 12.0f * i) / 5.0f);
-        if (rarity_rand -= expf(-0.5f * to_square * to_square / 5.0f), rarity_rand < 0.0f)
-        {
-            rarity = i < 0.0f ? 0 : (i < rr_rarity_id_max ? i : rr_rarity_id_ultra);
+    for (; rarity < rr_rarity_id_max - 1; ++rarity)
+        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, rr_simulation_get_arena(this, 1)->wave)) > rarity_seed)
             break;
-        }
-    }
     // float r = rr_frand();
     // uint8_t id = rr_mob_id_pteranodon;
     // if (r -= 0.2, r < 0)
