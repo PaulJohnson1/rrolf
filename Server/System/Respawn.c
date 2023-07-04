@@ -23,8 +23,9 @@ static void respawn_system_tick(EntityIdx entity, void *_captures)
     physical->friction = 0.9;
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100000);
-    rr_component_health_set_health(health, 1000000);
+    rr_component_health_set_max_health(health, 1000);
+    rr_component_health_set_health(health, 1000);
+    health->damage = 10;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, entity);
     rr_component_player_info_set_camera_x(player_info, physical->x);

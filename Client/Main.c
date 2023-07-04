@@ -73,7 +73,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
         Module.canvas.id = "canvas";
         document.body.appendChild(Module.canvas);
         Module.ctxs = [Module.canvas.getContext('2d')];
-        Module.availableCtxs = new Array(128).fill(0).map(function(_, i) { return i; });
+        Module.availableCtxs = new Array(256).fill(0).map(function(_, i) { return i; });
         window.onkeydown = function({which, repeat})
         {
             if (!repeat)
