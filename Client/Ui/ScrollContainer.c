@@ -31,10 +31,10 @@ void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     struct scroll_container_metadata *data = this->data;
     this->abs_width = this->width = data->element->width + 5;
-    if (game->input_data->scroll_delta != 0)
+    if (rr_ui_mouse_over(this, game) && game->input_data->scroll_delta != 0)
     {
         struct scroll_container_metadata *data = this->data;
-        data->y += game->input_data->scroll_delta / 10;
+        data->y += game->input_data->scroll_delta * 0.4;
         if (data->y < 0)
             data->y = 0;
         else if (data->y > data->element->abs_height - this->abs_height)
