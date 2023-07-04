@@ -83,11 +83,7 @@ void rr_main_renderer_initialize(struct rr_game *this)
         window.onmousedown = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 1, +!!button)};
         window.onmousemove = function({clientX, clientY, button})
         {
-            // could be `Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)`
-            // but is not since js -> wasm calls are pretty expensive
-            HEAPF32[$1 >> 2] = clientX * devicePixelRatio;
-            HEAPF32[(4 + $1) >> 2] = clientY * devicePixelRatio;
-            HEAPU8[$2] = 2;
+            Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio,2, +!!button)
         };
         window.onmouseup = function({clientX, clientY, button}){Module._rr_mouse_event($0, clientX * devicePixelRatio, clientY * devicePixelRatio, 0, +!!button)};
         window.onwheel = function({deltaY}){Module._rr_wheel_event($0, deltaY)};

@@ -86,6 +86,8 @@ static void container_poll_events(struct rr_ui_element *this, struct rr_game *ga
     if (this->completely_hidden)
         return;
     rr_ui_element_check_if_focused(this, game);
+    if (game->focused != this)
+        return;
     struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < data->size; ++i)
        data->start[i]->poll_events(data->start[i], game);

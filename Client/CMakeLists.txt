@@ -21,6 +21,7 @@ set(SRCS
     Ui/Engine.c
     Ui/InventoryUi.c
     Ui/LoadoutUi.c
+    Ui/ScrollContainer.c
     Ui/SquadUi.c
     Ui/Text.c
     Game.c
@@ -66,7 +67,7 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_on_socket_event_emscripten")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_wheel_event,_rr_on_socket_event_emscripten")
 endif()
 
 if(RIVET_BUILD)

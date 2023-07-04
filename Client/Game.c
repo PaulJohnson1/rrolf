@@ -630,7 +630,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_global_alpha(this->renderer, 0.5f);
 
             // draw background features
-            for (uint64_t i = 0; i < 400; i++)
+            for (uint64_t i = 0; i < 50; i++)
             {
                 uint64_t selected_feature = rr_get_hash(i) % 8;
                 render_map_feature
@@ -665,7 +665,13 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_ui_render_element(this->window, this);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            if (this->petal_tooltips[id][rarity]->hidden == &this->true_ptr)
+            {
+                printf("gee %d %d %f %f\n", id, rarity, this->petal_tooltips[id][rarity]->abs_x, this->petal_tooltips[id][rarity]->abs_y);
+            }
             this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
+        }
 
     if (this->focused != NULL)
         this->focused->on_event(this->focused, this);

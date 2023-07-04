@@ -41,9 +41,10 @@ static void inventory_button_on_event(struct rr_ui_element *this, struct rr_game
     else
     {
         struct rr_ui_element *tooltip = game->petal_tooltips[data->id][data->rarity];
-        tooltip->hidden = this == game->focused ? &game->true_ptr : &game->false_ptr;
+        tooltip->hidden = &game->true_ptr;
         tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
         tooltip->y = (this->abs_y / game->renderer->scale - (tooltip->abs_height + this->abs_height / 2 + 10));
+        printf("%f %f\n", tooltip->x, tooltip->y);
         if (tooltip->x < 10)
             tooltip->x = 10;
         if (tooltip->y < 10)
@@ -136,6 +137,6 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     for (uint8_t rarity = rr_rarity_id_ultra; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
             rr_ui_container_add_element(this, rr_ui_set_justify(inventory_button_init(id, rarity), -1, -1));
-    this->fill = 0xff3456bd;
+    this->fill = 0x00000000;
     return this;
 }
