@@ -14,13 +14,9 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c, float oute
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
 
         element->container = c;
-        
-        if (!(c->container_flags & 2))
-        {
-            element->h_justify = 0;
-            element->lerp_x = element->x = width + element->width / 2;
-            element->lerp_y = element->y = (1 - element->v_justify) * (element->height / 2 + outer_spacing);
-        }
+        element->h_justify = -1;
+        element->x = width;
+        element->y = (-element->v_justify) * (outer_spacing);
 
         width += element->width + inner_spacing;
         if (element->height > height)
@@ -30,11 +26,11 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c, float oute
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
 
-    c->width = width;
-    c->height = height;
+    c->abs_width = c->width = width;
+    c->abs_height = c->height = height;
 
-    struct rr_ui_container_metadata *data = c->misc_data;
-    data->is_horizontal = 1;
+    struct rr_ui_container_metadata *data = c->data;
+    data->type = 1;
     data->outer_spacing = outer_spacing;
     data->inner_spacing = inner_spacing;
     va_end(args);
@@ -53,13 +49,9 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float oute
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
 
         element->container = c;
-
-        if (!(c->container_flags & 2))
-        {
-            element->v_justify = 0;
-            element->lerp_y = element->y = height + element->height / 2;
-            element->lerp_x = element->x = (1 - element->h_justify) * (element->width / 2 + outer_spacing);
-        }
+        element->v_justify = -1;
+        element->y = height;
+        element->x = (-element->h_justify) * (outer_spacing);
 
         height += element->height + inner_spacing;
         if (element->width > width)
@@ -69,84 +61,49 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float oute
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
 
-    c->width = width;
-    c->height = height;
-    struct rr_ui_container_metadata *data = c->misc_data;
-    data->is_horizontal = 0;
+    c->abs_width = c->width = width;
+    c->abs_height = c->height = height;
+
+    struct rr_ui_container_metadata *data = c->data;
+    data->type = 0;
     data->outer_spacing = outer_spacing;
     data->inner_spacing = inner_spacing;
     va_end(args);
     return c;
 }
 
-struct rr_ui_element *rr_ui_grid_container_init(struct rr_ui_element *c, uint8_t row, uint8_t col, float outer_spacing, float inner_spacing, struct rr_ui_element *(*ctor)(uint8_t, uint8_t))
+struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this, uint32_t bg)
 {
-    struct rr_ui_element *base = ctor(0, 0);
-    c->width = base->width * col + inner_spacing * (col - 1) + outer_spacing * 2;
-    c->height = base->height * row + inner_spacing * (row - 1) + outer_spacing * 2;
-    rr_ui_container_add_element(c, base);
-    base->lerp_x = base->x = outer_spacing + 0 * (base->width + inner_spacing) + base->width / 2;
-    base->lerp_y = base->y = outer_spacing + 0 * (base->height + inner_spacing) + base->height / 2;
-    for (uint8_t y = 1; y < col; ++y)
-    {
-        base = ctor(0, y);
-        rr_ui_container_add_element(c, base);
-        base->lerp_x = base->x = outer_spacing + y * (base->width + inner_spacing) + base->width / 2;
-        base->lerp_y = base->y = outer_spacing + 0 * (base->height + inner_spacing) + base->height / 2;
-    }
-    for (uint8_t x = 1; x < row; ++x)
-    {
-        for (uint8_t y = 0; y < col; ++y)
-        {
-            base = ctor(x, y);
-            rr_ui_container_add_element(c, base);
-            base->lerp_x = base->x = outer_spacing + y * (base->width + inner_spacing) + base->width / 2;
-            base->lerp_y = base->y = outer_spacing + x * (base->height + inner_spacing) + base->height / 2;
-        }
-    }
-    c->container_flags |= 2;
-    struct rr_ui_container_metadata *data = c->misc_data;
-    data->is_horizontal = 0;
-    data->outer_spacing = outer_spacing;
-    data->inner_spacing = inner_spacing;
-    return c;
+    this->fill = bg;
+    return this;
 }
 
-struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, uint8_t h_justify, uint8_t v_justify)
+struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, int8_t h_justify, int8_t v_justify)
 {
     c->h_justify = h_justify;
     c->v_justify = v_justify;
-    c->lerp_x = c->x = (1 - h_justify) * c->width / 2;
-    c->lerp_y = c->y = (1 - v_justify) * c->height / 2;
     return c;
 }
 
 struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
 { 
-    c->lerp_x = c->x += (1 - c->h_justify) * pad;
-    c->lerp_y = c->y += (1 - c->v_justify) * pad;
-    return c;
-}
-
-struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *c, uint32_t color)
-{ 
-    ((struct rr_ui_container_metadata *) c->misc_data)->fill_color = color;
+    c->x -= c->h_justify * pad;
+    c->y -= c->v_justify * pad;
     return c;
 }
 
 static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
 {
-    struct rr_ui_container_metadata *data = c->misc_data;
+    struct rr_ui_container_metadata *data = c->data;
     float height = 0;
     float width = outer_spacing;
-    for (uint32_t i = 0; i < data->elements.size; ++i)
+    for (uint32_t i = 0; i < data->size; ++i)
     {
-        struct rr_ui_element *element = data->elements.elements[i];
-        if (!(c->container_flags & 2))
-        {
-            element->lerp_x = element->x = width + element->width / 2;
-            element->lerp_y = element->y = (1 - element->v_justify) * (element->height / 2 + outer_spacing);
-        }
+        struct rr_ui_element *element = data->start[i];
+        if (element->completely_hidden)
+            continue;
+        element->x = width;
+        element->y = (-element->v_justify) * (outer_spacing);
 
         width += element->width + inner_spacing;
         if (element->height > height)
@@ -155,31 +112,27 @@ static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, 
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
 
-    c->width = width;
-    c->height = height;
-    if (c->container_flags & 2)
+    c->abs_width = c->width = width;
+    c->abs_height = c->height = height;
+    if (c->resizeable == 2)
     {
-        struct rr_ui_container_metadata *data = c->container->misc_data;
-        if (c->width > c->container->width)
-            return;
-        else
-            c->width = c->container->width - 2 * data->outer_spacing;
+        if (c->container->width > c->width)
+            c->width = c->container->width;
     }
 }
 
 static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
 {
-    struct rr_ui_container_metadata *data = c->misc_data;
+    struct rr_ui_container_metadata *data = c->data;
     float width = 0;
     float height = outer_spacing;
-    for (uint32_t i = 0; i < data->elements.size; ++i)
+    for (uint32_t i = 0; i < data->size; ++i)
     {
-        struct rr_ui_element *element = data->elements.elements[i];
-        if (!(c->container_flags & 2))
-        {
-            element->lerp_y = element->y = height + element->height / 2;
-            element->lerp_x = element->x = (1 - element->h_justify) * (element->width / 2 + outer_spacing);
-        }
+        struct rr_ui_element *element = data->start[i];
+        if (element->completely_hidden)
+            continue;
+        element->y = height;
+        element->x = (-element->h_justify) * (outer_spacing);
 
         height += element->height + inner_spacing;
         if (element->width > width)
@@ -188,56 +141,32 @@ static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, 
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
 
-    c->width = width;
-    c->height = height;
-    if (c->container_flags & 2)
+    c->abs_width = c->width = width;
+    c->abs_height = c->height = height;
+    if (c->resizeable == 2)
     {
-        struct rr_ui_container_metadata *data = c->container->misc_data;
-        if (c->height > c->container->height)
-            return;
-        else
-            c->height = c->container->height - 2 * data->outer_spacing;
+        if (c->container->height > c->height)
+            c->height = c->container->height;
     }
 }
 
 void rr_ui_container_refactor(struct rr_ui_element *c)
-{
-    struct rr_ui_container_metadata *data = c->misc_data;
-    float max_x = 0;
-    float max_y = 0;
-    float min_x = 0;
-    float min_y = 0;
-    float spacing = data->outer_spacing; //FIX
-    float halfWidth = c->width / 2;
-    float halfHeight = c->height / 2;
-    for (uint64_t i = 0; i < data->elements.size; ++i)
-    {
-        struct rr_ui_element *element = data->elements.elements[i];
-        if (element->container_flags == 1)
-        {
-            struct rr_ui_container_metadata *element_data = (element->misc_data);
-            if (element_data->is_horizontal)
-                rr_ui_h_container_set(element, element_data->outer_spacing, element_data->inner_spacing);
-            else
-                rr_ui_v_container_set(element, element_data->outer_spacing, element_data->inner_spacing);
+{ 
 
+    struct rr_ui_container_metadata *data = c->data;
+    for (uint64_t i = 0; i < data->size; ++i)
+    {
+        struct rr_ui_element *element = data->start[i];
+        if (element->completely_hidden)
+            continue;
+        if (element->resizeable)
             rr_ui_container_refactor(element);
-        }
-        float x = element->x + (element->h_justify - 1) * halfWidth;
-        float y = element->y + (element->v_justify - 1) * halfHeight;
-        float elem_pos = x - element->width / 2 - spacing;
-        if (elem_pos < min_x)
-            min_x = elem_pos;
-        elem_pos = y - element->height / 2 - spacing;
-        if (elem_pos < min_y)
-            min_y = elem_pos;
-        elem_pos = x + element->width / 2 + spacing;
-        if (elem_pos > max_x)
-            max_x = elem_pos;
-        elem_pos = y + element->height / 2 + spacing;
-        if (elem_pos > max_y)
-            max_y = elem_pos;
     }
-    c->width = max_x - min_x;
-    c->height = max_y - min_y;
+    if (c->resizeable == 1)
+    {
+        if (data->type == 1)
+            rr_ui_h_container_set(c, data->outer_spacing, data->inner_spacing);
+        else
+            rr_ui_v_container_set(c, data->outer_spacing, data->inner_spacing);
+    }
 }

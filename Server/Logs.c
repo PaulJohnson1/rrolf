@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#ifdef RIVET_BUILD
 #ifndef RR_DISABLE_DISCORD_INTEGRATION
 #include <curl/curl.h>
 
@@ -44,4 +45,5 @@ void rr_discord_curl_init()
 {
     curl_global_init(CURL_GLOBAL_ALL);
 }
+#endif
 #endif

@@ -1,50 +1,44 @@
-#include <Client/Ui/Element.h>
+#include <Client/Ui/Ui.h>
 
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 
 struct text_metadata
 {
-    float size;
     char const *text;
-    uint32_t fill;
+    float size;
 };
 
-static void text_on_render(struct rr_ui_element *this, void *_game)
+static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (this->hidden)
-        return;
-    struct rr_game *game = _game;
+    struct text_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    struct text_metadata *data = this->misc_data;
-    struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(renderer, &state);
-    rr_ui_translate(this, renderer);
     rr_renderer_scale(renderer, renderer->scale);
-    rr_renderer_set_fill(renderer, data->fill);
-    rr_renderer_set_stroke(renderer, 0xff000000);
-    rr_renderer_set_text_size(renderer, this->height);
-    rr_renderer_set_line_width(renderer, this->height * 0.12);
-    rr_renderer_set_text_align(renderer, 1);
+    this->abs_width = this->width = rr_renderer_get_text_size(data->text) * this->height;
     rr_renderer_set_text_baseline(renderer, 1);
+    rr_renderer_set_text_align(renderer, 1);
+    rr_renderer_set_fill(renderer, this->fill);
+    rr_renderer_set_stroke(renderer, 0xff222222);
+    rr_renderer_set_text_size(renderer, data->size);
+    rr_renderer_set_line_width(renderer, data->size * 0.12);
     rr_renderer_stroke_text(renderer, data->text, 0, 0);
     rr_renderer_fill_text(renderer, data->text, 0, 0);
-    rr_renderer_free_context_state(renderer, &state);
 }
 
-struct rr_ui_element *rr_ui_text_init(char const *str, float size, uint32_t fill)
+struct rr_ui_element *rr_ui_text_init(char const *text, float size, uint32_t fill)
 {
-    struct text_metadata *data = calloc(1, sizeof *data);
-    struct rr_ui_element *element = rr_ui_element_init();
-    element->on_render = text_on_render;
-    data->text = str;
-    element->height = size;
-    element->width = rr_renderer_get_text_size(str) * size;
-    element->misc_data = data;
-    data->fill = fill;
-
-    return element;
+    struct rr_ui_element *this = rr_ui_element_init();
+    struct text_metadata *data = malloc(sizeof *data);
+    this->abs_height = this->height = size;
+    this->abs_width = this->width = rr_renderer_get_text_size(text) * this->height;
+    this->fill = fill;
+    this->height = data->size = size;
+    data->text = text;
+    this->data = data;
+    this->on_render = text_on_render;
+    return this;
 }

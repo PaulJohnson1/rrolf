@@ -35,7 +35,6 @@ static void spawn_random_mob(struct rr_simulation *this);
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
-    rr_static_data_init();
     this->grid = malloc(sizeof *this->grid);
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;

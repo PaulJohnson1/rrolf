@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Shared/Entity.h>
-#include <Client/Ui/Element.h>
+#include <Client/Ui/Ui.h>
+#include <Client/Renderer/Renderer.h>
 #include <Client/Socket.h>
 
 #include <Shared/StaticData.h>
@@ -26,17 +27,6 @@ struct rr_game_crafting_data
     float animation;
     uint8_t crafting_id;
     uint8_t crafting_rarity;
-};
-
-struct rr_global_elements
-{
-    struct rr_ui_element *respawn_label;
-    struct rr_ui_element *title_screen;
-    struct rr_ui_element *loadout;
-    struct rr_ui_element *wave_info;
-    struct rr_ui_element *inventory;
-    struct rr_ui_element *in_game_squad_info;
-    struct rr_ui_element *game_over;
 };
 
 struct rr_game
@@ -66,26 +56,31 @@ struct rr_game
     struct rr_renderer background_features[9];
 
     struct rr_game_squad_client squad_members[4];
-    struct rr_global_elements ui_elements;
     struct rr_websocket socket;
     struct rr_game_crafting_data crafting_data;
-    struct rr_game_loadout_petal loadout[20];
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
-    struct rr_ui_element *global_container;
-    uint64_t tiles_size;
-    float expanding_circle_radius;
-    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t protocol_state;
+    float expanding_circle_radius;
+    struct rr_game_loadout_petal loadout[20];
     EntityIdx player_infos[4];
+    uint8_t displaying_debug_information;
+    uint8_t socket_ready;
+    uint8_t socket_pending;
+    uint8_t simulation_ready;
+    uint8_t simulation_not_ready;
     int8_t ticks_until_game_start;
     uint8_t ui_open; // 0 = none, 1 = inv, 2 = crafting
-    uint8_t displaying_debug_information:1;
-    uint8_t socket_ready:1;
-    uint8_t socket_pending:1;
-    uint8_t simulation_ready:1;
+    uint8_t false_ptr;
+    uint8_t true_ptr;
+    uint8_t tiles_size;
+
+    struct rr_ui_element *window;
+    struct rr_ui_element *prev_focused;
+    struct rr_ui_element *focused;
 };
 
 void rr_game_init(struct rr_game *);

@@ -7,7 +7,7 @@
 #include <Client/Game.h>
 #include <Shared/StaticData.h>
 
-void rr_renderer_render_petal(struct rr_renderer *renderer, struct rr_game *game, uint8_t id)
+void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
 {
     switch (id)
     {
@@ -109,12 +109,21 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, struct rr_game *game
         rr_renderer_quadratic_curve_to(renderer, 0.0f, -1.5f, 7.5f, 0.0f);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_egg:
+        rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0, 0, 12);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }
 }
 
-void rr_renderer_render_static_petal(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, uint8_t rarity)
+void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, uint8_t rarity)
 {
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas)
@@ -125,7 +134,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, struct rr_gam
             rr_renderer_rotate(renderer, 1.0f);
         else if (id == rr_petal_id_leaf)
             rr_renderer_rotate(renderer, -1.0f);
-        rr_renderer_render_petal(renderer, game, id);
+        rr_renderer_render_petal(renderer, id);
     }
     else
     {
@@ -139,7 +148,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, struct rr_gam
                 rr_renderer_rotate(renderer, 1.0f);
             else if (id == rr_petal_id_leaf)
                 rr_renderer_rotate(renderer, -1.0f);
-            rr_renderer_render_petal(renderer, game, id);
+            rr_renderer_render_petal(renderer, id);
             rr_renderer_free_context_state(renderer, &state);
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);
         }
@@ -299,7 +308,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
     rr_renderer_free_context_state(renderer, &original_state);
 }
 
-void rr_renderer_render_background(struct rr_renderer *renderer, struct rr_game *game, uint8_t rarity)
+void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
 {
     if (rarity == 255)
     {
