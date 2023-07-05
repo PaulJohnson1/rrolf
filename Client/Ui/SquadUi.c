@@ -264,7 +264,7 @@ struct rr_ui_element *rr_ui_info_init()
                               -1, 0),
             rr_ui_set_justify(
                 rr_ui_h_container_init(
-                    rr_ui_container_init(), 5, 10, 2, ui_flower_init(0, 35),
+                    rr_ui_container_init(), 5, 10, 2, ui_flower_init(1, 35),
                     rr_ui_text_init("- not ready", 15, 0xffffffff)),
                 -1, 0)),
         0x80000000);
