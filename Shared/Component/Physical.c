@@ -14,25 +14,28 @@ enum
     state_flags_all = 0b11111
 };
 
-#define FOR_EACH_PUBLIC_FIELD \
-    X(server_animation_tick, uint8) \
-    X(angle, float32) \
-    X(radius, float32) 
+#define FOR_EACH_PUBLIC_FIELD                                                  \
+    X(server_animation_tick, uint8)                                            \
+    X(angle, float32)                                                          \
+    X(radius, float32)
 
-void rr_component_physical_init(struct rr_component_physical *this, struct rr_simulation *simulation)
+void rr_component_physical_init(struct rr_component_physical *this,
+                                struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->mass = 1;)
     RR_SERVER_ONLY(this->has_deletion_animation = 1;)
 }
 
-void rr_component_physical_free(struct rr_component_physical *this, struct rr_simulation *simulation)
+void rr_component_physical_free(struct rr_component_physical *this,
+                                struct rr_simulation *simulation)
 {
     RR_SERVER_ONLY(this->has_deletion_animation = 0;)
 }
 
 #ifdef RR_SERVER
-void rr_component_physical_write(struct rr_component_physical *this, struct proto_bug *encoder, int is_creation)
+void rr_component_physical_write(struct rr_component_physical *this,
+                                 struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "physical component state");
@@ -47,7 +50,8 @@ RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
 // RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
-void rr_component_physical_set_radius(struct rr_component_physical *this, float r)
+void rr_component_physical_set_radius(struct rr_component_physical *this,
+                                      float r)
 {
     if (r > (1 << 8))
         printf("radius cannot exceed %d\n", 1 << 8);
@@ -58,9 +62,11 @@ RR_DEFINE_PUBLIC_FIELD(physical, uint8_t, server_animation_tick)
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_physical_read(struct rr_component_physical *this, struct proto_bug *encoder)
+void rr_component_physical_read(struct rr_component_physical *this,
+                                struct proto_bug *encoder)
 {
-    uint64_t state = proto_bug_read_varuint(encoder, "physical component state");
+    uint64_t state =
+        proto_bug_read_varuint(encoder, "physical component state");
     if (state & state_flags_x)
     {
         float new_x = proto_bug_read_float32(encoder, "field x");

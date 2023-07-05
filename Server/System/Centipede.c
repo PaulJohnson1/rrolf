@@ -9,17 +9,21 @@
 
 void rr_system_centipede_foreach_function(EntityIdx id, void *simulation)
 {
-    struct rr_component_centipede *centipede = rr_simulation_get_centipede(simulation, id);
-    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+    struct rr_component_centipede *centipede =
+        rr_simulation_get_centipede(simulation, id);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, id);
     struct rr_vector parent_vector = {physical->x, physical->y};
     if (centipede->parent_node != RR_NULL_ENTITY)
         return;
     while (centipede->child_node != RR_NULL_ENTITY)
     {
         float radius = physical->radius;
-        centipede = rr_simulation_get_centipede(simulation, centipede->child_node);
+        centipede =
+            rr_simulation_get_centipede(simulation, centipede->child_node);
         physical = rr_simulation_get_physical(simulation, centipede->parent_id);
-        struct rr_vector delta = {physical->x - parent_vector.x, physical->y - parent_vector.y};
+        struct rr_vector delta = {physical->x - parent_vector.x,
+                                  physical->y - parent_vector.y};
         if (delta.x == 0.0f && delta.y == 0.0f)
             delta.x = 1.0f;
 
@@ -33,5 +37,6 @@ void rr_system_centipede_foreach_function(EntityIdx id, void *simulation)
 
 void rr_system_centipede_tick(struct rr_simulation *simulation)
 {
-    rr_simulation_for_each_centipede(simulation, simulation, rr_system_centipede_foreach_function);
+    rr_simulation_for_each_centipede(simulation, simulation,
+                                     rr_system_centipede_foreach_function);
 }

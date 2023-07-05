@@ -4,13 +4,13 @@
 #include <string.h>
 
 #include <Client/Game.h>
+#include <Client/Renderer/RenderFunctions.h>
+#include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
-#include <Client/Renderer/Renderer.h>
-#include <Client/Renderer/RenderFunctions.h>
 
-#include <Shared/Utilities.h>
 #include <Shared/StaticData.h>
+#include <Shared/Utilities.h>
 
 struct mob_button_metadata
 {
@@ -26,12 +26,13 @@ static void wave_text_on_render(struct rr_ui_element *this, void *_game)
     struct rr_game *game = _game;
     if (!game->simulation_ready)
         return;
-    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer *renderer = game->renderer;
     struct text_metadata *data = this->misc_data;
     char out[12];
     out[sprintf(out, "Wave %d", arena->wave)] = 0;
-    this->width = rr_renderer_get_text_size((char const *) &out);
+    this->width = rr_renderer_get_text_size((char const *)&out);
 
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(renderer, &state);
@@ -43,8 +44,8 @@ static void wave_text_on_render(struct rr_ui_element *this, void *_game)
     rr_renderer_set_line_width(renderer, this->height * 0.12);
     rr_renderer_set_text_align(renderer, 1);
     rr_renderer_set_text_baseline(renderer, 1);
-    rr_renderer_stroke_text(renderer, (char const *) &out, 0, 0);
-    rr_renderer_fill_text(renderer, (char const *) &out, 0, 0);
+    rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
+    rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_free_context_state(renderer, &state);
 }
 
@@ -62,11 +63,12 @@ static void mob_button_on_render(struct rr_ui_element *this, void *_game)
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
-    rr_renderer_scale(renderer, this->width * 0.01 * mob_radius / RR_MOB_DATA[data->id].radius);
-    
+    rr_renderer_scale(renderer, this->width * 0.01 * mob_radius /
+                                    RR_MOB_DATA[data->id].radius);
+
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
     rr_renderer_render_mob(renderer, game, data->id, 0);
-    
+
     rr_renderer_free_context_state(renderer, &state);
 }
 
@@ -77,7 +79,8 @@ static void wave_bar_on_render(struct rr_ui_element *this, void *_game)
     struct rr_game *game = _game;
     if (!game->simulation_ready)
         return;
-    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
     float capac = 15 * 5 * 25;
@@ -144,8 +147,6 @@ struct rr_ui_element *rr_ui_wave_container_init()
 {
     return rr_ui_set_justify(
         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
-            rr_ui_wave_text_init(36),
-            rr_ui_wave_bar_init()
-        )
-    , 1, 1);
+                               rr_ui_wave_text_init(36), rr_ui_wave_bar_init()),
+        1, 1);
 }

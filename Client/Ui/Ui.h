@@ -65,16 +65,20 @@ struct rr_ui_element *rr_ui_static_space_init(float);
 struct rr_ui_element *rr_ui_container_init();
 struct rr_ui_element *rr_ui_flex_container_init();
 struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float, float);
-struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
+struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
+                                                  struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
 
 struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
 
-struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_choose_element_init(
+    struct rr_ui_element *, struct rr_ui_element *,
+    uint8_t (*)(struct rr_ui_element *, struct rr_game *));
 
 // custom
-struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *);
+struct rr_ui_element *
+rr_ui_squad_player_container_init(struct rr_game_squad_client *);
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_inventory_container_init();
@@ -82,4 +86,5 @@ struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t);
 struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
 
-struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
+struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *,
+                                                  float);

@@ -2,28 +2,32 @@
 
 #include <string.h>
 
-#include <Shared/pb.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
+#include <Shared/pb.h>
 
-void rr_component_projectile_init(struct rr_component_projectile *this, struct rr_simulation *simulation)
+void rr_component_projectile_init(struct rr_component_projectile *this,
+                                  struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
 }
 
-void rr_component_projectile_free(struct rr_component_projectile *this, struct rr_simulation *simulation)
+void rr_component_projectile_free(struct rr_component_projectile *this,
+                                  struct rr_simulation *simulation)
 {
 }
 
 #ifdef RR_SERVER
-void rr_component_projectile_write(struct rr_component_projectile *this, struct proto_bug *encoder, int is_creation)
+void rr_component_projectile_write(struct rr_component_projectile *this,
+                                   struct proto_bug *encoder, int is_creation)
 {
 }
 
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_projectile_read(struct rr_component_projectile *this, struct proto_bug *encoder)
+void rr_component_projectile_read(struct rr_component_projectile *this,
+                                  struct proto_bug *encoder)
 {
 }
 #endif

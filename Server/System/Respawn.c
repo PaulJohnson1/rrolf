@@ -1,21 +1,26 @@
 #include <Server/System/Respawn.h>
 
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include <Server/Simulation.h>
 
 static void respawn_system_tick(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, entity);
+    struct rr_component_player_info *player_info =
+        rr_simulation_get_player_info(this, entity);
     if (player_info->flower_id != RR_NULL_ENTITY)
         return;
     EntityIdx flower_id = rr_simulation_alloc_entity(this);
-    struct rr_component_physical *physical = rr_simulation_add_physical(this, flower_id);
-    struct rr_component_health *health = rr_simulation_add_health(this, flower_id);
-    struct rr_component_relations *relations = rr_simulation_add_relations(this, flower_id);
-    float distance = sqrt((float)rand() / (float)RAND_MAX) * rr_simulation_get_arena(this, 1)->radius;
+    struct rr_component_physical *physical =
+        rr_simulation_add_physical(this, flower_id);
+    struct rr_component_health *health =
+        rr_simulation_add_health(this, flower_id);
+    struct rr_component_relations *relations =
+        rr_simulation_add_relations(this, flower_id);
+    float distance = sqrt((float)rand() / (float)RAND_MAX) *
+                     rr_simulation_get_arena(this, 1)->radius;
     float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);

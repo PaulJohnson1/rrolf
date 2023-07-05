@@ -1,8 +1,8 @@
 #include <Server/System/MapBoundary.h>
 
-#include <stdlib.h>
-#include <math.h>
 #include <assert.h>
+#include <math.h>
+#include <stdlib.h>
 
 #include <Server/Simulation.h>
 #include <Shared/Entity.h>
@@ -21,15 +21,20 @@ static void aggressive_find_target(EntityIdx i, void *_captures)
 
     struct rr_simulation *this = captures->simulation;
     struct rr_component_ai *ai = captures->ai;
-    struct rr_component_relations *relations_1 = rr_simulation_get_relations(this, i);
-    struct rr_component_relations *relations_2 = rr_simulation_get_relations(this, ai->parent_id);
+    struct rr_component_relations *relations_1 =
+        rr_simulation_get_relations(this, i);
+    struct rr_component_relations *relations_2 =
+        rr_simulation_get_relations(this, ai->parent_id);
     if (relations_1->team == relations_2->team)
         return;
 
-    struct rr_component_physical *ai_physical = rr_simulation_get_physical(this, ai->parent_id);
-    struct rr_component_physical *flower_physical = rr_simulation_get_physical(this, i);
+    struct rr_component_physical *ai_physical =
+        rr_simulation_get_physical(this, ai->parent_id);
+    struct rr_component_physical *flower_physical =
+        rr_simulation_get_physical(this, i);
 
-    struct rr_vector delta = {ai_physical->x - flower_physical->x, ai_physical->x - flower_physical->x};
+    struct rr_vector delta = {ai_physical->x - flower_physical->x,
+                              ai_physical->x - flower_physical->x};
 
     float distance = delta.x * delta.x + delta.y * delta.y;
 
@@ -45,12 +50,15 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 {
     struct rr_simulation *this = simulation;
 
-    if (rr_simulation_has_centipede(this, entity) && rr_simulation_get_centipede(this, entity)->parent_node != RR_NULL_ENTITY)
+    if (rr_simulation_has_centipede(this, entity) &&
+        rr_simulation_get_centipede(this, entity)->parent_node !=
+            RR_NULL_ENTITY)
         return;
     if (rr_simulation_get_health(this, entity)->health < 0.0001f)
         return;
     struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
-    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this, entity);
 
     switch (ai->ai_type)
     {
@@ -67,8 +75,10 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         captures.simulation = this;
         captures.closest_distance = 1500.0f * 1500.0f; // ai detection range
 
-        if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_mobs)
-            rr_simulation_for_each_flower(this, &captures, aggressive_find_target);
+        if (rr_simulation_get_relations(simulation, entity)->team ==
+            rr_simulation_team_id_mobs)
+            rr_simulation_for_each_flower(this, &captures,
+                                          aggressive_find_target);
         else
             rr_simulation_for_each_mob(this, &captures, aggressive_find_target);
         break;
@@ -97,21 +107,28 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
     case rr_ai_state_attacking:
     {
-        if (!rr_simulation_has_entity(this, ai->target_entity)) // target died (what a noob)
+        if (!rr_simulation_has_entity(
+                this, ai->target_entity)) // target died (what a noob)
         {
             // ai->ai_state = rr_ai_state_spin2team;
-            ai->target_entity = RR_NULL_ENTITY; // you really don't want the entity being reallocated and then the mob goes sicko mode
+            ai->target_entity =
+                RR_NULL_ENTITY; // you really don't want the entity being
+                                // reallocated and then the mob goes sicko mode
             break;
         }
-        struct rr_component_physical *target_physical = rr_simulation_get_physical(this, ai->target_entity);
-        struct rr_vector delta = {target_physical->x - physical->x, target_physical->y - physical->y};
+        struct rr_component_physical *target_physical =
+            rr_simulation_get_physical(this, ai->target_entity);
+        struct rr_vector delta = {target_physical->x - physical->x,
+                                  target_physical->y - physical->y};
         rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
         if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             if (delta.x * delta.x + delta.y * delta.y <= 500 * 500)
             {
                 break;
             }
-        ai->ticks_until_next_action = rand() % 10 + 25; // when the ai is done being pissed, wait a little until the next action
+        ai->ticks_until_next_action =
+            rand() % 10 + 25; // when the ai is done being pissed, wait a little
+                              // until the next action
         // if and only if aggro type is pteranodon and is too close then break
         rr_vector_set_magnitude(&delta, 0.75f);
         rr_vector_add(&physical->acceleration, &delta);
@@ -131,7 +148,8 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
             break;
         case rr_ai_state_idle:
             ai->ai_state = rr_ai_state_idle_moving;
-            rr_component_physical_set_angle(physical, 2 * M_PI * rand() / RAND_MAX);
+            rr_component_physical_set_angle(physical,
+                                            2 * M_PI * rand() / RAND_MAX);
             ai->ticks_until_next_action = rand() % 10 + 75;
             break;
         case rr_ai_state_spin2team:
@@ -141,40 +159,60 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         case rr_ai_state_attacking:
             if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             {
-                struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
-                //spawn a missile
+                struct rr_component_mob *mob =
+                    rr_simulation_get_mob(simulation, entity);
+                // spawn a missile
                 EntityIdx petal_id = rr_simulation_alloc_entity(simulation);
-                struct rr_component_physical *physical2 = rr_simulation_add_physical(simulation, petal_id);
-                struct rr_component_petal *petal = rr_simulation_add_petal(simulation, petal_id);
-                struct rr_component_relations *relations = rr_simulation_add_relations(simulation, petal_id);
-                struct rr_component_health *health = rr_simulation_add_health(simulation, petal_id); 
-                struct rr_component_projectile *projectile = rr_simulation_add_projectile(simulation, petal_id);
+                struct rr_component_physical *physical2 =
+                    rr_simulation_add_physical(simulation, petal_id);
+                struct rr_component_petal *petal =
+                    rr_simulation_add_petal(simulation, petal_id);
+                struct rr_component_relations *relations =
+                    rr_simulation_add_relations(simulation, petal_id);
+                struct rr_component_health *health =
+                    rr_simulation_add_health(simulation, petal_id);
+                struct rr_component_projectile *projectile =
+                    rr_simulation_add_projectile(simulation, petal_id);
 
                 rr_component_physical_set_x(physical2, physical->x);
                 rr_component_physical_set_y(physical2, physical->y);
                 rr_component_physical_set_angle(physical2, physical->angle);
-                rr_component_physical_set_radius(physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
+                rr_component_physical_set_radius(
+                    physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
                 physical2->friction = 0.5f;
                 physical2->mass = 2.0f;
-                rr_vector_from_polar(&physical2->acceleration, 50, physical->angle);
+                rr_vector_from_polar(&physical2->acceleration, 50,
+                                     physical->angle);
 
-                rr_component_relations_set_team(relations, rr_simulation_get_relations(simulation, entity)->team);
+                rr_component_relations_set_team(
+                    relations,
+                    rr_simulation_get_relations(simulation, entity)->team);
                 rr_component_relations_set_owner(relations, ai->parent_id);
 
                 rr_component_petal_set_id(petal, rr_petal_id_missile);
-                rr_component_petal_set_rarity(petal, mob->rarity); // need fix later
+                rr_component_petal_set_rarity(petal,
+                                              mob->rarity); // need fix later
                 petal->detached = 1;
 
-                rr_component_health_set_max_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
-                rr_component_health_set_health(health, RR_MOB_DATA[mob->id].health * RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
-                health->damage = RR_MOB_DATA[mob->id].damage * RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.1f;
+                rr_component_health_set_max_health(
+                    health, RR_MOB_DATA[mob->id].health *
+                                RR_MOB_RARITY_SCALING[mob->rarity].health *
+                                0.2);
+                rr_component_health_set_health(
+                    health, RR_MOB_DATA[mob->id].health *
+                                RR_MOB_RARITY_SCALING[mob->rarity].health *
+                                0.2);
+                health->damage = RR_MOB_DATA[mob->id].damage *
+                                 RR_MOB_RARITY_SCALING[mob->rarity].damage *
+                                 0.1f;
                 rr_component_health_set_hidden(health, 1);
 
                 projectile->ticks_until_death = 50;
-                
+
                 ai->ticks_until_next_action = 50;
 
-                rr_vector_from_polar(&physical->acceleration, -2, physical->angle); //recoil
+                rr_vector_from_polar(&physical->acceleration, -2,
+                                     physical->angle); // recoil
             }
             break;
         }

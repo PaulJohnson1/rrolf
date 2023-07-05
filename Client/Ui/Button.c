@@ -1,8 +1,8 @@
 #include <Client/Ui/Ui.h>
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
@@ -23,7 +23,8 @@ static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
         (*(data->toggle)) ^= 1;
 }
 
-static void squad_join_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void squad_join_button_on_event(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_this_tick & 1)
@@ -40,7 +41,8 @@ static void squad_join_button_on_event(struct rr_ui_element *this, struct rr_gam
     }
 }
 
-static void labeled_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void labeled_button_on_render(struct rr_ui_element *this,
+                                     struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -54,7 +56,8 @@ static void labeled_button_on_render(struct rr_ui_element *this, struct rr_game 
     rr_renderer_set_stroke(renderer, this->fill);
     rr_renderer_set_line_width(renderer, 6);
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2, this->width, this->height, 6);
+    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2,
+                           this->width, this->height, 6);
     rr_renderer_fill(renderer);
     rr_renderer_stroke(renderer);
     rr_renderer_set_text_baseline(renderer, 1);
@@ -69,7 +72,8 @@ static void labeled_button_on_render(struct rr_ui_element *this, struct rr_game 
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-struct rr_ui_element *rr_ui_labeled_button_init(char const *text, float height, uint8_t *toggle)
+struct rr_ui_element *rr_ui_labeled_button_init(char const *text, float height,
+                                                uint8_t *toggle)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct labeled_button_metadata *data = malloc(sizeof *data);

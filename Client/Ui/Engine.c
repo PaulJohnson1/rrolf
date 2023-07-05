@@ -2,12 +2,15 @@
 
 #include <stdio.h>
 
-struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
+struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
+                                             float outer_spacing,
+                                             float inner_spacing,
+                                             uint32_t count, ...)
 {
     va_list args;
     va_start(args, count);
     c->x = c->y = 0;
-    float height = 0; //outer spacing
+    float height = 0; // outer spacing
     float width = outer_spacing;
     for (uint32_t i = 0; i < count; ++i)
     {
@@ -37,12 +40,15 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c, float oute
     return c;
 }
 
-struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float outer_spacing, float inner_spacing, uint32_t count, ...)
+struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
+                                             float outer_spacing,
+                                             float inner_spacing,
+                                             uint32_t count, ...)
 {
     va_list args;
     va_start(args, count);
     c->x = c->y = 0;
-    float width = 0; //outer spacing
+    float width = 0; // outer spacing
     float height = outer_spacing;
     for (uint32_t i = 0; i < count; ++i)
     {
@@ -72,13 +78,15 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c, float oute
     return c;
 }
 
-struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this, uint32_t bg)
+struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this,
+                                           uint32_t bg)
 {
     this->fill = bg;
     return this;
 }
 
-struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, int8_t h_justify, int8_t v_justify)
+struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c,
+                                        int8_t h_justify, int8_t v_justify)
 {
     c->h_justify = h_justify;
     c->v_justify = v_justify;
@@ -86,13 +94,14 @@ struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c, int8_t h_justif
 }
 
 struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
-{ 
+{
     c->x -= c->h_justify * pad;
     c->y -= c->v_justify * pad;
     return c;
 }
 
-static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
+static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing,
+                                  float inner_spacing)
 {
     struct rr_ui_container_metadata *data = c->data;
     float height = 0;
@@ -121,7 +130,8 @@ static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, 
     }
 }
 
-static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
+static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing,
+                                  float inner_spacing)
 {
     struct rr_ui_container_metadata *data = c->data;
     float width = 0;
@@ -151,7 +161,7 @@ static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, 
 }
 
 void rr_ui_container_refactor(struct rr_ui_element *c)
-{ 
+{
 
     struct rr_ui_container_metadata *data = c->data;
     for (uint64_t i = 0; i < data->size; ++i)

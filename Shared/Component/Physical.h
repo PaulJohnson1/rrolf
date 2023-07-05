@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Shared/Component/Common.h>
 #include <Shared/Bitset.h>
+#include <Shared/Component/Common.h>
 #include <Shared/Entity.h>
-#include <Shared/Vector.h>
 #include <Shared/Utilities.h>
+#include <Shared/Vector.h>
 
 #ifdef RR_CLIENT
 #include <Client/Game.h>
@@ -25,42 +25,46 @@ struct rr_component_physical_spatial_hash_bounds
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
-                   struct rr_vector velocity;
+    struct rr_vector velocity;
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
-    //RR_SERVER_ONLY(uint32_t query_id;)
-    //RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
+    // RR_SERVER_ONLY(uint32_t query_id;)
+    // RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float restitution;)
     RR_SERVER_ONLY(float friction;)
-                   float angle;
+    float angle;
     RR_CLIENT_ONLY(float lerp_angle;)
-                   float x;
+    float x;
     RR_CLIENT_ONLY(float lerp_x;)
-                   float y;
+    float y;
     RR_CLIENT_ONLY(float lerp_y;)
-                   float radius;
+    float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float lerp_server_animation_tick;)
     RR_SERVER_ONLY(uint32_t query_id);
-                   uint8_t server_animation_tick:6;
-    RR_CLIENT_ONLY(uint8_t animation_started:1;)
-    RR_SERVER_ONLY(uint8_t ticked_animation:1;)
-    RR_SERVER_ONLY(uint8_t has_deletion_animation:1;)
+    uint8_t server_animation_tick : 6;
+    RR_CLIENT_ONLY(uint8_t animation_started : 1;)
+    RR_SERVER_ONLY(uint8_t ticked_animation : 1;)
+    RR_SERVER_ONLY(uint8_t has_deletion_animation : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
-                   EntityIdx parent_id;
+    EntityIdx parent_id;
     // RR_SERVER_ONLY(uint8_t has_collisions;)
     // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
 
-void rr_component_physical_init(struct rr_component_physical *, struct rr_simulation *);
-void rr_component_physical_free(struct rr_component_physical *, struct rr_simulation *);
+void rr_component_physical_init(struct rr_component_physical *,
+                                struct rr_simulation *);
+void rr_component_physical_free(struct rr_component_physical *,
+                                struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *, struct proto_bug *, int);)
-RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *, struct proto_bug *);)
+RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *,
+                                                struct proto_bug *, int);)
+RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *,
+                                               struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(physical, float, x)
 RR_DECLARE_PUBLIC_FIELD(physical, float, y)

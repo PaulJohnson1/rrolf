@@ -1,15 +1,15 @@
 #include <Shared/Component/Flower.h>
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
-#include <Shared/pb.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
+#include <Shared/pb.h>
 
-#define FOR_EACH_PUBLIC_FIELD \
-    X(eye_angle, float32) \
-    X(face_flags, uint8) 
+#define FOR_EACH_PUBLIC_FIELD                                                  \
+    X(eye_angle, float32)                                                      \
+    X(face_flags, uint8)
 
 enum
 {
@@ -18,25 +18,31 @@ enum
     state_flags_all = 0b000011
 };
 
-void rr_component_flower_init(struct rr_component_flower *this, struct rr_simulation *simulation)
+void rr_component_flower_init(struct rr_component_flower *this,
+                              struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
 }
 
-void rr_component_flower_free(struct rr_component_flower *this, struct rr_simulation *simulation)
+void rr_component_flower_free(struct rr_component_flower *this,
+                              struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    if (rr_simulation_has_entity(simulation, rr_simulation_get_relations(simulation, this->parent_id)->owner))
+    if (rr_simulation_has_entity(
+            simulation,
+            rr_simulation_get_relations(simulation, this->parent_id)->owner))
         rr_component_player_info_set_flower_id(
             rr_simulation_get_player_info(
                 simulation,
-                rr_simulation_get_relations(simulation, this->parent_id)->owner),
+                rr_simulation_get_relations(simulation, this->parent_id)
+                    ->owner),
             RR_NULL_ENTITY);
 #endif
 }
 
 #ifdef RR_SERVER
-void rr_component_flower_write(struct rr_component_flower *this, struct proto_bug *encoder, int is_creation)
+void rr_component_flower_write(struct rr_component_flower *this,
+                               struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "flower component state");
@@ -50,7 +56,8 @@ RR_DEFINE_PUBLIC_FIELD(flower, float, eye_angle)
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_flower_read(struct rr_component_flower *this, struct proto_bug *encoder)
+void rr_component_flower_read(struct rr_component_flower *this,
+                              struct proto_bug *encoder)
 {
     uint64_t state = proto_bug_read_varuint(encoder, "flower component state");
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);

@@ -49,5 +49,7 @@ struct rr_component_ai
 void rr_component_ai_init(struct rr_component_ai *, struct rr_simulation *);
 void rr_component_ai_free(struct rr_component_ai *, struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_ai_write(struct rr_component_ai *, struct proto_bug *, int);)
-RR_CLIENT_ONLY(void rr_component_ai_read(struct rr_component_ai *, struct proto_bug *);)
+RR_SERVER_ONLY(void rr_component_ai_write(struct rr_component_ai *,
+                                          struct proto_bug *, int);)
+RR_CLIENT_ONLY(void rr_component_ai_read(struct rr_component_ai *,
+                                         struct proto_bug *);)

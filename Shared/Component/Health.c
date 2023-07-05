@@ -2,14 +2,14 @@
 
 #include <string.h>
 
-#include <Shared/pb.h>
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
+#include <Shared/pb.h>
 
-#define FOR_EACH_PUBLIC_FIELD \
-    X(health, float32) \
-    X(hidden, uint8) \
-    X(max_health, float32) 
+#define FOR_EACH_PUBLIC_FIELD                                                  \
+    X(health, float32)                                                         \
+    X(hidden, uint8)                                                           \
+    X(max_health, float32)
 
 enum
 {
@@ -19,19 +19,22 @@ enum
     state_flags_all = 0b111
 };
 
-void rr_component_health_init(struct rr_component_health *this, struct rr_simulation *simulation)
+void rr_component_health_init(struct rr_component_health *this,
+                              struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
     this->health = 1;
     this->max_health = 1;
 }
 
-void rr_component_health_free(struct rr_component_health *this, struct rr_simulation *simulation)
+void rr_component_health_free(struct rr_component_health *this,
+                              struct rr_simulation *simulation)
 {
 }
 
 #ifdef RR_SERVER
-void rr_component_health_write(struct rr_component_health *this, struct proto_bug *encoder, int is_creation)
+void rr_component_health_write(struct rr_component_health *this,
+                               struct proto_bug *encoder, int is_creation)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "health component state");
@@ -60,7 +63,8 @@ RR_DEFINE_PUBLIC_FIELD(health, uint8_t, hidden)
 #endif
 
 #ifdef RR_CLIENT
-void rr_component_health_read(struct rr_component_health *this, struct proto_bug *encoder)
+void rr_component_health_read(struct rr_component_health *this,
+                              struct proto_bug *encoder)
 {
     uint64_t state = proto_bug_read_varuint(encoder, "health component state");
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);

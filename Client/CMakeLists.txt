@@ -15,15 +15,14 @@ set(SRCS
     Renderer/RenderPetal.c
     System/Interpolation.c
     Ui/Button.c
-    Ui/ChooseElement.c
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/Icon.c
     Ui/InventoryUi.c
-    Ui/LoadoutUi.c
-    Ui/ScrollContainer.c
-    Ui/SquadUi.c
+    Ui/PairedButton.c
     Ui/Text.c
+    Ui/TextInput.c
     Game.c
     InputData.c
     Main.c
@@ -67,12 +66,7 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_wheel_event,_rr_on_socket_event_emscripten")
-endif()
-
-if(RIVET_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_BUILD")
-    set(SRCS ${SRCS} ../Shared/Rivet.c)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_on_socket_event_emscripten")
 endif()
 
 add_executable(rrolf-client ${SRCS})

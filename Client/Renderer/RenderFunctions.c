@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdio.h>
 
-#include <Client/Renderer/Renderer.h>
 #include <Client/Game.h>
+#include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
 void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
@@ -39,7 +39,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_move_to(renderer, 12.138091087341309f, 0.0f);
         rr_renderer_line_to(renderer, 3.8414306640625f, 12.377452850341797f);
         rr_renderer_line_to(renderer, -11.311542510986328f, 7.916932582855225f);
-        rr_renderer_line_to(renderer, -11.461170196533203f, -7.836822032928467f);
+        rr_renderer_line_to(renderer, -11.461170196533203f,
+                            -7.836822032928467f);
         rr_renderer_line_to(renderer, 4.538298606872559f, -13.891617774963379f);
         rr_renderer_line_to(renderer, 12.138091087341309f, 0.0f);
         rr_renderer_fill(renderer);
@@ -100,8 +101,10 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, -20.0f, 0.0f);
         rr_renderer_line_to(renderer, -15.0f, 0.0f);
-        rr_renderer_bezier_curve_to(renderer, -10.0f, -12.0f, 5.0f, -12.0f, 15.0f, 0.0f);
-        rr_renderer_bezier_curve_to(renderer, 5.0f, 12.0f, -10.0f, 12.0f, -15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, -10.0f, -12.0f, 5.0f, -12.0f,
+                                    15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, 5.0f, 12.0f, -10.0f, 12.0f,
+                                    -15.0f, 0.0f);
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         rr_renderer_begin_path(renderer);
@@ -123,7 +126,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
     }
 }
 
-void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, uint8_t rarity)
+void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
+                                     uint8_t rarity)
 {
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas)
@@ -139,7 +143,9 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
     else
     {
         struct rr_renderer_context_state state;
-        float r = RR_PETAL_DATA[id].clump_radius == 0.0f ? 10.0f : RR_PETAL_DATA[id].clump_radius;
+        float r = RR_PETAL_DATA[id].clump_radius == 0.0f
+                      ? 10.0f
+                      : RR_PETAL_DATA[id].clump_radius;
         for (uint32_t i = 0; i < count; ++i)
         {
             rr_renderer_init_context_state(renderer, &state);
@@ -157,7 +163,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id, u
     }
 }
 
-void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, float animation_tick)
+void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
+                            uint8_t id, float animation_tick)
 {
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
@@ -237,12 +244,14 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         // antennae line a
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25.0f, -10.0f);
-        rr_renderer_quadratic_curve_to(renderer, 45.0f, -10.0f, 55.0f + animation_tick * 2.0f, -30.0f);
+        rr_renderer_quadratic_curve_to(renderer, 45.0f, -10.0f,
+                                       55.0f + animation_tick * 2.0f, -30.0f);
         rr_renderer_stroke(renderer);
         // antennae line b
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 25.0f, 10.0f);
-        rr_renderer_quadratic_curve_to(renderer, 45.0f, 10.0f, 55.0f - animation_tick * 2.0f, 30.0f);
+        rr_renderer_quadratic_curve_to(renderer, 45.0f, 10.0f,
+                                       55.0f - animation_tick * 2.0f, 30.0f);
         rr_renderer_stroke(renderer);
         rr_renderer_free_context_state(renderer, &state);
         break;
@@ -274,13 +283,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game, 
         rr_renderer_translate(renderer, 40.0f, 30.0f);
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
         rr_renderer_free_context_state(renderer, &state);
-        
+
         rr_renderer_init_context_state(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
         rr_renderer_translate(renderer, -40.0f, 30.0f);
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
         rr_renderer_free_context_state(renderer, &state);
-        
+
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         break;
     case rr_mob_id_dakotaraptor:

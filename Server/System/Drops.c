@@ -15,18 +15,23 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
     EntityIdx drop_id = captures->self;
     struct rr_component_drop *drop = rr_simulation_get_drop(this, drop_id);
 
-    struct rr_component_relations *flower_relations = rr_simulation_get_relations(this, flower);
+    struct rr_component_relations *flower_relations =
+        rr_simulation_get_relations(this, flower);
     if (!rr_simulation_has_entity(this, flower_relations->owner))
         return;
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, flower_relations->owner);
+    struct rr_component_player_info *player_info =
+        rr_simulation_get_player_info(this, flower_relations->owner);
 
     if (rr_bitset_get(drop->picked_up_by, flower_relations->owner))
         return;
-    struct rr_component_physical *physical = rr_simulation_get_physical(this, drop_id);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this, drop_id);
 
-    struct rr_component_physical *flower_physical = rr_simulation_get_physical(this, flower);
+    struct rr_component_physical *flower_physical =
+        rr_simulation_get_physical(this, flower);
 
-    struct rr_vector delta = {physical->x - flower_physical->x, physical->y - flower_physical->y};
+    struct rr_vector delta = {physical->x - flower_physical->x,
+                              physical->y - flower_physical->y};
     if (rr_vector_get_magnitude(&delta) > 100)
         return;
     rr_bitset_set(drop->picked_up_by, flower_relations->owner);
@@ -39,7 +44,8 @@ static void drop_despawn_tick(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
     struct rr_component_drop *drop = rr_simulation_get_drop(this, entity);
-    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this, entity);
     if (drop->ticks_until_despawn == 0)
     {
         rr_simulation_request_entity_deletion(this, entity);

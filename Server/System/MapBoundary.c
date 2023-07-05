@@ -2,14 +2,16 @@
 
 #include <Server/Simulation.h>
 
+#include <Shared/Component/Physical.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
-#include <Shared/Component/Physical.h>
 
-static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulation)
+static void rr_system_map_boundary_foreach_function(EntityIdx id,
+                                                    void *simulation)
 {
     struct rr_simulation *this = simulation;
-    struct rr_component_physical *physical = rr_simulation_get_physical(this, id);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this, id);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_vector position;
     rr_vector_set(&position, physical->x, physical->y);
@@ -27,5 +29,6 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id, void *simulati
 
 void rr_system_map_boundary_tick(struct rr_simulation *simulation)
 {
-    rr_simulation_for_each_physical(simulation, simulation, rr_system_map_boundary_foreach_function);
+    rr_simulation_for_each_physical(simulation, simulation,
+                                    rr_system_map_boundary_foreach_function);
 }
