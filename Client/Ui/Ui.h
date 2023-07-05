@@ -43,9 +43,10 @@ struct rr_ui_element
     uint8_t resizeable;
     uint8_t completely_hidden;
     uint8_t first_frame;
-    uint8_t *hidden;
     struct rr_ui_element *container;
     void *data;
+    uint8_t *hidden;
+    uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
     uint8_t (*animate)(struct rr_ui_element *, struct rr_game *);
     void (*on_render)(struct rr_ui_element *, struct rr_game *);
     void (*on_event)(struct rr_ui_element *, struct rr_game *);

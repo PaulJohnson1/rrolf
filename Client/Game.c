@@ -80,8 +80,19 @@ void rr_game_init(struct rr_game *this)
                                         0x00000000),
                                     &this->simulation_not_ready));
     rr_ui_container_add_element(this->window,
-                                rr_ui_link_toggle(
-                                    rr_ui_pad(rr_ui_set_justify(rr_ui_inventory_container_init(), -1, 1), 20), &this->simulation_not_ready));
+        rr_ui_set_background(
+            rr_ui_link_toggle(
+                rr_ui_pad(
+                    rr_ui_set_justify(
+                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+                            rr_ui_text_init("Inventory", 24, 0xffffffff),
+                            rr_ui_scroll_container_init(rr_ui_inventory_container_init(), 400)
+                        )
+                    , -1, 1),
+                20)
+            , &this->simulation_not_ready)
+        , 0xff0000ff)
+    );
     rr_ui_container_add_element(this->window,
                                 rr_ui_link_toggle(
                                     rr_ui_set_justify(
