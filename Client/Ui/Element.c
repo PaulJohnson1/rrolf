@@ -57,22 +57,23 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     else if (this->container == game->window)
         rr_renderer_translate(
             game->renderer,
-            (this->x + (this->abs_width - this->width) / 2 + (this->h_justify) *
+            (this->x + (this->h_justify) *
                            (this->container->abs_width / 2 / game->renderer->scale -
-                            this->width / 2)) *
+                            this->width / 2 - (this->abs_width - this->width) / 2)) *
                 game->renderer->scale,
-            (this->y + (this->abs_height - this->height) / 2 + (this->v_justify) * (this->container->abs_height / 2 /
+            (this->y + (this->v_justify) * (this->container->abs_height / 2 /
                                                 game->renderer->scale -
-                                            this->height / 2)) *
+                                            this->height / 2 - (this->abs_height - this->height) / 2)) *
                 game->renderer->scale); // necessary btw
     else
         rr_renderer_translate(
             game->renderer,
             (this->x + (this->h_justify) *
-                           (this->container->abs_width / 2 - this->width / 2)) *
+                           (this->container->abs_width / 2 -
+                            this->width / 2 - (this->abs_width - this->width) / 2)) *
                 game->renderer->scale,
             (this->y + (this->v_justify) * (this->container->abs_height / 2 -
-                                            this->height / 2)) *
+                                            this->height / 2 - (this->abs_height - this->height) / 2)) *
                 game->renderer->scale); // necessary btw
     this->abs_x = game->renderer->state.transform_matrix[2];
     this->abs_y = game->renderer->state.transform_matrix[5];
