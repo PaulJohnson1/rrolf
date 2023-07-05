@@ -24,7 +24,7 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, 
     uint8_t team1 = rr_simulation_get_relations(this, a)->team;
     uint8_t team2 = rr_simulation_get_relations(this, b)->team;
     if (team1 != team2)
-        return 1; //only drop doesn't care about team
+        return 1; // only drop doesn't care about team
     exclude(petal, petal);
     exclude(petal, flower);
     exclude(petal, mob);
@@ -70,28 +70,28 @@ static void colliding_with_function(uint64_t i, void *_captures)
         rr_component_physical_set_y(physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
     }
 
-    // {
-    //     float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
-    //     float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
-    //     float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
+    {
+        float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
+        float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
+        float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
 
-    //     // struct rr_vector delta = (ball2Position - ball1Position).Normalize();
-    //     rr_vector_normalize(&delta);
-    //     float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y * delta.y);
-    //     float scale2 = (physical2->velocity.x * delta.x + physical2->velocity.y * delta.y);
-    //     struct rr_vector parallel1 = {delta.x * scale1, delta.y * scale1};
-    //     struct rr_vector perp1 = {physical1->velocity.x - parallel1.x, physical1->velocity.y - parallel1.y};
-    //     struct rr_vector parallel2 = {delta.x * scale2, delta.y * scale2};
-    //     struct rr_vector perp2 = {physical2->velocity.x - parallel2.x, physical2->velocity.y - parallel2.y};
-    //     float restitution = 0.1f;
+        // struct rr_vector delta = (ball2Position - ball1Position).Normalize();
+        rr_vector_normalize(&delta);
+        float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y * delta.y);
+        float scale2 = (physical2->velocity.x * delta.x + physical2->velocity.y * delta.y);
+        struct rr_vector parallel1 = {delta.x * scale1, delta.y * scale1};
+        struct rr_vector perp1 = {physical1->velocity.x - parallel1.x, physical1->velocity.y - parallel1.y};
+        struct rr_vector parallel2 = {delta.x * scale2, delta.y * scale2};
+        struct rr_vector perp2 = {physical2->velocity.x - parallel2.x, physical2->velocity.y - parallel2.y};
+        float restitution = 0.1f;
 
-    //     rr_vector_set(&physical1->velocity,
-    //                     (parallel2.x * v1_Coeff + parallel1.x * v_SharedCoeff) * restitution + perp1.x,
-    //                     (parallel2.y * v1_Coeff + parallel1.y * v_SharedCoeff) * restitution + perp1.y);
-    //     rr_vector_set(&physical2->velocity,
-    //                     (parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
-    //                     (parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
-    // }
+        rr_vector_set(&physical1->velocity,
+                        (parallel2.x * v1_Coeff + parallel1.x * v_SharedCoeff) * restitution + perp1.x,
+                        (parallel2.y * v1_Coeff + parallel1.y * v_SharedCoeff) * restitution + perp1.y);
+        rr_vector_set(&physical2->velocity,
+                        (parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
+                        (parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
+    }
 }
 
 static void system_for_each_function(EntityIdx entity, void *_captures)
@@ -111,7 +111,7 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
         colliding_with_function(physical->colliding_with[i], &captures);
     }
 
-    //rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
+    // rr_bitset_for_each_bit(physical->collisions, physical->collisions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures, colliding_with_function);
 }
 
 void rr_system_collision_resolution_tick(struct rr_simulation *this)

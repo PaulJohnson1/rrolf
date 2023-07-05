@@ -33,17 +33,17 @@ int rr_vector_equals(struct rr_vector *this, struct rr_vector *other)
 
 void rr_vector_normalize(struct rr_vector *this)
 {
-    rr_vector_scale(this, 1 / sqrtf(this->x*this->x+this->y*this->y));
+    rr_vector_scale(this, 1 / sqrtf(this->x * this->x + this->y * this->y));
 }
 
 void rr_vector_set_magnitude(struct rr_vector *this, float mag)
 {
-    rr_vector_scale(this, mag / sqrtf(this->x*this->x+this->y*this->y));
+    rr_vector_scale(this, mag / sqrtf(this->x * this->x + this->y * this->y));
 }
 
 float rr_vector_get_magnitude(struct rr_vector *this)
 {
-    return sqrtf(this->x*this->x+this->y*this->y);
+    return sqrtf(this->x * this->x + this->y * this->y);
 }
 
 float rr_vector_theta(struct rr_vector *this)

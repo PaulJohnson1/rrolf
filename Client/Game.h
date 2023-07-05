@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Shared/Entity.h>
-#include <Client/Ui/Ui.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Socket.h>
+#include <Client/Ui/Ui.h>
+#include <Shared/Entity.h>
 
 #include <Shared/StaticData.h>
 

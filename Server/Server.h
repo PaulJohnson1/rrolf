@@ -24,5 +24,6 @@ struct rr_server
 void rr_server_init(struct rr_server *);
 void rr_server_free(struct rr_server *);
 
-// Blocking function. The only time this function will never end unless the server crashes some how (impossible because we write god tier c)
+// Blocking function. The only time this function will never end unless the
+// server crashes some how (impossible because we write god tier c)
 void rr_server_run(struct rr_server *);

@@ -7,16 +7,16 @@
 
 #include <libwebsockets.h>
 
-#include <Shared/Component/Physical.h>
+#include <Server/Client.h>
+#include <Server/Logs.h>
+#include <Server/Simulation.h>
 #include <Shared/Bitset.h>
+#include <Shared/Component/Physical.h>
 #include <Shared/Crypto.h>
-#include <Shared/pb.h>
+#include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
-#include <Shared/Rivet.h>
-#include <Server/Client.h>
-#include <Server/Simulation.h>
-#include <Server/Logs.h>
+#include <Shared/pb.h>
 
 #ifndef NDEBUG
 #define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
@@ -29,15 +29,19 @@ static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
     puts("creating player info");
-    this->player_info = rr_simulation_add_player_info(&this->server->simulation, rr_simulation_alloc_entity(&this->server->simulation));
+    this->player_info = rr_simulation_add_player_info(
+        &this->server->simulation,
+        rr_simulation_alloc_entity(&this->server->simulation));
     rr_component_player_info_set_slot_count(this->player_info, 10);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
         uint8_t id = this->player_info->slots[i].id = this->loadout[i].id;
-        uint8_t rarity = this->player_info->slots[i].rarity = this->loadout[i].rarity;
+        uint8_t rarity = this->player_info->slots[i].rarity =
+            this->loadout[i].rarity;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
         this->player_info->secondary_slots[i].id = this->loadout[i + 10].id;
-        this->player_info->secondary_slots[i].rarity = this->loadout[i + 10].rarity;
+        this->player_info->secondary_slots[i].rarity =
+            this->loadout[i + 10].rarity;
     }
     // rr_server_client_create_flower(this);
 }
@@ -48,18 +52,23 @@ void rr_server_client_free(struct rr_server_client *this)
     if (this->server->simulation_active)
     {
         if (this->player_info->flower_id != RR_NULL_ENTITY)
-            rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->flower_id);
-        rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->parent_id);
+            rr_simulation_request_entity_deletion(&this->server->simulation,
+                                                  this->player_info->flower_id);
+        rr_simulation_request_entity_deletion(&this->server->simulation,
+                                              this->player_info->parent_id);
     }
 }
 
-void rr_server_client_encrypt_message(struct rr_server_client *this, uint8_t *start, uint64_t size)
+void rr_server_client_encrypt_message(struct rr_server_client *this,
+                                      uint8_t *start, uint64_t size)
 {
-    this->clientbound_encryption_key = rr_get_hash(this->clientbound_encryption_key);
+    this->clientbound_encryption_key =
+        rr_get_hash(this->clientbound_encryption_key);
     rr_encrypt(start, size, this->clientbound_encryption_key);
 }
 
-void rr_server_client_write_message(struct rr_server_client *this, uint8_t *message_start, uint64_t size)
+void rr_server_client_write_message(struct rr_server_client *this,
+                                    uint8_t *message_start, uint64_t size)
 {
     lws_write(this->socket_handle, message_start, size, LWS_WRITE_BINARY);
 }
@@ -71,21 +80,29 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, 0, "header");
-    rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
-    rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
-    rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
+    rr_simulation_write_binary(&server->simulation, &encoder,
+                               this->player_info);
+    rr_server_client_encrypt_message(this, encoder.start,
+                                     encoder.current - encoder.start);
+    rr_server_client_write_message(this, encoder.start,
+                                   encoder.current - encoder.start);
 }
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
     if (this->server->simulation_active)
     {
-        if (rr_simulation_has_entity(&this->server->simulation, this->player_info->flower_id))
+        if (rr_simulation_has_entity(&this->server->simulation,
+                                     this->player_info->flower_id))
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(&this->server->simulation, this->player_info->flower_id);
-            rr_component_player_info_set_camera_x(this->player_info, physical->x);
-            rr_component_player_info_set_camera_y(this->player_info, physical->y);
-            rr_vector_set(&physical->acceleration, this->player_accel_x, this->player_accel_y);
+            struct rr_component_physical *physical = rr_simulation_get_physical(
+                &this->server->simulation, this->player_info->flower_id);
+            rr_component_player_info_set_camera_x(this->player_info,
+                                                  physical->x);
+            rr_component_player_info_set_camera_y(this->player_info,
+                                                  physical->y);
+            rr_vector_set(&physical->acceleration, this->player_accel_x,
+                          this->player_accel_y);
         }
         rr_server_client_broadcast_update(this);
     }
@@ -95,19 +112,28 @@ void rr_server_client_tick(struct rr_server_client *this)
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, 69, "header");
-        proto_bug_write_uint8(&encoder, this->server->ticks_until_simulation_create, "countdown");
+        proto_bug_write_uint8(
+            &encoder, this->server->ticks_until_simulation_create, "countdown");
         for (uint32_t i = 0; i < 4; ++i)
         {
-            proto_bug_write_uint8(&encoder, rr_bitset_get(&this->server->clients_in_use[0], i), "bitbit");
-            proto_bug_write_uint8(&encoder, this->server->clients[i].ready, "ready");
+            proto_bug_write_uint8(
+                &encoder, rr_bitset_get(&this->server->clients_in_use[0], i),
+                "bitbit");
+            proto_bug_write_uint8(&encoder, this->server->clients[i].ready,
+                                  "ready");
             for (uint8_t j = 0; j < 20; ++j)
             {
-                proto_bug_write_uint8(&encoder, this->server->clients[i].loadout[j].id, "id");
-                proto_bug_write_uint8(&encoder, this->server->clients[i].loadout[j].rarity, "rar");
+                proto_bug_write_uint8(
+                    &encoder, this->server->clients[i].loadout[j].id, "id");
+                proto_bug_write_uint8(
+                    &encoder, this->server->clients[i].loadout[j].rarity,
+                    "rar");
             }
         }
-        rr_server_client_encrypt_message(this, encoder.start, encoder.current - encoder.start);
-        rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
+        rr_server_client_encrypt_message(this, encoder.start,
+                                         encoder.current - encoder.start);
+        rr_server_client_write_message(this, encoder.start,
+                                       encoder.current - encoder.start);
         // send squad info
     }
 }
@@ -117,9 +143,12 @@ static void delete_entity_function(EntityIdx entity, void *_captures)
     rr_simulation_request_entity_deletion(_captures, entity);
 }
 
-int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reasons reason, void *context, void *packet, size_t size)
+int rr_server_lws_callback_function(struct lws *socket,
+                                    enum lws_callback_reasons reason,
+                                    void *context, void *packet, size_t size)
 {
-    struct rr_server *this = (struct rr_server *)lws_context_user(lws_get_context(socket));
+    struct rr_server *this =
+        (struct rr_server *)lws_context_user(lws_get_context(socket));
     switch (reason)
     {
     case LWS_CALLBACK_ESTABLISHED:
@@ -138,21 +167,32 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 char log[100] = {"ip: `"};
                 strcat(log, this->clients[i].ip_address);
                 strcat(log, "`");
-                //rr_discord_webhook_log("player status", "client connected", log, 0x44ff44);
+                // rr_discord_webhook_log("player status", "client connected",
+                // log, 0x44ff44);
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].requested_verification, "verification");
-                proto_bug_write_uint32(&encryption_key_encoder, rr_get_rand(), "useless bytes");
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].clientbound_encryption_key, "c encryption key");
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].serverbound_encryption_key, "s encryption key");
+                proto_bug_write_uint64(&encryption_key_encoder,
+                                       this->clients[i].requested_verification,
+                                       "verification");
+                proto_bug_write_uint32(&encryption_key_encoder, rr_get_rand(),
+                                       "useless bytes");
+                proto_bug_write_uint64(
+                    &encryption_key_encoder,
+                    this->clients[i].clientbound_encryption_key,
+                    "c encryption key");
+                proto_bug_write_uint64(
+                    &encryption_key_encoder,
+                    this->clients[i].serverbound_encryption_key,
+                    "s encryption key");
                 rr_encrypt(outgoing_message, 1024, 21094093777837637ull);
                 rr_encrypt(outgoing_message, 8, 1);
                 rr_encrypt(outgoing_message, 1024, 59731158950470853ull);
                 rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
                 rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
-                rr_server_client_write_message(this->clients + i, outgoing_message, 1024);
+                rr_server_client_write_message(this->clients + i,
+                                               outgoing_message, 1024);
                 return 0;
             }
         RR_UNREACHABLE("max clients reached");
@@ -167,13 +207,16 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 {
                     rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
-                    rr_rivet_players_disconnected(getenv("RIVET_LOBBY_TOKEN"), this->clients[i].rivet_player_token);
+                    rr_rivet_players_disconnected(
+                        getenv("RIVET_LOBBY_TOKEN"),
+                        this->clients[i].rivet_player_token);
 #endif
                     rr_server_client_free(this->clients + i);
                     char log[100] = {"ip: `"};
                     strcat(log, this->clients[i].ip_address);
                     strcat(log, "`");
-                    //rr_discord_webhook_log("player status", "client disconnected", log, 0xff4444);
+                    // rr_discord_webhook_log("player status", "client
+                    // disconnected", log, 0xff4444);
                     return 0;
                 }
             }
@@ -203,7 +246,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
         }
 
         rr_decrypt(packet, size, client->serverbound_encryption_key);
-        client->serverbound_encryption_key = rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
+        client->serverbound_encryption_key =
+            rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
 
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
@@ -214,35 +258,49 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             if (size < 16)
             {
                 fputs("skid gaming1", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */, (uint8_t *)"script kiddie1", sizeof "script kiddie");
+                lws_close_reason(
+                    socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */,
+                    (uint8_t *)"script kiddie1", sizeof "script kiddie");
                 return 1;
             }
 
             proto_bug_read_uint64(&encoder, "useless bytes");
-            uint64_t received_verification = proto_bug_read_uint64(&encoder, "verification");
+            uint64_t received_verification =
+                proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
                 fputs("skid gaming2", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie2", sizeof "script kiddie");
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
+                                 (uint8_t *)"script kiddie2",
+                                 sizeof "script kiddie");
                 return 1;
             }
 
 #ifdef RIVET_BUILD
-            uint64_t encountered_size = proto_bug_read_varuint(&encoder, "rivet token size");
+            uint64_t encountered_size =
+                proto_bug_read_varuint(&encoder, "rivet token size");
             if (16 + encountered_size >= size)
             {
                 printf("%lu %lu\n", size, encountered_size);
                 fputs("skid gaming3", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie3", sizeof "script kiddie");
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
+                                 (uint8_t *)"script kiddie3",
+                                 sizeof "script kiddie");
                 return 1;
             }
             this->clients[i].rivet_player_token = malloc(encountered_size + 1);
-            this->clients[i].rivet_player_token[encountered_size] = 0; // don't forget the null terminator lol
-            proto_bug_read_string(&encoder, this->clients[i].rivet_player_token, encountered_size, "rivet token");
-            if (!rr_rivet_players_connected(getenv("RIVET_LOBBY_TOKEN"), this->clients[i].rivet_player_token))
+            this->clients[i].rivet_player_token[encountered_size] =
+                0; // don't forget the null terminator lol
+            proto_bug_read_string(&encoder, this->clients[i].rivet_player_token,
+                                  encountered_size, "rivet token");
+            if (!rr_rivet_players_connected(
+                    getenv("RIVET_LOBBY_TOKEN"),
+                    this->clients[i].rivet_player_token))
             {
                 fputs("skid gaming4", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE, (uint8_t *)"script kiddie4", sizeof "script kiddie");
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
+                                 (uint8_t *)"script kiddie4",
+                                 sizeof "script kiddie");
                 return 1;
             }
 #endif
@@ -262,7 +320,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
                 return 0;
             }
             proto_bug_read_uint8(&encoder, "movement type");
-            uint64_t movementFlags = proto_bug_read_uint8(&encoder, "movement kb flags");
+            uint64_t movementFlags =
+                proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
             float y = 0;
 
@@ -310,18 +369,24 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            struct rr_component_player_info_petal_slot *slot = &client->player_info->slots[pos];
-            struct rr_component_player_info_petal_slot *s_slot = &client->player_info->secondary_slots[pos];
+            struct rr_component_player_info_petal_slot *slot =
+                &client->player_info->slots[pos];
+            struct rr_component_player_info_petal_slot *s_slot =
+                &client->player_info->secondary_slots[pos];
             for (uint32_t i = 0; i < slot->count; ++i)
             {
                 EntityIdx id = slot->petals[i].simulation_id;
-                if (id != RR_NULL_ENTITY && rr_simulation_has_entity(&this->simulation, id))
+                if (id != RR_NULL_ENTITY &&
+                    rr_simulation_has_entity(&this->simulation, id))
                 {
-                    struct rr_component_physical *physical = rr_simulation_get_physical(&this->simulation, id);
-                    struct rr_component_health *health = rr_simulation_get_health(&this->simulation, id);
+                    struct rr_component_physical *physical =
+                        rr_simulation_get_physical(&this->simulation, id);
+                    struct rr_component_health *health =
+                        rr_simulation_get_health(&this->simulation, id);
 
                     rr_component_health_set_health(health, 0);
-                    rr_component_physical_set_server_animation_tick(physical, 6);
+                    rr_component_physical_set_server_animation_tick(physical,
+                                                                    6);
                 }
             }
             uint8_t temp = slot->id;
@@ -333,7 +398,8 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
 
             slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
             for (uint32_t i = 0; i < slot->count; ++i)
-                slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
+                slot->petals[i].cooldown_ticks =
+                    RR_PETAL_DATA[slot->id].cooldown;
             break;
         }
         case 3:
@@ -347,23 +413,35 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             {
                 puts("incr");
                 // increment
-                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                struct rr_component_arena *arena =
+                    rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave_tick(arena, 0);
                 rr_component_arena_set_wave(arena, arena->wave + 1);
-                rr_simulation_for_each_mob(&this->simulation, &this->simulation, delete_entity_function);
-                rr_simulation_for_each_drop(&this->simulation, &this->simulation, delete_entity_function);
-                rr_simulation_for_each_petal(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_mob(&this->simulation, &this->simulation,
+                                           delete_entity_function);
+                rr_simulation_for_each_drop(&this->simulation,
+                                            &this->simulation,
+                                            delete_entity_function);
+                rr_simulation_for_each_petal(&this->simulation,
+                                             &this->simulation,
+                                             delete_entity_function);
             }
             if (cheat_type == 2)
             {
                 puts("decr");
                 // decrement
-                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                struct rr_component_arena *arena =
+                    rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave_tick(arena, 0);
                 rr_component_arena_set_wave(arena, arena->wave - 1);
-                rr_simulation_for_each_mob(&this->simulation, &this->simulation, delete_entity_function);
-                rr_simulation_for_each_drop(&this->simulation, &this->simulation, delete_entity_function);
-                rr_simulation_for_each_petal(&this->simulation, &this->simulation, delete_entity_function);
+                rr_simulation_for_each_mob(&this->simulation, &this->simulation,
+                                           delete_entity_function);
+                rr_simulation_for_each_drop(&this->simulation,
+                                            &this->simulation,
+                                            delete_entity_function);
+                rr_simulation_for_each_petal(&this->simulation,
+                                             &this->simulation,
+                                             delete_entity_function);
             }
             if (cheat_type == 3)
             {
@@ -386,8 +464,10 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
             {
                 if (pos > 20)
                     return 0;
-                client->loadout[pos - 1].id = proto_bug_read_uint8(&encoder, "id");
-                client->loadout[pos - 1].rarity = proto_bug_read_uint8(&encoder, "rar");
+                client->loadout[pos - 1].id =
+                    proto_bug_read_uint8(&encoder, "id");
+                client->loadout[pos - 1].rarity =
+                    proto_bug_read_uint8(&encoder, "rar");
                 pos = proto_bug_read_uint8(&encoder, "pos");
             }
             break;
@@ -413,18 +493,21 @@ void rr_server_free(struct rr_server *this)
     lws_context_destroy(this->server);
 }
 
-static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
+static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
+                                                        void *captures)
 {
     struct rr_simulation *this = captures;
-#define XX(COMPONENT, ID)                            \
-    if (rr_simulation_has_##COMPONENT(this, entity)) \
+#define XX(COMPONENT, ID)                                                      \
+    if (rr_simulation_has_##COMPONENT(this, entity))                           \
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
     if (rr_simulation_has_physical(this, entity))
         rr_simulation_get_physical(this, entity)->ticked_animation = 0;
     if (rr_simulation_has_drop(this, entity))
-        memset(&rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0, sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
+        memset(
+            &rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0,
+            sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
 }
 
 void rr_server_tick(struct rr_server *this)
@@ -452,7 +535,9 @@ void rr_server_tick(struct rr_server *this)
             rr_simulation_init(&this->simulation);
         }
         else
-            rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+            rr_simulation_for_each_entity(
+                &this->simulation, &this->simulation,
+                rr_simulation_tick_entity_resetter_function);
     }
     else
     {
@@ -497,8 +582,7 @@ void rr_server_run(struct rr_server *this)
     memset(&info, 0, sizeof(info));
 
     struct lws_protocols protocols[2] = {
-        {"g", rr_server_lws_callback_function, 0, 0},
-        {NULL, NULL, 0, 0}};
+        {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
     info.port = 1234;
     info.protocols = &protocols[0];
     info.gid = -1;
@@ -520,12 +604,15 @@ void rr_server_run(struct rr_server *this)
         struct timeval start;
         struct timeval end;
 
-        gettimeofday(&start, NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
+        gettimeofday(
+            &start,
+            NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
         lws_service(this->server, -1);
         rr_server_tick(this);
         gettimeofday(&end, NULL);
 
-        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
+                                (end.tv_usec - start.tv_usec);
         if (elapsed_time > 200)
             fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;

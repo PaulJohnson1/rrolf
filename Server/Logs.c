@@ -9,7 +9,8 @@
 
 #include <Shared/cJSON.h>
 
-void rr_discord_webhook_log(char *webhook_name, char *name, char *value, uint32_t color)
+void rr_discord_webhook_log(char *webhook_name, char *name, char *value,
+                            uint32_t color)
 {
     CURL *curl = curl_easy_init();
     CURLcode result;
@@ -17,7 +18,10 @@ void rr_discord_webhook_log(char *webhook_name, char *name, char *value, uint32_
     struct curl_slist *headers = 0;
     headers = curl_slist_append(headers, "Content-Type: application/json");
     assert(curl);
-    curl_easy_setopt(curl, CURLOPT_URL, "https://canary.discord.com/api/webhooks/1114420424277770250/e0cMQafY8B5cJBJ0FadAqjvjQgC43O5vVCsk58uv5y9tZB9CWYrXk-P9zdWFxljSEcds");
+    curl_easy_setopt(
+        curl, CURLOPT_URL,
+        "https://canary.discord.com/api/webhooks/1114420424277770250/"
+        "e0cMQafY8B5cJBJ0FadAqjvjQgC43O5vVCsk58uv5y9tZB9CWYrXk-P9zdWFxljSEcds");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     cJSON *root = cJSON_CreateObject();
     cJSON *embeds = cJSON_CreateArray();
@@ -41,9 +45,6 @@ void rr_discord_webhook_log(char *webhook_name, char *name, char *value, uint32_
     curl_slist_free_all(headers);
 }
 
-void rr_discord_curl_init()
-{
-    curl_global_init(CURL_GLOBAL_ALL);
-}
+void rr_discord_curl_init() { curl_global_init(CURL_GLOBAL_ALL); }
 #endif
 #endif

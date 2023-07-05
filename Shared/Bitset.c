@@ -32,7 +32,8 @@ void rr_bitset_maybe_set(uint8_t *a, uint64_t i, uint8_t bit)
     else
         rr_bitset_unset(a, i);
 }
-void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (*cb)(uint64_t, void *))
+void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures,
+                            void (*cb)(uint64_t, void *))
 {
     uint8_t *const original_start = start;
     // while (start != end)
@@ -105,7 +106,8 @@ void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures, void (
 
     while (start != end)
     {
-        if ((start + 8 < end) && (uint64_t)start % 8 == 0 && !*(uint64_t *)start)
+        if ((start + 8 < end) && (uint64_t)start % 8 == 0 &&
+            !*(uint64_t *)start)
         {
             start += 8;
             continue;

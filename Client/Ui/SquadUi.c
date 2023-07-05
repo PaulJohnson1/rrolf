@@ -92,7 +92,7 @@ static struct rr_ui_element *rr_ui_player_init(struct rr_game_squad_client *play
     return choose_container;
 }
 
-struct rr_ui_element *squad_player_container_init(struct rr_game_squad_client *member)
+struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(5, 4, 10, 5);
@@ -110,4 +110,9 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad_client *m
     data->data = member;
 
     return rr_ui_set_background(rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1, this), 0xff0000ff);
+}
+
+struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
+{
+    return rr_ui_text_init("Starting in x", 18, 0xffffffff);
 }

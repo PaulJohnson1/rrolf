@@ -29,37 +29,42 @@ struct rr_simulation
 {
     uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    RR_SERVER_ONLY(uint8_t recently_deleted[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    RR_SERVER_ONLY(
+        uint8_t recently_deleted[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(EntityIdx arena;)
     RR_CLIENT_ONLY(EntityIdx player_info);
 
-#define XX(COMPONENT, ID) \
+#define XX(COMPONENT, ID)                                                      \
     uint8_t COMPONENT##_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
-#define XX(COMPONENT, ID) \
+#define XX(COMPONENT, ID)                                                      \
     struct rr_component_##COMPONENT COMPONENT##_components[RR_MAX_ENTITY_COUNT];
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
-                   uint8_t game_over;
+    uint8_t game_over;
 };
 
 void rr_simulation_init(struct rr_simulation *);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
 void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
-void rr_simulation_for_each_entity(struct rr_simulation *, void *, void (*cb)(EntityIdx, void *));
+void rr_simulation_for_each_entity(struct rr_simulation *, void *,
+                                   void (*cb)(EntityIdx, void *));
 
 // internal use
 void __rr_simulation_pending_deletion_free_components(uint64_t, void *);
 void __rr_simulation_pending_deletion_unset_entity(uint64_t, void *);
 
-#define XX(COMPONENT, ID)                                                                              \
-    uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *, EntityIdx);                          \
-    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(struct rr_simulation *, EntityIdx); \
-    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(struct rr_simulation *, EntityIdx); \
-    void rr_simulation_for_each_##COMPONENT(struct rr_simulation *, void *, void (*cb)(EntityIdx, void *));
+#define XX(COMPONENT, ID)                                                      \
+    uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *, EntityIdx);  \
+    struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(            \
+        struct rr_simulation *, EntityIdx);                                    \
+    struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
+        struct rr_simulation *, EntityIdx);                                    \
+    void rr_simulation_for_each_##COMPONENT(struct rr_simulation *, void *,    \
+                                            void (*cb)(EntityIdx, void *));
 RR_FOR_EACH_COMPONENT
 #undef XX

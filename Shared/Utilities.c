@@ -26,7 +26,7 @@ float rr_angle_lerp(float start, float end, float t)
         t = 0;
     else if (t > 1)
         t = 1;
-        
+
     start = fmod(start, 2 * M_PI);
     end = fmod(end, 2 * M_PI);
     if (fabs(end - start) < M_PI)
@@ -41,10 +41,7 @@ float rr_angle_lerp(float start, float end, float t)
     }
 }
 
-float rr_frand()
-{
-    return (double)rand() / (double)RAND_MAX;
-}
+float rr_frand() { return (double)rand() / (double)RAND_MAX; }
 
 float rr_fclamp(float v, float s, float e)
 {

@@ -1,9 +1,9 @@
-#include <fenv.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
 #include <assert.h>
+#include <fenv.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef RIVET_BUILD
 #include <curl/curl.h>
@@ -11,9 +11,9 @@
 
 #include <Server/Logs.h>
 #include <Server/Server.h>
-#include <Shared/Utilities.h>
-#include <Shared/StaticData.h>
 #include <Shared/Rivet.h>
+#include <Shared/StaticData.h>
+#include <Shared/Utilities.h>
 
 int volatile quitting_already = 0;
 
@@ -69,11 +69,13 @@ int main()
     strcat(startup_message, " linux");
 #endif
 #ifdef RIVET_BUILD
-    rr_discord_webhook_log("server status", "server startup", startup_message, 0x4000ff);
+    rr_discord_webhook_log("server status", "server startup", startup_message,
+                           0x4000ff);
     char const *lobby_token = getenv("RIVET_LOBBY_TOKEN");
     if (!lobby_token)
     {
-        fputs("using rivet build without rivet lobby token env var set\n", stderr);
+        fputs("using rivet build without rivet lobby token env var set\n",
+              stderr);
         abort();
     }
     rr_rivet_lobbies_ready(lobby_token);
