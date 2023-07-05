@@ -39,9 +39,9 @@ void rr_simulation_init(struct rr_simulation *this)
     this->grid = malloc(sizeof *this->grid);
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;
-    this->arena = rr_simulation_alloc_entity(this);
+    rr_simulation_alloc_entity(this);
     struct rr_component_arena *arena_component =
-        rr_simulation_add_arena(this, this->arena);
+        rr_simulation_add_arena(this, 1);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
     rr_component_arena_set_wave(arena_component, 1);
 
@@ -328,7 +328,7 @@ void rr_simulation_find_entities_in_view(
     if (player_info->flower_id != RR_NULL_ENTITY)
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
-    rr_bitset_set(captures.entities_in_view, this->arena);
+    rr_bitset_set(captures.entities_in_view, 1);
     rr_simulation_for_each_physical(
         this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
