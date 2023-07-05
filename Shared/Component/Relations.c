@@ -54,3 +54,22 @@ void rr_component_relations_read(struct rr_component_relations *this,
 #undef X
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

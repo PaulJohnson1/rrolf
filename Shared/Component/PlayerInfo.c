@@ -18,10 +18,10 @@
 enum
 {
     state_flags_camera_y = 0b000001,
-    state_flags_flower_id = 0b000010,
-    state_flags_slot_count = 0b000100,
-    state_flags_camera_fov = 0b001000,
-    state_flags_camera_x = 0b010000,
+    state_flags_camera_fov = 0b000010,
+    state_flags_flower_id = 0b000100,
+    state_flags_camera_x = 0b001000,
+    state_flags_slot_count = 0b010000,
     state_flags_inv = 0b100000,
     state_flags_all = 0b111111
 };
@@ -99,3 +99,22 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
     }
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

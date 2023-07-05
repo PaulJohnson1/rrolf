@@ -111,3 +111,22 @@ void rr_component_mob_read(struct rr_component_mob *this,
 #undef X
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
