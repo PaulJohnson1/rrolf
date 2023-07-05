@@ -45,7 +45,7 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 10, 20, 2,
-                        rr_ui_text_init("join game here", 36, 0xffffffff),
+                        rr_ui_text_init("name input field (todo)", 25, 0xffffffff),
                         rr_ui_set_background(
                             rr_ui_labeled_button_init("Join", 36, NULL),
                             0xff1dd129)),
