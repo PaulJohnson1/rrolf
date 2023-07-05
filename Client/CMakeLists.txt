@@ -21,6 +21,7 @@ set(SRCS
     Ui/Engine.c
     Ui/InventoryUi.c
     Ui/LoadoutUi.c
+    Ui/Rivet.c
     Ui/ScrollContainer.c
     Ui/SquadUi.c
     Ui/Text.c

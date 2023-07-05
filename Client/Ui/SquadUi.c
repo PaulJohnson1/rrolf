@@ -7,7 +7,6 @@
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
-
 #include <Shared/Utilities.h>
 
 void render_flower(uint8_t is_frown, struct rr_ui_element *element,
@@ -253,7 +252,6 @@ struct rr_ui_element *rr_ui_info_init()
     struct info_metadata *data = element->data;
     data->question_mark = rr_ui_text_init("?", 18, 0xffffffff);
     
-
     element->abs_width = element->abs_height = element->width =
         element->height = 20;
 

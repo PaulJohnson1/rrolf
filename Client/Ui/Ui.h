@@ -89,3 +89,5 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
 
 struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_flower_init(uint8_t, float);
+
+struct rr_ui_element *rr_ui_rivet_init();

@@ -150,3 +150,16 @@ void rr_rivet_lobbies_find(void *captures)
         captures);
 #endif
 }
+
+void rr_rivet_identities_create_guest(void *captures)
+{
+    puts("creating rivet guest account");
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            fetch("https://identity.api.rivet.gg/v1/identities",
+                  {method : "POST", body : "{}"}).then(x => x.json()).then(console.log);
+        },
+        captures);
+#endif
+}
