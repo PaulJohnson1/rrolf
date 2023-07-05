@@ -72,23 +72,3 @@ void rr_component_health_read(struct rr_component_health *this,
 #undef X
 }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

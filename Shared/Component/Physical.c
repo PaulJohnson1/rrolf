@@ -88,22 +88,3 @@ void rr_component_physical_read(struct rr_component_physical *this,
 #undef X
 }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

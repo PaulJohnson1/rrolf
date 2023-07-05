@@ -53,7 +53,12 @@
         "fern5.h": "c",
         "moss.h": "c",
         "fern2.h": "c",
-        "fern4.h": "c"
+        "fern4.h": "c",
+        "regex": "c",
+        "__string": "c",
+        "typeindex": "c",
+        "typeinfo": "c",
+        "game.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"

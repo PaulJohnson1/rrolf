@@ -55,22 +55,3 @@ void rr_component_petal_read(struct rr_component_petal *this,
 #undef X
 }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

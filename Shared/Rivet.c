@@ -153,13 +153,67 @@ void rr_rivet_lobbies_find(void *captures)
 
 void rr_rivet_identities_create_guest(void *captures)
 {
-    puts("creating rivet guest account");
 #ifdef EMSCRIPTEN
-    EM_ASM(
+    // clang-format off
+    EM_ASM({
+        function on_account(x)
         {
-            fetch("https://identity.api.rivet.gg/v1/identities",
-                  {method : "POST", body : "{}"}).then(x => x.json()).then(console.log);
-        },
-        captures);
+            // doesn't matter if this memory gets leaked, it's only ever ran once
+            const $token = _malloc(x.identity_token.length + 1);
+            const $avatar_url = _malloc(x.identity.avatar_url.length + 1);
+            const $name = _malloc(x.identity.display_name.length + 1);
+            const $account_number = _malloc(6);
+            HEAPU8[$token + x.identity_token.length] = 0; // null terminate
+            HEAPU8[$avatar_url + x.identity.avatar_url.length] = 0;
+            HEAPU8[$name + x.identity.display_name.length] = 0;
+            HEAPU8[$account_number + 5] = 0;
+            for (let i = 0; i < x.identity_token.length; i++)
+                HEAPU8[$token + i] = x.identity_token[i].charCodeAt();
+            for (let i = 0; i < x.identity.avatar_url.length; i++)
+                HEAPU8[$avatar_url + i] = x.identity.avatar_url[i].charCodeAt();
+            for (let i = 0; i < x.identity.display_name.length; i++)
+                HEAPU8[$name + i] = x.identity.display_name[i].charCodeAt();
+            for (let i = 0; i < 5; i++)
+                HEAPU8[$account_number + i] = ("#" + x.identity.account_number)[i].charCodeAt();
+            Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $0);
+        }
+
+        if (!localStorage.getItem("DO_NOT_SHARE_rivet_account_token"))
+        {
+            console.log("signing up rivet guest account");
+            fetch("https://identity.api.rivet.gg/v1/identities", {
+                method: "POST",
+                body: "{}",
+                headers: {
+                    // is a dev token
+                    Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                }
+            }).then(x => x.json())
+              .then(x => {
+                  localStorage.setItem("DO_NOT_SHARE_rivet_account_token", x.identity_token);
+                  console.log("new rivet account created");
+                  on_account(x);
+              });
+        }
+        else
+        {
+            console.log("logging in");
+            fetch("https://identity.api.rivet.gg/v1/identities", {
+                method: "POST",
+                body: JSON.stringify({
+                    existing_identity_token: localStorage.getItem("DO_NOT_SHARE_rivet_account_token")
+                }),
+                headers: {
+                    // is a dev token
+                    Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                }
+            }).then(x => x.json())
+              .then(x => {
+                  console.log("logged in");
+                  on_account(x);
+              });
+        }
+    }, captures);
+    // clang-format on
 #endif
 }

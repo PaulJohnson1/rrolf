@@ -65,22 +65,3 @@ void rr_component_flower_read(struct rr_component_flower *this,
 #undef X
 }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -14,10 +14,26 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-static void *socket_thread(void *arg)
+static void *rr_create_game_thread(void *arg)
 {
     struct rr_game *game = arg;
-    rr_game_connect_socket(game);
+
+    while (1)
+    {
+        struct timeval start;
+        struct timeval end;
+        gettimeofday(&start, NULL);
+        rr_game_tick(game, 0.016f);
+        gettimeofday(&end, NULL);
+        int64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
+                               (end.tv_usec - start.tv_usec);
+        if (elapsed_time > 1000)
+            printf("tick took %ld microseconds\n", elapsed_time);
+        int64_t to_sleep = 16666 - elapsed_time;
+        if (to_sleep > 0)
+            usleep(to_sleep);
+        // otherwise don't even call the function
+    }
 
     return 0;
 }
@@ -207,27 +223,14 @@ int main()
 #ifndef EMSCRIPTEN
     pthread_t socket_tid;
 
-    if (pthread_create(&socket_tid, NULL, rr_create_game_thread, &game) != 0)
-    {
-        fputs("Failed to create game thread\n", stderr);
-        return 1;
-    }
-    while (1)
-    {
-        struct timeval start;
-        struct timeval end;
-        gettimeofday(&start, NULL);
-        rr_game_tick(&game, 0.016f);
-        gettimeofday(&end, NULL);
-        int64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
-                               (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 1000)
-            printf("tick took %ld microseconds\n", elapsed_time);
-        int64_t to_sleep = 16666 - elapsed_time;
-        if (to_sleep > 0)
-            usleep(to_sleep);
-        // otherwise don't even call the function
-    }
+    // if (pthread_create(&socket_tid, NULL, rr_create_game_thread, &game) != 0)
+    // {
+    //     fputs("Failed to create game thread\n", stderr);
+    //     return 1;
+    // }
+
+    rr_game_connect_socket(&game);
+    rr_create_game_thread(&game);
 #endif
 
     return 0;

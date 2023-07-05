@@ -24,7 +24,7 @@ void rr_on_socket_event_emscripten(struct rr_websocket *this,
 int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
                            void *user, void *in, size_t size)
 {
-    printf("cb called reason: %u", reason);
+    printf("cb called reason: %u\n", reason);
     struct rr_websocket *this = lws_context_user(lws_get_context(wsi));
 
     switch (reason)

@@ -28,6 +28,17 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
+void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
+                        char *account_number, void *captures)
+{
+    struct rr_game *this = captures;
+    strcpy(this->rivet_account.token, token);
+    strcpy(this->rivet_account.name, name);
+    strcpy(this->rivet_account.avatar_url, avatar_url);
+    strcpy(this->rivet_account.account_number, account_number);
+    printf("aaaa %p %p %s\n", &this->rivet_account.name, this, this->rivet_account.name);
+}
+
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
@@ -37,86 +48,87 @@ void rr_game_init(struct rr_game *this)
     this->window->resizeable = 0;
     this->true_ptr = 1;
 
-    rr_rivet_identities_create_guest(0);
+#ifdef RIVET_BUILD
+    printf("hi %p\n", this);
+    strcpy(this->rivet_account.name, "loading");
+    strcpy(this->rivet_account.avatar_url, "");
+    strcpy(this->rivet_account.token, "");
+    strcpy(this->rivet_account.account_number, "#0000");
+    rr_rivet_identities_create_guest(this);
+#endif
 
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_background(
-            rr_ui_pad(
-                rr_ui_set_justify(
-                    rr_ui_h_container_init(
-                        rr_ui_container_init(), 5, 2, 1,
-                        rr_ui_rivet_init()
-                    ),
-                -1, -1),
-            10)
-        , 0x40ffffff)
-    );
+            rr_ui_pad(rr_ui_set_justify(
+                          rr_ui_h_container_init(rr_ui_container_init(), 5, 2,
+                                                 1, rr_ui_rivet_init(this)),
+                          -1, -1),
+                      10),
+            0x40ffffff));
 
-        rr_ui_container_add_element(
-            this->window,
-            rr_ui_link_toggle(
-                rr_ui_set_background(
-                    rr_ui_v_container_init(
-                        rr_ui_container_init(), 10, 20, 6,
-                        rr_ui_text_init("rrolf.io", 96, 0xffffffff),
-                        rr_ui_h_container_init(
-                            rr_ui_container_init(), 10, 20, 2,
-                            rr_ui_text_init("name input (TODO)", 25,
-                                            0xffffffff),
-                            rr_ui_set_background(
-                                rr_ui_labeled_button_init("Join", 36, NULL),
-                                0xff1dd129)),
+    rr_ui_container_add_element(
+        this->window,
+        rr_ui_link_toggle(
+            rr_ui_set_background(
+                rr_ui_v_container_init(
+                    rr_ui_container_init(), 10, 20, 6,
+                    rr_ui_text_init("rrolf.io", 96, 0xffffffff),
+                    rr_ui_h_container_init(
+                        rr_ui_container_init(), 10, 20, 2,
+                        rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
                         rr_ui_set_background(
-                            rr_ui_link_toggle(
-                                rr_ui_v_container_init(
-                                    rr_ui_container_init(), 10, 20, 3,
-                                    rr_ui_h_container_init(
-                                        rr_ui_container_init(), 1, 15, 2,
-                                        rr_ui_text_init("Squad", 18,
-                                                        0xffffffff),
-                                        rr_ui_info_init(), -1, 0),
-                                    rr_ui_h_container_init(
-                                        rr_ui_container_init(), 10, 20, 4,
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[0]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[1]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[2]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[3])),
-                                    rr_ui_set_justify(
-                                        rr_ui_countdown_init(this), 1, 0)),
-                                &this->socket_ready),
-                            0x40ffffff),
-                        rr_ui_h_container_init(
-                            rr_ui_container_init(), 0, 15, 10,
-                            rr_ui_title_screen_loadout_button_init(0),
-                            rr_ui_title_screen_loadout_button_init(1),
-                            rr_ui_title_screen_loadout_button_init(2),
-                            rr_ui_title_screen_loadout_button_init(3),
-                            rr_ui_title_screen_loadout_button_init(4),
-                            rr_ui_title_screen_loadout_button_init(5),
-                            rr_ui_title_screen_loadout_button_init(6),
-                            rr_ui_title_screen_loadout_button_init(7),
-                            rr_ui_title_screen_loadout_button_init(8),
-                            rr_ui_title_screen_loadout_button_init(9)),
-                        rr_ui_h_container_init(
-                            rr_ui_container_init(), 0, 15, 10,
-                            rr_ui_title_screen_loadout_button_init(10),
-                            rr_ui_title_screen_loadout_button_init(11),
-                            rr_ui_title_screen_loadout_button_init(12),
-                            rr_ui_title_screen_loadout_button_init(13),
-                            rr_ui_title_screen_loadout_button_init(14),
-                            rr_ui_title_screen_loadout_button_init(15),
-                            rr_ui_title_screen_loadout_button_init(16),
-                            rr_ui_title_screen_loadout_button_init(17),
-                            rr_ui_title_screen_loadout_button_init(18),
-                            rr_ui_title_screen_loadout_button_init(19)),
-                        rr_ui_text_init("powered by Rivet", 15, 0xffffffff)),
-                    0x00000000),
-                &this->simulation_not_ready));
+                            rr_ui_labeled_button_init("Join", 36, NULL),
+                            0xff1dd129)),
+                    rr_ui_set_background(
+                        rr_ui_link_toggle(
+                            rr_ui_v_container_init(
+                                rr_ui_container_init(), 10, 20, 3,
+                                rr_ui_h_container_init(
+                                    rr_ui_container_init(), 1, 15, 2,
+                                    rr_ui_text_init("Squad", 18, 0xffffffff),
+                                    rr_ui_info_init(), -1, 0),
+                                rr_ui_h_container_init(
+                                    rr_ui_container_init(), 10, 20, 4,
+                                    rr_ui_squad_player_container_init(
+                                        &this->squad_members[0]),
+                                    rr_ui_squad_player_container_init(
+                                        &this->squad_members[1]),
+                                    rr_ui_squad_player_container_init(
+                                        &this->squad_members[2]),
+                                    rr_ui_squad_player_container_init(
+                                        &this->squad_members[3])),
+                                rr_ui_set_justify(rr_ui_countdown_init(this), 1,
+                                                  0)),
+                            &this->socket_ready),
+                        0x40ffffff),
+                    rr_ui_h_container_init(
+                        rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_title_screen_loadout_button_init(0),
+                        rr_ui_title_screen_loadout_button_init(1),
+                        rr_ui_title_screen_loadout_button_init(2),
+                        rr_ui_title_screen_loadout_button_init(3),
+                        rr_ui_title_screen_loadout_button_init(4),
+                        rr_ui_title_screen_loadout_button_init(5),
+                        rr_ui_title_screen_loadout_button_init(6),
+                        rr_ui_title_screen_loadout_button_init(7),
+                        rr_ui_title_screen_loadout_button_init(8),
+                        rr_ui_title_screen_loadout_button_init(9)),
+                    rr_ui_h_container_init(
+                        rr_ui_container_init(), 0, 15, 10,
+                        rr_ui_title_screen_loadout_button_init(10),
+                        rr_ui_title_screen_loadout_button_init(11),
+                        rr_ui_title_screen_loadout_button_init(12),
+                        rr_ui_title_screen_loadout_button_init(13),
+                        rr_ui_title_screen_loadout_button_init(14),
+                        rr_ui_title_screen_loadout_button_init(15),
+                        rr_ui_title_screen_loadout_button_init(16),
+                        rr_ui_title_screen_loadout_button_init(17),
+                        rr_ui_title_screen_loadout_button_init(18),
+                        rr_ui_title_screen_loadout_button_init(19)),
+                    rr_ui_text_init("powered by Rivet", 15, 0xffffffff)),
+                0x00000000),
+            &this->simulation_not_ready));
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_background(
@@ -1867,13 +1879,15 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->socket.serverbound_encryption_key =
                 proto_bug_read_uint64(&encoder, "s encryption key");
             struct proto_bug verify_encoder;
-            proto_bug_init(&verify_encoder, output_packet);
+            proto_bug_init(&verify_encoder, &output_packet[0]);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
 #ifdef RIVET_BUILD
-            uint64_t token_size = strlen(this->socket.rivet_player_token);
+            uint64_t token_size = strlen(this->socket.rivet_player_token
+                                             ? this->socket.rivet_player_token
+                                             : strdup(""));
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_string(&verify_encoder,
@@ -2244,12 +2258,11 @@ void rr_game_tick(struct rr_game *this, float delta)
         this->focused->on_event(this->focused, this);
     if (this->prev_focused != this->focused && this->prev_focused != NULL)
         this->prev_focused->on_event(this->prev_focused, this);
+#ifndef EMSCRIPTEN
+    lws_service(this->socket.socket_context, -1);
+#endif
     if (this->socket_ready)
     {
-#ifndef EMSCRIPTEN
-        lws_service(this->socket.socket_context, -1);
-#endif
-
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               186 /* ; */))
             this->displaying_debug_information ^= 1;
@@ -2325,7 +2338,8 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
 #ifdef RIVET_BUILD
-    rr_rivet_lobbies_find(&this->socket);
+    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
+    // rr_rivet_lobbies_find(&this->socket);
 #else
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);

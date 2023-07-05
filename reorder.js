@@ -155,7 +155,7 @@ function field_list_modify_fields(data)
 
 function modify_field_list(data)
 {
-    return field_list_modify_enum(field_list_modify_fields(data));
+    return field_list_modify_enum(field_list_modify_fields(data)).replace(/\n+$/, "");
 }
 
 function modify_file(name, cb)
