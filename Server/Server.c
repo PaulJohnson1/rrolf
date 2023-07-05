@@ -379,21 +379,12 @@ int rr_server_lws_callback_function(struct lws *socket, enum lws_callback_reason
         case 70:
         {
             uint64_t local_size = size - 1;
-            size -= 1;
-            if (local_size == 0)
-                return 0;
-
-            local_size -= 1;
-            if (local_size == 0)
+            if (local_size % 3 != 1)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "pos");
             while (pos)
             {
                 if (pos > 20)
-                    return 0;
-
-                local_size -= 3;
-                if (local_size == 0)
                     return 0;
                 client->loadout[pos - 1].id = proto_bug_read_uint8(&encoder, "id");
                 client->loadout[pos - 1].rarity = proto_bug_read_uint8(&encoder, "rar");

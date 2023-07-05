@@ -112,7 +112,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 break;
             }
         ai->ticks_until_next_action = rand() % 10 + 25; // when the ai is done being pissed, wait a little until the next action
-        // if and only if aggro type is hornet and is too close then break
+        // if and only if aggro type is pteranodon and is too close then break
         rr_vector_set_magnitude(&delta, 0.75f);
         rr_vector_add(&physical->acceleration, &delta);
     }
@@ -154,9 +154,9 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
                 rr_component_physical_set_y(physical2, physical->y);
                 rr_component_physical_set_angle(physical2, physical->angle);
                 rr_component_physical_set_radius(physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-                physical2->friction = 0.75f;
+                physical2->friction = 0.5f;
                 physical2->mass = 2.0f;
-                rr_vector_from_polar(&physical2->acceleration, 100, physical->angle);
+                rr_vector_from_polar(&physical2->acceleration, 50, physical->angle);
 
                 rr_component_relations_set_team(relations, rr_simulation_get_relations(simulation, entity)->team);
                 rr_component_relations_set_owner(relations, ai->parent_id);

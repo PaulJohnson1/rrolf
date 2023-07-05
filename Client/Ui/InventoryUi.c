@@ -44,7 +44,6 @@ static void inventory_button_on_event(struct rr_ui_element *this, struct rr_game
         tooltip->hidden = &game->true_ptr;
         tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
         tooltip->y = (this->abs_y / game->renderer->scale - (tooltip->abs_height + this->abs_height / 2 + 10));
-        printf("%f %f\n", tooltip->x, tooltip->y);
         if (tooltip->x < 10)
             tooltip->x = 10;
         if (tooltip->y < 10)

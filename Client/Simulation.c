@@ -50,7 +50,7 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
 
         if (is_creation)
         {
-#ifndef NDEBUG
+#ifndef RIVET_BUILD
             printf("create entity with id %d, components %d\n", id, component_flags);
 #endif
             rr_bitset_set(this->entity_tracker, id);
@@ -80,7 +80,9 @@ void rr_simulation_read_binary(struct rr_simulation *this, struct proto_bug *enc
     long now_time = (end.tv_sec) * 1000000 + (end.tv_usec);
     if (ttt++ == 10)
     {
+#ifndef RIVET_BUILD
         printf("%ld ms tick\n", (now_time - last) / 10000);
+#endif
         ttt = 0;
         last = now_time;
     }
