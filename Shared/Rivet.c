@@ -124,12 +124,9 @@ void rr_rivet_lobbies_find(void *captures)
             fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
                 headers : {
                     Authorization :
-                        "Bearer "
-                        "pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9."
-                        "COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEg"
-                        "oQBM-6Z-llSJm8ubdJfMaGOw."
-                        "QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_"
-                        "okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
+                        // clang-format off
+                        "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
+                    // clang-format on
                 },
                 method : "POST",
                 body : '{"game_modes":["default"]}'
