@@ -46,7 +46,9 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 10, 20, 2,
                         rr_ui_text_init("join game here", 36, 0xffffffff),
-                        rr_ui_labeled_button_init("Join", 36, NULL)),
+                        rr_ui_set_background(
+                            rr_ui_labeled_button_init("Join", 36, NULL),
+                            0xff1dd129)),
                     rr_ui_set_background(
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
@@ -106,7 +108,7 @@ void rr_game_init(struct rr_game *this)
                               -1, 1),
                           20),
                 &this->simulation_not_ready),
-            0xff0000ff));
+            0xff5a9fdb));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -2178,7 +2180,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         custom_player_info.lerp_camera_fov = 0.9;
         struct rr_renderer_context_state state;
         rr_renderer_context_state_init(this->renderer, &state);
-        rr_renderer_translate(this->renderer, this->renderer->width * 0.5f, this->renderer->height * 0.5f);
+        rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
+                              this->renderer->height * 0.5f);
         render_background(&custom_player_info, this);
         rr_renderer_context_state_free(this->renderer, &state);
     }
