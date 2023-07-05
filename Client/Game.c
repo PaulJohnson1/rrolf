@@ -45,13 +45,14 @@ void rr_game_init(struct rr_game *this)
                                                                                       rr_ui_text_init("Enter game here", 36, 0xffffffff),
                                                                                       rr_ui_labeled_button_init("Join", 36, NULL)),
                                                                rr_ui_set_background(
-                                                                   rr_ui_link_toggle(rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 2,
+                                                                   rr_ui_link_toggle(rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 3,
                                                                                                             rr_ui_text_init("Squad", 18, 0xffffffff),
                                                                                                             rr_ui_h_container_init(rr_ui_container_init(), 10, 20, 4,
                                                                                                                                    squad_player_container_init(&this->squad_members[0]),
                                                                                                                                    squad_player_container_init(&this->squad_members[1]),
                                                                                                                                    squad_player_container_init(&this->squad_members[2]),
-                                                                                                                                   squad_player_container_init(&this->squad_members[3]))),
+                                                                                                                                   squad_player_container_init(&this->squad_members[3])),
+                                                                                                            rr_ui_set_justify(rr_ui_text_init("Starting in x", 18, 0xffffffff), 1, 0)),
                                                                                      &this->socket_ready),
                                                                    0xff00ff00),
                                                                rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
@@ -80,19 +81,17 @@ void rr_game_init(struct rr_game *this)
                                         0x00000000),
                                     &this->simulation_not_ready));
     rr_ui_container_add_element(this->window,
-        rr_ui_set_background(
-            rr_ui_link_toggle(
-                rr_ui_pad(
-                    rr_ui_set_justify(
-                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
-                            rr_ui_text_init("Inventory", 24, 0xffffffff),
-                            rr_ui_scroll_container_init(rr_ui_inventory_container_init(), 400)
-                        )
-                    , -1, 1),
-                20)
-            , &this->simulation_not_ready)
-        , 0xff0000ff)
-    );
+                                rr_ui_set_background(
+                                    rr_ui_link_toggle(
+                                        rr_ui_pad(
+                                            rr_ui_set_justify(
+                                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+                                                                       rr_ui_text_init("Inventory", 24, 0xffffffff),
+                                                                       rr_ui_scroll_container_init(rr_ui_inventory_container_init(), 400)),
+                                                -1, 1),
+                                            20),
+                                        &this->simulation_not_ready),
+                                    0xff0000ff));
     rr_ui_container_add_element(this->window,
                                 rr_ui_link_toggle(
                                     rr_ui_set_justify(
@@ -423,8 +422,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type, void
 void render_drop_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
-    if (!rr_simulation_has_drop(this->simulation, entity))
-        return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
@@ -436,8 +433,6 @@ void render_drop_component(EntityIdx entity, void *_captures)
 void render_health_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
-    if (!rr_simulation_has_health(this->simulation, entity))
-        return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
@@ -449,8 +444,6 @@ void render_health_component(EntityIdx entity, void *_captures)
 void render_mob_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
-    if (!rr_simulation_has_mob(this->simulation, entity))
-        return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
@@ -462,8 +455,6 @@ void render_mob_component(EntityIdx entity, void *_captures)
 void render_petal_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
-    if (!rr_simulation_has_petal(this->simulation, entity))
-        return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
@@ -475,8 +466,6 @@ void render_petal_component(EntityIdx entity, void *_captures)
 void render_flower_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
-    if (!rr_simulation_has_flower(this->simulation, entity))
-        return;
     struct rr_renderer_context_state state;
     rr_renderer_init_context_state(this->renderer, &state);
     struct rr_component_physical *physical = rr_simulation_get_physical(this->simulation, entity);
@@ -581,13 +570,13 @@ void rr_game_tick(struct rr_game *this, float delta)
     float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) / ((double)UINT32_MAX) * (M_PI * 2);    \
     float x = distance * sinf(theta);                                                                      \
     float y = distance * cosf(theta);                                                                      \
-    if (x < leftX - (selected_feature == 8 ? 400 : 100))                                                     \
+    if (x < leftX - (selected_feature == 8 ? 400 : 100))                                                   \
         continue;                                                                                          \
-    if (x > rightX + (selected_feature == 8 ? 400 : 100))                                                    \
+    if (x > rightX + (selected_feature == 8 ? 400 : 100))                                                  \
         continue;                                                                                          \
-    if (y < topY - (selected_feature == 8 ? 400 : 100))                                                      \
+    if (y < topY - (selected_feature == 8 ? 400 : 100))                                                    \
         continue;                                                                                          \
-    if (y > bottomY + (selected_feature == 8 ? 400 : 100))                                                   \
+    if (y > bottomY + (selected_feature == 8 ? 400 : 100))                                                 \
         continue;                                                                                          \
     rr_renderer_init_context_state(this->renderer, &state);                                                \
     rr_renderer_translate(this->renderer, x, y);                                                           \
@@ -595,10 +584,10 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_draw_image(this->renderer, &this->background_features[selected_feature]);                  \
     rr_renderer_free_context_state(this->renderer, &state);
 
-            rr_renderer_set_global_alpha(this->renderer, 0.5f);
+            rr_renderer_set_global_alpha(this->renderer, 0.75f);
 
             // draw background features
-            for (uint64_t i = 0; i < 400; i++)
+            for (uint64_t i = 0; i < 200; i++)
             {
                 uint64_t selected_feature = rr_get_hash(i) % 8;
                 render_map_feature
@@ -617,11 +606,11 @@ void rr_game_tick(struct rr_game *this, float delta)
 #undef render_map_feature
             rr_renderer_free_context_state(this->renderer, &state2);
 
-            rr_simulation_for_each_entity(this->simulation, this, render_health_component);
-            rr_simulation_for_each_entity(this->simulation, this, render_drop_component);
-            rr_simulation_for_each_entity(this->simulation, this, render_mob_component);
-            rr_simulation_for_each_entity(this->simulation, this, render_petal_component);
-            rr_simulation_for_each_entity(this->simulation, this, render_flower_component);
+            rr_simulation_for_each_health(this->simulation, this, render_health_component);
+            rr_simulation_for_each_drop(this->simulation, this, render_drop_component);
+            rr_simulation_for_each_mob(this->simulation, this, render_mob_component);
+            rr_simulation_for_each_petal(this->simulation, this, render_petal_component);
+            rr_simulation_for_each_flower(this->simulation, this, render_flower_component);
             rr_renderer_free_context_state(this->renderer, &state1);
         }
     }

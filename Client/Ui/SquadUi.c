@@ -77,19 +77,34 @@ static struct rr_ui_element *squad_loadout_button_init(struct rr_game_loadout_pe
     return this;
 }
 
+static uint8_t should_be_ready(struct rr_ui_element *choose, struct rr_game *game)
+{
+    return ((struct rr_game_squad_client *)((struct rr_ui_choose_element_metadata *)choose->data)->data)->ready;
+}
+
+static struct rr_ui_element *rr_ui_player_init(struct rr_game_squad_client *player)
+{
+    struct rr_ui_element *choose_container = rr_ui_choose_element_init(
+        rr_ui_text_init("Ready", 20, 0xff00ff00),
+        rr_ui_text_init("Waiting", 15, 0xffcccccc),
+        should_be_ready);
+    ((struct rr_ui_choose_element_metadata *)choose_container->data)->data = player;
+    return choose_container;
+}
+
 struct rr_ui_element *squad_player_container_init(struct rr_game_squad_client *member)
 {
-    struct rr_ui_element *b = rr_ui_text_init("Nobody", 20, 0xffffffff);
+    struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(5, 4, 10, 5);
     for (uint8_t i = 0; i < 20; ++i)
         rr_ui_container_add_element(loadout, rr_ui_set_justify(squad_loadout_button_init(&member->loadout[i]), -1, -1));
-    //manually set the size if we want it to stay constant
+    // manually set the size if we want it to stay constant
     loadout->abs_width = loadout->width = 2 * 10 + (15 + 5) * 5 - 10;
     loadout->abs_height = loadout->height = 2 * 10 + (15 + 5) * 4 - 10;
-    struct rr_ui_element *a = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
-        rr_ui_text_init("Player", 16, 0xffffffff), 
-        loadout
-    );
+    struct rr_ui_element *a = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 3,
+                                                     rr_ui_text_init("player name (todo)", 18, 0xffffffff),
+                                                     rr_ui_player_init(member),
+                                                     loadout);
     struct rr_ui_element *this = rr_ui_choose_element_init(a, b, choose);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
