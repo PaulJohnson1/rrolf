@@ -77,7 +77,7 @@ static void render_flower_not_frown(struct rr_ui_element *element,
     render_flower(0, element, game);
 }
 
-static struct rr_ui_element *ui_flower_init(uint8_t frowning, float size)
+struct rr_ui_element *rr_ui_flower_init(uint8_t frowning, float size)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     element->width = element->abs_width = element->height =
@@ -175,7 +175,7 @@ static struct rr_ui_element *
 rr_ui_player_init(struct rr_game_squad_client *player)
 {
     struct rr_ui_element *choose_container = rr_ui_choose_element_init(
-        ui_flower_init(0, 50), ui_flower_init(1, 50), should_be_ready);
+        rr_ui_flower_init(0, 50), rr_ui_flower_init(1, 50), should_be_ready);
     ((struct rr_ui_choose_element_metadata *)choose_container->data)->data =
         player;
     return choose_container;
@@ -217,6 +217,22 @@ struct info_metadata
     struct rr_ui_element *tooltip;
 };
 
+static void info_data_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_element *tooltip = game->squad_info_tooltip;
+    tooltip->hidden = game->focused == game->prev_focused ? &game->true_ptr : &game->false_ptr;
+
+    tooltip->x =
+        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
+    tooltip->y =
+        (this->abs_y / game->renderer->scale -
+         (tooltip->abs_height + this->abs_height / 2 + 10));
+    if (tooltip->x < 10)
+        tooltip->x = 10;
+    if (tooltip->y < 10)
+        tooltip->y = 10;
+}
+
 static void render_info(struct rr_ui_element *element, struct rr_game *game)
 {
     rr_renderer_begin_path(game->renderer);
@@ -227,25 +243,7 @@ static void render_info(struct rr_ui_element *element, struct rr_game *game)
     // the ? text element
     struct info_metadata *data = element->data;
 
-    data->tooltip->hidden =
-        element != game->focused ? &game->true_ptr : &game->false_ptr;
-
-    data->tooltip->x =
-        (element->abs_x / game->renderer->scale - data->tooltip->abs_width / 2);
-    data->tooltip->y =
-        (element->abs_y / game->renderer->scale -
-         (data->tooltip->abs_height + element->abs_height / 2 + 10));
-    if (data->tooltip->x < 10)
-        data->tooltip->x = 10;
-    if (data->tooltip->y < 10)
-        data->tooltip->y = 10;
-
     data->question_mark->on_render(data->question_mark, game);
-
-    if (!*data->tooltip->hidden)
-    {
-        data->tooltip->on_render(data->tooltip, game);
-    }
 }
 
 struct rr_ui_element *rr_ui_info_init()
@@ -254,24 +252,12 @@ struct rr_ui_element *rr_ui_info_init()
     element->data = malloc(sizeof(struct info_metadata));
     struct info_metadata *data = element->data;
     data->question_mark = rr_ui_text_init("?", 18, 0xffffffff);
-    data->tooltip = rr_ui_set_background(
-        rr_ui_v_container_init(
-            rr_ui_container_init(), 10, 10, 2,
-            rr_ui_set_justify(rr_ui_h_container_init(
-                                  rr_ui_container_init(), 5, 10, 2,
-                                  ui_flower_init(0, 35),
-                                  rr_ui_text_init("- ready", 15, 0xffffffff)),
-                              -1, 0),
-            rr_ui_set_justify(
-                rr_ui_h_container_init(
-                    rr_ui_container_init(), 5, 10, 2, ui_flower_init(0, 35),
-                    rr_ui_text_init("- not ready", 15, 0xffffffff)),
-                -1, 0)),
-        0x80000000);
+    
 
     element->abs_width = element->abs_height = element->width =
         element->height = 20;
 
     element->on_render = render_info;
+    element->on_event = info_data_on_event;
     return element;
 }

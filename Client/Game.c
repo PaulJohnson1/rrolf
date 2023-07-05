@@ -143,6 +143,22 @@ void rr_game_init(struct rr_game *this)
                 0, 1),
             &this->simulation_ready));
 
+    this->squad_info_tooltip = rr_ui_container_add_element(this->window, rr_ui_link_toggle(
+        rr_ui_set_justify(
+        rr_ui_set_background(
+            rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+                rr_ui_set_justify(rr_ui_h_container_init(
+                                  rr_ui_container_init(), 5, 10, 2,
+                                  rr_ui_flower_init(0, 35),
+                                  rr_ui_text_init("- ready", 15, 0xffffffff)),
+                              -1, 0),
+                rr_ui_set_justify(
+                rr_ui_h_container_init(
+                    rr_ui_container_init(), 5, 10, 2, rr_ui_flower_init(0, 35),
+                    rr_ui_text_init("- not ready", 15, 0xffffffff)),
+                -1, 0)
+        ),
+        0x80000000), -1,-1), &this->false_ptr));
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
