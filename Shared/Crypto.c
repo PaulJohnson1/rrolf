@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Shared/MagicNumber.h>
+
 // https://github.com/shiffthq/chacha20/blob/master/src/chacha20.c
 static inline void u32t8le(uint32_t v, uint8_t p[4])
 {
@@ -134,7 +136,7 @@ static void ChaCha20XOR(uint8_t key[32], uint32_t counter, uint8_t nonce[12],
 
 uint64_t rr_get_hash(uint64_t x)
 {
-    x = (x + 1) * 100000;
+    x = (x + 1) * (100000 ^ RR_SECRET8);
     x ^= x << 17;
     x ^= x >> 13;
     x ^= x << 5;

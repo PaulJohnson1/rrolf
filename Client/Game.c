@@ -45,7 +45,7 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 10, 20, 2,
-                        rr_ui_text_init("name input field (todo)", 25, 0xffffffff),
+                        rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
                         rr_ui_set_background(
                             rr_ui_labeled_button_init("Join", 36, NULL),
                             0xff1dd129)),
@@ -53,7 +53,10 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
                                 rr_ui_container_init(), 10, 20, 3,
-                                rr_ui_text_init("Squad", 18, 0xffffffff),
+                                rr_ui_h_container_init(
+                                    rr_ui_container_init(), 1, 15, 2,
+                                    rr_ui_text_init("Squad", 18, 0xffffffff),
+                                    rr_ui_info_init(), -1, 0),
                                 rr_ui_h_container_init(
                                     rr_ui_container_init(), 10, 20, 4,
                                     rr_ui_squad_player_container_init(
@@ -67,7 +70,7 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_set_justify(rr_ui_countdown_init(this), 1,
                                                   0)),
                             &this->socket_ready),
-                        0xff00ff00),
+                        0x40ffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15, 10,
                         rr_ui_title_screen_loadout_button_init(0),
@@ -208,6 +211,7 @@ void rr_game_init(struct rr_game *this)
         }
     }
 
+    // TODO: move these out of this file
     rr_renderer_init(&this->mob_pteranodon_wings[0]);
     rr_renderer_set_dimensions(&this->mob_pteranodon_wings[0], 800, 600);
     rr_renderer_draw_svg(
@@ -2001,7 +2005,7 @@ void player_info_finder(struct rr_game *this)
 }
 
 static void render_background(struct rr_component_player_info *player_info,
-                              struct rr_game *this)
+                              struct rr_game *this, uint32_t prop_amount)
 {
     double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
@@ -2038,7 +2042,7 @@ static void render_background(struct rr_component_player_info *player_info,
                   ((double)UINT32_MAX) * (M_PI * 2);                           \
     float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) /     \
                            ((double)UINT32_MAX)) *                             \
-                     1650.0;                                                   \
+                     1600.0;                                                   \
     float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) /           \
                      ((double)UINT32_MAX) * (M_PI * 2);                        \
     float x = distance * sinf(theta);                                          \
@@ -2061,7 +2065,7 @@ static void render_background(struct rr_component_player_info *player_info,
     rr_renderer_set_global_alpha(this->renderer, 0.75f);
 
     // draw background features
-    for (uint64_t i = 0; i < 200;)
+    for (uint64_t i = 0; i < prop_amount;)
     {
         uint64_t selected_feature;
         // any number between 0-8 and is not 1. 1 is water lettuce
@@ -2075,7 +2079,7 @@ static void render_background(struct rr_component_player_info *player_info,
         render_map_feature
     }
     // trees over everything
-    for (uint64_t i = 0; i < 8; i++)
+    for (uint64_t i = 0; i < prop_amount / 50; i++)
     {
         uint64_t selected_feature = 8;
         render_map_feature
@@ -2155,7 +2159,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this);
+            render_background(player_info, this, 200);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -2182,7 +2186,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
-        render_background(&custom_player_info, this);
+        render_background(&custom_player_info, this, 400);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui

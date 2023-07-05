@@ -28,6 +28,14 @@ struct rr_ui_container_metadata
 
 struct rr_ui_element
 {
+    struct rr_ui_element *container;
+    void *data;
+    uint8_t *hidden;
+    uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
+    uint8_t (*animate)(struct rr_ui_element *, struct rr_game *);
+    void (*on_render)(struct rr_ui_element *, struct rr_game *);
+    void (*on_event)(struct rr_ui_element *, struct rr_game *);
+    void (*poll_events)(struct rr_ui_element *, struct rr_game *);
     float x;
     float y;
     float width;
@@ -43,14 +51,6 @@ struct rr_ui_element
     uint8_t resizeable;
     uint8_t completely_hidden;
     uint8_t first_frame;
-    struct rr_ui_element *container;
-    void *data;
-    uint8_t *hidden;
-    uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
-    uint8_t (*animate)(struct rr_ui_element *, struct rr_game *);
-    void (*on_render)(struct rr_ui_element *, struct rr_game *);
-    void (*on_event)(struct rr_ui_element *, struct rr_game *);
-    void (*poll_events)(struct rr_ui_element *, struct rr_game *);
 };
 
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
@@ -80,6 +80,7 @@ struct rr_ui_element *rr_ui_choose_element_init(
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *);
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
+struct rr_ui_element *rr_ui_info_init();
 
 struct rr_ui_element *rr_ui_inventory_container_init();
 

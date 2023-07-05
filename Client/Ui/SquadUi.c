@@ -10,6 +10,87 @@
 
 #include <Shared/Utilities.h>
 
+void render_flower(uint8_t is_frown, struct rr_ui_element *element,
+                   struct rr_game *game)
+{
+    struct rr_renderer_context_state state;
+    struct rr_renderer *renderer = game->renderer;
+    rr_renderer_set_stroke(renderer, 0xffcfbb50);
+    rr_renderer_set_fill(renderer, 0xffffe763);
+    rr_renderer_set_line_width(renderer, 3);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, element->width * 0.5);
+    rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
+    rr_renderer_scale(renderer, element->width / 50);
+    struct rr_renderer_context_state state1;
+    rr_renderer_context_state_init(renderer, &state1);
+    rr_renderer_set_fill(renderer, 0xff222222);
+    rr_renderer_scale2(renderer, 1, 2);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, -7, -2.5, 3.25);
+    rr_renderer_fill(renderer);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, -7, -2.5, 3);
+    rr_renderer_clip(renderer);
+    rr_renderer_scale2(renderer, 1, 0.5);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, -7 + 3, -5 + 0, 3);
+    rr_renderer_fill(renderer);
+    rr_renderer_context_state_free(renderer, &state1);
+
+    rr_renderer_context_state_init(renderer, &state1);
+    rr_renderer_set_fill(renderer, 0xff222222);
+    rr_renderer_scale2(renderer, 1, 2);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 7, -2.5, 3.25);
+    rr_renderer_fill(renderer);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 7, -2.5, 3);
+    rr_renderer_clip(renderer);
+    rr_renderer_scale2(renderer, 1, 0.5);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 7 + 3, -5 + 0, 3);
+    rr_renderer_fill(renderer);
+    rr_renderer_context_state_free(renderer, &state1);
+    rr_renderer_set_stroke(renderer, 0xff222222);
+    rr_renderer_set_line_width(renderer, 1.5);
+    rr_renderer_set_line_cap(renderer, 1);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, -6, 10);
+    rr_renderer_quadratic_curve_to(renderer, 0, is_frown ? 4 : 15, 6, 10);
+    rr_renderer_stroke(renderer);
+    rr_renderer_context_state_free(renderer, &state);
+}
+
+static void render_flower_frown(struct rr_ui_element *element,
+                                struct rr_game *game)
+{
+    render_flower(1, element, game);
+}
+
+static void render_flower_not_frown(struct rr_ui_element *element,
+                                    struct rr_game *game)
+{
+    render_flower(0, element, game);
+}
+
+static struct rr_ui_element *ui_flower_init(uint8_t frowning, float size)
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->width = element->abs_width = element->height =
+        element->abs_height = size;
+
+    if (frowning)
+        element->on_render = render_flower_frown;
+    else
+        element->on_render = render_flower_not_frown;
+
+    return element;
+}
+
 static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
@@ -94,8 +175,7 @@ static struct rr_ui_element *
 rr_ui_player_init(struct rr_game_squad_client *player)
 {
     struct rr_ui_element *choose_container = rr_ui_choose_element_init(
-        rr_ui_text_init("Ready", 20, 0xff00ff00),
-        rr_ui_text_init("Waiting", 15, 0xffcccccc), should_be_ready);
+        ui_flower_init(0, 50), ui_flower_init(1, 50), should_be_ready);
     ((struct rr_ui_choose_element_metadata *)choose_container->data)->data =
         player;
     return choose_container;
@@ -105,7 +185,7 @@ struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
-    struct rr_ui_element *loadout = rr_ui_2d_container_init(5, 4, 10, 5);
+    struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 2);
     for (uint8_t i = 0; i < 20; ++i)
         rr_ui_container_add_element(
             loadout,
@@ -115,19 +195,83 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     loadout->abs_width = loadout->width = 2 * 10 + (15 + 5) * 5 - 10;
     loadout->abs_height = loadout->height = 2 * 10 + (15 + 5) * 4 - 10;
     struct rr_ui_element *a = rr_ui_v_container_init(
-        rr_ui_container_init(), 0, 10, 3,
-        rr_ui_text_init("player name (todo)", 18, 0xffffffff),
-        rr_ui_player_init(member), loadout);
+        rr_ui_container_init(), 0, 10, 3, rr_ui_player_init(member),
+        rr_ui_text_init("name (TODO)", 18, 0xffffffff), loadout);
     struct rr_ui_element *this = rr_ui_choose_element_init(a, b, choose);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
 
     return rr_ui_set_background(
         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1, this),
-        0xff0000ff);
+        0x40ffffff);
 }
 
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
 {
     return rr_ui_text_init("Starting in x", 18, 0xffffffff);
+}
+
+struct info_metadata
+{
+    struct rr_ui_element *question_mark;
+    struct rr_ui_element *tooltip;
+};
+
+static void render_info(struct rr_ui_element *element, struct rr_game *game)
+{
+    rr_renderer_begin_path(game->renderer);
+    rr_renderer_set_line_width(game->renderer, 2.0f);
+    rr_renderer_set_stroke(game->renderer, 0x40000000);
+    rr_renderer_arc(game->renderer, 0.0f, 0.0f, 10.0f);
+    rr_renderer_stroke(game->renderer);
+    // the ? text element
+    struct info_metadata *data = element->data;
+
+    data->tooltip->hidden =
+        element != game->focused ? &game->true_ptr : &game->false_ptr;
+
+    data->tooltip->x =
+        (element->abs_x / game->renderer->scale - data->tooltip->abs_width / 2);
+    data->tooltip->y =
+        (element->abs_y / game->renderer->scale -
+         (data->tooltip->abs_height + element->abs_height / 2 + 10));
+    if (data->tooltip->x < 10)
+        data->tooltip->x = 10;
+    if (data->tooltip->y < 10)
+        data->tooltip->y = 10;
+
+    data->question_mark->on_render(data->question_mark, game);
+
+    if (!*data->tooltip->hidden)
+    {
+        data->tooltip->on_render(data->tooltip, game);
+    }
+}
+
+struct rr_ui_element *rr_ui_info_init()
+{
+    struct rr_ui_element *element = rr_ui_element_init();
+    element->data = malloc(sizeof(struct info_metadata));
+    struct info_metadata *data = element->data;
+    data->question_mark = rr_ui_text_init("?", 18, 0xffffffff);
+    data->tooltip = rr_ui_set_background(
+        rr_ui_v_container_init(
+            rr_ui_container_init(), 10, 10, 2,
+            rr_ui_set_justify(rr_ui_h_container_init(
+                                  rr_ui_container_init(), 5, 10, 2,
+                                  ui_flower_init(0, 35),
+                                  rr_ui_text_init("- ready", 15, 0xffffffff)),
+                              -1, 0),
+            rr_ui_set_justify(
+                rr_ui_h_container_init(
+                    rr_ui_container_init(), 5, 10, 2, ui_flower_init(0, 35),
+                    rr_ui_text_init("- not ready", 15, 0xffffffff)),
+                -1, 0)),
+        0x80000000);
+
+    element->abs_width = element->abs_height = element->width =
+        element->height = 20;
+
+    element->on_render = render_info;
+    return element;
 }

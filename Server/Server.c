@@ -613,7 +613,7 @@ void rr_server_run(struct rr_server *this)
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 200)
+        if (elapsed_time > 1000)
             fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
