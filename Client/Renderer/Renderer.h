@@ -49,9 +49,9 @@ struct rr_renderer
 void rr_renderer_init(struct rr_renderer *);
 void rr_renderer_set_dimensions(struct rr_renderer *, float, float);
 
-void rr_renderer_init_context_state(struct rr_renderer *,
+void rr_renderer_context_state_init(struct rr_renderer *,
                                     struct rr_renderer_context_state *);
-void rr_renderer_free_context_state(struct rr_renderer *,
+void rr_renderer_context_state_free(struct rr_renderer *,
                                     struct rr_renderer_context_state *);
 
 void rr_renderer_set_fill(struct rr_renderer *, uint32_t);

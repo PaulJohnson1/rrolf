@@ -101,11 +101,11 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(renderer, &state);
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer, data->rarity);
     rr_renderer_draw_image(renderer,
                            &game->static_petals[data->id][data->rarity]);
-    rr_renderer_free_context_state(renderer, &state);
+    rr_renderer_context_state_free(renderer, &state);
 
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);

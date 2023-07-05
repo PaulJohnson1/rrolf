@@ -31,7 +31,7 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_stroke(renderer);
     rr_renderer_scale(renderer, physical->radius / 25);
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(renderer, &state);
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_set_fill(renderer, 0xff222222);
     rr_renderer_scale2(renderer, 1, 2);
     rr_renderer_begin_path(renderer);
@@ -46,9 +46,9 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_arc(renderer, -7 + flower->lerp_eye_x, -5 + flower->lerp_eye_y,
                     3);
     rr_renderer_fill(renderer);
-    rr_renderer_free_context_state(renderer, &state);
+    rr_renderer_context_state_free(renderer, &state);
 
-    rr_renderer_init_context_state(renderer, &state);
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_set_fill(renderer, 0xff222222);
     rr_renderer_scale2(renderer, 1, 2);
     rr_renderer_begin_path(renderer);
@@ -63,7 +63,7 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_arc(renderer, 7 + flower->lerp_eye_x, -5 + flower->lerp_eye_y,
                     3);
     rr_renderer_fill(renderer);
-    rr_renderer_free_context_state(renderer, &state);
+    rr_renderer_context_state_free(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 1.5);
     rr_renderer_set_line_cap(renderer, 1);

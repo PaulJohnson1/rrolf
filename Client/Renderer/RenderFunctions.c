@@ -148,7 +148,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
                       : RR_PETAL_DATA[id].clump_radius;
         for (uint32_t i = 0; i < count; ++i)
         {
-            rr_renderer_init_context_state(renderer, &state);
+            rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, r, 0.0f);
             if (id == rr_petal_id_missile)
                 rr_renderer_rotate(renderer, 1.0f);
@@ -157,7 +157,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
             else if (id == rr_petal_id_stinger && rarity == rr_rarity_id_ultra)
                 rr_renderer_rotate(renderer, M_PI);
             rr_renderer_render_petal(renderer, id);
-            rr_renderer_free_context_state(renderer, &state);
+            rr_renderer_context_state_free(renderer, &state);
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);
         }
     }
@@ -169,7 +169,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
-    rr_renderer_init_context_state(renderer, &original_state);
+    rr_renderer_context_state_init(renderer, &original_state);
     switch (id)
     {
     case rr_mob_id_triceratops:
@@ -188,15 +188,15 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
 
-        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
         rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
         rr_renderer_draw_image(renderer, &game->mob_trex_legs[0]);
-        rr_renderer_free_context_state(renderer, &state);
+        rr_renderer_context_state_free(renderer, &state);
 
-        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
         rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
         rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
-        rr_renderer_free_context_state(renderer, &state);
+        rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_draw_image(renderer, &game->mob_trex_tail_bottom);
         rr_renderer_draw_image(renderer, &game->mob_trex_body);
@@ -230,7 +230,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_set_stroke(renderer, 0xff333333);
         rr_renderer_set_line_cap(renderer, 1.0f);
         rr_renderer_set_line_width(renderer, 3.0f);
-        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
         rr_renderer_set_fill(renderer, 0xff333333);
         // antennae circle a
@@ -253,7 +253,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_quadratic_curve_to(renderer, 45.0f, 10.0f,
                                        55.0f - animation_tick * 2.0f, 30.0f);
         rr_renderer_stroke(renderer);
-        rr_renderer_free_context_state(renderer, &state);
+        rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_spinosaurus_body:
         rr_renderer_scale(renderer, 10.0f / 36.0f);
@@ -278,17 +278,17 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
 
-        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
         rr_renderer_translate(renderer, 40.0f, 30.0f);
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
-        rr_renderer_free_context_state(renderer, &state);
+        rr_renderer_context_state_free(renderer, &state);
 
-        rr_renderer_init_context_state(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
         rr_renderer_translate(renderer, -40.0f, 30.0f);
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
-        rr_renderer_free_context_state(renderer, &state);
+        rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         break;
@@ -316,7 +316,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     }
 
-    rr_renderer_free_context_state(renderer, &original_state);
+    rr_renderer_context_state_free(renderer, &original_state);
 }
 
 void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)

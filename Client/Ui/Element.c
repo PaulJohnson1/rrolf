@@ -49,7 +49,7 @@ static uint8_t default_animate(struct rr_ui_element *this, struct rr_game *game)
 void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(game->renderer, &state);
+    rr_renderer_context_state_init(game->renderer, &state);
     // fix ugly code later
     if (this->container == this)
         rr_renderer_translate(game->renderer, game->renderer->width / 2,
@@ -79,7 +79,7 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     if (this->animate(this, game))
         this->on_render(this, game);
     this->first_frame = 0;
-    rr_renderer_free_context_state(game->renderer, &state);
+    rr_renderer_context_state_free(game->renderer, &state);
 }
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)

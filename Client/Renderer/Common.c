@@ -33,14 +33,14 @@ void rr_renderer_set_dimensions(struct rr_renderer *this, float w, float h)
 #endif
 }
 
-void rr_renderer_init_context_state(struct rr_renderer *this,
+void rr_renderer_context_state_init(struct rr_renderer *this,
                                     struct rr_renderer_context_state *state)
 {
     memcpy(state, &this->state, sizeof *state);
     rr_renderer_save(this);
 }
 
-void rr_renderer_free_context_state(struct rr_renderer *this,
+void rr_renderer_context_state_free(struct rr_renderer *this,
                                     struct rr_renderer_context_state *state)
 {
     memcpy(&this->state, state, sizeof *state);

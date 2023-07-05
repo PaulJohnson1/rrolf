@@ -14,7 +14,7 @@ static void container_on_render(struct rr_ui_element *this,
     {
         struct rr_renderer *renderer = game->renderer;
         struct rr_renderer_context_state state2;
-        rr_renderer_init_context_state(renderer, &state2);
+        rr_renderer_context_state_init(renderer, &state2);
         rr_renderer_set_fill(renderer, this->fill);
         rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
@@ -31,7 +31,7 @@ static void container_on_render(struct rr_ui_element *this,
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);
         }
-        rr_renderer_free_context_state(renderer, &state2);
+        rr_renderer_context_state_free(renderer, &state2);
     }
     struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < data->size; ++i)
@@ -70,7 +70,7 @@ static void container_2d_on_render(struct rr_ui_element *this,
     {
         struct rr_renderer *renderer = game->renderer;
         struct rr_renderer_context_state state2;
-        rr_renderer_init_context_state(renderer, &state2);
+        rr_renderer_context_state_init(renderer, &state2);
         rr_renderer_set_fill(renderer, this->fill);
         rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
@@ -87,7 +87,7 @@ static void container_2d_on_render(struct rr_ui_element *this,
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);
         }
-        rr_renderer_free_context_state(renderer, &state2);
+        rr_renderer_context_state_free(renderer, &state2);
     }
     for (uint32_t i = 0; i < data->size; ++i)
         rr_ui_render_element(data->start[i], game);

@@ -1730,7 +1730,7 @@ void rr_game_init(struct rr_game *this)
     this->tiles_size = 3;
 
     rr_renderer_init(&this->background_features[0]);
-    rr_renderer_set_dimensions(&this->background_features[0], 200, 200);
+    rr_renderer_set_dimensions(&this->background_features[0], 100, 100);
     rr_renderer_draw_svg(&this->background_features[0],
 #include <Client/Assets/MapFeature/Moss.h>
                          , 0, 0);
@@ -1929,61 +1929,61 @@ void render_drop_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(this->renderer, &state);
+    rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_drop_render(entity, this);
-    rr_renderer_free_context_state(this->renderer, &state);
+    rr_renderer_context_state_free(this->renderer, &state);
 }
 
 void render_health_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(this->renderer, &state);
+    rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x,
                           physical->lerp_y + physical->radius + 30);
     rr_component_health_render(entity, this);
-    rr_renderer_free_context_state(this->renderer, &state);
+    rr_renderer_context_state_free(this->renderer, &state);
 }
 
 void render_mob_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(this->renderer, &state);
+    rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_mob_render(entity, this);
-    rr_renderer_free_context_state(this->renderer, &state);
+    rr_renderer_context_state_free(this->renderer, &state);
 }
 
 void render_petal_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(this->renderer, &state);
+    rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_petal_render(entity, this);
-    rr_renderer_free_context_state(this->renderer, &state);
+    rr_renderer_context_state_free(this->renderer, &state);
 }
 
 void render_flower_component(EntityIdx entity, void *_captures)
 {
     struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
-    rr_renderer_init_context_state(this->renderer, &state);
+    rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_flower_render(entity, this);
-    rr_renderer_free_context_state(this->renderer, &state);
+    rr_renderer_context_state_free(this->renderer, &state);
 }
 
 void player_info_finder(struct rr_game *this)
@@ -1998,6 +1998,91 @@ void player_info_finder(struct rr_game *this)
             this->player_infos[counter++] = i;
 }
 
+static void render_background(struct rr_component_player_info *player_info,
+                              struct rr_game *this)
+{
+    double scale = player_info->lerp_camera_fov * this->renderer->scale;
+    double leftX =
+        player_info->lerp_camera_x - this->renderer->width / (2 * scale);
+    double rightX =
+        player_info->lerp_camera_x + this->renderer->width / (2 * scale);
+    double topY =
+        player_info->lerp_camera_y - this->renderer->height / (2 * scale);
+    double bottomY =
+        player_info->lerp_camera_y + this->renderer->height / (2 * scale);
+
+#define GRID_SIZE (256)
+    double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
+    double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
+    for (; newLeftX < rightX; newLeftX += GRID_SIZE)
+    {
+        for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
+        {
+            uint32_t tile_index = (uint32_t)((newLeftX / GRID_SIZE + 1) *
+                                             (currY / GRID_SIZE + 2)) %
+                                  this->tiles_size;
+            struct rr_renderer_context_state state;
+            rr_renderer_context_state_init(this->renderer, &state);
+            rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
+                                  currY + GRID_SIZE / 2);
+            rr_renderer_draw_image(this->renderer, this->tiles + tile_index);
+            rr_renderer_context_state_free(this->renderer, &state);
+        }
+    }
+
+#define render_map_feature                                                     \
+    struct rr_renderer_context_state state;                                    \
+    float theta = ((double)(uint32_t)(rr_get_hash(i + 200000))) /              \
+                  ((double)UINT32_MAX) * (M_PI * 2);                           \
+    float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) /     \
+                           ((double)UINT32_MAX)) *                             \
+                     1650.0;                                                   \
+    float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) /           \
+                     ((double)UINT32_MAX) * (M_PI * 2);                        \
+    float x = distance * sinf(theta);                                          \
+    float y = distance * cosf(theta);                                          \
+    if (x < leftX - (selected_feature == 8 ? 400 : 100))                       \
+        continue;                                                              \
+    if (x > rightX + (selected_feature == 8 ? 400 : 100))                      \
+        continue;                                                              \
+    if (y < topY - (selected_feature == 8 ? 400 : 100))                        \
+        continue;                                                              \
+    if (y > bottomY + (selected_feature == 8 ? 400 : 100))                     \
+        continue;                                                              \
+    rr_renderer_context_state_init(this->renderer, &state);                    \
+    rr_renderer_translate(this->renderer, x, y);                               \
+    rr_renderer_rotate(this->renderer, rotation);                              \
+    rr_renderer_draw_image(this->renderer,                                     \
+                           &this->background_features[selected_feature]);      \
+    rr_renderer_context_state_free(this->renderer, &state);
+
+    rr_renderer_set_global_alpha(this->renderer, 0.75f);
+
+    // draw background features
+    for (uint64_t i = 0; i < 200;)
+    {
+        uint64_t selected_feature;
+        // any number between 0-8 and is not 1. 1 is water lettuce
+        // which is disabled for now
+        do
+        {
+            selected_feature = rr_get_hash(i) % 8;
+            i++;
+        } while (selected_feature == 1);
+
+        render_map_feature
+    }
+    // trees over everything
+    for (uint64_t i = 0; i < 8; i++)
+    {
+        uint64_t selected_feature = 8;
+        render_map_feature
+    }
+
+#undef GRID_SIZE
+#undef render_map_feature
+}
+
 void rr_game_tick(struct rr_game *this, float delta)
 {
     struct timeval start;
@@ -2007,7 +2092,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state grand_state;
-    rr_renderer_init_context_state(this->renderer, &grand_state);
+    rr_renderer_context_state_init(this->renderer, &grand_state);
     // render off-game elements
 
     if (this->simulation_ready)
@@ -2022,7 +2107,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (this->simulation->player_info != RR_NULL_ENTITY)
         {
             // screen shake
-            rr_renderer_init_context_state(this->renderer, &state1);
+            rr_renderer_context_state_init(this->renderer, &state1);
             struct rr_component_player_info *player_info =
                 rr_simulation_get_player_info(this->simulation,
                                               this->simulation->player_info);
@@ -2045,7 +2130,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 
             uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51)
                              << 24;
-            rr_renderer_init_context_state(this->renderer, &state2);
+            rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
             rr_renderer_set_fill(this->renderer, 0xff45230a);
             rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
@@ -2053,100 +2138,24 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_fill(this->renderer, alpha);
             rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
                                   this->renderer->height);
-            rr_renderer_free_context_state(this->renderer, &state2);
-            rr_renderer_init_context_state(this->renderer, &state2);
+            rr_renderer_context_state_free(this->renderer, &state2);
+            rr_renderer_context_state_init(this->renderer, &state2);
 
             struct rr_component_arena *arena =
                 rr_simulation_get_arena(this->simulation, 1);
             rr_renderer_begin_path(this->renderer);
             rr_renderer_arc(this->renderer, 0, 0, arena->radius);
-            rr_renderer_set_fill(this->renderer, 0xffdb7100);
+            rr_renderer_set_fill(this->renderer, 0xff45230a);
             rr_renderer_fill(this->renderer);
             rr_renderer_clip(this->renderer);
 
             rr_renderer_set_line_width(this->renderer, 1.0f);
             rr_renderer_set_stroke(this->renderer, alpha);
-
-            double scale = player_info->lerp_camera_fov * this->renderer->scale;
-            double leftX = player_info->lerp_camera_x -
-                           this->renderer->width / (2 * scale);
-            double rightX = player_info->lerp_camera_x +
-                            this->renderer->width / (2 * scale);
-            double topY = player_info->lerp_camera_y -
-                          this->renderer->height / (2 * scale);
-            double bottomY = player_info->lerp_camera_y +
-                             this->renderer->height / (2 * scale);
-
-#define GRID_SIZE (256)
-            double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
-            double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
-            for (; newLeftX < rightX; newLeftX += GRID_SIZE)
-            {
-                for (double currY = newTopY; currY < bottomY;
-                     currY += GRID_SIZE)
-                {
-                    uint32_t tile_index =
-                        (uint32_t)((newLeftX / GRID_SIZE + 1) *
-                                   (currY / GRID_SIZE + 2)) %
-                        this->tiles_size;
-                    struct rr_renderer_context_state state;
-                    rr_renderer_init_context_state(this->renderer, &state);
-                    rr_renderer_translate(this->renderer,
-                                          newLeftX + GRID_SIZE / 2,
-                                          currY + GRID_SIZE / 2);
-                    rr_renderer_draw_image(this->renderer,
-                                           this->tiles + tile_index);
-                    rr_renderer_free_context_state(this->renderer, &state);
-                }
-            }
-
-#define render_map_feature                                                     \
-    struct rr_renderer_context_state state;                                    \
-    float theta = ((double)(uint32_t)(rr_get_hash(i + 200000))) /              \
-                  ((double)UINT32_MAX) * (M_PI * 2);                           \
-    float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) /     \
-                           ((double)UINT32_MAX)) *                             \
-                     1650.0;                                                   \
-    float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) /           \
-                     ((double)UINT32_MAX) * (M_PI * 2);                        \
-    float x = distance * sinf(theta);                                          \
-    float y = distance * cosf(theta);                                          \
-    if (x < leftX - (selected_feature == 8 ? 400 : 100))                       \
-        continue;                                                              \
-    if (x > rightX + (selected_feature == 8 ? 400 : 100))                      \
-        continue;                                                              \
-    if (y < topY - (selected_feature == 8 ? 400 : 100))                        \
-        continue;                                                              \
-    if (y > bottomY + (selected_feature == 8 ? 400 : 100))                     \
-        continue;                                                              \
-    rr_renderer_init_context_state(this->renderer, &state);                    \
-    rr_renderer_translate(this->renderer, x, y);                               \
-    rr_renderer_rotate(this->renderer, rotation);                              \
-    rr_renderer_draw_image(this->renderer,                                     \
-                           &this->background_features[selected_feature]);      \
-    rr_renderer_free_context_state(this->renderer, &state);
-
-            rr_renderer_set_global_alpha(this->renderer, 0.75f);
-
-            // draw background features
-            for (uint64_t i = 0; i < 200; i++)
-            {
-                uint64_t selected_feature = rr_get_hash(i) % 8;
-                render_map_feature
-            }
-
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            // trees over everything
-            for (uint64_t i = 0; i < 8; i++)
-            {
-                uint64_t selected_feature = 8;
-                render_map_feature
-            }
+            render_background(player_info, this);
 
-#undef GRID_SIZE
-#undef render_map_feature
-            rr_renderer_free_context_state(this->renderer, &state2);
+            rr_renderer_context_state_free(this->renderer, &state2);
 
             rr_simulation_for_each_health(this->simulation, this,
                                           render_health_component);
@@ -2158,8 +2167,20 @@ void rr_game_tick(struct rr_game *this, float delta)
                                          render_petal_component);
             rr_simulation_for_each_flower(this->simulation, this,
                                           render_flower_component);
-            rr_renderer_free_context_state(this->renderer, &state1);
+            rr_renderer_context_state_free(this->renderer, &state1);
         }
+    }
+    else
+    {
+        // render background but different
+        struct rr_component_player_info custom_player_info;
+        rr_component_player_info_init(&custom_player_info, 0);
+        custom_player_info.lerp_camera_fov = 0.9;
+        struct rr_renderer_context_state state;
+        rr_renderer_context_state_init(this->renderer, &state);
+        rr_renderer_translate(this->renderer, this->renderer->width * 0.5f, this->renderer->height * 0.5f);
+        render_background(&custom_player_info, this);
+        rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
     this->simulation_not_ready = this->simulation_ready == 0;
@@ -2237,16 +2258,16 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->displaying_debug_information)
     {
         struct rr_renderer_context_state state;
-        rr_renderer_init_context_state(this->renderer, &state);
+        rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_scale(this->renderer, 5);
         static char debug_mspt[100];
         debug_mspt[sprintf(debug_mspt, "%f mspt",
                            (float)time_elapsed / 1000.0f)] = 0;
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 8);
-        rr_renderer_free_context_state(this->renderer, &state);
+        rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
-    rr_renderer_free_context_state(this->renderer, &grand_state);
+    rr_renderer_context_state_free(this->renderer, &grand_state);
 
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
