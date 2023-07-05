@@ -2236,15 +2236,9 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_ui_render_element(this->window, this);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-        {
-            // if (this->petal_tooltips[id][rarity]->hidden == &this->true_ptr)
-            // {
-            //     printf("gee %d %d %f %f\n", id, rarity,
-            //     this->petal_tooltips[id][rarity]->abs_x,
-            //     this->petal_tooltips[id][rarity]->abs_y);
-            // }
             this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
-        }
+
+    this->squad_info_tooltip->hidden = &this->false_ptr;
 
     if (this->focused != NULL)
         this->focused->on_event(this->focused, this);
