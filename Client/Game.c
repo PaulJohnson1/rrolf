@@ -1853,7 +1853,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         case 0:
         {
             this->simulation_ready = 1;
-            rr_simulation_read_binary(this->simulation, &encoder);
+            rr_simulation_read_binary(this, &encoder);
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 0, "header");
@@ -1997,10 +1997,10 @@ void player_info_finder(struct rr_game *this)
     struct rr_simulation *simulation = this->simulation;
     uint8_t counter = 1;
     memset(&this->player_infos, 0, sizeof this->player_infos);
-    this->player_infos[0] = this->simulation->player_info;
+    this->player_infos[0] = this->player_info->parent_id;
     for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; ++i)
         if (rr_bitset_get(simulation->player_info_tracker, i) &&
-            i != this->simulation->player_info)
+            i != this->player_info->parent_id)
             this->player_infos[counter++] = i;
 }
 
@@ -2110,13 +2110,11 @@ void rr_game_tick(struct rr_game *this, float delta)
         struct rr_renderer_context_state state2;
         // rr_simulation_for_each_entity(this->simulation, this->simulation,
         // player_info_finder);
-        if (this->simulation->player_info != RR_NULL_ENTITY)
+        if (this->player_info != 0)
         {
             // screen shake
             rr_renderer_context_state_init(this->renderer, &state1);
-            struct rr_component_player_info *player_info =
-                rr_simulation_get_player_info(this->simulation,
-                                              this->simulation->player_info);
+            struct rr_component_player_info *player_info = this->player_info;
             rr_renderer_translate(this->renderer, this->renderer->width / 2,
                                   this->renderer->height / 2);
             rr_renderer_scale(this->renderer, player_info->lerp_camera_fov *

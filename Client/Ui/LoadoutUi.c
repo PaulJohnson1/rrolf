@@ -65,9 +65,7 @@ static void petal_switch_button_event(struct rr_ui_element *this,
     }
     else
     {
-        struct rr_component_player_info *player_info =
-            rr_simulation_get_player_info(game->simulation,
-                                          game->simulation->player_info);
+        struct rr_component_player_info *player_info = game->player_info;
         struct rr_component_player_info_petal_slot *slot =
             data->pos < 10 ? &player_info->slots[data->pos]
                            : &player_info->secondary_slots[data->pos - 10];
@@ -126,11 +124,9 @@ static uint8_t title_screen_loadout_button_animate(struct rr_ui_element *this,
 static uint8_t loadout_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    if (game->simulation->player_info == RR_NULL_ENTITY)
+    if (game->player_info == 0)
         return 0;
-    struct rr_component_player_info *player_info =
-        rr_simulation_get_player_info(game->simulation,
-                                      game->simulation->player_info);
+    struct rr_component_player_info *player_info = game->player_info;
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);

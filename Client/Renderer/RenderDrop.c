@@ -27,9 +27,7 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game)
     {
         if (drop->hidden)
         {
-            struct rr_component_player_info *player_info =
-                rr_simulation_get_player_info(game->simulation,
-                                              game->simulation->player_info);
+            struct rr_component_player_info *player_info = game->player_info;
             rr_renderer_translate(
                 renderer,
                 (player_info->camera_x - physical->x) * animation_tick,

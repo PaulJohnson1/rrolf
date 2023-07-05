@@ -20,7 +20,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
         struct rr_component_relations *relations =
             rr_simulation_get_relations(simulation, health->parent_id);
 
-        if (relations->owner == simulation->player_info)
+        if (relations->owner == game->player_info->parent_id)
             if (health->health == health->max_health)
                 return;
     }

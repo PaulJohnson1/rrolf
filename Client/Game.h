@@ -6,6 +6,7 @@
 #include <Shared/Entity.h>
 
 #include <Shared/StaticData.h>
+#include <Shared/pb.h>
 
 struct rr_game_loadout_petal
 {
@@ -63,6 +64,8 @@ struct rr_game
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
+    struct rr_component_player_info *player_info;
+
     uint32_t protocol_state;
     float expanding_circle_radius;
     struct rr_game_loadout_petal loadout[20];
@@ -86,3 +89,4 @@ struct rr_game
 void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
+void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
