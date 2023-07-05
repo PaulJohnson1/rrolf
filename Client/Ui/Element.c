@@ -27,7 +27,7 @@ static uint8_t default_animate(struct rr_ui_element *this, struct rr_game *game)
             this->animation = 1;
             return 0;
         }
-        this->animation = rr_lerp(this->animation, 1, 0.5);
+        this->animation = rr_lerp(this->animation, 1, 0.4);
         if (this->animation > 0.99)
         {
             this->animation = 1;
@@ -38,7 +38,7 @@ static uint8_t default_animate(struct rr_ui_element *this, struct rr_game *game)
     else
     {
         this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.5);
+        this->animation = rr_lerp(this->animation, 0, 0.4);
     }
     this->width = this->abs_width * (1 - this->animation);
     this->height = this->abs_height * (1 - this->animation);
@@ -57,22 +57,22 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     else if (this->container == game->window)
         rr_renderer_translate(
             game->renderer,
-            (this->x + (this->h_justify) *
-                           (this->container->width / 2 / game->renderer->scale -
-                            this->abs_width / 2)) *
+            (this->x + (this->abs_width - this->width) / 2 + (this->h_justify) *
+                           (this->container->abs_width / 2 / game->renderer->scale -
+                            this->width / 2)) *
                 game->renderer->scale,
-            (this->y + (this->v_justify) * (this->container->height / 2 /
+            (this->y + (this->abs_height - this->height) / 2 + (this->v_justify) * (this->container->abs_height / 2 /
                                                 game->renderer->scale -
-                                            this->abs_height / 2)) *
+                                            this->height / 2)) *
                 game->renderer->scale); // necessary btw
     else
         rr_renderer_translate(
             game->renderer,
             (this->x + (this->h_justify) *
-                           (this->container->width / 2 - this->abs_width / 2)) *
+                           (this->container->abs_width / 2 - this->width / 2)) *
                 game->renderer->scale,
-            (this->y + (this->v_justify) * (this->container->height / 2 -
-                                            this->abs_height / 2)) *
+            (this->y + (this->v_justify) * (this->container->abs_height / 2 -
+                                            this->height / 2)) *
                 game->renderer->scale); // necessary btw
     this->abs_x = game->renderer->state.transform_matrix[2];
     this->abs_y = game->renderer->state.transform_matrix[5];
@@ -80,6 +80,21 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
         this->on_render(this, game);
     this->first_frame = 0;
     rr_renderer_context_state_free(game->renderer, &state);
+}
+
+void rr_ui_toggle_tooltip(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
+{
+    tooltip->hidden = this == game->prev_focused ? &game->true_ptr : &game->false_ptr;
+
+    tooltip->x =
+        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
+    tooltip->y =
+        (this->abs_y / game->renderer->scale -
+         (tooltip->abs_height + this->height / 2 + 10));
+    if (tooltip->x < 10)
+        tooltip->x = 10;
+    if (tooltip->y < 10)
+        tooltip->y = 10;
 }
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)

@@ -36,18 +36,7 @@ static void loadout_button_on_event(struct rr_ui_element *this,
     {
         if (game->loadout[data->pos].id == 0)
             return;
-        struct rr_ui_element *tooltip =
-            game->petal_tooltips[data->prev_id][data->prev_rarity];
-        tooltip->hidden =
-            this == game->focused ? &game->true_ptr : &game->false_ptr;
-        tooltip->x =
-            (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
-        tooltip->y = (this->abs_y / game->renderer->scale -
-                      (tooltip->abs_height + this->abs_height / 2 + 10));
-        if (tooltip->x < 10)
-            tooltip->x = 10;
-        if (tooltip->y < 10)
-            tooltip->y = 10;
+        rr_ui_toggle_tooltip(this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
     }
 }
 
@@ -73,17 +62,7 @@ static void petal_switch_button_event(struct rr_ui_element *this,
         uint8_t rarity = slot->rarity;
         if (id == 0)
             return;
-        struct rr_ui_element *tooltip = game->petal_tooltips[id][rarity];
-        tooltip->hidden =
-            this == game->focused ? &game->true_ptr : &game->false_ptr;
-        tooltip->x =
-            (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
-        tooltip->y = (this->abs_y / game->renderer->scale -
-                      (tooltip->abs_height + this->abs_height / 2 + 10));
-        if (tooltip->x < 10)
-            tooltip->x = 10;
-        if (tooltip->y < 10)
-            tooltip->y = 10;
+        rr_ui_toggle_tooltip(this, game->petal_tooltips[id][rarity], game);
     }
 }
 

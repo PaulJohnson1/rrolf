@@ -54,6 +54,7 @@ struct rr_ui_element
 };
 
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
+void rr_ui_toggle_tooltip(struct rr_ui_element *, struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_mouse_over(struct rr_ui_element *, struct rr_game *);
 void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);

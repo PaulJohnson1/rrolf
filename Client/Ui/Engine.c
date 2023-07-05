@@ -121,13 +121,8 @@ static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing,
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
 
-    c->abs_width = c->width = width;
-    c->abs_height = c->height = height;
-    if (c->resizeable == 2)
-    {
-        if (c->container->width > c->width)
-            c->width = c->container->width;
-    }
+    c->abs_width = width;
+    c->abs_height = height;
 }
 
 static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing,
@@ -151,13 +146,8 @@ static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing,
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
 
-    c->abs_width = c->width = width;
-    c->abs_height = c->height = height;
-    if (c->resizeable == 2)
-    {
-        if (c->container->height > c->height)
-            c->height = c->container->height;
-    }
+    c->abs_width = width;
+    c->abs_height = height;
 }
 
 void rr_ui_container_refactor(struct rr_ui_element *c)

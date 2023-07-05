@@ -219,18 +219,7 @@ struct info_metadata
 
 static void info_data_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    struct rr_ui_element *tooltip = game->squad_info_tooltip;
-    tooltip->hidden = game->focused == game->prev_focused ? &game->true_ptr : &game->false_ptr;
-
-    tooltip->x =
-        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
-    tooltip->y =
-        (this->abs_y / game->renderer->scale -
-         (tooltip->abs_height + this->abs_height / 2 + 10));
-    if (tooltip->x < 10)
-        tooltip->x = 10;
-    if (tooltip->y < 10)
-        tooltip->y = 10;
+    rr_ui_toggle_tooltip(this, game->squad_info_tooltip, game);
 }
 
 static void render_info(struct rr_ui_element *element, struct rr_game *game)
