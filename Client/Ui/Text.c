@@ -42,7 +42,7 @@ static void dynamic_text_on_render(struct rr_ui_element *this, struct rr_game *g
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-struct rr_ui_element *rr_ui_text_init(char *text, float size,
+struct rr_ui_element *rr_ui_text_init(char const *text, float size,
                                       uint32_t fill)
 {
     struct rr_ui_element *this = rr_ui_element_init();

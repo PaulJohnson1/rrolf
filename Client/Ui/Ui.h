@@ -8,7 +8,7 @@ struct rr_game_squad_client;
 
 struct text_metadata
 {
-    char *text;
+    char const *text;
     float size;
 };
 
@@ -82,7 +82,7 @@ struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float, float);
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
                                                   struct rr_ui_element *);
 
-struct rr_ui_element *rr_ui_text_init(char *, float, uint32_t);
+struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
 struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t, void (*)(struct rr_ui_element *, struct rr_game *));
 
 struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
