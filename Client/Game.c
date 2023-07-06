@@ -2339,8 +2339,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
 #ifdef RIVET_BUILD
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
-    // rr_rivet_lobbies_find(&this->socket);
+    rr_rivet_lobbies_find(&this->socket);
 #else
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
