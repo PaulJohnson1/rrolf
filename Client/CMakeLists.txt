@@ -23,6 +23,7 @@ set(SRCS
     Ui/LoadoutUi.c
     Ui/Rivet.c
     Ui/ScrollContainer.c
+    Ui/Settings.c
     Ui/SquadUi.c
     Ui/Text.c
     Ui/TitleScreenButton.c

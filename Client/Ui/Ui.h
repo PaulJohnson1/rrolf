@@ -108,3 +108,6 @@ struct rr_ui_element *rr_ui_flower_init(uint8_t, float);
 struct rr_ui_element *rr_ui_rivet_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_inventory_toggle_button_init();
+struct rr_ui_element *rr_ui_settings_toggle_button_init();
+
+struct rr_ui_element *rr_ui_settings_container_init();

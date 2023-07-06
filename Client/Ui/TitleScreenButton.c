@@ -34,10 +34,21 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this, struct rr_game
 {
     if (game->input_data->mouse_buttons_this_tick & 1)
     {
-        if (game->ui_open == 1)
-            game->ui_open = 0;
+        if (game->bottom_ui_open == 1)
+            game->bottom_ui_open = 0;
         else
-            game->ui_open = 1;
+            game->bottom_ui_open = 1;
+    }
+}
+
+void settings_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_this_tick & 1)
+    {
+        if (game->top_ui_open == 1)
+            game->top_ui_open = 0;
+        else
+            game->top_ui_open = 1;
     }
 }
 
@@ -47,6 +58,16 @@ struct rr_ui_element *rr_ui_inventory_toggle_button_init()
     this->fill = 0xffff0000;
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = inventory_toggle_button_on_event;
+    this->on_render = inventory_toggle_on_render;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_settings_toggle_button_init()
+{
+    struct rr_ui_element *this = rr_ui_element_init();
+    this->fill = 0xff00ff00;
+    this->abs_width = this->abs_height = this->width = this->height = 40;
+    this->on_event = settings_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;
     return this;
 }

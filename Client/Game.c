@@ -42,7 +42,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_this_tick & 1)
-        game->ui_open = 0;
+        game->bottom_ui_open = game->top_ui_open = 0;
 }
 
 void rr_game_init(struct rr_game *this)
@@ -66,14 +66,13 @@ void rr_game_init(struct rr_game *this)
 
     rr_ui_container_add_element(
         this->window,
-        rr_ui_set_background(
-            rr_ui_pad(rr_ui_set_justify(
-                          rr_ui_h_container_init(rr_ui_container_init(), 5, 2,
-                                                 1, rr_ui_rivet_init(this)),
-                          -1, -1),
-                      10),
-            0x40ffffff));
-
+        rr_ui_pad(rr_ui_set_justify(
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 2, 
+                    rr_ui_settings_toggle_button_init(), 
+                    rr_ui_set_background(rr_ui_h_container_init(rr_ui_container_init(), 5, 0, 1, rr_ui_rivet_init(this)), 0x80000000)),
+                    -1, -1),
+                10));
+    rr_ui_container_add_element(this->window, rr_ui_settings_container_init());
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(

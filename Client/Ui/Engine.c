@@ -93,6 +93,18 @@ struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c,
     return c;
 }
 
+struct rr_ui_element *rr_ui_h_pad(struct rr_ui_element *c, float pad)
+{
+    c->x -= c->h_justify * pad;
+    return c;
+}
+
+struct rr_ui_element *rr_ui_v_pad(struct rr_ui_element *c, float pad)
+{
+    c->y -= c->v_justify * pad;
+    return c;
+}
+
 struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
 {
     c->x -= c->h_justify * pad;

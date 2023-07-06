@@ -87,7 +87,7 @@ static uint8_t inventory_button_animate(struct rr_ui_element *this,
 static uint8_t inventory_container_animate(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
-    if (game->ui_open != 1 || game->simulation_ready)
+    if (game->bottom_ui_open != 1 || game->simulation_ready)
     {
         if (this->first_frame == 1)
         {
