@@ -36,7 +36,8 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.name, name);
     strcpy(this->rivet_account.avatar_url, avatar_url);
     strcpy(this->rivet_account.account_number, account_number);
-    printf("aaaa %p %p %s\n", &this->rivet_account.name, this, this->rivet_account.name);
+    printf("aaaa %p %p %s\n", &this->rivet_account.name, this,
+           this->rivet_account.name);
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -66,12 +67,30 @@ void rr_game_init(struct rr_game *this)
 
     rr_ui_container_add_element(
         this->window,
-        rr_ui_pad(rr_ui_set_justify(
-                    rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 2, 
-                    rr_ui_settings_toggle_button_init(), 
-                    rr_ui_set_background(rr_ui_h_container_init(rr_ui_container_init(), 5, 0, 1, rr_ui_rivet_init(this)), 0x80000000)),
-                    -1, -1),
-                10));
+        rr_ui_pad(
+            rr_ui_set_justify(
+                rr_ui_set_background(
+                    rr_ui_h_container_init(
+                    rr_ui_container_init(), 10, 10, 3,
+                        rr_ui_settings_toggle_button_init(),
+                        rr_ui_set_background(
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 0, 1,
+                                rr_ui_text_init("discord.gg/kKWAUEbk9T", 15, 0xffffffff)
+                            ),
+                        0x40ffffff),
+                        rr_ui_set_background(
+                            rr_ui_h_container_init(
+                            rr_ui_container_init(), 5, 0, 1,
+                                rr_ui_rivet_init(this)
+                            ),
+                        0x40ffffff)
+                    ),
+                0x80000000),
+            -1, -1
+            ),
+        10)
+    );
     rr_ui_container_add_element(this->window, rr_ui_settings_container_init());
     rr_ui_container_add_element(
         this->window,
@@ -84,7 +103,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_container_init(), 10, 20, 2,
                         rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
                         rr_ui_set_background(
-                            rr_ui_labeled_button_init("Join", 36, NULL),
+                            rr_ui_join_button_init("Join", 36, NULL),
                             0xff1dd129)),
                     rr_ui_set_background(
                         rr_ui_link_toggle(
@@ -135,12 +154,14 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_text_init("powered by Rivet", 15, 0xffffffff)),
                 0x00000000),
             &this->simulation_not_ready));
+    rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(
-        this->window,rr_ui_inventory_container_init()
-    );
-    rr_ui_container_add_element(
-        this->window,rr_ui_link_toggle(rr_ui_pad(rr_ui_set_justify(rr_ui_inventory_toggle_button_init(), -1, 1), 10), &this->simulation_not_ready)
-    );
+        this->window,
+        rr_ui_link_toggle(
+            rr_ui_pad(
+                rr_ui_set_justify(rr_ui_inventory_toggle_button_init(), -1, 1),
+                10),
+            &this->simulation_not_ready));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(

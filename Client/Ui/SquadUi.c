@@ -254,3 +254,8 @@ struct rr_ui_element *rr_ui_info_init()
     element->on_event = info_data_on_event;
     return element;
 }
+
+struct rr_ui_element *rr_ui_join_button_init()
+{
+    return rr_ui_labeled_button_init("Join", 36, 0);
+}
