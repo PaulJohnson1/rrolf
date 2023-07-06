@@ -25,6 +25,7 @@ set(SRCS
     Ui/ScrollContainer.c
     Ui/SquadUi.c
     Ui/Text.c
+    Ui/TitleScreenButton.c
     Game.c
     InputData.c
     Main.c

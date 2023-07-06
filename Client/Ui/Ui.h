@@ -6,6 +6,19 @@ struct rr_game;
 struct rr_ui_element;
 struct rr_game_squad_client;
 
+struct text_metadata
+{
+    char *text;
+    float size;
+};
+
+struct dynamic_text_metadata
+{
+    char *text;
+    float size;
+    void (*get_text)(struct rr_ui_element *, struct rr_game *);
+};
+
 struct rr_ui_choose_element_metadata
 {
     uint8_t (*choose)(struct rr_ui_element *, struct rr_game *);
@@ -69,7 +82,8 @@ struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float, float);
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
                                                   struct rr_ui_element *);
 
-struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
+struct rr_ui_element *rr_ui_text_init(char *, float, uint32_t);
+struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t, void (*)(struct rr_ui_element *, struct rr_game *));
 
 struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
 
@@ -92,3 +106,5 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float)
 struct rr_ui_element *rr_ui_flower_init(uint8_t, float);
 
 struct rr_ui_element *rr_ui_rivet_init(struct rr_game *);
+
+struct rr_ui_element *rr_ui_inventory_toggle_button_init();

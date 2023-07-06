@@ -205,9 +205,15 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
         0x40ffffff);
 }
 
+static void squad_countdown(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct dynamic_text_metadata *data = this->data;
+    data->text[sprintf(data->text, "Starting in %d", game->ticks_until_game_start / 25)] = 0;
+}
+
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
 {
-    return rr_ui_text_init("Starting in x", 18, 0xffffffff);
+    return rr_ui_dynamic_text_init(18, 0xffffffff, squad_countdown);
 }
 
 struct info_metadata

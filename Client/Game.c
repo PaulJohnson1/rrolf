@@ -39,6 +39,12 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     printf("aaaa %p %p %s\n", &this->rivet_account.name, this, this->rivet_account.name);
 }
 
+static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_this_tick & 1)
+        game->ui_open = 0;
+}
+
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
@@ -46,6 +52,7 @@ void rr_game_init(struct rr_game *this)
     this->window->container = this->window;
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
+    this->window->on_event = window_on_event;
     this->true_ptr = 1;
 
 #ifdef RIVET_BUILD
@@ -130,19 +137,11 @@ void rr_game_init(struct rr_game *this)
                 0x00000000),
             &this->simulation_not_ready));
     rr_ui_container_add_element(
-        this->window,
-        rr_ui_set_background(
-            rr_ui_link_toggle(
-                rr_ui_pad(rr_ui_set_justify(
-                              rr_ui_v_container_init(
-                                  rr_ui_container_init(), 10, 10, 2,
-                                  rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(
-                                      rr_ui_inventory_container_init(), 400)),
-                              -1, 1),
-                          20),
-                &this->simulation_not_ready),
-            0xff5a9fdb));
+        this->window,rr_ui_inventory_container_init()
+    );
+    rr_ui_container_add_element(
+        this->window,rr_ui_link_toggle(rr_ui_pad(rr_ui_set_justify(rr_ui_inventory_toggle_button_init(), -1, 1), 10), &this->simulation_not_ready)
+    );
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -2256,6 +2255,8 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     if (this->focused != NULL)
         this->focused->on_event(this->focused, this);
+    else
+        this->window->on_event(this->window, this);
     if (this->prev_focused != this->focused && this->prev_focused != NULL)
         this->prev_focused->on_event(this->prev_focused, this);
 #ifndef EMSCRIPTEN

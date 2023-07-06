@@ -84,6 +84,36 @@ static uint8_t inventory_button_animate(struct rr_ui_element *this,
     return 1;
 }
 
+static uint8_t inventory_container_animate(struct rr_ui_element *this,
+                                        struct rr_game *game)
+{
+    if (game->ui_open != 1 || game->simulation_ready)
+    {
+        if (this->first_frame == 1)
+        {
+            this->completely_hidden = 1;
+            this->animation = 1;
+            return 0;
+        }
+        this->animation = rr_lerp(this->animation, 1, 0.15);
+        if (this->animation > 0.99)
+        {
+            this->animation = 1;
+            this->completely_hidden = 1;
+            return 0;
+        }
+    }
+    else
+    {
+        this->completely_hidden = 0;
+        this->animation = rr_lerp(this->animation, 0, 0.15);
+    }
+    this->width = this->abs_width;
+    this->height = this->abs_height;
+    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
+    return 1;
+}
+
 static void inventory_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
@@ -137,5 +167,17 @@ struct rr_ui_element *rr_ui_inventory_container_init()
                 this,
                 rr_ui_set_justify(inventory_button_init(id, rarity), -1, -1));
     this->fill = 0x00000000;
-    return this;
+    struct rr_ui_element *c = rr_ui_set_background(
+                rr_ui_pad(rr_ui_set_justify(
+                              rr_ui_v_container_init(
+                                  rr_ui_container_init(), 10, 10, 2,
+                                  rr_ui_text_init("Inventory", 24, 0xffffffff),
+                                  rr_ui_scroll_container_init(
+                                      this, 400)),
+                              -1, 1),
+                          20),
+            0xff5a9fdb);
+    c->x += 60 + 20;
+    c->animate = inventory_container_animate;
+    return c;
 }
