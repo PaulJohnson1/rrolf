@@ -27,6 +27,7 @@ set(SRCS
     Ui/SquadUi.c
     Ui/Text.c
     Ui/TitleScreenButton.c
+    Ui/WaveUi.c
     Game.c
     InputData.c
     Main.c

@@ -108,12 +108,14 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     case rr_ai_state_attacking:
     {
         if (!rr_simulation_has_entity(
-                this, ai->target_entity)) // target died (what a noob)
+                this, ai->target_entity) || rr_simulation_get_relations(this, ai->target_entity)->team == rr_simulation_get_relations(this, entity)->team) // target died (what a noob)
         {
             // ai->ai_state = rr_ai_state_spin2team;
             ai->target_entity =
                 RR_NULL_ENTITY; // you really don't want the entity being
                                 // reallocated and then the mob goes sicko mode
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = 2;
             break;
         }
         struct rr_component_physical *target_physical =

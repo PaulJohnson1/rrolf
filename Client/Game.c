@@ -67,30 +67,33 @@ void rr_game_init(struct rr_game *this)
 
     rr_ui_container_add_element(
         this->window,
-        rr_ui_pad(
-            rr_ui_set_justify(
-                rr_ui_set_background(
-                    rr_ui_h_container_init(
-                    rr_ui_container_init(), 10, 10, 3,
-                        rr_ui_settings_toggle_button_init(),
-                        rr_ui_set_background(
-                            rr_ui_h_container_init(
+        rr_ui_link_toggle(
+            rr_ui_pad(
+                rr_ui_set_justify(
+                    rr_ui_set_background(
+                        rr_ui_h_container_init(
+                        rr_ui_container_init(), 10, 10, 3,
+                            rr_ui_settings_toggle_button_init(),
+                            rr_ui_set_background(
+                                rr_ui_h_container_init(
+                                    rr_ui_container_init(), 5, 0, 1,
+                                    rr_ui_text_init("discord.gg/kKWAUEbk9T", 15, 0xffffffff)
+                                ),
+                            0x40ffffff),
+                            rr_ui_set_background(
+                                rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 0, 1,
-                                rr_ui_text_init("discord.gg/kKWAUEbk9T", 15, 0xffffffff)
-                            ),
-                        0x40ffffff),
-                        rr_ui_set_background(
-                            rr_ui_h_container_init(
-                            rr_ui_container_init(), 5, 0, 1,
-                                rr_ui_rivet_init(this)
-                            ),
-                        0x40ffffff)
-                    ),
-                0x80000000),
-            -1, -1
-            ),
-        10)
+                                    rr_ui_rivet_init(this)
+                                ),
+                            0x40ffffff)
+                        ),
+                    0x80000000),
+                -1, -1
+                ),
+            10)
+        , &this->simulation_not_ready)
     );
+    rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_wave_container_init(), &this->simulation_ready));
     rr_ui_container_add_element(this->window, rr_ui_settings_container_init());
     rr_ui_container_add_element(
         this->window,
@@ -2347,6 +2350,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     this->input_data->mouse_buttons_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
+    printf("%f %f\n", this->input_data->mouse_x, this->input_data->mouse_y);
 }
 
 void rr_game_connect_socket(struct rr_game *this)

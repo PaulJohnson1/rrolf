@@ -42,6 +42,10 @@ void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     }
     data->lerp_y = rr_lerp(data->lerp_y, data->y, 0.2);
     struct rr_renderer *renderer = game->renderer;
+    rr_renderer_set_stroke(renderer, 0x80000000);
+    rr_renderer_set_line_width(renderer, 3);
+    rr_renderer_begin_path(renderer);
+    
     rr_renderer_begin_path(renderer);
     rr_renderer_rect(renderer, renderer->scale * (-this->abs_width / 2),
                      renderer->scale * (-this->abs_height / 2),
