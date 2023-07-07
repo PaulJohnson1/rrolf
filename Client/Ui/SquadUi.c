@@ -208,7 +208,10 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 static void squad_countdown(struct rr_ui_element *this, struct rr_game *game)
 {
     struct dynamic_text_metadata *data = this->data;
-    data->text[sprintf(data->text, "Starting in %d", game->ticks_until_game_start / 25)] = 0;
+    if (game->ticks_until_game_start == 125)
+        data->text = "";
+    else
+        data->text[sprintf(data->text, "Starting in %d", game->ticks_until_game_start / 25)] = 0;
 }
 
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
@@ -255,7 +258,28 @@ struct rr_ui_element *rr_ui_info_init()
     return element;
 }
 
+static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct labeled_button_metadata *data = this->data;
+    if (game->socket_pending)
+    {
+        this->fill = 0xff999999;
+        data->text = "Connecting...";
+    }
+    else
+    { 
+        rr_ui_element_check_if_focused(this, game);
+        this->fill = 0xff1dd129;
+    if (game->socket_ready)
+        data->text = "Ready";
+    else
+        this->fill = 0xff1dd129;
+    }
+}
+
 struct rr_ui_element *rr_ui_join_button_init()
 {
-    return rr_ui_labeled_button_init("Join", 36, 0);
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 36, 0);
+    this->poll_events = labeled_button_poll_events;
+    return this;
 }

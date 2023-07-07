@@ -24,11 +24,11 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_pteranodon, 37.5, 50, 26.0f, {}},
     {rr_mob_id_dakotaraptor, 35, 40, 30.0f, {}}};
 
-float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 1.5, 2.5, 4, 6, 9, 14};
+float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 2, 4, 8, 16, 48, 196};
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1.0, 1.0, 1.0}, {2.5, 1.6, 1.2}, {4.5, 2.6, 1.6}, {9.0, 4.5, 2.0},
-    {15, 8.0, 2.5},  {25, 13, 4},     {50, 25, 6}};
+    {1.0, 1.0, 1.0}, {2.5, 1.6, 1.2}, {8.0, 3.0, 1.6}, {25.0, 7.5, 2.0},
+    {75, 20.0, 2.5},  {250, 50.0, 4},     {1000, 200, 6}};
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,

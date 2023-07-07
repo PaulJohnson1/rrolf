@@ -106,7 +106,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_container_init(), 10, 20, 2,
                         rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
                         rr_ui_set_background(
-                            rr_ui_join_button_init("Join", 36, NULL),
+                            rr_ui_join_button_init(),
                             0xff1dd129)),
                     rr_ui_set_background(
                         rr_ui_link_toggle(

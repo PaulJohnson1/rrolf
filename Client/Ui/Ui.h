@@ -6,9 +6,16 @@ struct rr_game;
 struct rr_ui_element;
 struct rr_game_squad_client;
 
+
+struct labeled_button_metadata
+{
+    uint8_t *toggle;
+    char *text;
+};
+
 struct text_metadata
 {
-    char const *text;
+    char *text;
     float size;
 };
 
