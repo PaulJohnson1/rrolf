@@ -36,8 +36,6 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.name, name);
     strcpy(this->rivet_account.avatar_url, avatar_url);
     strcpy(this->rivet_account.account_number, account_number);
-    printf("aaaa %p %p %s\n", &this->rivet_account.name, this,
-           this->rivet_account.name);
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -57,7 +55,6 @@ void rr_game_init(struct rr_game *this)
     this->true_ptr = 1;
 
 #ifdef RIVET_BUILD
-    printf("hi %p\n", this);
     strcpy(this->rivet_account.name, "loading");
     strcpy(this->rivet_account.avatar_url, "");
     strcpy(this->rivet_account.token, "");
@@ -2350,7 +2347,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     this->input_data->mouse_buttons_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
-    printf("%f %f\n", this->input_data->mouse_x, this->input_data->mouse_y);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
