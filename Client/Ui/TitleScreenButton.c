@@ -28,7 +28,6 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
                            this->width, this->height, 6);
     rr_renderer_fill(renderer);
     rr_renderer_stroke(renderer);
-    printf("p %f %f\n", this->abs_x, this->abs_y);
 }
 
 void inventory_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)

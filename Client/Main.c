@@ -4,6 +4,7 @@
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
 #include <Shared/Bitset.h>
+#include <Shared/MagicNumber.h>
 #include <Shared/Rivet.h>
 
 #include <stdint.h>
@@ -203,7 +204,8 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
 
 int main()
 {
-    puts("client init");
+    printf("client init version %llu",
+           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64);
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
