@@ -31,6 +31,15 @@ static void container_on_render(struct rr_ui_element *this,
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);
         }
+        /*
+        rr_renderer_begin_path(renderer);
+        rr_renderer_round_rect(renderer, -this->abs_width / 2,
+                               -this->abs_height / 2, this->abs_width,
+                               this->abs_height, 6);
+        rr_renderer_set_stroke(renderer, 0xff000000);
+        rr_renderer_set_line_width(renderer, 2);
+        rr_renderer_stroke(renderer);
+        */
         rr_renderer_context_state_free(renderer, &state2);
     }
     struct rr_ui_container_metadata *data = this->data;

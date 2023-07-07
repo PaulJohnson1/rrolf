@@ -69,6 +69,7 @@ struct rr_game
     struct rr_websocket socket;
     struct rr_game_crafting_data crafting_data;
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
+    struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
     struct rr_ui_element *squad_info_tooltip;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     struct rr_renderer *renderer;

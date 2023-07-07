@@ -112,8 +112,7 @@ struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
     return c;
 }
 
-static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing,
-                                  float inner_spacing)
+void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
 {
     struct rr_ui_container_metadata *data = c->data;
     float height = 0;
@@ -123,6 +122,7 @@ static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing,
         struct rr_ui_element *element = data->start[i];
         if (element->completely_hidden)
             continue;
+        element->h_justify = -1;
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
 
@@ -137,8 +137,7 @@ static void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing,
     c->abs_height = height;
 }
 
-static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing,
-                                  float inner_spacing)
+void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
 {
     struct rr_ui_container_metadata *data = c->data;
     float width = 0;
@@ -148,6 +147,7 @@ static void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing,
         struct rr_ui_element *element = data->start[i];
         if (element->completely_hidden)
             continue;
+        element->v_justify = -1;            
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
 

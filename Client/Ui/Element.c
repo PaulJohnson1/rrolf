@@ -115,7 +115,10 @@ void rr_ui_element_check_if_focused(struct rr_ui_element *this,
         game->focused = NULL;
 }
 
-void rr_ui_no_focus(struct rr_ui_element *this, struct rr_game *game) {}
+void rr_ui_tooltip_focus(struct rr_ui_element *this, struct rr_game *game) 
+{
+    this->hidden = &game->false_ptr;
+}
 
 struct rr_ui_element *rr_ui_element_init()
 {

@@ -278,7 +278,45 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_link_toggle(
                     rr_ui_set_justify(this->petal_tooltips[id][rarity], -1, -1),
                     &this->false_ptr));
-            this->petal_tooltips[id][rarity]->poll_events = rr_ui_no_focus;
+            this->petal_tooltips[id][rarity]->poll_events = rr_ui_tooltip_focus;
+            // remember that these don't have a container
+        }
+    }
+    for (uint32_t id = 0; id < rr_mob_id_max; ++id)
+    {
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            char *hp = malloc((sizeof *hp) * 16);
+            hp[sprintf(hp, "%.1f",
+                       RR_MOB_DATA[id].health *
+                           RR_MOB_RARITY_SCALING[rarity].health)] = 0;
+            char *dmg = malloc((sizeof *dmg) * 16);
+            dmg[sprintf(dmg, "%.1f",
+                        RR_MOB_DATA[id].damage *
+                            RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+            this->mob_tooltips[id][rarity] = rr_ui_set_background(
+                rr_ui_v_container_init(
+                    rr_ui_container_init(), 10, 5, 3,
+                        rr_ui_text_init(RR_MOB_NAMES[id], 24, 0xffffffff),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(
+                            rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Health: ", 12, 0xff44ff44),
+                            rr_ui_text_init(hp, 12, 0xff44ff44)),
+                        -1, 0),
+                    rr_ui_set_justify(
+                        rr_ui_h_container_init(
+                            rr_ui_container_init(), 0, 0, 2,
+                            rr_ui_text_init("Damage: ", 12, 0xffff4444),
+                            rr_ui_text_init(dmg, 12, 0xffff4444)),
+                        -1, 0)),
+                0x80000000);
+            rr_ui_container_add_element(
+                this->window,
+                rr_ui_link_toggle(
+                    rr_ui_set_justify(this->mob_tooltips[id][rarity], -1, -1),
+                    &this->false_ptr));
+            this->mob_tooltips[id][rarity]->poll_events = rr_ui_tooltip_focus;
             // remember that these don't have a container
         }
     }
@@ -2265,8 +2303,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->simulation_not_ready = this->simulation_ready == 0;
     this->prev_focused = this->focused;
     rr_ui_container_refactor(this->window);
-    this->window->poll_events(this->window, this);
     rr_ui_render_element(this->window, this);
+    this->window->poll_events(this->window, this);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
