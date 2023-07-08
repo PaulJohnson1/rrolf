@@ -20,10 +20,10 @@ struct loadout_button_metadata
     uint8_t pos;
     uint8_t prev_id;
     uint8_t prev_rarity;
+    float secondary_animation;
 };
 
-static void loadout_button_on_event(struct rr_ui_element *this,
-                                    struct rr_game *game)
+static void loadout_button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_this_tick & 1)
@@ -40,8 +40,7 @@ static void loadout_button_on_event(struct rr_ui_element *this,
     }
 }
 
-static void petal_switch_button_event(struct rr_ui_element *this,
-                                      struct rr_game *game)
+static void petal_switch_button_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_this_tick & 1) // mouse_down
@@ -66,8 +65,12 @@ static void petal_switch_button_event(struct rr_ui_element *this,
     }
 }
 
-static uint8_t title_screen_loadout_button_animate(struct rr_ui_element *this,
-                                                   struct rr_game *game)
+static uint8_t title_screen_loadout_button_should_show(struct rr_ui_element *this, struct rr_game *game)
+{
+    return !game->simulation_ready;
+}
+
+static void title_screen_loadout_button_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -75,36 +78,20 @@ static uint8_t title_screen_loadout_button_animate(struct rr_ui_element *this,
     rr_renderer_render_background(renderer, 255);
     uint8_t id = game->loadout[data->pos].id;
     uint8_t rarity = game->loadout[data->pos].rarity;
-    if (id == 0)
-    {
-        if (this->first_frame == 1)
-        {
-            this->animation = 1;
-            return 0;
-        }
-        this->animation = rr_lerp(this->animation, 1, 0.25);
-        if (this->animation > 0.99)
-        {
-            this->animation = 1;
-            return 0;
-        }
-    }
-    else
-    {
-        data->prev_id = id;
-        data->prev_rarity = rarity;
-        this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.5);
-    }
-    rr_renderer_scale(game->renderer, (1 - this->animation));
-    return 1;
+    data->secondary_animation = rr_lerp(data->secondary_animation, id == 0, 0.2);
+    
+    data->prev_id = id;
+    data->prev_rarity = rarity;
+    rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
-static uint8_t loadout_button_animate(struct rr_ui_element *this,
-                                      struct rr_game *game)
+static uint8_t loadout_button_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->player_info == 0)
-        return 0;
+    return game->simulation_ready;
+}
+
+static void loadout_button_animate(struct rr_ui_element *this, struct rr_game *game)
+{
     struct rr_component_player_info *player_info = game->player_info;
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -115,31 +102,13 @@ static uint8_t loadout_button_animate(struct rr_ui_element *this,
                        : &player_info->secondary_slots[data->pos - 10];
     uint8_t id = slot->id;
     uint8_t rarity = slot->rarity;
-    if (id == 0)
+    data->secondary_animation = rr_lerp(data->secondary_animation, id != data->prev_id || rarity != data->prev_rarity || id == 0, 0.2);    
+    if (id != 0)
     {
-        if (this->first_frame == 1)
-        {
-            this->animation = 1;
-            return 0;
-        }
-        this->animation = rr_lerp(this->animation, 1, 0.25);
-        if (this->animation > 0.99)
-        {
-            this->animation = 1;
-            return 0;
-        }
-    }
-    else
-    {
-        if (id != data->prev_id || rarity != data->prev_rarity)
-            this->animation = 1;
         data->prev_id = id;
         data->prev_rarity = rarity;
-        this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.5);
     }
-    rr_renderer_scale(game->renderer, (1 - this->animation));
-    return 1;
+    rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
 static void loadout_button_on_render(struct rr_ui_element *this,
@@ -148,8 +117,7 @@ static void loadout_button_on_render(struct rr_ui_element *this,
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
 }
 
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)
@@ -159,11 +127,13 @@ struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)
     data->pos = pos;
     data->prev_id = 0;
     data->prev_rarity = 0;
+    data->secondary_animation = 1;
     this->data = data;
     this->abs_width = this->width = pos < 10 ? 60 : 50;
     this->abs_height = this->height = pos < 10 ? 60 : 50;
     this->on_render = loadout_button_on_render;
     this->animate = title_screen_loadout_button_animate;
+    this->should_show = title_screen_loadout_button_should_show;
     this->on_event = loadout_button_on_event;
     return this;
 }
@@ -175,11 +145,13 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos)
     data->pos = pos;
     data->prev_id = 0;
     data->prev_rarity = 0;
+    data->secondary_animation = 1;
     this->data = data;
     this->abs_width = this->width = pos < 10 ? 60 : 50;
     this->abs_height = this->height = pos < 10 ? 60 : 50;
     this->on_render = loadout_button_on_render;
     this->animate = loadout_button_animate;
+    this->should_show = loadout_button_should_show;
     this->on_event = petal_switch_button_event;
     return this;
 }

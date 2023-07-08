@@ -104,50 +104,30 @@ struct squad_loadout_button_metadata
     uint8_t prev_rarity;
 };
 
-static uint8_t squad_loadout_button_animate(struct rr_ui_element *this,
-                                            struct rr_game *game)
+static uint8_t squad_loadout_button_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
-    if (data->petal->id == 0)
-    {
-        if (this->first_frame == 1)
-        {
-            this->completely_hidden = 1;
-            this->animation = 1;
-            return 0;
-        }
-        this->animation = rr_lerp(this->animation, 1, 0.25);
-        if (this->animation > 0.99)
-        {
-            this->animation = 1;
-            this->completely_hidden = 1;
-            return 0;
-        }
-    }
-    else
-    {
-        data->prev_id = data->petal->id;
-        data->prev_rarity = data->petal->rarity;
-        this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.5);
-    }
-    rr_renderer_scale(game->renderer, (1 - this->animation));
-    return 1;
+    return data->petal->id;
 }
 
-static void squad_loadout_button_on_render(struct rr_ui_element *this,
-                                           struct rr_game *game)
+static void squad_loadout_button_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct squad_loadout_button_metadata *data = this->data;
+    data->prev_id = data->petal->id;
+    data->prev_rarity = data->petal->rarity;
+    rr_renderer_scale(game->renderer, (1 - this->animation));
+}
+
+static void squad_loadout_button_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
 }
 
-static struct rr_ui_element *
-squad_loadout_button_init(struct rr_game_loadout_petal *petal)
+static struct rr_ui_element *squad_loadout_button_init(struct rr_game_loadout_petal *petal)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_loadout_button_metadata *data = malloc(sizeof *data);
@@ -158,11 +138,11 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal)
     this->abs_height = this->height = 15;
     this->on_render = squad_loadout_button_on_render;
     this->animate = squad_loadout_button_animate;
+    this->should_show = squad_loadout_button_should_show;
     return this;
 }
 
-static uint8_t should_be_ready(struct rr_ui_element *choose,
-                               struct rr_game *game)
+static uint8_t should_be_ready(struct rr_ui_element *choose, struct rr_game *game)
 {
     return ((struct rr_game_squad_client
                  *)((struct rr_ui_choose_element_metadata *)choose->data)
@@ -170,8 +150,7 @@ static uint8_t should_be_ready(struct rr_ui_element *choose,
         ->ready;
 }
 
-static struct rr_ui_element *
-rr_ui_player_init(struct rr_game_squad_client *player)
+static struct rr_ui_element *rr_ui_player_init(struct rr_game_squad_client *player)
 {
     struct rr_ui_element *choose_container = rr_ui_choose_element_init(
         rr_ui_flower_init(0, 50), rr_ui_flower_init(1, 50), should_be_ready);
@@ -180,8 +159,7 @@ rr_ui_player_init(struct rr_game_squad_client *player)
     return choose_container;
 }
 
-struct rr_ui_element *
-rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
+struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 2);

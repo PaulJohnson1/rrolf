@@ -17,33 +17,11 @@ static void default_function(struct rr_ui_element *this, struct rr_game *game)
     return; // does nothing
 }
 
-static uint8_t default_animate(struct rr_ui_element *this, struct rr_game *game)
+static void default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (this->should_show(this, game) == 0)
-    {
-        if (this->first_frame == 1)
-        {
-            this->completely_hidden = 1;
-            this->animation = 1;
-            return 0;
-        }
-        this->animation = rr_lerp(this->animation, 1, 0.4);
-        if (this->animation > 0.99)
-        {
-            this->animation = 1;
-            this->completely_hidden = 1;
-            return 0;
-        }
-    }
-    else
-    {
-        this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.4);
-    }
     this->width = this->abs_width * (1 - this->animation);
     this->height = this->abs_height * (1 - this->animation);
     rr_renderer_scale(game->renderer, (1 - this->animation));
-    return 1;
 }
 
 void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
@@ -77,9 +55,14 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
                 game->renderer->scale); // necessary btw
     this->abs_x = game->renderer->state.transform_matrix[2];
     this->abs_y = game->renderer->state.transform_matrix[5];
-    if (this->animate(this, game))
-        this->on_render(this, game);
+
+    this->animation = rr_lerp(this->animation, this->should_show(this, game) == 0, 0.4 + 0.6 * this->first_frame);
     this->first_frame = 0;
+
+    this->completely_hidden = this->animation > 0.99;
+    this->animate(this, game);
+    if (this->completely_hidden == 0)
+        this->on_render(this, game);
     rr_renderer_context_state_free(game->renderer, &state);
 }
 

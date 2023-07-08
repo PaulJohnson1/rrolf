@@ -83,26 +83,8 @@ void rr_game_init(struct rr_game *this)
         rr_ui_link_toggle(
             rr_ui_pad(
                 rr_ui_set_justify(
-                    rr_ui_set_background(
-                        rr_ui_h_container_init(
-                        rr_ui_container_init(), 10, 10, 3,
-                            rr_ui_settings_toggle_button_init(),
-                            rr_ui_set_background(
-                                rr_ui_h_container_init(
-                                    rr_ui_container_init(), 5, 0, 1,
-                                    rr_ui_text_init("discord.gg/kKWAUEbk9T", 15, 0xffffffff)
-                                ),
-                            0x40ffffff),
-                            rr_ui_set_background(
-                                rr_ui_h_container_init(
-                                rr_ui_container_init(), 5, 0, 1,
-                                    rr_ui_rivet_init(this)
-                                ),
-                            0x40ffffff)
-                        ),
-                    0x80000000),
-                -1, -1
-                ),
+                    rr_ui_rivet_container_init(this),
+                -1, -1),
             10)
         , simulation_not_ready)
     );

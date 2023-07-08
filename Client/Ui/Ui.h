@@ -51,7 +51,7 @@ struct rr_ui_element
     struct rr_ui_element *container;
     void *data;
     uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
-    uint8_t (*animate)(struct rr_ui_element *, struct rr_game *);
+    void (*animate)(struct rr_ui_element *, struct rr_game *);
     void (*on_render)(struct rr_ui_element *, struct rr_game *);
     void (*on_event)(struct rr_ui_element *, struct rr_game *);
     void (*poll_events)(struct rr_ui_element *, struct rr_game *);
@@ -95,9 +95,7 @@ struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t, void (*)(struct r
 
 struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
 
-struct rr_ui_element *rr_ui_choose_element_init(
-    struct rr_ui_element *, struct rr_ui_element *,
-    uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
 
 // custom
 struct rr_ui_element *
@@ -113,7 +111,7 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
 struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_flower_init(uint8_t, float);
 
-struct rr_ui_element *rr_ui_rivet_init(struct rr_game *);
+struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_inventory_toggle_button_init();
 struct rr_ui_element *rr_ui_settings_toggle_button_init();

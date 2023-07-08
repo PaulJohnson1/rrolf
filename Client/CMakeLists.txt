@@ -19,15 +19,14 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
-    Ui/InventoryUi.c
-    Ui/LoadoutUi.c
-    Ui/Rivet.c
+    Ui/TitleScreen/Inventory.c
+    Ui/InGame/Loadout.c
+    Ui/TitleScreen/Rivet.c
     Ui/ScrollContainer.c
-    Ui/Settings.c
-    Ui/SquadUi.c
+    Ui/TitleScreen/Settings.c
+    Ui/TitleScreen/Squad.c
     Ui/Text.c
-    Ui/TitleScreenButton.c
-    Ui/WaveUi.c
+    Ui/InGame/Wave.c
     Game.c
     InputData.c
     Main.c
