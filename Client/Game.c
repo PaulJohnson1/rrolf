@@ -38,6 +38,22 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.account_number, account_number);
 }
 
+static uint8_t simulation_not_ready(struct rr_ui_element *this, struct rr_game *game)
+{
+    return 1 - game->simulation_ready;
+}
+
+static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game)
+{
+    return game->simulation_ready;
+}
+
+static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
+{
+    return game->socket_ready;
+}
+
+
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_this_tick & 1)
@@ -88,9 +104,9 @@ void rr_game_init(struct rr_game *this)
                 -1, -1
                 ),
             10)
-        , &this->simulation_not_ready)
+        , simulation_not_ready)
     );
-    rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_wave_container_init(), &this->simulation_ready));
+    rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
     rr_ui_container_add_element(this->window, rr_ui_settings_container_init());
     rr_ui_container_add_element(
         this->window,
@@ -125,7 +141,7 @@ void rr_game_init(struct rr_game *this)
                                         &this->squad_members[3])),
                                 rr_ui_set_justify(rr_ui_countdown_init(this), 1,
                                                   0)),
-                            &this->socket_ready),
+                            socket_ready),
                         0x40ffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15, 10,
@@ -153,7 +169,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_title_screen_loadout_button_init(19)),
                     rr_ui_text_init("powered by Rivet", 15, 0xffffffff)),
                 0x00000000),
-            &this->simulation_not_ready));
+            simulation_not_ready));
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(
         this->window,
@@ -161,7 +177,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_pad(
                 rr_ui_set_justify(rr_ui_inventory_toggle_button_init(), -1, 1),
                 10),
-            &this->simulation_not_ready));
+            simulation_not_ready));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -191,7 +207,7 @@ void rr_game_init(struct rr_game *this)
                                            rr_ui_loadout_button_init(18),
                                            rr_ui_loadout_button_init(19))),
                 0, 1),
-            &this->simulation_ready));
+            simulation_ready));
 
     this->squad_info_tooltip = rr_ui_container_add_element(
         this->window,
@@ -214,7 +230,8 @@ void rr_game_init(struct rr_game *this)
                             -1, 0)),
                     0x80000000),
                 -1, -1),
-            &this->false_ptr));
+            rr_ui_never_show));
+    this->squad_info_tooltip->poll_events = rr_ui_no_focus;
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -277,8 +294,8 @@ void rr_game_init(struct rr_game *this)
                 this->window,
                 rr_ui_link_toggle(
                     rr_ui_set_justify(this->petal_tooltips[id][rarity], -1, -1),
-                    &this->false_ptr));
-            this->petal_tooltips[id][rarity]->poll_events = rr_ui_tooltip_focus;
+                    rr_ui_never_show));
+            this->petal_tooltips[id][rarity]->poll_events = rr_ui_no_focus;
             // remember that these don't have a container
         }
     }
@@ -315,8 +332,8 @@ void rr_game_init(struct rr_game *this)
                 this->window,
                 rr_ui_link_toggle(
                     rr_ui_set_justify(this->mob_tooltips[id][rarity], -1, -1),
-                    &this->false_ptr));
-            this->mob_tooltips[id][rarity]->poll_events = rr_ui_tooltip_focus;
+                    rr_ui_never_show));
+            this->mob_tooltips[id][rarity]->poll_events = rr_ui_no_focus;
             // remember that these don't have a container
         }
     }
@@ -2305,11 +2322,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_ui_container_refactor(this->window);
     rr_ui_render_element(this->window, this);
     this->window->poll_events(this->window, this);
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            this->petal_tooltips[id][rarity]->hidden = &this->false_ptr;
-
-    this->squad_info_tooltip->hidden = &this->false_ptr;
 
     if (this->focused != NULL)
         this->focused->on_event(this->focused, this);

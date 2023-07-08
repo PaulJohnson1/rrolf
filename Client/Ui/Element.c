@@ -19,7 +19,7 @@ static void default_function(struct rr_ui_element *this, struct rr_game *game)
 
 static uint8_t default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (this->hidden != NULL && *this->hidden == 0)
+    if (this->should_show(this, game) == 0)
     {
         if (this->first_frame == 1)
         {
@@ -85,8 +85,7 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
 
 void rr_ui_toggle_tooltip(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
 {
-    tooltip->hidden = this == game->prev_focused ? &game->true_ptr : &game->false_ptr;
-
+    tooltip->should_show = rr_ui_always_show;
     tooltip->x =
         (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
     tooltip->y =
@@ -115,10 +114,21 @@ void rr_ui_element_check_if_focused(struct rr_ui_element *this,
         game->focused = NULL;
 }
 
-void rr_ui_tooltip_focus(struct rr_ui_element *this, struct rr_game *game) 
+uint8_t rr_ui_always_show(struct rr_ui_element *this, struct rr_game *game) 
 {
-    this->hidden = &game->false_ptr;
+    return 1;
 }
+
+uint8_t rr_ui_never_show(struct rr_ui_element *this, struct rr_game *game) 
+{
+    return 0;
+}
+
+void rr_ui_no_focus(struct rr_ui_element *this, struct rr_game *game)
+{
+    this->should_show = rr_ui_never_show;
+}
+
 
 struct rr_ui_element *rr_ui_element_init()
 {
@@ -127,7 +137,7 @@ struct rr_ui_element *rr_ui_element_init()
     this->first_frame = 1;
     this->on_render = default_function;
     this->on_event = default_function; // null on_event
-    this->hidden = NULL;               // null hidden ptr (always show)
+    this->should_show = rr_ui_always_show;               
     this->poll_events = rr_ui_element_check_if_focused;
     this->animate = default_animate;
     return this;
@@ -140,9 +150,8 @@ struct rr_ui_element *rr_ui_static_space_init(float s)
     return this;
 }
 
-struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *this,
-                                        uint8_t *toggle_ptr)
+struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *this, uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *))
 {
-    this->hidden = toggle_ptr;
+    this->should_show = should_show;
     return this;
 }

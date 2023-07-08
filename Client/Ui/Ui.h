@@ -50,7 +50,6 @@ struct rr_ui_element
 {
     struct rr_ui_element *container;
     void *data;
-    uint8_t *hidden;
     uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
     uint8_t (*animate)(struct rr_ui_element *, struct rr_game *);
     void (*on_render)(struct rr_ui_element *, struct rr_game *);
@@ -77,8 +76,10 @@ void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
 void rr_ui_toggle_tooltip(struct rr_ui_element *, struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_mouse_over(struct rr_ui_element *, struct rr_game *);
 void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
-void rr_ui_tooltip_focus(struct rr_ui_element *, struct rr_game *);
-struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *, uint8_t *);
+uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
+uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
+void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
+struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
 
 struct rr_ui_element *rr_ui_element_init();
 struct rr_ui_element *rr_ui_static_space_init(float);

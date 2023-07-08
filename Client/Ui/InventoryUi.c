@@ -45,7 +45,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
     }
 }
 
-static uint8_t inventory_button_animate(struct rr_ui_element *this,
+static uint8_t inventory_button_should_show(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
@@ -57,37 +57,17 @@ static uint8_t inventory_button_animate(struct rr_ui_element *this,
             --count;
     }
     data->count = count;
-    if (count == 0)
-    {
-        if (this->first_frame == 1)
-        {
-            this->completely_hidden = 1;
-            this->animation = 1;
-            return 0;
-        }
-        this->animation = rr_lerp(this->animation, 1, 0.15);
-        if (this->animation > 0.99)
-        {
-            this->animation = 1;
-            this->completely_hidden = 1;
-            return 0;
-        }
-    }
-    else
-    {
-        this->completely_hidden = 0;
-        this->animation = rr_lerp(this->animation, 0, 0.15);
-    }
-    this->width = this->abs_width * (1 - this->animation);
-    this->height = this->abs_height * (1 - this->animation);
-    rr_renderer_scale(game->renderer, (1 - this->animation));
-    return 1;
+    return count;
 }
 
-static uint8_t inventory_container_animate(struct rr_ui_element *this,
-                                        struct rr_game *game)
+static uint8_t inventory_container_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->bottom_ui_open != 1 || game->simulation_ready)
+    return game->bottom_ui_open == 1 && !game->simulation_ready;
+}
+
+static uint8_t inventory_container_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (this->should_show(this, game) == 0)
     {
         if (this->first_frame == 1)
         {
@@ -153,7 +133,7 @@ static struct rr_ui_element *inventory_button_init(uint8_t id, uint8_t rarity)
     this->abs_height = this->height = 50;
     rr_ui_set_justify(this, -1, -1);
     this->on_render = inventory_button_on_render;
-    this->animate = inventory_button_animate;
+    this->should_show = inventory_button_should_show;
     this->on_event = inventory_button_on_event;
     return this;
 }
@@ -179,5 +159,6 @@ struct rr_ui_element *rr_ui_inventory_container_init()
             0xff5a9fdb);
     c->x += 60 + 20;
     c->animate = inventory_container_animate;
+    c->should_show = inventory_container_should_show;
     return c;
 }

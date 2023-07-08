@@ -10,10 +10,14 @@
 
 #include <Shared/Utilities.h>
 
-static uint8_t settings_container_animate(struct rr_ui_element *this,
-                                        struct rr_game *game)
+static uint8_t settings_container_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->top_ui_open != 1 || game->simulation_ready)
+    return game->top_ui_open == 1 && !game->simulation_ready;
+}
+
+static uint8_t settings_container_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (this->should_show(this, game) == 0)
     {
         if (this->first_frame == 1)
         {
@@ -54,5 +58,6 @@ struct rr_ui_element *rr_ui_settings_container_init()
         , 0xff999999)
     , 10);
     this->animate = settings_container_animate;
+    this->should_show = settings_container_should_show;
     return this;
 }
