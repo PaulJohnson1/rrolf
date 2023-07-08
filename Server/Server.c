@@ -1,6 +1,7 @@
 #include <Server/Server.h>
 
 #include <assert.h>
+#include <math.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -314,38 +315,53 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
         case 0:
         {
-            if (size < 3)
+            if (size < 9)
             {
                 puts("unsafe input packet with length < 3");
                 return 0;
             }
+            if (client->player_info == NULL)
+                break;
+            if (client->player_info->flower_id == 0)
+                break;
             proto_bug_read_uint8(&encoder, "movement type");
             uint64_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
             float y = 0;
 
-            if (movementFlags & 1)
-                y--;
-            if (movementFlags & 2)
-                x--;
-            if (movementFlags & 4)
-                y++;
-            if (movementFlags & 8)
-                x++;
-            if (client->player_info == NULL)
-                break;
-            if (client->player_info->flower_id == 0)
-                break;
-            if (x != 0 && y != 0)
+            if ((movementFlags & 64) == 0)
             {
-                // 1 / sqrt(2)
-                x *= 0.70710678118;
-                y *= 0.70710678118;
+                if (movementFlags & 1)
+                    y--;
+                if (movementFlags & 2)
+                    x--;
+                if (movementFlags & 4)
+                    y++;
+                if (movementFlags & 8)
+                    x++;
             }
-            client->player_accel_x = x;
-            client->player_accel_y = y;
-            client->player_info->input = movementFlags >> 4;
+            else
+            {
+                if (size < 9)
+                {
+                    return 0;
+                }
+                x = proto_bug_read_float32(&encoder, "mouse x");
+                y = proto_bug_read_float32(&encoder, "mouse y");
+            }
+            if (x != 0 || y != 0)
+            {
+                float mag_1 = 1 / sqrtf(x*x+y*y);
+                client->player_accel_x = x * mag_1;
+                client->player_accel_y = y * mag_1;
+            }
+            else
+            {
+                client->player_accel_x = 0;
+                client->player_accel_y = 0; 
+            }
+            client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
         case 1:

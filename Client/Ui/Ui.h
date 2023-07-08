@@ -6,6 +6,14 @@ struct rr_game;
 struct rr_ui_element;
 struct rr_game_squad_client;
 
+enum rr_ui_resizeable_type
+{
+    rr_ui_not_resizeable = 0,
+    rr_ui_h_container = 1,
+    rr_ui_v_container = 2,
+    rr_ui_choose_container = 3,
+    rr_ui_grid_container = 4
+};
 
 struct labeled_button_metadata
 {
@@ -29,18 +37,19 @@ struct dynamic_text_metadata
 struct rr_ui_choose_element_metadata
 {
     uint8_t (*choose)(struct rr_ui_element *, struct rr_game *);
-    struct rr_ui_element *a;
-    struct rr_ui_element *b;
     void *data;
 };
 
 struct rr_ui_container_metadata
 {
-    uint8_t type;
     uint8_t width; // for 2D containers
     uint8_t height;
     float outer_spacing;
     float inner_spacing;
+};
+
+struct rr_ui_element_vector
+{
     uint32_t size;
     uint32_t capacity;
     struct rr_ui_element **start;
@@ -48,6 +57,7 @@ struct rr_ui_container_metadata
 
 struct rr_ui_element
 {
+    struct rr_ui_element_vector elements;
     struct rr_ui_element *container;
     void *data;
     uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
@@ -97,6 +107,8 @@ struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
 
 struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
 
+struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
+
 // custom
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *);
@@ -116,7 +128,7 @@ struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
 struct rr_ui_element *rr_ui_inventory_toggle_button_init();
 struct rr_ui_element *rr_ui_settings_toggle_button_init();
 
-struct rr_ui_element *rr_ui_settings_container_init();
+struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game);
 struct rr_ui_element *rr_ui_join_button_init();
 
 struct rr_ui_element *rr_ui_wave_container_init();

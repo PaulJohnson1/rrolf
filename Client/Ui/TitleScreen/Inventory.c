@@ -123,7 +123,8 @@ struct rr_ui_element *rr_ui_inventory_container_init()
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
             rr_ui_container_add_element(
                 this,
-                rr_ui_set_justify(inventory_button_init(id, rarity), -1, -1));
+                inventory_button_init(id, rarity)
+            );
     this->fill = 0x00000000;
     struct rr_ui_element *c = rr_ui_set_background(
                 rr_ui_pad(rr_ui_set_justify(

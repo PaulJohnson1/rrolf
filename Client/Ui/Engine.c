@@ -31,9 +31,9 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
 
     c->abs_width = c->width = width;
     c->abs_height = c->height = height;
+    c->resizeable = rr_ui_h_container;
 
     struct rr_ui_container_metadata *data = c->data;
-    data->type = 1;
     data->outer_spacing = outer_spacing;
     data->inner_spacing = inner_spacing;
     va_end(args);
@@ -69,9 +69,9 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
 
     c->abs_width = c->width = width;
     c->abs_height = c->height = height;
+    c->resizeable = rr_ui_v_container;
 
     struct rr_ui_container_metadata *data = c->data;
-    data->type = 0;
     data->outer_spacing = outer_spacing;
     data->inner_spacing = inner_spacing;
     va_end(args);
@@ -112,14 +112,16 @@ struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
     return c;
 }
 
-void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
+void rr_ui_h_container_set(struct rr_ui_element *c)
 {
     struct rr_ui_container_metadata *data = c->data;
+    float outer_spacing = data->outer_spacing;
+    float inner_spacing = data->inner_spacing;
     float height = 0;
     float width = outer_spacing;
-    for (uint32_t i = 0; i < data->size; ++i)
+    for (uint32_t i = 0; i < c->elements.size; ++i)
     {
-        struct rr_ui_element *element = data->start[i];
+        struct rr_ui_element *element = c->elements.start[i];
         if (element->completely_hidden)
             continue;
         element->h_justify = -1;
@@ -137,14 +139,16 @@ void rr_ui_h_container_set(struct rr_ui_element *c, float outer_spacing, float i
     c->abs_height = height;
 }
 
-void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, float inner_spacing)
+void rr_ui_v_container_set(struct rr_ui_element *c)
 {
     struct rr_ui_container_metadata *data = c->data;
+    float outer_spacing = data->outer_spacing;
+    float inner_spacing = data->inner_spacing;
     float width = 0;
     float height = outer_spacing;
-    for (uint32_t i = 0; i < data->size; ++i)
+    for (uint32_t i = 0; i < c->elements.size; ++i)
     {
-        struct rr_ui_element *element = data->start[i];
+        struct rr_ui_element *element = c->elements.start[i];
         if (element->completely_hidden)
             continue;
         element->v_justify = -1;            
@@ -162,23 +166,96 @@ void rr_ui_v_container_set(struct rr_ui_element *c, float outer_spacing, float i
     c->abs_height = height;
 }
 
-void rr_ui_container_refactor(struct rr_ui_element *c)
+void rr_ui_choose_container_set(struct rr_ui_element *c)
 {
-
-    struct rr_ui_container_metadata *data = c->data;
-    for (uint64_t i = 0; i < data->size; ++i)
+    for (uint32_t i = 0; i < c->elements.size; ++i)
     {
-        struct rr_ui_element *element = data->start[i];
+        struct rr_ui_element *element = c->elements.start[i];
+        if (element->abs_width > c->abs_width)
+            c->abs_width = c->width = element->abs_width;
+        if (element->abs_height > c->abs_height)
+            c->abs_height = c->height = element->abs_height;
+    }
+}
+
+void rr_ui_grid_container_set(struct rr_ui_element *c)
+{
+    struct rr_ui_container_metadata *data = c->data;
+    float outer_spacing = data->outer_spacing;
+    float inner_spacing = data->inner_spacing;
+    uint32_t width = data->width;
+    uint32_t count = 0;
+    for (uint32_t i = 0; i < c->elements.size; ++i)
+    {
+        struct rr_ui_element *element = c->elements.start[i];
+        element->h_justify = element->v_justify = -1;
+        count += 1 - element->completely_hidden;
+    }
+    uint32_t mod = count % width;
+    uint32_t pos = 0;
+    float w = 0, h = 0;
+    for (uint32_t i = 0; i < c->elements.size; ++i)
+    {
+        struct rr_ui_element *element = c->elements.start[i];
         if (element->completely_hidden)
             continue;
-        if (element->resizeable)
-            rr_ui_container_refactor(element);
-    }
-    if (c->resizeable == 1)
-    {
-        if (data->type == 1)
-            rr_ui_h_container_set(c, data->outer_spacing, data->inner_spacing);
+        w = element->abs_width;
+        h = element->abs_height;
+        if (count - pos > mod)
+            element->x = outer_spacing + (pos % data->width) * (w + inner_spacing);
         else
-            rr_ui_v_container_set(c, data->outer_spacing, data->inner_spacing);
+        {
+            element->x = outer_spacing + (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
+        }
+        element->y = outer_spacing + (pos / data->width) * (h + inner_spacing);
+        ++pos;
+    }
+    data->height = (count + (width - 1)) / width;
+    c->abs_height = c->height = 2 * outer_spacing + (data->height) * (h + inner_spacing) - inner_spacing;
+    c->abs_width = c->width = 2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
+    // positioning
+    /*
+    uint32_t pos = 0;
+    float h = 0;
+    for (uint32_t i = 0; i < c->elements.size; ++i)
+    {
+        struct rr_ui_element *element = c->elements.start[i];
+        if (element->completely_hidden)
+            continue;
+        element->x = outer_spacing +
+                     (pos % data->width) * (element->abs_width + inner_spacing);
+        element->y = outer_spacing + (pos / data->width) *
+                                         (element->abs_height + inner_spacing);
+        h = element->abs_height;
+        ++pos;
+    }
+    c->abs_height = c->height =
+        2 * outer_spacing +
+        ((pos + (data->width - 1)) / data->width) * (h + inner_spacing) -
+        inner_spacing;
+    c->abs_width = c->width =
+        2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
+        */
+}
+
+void rr_ui_container_refactor(struct rr_ui_element *c)
+{
+    if (c->elements.size != 0)
+    {
+        for (uint64_t i = 0; i < c->elements.size; ++i)
+        {
+            struct rr_ui_element *element = c->elements.start[i];
+            if (element->completely_hidden)
+                continue;
+            rr_ui_container_refactor(element);
+        }
+        if (c->resizeable == rr_ui_h_container)
+            rr_ui_h_container_set(c);
+        else if (c->resizeable == rr_ui_v_container)
+            rr_ui_v_container_set(c);
+        else if (c->resizeable == rr_ui_choose_container)
+            rr_ui_choose_container_set(c);
+        else if (c->resizeable == rr_ui_grid_container)
+            rr_ui_grid_container_set(c);
     }
 }

@@ -15,7 +15,9 @@ struct rr_ui_element *rr_ui_h_pah(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_v_pad(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_pad(struct rr_ui_element *, float);
 
-void rr_ui_h_container_set(struct rr_ui_element *, float, float);
-void rr_ui_v_container_set(struct rr_ui_element *, float, float);
+void rr_ui_h_container_set(struct rr_ui_element *);
+void rr_ui_v_container_set(struct rr_ui_element *);
+void rr_ui_choose_container_set(struct rr_ui_element *);
+void rr_ui_grid_container_set(struct rr_ui_element *);
 
 void rr_ui_container_refactor(struct rr_ui_element *);

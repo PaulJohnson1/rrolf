@@ -123,6 +123,10 @@ struct rr_ui_element *rr_ui_element_init()
     this->should_show = rr_ui_always_show;               
     this->poll_events = rr_ui_element_check_if_focused;
     this->animate = default_animate;
+    this->resizeable = rr_ui_not_resizeable;
+    this->elements.size = 0;
+    this->elements.capacity = 1;
+    this->elements.start = malloc(sizeof(*this->elements.start) * this->elements.capacity);
     return this;
 }
 

@@ -79,9 +79,11 @@ static void title_screen_loadout_button_animate(struct rr_ui_element *this, stru
     uint8_t id = game->loadout[data->pos].id;
     uint8_t rarity = game->loadout[data->pos].rarity;
     data->secondary_animation = rr_lerp(data->secondary_animation, id == 0, 0.2);
-    
-    data->prev_id = id;
-    data->prev_rarity = rarity;
+    if (id != 0)
+    {
+        data->prev_id = id;
+        data->prev_rarity = rarity;
+    }
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 

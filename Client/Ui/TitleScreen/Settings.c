@@ -63,14 +63,18 @@ struct rr_ui_element *rr_ui_settings_toggle_button_init()
     return this;
 }
 
-struct rr_ui_element *rr_ui_settings_container_init()
+struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_pad(
         rr_ui_set_background(
             rr_ui_v_pad(
                 rr_ui_set_justify(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1,
-                        rr_ui_text_init("Settings", 24, 0xffffffff)
+                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+                        rr_ui_text_init("Settings", 24, 0xffffffff),
+                        rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
+                            rr_ui_toggle_box_init(&game->use_mouse),
+                            rr_ui_text_init("Mouse movement", 15, 0xffffffff)
+                        )
                     )
                 , -1, -1)
             , 80)

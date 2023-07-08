@@ -68,7 +68,6 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->true_ptr = 1;
 
 #ifdef RIVET_BUILD
     strcpy(this->rivet_account.name, "loading");
@@ -89,7 +88,7 @@ void rr_game_init(struct rr_game *this)
         , simulation_not_ready)
     );
     rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
-    rr_ui_container_add_element(this->window, rr_ui_settings_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_settings_container_init(this));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -1991,8 +1990,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               << 4;
             movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
                               << 5;
-            proto_bug_write_uint8(&encoder2, movement_flags,
-                                  "movement kb flags");
+            movement_flags |= this->use_mouse << 6;
+            proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
+            proto_bug_write_float32(&encoder2, this->input_data->mouse_x - this->renderer->width / 2, "mouse x");
+            proto_bug_write_float32(&encoder2, this->input_data->mouse_y - this->renderer->height / 2, "mouse y");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             break;
         }
@@ -2299,7 +2300,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
-    this->simulation_not_ready = this->simulation_ready == 0;
     this->prev_focused = this->focused;
     rr_ui_container_refactor(this->window);
     rr_ui_render_element(this->window, this);

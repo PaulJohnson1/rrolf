@@ -85,13 +85,11 @@ struct rr_game
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t simulation_ready;
-    uint8_t simulation_not_ready;
     int8_t ticks_until_game_start;
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
     uint8_t top_ui_open; // 0 = none, 1 = settings, 2 = changelog
-    uint8_t false_ptr;
-    uint8_t true_ptr;
     uint8_t tiles_size;
+    uint8_t use_mouse;
 
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;
