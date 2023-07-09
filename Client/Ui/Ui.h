@@ -110,8 +110,7 @@ struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct r
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
 // custom
-struct rr_ui_element *
-rr_ui_squad_player_container_init(struct rr_game_squad_client *);
+struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *);
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
 struct rr_ui_element *rr_ui_info_init();
 
@@ -128,7 +127,9 @@ struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
 struct rr_ui_element *rr_ui_inventory_toggle_button_init();
 struct rr_ui_element *rr_ui_settings_toggle_button_init();
 
-struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game);
+struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 struct rr_ui_element *rr_ui_join_button_init();
 
 struct rr_ui_element *rr_ui_wave_container_init();
+
+struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t, uint8_t);

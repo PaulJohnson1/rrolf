@@ -163,8 +163,7 @@ void rr_main_loop(struct rr_game *this)
             Module.ReadCstr = function(ptr)
             {
                 const start = ptr;
-                while (Module.HEAPU8[ptr++])
-                    ;
+                while (Module.HEAPU8[ptr++]);
                 return new TextDecoder().decode(
                     Module.HEAPU8.subarray(start, ptr));
             };

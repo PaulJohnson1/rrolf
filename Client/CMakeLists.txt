@@ -29,6 +29,7 @@ set(SRCS
     Ui/TitleScreen/Squad.c
     Ui/Text.c
     Ui/ToggleBox.c
+    Ui/Tooltip/Petal.c
     Game.c
     InputData.c
     Main.c
