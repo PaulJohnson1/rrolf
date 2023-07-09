@@ -82,7 +82,7 @@ void rr_wheel_event(struct rr_game *this, float delta)
 #else
 #endif
 
-void rr_main_renderer_initialize(struct rr_game *this)
+void rr_main_loop(struct rr_game *this)
 {
 #ifdef EMSCRIPTEN
     EM_ASM(
@@ -210,7 +210,7 @@ int main()
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
     static struct rr_simulation simulation;
-    rr_main_renderer_initialize(&game);
+    rr_main_loop(&game);
 
     rr_renderer_init(&renderer);
     rr_game_init(&game);

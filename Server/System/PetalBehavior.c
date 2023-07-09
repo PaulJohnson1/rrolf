@@ -252,8 +252,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     struct rr_component_physical *petal_physical =
                         rr_simulation_get_physical(simulation,
                                                    p_petal->simulation_id);
-                    rr_simulation_request_entity_deletion(
-                        simulation, p_petal->simulation_id);
+                    //rr_simulation_request_entity_deletion(simulation, p_petal->simulation_id);
+                    rr_component_health_set_health(rr_simulation_get_health(simulation, p_petal->simulation_id), 0);
 
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, rr_mob_id_trex,

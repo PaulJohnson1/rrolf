@@ -180,6 +180,15 @@ void rr_renderer_set_text_baseline(struct rr_renderer *this, uint8_t l)
 #endif
 }
 
+void rr_renderer_set_grayscale(struct rr_renderer *this, uint8_t pct)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM({
+        Module.ctxs[$0].filter = "grayscale(" + $1 + "\%)";
+    }, this->context_id, pct);
+#endif
+}
+
 void rr_renderer_update_transform(struct rr_renderer *this)
 {
 #ifdef EMSCRIPTEN

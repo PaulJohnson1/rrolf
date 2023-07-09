@@ -401,7 +401,6 @@ int rr_server_lws_callback_function(struct lws *socket,
                         rr_simulation_get_health(&this->simulation, id);
 
                     rr_component_health_set_health(health, 0);
-                    rr_component_physical_set_server_animation_tick(physical, 6);
 
                     slot->petals[i].simulation_id = RR_NULL_ENTITY;
                 }

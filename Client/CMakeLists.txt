@@ -13,6 +13,7 @@ set(SRCS
     Renderer/RenderHealth.c
     Renderer/RenderMob.c
     Renderer/RenderPetal.c
+    Storage.c
     System/Interpolation.c
     Ui/Button.c
     Ui/ChooseElement.c

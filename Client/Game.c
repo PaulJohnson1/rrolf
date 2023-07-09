@@ -2209,6 +2209,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
     // render off-game elements
