@@ -10,7 +10,7 @@
 
 void toggle_box_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
         *((uint8_t *) this->data) ^= 1;
 }
 

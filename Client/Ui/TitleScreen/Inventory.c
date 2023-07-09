@@ -24,7 +24,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (data->count == 0)
             return;
@@ -162,7 +162,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 
 void inventory_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->bottom_ui_open == 1)
             game->bottom_ui_open = 0;

@@ -56,7 +56,7 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
         game->bottom_ui_open = game->top_ui_open = 0;
 }
 
@@ -2318,8 +2318,11 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
-    this->input_data->mouse_buttons_this_tick = 0;
+    this->input_data->mouse_buttons_up_this_tick = 0;
+    this->input_data->mouse_buttons_down_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
+    this->input_data->prev_mouse_x = this->input_data->mouse_x;
+    this->input_data->prev_mouse_y = this->input_data->mouse_y;
     if (++this->debug_info.count == 10) 
         memset(&this->debug_info, 0, sizeof this->debug_info);
     this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;

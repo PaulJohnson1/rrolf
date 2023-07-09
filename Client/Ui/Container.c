@@ -10,13 +10,14 @@
 static void container_on_render(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
-    if (this->fill != 0x00000000)
+    if (this->fill != 0x00000000 || game->show_ui_hitbox)
     {
         struct rr_renderer *renderer = game->renderer;
         struct rr_renderer_context_state state2;
         rr_renderer_context_state_init(renderer, &state2);
         rr_renderer_set_fill(renderer, this->fill);
-        rr_renderer_scale(renderer, renderer->scale);
+        if (this != game->window)
+            rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
         rr_renderer_round_rect(renderer, -this->abs_width / 2,
                                -this->abs_height / 2, this->abs_width,
@@ -31,15 +32,16 @@ static void container_on_render(struct rr_ui_element *this,
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);
         }
-        /*
-        rr_renderer_begin_path(renderer);
-        rr_renderer_round_rect(renderer, -this->abs_width / 2,
-                               -this->abs_height / 2, this->abs_width,
-                               this->abs_height, 6);
-        rr_renderer_set_stroke(renderer, 0xff000000);
-        rr_renderer_set_line_width(renderer, 2);
-        rr_renderer_stroke(renderer);
-        */
+        if (game->show_ui_hitbox)
+        {
+            rr_renderer_begin_path(renderer);
+            rr_renderer_round_rect(renderer, -this->abs_width / 2,
+                                -this->abs_height / 2, this->abs_width,
+                                this->abs_height, 6);
+            rr_renderer_set_stroke(renderer, 0xff000000);
+            rr_renderer_set_line_width(renderer, 2);
+            rr_renderer_stroke(renderer);
+        }
         rr_renderer_context_state_free(renderer, &state2);
     }
     struct rr_ui_container_metadata *data = this->data;

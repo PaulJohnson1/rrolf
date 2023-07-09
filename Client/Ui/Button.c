@@ -13,7 +13,7 @@
 static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_this_tick & 1 && data->toggle != NULL)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && data->toggle != NULL)
         (*(data->toggle)) ^= 1;
 }
 
@@ -21,7 +21,7 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (!game->socket_ready)
             rr_game_connect_socket(game);

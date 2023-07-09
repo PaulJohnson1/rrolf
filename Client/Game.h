@@ -101,7 +101,7 @@ struct rr_game
     uint8_t top_ui_open; // 0 = none, 1 = settings, 2 = changelog
     uint8_t tiles_size;
     uint8_t use_mouse;
-    uint8_t grayscale;
+    uint8_t show_ui_hitbox;
 
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;

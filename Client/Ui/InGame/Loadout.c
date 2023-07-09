@@ -26,7 +26,7 @@ struct loadout_button_metadata
 static void loadout_button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         game->loadout[data->pos].id = 0;
         game->loadout[data->pos].rarity = 0;
@@ -43,7 +43,7 @@ static void loadout_button_on_event(struct rr_ui_element *this, struct rr_game *
 static void petal_switch_button_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_this_tick & 1) // mouse_down
+    if (game->input_data->mouse_buttons_up_this_tick & 1) // mouse_down
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);

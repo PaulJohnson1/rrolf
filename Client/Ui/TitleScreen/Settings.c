@@ -44,7 +44,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 
 void settings_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->top_ui_open == 1)
             game->top_ui_open = 0;
@@ -69,7 +69,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
         rr_ui_set_background(
             rr_ui_v_pad(
                 rr_ui_set_justify(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 3,
+                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 4,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
@@ -81,6 +81,12 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
                                 rr_ui_toggle_box_init(&game->displaying_debug_information),
                                 rr_ui_text_init("Show debug info", 15, 0xffffffff)
+                            ),
+                        -1, -1),
+                        rr_ui_set_justify(
+                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
+                                rr_ui_toggle_box_init(&game->show_ui_hitbox),
+                                rr_ui_text_init("Show ui hitboxes", 15, 0xffffffff)
                             ),
                         -1, -1)
                     )

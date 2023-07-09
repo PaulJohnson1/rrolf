@@ -66,12 +66,12 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
     if (state == 1) // press down
     {
         this->input_data->mouse_buttons |= (1 << button);
+        this->input_data->mouse_buttons_down_this_tick |= (1 << button);
     }
     else if (state == 0)
     {
         this->input_data->mouse_buttons &= ~(1 << button);
-        // this->input_data->mouse_buttons_this_tick &= ~(1 << button);
-        this->input_data->mouse_buttons_this_tick |= (1 << button);
+        this->input_data->mouse_buttons_up_this_tick |= (1 << button);
     }
 }
 
