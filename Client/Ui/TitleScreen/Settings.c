@@ -56,7 +56,7 @@ void settings_toggle_button_on_event(struct rr_ui_element *this, struct rr_game 
 struct rr_ui_element *rr_ui_settings_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0xff00ff00;
+    this->fill = 0xff888888;
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = settings_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;
@@ -79,8 +79,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                         -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
-                                rr_ui_toggle_box_init(&game->grayscale),
-                                rr_ui_text_init("Activate Grayscale", 15, 0xffffffff)
+                                rr_ui_toggle_box_init(&game->displaying_debug_information),
+                                rr_ui_text_init("Show debug info", 15, 0xffffffff)
                             ),
                         -1, -1)
                     )

@@ -63,6 +63,7 @@ static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
+    rr_static_data_init();
     this->window = rr_ui_container_init();
     this->window->container = this->window;
     this->window->h_justify = this->window->v_justify = 1;
@@ -233,38 +234,8 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            char *hp = malloc((sizeof *hp) * 16);
-            hp[sprintf(hp, "%.1f",
-                       RR_MOB_DATA[id].health *
-                           RR_MOB_RARITY_SCALING[rarity].health)] = 0;
-            char *dmg = malloc((sizeof *dmg) * 16);
-            dmg[sprintf(dmg, "%.1f",
-                        RR_MOB_DATA[id].damage *
-                            RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
-            this->mob_tooltips[id][rarity] = rr_ui_set_background(
-                rr_ui_v_container_init(
-                    rr_ui_container_init(), 10, 5, 3,
-                        rr_ui_text_init(RR_MOB_NAMES[id], 24, 0xffffffff),
-                    rr_ui_set_justify(
-                        rr_ui_h_container_init(
-                            rr_ui_container_init(), 0, 0, 2,
-                            rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                            rr_ui_text_init(hp, 12, 0xff44ff44)),
-                        -1, 0),
-                    rr_ui_set_justify(
-                        rr_ui_h_container_init(
-                            rr_ui_container_init(), 0, 0, 2,
-                            rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                            rr_ui_text_init(dmg, 12, 0xffff4444)),
-                        -1, 0)),
-                0x80000000);
-            rr_ui_container_add_element(
-                this->window,
-                rr_ui_link_toggle(
-                    rr_ui_set_justify(this->mob_tooltips[id][rarity], -1, -1),
-                    rr_ui_never_show));
-            this->mob_tooltips[id][rarity]->poll_events = rr_ui_no_focus;
-            // remember that these don't have a container
+            this->mob_tooltips[id][rarity] = rr_ui_mob_tooltip_init(id, rarity);
+            rr_ui_container_add_element(this->window, this->mob_tooltips[id][rarity]);
         }
     }
 
@@ -2158,7 +2129,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
-    rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
+    //rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
     // render off-game elements
@@ -2251,8 +2222,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     // ui
     this->prev_focused = this->focused;
-    rr_ui_container_refactor(this->window);
     rr_ui_render_element(this->window, this);
+    rr_ui_container_refactor(this->window);
     this->window->poll_events(this->window, this);
 
     if (this->focused != NULL)
@@ -2266,9 +2237,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 #endif
     if (this->socket_ready)
     {
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              186 /* ; */))
-            this->displaying_debug_information ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               75 /* k */))
         {
@@ -2306,20 +2274,43 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_websocket_send(&this->socket, encoder.start, encoder.current);
         }
     }
-
+    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                              186 /* ; */))
+            this->displaying_debug_information ^= 1;
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+    this->debug_info.cumulative_tick_time += time_elapsed;
+    if (time_elapsed > this->debug_info.max_tick_time)
+        this->debug_info.max_tick_time = time_elapsed;
+    long frame_time = end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
+    this->debug_info.cumulative_frame_time += frame_time;
+    if (frame_time > this->debug_info.max_frame_time)
+        this->debug_info.max_frame_time = frame_time;
 
     if (this->displaying_debug_information)
     {
         struct rr_renderer_context_state state;
         rr_renderer_context_state_init(this->renderer, &state);
-        rr_renderer_scale(this->renderer, 5);
+        rr_renderer_set_text_size(this->renderer, 12);
+        rr_renderer_set_line_width(this->renderer, 12 * 0.12);
+        rr_renderer_set_text_baseline(this->renderer, 2);
+        rr_renderer_set_fill(this->renderer, 0xffffffff);
+        rr_renderer_set_text_align(this->renderer, 2);
+        rr_renderer_translate(this->renderer, this->renderer->width - 5, this->renderer->height - 5);
         static char debug_mspt[100];
-        debug_mspt[sprintf(debug_mspt, "%f mspt",
-                           (float)time_elapsed / 1000.0f)] = 0;
-        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 8);
+        debug_mspt[sprintf(debug_mspt, "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
+                           this->debug_info.cumulative_tick_time * 0.001f / (this->debug_info.count + 1),
+                           this->debug_info.max_tick_time * 0.001f, 
+                           this->debug_info.cumulative_frame_time * 0.001f / (this->debug_info.count + 1),
+                           this->debug_info.max_frame_time * 0.001f)] = 0;
+        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
+        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
+        debug_mspt[sprintf(debug_mspt, "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
+                           this->debug_info.cumulative_tick_time * 0.001f / (this->debug_info.count + 1),
+                           this->debug_info.max_tick_time * 0.001f, 
+                           this->debug_info.cumulative_frame_time * 0.001f / (this->debug_info.count + 1),
+                           this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
@@ -2329,6 +2320,9 @@ void rr_game_tick(struct rr_game *this, float delta)
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     this->input_data->mouse_buttons_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
+    if (++this->debug_info.count == 10) 
+        memset(&this->debug_info, 0, sizeof this->debug_info);
+    this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
 }
 
 void rr_game_connect_socket(struct rr_game *this)

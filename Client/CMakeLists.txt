@@ -30,6 +30,7 @@ set(SRCS
     Ui/Text.c
     Ui/ToggleBox.c
     Ui/Tooltip/Petal.c
+    Ui/Tooltip/Mob.c
     Game.c
     InputData.c
     Main.c

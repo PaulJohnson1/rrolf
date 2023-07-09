@@ -38,8 +38,19 @@ struct rr_rivet_account
     char avatar_url[200];
 };
 
+struct rr_game_debug_info
+{
+    uint8_t count;
+    long last_tick_time;
+    long max_frame_time;
+    long cumulative_frame_time;
+    long max_tick_time;
+    long cumulative_tick_time;
+};
+
 struct rr_game
 {
+    struct rr_game_debug_info debug_info;
     // petal rendering cache
     struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
 

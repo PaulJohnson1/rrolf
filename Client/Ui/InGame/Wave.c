@@ -113,7 +113,7 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
-    element->abs_width = element->abs_height = element->width = element->height = 60;
+    element->abs_width = element->abs_height = element->width = element->height = 50;
     element->on_render = mob_button_on_render;
     element->on_event = mob_button_on_event;
     element->data = data;
@@ -139,10 +139,10 @@ static struct rr_ui_element *wave_bar_init()
 
 struct rr_ui_element *rr_ui_wave_container_init()
 {
-    struct rr_ui_element *outer_container = rr_ui_h_container_init(rr_ui_container_init(), 10, 15, 0);
+    struct rr_ui_element *outer_container = rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 0);
     for (uint8_t i = 0; i < rr_mob_id_max; ++i)
     {
-        struct rr_ui_element *inner_container =  rr_ui_v_container_init(rr_ui_container_init(), 10, -50, 0);
+        struct rr_ui_element *inner_container =  rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 0);
         for (uint8_t j = 0; j < rr_rarity_id_max; ++j)
         {
             rr_ui_container_add_element(inner_container, mob_button_init(i, j));
