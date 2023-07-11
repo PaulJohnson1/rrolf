@@ -113,7 +113,8 @@ static uint8_t squad_loadout_button_should_show(struct rr_ui_element *this, stru
 static void squad_loadout_button_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
-    data->prev_id = data->petal->id;
+    if (data->petal->id != 0)
+        data->prev_id = data->petal->id;
     data->prev_rarity = data->petal->rarity;
     rr_renderer_scale(game->renderer, (1 - this->animation));
 }

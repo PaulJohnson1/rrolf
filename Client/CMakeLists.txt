@@ -24,6 +24,7 @@ set(SRCS
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c
     Ui/TitleScreen/Inventory.c
+    Ui/TitleScreen/MobGallery.c
     Ui/TitleScreen/Rivet.c
     Ui/TitleScreen/Settings.c
     Ui/TitleScreen/Squad.c
@@ -36,6 +37,7 @@ set(SRCS
     Main.c
     Simulation.c
     Socket.c
+    Storage.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Centipede.c

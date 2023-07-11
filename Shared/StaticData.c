@@ -12,8 +12,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_faster, 7.0f, 5.0f, 15.0f, 20, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile, 20.0f, 10.0f, 15.0f, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, 10.0f, 5.0f, 8.0f, 25, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, 7.0f, 7.0f, 8.0f, 25, {1, 1, 1, 1, 1, 1, 2}},
-    {rr_petal_id_egg, 1.0f, 25.0f, 0.0f, 100, {4, 4, 4, 4, 4, 4, 4}}};
+    {rr_petal_id_leaf, 7.0f, 7.0f, 8.0f, 25, {1, 1, 1, 1, 1, 2, 3}},
+    {rr_petal_id_egg, 1.0f, 25.0f, 0.0f, 100, {4, 4, 4, 4, 4, 4, 5}}};
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 25, 10, 30.0f, {}},
@@ -28,7 +28,8 @@ float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 2, 4, 8, 16, 48, 196};
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0}, {2.5, 1.6, 1.2}, {8.0, 3.0, 1.6}, {25.0, 7.5, 2.0},
-    {75, 20.0, 2.5},  {250, 50.0, 4},     {1000, 200, 6}};
+    {75, 20.0, 2.5},  {250, 50.0, 4},     {1000, 200, 6}
+};
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
@@ -48,14 +49,14 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "ICBM approved",
     "Where are the zombies?",
     "Probably the most normal petal there is. Oh wait",
-    "It's egg"};
+    "It's egg"
+};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  10,
-                                                            15, 20, 50, 5};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {2, 3, 5, 7, 7, 7, 12};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 20, 30, 100, 50};
+uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 3, 5, 7, 7, 7, 15};
 
 static void init_rarity_coefficients()
 {
@@ -75,12 +76,15 @@ static void init_rarity_coefficients()
 
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 {
-    printf("loot table with seed %f\n", seed);
+    //printf("loot table with seed %f\n", seed);
     data->id = id;
     for (uint64_t mob = 0; mob < rr_rarity_id_max; ++mob)
     {
-        uint64_t cap = mob == 0                       ? 1
-                       : mob > rr_rarity_id_legendary ? mob == rr_rarity_id_ultra ? rr_rarity_id_mythic : rr_rarity_id_legendary : mob;
+        uint64_t cap = mob;
+        if (mob == 0)
+            cap = 1;
+        else if (mob < rr_rarity_id_legendary)
+            cap = mob - 1;
         data->loot_table[mob][0] =
             pow(1 - seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
         for (uint64_t drop = 0; drop <= cap; ++drop)
@@ -89,11 +93,11 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
             float end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
             data->loot_table[mob][drop + 1] =
                 pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
-            printf("%f ", data->loot_table[mob][drop + 1] - data->loot_table[mob][drop]);
+            //printf("%f ", data->loot_table[mob][drop + 1] - data->loot_table[mob][drop]);
         }
-        puts("");
+        //puts("");
     }
-    printf("------------------------------------------\n");
+    //printf("------------------------------------------\n");
 }
 
 static void init_loot_tables()
@@ -123,6 +127,9 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 1);
+
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
+                    rr_petal_id_stinger, 0.5);
 }
 
 void rr_static_data_init()

@@ -17,6 +17,7 @@ struct mob_button_metadata
 {
     uint8_t id;
     uint8_t rarity;
+    float lerp_width;
 };
 
 static void mob_button_on_event(struct rr_ui_element *this,
@@ -119,43 +120,79 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     return element;
 }
 
-static void wave_text_function(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t mob_container_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    struct rr_component_arena *arena =
-        rr_simulation_get_arena(game->simulation, 1);
-    struct dynamic_text_metadata *data = this->data;
-    data->text[sprintf(data->text, "Wave %d", arena->wave)] = 0;
+    return game->bottom_ui_open == 2 && !game->simulation_ready;
 }
 
-static struct rr_ui_element *wave_bar_init()
+static void mob_container_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    struct rr_ui_element *element = rr_ui_element_init();
-    element->abs_width = element->width = 200;
-    element->abs_height = element->height = 15;
-    element->on_render = wave_bar_on_render;
-    return element;
+    this->width = this->abs_width;
+    this->height = this->abs_height;
+    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
 }
 
-struct rr_ui_element *rr_ui_wave_container_init()
+struct rr_ui_element *rr_ui_mob_container_init()
 {
-    struct rr_ui_element *outer_container = rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 0);
-    for (uint8_t i = 0; i < rr_mob_id_max; ++i)
+    struct rr_ui_element *this = rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
+    for (uint8_t id = 0; id < rr_mob_id_max; ++id)
+        for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+            rr_ui_container_add_element(
+                this,
+                mob_button_init(id, rarity)
+            );
+    this->fill = 0x00000000;
+    struct rr_ui_element *c = rr_ui_set_background(
+                rr_ui_pad(rr_ui_set_justify(
+                              rr_ui_v_container_init(
+                                  rr_ui_container_init(), 10, 10, 2,
+                                  rr_ui_text_init("Mob Gallery", 24, 0xffffffff),
+                                  rr_ui_scroll_container_init(
+                                      this, 400)),
+                              -1, 1),
+                          20),
+            0xff5a9fdb);
+    c->x += 60 + 20;
+    c->animate = mob_container_animate;
+    c->should_show = mob_container_should_show;
+    return c;
+}
+
+static void mob_toggle_toggle_on_render(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    struct rr_renderer *renderer = game->renderer;
+    if (game->focused == this)
+        renderer->state.filter.amount = 0.2;
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_set_fill(renderer, this->fill);
+    renderer->state.filter.amount += 0.2;
+    rr_renderer_set_stroke(renderer, this->fill);
+    rr_renderer_set_line_width(renderer, 6);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2,
+                           this->width, this->height, 6);
+    rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
+}
+
+void mob_toggle_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        struct rr_ui_element *inner_container =  rr_ui_v_container_init(rr_ui_container_init(), 0, -40, 0);
-        for (uint8_t j = 0; j < rr_rarity_id_max; ++j)
-        {
-            rr_ui_container_add_element(inner_container, mob_button_init(i, j));
-        }
-        inner_container->width = inner_container->abs_width;
-        inner_container->height = inner_container->abs_height;
-        rr_ui_v_container_set(inner_container);
-        rr_ui_container_add_element(outer_container, inner_container);
+        if (game->bottom_ui_open == 2)
+            game->bottom_ui_open = 0;
+        else
+            game->bottom_ui_open = 2;
     }
-    rr_ui_h_container_set(outer_container);
-    outer_container->width = outer_container->abs_width;
-    outer_container->height = outer_container->abs_height;
-    return rr_ui_set_justify(
-        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
-                               rr_ui_dynamic_text_init(36, 0xffffffff, wave_text_function), wave_bar_init()),
-        0, -1);
+}
+
+struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init()
+{
+    struct rr_ui_element *this = rr_ui_element_init();
+    this->fill = 0xff56a2b3;
+    this->abs_width = this->abs_height = this->width = this->height = 60;
+    this->on_event = mob_toggle_toggle_button_on_event;
+    this->on_render = mob_toggle_toggle_on_render;
+    return this;
 }
