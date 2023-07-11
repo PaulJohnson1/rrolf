@@ -7,3 +7,8 @@ rrolf-client.wasm
 ### Rivet ###
 .rivet/
 .env
+
+
+# Added by cargo
+target/
+
