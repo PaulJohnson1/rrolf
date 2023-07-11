@@ -16,6 +16,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
+#include <Client/Storage.h>
 #include <Client/Ui/Engine.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Arena.h>
@@ -69,6 +70,7 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
+    this->protocol_state = (1 << 20) - 1;
 
 #ifdef RIVET_BUILD
     strcpy(this->rivet_account.name, "loading");
@@ -153,13 +155,18 @@ void rr_game_init(struct rr_game *this)
                 0x00000000),
             simulation_not_ready));
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
     rr_ui_container_add_element(
         this->window,
-        rr_ui_link_toggle(
-            rr_ui_pad(
-                rr_ui_set_justify(rr_ui_inventory_toggle_button_init(), -1, 1),
-                10),
-            simulation_not_ready));
+        rr_ui_set_justify(
+            rr_ui_link_toggle(
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2, 
+                    rr_ui_inventory_toggle_button_init(),
+                    rr_ui_mob_gallery_toggle_button_init()
+                )
+            , simulation_not_ready)
+        , -1, 1)
+    );
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -218,7 +225,7 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            this->inventory[id][rarity] = rand() % 10;
+            this->inventory[id][rarity] = 10;
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
                                        50);
@@ -1816,6 +1823,21 @@ void rr_game_init(struct rr_game *this)
     rr_renderer_draw_svg(&this->background_features[8],
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
+
+
+    //
+    uint8_t *loadout = rr_local_storage_get("loadout");
+    printf("%p lolol\n", loadout);
+    if (loadout == NULL)
+        return;
+    uint8_t at = 0;
+    while (loadout[at])
+    {
+        printf("%d %d %d\n", loadout[at], loadout[at + 1], loadout[at + 2]);
+        this->loadout[loadout[at] - 1].id = loadout[at + 1];
+        this->loadout[loadout[at] - 1].rarity = loadout[at + 2] - 1;
+        at += 3;
+    }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -2127,6 +2149,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
+    rr_storage_layout_save(this);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     //rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
@@ -2154,19 +2177,18 @@ void rr_game_tick(struct rr_game *this, float delta)
                                                   this->renderer->scale);
             rr_renderer_translate(this->renderer, -player_info->lerp_camera_x,
                                   -player_info->lerp_camera_y);
-#ifdef RIVET_BUILD
-            if (player_info->flower_id != RR_NULL_ENTITY)
-            {
-                if (rr_simulation_get_physical(this->simulation,
-                                               player_info->flower_id)
-                        ->server_animation_tick != 0)
-                    rr_renderer_translate(this->renderer, rr_frand() * 5.0f,
-                                          rr_frand() * 5.0f);
-            }
-#endif
 
-            uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51)
-                             << 24;
+            if (this->screen_shake && player_info->flower_id != RR_NULL_ENTITY)
+            {
+                if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->server_animation_tick != 0)
+                {
+                    float r = rr_frand() * 5;
+                    float a = rr_frand() * 2 * M_PI;
+                    rr_renderer_translate(this->renderer, r * cosf(a), r * sinf(a));
+                }
+            }
+
+            uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51) << 24;
             rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
             rr_renderer_set_fill(this->renderer, 0xff45230a);
@@ -2222,8 +2244,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     // ui
     this->prev_focused = this->focused;
-    rr_ui_render_element(this->window, this);
     rr_ui_container_refactor(this->window);
+    rr_ui_render_element(this->window, this);
     this->window->poll_events(this->window, this);
 
     if (this->focused != NULL)

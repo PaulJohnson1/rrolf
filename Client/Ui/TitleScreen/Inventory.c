@@ -174,7 +174,7 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this, struct rr_game
 struct rr_ui_element *rr_ui_inventory_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0xffff0000;
+    this->fill = 0xffe34545;
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = inventory_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;

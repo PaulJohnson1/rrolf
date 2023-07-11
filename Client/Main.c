@@ -165,7 +165,7 @@ void rr_main_loop(struct rr_game *this)
                 const start = ptr;
                 while (Module.HEAPU8[ptr++]);
                 return new TextDecoder().decode(
-                    Module.HEAPU8.subarray(start, ptr));
+                    Module.HEAPU8.subarray(start, ptr - 1));
             };
             function loop(time)
             {
@@ -203,8 +203,8 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
 
 int main()
 {
-    printf("client init version %llu",
-           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64);
+    printf("client init version %llu\n",
+           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64 ^ 2340498565434ull);
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;

@@ -92,7 +92,7 @@ struct rr_game
     float expanding_circle_radius;
     struct rr_game_loadout_petal loadout[20];
     EntityIdx player_infos[4];
-    uint8_t displaying_debug_information;
+    
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t simulation_ready;
@@ -100,8 +100,11 @@ struct rr_game
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
     uint8_t top_ui_open; // 0 = none, 1 = settings, 2 = changelog
     uint8_t tiles_size;
+
     uint8_t use_mouse;
+    uint8_t displaying_debug_information;
     uint8_t show_ui_hitbox;
+    uint8_t screen_shake;
 
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;

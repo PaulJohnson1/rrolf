@@ -78,7 +78,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         struct rr_ui_element *temp = rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 0);
         for (uint8_t r = 1; r < rr_rarity_id_mythic + 2; ++r)
         {
-            if (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1] < 0.0001)
+            if (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1] < 0.00001)
                 continue;
             char *d = malloc((sizeof *d) * 8);
             d[sprintf(d, "%.2f%%", 100 * (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1]))] = 0;
