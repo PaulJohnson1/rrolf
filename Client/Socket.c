@@ -11,7 +11,7 @@
 
 #include <Shared/Crypto.h>
 
-uint8_t output_packet[128 * 1024] = {0};
+uint8_t output_packet[2 * 1024] = {0};
 
 #ifdef EMSCRIPTEN
 void rr_on_socket_event_emscripten(struct rr_websocket *this,

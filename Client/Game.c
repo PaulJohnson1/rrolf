@@ -1825,17 +1825,14 @@ void rr_game_init(struct rr_game *this)
                          , 0, 0);
 
 
-    //
-    uint8_t *loadout = rr_local_storage_get("loadout");
-    printf("%p lolol\n", loadout);
-    if (loadout == NULL)
+    uint32_t size = rr_local_storage_get("loadout");
+    if (size == 0)
         return;
     uint8_t at = 0;
-    while (loadout[at])
+    while (at < size)
     {
-        printf("%d %d %d\n", loadout[at], loadout[at + 1], loadout[at + 2]);
-        this->loadout[loadout[at] - 1].id = loadout[at + 1];
-        this->loadout[loadout[at] - 1].rarity = loadout[at + 2] - 1;
+        this->loadout[storage_result[at]].id = storage_result[at + 1];
+        this->loadout[storage_result[at]].rarity = storage_result[at + 2];
         at += 3;
     }
 }
