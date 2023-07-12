@@ -69,6 +69,7 @@ async fn get_user_impl(username: &String, password: &String) -> Result<String, S
 
 #[get("/get_user/{username}/{password}")]
 async fn get_user(uri: web::Path<(String, String)>) -> impl Responder {
+    println!("getting user {} {}", uri.0, uri.1);
     match get_user_impl(&uri.0, &uri.1).await {
         Ok(r) => HttpResponse::Ok().body(r),
         Err(r) => HttpResponse::BadRequest().body(r),
