@@ -27,50 +27,57 @@ const NAMESPACE_ID: &str = "04cfba67-e965-4899-bcb9-b7497cc6863b"; // prod
                                                                    // const PETAL_COUNT: u64 = 11;
                                                                    // const RARITY_COUNT: u64 = 8;
 
-async fn maybe_create_account(username: &String, auth: &String) -> Result<String, String> {
+struct DatabaseAccount {
+    pub password: String,
+    pub username: String,
+    pub petals: serde_json::Value,
+}
+
+async fn maybe_create_account(username: &String, password: &String) -> Result<String, String> {
     Ok("aa".to_string())
 }
 
-async fn get_petals_impl(username: &String, auth: &String) -> Result<String, String> {
-    maybe_create_account(&username, &auth).await?;
+async fn get_user_impl(username: &String, password: &String) -> Result<String, String> {
+    maybe_create_account(&username, &password).await?;
 
-    let url = format!("https://kv.api.rivet.gg/v1/entries?namespace_id={NAMESPACE_ID}&key={DIRECTORY_SECRET}/game/players/{username}/petals");
+    let url = format!("https://kv.api.rivet.gg/v1/entries?namespace_id={NAMESPACE_ID}&key={DIRECTORY_SECRET}/game/players/{username}");
 
-    let a = reqwest::Client::new();
-    let a = a.get(url);
-    let a = a.header("Authorization", format!("Bearer {CLOUD_TOKEN}"));
-    let a = a.send();
-    let a = a.await;
-
-    if let Err(_) = a {
-        return Err("internal1".to_string());
-    }
-    let a = a.unwrap();
-    let a = a.text().await;
-    if let Err(_) = a {
-        return Err("internal2".to_string());
-    }
-    let a = a.unwrap();
+    let a = reqwest::Client::new()
+        .get(url)
+        .header("Authorization", format!("Bearer {CLOUD_TOKEN}"))
+        .send()
+        .await
+        .map_err(|_| "internal1".to_string())?
+        .text()
+        .await
+        .map_err(|_| "internal2".to_string())?;
 
     let a: serde_json::Value = serde_json::from_str(&a).expect("rivet server json valid");
     let b = &a["value"];
     if b.is_null() {
-        return Ok(a.to_string());
+        if a["watch"].is_null() {
+            return Err("invalid username".to_string());
+        }
+        return Err(format!("{{\"error\":\"not a rivet account?\",\"rivet_response\":{}}}", a.to_string()).to_string());
+    }
+
+    if b["password"].as_str().expect("password doesn't exist") != password.as_str() {
+        return Err("invalid password".to_string());
     }
     Ok(b.to_string())
 }
 
-#[get("/get_petals/{username}/{password}")]
-async fn get_petals(uri: web::Path<(String, String)>) -> impl Responder {
-    match get_petals_impl(&uri.0, &uri.1).await {
+#[get("/get_user/{username}/{password}")]
+async fn get_user(uri: web::Path<(String, String)>) -> impl Responder {
+    match get_user_impl(&uri.0, &uri.1).await {
         Ok(r) => HttpResponse::Ok().body(r),
-        Err(_) => HttpResponse::BadRequest().finish(),
+        Err(r) => HttpResponse::BadRequest().body(r),
     }
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(get_petals))
+    HttpServer::new(|| App::new().service(get_user))
         .bind(("127.0.0.1", 55554))?
         .run()
         .await
