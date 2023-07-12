@@ -5,6 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
+
 [dependencies]
 tokio = { version = "1.29.1", features = ["full"] }
 actix-web = "4.3.1"

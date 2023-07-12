@@ -1,32 +1,13 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
 use serde_json::Map;
-/*
-a = await fetch("https://kv.api.rivet.gg/v1/entries", {
-    headers: {
-        Authorization: "Bearer cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA"
-    },
-    method: "PUT",
-    body: '{"key":"a92pd3nf29d38tny9pr34dn3d908ntgb/game/players/example/petals/15:1","namespace_id":"04cfba67-e965-4899-bcb9-b7497cc6863b","value":123456789012345678901}'
-})
-b = await a.json()
-
-
-
-
-a = await fetch("https://kv.api.rivet.gg/v1/entries?key=a92pd3nf29d38tny9pr34dn3d908ntgb/game/players/example/petals/15:1&namespace_id=04cfba67-e965-4899-bcb9-b7497cc6863b", {
-    headers: {
-        Authorization: "Bearer cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA"
-    },
-})
-b = await a.json()
-*/
 
 const DIRECTORY_SECRET: &str = "a92pd3nf29d38tny9pr34dn3d908ntgb";
 const CLOUD_TOKEN: &str = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID: &str = "04cfba67-e965-4899-bcb9-b7497cc6863b"; // prod
-                                                                   // const PETAL_COUNT: u64 = 11;
-                                                                   // const RARITY_COUNT: u64 = 8;
+
+// const PETAL_COUNT: u64 = 11;
+// const RARITY_COUNT: u64 = 8;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct DatabaseAccount {
@@ -49,14 +30,7 @@ async fn get_user(username: &String, password: &String) -> Result<String, String
 
     let a: serde_json::Value = serde_json::from_str(&a).expect("rivet server json valid");
     if a["value"].is_null() {
-        if a["watch"].is_null() {
-            return Err("invalid username".to_string());
-        }
-        return Err(format!(
-            "{{\"error\":\"not a rivet account?\",\"rivet_response\":{}}}",
-            a.to_string()
-        )
-        .to_string());
+        return Err("not a rivet account".to_string());
     }
 
     let b: DatabaseAccount = serde_json::from_str(&a["value"].to_string()).unwrap();
@@ -83,14 +57,13 @@ async fn user_exists(username: &String) -> Result<bool, String> {
     Ok(!a["value"].is_null())
 }
 
+
 async fn user_create(username: &String, password: &String, safe: bool) -> Result<(), String> {
-    if safe {
-        if user_exists(username).await? {
-            return Err("account already exists".to_string());
-        }
+    if safe && user_exists(username).await? {
+        return Err("account already exists".to_string());
     }
     let url = format!("https://kv.api.rivet.gg/v1/entries?namespace_id={NAMESPACE_ID}");
-    let r = reqwest::Client::new()
+    reqwest::Client::new()
         .put(url)
         .body({
             let account = DatabaseAccount {
@@ -98,11 +71,11 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
                 password: password.to_string(),
                 petals: serde_json::Value::Object(Map::new()),
             };
-            let mut request_values = Map::new();
-            request_values.insert("key".to_string(), serde_json::value::to_value(format!("{DIRECTORY_SECRET}/game/players/{username}")).unwrap());
-            request_values.insert("namespace_id".to_string(), serde_json::value::to_value(NAMESPACE_ID.to_string()).unwrap());
-            request_values.insert("value".to_string(), serde_json::value::to_value(account).unwrap());
-            let request_json = serde_json::Value::Object(request_values);
+            let request_json = serde_json::json!({
+                "key":serde_json::value::to_value(format!("{DIRECTORY_SECRET}/game/players/{username}")).unwrap(),
+                "namespace_id": NAMESPACE_ID.to_string(),
+                "value": account
+            });
             serde_json::to_string(&request_json).unwrap()
         })
         .header("Authorization", format!("Bearer {CLOUD_TOKEN}"))
@@ -146,7 +119,7 @@ async fn main() -> std::io::Result<()> {
             web::scope("/api")
                 .service(get_user_req)
                 .service(user_create_req)
-                .service(user_exists_req)
+                .service(user_exists_req),
         )
     })
     .workers(10)
