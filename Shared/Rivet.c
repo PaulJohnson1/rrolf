@@ -174,7 +174,7 @@ void rr_rivet_identities_create_guest(void *captures)
             for (let i = 0; i < x.identity.display_name.length; i++)
                 HEAPU8[$name + i] = x.identity.display_name[i].charCodeAt();
             for (let i = 0; i < 5; i++)
-                HEAPU8[$account_number + i] = ("#" + x.identity.account_number)[i].charCodeAt();
+                HEAPU8[$account_number + i] = ("#" + x.identity.account_number.toString().padStart(4, "0"))[i].charCodeAt();
             Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $0);
         }
 
