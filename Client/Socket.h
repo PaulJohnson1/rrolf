@@ -8,7 +8,7 @@ struct lws;
 #else
 #endif
 
-extern uint8_t output_packet[128 * 1024];
+extern uint8_t output_packet[2 * 1024];
 
 enum rr_websocket_event_type
 {
