@@ -141,8 +141,8 @@ void rr_rivet_lobbies_find(void *captures)
                         HEAPU8[$host + i] = host[i].charCodeAt();
                     for (let i = 0; i < token.length; i++)
                         HEAPU8[$token + i] = token[i].charCodeAt();
-                    $host[host.length] = 0;
-                    $token[token.length] = 0;
+                    HEAPU8[$host] = 0;
+                    HEAPU8[$token] = 0;
                     Module._rr_rivet_lobby_on_find($host, $token,
                                                    json.ports.default.port, $0);
                 });

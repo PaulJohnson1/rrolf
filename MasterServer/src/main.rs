@@ -174,7 +174,7 @@ async fn user_craft_petals(
         }
     }
 
-    let mut user: DatabaseAccount =
+    let user: DatabaseAccount =
         serde_json::from_str(&user_get(username, password, true).await?)
             .map_err(|_| "user_get invalid json")?;
 
