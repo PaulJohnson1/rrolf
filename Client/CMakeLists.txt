@@ -23,6 +23,7 @@ set(SRCS
     Ui/InGame/Loadout.c
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c
+    Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/Inventory.c
     Ui/TitleScreen/MobGallery.c
     Ui/TitleScreen/Rivet.c

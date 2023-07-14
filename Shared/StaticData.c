@@ -55,8 +55,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 20, 30, 100, 50};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 3, 5, 7, 7, 7, 15};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 15, 20, 50, 5};
+uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 5, 5, 5, 7, 7};
 
 static void init_rarity_coefficients()
 {
@@ -76,28 +76,30 @@ static void init_rarity_coefficients()
 
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 {
-    //printf("loot table with seed %f\n", seed);
+    printf("loot table with seed %f\n", seed);
     data->id = id;
     for (uint64_t mob = 0; mob < rr_rarity_id_max; ++mob)
     {
         uint64_t cap = mob;
         if (mob == 0)
-            cap = 1;
-        else if (mob < rr_rarity_id_legendary)
+            cap = 0;
+        else if (mob <= rr_rarity_id_mythic)
             cap = mob - 1;
+        else
+            cap = rr_rarity_id_ultra;
         data->loot_table[mob][0] =
             pow(1 - seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
         for (uint64_t drop = 0; drop <= cap; ++drop)
         {
-            float start = RR_DROP_RARITY_COEFFICIENTS[drop];
-            float end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
+            double start = RR_DROP_RARITY_COEFFICIENTS[drop];
+            double end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
             data->loot_table[mob][drop + 1] =
                 pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
-            //printf("%f ", data->loot_table[mob][drop + 1] - data->loot_table[mob][drop]);
+            printf("%f ", data->loot_table[mob][drop + 1] - data->loot_table[mob][drop]);
         }
-        //puts("");
+        puts("");
     }
-    //printf("------------------------------------------\n");
+    printf("------------------------------------------\n");
 }
 
 static void init_loot_tables()
@@ -129,7 +131,13 @@ static void init_loot_tables()
                     rr_petal_id_missile, 1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
-                    rr_petal_id_stinger, 0.5);
+                    rr_petal_id_stinger, 0.0005);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
+                    rr_petal_id_stinger, 0.0006);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[2],
+                    rr_petal_id_stinger, 0.0007);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[3],
+                    rr_petal_id_stinger, 0.0008);
 }
 
 void rr_static_data_init()

@@ -156,13 +156,15 @@ void rr_game_init(struct rr_game *this)
             simulation_not_ready));
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_justify(
             rr_ui_link_toggle(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2, 
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 3, 
                     rr_ui_inventory_toggle_button_init(),
-                    rr_ui_mob_gallery_toggle_button_init()
+                    rr_ui_mob_gallery_toggle_button_init(),
+                    rr_ui_crafting_toggle_button_init()
                 )
             , simulation_not_ready)
         , -1, 1)

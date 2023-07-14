@@ -90,6 +90,7 @@ uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
 struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+void rr_ui_container_poll_events(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_element_init();
 struct rr_ui_element *rr_ui_static_space_init(float);
@@ -137,3 +138,6 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t, uint8_t);
 
 struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init();
 struct rr_ui_element *rr_ui_mob_container_init();
+
+struct rr_ui_element *rr_ui_crafting_container_init();
+struct rr_ui_element *rr_ui_crafting_toggle_button_init();
