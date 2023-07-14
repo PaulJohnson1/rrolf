@@ -44,12 +44,11 @@ static void container_on_render(struct rr_ui_element *this,
         }
         rr_renderer_context_state_free(renderer, &state2);
     }
-    struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < this->elements.size; ++i)
         rr_ui_render_element(this->elements.start[i], game);
 }
 
-static void container_poll_events(struct rr_ui_element *this,
+void rr_ui_container_poll_events(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
     if (this->completely_hidden)
@@ -87,7 +86,7 @@ struct rr_ui_element *rr_ui_container_init()
     struct rr_ui_container_metadata *data = malloc(sizeof *data);
     this->data = data;
     this->on_render = container_on_render;
-    this->poll_events = container_poll_events;
+    this->poll_events = rr_ui_container_poll_events;
     return this;
 }
 
@@ -97,7 +96,7 @@ struct rr_ui_element *rr_ui_flex_container_init()
     struct rr_ui_container_metadata *data = malloc(sizeof *data);
     this->data = data;
     this->on_render = container_on_render;
-    this->poll_events = container_poll_events;
+    this->poll_events = rr_ui_container_poll_events;
     return this;
 }
 
@@ -113,7 +112,7 @@ struct rr_ui_element *rr_ui_2d_container_init(uint8_t width, uint8_t height,
     data->inner_spacing = inner_spacing;
     this->data = data;
     this->on_render = container_on_render;
-    this->poll_events = container_poll_events;
+    this->poll_events = rr_ui_container_poll_events;
     this->resizeable = rr_ui_grid_container;
     return this;
 }

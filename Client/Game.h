@@ -25,7 +25,6 @@ struct rr_game_crafting_data
 {
     uint32_t count;
     uint32_t success_count;
-    float animation;
     uint8_t crafting_id;
     uint8_t crafting_rarity;
 };
@@ -50,6 +49,7 @@ struct rr_game_debug_info
 
 struct rr_game
 {
+    struct rr_game_crafting_data crafting_data;
     struct rr_game_debug_info debug_info;
     // petal rendering cache
     struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
@@ -78,7 +78,6 @@ struct rr_game
     struct rr_rivet_account rivet_account;
     struct rr_game_squad_client squad_members[4];
     struct rr_websocket socket;
-    struct rr_game_crafting_data crafting_data;
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
     struct rr_ui_element *squad_info_tooltip;

@@ -76,19 +76,22 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             break;
         struct rr_loot_data *data = &RR_MOB_DATA[id].loot[i];
         struct rr_ui_element *temp = rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 0);
-        for (uint8_t r = 1; r < rr_rarity_id_mythic + 2; ++r)
+        for (uint8_t r = 1; r < rr_rarity_id_mythic + 3; ++r)
         {
             if (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1] < 0.00001)
                 continue;
-            char *d = malloc((sizeof *d) * 8);
-            d[sprintf(d, "%.2f%%", 100 * (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1]))] = 0;
+            char *d = malloc((sizeof *d) * 12);
+            float pct = 100 * (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1]);
+            if (pct > 0.1) d[sprintf(d, "%.1f%%", pct)] = 0;
+            else if (pct > 0.01) d[sprintf(d, "%.2f%%", pct)] = 0;
+            else if (pct > 0.001) d[sprintf(d, "%.3f%%", pct)] = 0;
             rr_ui_container_add_element(temp, rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 2,
                     tooltip_petal_icon_init(data->id, r - 1),
                     rr_ui_text_init(d, 11, 0xffffffff)
                 )
             );
         }
-        rr_ui_container_add_element(this, temp);
+        rr_ui_container_add_element(this, rr_ui_set_justify(temp, -1, -1));
     }
     rr_ui_link_toggle(
         rr_ui_set_justify(this, -1, -1),
