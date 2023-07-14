@@ -5,6 +5,7 @@
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #else
+#include <cairo/cairo.h>
 #endif
 
 struct rr_renderer_paint
@@ -29,11 +30,16 @@ struct rr_renderer_context_state
 
 struct rr_renderer
 {
-    // uint8_t text_align;
-    // uint8_t text_baseline;
-    // uint8_t line_cap;
-    // uint8_t line_join;
+// uint8_t text_align;
+// uint8_t text_baseline;
+// uint8_t line_cap;
+// uint8_t line_join;
+#ifndef EMSCRIPTEN
+    cairo_t *context;
+    cairo_surface_t *surface;
+#else
     uint32_t context_id;
+#endif
     // struct rr_renderer_paint fill_style;
     // struct rr_renderer_paint stroke_style;
 
@@ -67,7 +73,8 @@ void rr_renderer_set_text_align(struct rr_renderer *, uint8_t);
 void rr_renderer_set_text_baseline(struct rr_renderer *, uint8_t);
 
 void rr_renderer_update_transform(struct rr_renderer *);
-void rr_renderer_set_transform(struct rr_renderer *, float, float, float, float, float, float);
+void rr_renderer_set_transform(struct rr_renderer *, float, float, float, float,
+                               float, float);
 void rr_renderer_translate(struct rr_renderer *, float, float);
 void rr_renderer_rotate(struct rr_renderer *, float);
 void rr_renderer_scale(struct rr_renderer *, float);
