@@ -167,7 +167,7 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
         username: username.to_string(),
         password: password.to_string(),
         petals: json!({
-            "5:1": 5
+            "1:1": 5
         }),
     };
     let request_json = serde_json::json!({
