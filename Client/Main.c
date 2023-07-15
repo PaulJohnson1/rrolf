@@ -203,8 +203,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
     this->input_data->scroll_delta = 0;
 }
 
-void rr_api_on_get_petals(char *thing, void *a) { puts(thing); }
-void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()
 {

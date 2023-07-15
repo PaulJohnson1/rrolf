@@ -53,7 +53,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
             var len = (data.length << 2) + 1;
             ret = stackAlloc(len);
             stringToUTF8(data, ret, len);
-            Module._rr_api_on_get_petals(ret, 0);
+            Module._rr_api_on_get_petals(ret, $2);
         });
         },
         param_1, param_2, captures);

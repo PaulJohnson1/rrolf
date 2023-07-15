@@ -28,7 +28,58 @@
 #include <Shared/Crypto.h>
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
+#include <Shared/cJSON.h>
 #include <Shared/pb.h>
+
+void rr_api_on_craft_result(char *json, void *a) { puts(json); }
+
+void rr_api_on_get_petals(char *json, void *a)
+{
+    struct rr_game *game = a;
+
+    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+            game->inventory[id][rarity] = 0;
+    cJSON *parsed = cJSON_Parse(json);
+    if (parsed == NULL)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL)
+        {
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        }
+        return;
+    }
+
+    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
+    if (petals == NULL || !cJSON_IsObject(petals))
+    {
+        fprintf(stderr, "petals is missing or is not an object\n");
+        cJSON_Delete(parsed);
+        return;
+    }
+
+    for (cJSON *petal_key = petals->child; petal_key != NULL;
+         petal_key = petal_key->next)
+    {
+        char *key = petal_key->string;
+        char *sub_key1 = strtok(key, ":");
+        char *sub_key2 = strtok(NULL, ":");
+
+        if (sub_key1 && sub_key2)
+        {
+            int index1 = atoi(sub_key1);
+            int index2 = atoi(sub_key2);
+
+            printf("%s %d %s %d %d %d %f\n", sub_key1, index1, sub_key2, index2, petal_key->type, petal_key->valueint, petal_key->valuedouble);
+
+            game->inventory[index1][index2] =
+                petal_key->valueint; // Assuming the value is a double.
+        }
+    }
+
+    cJSON_Delete(parsed);
+}
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
                         char *account_number, char *uuid, void *captures)
@@ -39,8 +90,9 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.avatar_url, avatar_url);
     strcpy(this->rivet_account.account_number, account_number);
     strcpy(this->rivet_account.uuid, uuid);
-    
-    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token, this);
+
+    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token,
+                      this);
 }
 
 static uint8_t simulation_not_ready(struct rr_ui_element *this,
@@ -76,6 +128,24 @@ void rr_game_init(struct rr_game *this)
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
     this->protocol_state = (1 << 20) - 1;
+
+    this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
+    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
+    {
+        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+        {
+            rr_renderer_init(&this->static_petals[id][rarity]);
+            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
+                                       50);
+            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
+            rr_renderer_render_static_petal(&this->static_petals[id][rarity],
+                                            id, rarity);
+            this->petal_tooltips[id][rarity] = rr_ui_petal_tooltip_init(id,
+            rarity); rr_ui_container_add_element(this->window,
+            this->petal_tooltips[id][rarity]);
+            // remember that these don't have a container
+        }
+    }
 
 #ifdef RIVET_BUILD
     strcpy(this->rivet_account.name, "loading");
@@ -227,34 +297,18 @@ void rr_game_init(struct rr_game *this)
             rr_ui_never_show));
     this->squad_info_tooltip->poll_events = rr_ui_no_focus;
 
-    this->rivet_info_tooltip = rr_ui_container_add_element(this->window, 
+    this->rivet_info_tooltip = rr_ui_container_add_element(
+        this->window,
         rr_ui_link_toggle(
             rr_ui_set_justify(
                 rr_ui_set_background(
-                    rr_ui_h_container_init(rr_ui_container_init(), 10, 0, 1,
-                        rr_ui_text_init("Hello guys", 16, 0xffffffff)
-                    )
-                , 0x80000000)
-            , -1, -1)
-        , rr_ui_never_show)
-    );
+                    rr_ui_h_container_init(
+                        rr_ui_container_init(), 10, 0, 1,
+                        rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff)),
+                    0x80000000),
+                -1, -1),
+            rr_ui_never_show));
     this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-    {
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-        {
-            this->inventory[id][rarity] = 10;
-            rr_renderer_init(&this->static_petals[id][rarity]);
-            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
-                                       50);
-            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[id][rarity],
-                                            id, rarity);
-            this->petal_tooltips[id][rarity] = rr_ui_petal_tooltip_init(id, rarity);
-            rr_ui_container_add_element(this->window, this->petal_tooltips[id][rarity]);
-            // remember that these don't have a container
-        }
-    }
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -2257,7 +2311,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else
     {
-        /*
         // render background but different
         struct rr_component_player_info custom_player_info;
         rr_component_player_info_init(&custom_player_info, 0);
@@ -2268,7 +2321,6 @@ void rr_game_tick(struct rr_game *this, float delta)
                               this->renderer->height * 0.5f);
         render_background(&custom_player_info, this, 400);
         rr_renderer_context_state_free(this->renderer, &state);
-        */
     }
     // ui
     this->crafting_data.animation -= delta;

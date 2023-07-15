@@ -54,6 +54,7 @@ set(SRCS
     ../Shared/Component/Projectile.c
     ../Shared/Component/Relations.c
     ../Shared/Bitset.c
+    ../Shared/cJSON.c
     ../Shared/Crypto.c
     ../Shared/pb.c
     ../Shared/SimulationCommon.c
