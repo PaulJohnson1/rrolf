@@ -1,3 +1,4 @@
+use actix_cors::Cors;
 use core::fmt;
 use std::collections::BTreeMap;
 
@@ -81,7 +82,7 @@ async fn make_request(
 ) -> Result<serde_json::Value> {
     match &body {
         Some(x) => println!("{} /{}\n{}", url, method.to_string(), x.clone()),
-        None => println!("{} /{}\nno body", url, method.to_string())
+        None => println!("{} /{}\nno body", url, method.to_string()),
     };
     let client = reqwest::Client::new();
     let mut request = client
@@ -109,7 +110,7 @@ struct DatabaseAccount {
     pub petals: serde_json::Value,
 }
 
-async fn user_get(username: &String, password: &String, use_password: bool) -> Result<String> {
+async fn user_get(username: &String, password: &String) -> Result<String> {
     let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
     let a = make_request(&url, reqwest::Method::GET, None).await?;
 
@@ -121,7 +122,9 @@ async fn user_get(username: &String, password: &String, use_password: bool) -> R
     let b: DatabaseAccount =
         serde_json::from_str(&a["value"].to_string()).map_err(|_| Error::InvalidJson)?;
 
-    if use_password && b.password != password.as_str() {
+    println!("{} {}", b.password, SERVER_SECRET);
+
+    if password != SERVER_SECRET && b.password != password.as_str() {
         return Err(Error::InvalidPassword);
     }
     Ok(serde_json::to_string(&b).map_err(|_| Error::InvalidJson)?)
@@ -163,7 +166,7 @@ async fn user_merge_petals(username: &String, petals: &Vec<Petal>, safe: bool) -
     }
 
     let mut user: DatabaseAccount =
-        serde_json::from_str(&user_get(username, &"".to_string(), false).await?)
+        serde_json::from_str(&user_get(username, &SERVER_SECRET.to_string()).await?)
             .map_err(|_| Error::InvalidJson)?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
@@ -213,7 +216,7 @@ async fn user_craft_petals(
         }
     }
 
-    let user: DatabaseAccount = serde_json::from_str(&user_get(username, password, true).await?)
+    let user: DatabaseAccount = serde_json::from_str(&user_get(username, password).await?)
         .map_err(|_| Error::InvalidJson)?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
@@ -286,7 +289,7 @@ fn parse_petals_string(petals_string: &str) -> Result<Vec<Petal>> {
 
 #[get("/user_get/{username}/{password}")]
 async fn user_get_req(uri: web::Path<(String, String)>) -> ActixResult<impl Responder> {
-    match user_get(&uri.0, &uri.1, true).await {
+    match user_get(&uri.0, &uri.1).await {
         Ok(r) => Ok(HttpResponse::Ok().body(r)),
         Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
@@ -342,14 +345,21 @@ async fn user_craft_petals_req(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
-        App::new().service(
-            web::scope("/api")
-                .service(user_get_req)
-                .service(user_create_req)
-                .service(user_exists_req)
-                .service(user_merge_petals_req)
-                .service(user_craft_petals_req),
-        )
+        App::new()
+            .wrap(
+                Cors::default()
+                    .allow_any_origin()
+                    .allow_any_header()
+                    .allow_any_method(),
+            )
+            .service(
+                web::scope("/api")
+                    .service(user_get_req)
+                    .service(user_create_req)
+                    .service(user_exists_req)
+                    .service(user_merge_petals_req)
+                    .service(user_craft_petals_req),
+            )
     })
     .workers(10)
     .bind(("127.0.0.1", 55554))?
