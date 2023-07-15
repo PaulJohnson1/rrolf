@@ -1,6 +1,7 @@
 use actix_cors::Cors;
 use core::fmt;
 use std::collections::BTreeMap;
+use async_recursion::async_recursion;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result as ActixResult};
 use rand::Rng;
@@ -58,6 +59,18 @@ fn rivet_url(key: &str) -> String {
     )
 }
 
+fn get_craft_chance(rarity: u64) -> f32 {
+    match rarity {
+        0 => 0.5,  // common -> uncommon
+        1 => 0.3,  // uncommon -> rare
+        2 => 0.15, //rare -> epic
+        3 => 0.05, // epic -> legendary
+        4 => 0.03, // legendary -> mythic
+        5 => 0.01, // mythic -> ultra
+        _ => 0.0,  // aka nothing
+    }
+}
+
 fn craft(count: i64, chance: f32) -> (i64, i64) {
     if chance == 0.0 {
         return (count, 0);
@@ -110,13 +123,17 @@ struct DatabaseAccount {
     pub petals: serde_json::Value,
 }
 
-async fn user_get(username: &String, password: &String) -> Result<String> {
+#[async_recursion]
+async fn user_get(username: &String, password: &String) -> Result<DatabaseAccount> {
     let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
     let a = make_request(&url, reqwest::Method::GET, None).await?;
 
     if a["value"].is_null() {
-        println!("not a rivet account error: {:#?}", a);
-        return Err(Error::AccountDoesNotExist);
+        if password == SERVER_SECRET {
+            return Err(Error::AccountDoesNotExist)
+        }
+        user_create(username, password, false).await?;
+        return user_get(username, password).await;
     }
 
     let b: DatabaseAccount =
@@ -127,13 +144,13 @@ async fn user_get(username: &String, password: &String) -> Result<String> {
     if password != SERVER_SECRET && b.password != password.as_str() {
         return Err(Error::InvalidPassword);
     }
-    Ok(serde_json::to_string(&b).map_err(|_| Error::InvalidJson)?)
+    Ok(b)
 }
 
 async fn user_exists(username: &String) -> Result<bool> {
-    let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
-    let a = make_request(&url, reqwest::Method::GET, None).await?;
-    Ok(!a["value"].is_null())
+    let data = make_request(&format!("{}/game/players/{}", DIRECTORY_SECRET, username), reqwest::Method::GET, None).await?;
+
+    Ok(data["value"].is_object())
 }
 
 async fn user_create(username: &String, password: &String, safe: bool) -> Result<()> {
@@ -160,14 +177,8 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
     Ok(())
 }
 
-async fn user_merge_petals(username: &String, petals: &Vec<Petal>, safe: bool) -> Result<()> {
-    if safe && !user_exists(username).await? {
-        return Err(Error::AccountDoesNotExist);
-    }
-
-    let mut user: DatabaseAccount =
-        serde_json::from_str(&user_get(username, &SERVER_SECRET.to_string()).await?)
-            .map_err(|_| Error::InvalidJson)?;
+async fn user_merge_petals(username: &String, petals: &Vec<Petal>) -> Result<()> {
+    let mut user: DatabaseAccount = user_get(username, &SERVER_SECRET.to_string()).await?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
         serde_json::from_value(user.petals).map_err(|_| Error::InvalidPetalsFormat)?;
@@ -208,7 +219,7 @@ async fn user_craft_petals(
     username: &String,
     password: &String,
     petals: &mut Vec<Petal>,
-) -> Result<()> {
+) -> Result<String> {
     // Check if each petal has enough quantity
     for petal in petals.iter() {
         if petal.2 < 5 {
@@ -216,8 +227,7 @@ async fn user_craft_petals(
         }
     }
 
-    let user: DatabaseAccount = serde_json::from_str(&user_get(username, password).await?)
-        .map_err(|_| Error::InvalidJson)?;
+    let user: DatabaseAccount = user_get(username, password).await?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
         serde_json::from_value(user.petals).map_err(|_| Error::InvalidPetalsFormat)?;
@@ -248,26 +258,22 @@ async fn user_craft_petals(
         let (id, rarity) = (petal.0, petal.1);
         let count = petal.2;
 
-        let (petals_left, new_petals) = craft(
-            count,
-            match rarity {
-                0 => 0.5,  // common -> uncommon
-                1 => 0.3,  // uncommon -> rare
-                2 => 0.15, //rare -> epic
-                3 => 0.05, // epic -> legendary
-                4 => 0.03, // legendary -> mythic
-                5 => 0.01, // mythic -> ultra
-                _ => 0.0,  // aka nothing
-            },
-        );
+        let (petals_left, new_petals) = craft(count, get_craft_chance(rarity));
         craft_results.push((id, rarity + 1, new_petals));
         craft_results.push((id, rarity, petals_left - count));
     }
 
     // merge
-    user_merge_petals(username, &craft_results, false).await?;
+    user_merge_petals(username, &craft_results).await?;
 
-    Ok(())
+    // create a vector of strings where each string is formatted as "id:rarity:count"
+    let results: Vec<String> = craft_results
+        .iter()
+        .map(|result| format!("{}:{}:{}", result.0, result.1, result.2))
+        .collect();
+
+    // join the results with commas and return the result
+    Ok(results.join(","))
 }
 
 fn parse_petals_string(petals_string: &str) -> Result<Vec<Petal>> {
@@ -290,7 +296,7 @@ fn parse_petals_string(petals_string: &str) -> Result<Vec<Petal>> {
 #[get("/user_get/{username}/{password}")]
 async fn user_get_req(uri: web::Path<(String, String)>) -> ActixResult<impl Responder> {
     match user_get(&uri.0, &uri.1).await {
-        Ok(r) => Ok(HttpResponse::Ok().body(r)),
+        Ok(r) => Ok(HttpResponse::Ok().body(serde_json::to_string(&r).unwrap())),
         Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
 }
@@ -306,8 +312,8 @@ async fn user_create_req(uri: web::Path<(String, String)>) -> ActixResult<impl R
 #[get("/user_exists/{username}")]
 async fn user_exists_req(uri: web::Path<String>) -> ActixResult<impl Responder> {
     match user_exists(&uri.to_string()).await {
-        Ok(r) => Ok(HttpResponse::Ok().body(if r { "true" } else { "false" })),
-        Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
+        Ok(x) => Ok(HttpResponse::BadRequest().body(if x { "1" } else { "0" })),
+        Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string()))
     }
 }
 
@@ -322,7 +328,7 @@ async fn user_merge_petals_req(
         Ok(x) => x,
         Err(x) => return Ok(HttpResponse::BadRequest().body(x.to_string())),
     };
-    match user_merge_petals(&uri.1.to_string(), &petals, false).await {
+    match user_merge_petals(&uri.1.to_string(), &petals).await {
         Ok(_) => Ok(HttpResponse::Ok().body("success")),
         Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
@@ -337,7 +343,7 @@ async fn user_craft_petals_req(
         Err(x) => return Ok(HttpResponse::BadRequest().body(x.to_string())),
     };
     match user_craft_petals(&uri.0.to_string(), &uri.1.to_string(), &mut petals).await {
-        Ok(_) => Ok(HttpResponse::Ok().body("success")),
+        Ok(x) => Ok(HttpResponse::Ok().body(x)),
         Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
 }
