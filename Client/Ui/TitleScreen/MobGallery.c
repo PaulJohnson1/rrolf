@@ -24,7 +24,7 @@ static void mob_button_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
-    rr_ui_toggle_tooltip(this, game->mob_tooltips[data->id][data->rarity], game);
+    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity], game);
 }
 
 static void wave_text_on_render(struct rr_ui_element *this, struct rr_game *game)

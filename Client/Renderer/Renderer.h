@@ -80,7 +80,6 @@ void rr_renderer_rotate(struct rr_renderer *, float);
 void rr_renderer_scale(struct rr_renderer *, float);
 void rr_renderer_scale2(struct rr_renderer *, float, float);
 
-void rr_renderer_set_grayscale(struct rr_renderer *, uint8_t);
 void rr_renderer_save(struct rr_renderer *);
 void rr_renderer_restore(struct rr_renderer *);
 
