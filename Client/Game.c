@@ -2242,6 +2242,9 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
+    this->crafting_data.animation -= delta;
+    if (this->crafting_data.animation < 0)
+        this->crafting_data.animation = 0;
     this->prev_focused = this->focused;
     rr_ui_container_refactor(this->window);
     rr_ui_render_element(this->window, this);

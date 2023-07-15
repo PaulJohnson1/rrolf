@@ -23,6 +23,7 @@ struct rr_game_squad_client
 
 struct rr_game_crafting_data
 {
+    float animation;
     uint32_t count;
     uint32_t success_count;
     uint8_t crafting_id;

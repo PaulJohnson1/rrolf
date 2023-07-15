@@ -17,6 +17,7 @@
 struct crafting_ring_metadata
 {
     float angle;
+    float v_angle;
 };
 
 struct crafting_ring_button_metadata
@@ -40,14 +41,18 @@ static void craft_button_on_event(struct rr_ui_element *this, struct rr_game *ga
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->crafting_data.count >= 5 && game->crafting_data.crafting_id != 0 && game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
+        if (game->crafting_data.success_count == 0 && game->crafting_data.count >= 5 && game->crafting_data.crafting_id != 0 && game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
+        {
             game->crafting_data.success_count = 1;
+            game->crafting_data.animation = 5;
+            game->crafting_data.count = 0;
+        }
     }
 }
 
 static uint8_t crafting_ring_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->crafting_data.success_count == 0;
+    return game->crafting_data.success_count == 0 || game->crafting_data.animation != 0;
 }
 
 static void crafting_result_container_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -118,11 +123,17 @@ static struct rr_ui_element *crafting_ring_petal_init(uint8_t pos)
 
 static void crafting_ring_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
+    struct crafting_ring_metadata *data = this->data;
+    if (game->crafting_data.animation != 0)
+        data->v_angle = 0.5;
+    data->angle += data->v_angle;
+    data->v_angle *= 0.8;
     struct rr_renderer_context_state state;
     for (uint32_t i = 0; i < this->elements.size; ++i)
     {
         rr_renderer_context_state_init(game->renderer, &state);
-        rr_renderer_translate(game->renderer, game->renderer->scale * cosf(i * 2 * M_PI / this->elements.size) * 120, game->renderer->scale * sinf(i * 2 * M_PI / this->elements.size) * 120);
+        rr_renderer_translate(game->renderer, game->renderer->scale * cosf(i * 2 * M_PI / this->elements.size + data->angle) * 120, 
+        game->renderer->scale * sinf(i * 2 * M_PI / this->elements.size + data->angle) * 120);
         rr_ui_render_element(this->elements.start[i], game);
         rr_renderer_context_state_free(game->renderer, &state);
     }
@@ -131,7 +142,8 @@ static struct rr_ui_element *crafting_ring_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct crafting_ring_metadata *data = malloc(sizeof *data);
-    data->angle = 0;
+    memset(data, 0, sizeof *data);
+    this->data = data;
     this->abs_width = this->width = 300;
     this->abs_height = this->height = 300;
     this->on_render = crafting_ring_on_render;
@@ -147,7 +159,7 @@ static struct rr_ui_element *crafting_ring_init()
 
 static uint8_t crafting_result_container_should_show(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->crafting_data.success_count;
+    return game->crafting_data.success_count && game->crafting_data.animation == 0;
 }
 
 static void crafting_result_container_on_render(struct rr_ui_element *this, struct rr_game *game)
