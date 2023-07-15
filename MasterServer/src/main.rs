@@ -1,12 +1,12 @@
 use actix_cors::Cors;
+use async_recursion::async_recursion;
 use core::fmt;
 use std::collections::BTreeMap;
-use async_recursion::async_recursion;
 
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result as ActixResult};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
-use serde_json::Map;
+use serde_json::json;
 
 type Petal = (u64, u64, i64);
 
@@ -130,7 +130,7 @@ async fn user_get(username: &String, password: &String) -> Result<DatabaseAccoun
 
     if a["value"].is_null() {
         if password == SERVER_SECRET {
-            return Err(Error::AccountDoesNotExist)
+            return Err(Error::AccountDoesNotExist);
         }
         user_create(username, password, false).await?;
         return user_get(username, password).await;
@@ -148,7 +148,12 @@ async fn user_get(username: &String, password: &String) -> Result<DatabaseAccoun
 }
 
 async fn user_exists(username: &String) -> Result<bool> {
-    let data = make_request(&format!("{}/game/players/{}", DIRECTORY_SECRET, username), reqwest::Method::GET, None).await?;
+    let data = make_request(
+        &format!("{}/game/players/{}", DIRECTORY_SECRET, username),
+        reqwest::Method::GET,
+        None,
+    )
+    .await?;
 
     Ok(data["value"].is_object())
 }
@@ -161,7 +166,9 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
     let account = DatabaseAccount {
         username: username.to_string(),
         password: password.to_string(),
-        petals: serde_json::Value::Object(Map::new()),
+        petals: json!({
+            "5:1": 5
+        }),
     };
     let request_json = serde_json::json!({
         "key": format!("{}/game/players/{}", DIRECTORY_SECRET, username),
@@ -313,7 +320,7 @@ async fn user_create_req(uri: web::Path<(String, String)>) -> ActixResult<impl R
 async fn user_exists_req(uri: web::Path<String>) -> ActixResult<impl Responder> {
     match user_exists(&uri.to_string()).await {
         Ok(x) => Ok(HttpResponse::BadRequest().body(if x { "1" } else { "0" })),
-        Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string()))
+        Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
 }
 
