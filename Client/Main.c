@@ -1,14 +1,15 @@
+#include <stdint.h>
+#include <stdio.h>
+
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
+#include <Shared/Api.h>
 #include <Shared/Bitset.h>
 #include <Shared/MagicNumber.h>
 #include <Shared/Rivet.h>
-
-#include <stdint.h>
-#include <stdio.h>
 
 #ifndef EMSCRIPTEN
 #include <pthread.h>
@@ -163,7 +164,8 @@ void rr_main_loop(struct rr_game *this)
             Module.ReadCstr = function(ptr)
             {
                 const start = ptr;
-                while (Module.HEAPU8[ptr++]);
+                while (Module.HEAPU8[ptr++])
+                    ;
                 return new TextDecoder().decode(
                     Module.HEAPU8.subarray(start, ptr - 1));
             };
@@ -201,10 +203,16 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
     this->input_data->scroll_delta = 0;
 }
 
+void rr_api_on_get_petals(char *thing, void *a) { puts(thing); }
+void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
+
 int main()
 {
+    rr_api_get_petals("example_uuid", "example_password", 0);
+
     printf("client init version %llu\n",
-           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64 ^ 2340498565434ull);
+           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64 ^
+               2340498565434ull);
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;

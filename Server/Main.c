@@ -11,6 +11,7 @@
 
 #include <Server/Logs.h>
 #include <Server/Server.h>
+#include <Shared/Api.h>
 #include <Shared/Rivet.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
@@ -41,8 +42,13 @@ void sigint_handle(int s)
 #endif
 }
 
+void rr_api_on_get_petals(char *thing, void *a) { puts(thing); }
+void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
+
 int main()
 {
+    rr_api_get_petals("example_uuid", "example_password", 0);
+
     // signal(SIGINT, sigint_handle);
 #ifdef RIVET_BUILD
     curl_global_init(CURL_GLOBAL_ALL);
