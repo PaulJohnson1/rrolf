@@ -1,6 +1,8 @@
 #include <Client/Storage.h>
 
+#ifdef EMSCRIPTEN
 #include <emscripten.h>
+#endif
 
 #include <Client/Game.h>
 

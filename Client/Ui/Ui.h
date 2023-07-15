@@ -83,14 +83,18 @@ struct rr_ui_element
 };
 
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
-void rr_ui_render_tooltip_above(struct rr_ui_element *, struct rr_ui_element *, struct rr_game *);
-void rr_ui_render_tooltip_below(struct rr_ui_element *, struct rr_ui_element *, struct rr_game *);
+void rr_ui_render_tooltip_above(struct rr_ui_element *, struct rr_ui_element *,
+                                struct rr_game *);
+void rr_ui_render_tooltip_below(struct rr_ui_element *, struct rr_ui_element *,
+                                struct rr_game *);
 uint8_t rr_ui_mouse_over(struct rr_ui_element *, struct rr_game *);
 void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
-struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *,
+                                        uint8_t (*)(struct rr_ui_element *,
+                                                    struct rr_game *));
 void rr_ui_container_poll_events(struct rr_ui_element *, struct rr_game *);
 
 struct rr_ui_element *rr_ui_element_init();
@@ -103,16 +107,21 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
                                                   struct rr_ui_element *);
 
 struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
-struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t, void (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t,
+                                              void (*)(struct rr_ui_element *,
+                                                       struct rr_game *));
 
 struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
 
-struct rr_ui_element *rr_ui_choose_element_init(struct rr_ui_element *, struct rr_ui_element *, uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_choose_element_init(
+    struct rr_ui_element *, struct rr_ui_element *,
+    uint8_t (*)(struct rr_ui_element *, struct rr_game *));
 
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
 // custom
-struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *);
+struct rr_ui_element *
+rr_ui_squad_player_container_init(struct rr_game_squad_client *);
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
 struct rr_ui_element *rr_ui_info_init();
 
@@ -121,7 +130,8 @@ struct rr_ui_element *rr_ui_inventory_container_init();
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t);
 struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
 
-struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
+struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *,
+                                                  float);
 struct rr_ui_element *rr_ui_flower_init(uint8_t, float);
 
 struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
@@ -142,3 +152,10 @@ struct rr_ui_element *rr_ui_mob_container_init();
 
 struct rr_ui_element *rr_ui_crafting_container_init();
 struct rr_ui_element *rr_ui_crafting_toggle_button_init();
+
+struct rr_ui_element *rr_ui_h_slider_init(float width, float height,
+                                          float *value);
+
+struct rr_ui_element *rr_ui_v_slider_init(float width, float height,
+                                          float min_value, float max_value,
+                                          float *value);

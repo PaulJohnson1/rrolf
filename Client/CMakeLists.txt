@@ -13,7 +13,6 @@ set(SRCS
     Renderer/RenderHealth.c
     Renderer/RenderMob.c
     Renderer/RenderPetal.c
-    Renderer/Wasm.c
     Storage.c
     System/Interpolation.c
     Ui/Button.c
@@ -30,6 +29,7 @@ set(SRCS
     Ui/TitleScreen/Rivet.c
     Ui/TitleScreen/Settings.c
     Ui/TitleScreen/Squad.c
+    Ui/Slider.c
     Ui/Text.c
     Ui/ToggleBox.c
     Ui/Tooltip/Petal.c
@@ -94,7 +94,7 @@ endif()
 add_executable(rrolf-client ${SRCS})
 
 if(NOT WASM_BUILD)
-    target_link_libraries(rrolf-client websockets)
+    target_link_libraries(rrolf-client websockets cairo curl)
 endif()
 
 target_link_libraries(rrolf-client m)

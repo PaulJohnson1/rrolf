@@ -193,3 +193,15 @@ void rr_renderer_clip2(struct rr_renderer *this)
     cairo_set_fill_rule(this->context, fill_rule);
     cairo_clip(this->context);
 }
+
+void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *b) {}
+void rr_renderer_fill_text(struct rr_renderer *this, char const *a, float b, float c) {}
+void rr_renderer_stroke_text(struct rr_renderer *this, char const *a, float b, float c){}
+void rr_renderer_set_text_align(struct rr_renderer *this, uint8_t a) {}
+void rr_renderer_set_text_baseline(struct rr_renderer *this, uint8_t a) {}
+void rr_renderer_set_text_size(struct rr_renderer *this, float a) {}
+void rr_renderer_draw_svg(struct rr_renderer *this, char *svg, float x, float y) {}
+float rr_renderer_get_text_size(char const *a) {return 0;}
+
+
+

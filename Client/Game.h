@@ -92,6 +92,7 @@ struct rr_game
 
     uint32_t protocol_state;
     float expanding_circle_radius;
+    float map_prop_count;
     struct rr_game_loadout_petal loadout[20];
     EntityIdx player_infos[4];
     

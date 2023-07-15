@@ -206,8 +206,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
 
 int main()
 {
-    rr_api_get_petals("example_uuid", "example_password", 0);
-
     printf("client init version %llu\n",
            14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64 ^
                2340498565434ull);

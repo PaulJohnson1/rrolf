@@ -32,7 +32,7 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 {
-#ifdef RR_SERVER
+#ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
     char url[500];
     RR_RIVET_CURL_PROLOGUE
@@ -63,7 +63,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                            char const *param_3, void *captures)
 {
-#ifdef RR_SERVER
+#ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
     char url[500];
     RR_RIVET_CURL_PROLOGUE

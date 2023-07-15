@@ -71,8 +71,6 @@ void rr_api_on_get_petals(char *json, void *a)
             int index1 = atoi(sub_key1);
             int index2 = atoi(sub_key2);
 
-            printf("%s %d %s %d %d %d %f\n", sub_key1, index1, sub_key2, index2, petal_key->type, petal_key->valueint, petal_key->valuedouble);
-
             game->inventory[index1][index2] =
                 petal_key->valueint; // Assuming the value is a double.
         }
@@ -2292,7 +2290,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this, 200);
+            render_background(player_info, this, this->map_prop_count * 400);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -2319,7 +2317,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
-        render_background(&custom_player_info, this, 400);
+        printf("%f\n", this->map_prop_count);
+        render_background(&custom_player_info, this, this->map_prop_count * 800);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
