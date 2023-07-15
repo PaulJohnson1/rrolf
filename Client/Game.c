@@ -223,6 +223,19 @@ void rr_game_init(struct rr_game *this)
                 -1, -1),
             rr_ui_never_show));
     this->squad_info_tooltip->poll_events = rr_ui_no_focus;
+
+    this->rivet_info_tooltip = rr_ui_container_add_element(this->window, 
+        rr_ui_link_toggle(
+            rr_ui_set_justify(
+                rr_ui_set_background(
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 0, 1,
+                        rr_ui_text_init("Hello guys", 16, 0xffffffff)
+                    )
+                , 0x80000000)
+            , -1, -1)
+        , rr_ui_never_show)
+    );
+    this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -2230,6 +2243,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else
     {
+        /*
         // render background but different
         struct rr_component_player_info custom_player_info;
         rr_component_player_info_init(&custom_player_info, 0);
@@ -2240,6 +2254,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                               this->renderer->height * 0.5f);
         render_background(&custom_player_info, this, 400);
         rr_renderer_context_state_free(this->renderer, &state);
+        */
     }
     // ui
     this->crafting_data.animation -= delta;
@@ -2248,14 +2263,18 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->prev_focused = this->focused;
     rr_ui_container_refactor(this->window);
     rr_ui_render_element(this->window, this);
-    this->window->poll_events(this->window, this);
+    if (!this->block_ui_input)
+    {
+        this->window->poll_events(this->window, this);
 
-    if (this->focused != NULL)
-        this->focused->on_event(this->focused, this);
-    else
-        this->window->on_event(this->window, this);
-    if (this->prev_focused != this->focused && this->prev_focused != NULL)
-        this->prev_focused->on_event(this->prev_focused, this);
+        if (this->focused != NULL)
+            this->focused->on_event(this->focused, this);
+        else
+            this->window->on_event(this->window, this);
+        if (this->prev_focused != this->focused && this->prev_focused != NULL)
+            this->prev_focused->on_event(this->prev_focused, this);
+    }
+    this->block_ui_input = 0;
 #ifndef EMSCRIPTEN
     lws_service(this->socket.socket_context, -1);
 #endif

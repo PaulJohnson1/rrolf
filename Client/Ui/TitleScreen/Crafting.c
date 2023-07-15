@@ -44,8 +44,8 @@ static void craft_button_on_event(struct rr_ui_element *this, struct rr_game *ga
         if (game->crafting_data.success_count == 0 && game->crafting_data.count >= 5 && game->crafting_data.crafting_id != 0 && game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
         {
             game->crafting_data.success_count = 1;
-            game->crafting_data.animation = 5;
-            game->crafting_data.count = 0;
+            game->crafting_data.animation = 2.5;
+            //game->crafting_data.count = 0;
         }
     }
 }
@@ -125,7 +125,7 @@ static void crafting_ring_on_render(struct rr_ui_element *this, struct rr_game *
 {
     struct crafting_ring_metadata *data = this->data;
     if (game->crafting_data.animation != 0)
-        data->v_angle = 0.5;
+        data->v_angle = 0.1;
     data->angle += data->v_angle;
     data->v_angle *= 0.8;
     struct rr_renderer_context_state state;
@@ -216,12 +216,8 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this, struct
             --count;
     }
     if (data->id == game->crafting_data.crafting_id) 
-    {
         if (data->rarity == game->crafting_data.crafting_rarity)
             count -= game->crafting_data.count;
-        else if (data->rarity == game->crafting_data.crafting_rarity + 1)
-            count -= game->crafting_data.success_count;
-    }
     data->count = count;
     data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);

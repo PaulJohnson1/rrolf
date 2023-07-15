@@ -64,8 +64,12 @@ void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
         {
             data->scroll_focus = 1;
         }
-        else if (game->input_data->mouse_buttons_up_this_tick & 1)
+        else if (data->scroll_focus && game->input_data->mouse_buttons_up_this_tick & 1)
+        {
             data->scroll_focus = 0;
+            game->block_ui_input = 1;
+            puts("blocking ui events");
+        }
 
         if (data->scroll_focus)
         {
@@ -94,6 +98,7 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *c,
     struct scroll_container_metadata *data = malloc(sizeof *data);
     rr_ui_container_add_element(this, c);
     data->y = data->lerp_y = 0;
+    data->scroll_focus = 0;
     c->h_justify = -1;
     c->v_justify = -1;
     this->data = data;

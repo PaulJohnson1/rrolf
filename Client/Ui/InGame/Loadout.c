@@ -36,7 +36,7 @@ static void loadout_button_on_event(struct rr_ui_element *this, struct rr_game *
     {
         if (game->loadout[data->pos].id == 0)
             return;
-        rr_ui_toggle_tooltip(this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
+        rr_ui_render_tooltip_above(this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
     }
 }
 
@@ -61,7 +61,7 @@ static void petal_switch_button_event(struct rr_ui_element *this, struct rr_game
         uint8_t rarity = slot->rarity;
         if (id == 0)
             return;
-        rr_ui_toggle_tooltip(this, game->petal_tooltips[id][rarity], game);
+        rr_ui_render_tooltip_above(this, game->petal_tooltips[id][rarity], game);
     }
 }
 

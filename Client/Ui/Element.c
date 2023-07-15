@@ -66,7 +66,7 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_context_state_free(game->renderer, &state);
 }
 
-void rr_ui_toggle_tooltip(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
+void rr_ui_render_tooltip_above(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
 {
     tooltip->should_show = rr_ui_always_show;
     tooltip->x =
@@ -76,9 +76,28 @@ void rr_ui_toggle_tooltip(struct rr_ui_element *this, struct rr_ui_element *tool
          (tooltip->abs_height + this->height / 2 + 10));
     if (tooltip->x < 10)
         tooltip->x = 10;
+    else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
+        tooltip->x = game->renderer->width - 10 - tooltip->abs_width;
     if (tooltip->y < 10)
         tooltip->y = 10;
 }
+
+void rr_ui_render_tooltip_below(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
+{
+    tooltip->should_show = rr_ui_always_show;
+    tooltip->x =
+        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
+    tooltip->y =
+        (this->abs_y / game->renderer->scale +
+         (this->height / 2 + 10));
+    if (tooltip->x < 10)
+        tooltip->x = 10;
+    else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
+        tooltip->x = game->renderer->width - 10 - tooltip->abs_width;
+    if (tooltip->y > game->renderer->height - tooltip->abs_height - 10)
+        tooltip->y = game->renderer->height - tooltip->abs_height - 10;
+}
+
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)
 {

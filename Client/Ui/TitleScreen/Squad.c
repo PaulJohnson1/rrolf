@@ -206,7 +206,7 @@ struct info_metadata
 
 static void info_data_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    rr_ui_toggle_tooltip(this, game->squad_info_tooltip, game);
+    rr_ui_render_tooltip_above(this, game->squad_info_tooltip, game);
 }
 
 static void render_info(struct rr_ui_element *element, struct rr_game *game)

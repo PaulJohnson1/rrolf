@@ -40,9 +40,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
         }
     }
     else
-    {
-        rr_ui_toggle_tooltip(this, game->petal_tooltips[data->id][data->rarity], game);
-    }
+        rr_ui_render_tooltip_above(this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static uint8_t inventory_button_should_show(struct rr_ui_element *this,
