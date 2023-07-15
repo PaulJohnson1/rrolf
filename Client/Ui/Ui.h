@@ -119,6 +119,8 @@ struct rr_ui_element *rr_ui_choose_element_init(
 
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
+struct rr_ui_element *rr_ui_h_slider_init(float, float, float *);
+
 // custom
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *);
@@ -152,10 +154,3 @@ struct rr_ui_element *rr_ui_mob_container_init();
 
 struct rr_ui_element *rr_ui_crafting_container_init();
 struct rr_ui_element *rr_ui_crafting_toggle_button_init();
-
-struct rr_ui_element *rr_ui_h_slider_init(float width, float height,
-                                          float *value);
-
-struct rr_ui_element *rr_ui_v_slider_init(float width, float height,
-                                          float min_value, float max_value,
-                                          float *value);

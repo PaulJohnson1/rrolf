@@ -68,7 +68,6 @@ void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
         {
             data->scroll_focus = 0;
             game->block_ui_input = 1;
-            puts("blocking ui events");
         }
 
         if (data->scroll_focus)
