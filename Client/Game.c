@@ -18,6 +18,7 @@
 #include <Client/Socket.h>
 #include <Client/Storage.h>
 #include <Client/Ui/Engine.h>
+#include <Shared/Api.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
@@ -30,21 +31,26 @@
 #include <Shared/pb.h>
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
-                        char *account_number, void *captures)
+                        char *account_number, char *uuid, void *captures)
 {
     struct rr_game *this = captures;
     strcpy(this->rivet_account.token, token);
     strcpy(this->rivet_account.name, name);
     strcpy(this->rivet_account.avatar_url, avatar_url);
     strcpy(this->rivet_account.account_number, account_number);
+    strcpy(this->rivet_account.uuid, uuid);
+    
+    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token, this);
 }
 
-static uint8_t simulation_not_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t simulation_not_ready(struct rr_ui_element *this,
+                                    struct rr_game *game)
 {
     return 1 - game->simulation_ready;
 }
 
-static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t simulation_ready(struct rr_ui_element *this,
+                                struct rr_game *game)
 {
     return game->simulation_ready;
 }
@@ -53,7 +59,6 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     return game->socket_ready;
 }
-
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -77,6 +82,7 @@ void rr_game_init(struct rr_game *this)
     strcpy(this->rivet_account.avatar_url, "");
     strcpy(this->rivet_account.token, "");
     strcpy(this->rivet_account.account_number, "#0000");
+    strcpy(this->rivet_account.uuid, "no-uuid");
     rr_rivet_identities_create_guest(this);
 #endif
 
@@ -84,14 +90,14 @@ void rr_game_init(struct rr_game *this)
         this->window,
         rr_ui_link_toggle(
             rr_ui_pad(
-                rr_ui_set_justify(
-                    rr_ui_rivet_container_init(this),
-                -1, -1),
-            10)
-        , simulation_not_ready)
-    );
-    rr_ui_container_add_element(this->window, rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
-    rr_ui_container_add_element(this->window, rr_ui_settings_container_init(this));
+                rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
+                10),
+            simulation_not_ready));
+    rr_ui_container_add_element(
+        this->window,
+        rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
+    rr_ui_container_add_element(this->window,
+                                rr_ui_settings_container_init(this));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -102,9 +108,8 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 10, 20, 2,
                         rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
-                        rr_ui_set_background(
-                            rr_ui_join_button_init(),
-                            0xff1dd129)),
+                        rr_ui_set_background(rr_ui_join_button_init(),
+                                             0xff1dd129)),
                     rr_ui_set_background(
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
@@ -161,14 +166,12 @@ void rr_game_init(struct rr_game *this)
         this->window,
         rr_ui_set_justify(
             rr_ui_link_toggle(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 3, 
-                    rr_ui_inventory_toggle_button_init(),
-                    rr_ui_mob_gallery_toggle_button_init(),
-                    rr_ui_crafting_toggle_button_init()
-                )
-            , simulation_not_ready)
-        , -1, 1)
-    );
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 3,
+                                       rr_ui_inventory_toggle_button_init(),
+                                       rr_ui_mob_gallery_toggle_button_init(),
+                                       rr_ui_crafting_toggle_button_init()),
+                simulation_not_ready),
+            -1, 1));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -223,28 +226,13 @@ void rr_game_init(struct rr_game *this)
                 -1, -1),
             rr_ui_never_show));
     this->squad_info_tooltip->poll_events = rr_ui_no_focus;
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-    {
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-        {
-            this->inventory[id][rarity] = 10;
-            rr_renderer_init(&this->static_petals[id][rarity]);
-            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
-                                       50);
-            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[id][rarity],
-                                            id, rarity);
-            this->petal_tooltips[id][rarity] = rr_ui_petal_tooltip_init(id, rarity);
-            rr_ui_container_add_element(this->window, this->petal_tooltips[id][rarity]);
-            // remember that these don't have a container
-        }
-    }
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
             this->mob_tooltips[id][rarity] = rr_ui_mob_tooltip_init(id, rarity);
-            rr_ui_container_add_element(this->window, this->mob_tooltips[id][rarity]);
+            rr_ui_container_add_element(this->window,
+                                        this->mob_tooltips[id][rarity]);
         }
     }
 
@@ -1826,7 +1814,6 @@ void rr_game_init(struct rr_game *this)
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
 
-
     uint32_t size = rr_local_storage_get("loadout");
     if (size == 0)
         return;
@@ -1932,9 +1919,16 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
                               << 5;
             movement_flags |= this->use_mouse << 6;
-            proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
-            proto_bug_write_float32(&encoder2, this->input_data->mouse_x - this->renderer->width / 2, "mouse x");
-            proto_bug_write_float32(&encoder2, this->input_data->mouse_y - this->renderer->height / 2, "mouse y");
+            proto_bug_write_uint8(&encoder2, movement_flags,
+                                  "movement kb flags");
+            proto_bug_write_float32(&encoder2,
+                                    this->input_data->mouse_x -
+                                        this->renderer->width / 2,
+                                    "mouse x");
+            proto_bug_write_float32(&encoder2,
+                                    this->input_data->mouse_y -
+                                        this->renderer->height / 2,
+                                    "mouse y");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             break;
         }
@@ -2151,7 +2145,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_storage_layout_save(this);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
-    //rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
+    // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
     // render off-game elements
@@ -2179,15 +2173,19 @@ void rr_game_tick(struct rr_game *this, float delta)
 
             if (this->screen_shake && player_info->flower_id != RR_NULL_ENTITY)
             {
-                if (rr_simulation_get_physical(this->simulation, player_info->flower_id)->server_animation_tick != 0)
+                if (rr_simulation_get_physical(this->simulation,
+                                               player_info->flower_id)
+                        ->server_animation_tick != 0)
                 {
                     float r = rr_frand() * 5;
                     float a = rr_frand() * 2 * M_PI;
-                    rr_renderer_translate(this->renderer, r * cosf(a), r * sinf(a));
+                    rr_renderer_translate(this->renderer, r * cosf(a),
+                                          r * sinf(a));
                 }
             }
 
-            uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51) << 24;
+            uint32_t alpha = (uint32_t)(player_info->lerp_camera_fov * 51)
+                             << 24;
             rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
             rr_renderer_set_fill(this->renderer, 0xff45230a);
@@ -2299,15 +2297,16 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              186 /* ; */))
-            this->displaying_debug_information ^= 1;
+                          186 /* ; */))
+        this->displaying_debug_information ^= 1;
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
     this->debug_info.cumulative_tick_time += time_elapsed;
     if (time_elapsed > this->debug_info.max_tick_time)
         this->debug_info.max_tick_time = time_elapsed;
-    long frame_time = end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
+    long frame_time =
+        end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
     this->debug_info.cumulative_frame_time += frame_time;
     if (frame_time > this->debug_info.max_frame_time)
         this->debug_info.max_frame_time = frame_time;
@@ -2321,20 +2320,29 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_set_text_baseline(this->renderer, 2);
         rr_renderer_set_fill(this->renderer, 0xffffffff);
         rr_renderer_set_text_align(this->renderer, 2);
-        rr_renderer_translate(this->renderer, this->renderer->width - 5, this->renderer->height - 5);
+        rr_renderer_translate(this->renderer, this->renderer->width - 5,
+                              this->renderer->height - 5);
         static char debug_mspt[100];
-        debug_mspt[sprintf(debug_mspt, "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
-                           this->debug_info.cumulative_tick_time * 0.001f / (this->debug_info.count + 1),
-                           this->debug_info.max_tick_time * 0.001f, 
-                           this->debug_info.cumulative_frame_time * 0.001f / (this->debug_info.count + 1),
-                           this->debug_info.max_frame_time * 0.001f)] = 0;
+        debug_mspt[sprintf(
+            debug_mspt,
+            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
+            this->debug_info.cumulative_tick_time * 0.001f /
+                (this->debug_info.count + 1),
+            this->debug_info.max_tick_time * 0.001f,
+            this->debug_info.cumulative_frame_time * 0.001f /
+                (this->debug_info.count + 1),
+            this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        debug_mspt[sprintf(debug_mspt, "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
-                           this->debug_info.cumulative_tick_time * 0.001f / (this->debug_info.count + 1),
-                           this->debug_info.max_tick_time * 0.001f, 
-                           this->debug_info.cumulative_frame_time * 0.001f / (this->debug_info.count + 1),
-                           this->debug_info.max_frame_time * 0.001f)] = 0;
+        debug_mspt[sprintf(
+            debug_mspt,
+            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
+            this->debug_info.cumulative_tick_time * 0.001f /
+                (this->debug_info.count + 1),
+            this->debug_info.max_tick_time * 0.001f,
+            this->debug_info.cumulative_frame_time * 0.001f /
+                (this->debug_info.count + 1),
+            this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
@@ -2347,7 +2355,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->mouse_state_this_tick = 0;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    if (++this->debug_info.count == 10) 
+    if (++this->debug_info.count == 10)
         memset(&this->debug_info, 0, sizeof this->debug_info);
     this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
 }

@@ -162,10 +162,12 @@ void rr_rivet_identities_create_guest(void *captures)
             const $token = _malloc(x.identity_token.length + 1);
             const $avatar_url = _malloc(x.identity.avatar_url.length + 1);
             const $name = _malloc(x.identity.display_name.length + 1);
+            const $uuid = _malloc(x.identity.identity_id.length + 1);
             const $account_number = _malloc(6);
             HEAPU8[$token + x.identity_token.length] = 0; // null terminate
             HEAPU8[$avatar_url + x.identity.avatar_url.length] = 0;
             HEAPU8[$name + x.identity.display_name.length] = 0;
+            HEAPU8[$uuid + x.identity.identity_id.length] = 0;
             HEAPU8[$account_number + 5] = 0;
             for (let i = 0; i < x.identity_token.length; i++)
                 HEAPU8[$token + i] = x.identity_token[i].charCodeAt();
@@ -173,9 +175,11 @@ void rr_rivet_identities_create_guest(void *captures)
                 HEAPU8[$avatar_url + i] = x.identity.avatar_url[i].charCodeAt();
             for (let i = 0; i < x.identity.display_name.length; i++)
                 HEAPU8[$name + i] = x.identity.display_name[i].charCodeAt();
+            for (let i = 0; i < x.identity.identity_id.length; i++)
+                HEAPU8[$uuid + i] = x.identity.identity_id[i].charCodeAt();
             for (let i = 0; i < 5; i++)
                 HEAPU8[$account_number + i] = ("#" + x.identity.account_number.toString().padStart(4, "0"))[i].charCodeAt();
-            Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $0);
+            Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
         }
 
         if (!localStorage.getItem("DO_NOT_SHARE_rivet_account_token"))

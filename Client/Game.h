@@ -34,6 +34,7 @@ struct rr_rivet_account
 {
     char account_number[6];
     char token[300];
+    char uuid[100];
     char name[100];
     char avatar_url[200];
 };

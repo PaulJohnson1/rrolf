@@ -50,8 +50,10 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
         fetch("https://rrolf.io/api/user_get/" + UTF8ToString($0) + '/' + UTF8ToString($1))
         .then(response => response.text())
         .then(data => {
-            var fn = Module.cwrap('rr_api_on_get_petals', null, 0, ['string']);
-            fn(data);
+            var len = (data.length << 2) + 1;
+            ret = stackAlloc(len);
+            stringToUTF8(data, ret, len);
+            Module._rr_api_on_get_petals(ret, 0);
         });
         },
         param_1, param_2, captures);
