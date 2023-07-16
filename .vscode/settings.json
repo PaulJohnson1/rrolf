@@ -76,7 +76,8 @@
         "tail.h": "c",
         "head.h": "c",
         "wing1.h": "c",
-        "wing2.h": "c"
+        "wing2.h": "c",
+        "renderer.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"

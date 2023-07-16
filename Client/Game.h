@@ -4,7 +4,7 @@
 #include <Client/Socket.h>
 #include <Client/Ui/Ui.h>
 #include <Shared/Entity.h>
-
+#include <Shared/Rivet.h>
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
 
@@ -28,15 +28,6 @@ struct rr_game_crafting_data
     uint32_t success_count;
     uint8_t crafting_id;
     uint8_t crafting_rarity;
-};
-
-struct rr_rivet_account
-{
-    char account_number[6];
-    char token[300];
-    char uuid[100];
-    char name[100];
-    char avatar_url[200];
 };
 
 struct rr_game_debug_info

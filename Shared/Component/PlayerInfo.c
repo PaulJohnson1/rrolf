@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <Shared/Component/Health.h>
+#include <Shared/Rivet.h>
 #include <Shared/SimulationCommon.h>
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
@@ -59,7 +60,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                 sizeof petals_string - strlen(petals_string) - 1);
     }
 
-    rr_api_merge_petals(this->account.uuid, petals_string);
+    rr_api_merge_petals(this->account->uuid, petals_string);
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
@@ -69,23 +70,25 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 }
 
 #ifdef RR_SERVER
-void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this, uint8_t pos, uint8_t cd)
+void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this,
+                                          uint8_t pos, uint8_t cd)
 {
-    this->protocol_state |= (this->slots[pos].client_cooldown != cd) * state_flags_petals;
+    this->protocol_state |=
+        (this->slots[pos].client_cooldown != cd) * state_flags_petals;
     this->slots[pos].client_cooldown = cd;
 }
 
-void rr_component_player_info_petal_swap(struct rr_component_player_info *this, struct rr_simulation *simulation, uint8_t pos)
+void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
+                                         struct rr_simulation *simulation,
+                                         uint8_t pos)
 {
-    struct rr_component_player_info_petal_slot *slot =
-        &this->slots[pos];
+    struct rr_component_player_info_petal_slot *slot = &this->slots[pos];
     struct rr_component_player_info_petal_slot *s_slot =
         &this->secondary_slots[pos];
     for (uint32_t i = 0; i < slot->count; ++i)
     {
         EntityIdx id = slot->petals[i].simulation_id;
-        if (id != RR_NULL_ENTITY &&
-            rr_simulation_has_entity(simulation, id))
+        if (id != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, id))
         {
             struct rr_component_physical *physical =
                 rr_simulation_get_physical(simulation, id);
@@ -106,8 +109,7 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this, 
 
     slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
     for (uint32_t i = 0; i < slot->count; ++i)
-        slot->petals[i].cooldown_ticks =
-            RR_PETAL_DATA[slot->id].cooldown;
+        slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
     this->protocol_state |= state_flags_petals;
 }
 
@@ -125,11 +127,12 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
         {
             proto_bug_write_uint8(encoder, this->slots[i].id, "p_id");
             proto_bug_write_uint8(encoder, this->slots[i].rarity, "p_rar");
-            proto_bug_write_uint8(encoder, this->slots[i].client_cooldown, "p_ccd");
+            proto_bug_write_uint8(encoder, this->slots[i].client_cooldown,
+                                  "p_ccd");
 
             proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
             proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity,
-                                "p_rar");
+                                  "p_rar");
         }
     }
 }
@@ -157,7 +160,8 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
         {
             this->slots[i].id = proto_bug_read_uint8(encoder, "p_id");
             this->slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
-            this->slots[i].client_cooldown = proto_bug_read_uint8(encoder, "p_ccd");
+            this->slots[i].client_cooldown =
+                proto_bug_read_uint8(encoder, "p_ccd");
 
             this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
             this->secondary_slots[i].rarity =
