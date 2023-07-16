@@ -31,6 +31,21 @@
 #include <Shared/cJSON.h>
 #include <Shared/pb.h>
 
+void validate_loadout(struct rr_game *this)
+{
+    uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
+    memcpy(&temp_inv, &this->inventory, (sizeof (uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
+    for (uint8_t i = 0; i < 20; ++i)
+    {
+        uint8_t id = this->loadout[i].id;
+        uint8_t rarity = this->loadout[i].rarity;
+        if (temp_inv[id][rarity] == 0)
+            this->loadout[i].id = this->loadout[i].rarity = 0;
+        else
+            --temp_inv[id][rarity];
+    }
+}
+
 void rr_api_on_get_petals(char *json, void *a)
 {
     struct rr_game *game = a;
@@ -831,6 +846,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
+    validate_loadout(this);
     rr_storage_layout_save(this);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
