@@ -40,7 +40,7 @@ function build_frontend()
   
     spawnSync("cmake", ["../Client", "-DDEBUG_BUILD=0", "-DWASM_BUILD=1", "-DRIVET_BUILD=1"], {stdio: "inherit"});
   
-    spawnSync("make", [], {stdio: "inherit"});
+    spawnSync("make", ["-j2"], {stdio: "inherit"});
   
      fs.copyFileSync("rrolf-client", "../RivetStaticPage/rrolf-client");
      fs.copyFileSync("rrolf-client.wasm", "../RivetStaticPage/rrolf-client.wasm");
