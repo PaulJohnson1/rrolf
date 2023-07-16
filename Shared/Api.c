@@ -53,6 +53,10 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
             var len = (data.length << 2) + 1;
             ret = stackAlloc(len);
             stringToUTF8(data, ret, len);
+            const $a = _malloc(1 + data.length);
+            for (let i = 0; i < CMSG_DATA.length; i++)
+                HEAPU8[$a + i] = data[i].charCodeAt();
+            HEAPU8[$a + data.length] = 0;
             Module._rr_api_on_get_petals(ret, $2);
         });
         },

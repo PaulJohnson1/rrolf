@@ -2291,7 +2291,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this, this->map_prop_count * 400);
+            render_background(player_info, this, this->map_prop_count * 1600);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -2318,8 +2318,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
-        printf("%f\n", this->map_prop_count);
-        render_background(&custom_player_info, this, this->map_prop_count * 800);
+        render_background(&custom_player_info, this, this->map_prop_count * 1600);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
