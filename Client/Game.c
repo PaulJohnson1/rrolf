@@ -31,8 +31,6 @@
 #include <Shared/cJSON.h>
 #include <Shared/pb.h>
 
-void rr_api_on_craft_result(char *json, void *a) { puts(json); }
-
 void rr_api_on_get_petals(char *json, void *a)
 {
     struct rr_game *game = a;

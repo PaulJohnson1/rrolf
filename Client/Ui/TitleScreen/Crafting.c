@@ -10,7 +10,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
-
+#include <Shared/Api.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
@@ -37,6 +37,61 @@ struct crafting_inventory_button_metadata
     float secondary_animation;
 };
 
+struct server_response
+{
+    int64_t count;
+    int rarity;
+    int id;
+};
+
+struct craft_captures
+{
+    struct rr_game_crafting_data craft;
+    struct rr_game *game;
+};
+
+void rr_api_on_craft_result(char *data, void *_captures)
+{
+    // parse format of type id:rarity:count,id:rarity:count
+    // and if it's the same id:rarity as the petal that is being crafted, reset
+    // the animation and set the success count
+    struct craft_captures *captures = _captures;
+    struct rr_game *game = captures->game;
+    // struct rr_game_crafting_data *craft = &captures->craft;
+    struct rr_game_crafting_data *craft = &game->crafting_data;
+
+    craft->animation = 0;
+
+    char *token = strtok(data, ",");
+    while (token)
+    {
+        struct server_response r;
+        if (sscanf(token, "%d:%d:%lld", &r.id, &r.rarity, &r.count) != 3)
+        {
+            puts("Error parsing token");
+        }
+        else
+        {
+            game->inventory[r.id][r.rarity] += r.count;
+            if (r.id == craft->crafting_id &&
+                r.rarity - 1 == craft->crafting_rarity)
+            {
+                craft->success_count += r.count;
+                craft->count = 0;
+                craft->crafting_id = 0;
+                craft->crafting_rarity = 0;
+            }
+            else
+            {
+                craft->count = -r.count;
+                printf("%d\n", craft->count);
+            }
+        }
+
+        token = strtok(0, ",");
+    }
+}
+
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
@@ -47,8 +102,17 @@ static void craft_button_on_event(struct rr_ui_element *this,
             game->crafting_data.crafting_id != 0 &&
             game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
         {
-            game->crafting_data.success_count = 1;
-            game->crafting_data.animation = 2.5;
+            game->crafting_data.success_count = 0;
+            game->crafting_data.animation = 200000;
+            char petal_data[100] = {0};
+            snprintf(
+                petal_data, 90, "%d:%d:%d", game->crafting_data.crafting_id,
+                game->crafting_data.crafting_rarity, game->crafting_data.count);
+            static struct craft_captures c;
+            c.game = game;
+            memcpy(&c.craft, &game->crafting_data, sizeof c.craft);
+            rr_api_craft_petals(game->rivet_account.uuid,
+                                game->rivet_account.token, petal_data, &c);
             // game->crafting_data.count = 0;
         }
     }
