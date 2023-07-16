@@ -1084,7 +1084,8 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
 #ifdef RIVET_BUILD
-    rr_rivet_lobbies_find(&this->socket);
+    printf("fuckiyng hell %p\n", this);
+    rr_rivet_lobbies_find(this);
 #else
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
@@ -1095,17 +1096,28 @@ void rr_game_connect_socket(struct rr_game *this)
 #endif
 }
 
-void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures)
+struct on_find_captures
 {
-    struct rr_websocket *socket = captures;
-    if (port == 443)
-        rr_websocket_connect_to(socket, s, port, 1);
-    else
-        rr_websocket_connect_to(socket, s, port, 0);
+    struct rr_game *game;
+    struct rr_websocket *socket;
+};
+
+void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_captures)
+{
+    struct on_find_captures *captures = _captures;
+    rr_websocket_connect_to(captures->socket, "127.0.0.1", 1234, 0);
+
+    // if (port == 443)
+    //     rr_websocket_connect_to(captures->socket, s, port, 1);
+    // else
+    //     rr_websocket_connect_to(captures->socket, s, port, 0);
     free(s);
-// socket->rivet_player_token = strdup(token);
+// captures->socket->rivet_player_token = strdup(token);
 // free(token);
 #ifdef RIVET_BUILD
-    socket->rivet_player_token = token;
+    printf("fuck webassemlby\n");
+    captures->socket->rivet_player_token = token;
+    captures->socket->uuid = captures->game->rivet_account.uuid;
+    printf("%s", captures->socket->uuid);
 #endif
 }

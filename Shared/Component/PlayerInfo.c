@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef RR_SERVER
+#include <Server/Client.h>
+#endif
 #include <Shared/Api.h>
 #include <Shared/Component/Health.h>
 #include <Shared/Rivet.h>
@@ -61,7 +64,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                 sizeof petals_string - strlen(petals_string) - 1);
     }
 
-    rr_api_merge_petals(this->account->uuid, petals_string);
+    rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(

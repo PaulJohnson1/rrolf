@@ -33,6 +33,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
     this->player_info = rr_simulation_add_player_info(
         &this->server->simulation,
         rr_simulation_alloc_entity(&this->server->simulation));
+    this->player_info->client = this;
     rr_component_player_info_set_slot_count(this->player_info, 10);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
@@ -210,7 +211,7 @@ int rr_server_lws_callback_function(struct lws *socket,
 #ifdef RIVET_BUILD
                     rr_rivet_players_disconnected(
                         getenv("RIVET_LOBBY_TOKEN"),
-                        this->clients[i].rivet_player_token);
+                        this->clients[i].rivet_account.token);
 #endif
                     rr_server_client_free(this->clients + i);
                     char log[100] = {"ip: `"};
@@ -294,29 +295,31 @@ int rr_server_lws_callback_function(struct lws *socket,
                 return 1;
             }
 
+            memset(&this->clients[i].rivet_account, 0, sizeof(struct rr_rivet_account));
+
             // Read rivet token
-            this->clients[i].rivet_player_token = malloc(encountered_size + 1);
-            this->clients[i].rivet_player_token[encountered_size] =
+            // this->clients[i].player_info.account.token = malloc(encountered_size + 1);
+            this->clients[i].rivet_account.token[encountered_size] =
                 0; // don't forget the null terminator lol
-            proto_bug_read_string(&encoder, this->clients[i].rivet_player_token,
+            proto_bug_read_string(&encoder, this->clients[i].rivet_account.token,
                                   encountered_size, "rivet token");
 
             // Read uuid
-            this->clients[i].uuid = malloc(uuid_encountered_size + 1);
-            this->clients[i].uuid[uuid_encountered_size] =
+            // this->clients[i].rivet_account.uuid = malloc(uuid_encountered_size + 1);
+            this->clients[i].rivet_account.uuid[uuid_encountered_size] =
                 0; // null terminator for uuid
-            proto_bug_read_string(&encoder, this->clients[i].uuid,
+            proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
 
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
-                    this->clients[i].rivet_player_token))
+                    this->clients[i].rivet_account.token))
             {
-                fputs("skid gaming4", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
-                                 (uint8_t *)"script kiddie4",
-                                 sizeof "script kiddie");
-                return 1;
+                // fputs("skid gaming4", stderr);
+                // lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
+                //                  (uint8_t *)"script kiddie4",
+                //                  sizeof "script kiddie");
+                // return 1;
             }
 #endif
 

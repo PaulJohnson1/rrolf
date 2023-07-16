@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include <Shared/Rivet.h>
+
 struct rr_server_client_loadout_petal
 {
     uint8_t id;
@@ -10,19 +12,16 @@ struct rr_server_client_loadout_petal
 
 struct rr_server_client
 {
-    struct rr_server_client_loadout_petal loadout[20];
+    struct rr_rivet_account rivet_account;
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
+    struct rr_server *server;
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
     float player_accel_x;
     float player_accel_y;
-    struct rr_server *server;
-#ifdef RIVET_BUILD
-    char *rivet_player_token;
-    char *uuid;
-#endif
+    struct rr_server_client_loadout_petal loadout[20];
     int file_descriptor;
     char ip_address[100];
     char client_nickname[16];

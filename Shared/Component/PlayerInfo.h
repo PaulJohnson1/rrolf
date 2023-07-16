@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Shared/Rivet.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Common.h>
 #include <Shared/Entity.h>
@@ -39,7 +40,7 @@ struct rr_component_player_info
     struct rr_component_player_info_petal_slot secondary_slots[10];
     struct rr_drop_picked_up *collected_this_run;
     struct rr_drop_picked_up *collected_this_run_end;
-    RR_SERVER_ONLY(struct rr_rivet_account *account;)
+    RR_SERVER_ONLY(struct rr_server_client *client;)
     RR_SERVER_ONLY(float global_rotation;)
     float camera_x;
     RR_CLIENT_ONLY(float lerp_camera_x;)
@@ -62,8 +63,11 @@ void rr_component_player_info_init(struct rr_component_player_info *,
 void rr_component_player_info_free(struct rr_component_player_info *,
                                    struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_player_info_set_slot_cd(struct rr_component_player_info *, uint8_t, uint8_t);)
-RR_SERVER_ONLY(void rr_component_player_info_petal_swap(struct rr_component_player_info *, struct rr_simulation *, uint8_t);)
+RR_SERVER_ONLY(void rr_component_player_info_set_slot_cd(
+                   struct rr_component_player_info *, uint8_t, uint8_t);)
+RR_SERVER_ONLY(
+    void rr_component_player_info_petal_swap(struct rr_component_player_info *,
+                                             struct rr_simulation *, uint8_t);)
 
 RR_SERVER_ONLY(void rr_component_player_info_write(
                    struct rr_component_player_info *, struct proto_bug *, int);)
