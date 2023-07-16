@@ -205,15 +205,18 @@ void rr_renderer_rect(struct rr_renderer *this, float x, float y, float w,
            h);
 }
 
-void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *image)
+void rr_renderer_draw_translated_image(struct rr_renderer *this, struct rr_renderer *image, float x, float y)
 {
     EM_ASM(
-        {
-            Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas,
-                                      -Module.ctxs[$1].canvas.width / 2,
-                                      -Module.ctxs[$1].canvas.height / 2);
-        },
-        this->context_id, image->context_id);
+    {
+        Module.ctxs[$0].drawImage(Module.ctxs[$1].canvas, $2, $3);
+    },
+    this->context_id, image->context_id, -image->width / 2 + x, -image->height / 2 + y);
+}
+
+void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *image)
+{
+    rr_renderer_draw_translated_image(this, image, 0, 0);
 }
 
 void rr_renderer_draw_svg(struct rr_renderer *this, char *svg, float x, float y)

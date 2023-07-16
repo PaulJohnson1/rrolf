@@ -1,5 +1,6 @@
 #include <Client/Ui/Ui.h>
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,7 @@ struct loadout_button_metadata
     uint8_t prev_id;
     uint8_t prev_rarity;
     float secondary_animation;
+    float lerp_cd;
 };
 
 static void loadout_button_on_event(struct rr_ui_element *this,
@@ -122,7 +124,21 @@ static void loadout_button_animate(struct rr_ui_element *this,
         data->prev_id = id;
         data->prev_rarity = rarity;
     }
+    if (data->lerp_cd < slot->client_cooldown)
+        data->lerp_cd = slot->client_cooldown * (1.0f / 255);
+    else
+        data->lerp_cd = rr_lerp(data->lerp_cd, slot->client_cooldown * (1.0f / 255), 0.2);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
+}
+
+static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    struct loadout_button_metadata *data = this->data;
+    struct rr_renderer *renderer = game->renderer;
+    rr_renderer_render_background(renderer, data->prev_rarity);
+    rr_renderer_draw_image(
+        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
 }
 
 static void loadout_button_on_render(struct rr_ui_element *this,
@@ -130,7 +146,13 @@ static void loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    float pct = data->lerp_cd * data->lerp_cd * (3 - 2 * data->lerp_cd);
     rr_renderer_render_background(renderer, data->prev_rarity);
+    rr_renderer_set_fill(renderer, 0x40000000);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, 0, 0);
+    rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10, -M_PI / 2 - pct * M_PI * 8, 0);
+    rr_renderer_fill(renderer);
     rr_renderer_draw_image(
         renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
 }
@@ -146,7 +168,7 @@ struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)
     this->data = data;
     this->abs_width = this->width = pos < 10 ? 60 : 50;
     this->abs_height = this->height = pos < 10 ? 60 : 50;
-    this->on_render = loadout_button_on_render;
+    this->on_render = title_screen_loadout_button_on_render;
     this->animate = title_screen_loadout_button_animate;
     this->should_show = title_screen_loadout_button_should_show;
     this->on_event = loadout_button_on_event;
@@ -161,6 +183,7 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos)
     data->prev_id = 0;
     data->prev_rarity = 0;
     data->secondary_animation = 1;
+    data->lerp_cd = 0;
     this->data = data;
     this->abs_width = this->width = pos < 10 ? 60 : 50;
     this->abs_height = this->height = pos < 10 ? 60 : 50;

@@ -51,8 +51,9 @@ void rr_component_player_info_init(struct rr_component_player_info *,
                                    struct rr_simulation *);
 void rr_component_player_info_free(struct rr_component_player_info *,
                                    struct rr_simulation *);
-void rr_component_player_info_signal_inv_update(
-    struct rr_component_player_info *this);
+
+RR_SERVER_ONLY(void rr_component_player_info_set_slot_cd(struct rr_component_player_info *, uint8_t, uint8_t);)
+RR_SERVER_ONLY(void rr_component_player_info_petal_swap(struct rr_component_player_info *, struct rr_simulation *, uint8_t);)
 
 RR_SERVER_ONLY(void rr_component_player_info_write(
                    struct rr_component_player_info *, struct proto_bug *, int);)

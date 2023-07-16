@@ -275,6 +275,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 }
             }
         }
+        rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
     }
     player_info->rotation_count = rotation_pos;
     player_info->global_rotation += 0.1;

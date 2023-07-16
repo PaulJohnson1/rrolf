@@ -83,7 +83,7 @@ add_executable(rrolf-server ${SRCS})
 
 if(WINDOWS)
     target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
-    target_link_libraries(rrolf-server ws2_32 wsock32)
+    target_link_libraries(rrolf-server ws2_32 wsock32 curl)
 endif()
 target_link_libraries(rrolf-server pthread websockets m)
 

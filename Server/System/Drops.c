@@ -37,7 +37,6 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
     rr_bitset_set(drop->picked_up_by, flower_relations->owner);
     rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
     //++player_info->inv[drop->id][drop->rarity];
-    rr_component_player_info_signal_inv_update(player_info);
 }
 
 static void drop_despawn_tick(EntityIdx entity, void *_captures)

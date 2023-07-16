@@ -79,6 +79,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
             physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
     }
 
+    /*
     {
         float v2_Coeff =
             2.0f * physical1->mass / (physical1->mass + physical2->mass);
@@ -116,6 +117,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                               restitution +
                           perp2.y);
     }
+    */
 }
 
 static void system_for_each_function(EntityIdx entity, void *_captures)
