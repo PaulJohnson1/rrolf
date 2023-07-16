@@ -50,14 +50,11 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
         fetch("https://rrolf.io/api/user_get/" + UTF8ToString($0) + '/' + UTF8ToString($1))
         .then(response => response.text())
         .then(data => {
-            var len = (data.length << 2) + 1;
-            ret = stackAlloc(len);
-            stringToUTF8(data, ret, len);
             const $a = _malloc(1 + data.length);
-            for (let i = 0; i < CMSG_DATA.length; i++)
+            for (let i = 0; i < data.length; i++)
                 HEAPU8[$a + i] = data[i].charCodeAt();
             HEAPU8[$a + data.length] = 0;
-            Module._rr_api_on_get_petals(ret, $2);
+            Module._rr_api_on_get_petals($a, $2);
         });
         },
         param_1, param_2, captures);
@@ -85,8 +82,11 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
         fetch("https://rrolf.io/user_craft_petals/" + UTF8ToString($0) + '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
         .then(response => response.text())
         .then(data => {
-            var fn = Module.cwrap('rr_api_on_craft_result', null, ['string']);
-            fn(data);
+            const $a = _malloc(1 + data.length);
+            for (let i = 0; i < data.length; i++)
+                HEAPU8[$a + i] = data[i].charCodeAt();
+            HEAPU8[$a + data.length] = 0;
+            Module._rr_on_craft_results($a);
         });
         },
         param_1, param_2, param_3);
