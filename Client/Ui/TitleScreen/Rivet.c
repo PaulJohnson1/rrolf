@@ -19,6 +19,7 @@ static struct rr_ui_element *rr_ui_rivet_init(struct rr_game *game)
                                   rr_ui_text_init(game->rivet_account.name, 15, 0xffffffff),
                                   rr_ui_text_init(game->rivet_account.account_number, 15, 0xffcccccc));
     this->on_event = rivet_container_on_event;
+    this->stop_event_propagation = 1;
     return this;
 }
 
