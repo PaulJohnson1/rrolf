@@ -80,6 +80,7 @@ struct rr_ui_element
     uint8_t resizeable;
     uint8_t completely_hidden;
     uint8_t first_frame;
+    uint8_t stop_event_propagation;
 };
 
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);

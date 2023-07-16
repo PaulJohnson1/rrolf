@@ -107,8 +107,10 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
 
     case rr_ai_state_attacking:
     {
-        if (!rr_simulation_has_entity(
-                this, ai->target_entity) || rr_simulation_get_relations(this, ai->target_entity)->team == rr_simulation_get_relations(this, entity)->team) // target died (what a noob)
+        if (!rr_simulation_has_entity(this, ai->target_entity) ||
+            rr_simulation_get_relations(this, ai->target_entity)->team ==
+                rr_simulation_get_relations(this, entity)
+                    ->team) // target died (what a noob)
         {
             // ai->ai_state = rr_ai_state_spin2team;
             ai->target_entity =

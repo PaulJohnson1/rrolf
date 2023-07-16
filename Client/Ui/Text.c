@@ -24,7 +24,8 @@ static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-static void dynamic_text_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void dynamic_text_on_render(struct rr_ui_element *this,
+                                   struct rr_game *game)
 {
     struct dynamic_text_metadata *data = this->data;
     data->get_text(this, game);
@@ -58,8 +59,9 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
     return this;
 }
 
-struct rr_ui_element *rr_ui_dynamic_text_init(float size,
-                                      uint32_t fill, void (*get_text)(struct rr_ui_element *, struct rr_game *))
+struct rr_ui_element *rr_ui_dynamic_text_init(
+    float size, uint32_t fill,
+    void (*get_text)(struct rr_ui_element *, struct rr_game *))
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct dynamic_text_metadata *data = malloc(sizeof *data);

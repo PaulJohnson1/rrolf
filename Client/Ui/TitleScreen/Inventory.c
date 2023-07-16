@@ -40,11 +40,12 @@ static void inventory_button_on_event(struct rr_ui_element *this,
         }
     }
     else
-        rr_ui_render_tooltip_above(this, game->petal_tooltips[data->id][data->rarity], game);
+        rr_ui_render_tooltip_above(
+            this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static uint8_t inventory_button_should_show(struct rr_ui_element *this,
-                                        struct rr_game *game)
+                                            struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
     uint32_t count = game->inventory[data->id][data->rarity];
@@ -54,7 +55,7 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
             game->loadout[i].rarity == data->rarity)
             --count;
     }
-    if (data->id == game->crafting_data.crafting_id) 
+    if (data->id == game->crafting_data.crafting_id)
     {
         if (data->rarity == game->crafting_data.crafting_rarity)
             count -= game->crafting_data.count;
@@ -65,16 +66,20 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
     return count;
 }
 
-static uint8_t inventory_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t inventory_container_should_show(struct rr_ui_element *this,
+                                               struct rr_game *game)
 {
     return game->bottom_ui_open == 1 && !game->simulation_ready;
 }
 
-static void inventory_container_animate(struct rr_ui_element *this, struct rr_game *game)
+static void inventory_container_animate(struct rr_ui_element *this,
+                                        struct rr_game *game)
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
+    rr_renderer_translate(game->renderer, 0,
+                          -(this->y - this->abs_height / 2) * 2 *
+                              this->animation);
 }
 
 static void inventory_button_on_render(struct rr_ui_element *this,
@@ -127,21 +132,18 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     struct rr_ui_element *this = rr_ui_2d_container_init(5, 6, 15, 15);
     for (uint8_t rarity = rr_rarity_id_ultra; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
-            rr_ui_container_add_element(
-                this,
-                inventory_button_init(id, rarity)
-            );
+            rr_ui_container_add_element(this,
+                                        inventory_button_init(id, rarity));
     this->fill = 0x00000000;
     struct rr_ui_element *c = rr_ui_set_background(
-                rr_ui_pad(rr_ui_set_justify(
-                              rr_ui_v_container_init(
+        rr_ui_pad(
+            rr_ui_set_justify(rr_ui_v_container_init(
                                   rr_ui_container_init(), 10, 10, 2,
                                   rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(
-                                      this, 400)),
+                                  rr_ui_scroll_container_init(this, 400)),
                               -1, 1),
-                          20),
-            0xff5a9fdb);
+            20),
+        0xff5a9fdb);
     c->x += 60 + 20;
     c->animate = inventory_container_animate;
     c->should_show = inventory_container_should_show;
@@ -149,7 +151,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
 }
 
 static void inventory_toggle_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                       struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
@@ -166,7 +168,8 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-void inventory_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+void inventory_toggle_button_on_event(struct rr_ui_element *this,
+                                      struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {

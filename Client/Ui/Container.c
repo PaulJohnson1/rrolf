@@ -36,8 +36,8 @@ static void container_on_render(struct rr_ui_element *this,
         {
             rr_renderer_begin_path(renderer);
             rr_renderer_round_rect(renderer, -this->abs_width / 2,
-                                -this->abs_height / 2, this->abs_width,
-                                this->abs_height, 6);
+                                   -this->abs_height / 2, this->abs_width,
+                                   this->abs_height, 6);
             rr_renderer_set_stroke(renderer, 0xff000000);
             rr_renderer_set_line_width(renderer, 2);
             rr_renderer_stroke(renderer);
@@ -49,7 +49,7 @@ static void container_on_render(struct rr_ui_element *this,
 }
 
 void rr_ui_container_poll_events(struct rr_ui_element *this,
-                                  struct rr_game *game)
+                                 struct rr_game *game)
 {
     if (this->completely_hidden)
         return;
@@ -57,7 +57,7 @@ void rr_ui_container_poll_events(struct rr_ui_element *this,
         rr_ui_element_check_if_focused(this, game);
     else
         game->focused = this;
-    if (game->focused != this)
+    if (game->focused != this || this->stop_event_propagation)
         return;
     struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < this->elements.size; ++i)
@@ -71,7 +71,8 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this,
     {
         struct rr_ui_element **_new =
             malloc((sizeof *_new) * (this->elements.capacity *= 2));
-        memcpy(_new, this->elements.start, this->elements.size * (sizeof *_new));
+        memcpy(_new, this->elements.start,
+               this->elements.size * (sizeof *_new));
         free(this->elements.start);
         this->elements.start = _new;
     }

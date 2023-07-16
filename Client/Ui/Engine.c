@@ -151,7 +151,7 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
         struct rr_ui_element *element = c->elements.start[i];
         if (element->completely_hidden)
             continue;
-        element->v_justify = -1;            
+        element->v_justify = -1;
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
 
@@ -202,17 +202,23 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
         w = element->abs_width;
         h = element->abs_height;
         if (count - pos > mod)
-            element->x = outer_spacing + (pos % data->width) * (w + inner_spacing);
+            element->x =
+                outer_spacing + (pos % data->width) * (w + inner_spacing);
         else
         {
-            element->x = outer_spacing + (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
+            element->x =
+                outer_spacing +
+                (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
         }
         element->y = outer_spacing + (pos / data->width) * (h + inner_spacing);
         ++pos;
     }
     data->height = (count + (width - 1)) / width;
-    c->abs_height = c->height = 2 * outer_spacing + (data->height) * (h + inner_spacing) - inner_spacing;
-    c->abs_width = c->width = 2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
+    c->abs_height = c->height = 2 * outer_spacing +
+                                (data->height) * (h + inner_spacing) -
+                                inner_spacing;
+    c->abs_width = c->width =
+        2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
     // positioning
     /*
     uint32_t pos = 0;
