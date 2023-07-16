@@ -1948,9 +1948,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
 #ifdef RIVET_BUILD
-            uint64_t token_size = strlen(this->socket.rivet_player_token
-                                             ? this->socket.rivet_player_token
-                                             : strdup(""));
+            uint64_t token_size = strlen(this->socket.rivet_player_token);
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_string(&verify_encoder,

@@ -73,9 +73,11 @@ void rr_api_on_craft_result(char *data, void *_captures)
         else
         {
             game->inventory[r.id][r.rarity] += r.count;
-            if (r.id == craft->crafting_id && r.rarity - 1 == craft->crafting_rarity)
+            if (r.id == craft->crafting_id &&
+                r.rarity - 1 == craft->crafting_rarity)
                 craft->success_count += r.count;
-            else if (r.id == craft->crafting_id && r.rarity == craft->crafting_rarity)
+            else if (r.id == craft->crafting_id &&
+                     r.rarity == craft->crafting_rarity)
                 craft->count += r.count;
         }
 
@@ -104,7 +106,6 @@ static void craft_button_on_event(struct rr_ui_element *this,
             memcpy(&c.craft, &game->crafting_data, sizeof c.craft);
             rr_api_craft_petals(game->rivet_account.uuid,
                                 game->rivet_account.token, petal_data, &c);
-            // game->crafting_data.count = 0;
         }
     }
 }
