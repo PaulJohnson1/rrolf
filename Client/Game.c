@@ -282,13 +282,13 @@ void rr_game_init(struct rr_game *this)
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
-            rr_ui_set_justify(
-                rr_ui_set_background(
-                    rr_ui_h_container_init(
-                        rr_ui_container_init(), 10, 0, 1,
-                        rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff)),
-                    0x80000000),
-                -1, -1),
+            rr_ui_set_justify(rr_ui_set_background(
+                                  rr_ui_h_container_init(
+                                      rr_ui_container_init(), 10, 0, 1,
+                                      rr_ui_text_init(this->rivet_account.uuid,
+                                                      16, 0xffffffff)),
+                                  0x80000000),
+                              -1, -1),
             rr_ui_never_show));
     this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
@@ -310,13 +310,13 @@ void rr_game_init(struct rr_game *this)
             rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
             rr_renderer_render_static_petal(&this->static_petals[id][rarity],
                                             id, rarity);
-            this->petal_tooltips[id][rarity] = rr_ui_petal_tooltip_init(id,
-            rarity); rr_ui_container_add_element(this->window,
-            this->petal_tooltips[id][rarity]);
+            this->petal_tooltips[id][rarity] =
+                rr_ui_petal_tooltip_init(id, rarity);
+            rr_ui_container_add_element(this->window,
+                                        this->petal_tooltips[id][rarity]);
             // remember that these don't have a container
         }
     }
-
 
     // TODO: move these out of this file
     rr_renderer_init(&this->mob_pteranodon_wings[0]);
@@ -2318,7 +2318,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
-        render_background(&custom_player_info, this, this->map_prop_count * 1600);
+        render_background(&custom_player_info, this,
+                          this->map_prop_count * 1600);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui

@@ -21,13 +21,15 @@ struct mob_button_metadata
 };
 
 static void mob_button_on_event(struct rr_ui_element *this,
-                                    struct rr_game *game)
+                                struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
-    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity], game);
+    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
+                               game);
 }
 
-static void wave_text_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void wave_text_on_render(struct rr_ui_element *this,
+                                struct rr_game *game)
 {
     struct rr_component_arena *arena =
         rr_simulation_get_arena(game->simulation, 1);
@@ -51,7 +53,8 @@ static void wave_text_on_render(struct rr_ui_element *this, struct rr_game *game
     rr_renderer_context_state_free(renderer, &state);
 }
 
-static void mob_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void mob_button_on_render(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
@@ -113,45 +116,47 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
-    element->abs_width = element->abs_height = element->width = element->height = 50;
+    element->abs_width = element->abs_height = element->width =
+        element->height = 50;
     element->on_render = mob_button_on_render;
     element->on_event = mob_button_on_event;
     element->data = data;
     return element;
 }
 
-static uint8_t mob_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t mob_container_should_show(struct rr_ui_element *this,
+                                         struct rr_game *game)
 {
     return game->bottom_ui_open == 2 && !game->simulation_ready;
 }
 
-static void mob_container_animate(struct rr_ui_element *this, struct rr_game *game)
+static void mob_container_animate(struct rr_ui_element *this,
+                                  struct rr_game *game)
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
+    rr_renderer_translate(game->renderer, 0,
+                          -(this->y - this->abs_height / 2) * 2 *
+                              this->animation);
 }
 
 struct rr_ui_element *rr_ui_mob_container_init()
 {
-    struct rr_ui_element *this = rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
+    struct rr_ui_element *this =
+        rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
     for (uint8_t id = 0; id < rr_mob_id_max; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            rr_ui_container_add_element(
-                this,
-                mob_button_init(id, rarity)
-            );
+            rr_ui_container_add_element(this, mob_button_init(id, rarity));
     this->fill = 0x00000000;
     struct rr_ui_element *c = rr_ui_set_background(
-                rr_ui_pad(rr_ui_set_justify(
-                              rr_ui_v_container_init(
-                                  rr_ui_container_init(), 10, 10, 2,
-                                  rr_ui_text_init("Mob Gallery", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(
-                                      this, 400)),
-                              -1, 1),
-                          20),
-            0xff5a9fdb);
+        rr_ui_pad(rr_ui_set_justify(
+                      rr_ui_v_container_init(
+                          rr_ui_container_init(), 10, 10, 2,
+                          rr_ui_text_init("Mob Gallery", 24, 0xffffffff),
+                          rr_ui_scroll_container_init(this, 400)),
+                      -1, 1),
+                  20),
+        0xff5a9fdb);
     c->x += 60 + 20;
     c->animate = mob_container_animate;
     c->should_show = mob_container_should_show;
@@ -159,7 +164,7 @@ struct rr_ui_element *rr_ui_mob_container_init()
 }
 
 static void mob_toggle_toggle_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                        struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
@@ -176,7 +181,8 @@ static void mob_toggle_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-void mob_toggle_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {

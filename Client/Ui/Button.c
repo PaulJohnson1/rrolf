@@ -13,7 +13,8 @@
 static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && data->toggle != NULL)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        data->toggle != NULL)
         (*(data->toggle)) ^= 1;
 }
 
@@ -43,15 +44,17 @@ static void labeled_button_on_render(struct rr_ui_element *this,
     if (game->focused == this)
         renderer->state.filter.amount = 0.2;
 
-    this->abs_width = 20 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
+    this->abs_width =
+        20 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
     rr_renderer_set_stroke(renderer, this->fill);
     rr_renderer_set_line_width(renderer, 6);
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2,
-                           this->abs_width, this->abs_height, 6);
+    rr_renderer_round_rect(renderer, -this->abs_width / 2,
+                           -this->abs_height / 2, this->abs_width,
+                           this->abs_height, 6);
     rr_renderer_fill(renderer);
     rr_renderer_stroke(renderer);
     rr_renderer_set_text_baseline(renderer, 1);

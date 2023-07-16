@@ -20,13 +20,15 @@ struct mob_button_metadata
 };
 
 static void mob_button_on_event(struct rr_ui_element *this,
-                                    struct rr_game *game)
+                                struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
-    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity], game);
+    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
+                               game);
 }
 
-static void wave_text_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void wave_text_on_render(struct rr_ui_element *this,
+                                struct rr_game *game)
 {
     struct rr_component_arena *arena =
         rr_simulation_get_arena(game->simulation, 1);
@@ -50,7 +52,8 @@ static void wave_text_on_render(struct rr_ui_element *this, struct rr_game *game
     rr_renderer_context_state_free(renderer, &state);
 }
 
-static void mob_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void mob_button_on_render(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
@@ -112,7 +115,8 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
-    element->abs_width = element->abs_height = element->width = element->height = 50;
+    element->abs_width = element->abs_height = element->width =
+        element->height = 50;
     element->on_render = mob_button_on_render;
     element->on_event = mob_button_on_event;
     element->data = data;
@@ -138,10 +142,12 @@ static struct rr_ui_element *wave_bar_init()
 
 struct rr_ui_element *rr_ui_wave_container_init()
 {
-    struct rr_ui_element *outer_container = rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 0);
+    struct rr_ui_element *outer_container =
+        rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 0);
     for (uint8_t i = 0; i < rr_mob_id_max; ++i)
     {
-        struct rr_ui_element *inner_container =  rr_ui_v_container_init(rr_ui_container_init(), 0, -40, 0);
+        struct rr_ui_element *inner_container =
+            rr_ui_v_container_init(rr_ui_container_init(), 0, -40, 0);
         for (uint8_t j = 0; j < rr_rarity_id_max; ++j)
         {
             rr_ui_container_add_element(inner_container, mob_button_init(i, j));
@@ -155,7 +161,9 @@ struct rr_ui_element *rr_ui_wave_container_init()
     outer_container->width = outer_container->abs_width;
     outer_container->height = outer_container->abs_height;
     return rr_ui_set_justify(
-        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
-                               rr_ui_dynamic_text_init(36, 0xffffffff, wave_text_function), wave_bar_init()),
+        rr_ui_v_container_init(
+            rr_ui_container_init(), 10, 10, 2,
+            rr_ui_dynamic_text_init(36, 0xffffffff, wave_text_function),
+            wave_bar_init()),
         0, -1);
 }

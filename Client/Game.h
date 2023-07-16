@@ -95,13 +95,13 @@ struct rr_game
     float map_prop_count;
     struct rr_game_loadout_petal loadout[20];
     EntityIdx player_infos[4];
-    
+
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t simulation_ready;
     int8_t ticks_until_game_start;
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
-    uint8_t top_ui_open; // 0 = none, 1 = settings, 2 = changelog
+    uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
     uint8_t tiles_size;
 
     uint8_t block_ui_input;

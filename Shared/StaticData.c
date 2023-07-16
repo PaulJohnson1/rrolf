@@ -28,8 +28,7 @@ float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 2, 4, 8, 16, 48, 196};
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0}, {2.5, 1.6, 1.2}, {8.0, 3.0, 1.6}, {25.0, 7.5, 2.0},
-    {75, 20.0, 2.5},  {250, 50.0, 4},     {1000, 200, 6}
-};
+    {75, 20.0, 2.5}, {250, 50.0, 4},  {1000, 200, 6}};
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
@@ -49,13 +48,13 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "ICBM approved",
     "Where are the zombies?",
     "Probably the most normal petal there is. Oh wait",
-    "It's egg"
-};
+    "It's egg"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 15, 20, 50, 5};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  5,  10,
+                                                            15, 20, 50, 5};
 uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 5, 5, 5, 7, 7};
 
 static void init_rarity_coefficients()
@@ -92,10 +91,12 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
         for (uint64_t drop = 0; drop <= cap; ++drop)
         {
             double start = RR_DROP_RARITY_COEFFICIENTS[drop];
-            double end = drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
+            double end =
+                drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
             data->loot_table[mob][drop + 1] =
                 pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
-            printf("%f ", data->loot_table[mob][drop + 1] - data->loot_table[mob][drop]);
+            printf("%f ", data->loot_table[mob][drop + 1] -
+                              data->loot_table[mob][drop]);
         }
         puts("");
     }

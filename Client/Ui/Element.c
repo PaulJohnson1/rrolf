@@ -35,28 +35,33 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     else if (this->container == game->window)
         rr_renderer_translate(
             game->renderer,
-            (this->x + (this->h_justify) *
-                           (this->container->abs_width / 2 / game->renderer->scale -
-                            this->width / 2 - (this->abs_width - this->width) / 2)) *
+            (this->x +
+             (this->h_justify) *
+                 (this->container->abs_width / 2 / game->renderer->scale -
+                  this->width / 2 - (this->abs_width - this->width) / 2)) *
                 game->renderer->scale,
-            (this->y + (this->v_justify) * (this->container->abs_height / 2 /
-                                                game->renderer->scale -
-                                            this->height / 2 - (this->abs_height - this->height) / 2)) *
+            (this->y +
+             (this->v_justify) *
+                 (this->container->abs_height / 2 / game->renderer->scale -
+                  this->height / 2 - (this->abs_height - this->height) / 2)) *
                 game->renderer->scale); // necessary btw
     else
         rr_renderer_translate(
             game->renderer,
             (this->x + (this->h_justify) *
-                           (this->container->abs_width / 2 -
-                            this->width / 2 - (this->abs_width - this->width) / 2)) *
+                           (this->container->abs_width / 2 - this->width / 2 -
+                            (this->abs_width - this->width) / 2)) *
                 game->renderer->scale,
-            (this->y + (this->v_justify) * (this->container->abs_height / 2 -
-                                            this->height / 2 - (this->abs_height - this->height) / 2)) *
+            (this->y + (this->v_justify) *
+                           (this->container->abs_height / 2 - this->height / 2 -
+                            (this->abs_height - this->height) / 2)) *
                 game->renderer->scale); // necessary btw
     this->abs_x = game->renderer->state.transform_matrix[2];
     this->abs_y = game->renderer->state.transform_matrix[5];
 
-    this->animation = rr_lerp(this->animation, this->should_show(this, game) == 0, 0.4 + 0.6 * this->first_frame);
+    this->animation =
+        rr_lerp(this->animation, this->should_show(this, game) == 0,
+                0.4 + 0.6 * this->first_frame);
     this->first_frame = 0;
 
     this->completely_hidden = this->animation > 0.99;
@@ -66,14 +71,14 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_context_state_free(game->renderer, &state);
 }
 
-void rr_ui_render_tooltip_above(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
+void rr_ui_render_tooltip_above(struct rr_ui_element *this,
+                                struct rr_ui_element *tooltip,
+                                struct rr_game *game)
 {
     tooltip->should_show = rr_ui_always_show;
-    tooltip->x =
-        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
-    tooltip->y =
-        (this->abs_y / game->renderer->scale -
-         (tooltip->abs_height + this->height / 2 + 10));
+    tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
+    tooltip->y = (this->abs_y / game->renderer->scale -
+                  (tooltip->abs_height + this->height / 2 + 10));
     if (tooltip->x < 10)
         tooltip->x = 10;
     else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
@@ -82,14 +87,14 @@ void rr_ui_render_tooltip_above(struct rr_ui_element *this, struct rr_ui_element
         tooltip->y = 10;
 }
 
-void rr_ui_render_tooltip_below(struct rr_ui_element *this, struct rr_ui_element *tooltip, struct rr_game *game)
+void rr_ui_render_tooltip_below(struct rr_ui_element *this,
+                                struct rr_ui_element *tooltip,
+                                struct rr_game *game)
 {
     tooltip->should_show = rr_ui_always_show;
-    tooltip->x =
-        (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
+    tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
     tooltip->y =
-        (this->abs_y / game->renderer->scale +
-         (this->height / 2 + 10));
+        (this->abs_y / game->renderer->scale + (this->height / 2 + 10));
     if (tooltip->x < 10)
         tooltip->x = 10;
     else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
@@ -97,7 +102,6 @@ void rr_ui_render_tooltip_below(struct rr_ui_element *this, struct rr_ui_element
     if (tooltip->y > game->renderer->height - tooltip->abs_height - 10)
         tooltip->y = game->renderer->height - tooltip->abs_height - 10;
 }
-
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -116,12 +120,12 @@ void rr_ui_element_check_if_focused(struct rr_ui_element *this,
         game->focused = NULL;
 }
 
-uint8_t rr_ui_always_show(struct rr_ui_element *this, struct rr_game *game) 
+uint8_t rr_ui_always_show(struct rr_ui_element *this, struct rr_game *game)
 {
     return 1;
 }
 
-uint8_t rr_ui_never_show(struct rr_ui_element *this, struct rr_game *game) 
+uint8_t rr_ui_never_show(struct rr_ui_element *this, struct rr_game *game)
 {
     return 0;
 }
@@ -131,7 +135,6 @@ void rr_ui_no_focus(struct rr_ui_element *this, struct rr_game *game)
     this->should_show = rr_ui_never_show;
 }
 
-
 struct rr_ui_element *rr_ui_element_init()
 {
     struct rr_ui_element *this = malloc(sizeof *this);
@@ -139,13 +142,14 @@ struct rr_ui_element *rr_ui_element_init()
     this->first_frame = 1;
     this->on_render = default_function;
     this->on_event = default_function; // null on_event
-    this->should_show = rr_ui_always_show;               
+    this->should_show = rr_ui_always_show;
     this->poll_events = rr_ui_element_check_if_focused;
     this->animate = default_animate;
     this->resizeable = rr_ui_not_resizeable;
     this->elements.size = 0;
     this->elements.capacity = 1;
-    this->elements.start = malloc(sizeof(*this->elements.start) * this->elements.capacity);
+    this->elements.start =
+        malloc(sizeof(*this->elements.start) * this->elements.capacity);
     return this;
 }
 
@@ -156,7 +160,9 @@ struct rr_ui_element *rr_ui_static_space_init(float s)
     return this;
 }
 
-struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *this, uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *))
+struct rr_ui_element *rr_ui_link_toggle(
+    struct rr_ui_element *this,
+    uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *))
 {
     this->should_show = should_show;
     return this;

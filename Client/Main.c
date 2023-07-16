@@ -203,7 +203,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
     this->input_data->scroll_delta = 0;
 }
 
-
 int main()
 {
     printf("client init version %llu\n",

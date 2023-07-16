@@ -36,8 +36,8 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
     char readBuffer[50000] = {0};
     char url[500];
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s",
-             param_1, param_2);
+    snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s", param_1,
+             param_2);
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -47,22 +47,23 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #else
     EM_ASM(
         {
-        fetch("https://rrolf.io/api/user_get/" + UTF8ToString($0) + '/' + UTF8ToString($1))
-        .then(response => response.text())
-        .then(data => {
-            const $a = _malloc(1 + data.length);
-            for (let i = 0; i < data.length; i++)
-                HEAPU8[$a + i] = data[i].charCodeAt();
-            HEAPU8[$a + data.length] = 0;
-            Module._rr_api_on_get_petals($a, $2);
-        });
+            fetch("https://rrolf.io/api/user_get/" + UTF8ToString($0) + '/' +
+                  UTF8ToString($1))
+                .then(response = > response.text())
+                .then(data = > {
+                    const $a = _malloc(1 + data.length);
+                    for (let i = 0; i < data.length; i++)
+                        HEAPU8[$a + i] = data[i].charCodeAt();
+                    HEAPU8[$a + data.length] = 0;
+                    Module._rr_api_on_get_petals($a, $2);
+                });
         },
         param_1, param_2, captures);
 #endif
 }
 
 void rr_api_craft_petals(char const *param_1, char const *param_2,
-                           char const *param_3, void *captures)
+                         char const *param_3, void *captures)
 {
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
@@ -79,15 +80,16 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
 #else
     EM_ASM(
         {
-        fetch("https://rrolf.io/user_craft_petals/" + UTF8ToString($0) + '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
-        .then(response => response.text())
-        .then(data => {
-            const $a = _malloc(1 + data.length);
-            for (let i = 0; i < data.length; i++)
-                HEAPU8[$a + i] = data[i].charCodeAt();
-            HEAPU8[$a + data.length] = 0;
-            Module._rr_on_craft_results($a);
-        });
+            fetch("https://rrolf.io/user_craft_petals/" + UTF8ToString($0) +
+                  '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
+                .then(response = > response.text())
+                .then(data = > {
+                    const $a = _malloc(1 + data.length);
+                    for (let i = 0; i < data.length; i++)
+                        HEAPU8[$a + i] = data[i].charCodeAt();
+                    HEAPU8[$a + data.length] = 0;
+                    Module._rr_on_craft_results($a);
+                });
         },
         param_1, param_2, param_3);
 #endif

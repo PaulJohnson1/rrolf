@@ -1,8 +1,8 @@
 #include <Client/Ui/Ui.h>
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
@@ -37,25 +37,32 @@ struct crafting_inventory_button_metadata
     float secondary_animation;
 };
 
-static void craft_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void craft_button_on_event(struct rr_ui_element *this,
+                                  struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->crafting_data.success_count == 0 && game->crafting_data.count >= 5 && game->crafting_data.crafting_id != 0 && game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
+        if (game->crafting_data.success_count == 0 &&
+            game->crafting_data.count >= 5 &&
+            game->crafting_data.crafting_id != 0 &&
+            game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
         {
             game->crafting_data.success_count = 1;
             game->crafting_data.animation = 2.5;
-            //game->crafting_data.count = 0;
+            // game->crafting_data.count = 0;
         }
     }
 }
 
-static uint8_t crafting_ring_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t crafting_ring_should_show(struct rr_ui_element *this,
+                                         struct rr_game *game)
 {
-    return game->crafting_data.success_count == 0 || game->crafting_data.animation != 0;
+    return game->crafting_data.success_count == 0 ||
+           game->crafting_data.animation != 0;
 }
 
-static void crafting_result_container_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_result_container_on_event(struct rr_ui_element *this,
+                                               struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -63,11 +70,16 @@ static void crafting_result_container_on_event(struct rr_ui_element *this, struc
     }
 }
 
-static void crafting_ring_petal_animate(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_ring_petal_animate(struct rr_ui_element *this,
+                                        struct rr_game *game)
 {
     struct crafting_ring_button_metadata *data = this->data;
     data->count = (game->crafting_data.count + data->pos) / 5;
-    data->secondary_animation = rr_lerp(data->secondary_animation, data->count == 0 || data->prev_id != game->crafting_data.crafting_id || data->prev_rarity != game->crafting_data.crafting_rarity, 0.4);
+    data->secondary_animation = rr_lerp(
+        data->secondary_animation,
+        data->count == 0 || data->prev_id != game->crafting_data.crafting_id ||
+            data->prev_rarity != game->crafting_data.crafting_rarity,
+        0.4);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
     rr_renderer_render_background(game->renderer, 254);
     if (game->crafting_data.crafting_id != 0)
@@ -79,15 +91,16 @@ static void crafting_ring_petal_animate(struct rr_ui_element *this, struct rr_ga
     rr_renderer_rotate(game->renderer, data->secondary_animation * M_PI * 2);
 }
 
-static void crafting_ring_petal_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_ring_petal_on_render(struct rr_ui_element *this,
+                                          struct rr_game *game)
 {
     struct crafting_ring_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(renderer,
-                           &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_draw_image(
+        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
     rr_renderer_context_state_free(renderer, &state);
 
     rr_renderer_translate(renderer, 25, -25);
@@ -121,7 +134,8 @@ static struct rr_ui_element *crafting_ring_petal_init(uint8_t pos)
     return this;
 }
 
-static void crafting_ring_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_ring_on_render(struct rr_ui_element *this,
+                                    struct rr_game *game)
 {
     struct crafting_ring_metadata *data = this->data;
     if (game->crafting_data.animation != 0)
@@ -132,8 +146,12 @@ static void crafting_ring_on_render(struct rr_ui_element *this, struct rr_game *
     for (uint32_t i = 0; i < this->elements.size; ++i)
     {
         rr_renderer_context_state_init(game->renderer, &state);
-        rr_renderer_translate(game->renderer, game->renderer->scale * cosf(i * 2 * M_PI / this->elements.size + data->angle) * 120, 
-        game->renderer->scale * sinf(i * 2 * M_PI / this->elements.size + data->angle) * 120);
+        rr_renderer_translate(
+            game->renderer,
+            game->renderer->scale *
+                cosf(i * 2 * M_PI / this->elements.size + data->angle) * 120,
+            game->renderer->scale *
+                sinf(i * 2 * M_PI / this->elements.size + data->angle) * 120);
         rr_ui_render_element(this->elements.start[i], game);
         rr_renderer_context_state_free(game->renderer, &state);
     }
@@ -157,19 +175,25 @@ static struct rr_ui_element *crafting_ring_init()
     return this;
 }
 
-static uint8_t crafting_result_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t crafting_result_container_should_show(struct rr_ui_element *this,
+                                                     struct rr_game *game)
 {
-    return game->crafting_data.success_count && game->crafting_data.animation == 0;
+    return game->crafting_data.success_count &&
+           game->crafting_data.animation == 0;
 }
 
-static void crafting_result_container_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_result_container_on_render(struct rr_ui_element *this,
+                                                struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_render_background(renderer, game->crafting_data.crafting_rarity + 1);
-    rr_renderer_draw_image(renderer,
-                           &game->static_petals[game->crafting_data.crafting_id][game->crafting_data.crafting_rarity + 1]);
+    rr_renderer_render_background(renderer,
+                                  game->crafting_data.crafting_rarity + 1);
+    rr_renderer_draw_image(
+        renderer,
+        &game->static_petals[game->crafting_data.crafting_id]
+                            [game->crafting_data.crafting_rarity + 1]);
     rr_renderer_context_state_free(renderer, &state);
 
     rr_renderer_translate(renderer, 25, -25);
@@ -187,7 +211,7 @@ static void crafting_result_container_on_render(struct rr_ui_element *this, stru
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }
 
-static struct rr_ui_element *crafting_result_container_init() 
+static struct rr_ui_element *crafting_result_container_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
     this->abs_width = this->width = 60;
@@ -205,7 +229,8 @@ static struct rr_ui_element *crafting_button_init()
     return this;
 }
 
-static void crafting_inventory_button_animate(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_inventory_button_animate(struct rr_ui_element *this,
+                                              struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
     uint32_t count = game->inventory[data->id][data->rarity];
@@ -215,24 +240,27 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this, struct
             game->loadout[i].rarity == data->rarity)
             --count;
     }
-    if (data->id == game->crafting_data.crafting_id) 
+    if (data->id == game->crafting_data.crafting_id)
         if (data->rarity == game->crafting_data.crafting_rarity)
             count -= game->crafting_data.count;
     data->count = count;
-    data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
+    data->secondary_animation =
+        rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
     rr_renderer_render_background(game->renderer, 254);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
-static void crafting_inventory_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_inventory_button_on_event(struct rr_ui_element *this,
+                                               struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
     if (data->count == 0)
         return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->crafting_data.crafting_id != data->id || game->crafting_data.crafting_rarity != data->rarity)
+        if (game->crafting_data.crafting_id != data->id ||
+            game->crafting_data.crafting_rarity != data->rarity)
         {
             game->crafting_data.crafting_id = data->id;
             game->crafting_data.crafting_rarity = data->rarity;
@@ -241,19 +269,23 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this, struc
         }
         if (data->count > 5)
             game->crafting_data.count += 5;
-        else    
+        else
             game->crafting_data.count += data->count;
     }
 }
 
-static void crafting_container_animate(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_container_animate(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
+    rr_renderer_translate(game->renderer, 0,
+                          -(this->y - this->abs_height / 2) * 2 *
+                              this->animation);
 }
 
-static void crafting_inventory_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_inventory_button_on_render(struct rr_ui_element *this,
+                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -279,7 +311,7 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this, stru
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }
 
-struct rr_ui_element *crafting_inventory_button_init(uint8_t id, uint8_t rarity) 
+struct rr_ui_element *crafting_inventory_button_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct crafting_inventory_button_metadata *data = malloc(sizeof *data);
@@ -297,20 +329,20 @@ struct rr_ui_element *crafting_inventory_button_init(uint8_t id, uint8_t rarity)
     return this;
 }
 
-static uint8_t crafting_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t crafting_container_should_show(struct rr_ui_element *this,
+                                              struct rr_game *game)
 {
     return game->bottom_ui_open == 3 && !game->simulation_ready;
 }
 
 struct rr_ui_element *rr_ui_crafting_container_init()
 {
-    struct rr_ui_element *this = rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
+    struct rr_ui_element *this =
+        rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
     for (uint8_t id = 1; id < rr_petal_id_max; ++id)
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             rr_ui_container_add_element(
-                this,
-                crafting_inventory_button_init(id, rarity)
-            );
+                this, crafting_inventory_button_init(id, rarity));
     this->fill = 0x00000000;
     struct rr_ui_element *craft = rr_ui_container_init();
     rr_ui_container_add_element(craft, crafting_ring_init());
@@ -318,19 +350,17 @@ struct rr_ui_element *rr_ui_crafting_container_init()
     craft->abs_width = craft->width = 300;
     craft->abs_height = craft->height = 300;
     struct rr_ui_element *c = rr_ui_set_background(
-                rr_ui_pad(rr_ui_set_justify(
-                              rr_ui_v_container_init(
-                                  rr_ui_container_init(), 10, 10, 3,
-                                  rr_ui_text_init("Crafting", 24, 0xffffffff),
-                                  rr_ui_h_container_init(rr_ui_container_init(), 0, 25, 2, 
-                                    crafting_button_init(),
-                                    craft
-                                  ),
-                                  rr_ui_scroll_container_init(
-                                      this, 300)),
-                              -1, 1),
-                          20),
-            0xff13d4c5);
+        rr_ui_pad(
+            rr_ui_set_justify(
+                rr_ui_v_container_init(
+                    rr_ui_container_init(), 10, 10, 3,
+                    rr_ui_text_init("Crafting", 24, 0xffffffff),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 25, 2,
+                                           crafting_button_init(), craft),
+                    rr_ui_scroll_container_init(this, 300)),
+                -1, 1),
+            20),
+        0xff13d4c5);
     c->x += 60 + 20;
     c->animate = crafting_container_animate;
     c->should_show = crafting_container_should_show;
@@ -338,7 +368,7 @@ struct rr_ui_element *rr_ui_crafting_container_init()
 }
 
 static void crafting_toggle_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                      struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
@@ -355,7 +385,8 @@ static void crafting_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-void crafting_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+void crafting_toggle_button_on_event(struct rr_ui_element *this,
+                                     struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {

@@ -104,13 +104,15 @@ struct squad_loadout_button_metadata
     uint8_t prev_rarity;
 };
 
-static uint8_t squad_loadout_button_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t squad_loadout_button_should_show(struct rr_ui_element *this,
+                                                struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
     return data->petal->id;
 }
 
-static void squad_loadout_button_animate(struct rr_ui_element *this, struct rr_game *game)
+static void squad_loadout_button_animate(struct rr_ui_element *this,
+                                         struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
     if (data->petal->id != 0)
@@ -119,16 +121,19 @@ static void squad_loadout_button_animate(struct rr_ui_element *this, struct rr_g
     rr_renderer_scale(game->renderer, (1 - this->animation));
 }
 
-static void squad_loadout_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void squad_loadout_button_on_render(struct rr_ui_element *this,
+                                           struct rr_game *game)
 {
     struct squad_loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_draw_image(
+        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
 }
 
-static struct rr_ui_element *squad_loadout_button_init(struct rr_game_loadout_petal *petal)
+static struct rr_ui_element *
+squad_loadout_button_init(struct rr_game_loadout_petal *petal)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_loadout_button_metadata *data = malloc(sizeof *data);
@@ -143,7 +148,8 @@ static struct rr_ui_element *squad_loadout_button_init(struct rr_game_loadout_pe
     return this;
 }
 
-static uint8_t should_be_ready(struct rr_ui_element *choose, struct rr_game *game)
+static uint8_t should_be_ready(struct rr_ui_element *choose,
+                               struct rr_game *game)
 {
     return ((struct rr_game_squad_client
                  *)((struct rr_ui_choose_element_metadata *)choose->data)
@@ -151,7 +157,8 @@ static uint8_t should_be_ready(struct rr_ui_element *choose, struct rr_game *gam
         ->ready;
 }
 
-static struct rr_ui_element *rr_ui_player_init(struct rr_game_squad_client *player)
+static struct rr_ui_element *
+rr_ui_player_init(struct rr_game_squad_client *player)
 {
     struct rr_ui_element *choose_container = rr_ui_choose_element_init(
         rr_ui_flower_init(0, 50), rr_ui_flower_init(1, 50), should_be_ready);
@@ -160,7 +167,8 @@ static struct rr_ui_element *rr_ui_player_init(struct rr_game_squad_client *play
     return choose_container;
 }
 
-struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
+struct rr_ui_element *
+rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 2);
@@ -190,7 +198,8 @@ static void squad_countdown(struct rr_ui_element *this, struct rr_game *game)
     if (game->ticks_until_game_start == 125)
         data->text = "";
     else
-        data->text[sprintf(data->text, "Starting in %d", game->ticks_until_game_start / 25)] = 0;
+        data->text[sprintf(data->text, "Starting in %d",
+                           game->ticks_until_game_start / 25)] = 0;
 }
 
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
@@ -228,7 +237,7 @@ struct rr_ui_element *rr_ui_info_init()
     element->data = malloc(sizeof(struct info_metadata));
     struct info_metadata *data = element->data;
     data->question_mark = rr_ui_text_init("?", 18, 0xffffffff);
-    
+
     element->abs_width = element->abs_height = element->width =
         element->height = 20;
 
@@ -237,7 +246,8 @@ struct rr_ui_element *rr_ui_info_init()
     return element;
 }
 
-static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
+static void labeled_button_poll_events(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (game->socket_pending)
@@ -246,13 +256,13 @@ static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_gam
         data->text = "Connecting...";
     }
     else
-    { 
+    {
         rr_ui_element_check_if_focused(this, game);
         this->fill = 0xff1dd129;
-    if (game->socket_ready)
-        data->text = "Ready";
-    else
-        this->fill = 0xff1dd129;
+        if (game->socket_ready)
+            data->text = "Ready";
+        else
+            this->fill = 0xff1dd129;
     }
 }
 

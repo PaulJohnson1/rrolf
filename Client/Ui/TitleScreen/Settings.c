@@ -6,25 +6,29 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Ui/Engine.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
 
 #include <Shared/Utilities.h>
 
-static uint8_t settings_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t settings_container_should_show(struct rr_ui_element *this,
+                                              struct rr_game *game)
 {
     return game->top_ui_open == 1 && !game->simulation_ready;
 }
 
-static void settings_container_animate(struct rr_ui_element *this, struct rr_game *game)
+static void settings_container_animate(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, -(this->x + this->abs_width / 2) * 2 * this->animation, 0);
+    rr_renderer_translate(
+        game->renderer, -(this->x + this->abs_width / 2) * 2 * this->animation,
+        0);
 }
 
 static void inventory_toggle_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                       struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
@@ -41,8 +45,8 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-
-void settings_toggle_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+void settings_toggle_button_on_event(struct rr_ui_element *this,
+                                     struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -69,43 +73,50 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
         rr_ui_set_background(
             rr_ui_v_pad(
                 rr_ui_set_justify(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 6,
+                    rr_ui_v_container_init(
+                        rr_ui_container_init(), 10, 10, 6,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
                         rr_ui_set_justify(
-                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
-                                rr_ui_h_slider_init(200, 20, &game->map_prop_count),
-                                rr_ui_text_init("map prop count", 15, 0xffffffff)
-                            ),
-                        -1, -1),
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10, 2,
+                                rr_ui_h_slider_init(200, 20,
+                                                    &game->map_prop_count),
+                                rr_ui_text_init("map prop count", 15,
+                                                0xffffffff)),
+                            -1, -1),
                         rr_ui_set_justify(
-                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->use_mouse),
-                                rr_ui_text_init("Mouse movement", 15, 0xffffffff)
-                            ),
-                        -1, -1),
+                                rr_ui_text_init("Mouse movement", 15,
+                                                0xffffffff)),
+                            -1, -1),
                         rr_ui_set_justify(
-                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->screen_shake),
-                                rr_ui_text_init("Screen shake", 15, 0xffffffff)
-                            ),
-                        -1, -1),
+                                rr_ui_text_init("Screen shake", 15,
+                                                0xffffffff)),
+                            -1, -1),
                         rr_ui_set_justify(
-                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
-                                rr_ui_toggle_box_init(&game->displaying_debug_information),
-                                rr_ui_text_init("Show debug info", 15, 0xffffffff)
-                            ),
-                        -1, -1),
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10, 2,
+                                rr_ui_toggle_box_init(
+                                    &game->displaying_debug_information),
+                                rr_ui_text_init("Show debug info", 15,
+                                                0xffffffff)),
+                            -1, -1),
                         rr_ui_set_justify(
-                            rr_ui_h_container_init(rr_ui_container_init(), 5, 10, 2, 
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->show_ui_hitbox),
-                                rr_ui_text_init("Show ui hitboxes", 15, 0xffffffff)
-                            ),
-                        -1, -1)
-                    )
-                , -1, -1)
-            , 80)
-        , 0xff999999)
-    , 10);
+                                rr_ui_text_init("Show ui hitboxes", 15,
+                                                0xffffffff)),
+                            -1, -1)),
+                    -1, -1),
+                80),
+            0xff999999),
+        10);
     this->animate = settings_container_animate;
     this->should_show = settings_container_should_show;
     return this;
