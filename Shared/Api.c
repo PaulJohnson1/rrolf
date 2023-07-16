@@ -62,7 +62,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #endif
 }
 
-void rr_api_merge_petals(char const *id, char const *petals, void *captures)
+void rr_api_merge_petals(char const *id, char const *petals)
 {
 #ifndef EMSCRIPTEN
     char url[5000] = {0};

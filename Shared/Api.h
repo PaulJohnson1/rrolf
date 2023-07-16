@@ -25,4 +25,4 @@ void rr_api_on_craft_result(char *, void *);
 void rr_api_get_petals(char const *id, char const *token, void *);
 void rr_api_craft_petals(char const *id, char const *token, char const *petals,
                          void *);
-void rr_api_merge_petals(char const *id, char const *petals, void *);
+void rr_api_merge_petals(char const *id, char const *petals);
