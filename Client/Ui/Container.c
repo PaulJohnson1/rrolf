@@ -57,7 +57,7 @@ void rr_ui_container_poll_events(struct rr_ui_element *this,
         rr_ui_element_check_if_focused(this, game);
     else
         game->focused = this;
-    if (game->focused != this)
+    if (game->focused != this || this->stop_event_propagation)
         return;
     struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < this->elements.size; ++i)
