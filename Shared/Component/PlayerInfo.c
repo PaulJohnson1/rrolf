@@ -22,15 +22,9 @@ enum
     state_flags_flower_id = 0b000100,
     state_flags_camera_x = 0b001000,
     state_flags_slot_count = 0b010000,
-    state_flags_inv = 0b100000,
+    state_flags_petals = 0b100000,
     state_flags_all = 0b111111
 };
-
-void rr_component_player_info_signal_inv_update(
-    struct rr_component_player_info *this)
-{
-    RR_SERVER_ONLY(this->protocol_state |= state_flags_inv;)
-}
 
 void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
@@ -75,6 +69,48 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 }
 
 #ifdef RR_SERVER
+void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this, uint8_t pos, uint8_t cd)
+{
+    this->protocol_state |= (this->slots[pos].client_cooldown != cd) * state_flags_petals;
+    this->slots[pos].client_cooldown = cd;
+}
+
+void rr_component_player_info_petal_swap(struct rr_component_player_info *this, struct rr_simulation *simulation, uint8_t pos)
+{
+    struct rr_component_player_info_petal_slot *slot =
+        &this->slots[pos];
+    struct rr_component_player_info_petal_slot *s_slot =
+        &this->secondary_slots[pos];
+    for (uint32_t i = 0; i < slot->count; ++i)
+    {
+        EntityIdx id = slot->petals[i].simulation_id;
+        if (id != RR_NULL_ENTITY &&
+            rr_simulation_has_entity(simulation, id))
+        {
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(simulation, id);
+            struct rr_component_health *health =
+                rr_simulation_get_health(simulation, id);
+
+            rr_component_health_set_health(health, 0);
+
+            slot->petals[i].simulation_id = RR_NULL_ENTITY;
+        }
+    }
+    uint8_t temp = slot->id;
+    slot->id = s_slot->id;
+    s_slot->id = temp;
+    temp = slot->rarity;
+    slot->rarity = s_slot->rarity;
+    s_slot->rarity = temp;
+
+    slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
+    for (uint32_t i = 0; i < slot->count; ++i)
+        slot->petals[i].cooldown_ticks =
+            RR_PETAL_DATA[slot->id].cooldown;
+    this->protocol_state |= state_flags_petals;
+}
+
 void rr_component_player_info_write(struct rr_component_player_info *this,
                                     struct proto_bug *encoder, int is_creation)
 {
@@ -83,15 +119,18 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
-    for (uint32_t i = 0; i < this->slot_count; ++i)
+    if (state & state_flags_petals)
     {
-        proto_bug_write_uint8(encoder, this->slots[i].id, "p_id");
-        proto_bug_write_uint8(encoder, this->slots[i].rarity, "p_rar");
-        proto_bug_write_uint8(encoder, this->slots[i].client_cooldown, "p_ccd");
+        for (uint32_t i = 0; i < this->slot_count; ++i)
+        {
+            proto_bug_write_uint8(encoder, this->slots[i].id, "p_id");
+            proto_bug_write_uint8(encoder, this->slots[i].rarity, "p_rar");
+            proto_bug_write_uint8(encoder, this->slots[i].client_cooldown, "p_ccd");
 
-        proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
-        proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity,
-                              "p_rar");
+            proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
+            proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity,
+                                "p_rar");
+        }
     }
 }
 
@@ -112,15 +151,18 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
-    for (uint32_t i = 0; i < this->slot_count; ++i)
+    if (state & state_flags_petals)
     {
-        this->slots[i].id = proto_bug_read_uint8(encoder, "p_id");
-        this->slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
-        this->slots[i].client_cooldown = proto_bug_read_uint8(encoder, "p_ccd");
+        for (uint32_t i = 0; i < this->slot_count; ++i)
+        {
+            this->slots[i].id = proto_bug_read_uint8(encoder, "p_id");
+            this->slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
+            this->slots[i].client_cooldown = proto_bug_read_uint8(encoder, "p_ccd");
 
-        this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
-        this->secondary_slots[i].rarity =
-            proto_bug_read_uint8(encoder, "p_rar");
+            this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
+            this->secondary_slots[i].rarity =
+                proto_bug_read_uint8(encoder, "p_rar");
+        }
     }
 }
 #endif

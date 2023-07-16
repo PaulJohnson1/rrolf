@@ -65,7 +65,7 @@ static void mob_button_on_render(struct rr_ui_element *this,
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
-    rr_renderer_scale(renderer, this->abs_width * 0.01 * mob_radius /
+    rr_renderer_scale(renderer, 0.65 * mob_radius /
                                     RR_MOB_DATA[data->id].radius);
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;

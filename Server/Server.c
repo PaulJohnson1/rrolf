@@ -399,37 +399,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            struct rr_component_player_info_petal_slot *slot =
-                &client->player_info->slots[pos];
-            struct rr_component_player_info_petal_slot *s_slot =
-                &client->player_info->secondary_slots[pos];
-            for (uint32_t i = 0; i < slot->count; ++i)
-            {
-                EntityIdx id = slot->petals[i].simulation_id;
-                if (id != RR_NULL_ENTITY &&
-                    rr_simulation_has_entity(&this->simulation, id))
-                {
-                    struct rr_component_physical *physical =
-                        rr_simulation_get_physical(&this->simulation, id);
-                    struct rr_component_health *health =
-                        rr_simulation_get_health(&this->simulation, id);
-
-                    rr_component_health_set_health(health, 0);
-
-                    slot->petals[i].simulation_id = RR_NULL_ENTITY;
-                }
-            }
-            uint8_t temp = slot->id;
-            slot->id = s_slot->id;
-            s_slot->id = temp;
-            temp = slot->rarity;
-            slot->rarity = s_slot->rarity;
-            s_slot->rarity = temp;
-
-            slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
-            for (uint32_t i = 0; i < slot->count; ++i)
-                slot->petals[i].cooldown_ticks =
-                    RR_PETAL_DATA[slot->id].cooldown;
+            rr_component_player_info_petal_swap(client->player_info, &this->simulation, pos);
             break;
         }
         case 3:

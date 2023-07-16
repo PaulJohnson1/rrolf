@@ -38,6 +38,7 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
         return;
     rr_bitset_set(drop->picked_up_by, flower_relations->owner);
     rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
+    
     for (struct rr_drop_picked_up *i = player_info->collected_this_run;
          i < player_info->collected_this_run_end; i++)
     {

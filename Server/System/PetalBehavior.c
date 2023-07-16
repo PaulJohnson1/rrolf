@@ -147,7 +147,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             struct rr_component_health *player_health =
                 rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(player_health,
-                                           player_health->health + 20);
+                                           player_health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity]);
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
@@ -156,7 +156,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 ++rotation_pos; // clump rotpos ++
             // specials
             if (data->id == rr_petal_id_faster)
-                player_info->global_rotation += 0.01;
+                player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
             if (p_petal->simulation_id != RR_NULL_ENTITY &&
@@ -261,7 +261,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
 
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, rr_mob_id_trex,
-                                                slot->rarity);
+                                                slot->rarity == 0 ? 0 : slot->rarity - 1);
                     struct rr_component_physical *mob_physical =
                         rr_simulation_get_physical(simulation, mob_id);
                     struct rr_component_relations *mob_team =
@@ -275,6 +275,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 }
             }
         }
+        rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
     }
     player_info->rotation_count = rotation_pos;
     player_info->global_rotation += 0.1;

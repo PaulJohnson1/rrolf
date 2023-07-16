@@ -175,14 +175,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     case rr_mob_id_triceratops:
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[0]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[1]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[2]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[3]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[4]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[5]);
-        // rr_renderer_draw_image(renderer, &game->mob_triceratops[6]);
-
+        rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[0]);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[1]);
+        rr_renderer_draw_translated_image(renderer, &game->mob_triceratops_tail, 0, 155);
+        rr_renderer_draw_image(renderer, &game->mob_triceratops_body);
+        rr_renderer_draw_translated_image(renderer, &game->mob_triceratops_head, 0, -145);
         break;
     case rr_mob_id_trex:
         rr_renderer_rotate(renderer, M_PI / 2);
@@ -198,11 +195,9 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
         rr_renderer_context_state_free(renderer, &state);
 
-        // rr_renderer_draw_image(renderer, &game->mob_trex_tail_bottom);
-        // rr_renderer_draw_image(renderer, &game->mob_trex_body);
-        // rr_renderer_draw_image(renderer, &game->mob_trex_tail_top);
-        // rr_renderer_draw_image(renderer, &game->mob_trex_body_line);
-        // rr_renderer_draw_image(renderer, &game->mob_trex_head);
+        rr_renderer_draw_translated_image(renderer, &game->mob_trex_tail, 0, 150);
+        rr_renderer_draw_image(renderer, &game->mob_trex_body);
+        rr_renderer_draw_translated_image(renderer, &game->mob_trex_head, 0, -125);
         break;
     case rr_mob_id_stump:
         rr_renderer_rotate(renderer, M_PI / 2);
@@ -210,69 +205,8 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_draw_image(renderer, &game->mob_stump);
         break;
     case rr_mob_id_spinosaurus_head:
-        rr_renderer_scale(renderer, 10.0f / 36.0f);
-        rr_renderer_set_fill(renderer, 0xff333333);
-        // side circle a
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_tick * 3.0f, -30.0f, 15.0f);
-        rr_renderer_fill(renderer);
-        // side circle b
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_tick * 3.0f, 30.0f, 15.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_set_fill(renderer, 0xff8ac255);
-        rr_renderer_set_stroke(renderer, 0xff709d45);
-        rr_renderer_set_line_width(renderer, 7.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0.0f, 0.0f, 35.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
-        rr_renderer_set_stroke(renderer, 0xff333333);
-        rr_renderer_set_line_cap(renderer, 1.0f);
-        rr_renderer_set_line_width(renderer, 3.0f);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_set_fill(renderer, 0xff333333);
-        // antennae circle a
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55.0f + animation_tick * 2.0f, -30.0f, 5.0f);
-        rr_renderer_fill(renderer);
-        // antennae circle b
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 55.0f - animation_tick * 2.0f, 30.0f, 5.0f);
-        rr_renderer_fill(renderer);
-        // antennae line a
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 25.0f, -10.0f);
-        rr_renderer_quadratic_curve_to(renderer, 45.0f, -10.0f,
-                                       55.0f + animation_tick * 2.0f, -30.0f);
-        rr_renderer_stroke(renderer);
-        // antennae line b
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 25.0f, 10.0f);
-        rr_renderer_quadratic_curve_to(renderer, 45.0f, 10.0f,
-                                       55.0f - animation_tick * 2.0f, 30.0f);
-        rr_renderer_stroke(renderer);
-        rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_spinosaurus_body:
-        rr_renderer_scale(renderer, 10.0f / 36.0f);
-        rr_renderer_set_fill(renderer, 0xff333333);
-        // side circle a
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, animation_tick * 2.0f, -30.0f, 15.0f);
-        rr_renderer_fill(renderer);
-        // antennae circle b
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, -animation_tick * 2.0f, 30.0f, 15.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_set_fill(renderer, 0xff8ac255);
-        rr_renderer_set_stroke(renderer, 0xff709d45);
-        rr_renderer_set_line_width(renderer, 7.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0.0f, 0.0f, 35.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
         break;
     case rr_mob_id_pteranodon:
         rr_renderer_rotate(renderer, M_PI / 2);
@@ -280,27 +214,24 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, 40.0f, 30.0f);
-        rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
+        rr_renderer_draw_translated_image(renderer, &game->mob_pteranodon_wings[0], 175, 0);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, -40.0f, 30.0f);
-        rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
+        rr_renderer_draw_translated_image(renderer, &game->mob_pteranodon_wings[1], -175, 0);
         rr_renderer_context_state_free(renderer, &state);
-
         rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         break;
     case rr_mob_id_dakotaraptor:
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
 
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[0]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[1]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_tail);
+        rr_renderer_draw_translated_image(renderer, &game->mob_dakotaraptor_wings[0], -65, 0);
+        rr_renderer_draw_translated_image(renderer, &game->mob_dakotaraptor_wings[1], 65, 0);
+        rr_renderer_draw_translated_image(renderer, &game->mob_dakotaraptor_tail, 0, 125);
         rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_body);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_head);
+        rr_renderer_draw_translated_image(renderer, &game->mob_dakotaraptor_head, 0, -125);
         break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
@@ -341,14 +272,16 @@ void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
         rr_renderer_fill(renderer);
         return;
     }
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
     renderer->state.filter.amount = 0.2f;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[rarity]);
+    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
     rr_renderer_set_line_width(renderer, 6.0f);
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -30.0f, -30.0f, 60.0f, 60.0f, 6.0f);
+    rr_renderer_round_rect(renderer, -33.0f, -33.0f, 66.0f, 66.0f, 6.0f);
     rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
-    rr_renderer_clip(renderer);
     renderer->state.filter.amount = 0.0f;
+    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[rarity]);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_round_rect(renderer, -27.0f, -27.0f, 54.0f, 54.0f, 3.0f);
+    rr_renderer_fill(renderer);
+    rr_renderer_clip(renderer);
 }

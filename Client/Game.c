@@ -31,6 +31,21 @@
 #include <Shared/cJSON.h>
 #include <Shared/pb.h>
 
+void validate_loadout(struct rr_game *this)
+{
+    uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
+    memcpy(&temp_inv, &this->inventory, (sizeof (uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
+    for (uint8_t i = 0; i < 20; ++i)
+    {
+        uint8_t id = this->loadout[i].id;
+        uint8_t rarity = this->loadout[i].rarity;
+        if (temp_inv[id][rarity] == 0)
+            this->loadout[i].id = this->loadout[i].rarity = 0;
+        else
+            --temp_inv[id][rarity];
+    }
+}
+
 void rr_api_on_get_petals(char *json, void *a)
 {
     struct rr_game *game = a;
@@ -318,79 +333,79 @@ void rr_game_init(struct rr_game *this)
 
     // TODO: move these out of this file
     rr_renderer_init(&this->mob_pteranodon_wings[0]);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[0], 800, 600);
+    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[0], 432, 288);
     rr_renderer_draw_svg(&this->mob_pteranodon_wings[0],
-#include <Client/Assets/Mob/Pteranodon/Body.h>
-                         , 0, 0);
-
-    rr_renderer_init(&this->mob_pteranodon_wings[1]);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[1], 800, 600);
-    rr_renderer_draw_svg(&this->mob_pteranodon_wings[1],
 #include <Client/Assets/Mob/Pteranodon/Wing1.h>
                          , 0, 0);
 
-    rr_renderer_init(&this->mob_pteranodon_body);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_body, 800, 600);
-    rr_renderer_draw_svg(&this->mob_pteranodon_body,
+    rr_renderer_init(&this->mob_pteranodon_wings[1]);
+    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[1], 432, 288);
+    rr_renderer_draw_svg(&this->mob_pteranodon_wings[1],
 #include <Client/Assets/Mob/Pteranodon/Wing2.h>
                          , 0, 0);
 
+    rr_renderer_init(&this->mob_pteranodon_body);
+    rr_renderer_set_dimensions(&this->mob_pteranodon_body, 192, 336);
+    rr_renderer_draw_svg(&this->mob_pteranodon_body,
+#include <Client/Assets/Mob/Pteranodon/Body.h>
+                         , 0, 0);
+
     rr_renderer_init(&this->mob_trex_head);
-    rr_renderer_set_dimensions(&this->mob_trex_head, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_trex_head, 144, 244);
     rr_renderer_draw_svg(&this->mob_trex_head,
 #include <Client/Assets/Mob/Rex/Head.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_trex_legs[0]);
-    rr_renderer_set_dimensions(&this->mob_trex_legs[0], 800, 600);
+    rr_renderer_set_dimensions(&this->mob_trex_legs[0], 240, 240);
     rr_renderer_draw_svg(&this->mob_trex_legs[0],
 #include <Client/Assets/Mob/Rex/Leg1.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_trex_legs[1]);
-    rr_renderer_set_dimensions(&this->mob_trex_legs[1], 800, 600);
+    rr_renderer_set_dimensions(&this->mob_trex_legs[1], 240, 240);
     rr_renderer_draw_svg(&this->mob_trex_legs[1],
 #include <Client/Assets/Mob/Rex/Leg2.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_trex_body);
-    rr_renderer_set_dimensions(&this->mob_trex_body, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_trex_body, 192, 336);
     rr_renderer_draw_svg(&this->mob_trex_body,
 #include <Client/Assets/Mob/Rex/Body.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_trex_tail);
-    rr_renderer_set_dimensions(&this->mob_trex_tail, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_trex_tail, 192, 336);
     rr_renderer_draw_svg(&this->mob_trex_tail,
 #include <Client/Assets/Mob/Rex/Tail.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_triceratops_head);
-    rr_renderer_set_dimensions(&this->mob_triceratops_head, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_triceratops_head, 192, 336);
     rr_renderer_draw_svg(&this->mob_triceratops_head,
 #include <Client/Assets/Mob/Triceratops/Head.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_triceratops_body);
-    rr_renderer_set_dimensions(&this->mob_triceratops_body, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_triceratops_body, 192, 336);
     rr_renderer_draw_svg(&this->mob_triceratops_body,
 #include <Client/Assets/Mob/Triceratops/Body.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_triceratops_legs[0]);
-    rr_renderer_set_dimensions(&this->mob_triceratops_legs[0], 800, 600);
+    rr_renderer_set_dimensions(&this->mob_triceratops_legs[0], 240, 240);
     rr_renderer_draw_svg(&this->mob_triceratops_legs[0],
 #include <Client/Assets/Mob/Triceratops/Leg1.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_triceratops_legs[1]);
-    rr_renderer_set_dimensions(&this->mob_triceratops_legs[1], 800, 600);
+    rr_renderer_set_dimensions(&this->mob_triceratops_legs[1], 240, 240);
     rr_renderer_draw_svg(&this->mob_triceratops_legs[1],
 #include <Client/Assets/Mob/Triceratops/Leg2.h>
                          , 0, 0);
 
     rr_renderer_init(&this->mob_triceratops_tail);
-    rr_renderer_set_dimensions(&this->mob_triceratops_tail, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_triceratops_tail, 192, 336);
     rr_renderer_draw_svg(&this->mob_triceratops_tail,
 #include <Client/Assets/Mob/Triceratops/Tail.h>
                          , 0, 0);
@@ -835,6 +850,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
+    validate_loadout(this);
     rr_storage_layout_save(this);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
@@ -902,7 +918,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this, this->map_prop_count * 1600);
+            render_background(player_info, this, this->map_prop_count * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -930,7 +946,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
         render_background(&custom_player_info, this,
-                          this->map_prop_count * 1600);
+                          this->map_prop_count * 750);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
