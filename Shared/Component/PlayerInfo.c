@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Shared/Api.h>
 #include <Shared/Component/Health.h>
 #include <Shared/Rivet.h>
 #include <Shared/SimulationCommon.h>
