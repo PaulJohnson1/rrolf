@@ -35,6 +35,10 @@ void rr_component_mob_free(struct rr_component_mob *this,
                            struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
+    struct rr_component_relations *relations =
+        rr_simulation_get_relations(simulation, this->parent_id);
+    if (relations->team != rr_simulation_team_id_mobs)
+        return;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, this->parent_id);
     uint8_t spawn_ids[4] = {};
