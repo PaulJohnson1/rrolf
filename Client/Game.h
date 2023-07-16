@@ -57,19 +57,23 @@ struct rr_game
     struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
 
     // mob assets cache
-    struct rr_renderer mob_pteranodon_wings[2];
     struct rr_renderer mob_pteranodon_body;
+    struct rr_renderer mob_pteranodon_wings[2];
 
-    struct rr_renderer mob_trex_legs[2]; // contains: [{leg, arm}, {arm, leg}]
-    struct rr_renderer mob_trex_body;
-    struct rr_renderer mob_trex_body_line;
-    struct rr_renderer mob_trex_tail_bottom;
-    struct rr_renderer mob_trex_tail_top;
     struct rr_renderer mob_trex_head;
+    struct rr_renderer mob_trex_body;
+    struct rr_renderer mob_trex_tail;
+    struct rr_renderer mob_trex_legs[2]; // contains: [{leg, arm}, {arm, leg}]
 
-    struct rr_renderer mob_triceratops[7];
+    struct rr_renderer mob_triceratops_head;
+    struct rr_renderer mob_triceratops_body;
+    struct rr_renderer mob_triceratops_tail;
+    struct rr_renderer mob_triceratops_legs[2];
 
-    struct rr_renderer mob_dakotaraptor[6];
+    struct rr_renderer mob_dakotaraptor_body;
+    struct rr_renderer mob_dakotaraptor_head;
+    struct rr_renderer mob_dakotaraptor_tail;
+    struct rr_renderer mob_dakotaraptor_wings[2];
 
     struct rr_renderer mob_stump;
 

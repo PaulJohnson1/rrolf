@@ -175,13 +175,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     case rr_mob_id_triceratops:
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[0]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[1]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[2]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[3]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[4]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[5]);
-        rr_renderer_draw_image(renderer, &game->mob_triceratops[6]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[0]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[1]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[2]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[3]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[4]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[5]);
+        // rr_renderer_draw_image(renderer, &game->mob_triceratops[6]);
 
         break;
     case rr_mob_id_trex:
@@ -198,11 +198,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
         rr_renderer_context_state_free(renderer, &state);
 
-        rr_renderer_draw_image(renderer, &game->mob_trex_tail_bottom);
-        rr_renderer_draw_image(renderer, &game->mob_trex_body);
-        rr_renderer_draw_image(renderer, &game->mob_trex_tail_top);
-        rr_renderer_draw_image(renderer, &game->mob_trex_body_line);
-        rr_renderer_draw_image(renderer, &game->mob_trex_head);
+        // rr_renderer_draw_image(renderer, &game->mob_trex_tail_bottom);
+        // rr_renderer_draw_image(renderer, &game->mob_trex_body);
+        // rr_renderer_draw_image(renderer, &game->mob_trex_tail_top);
+        // rr_renderer_draw_image(renderer, &game->mob_trex_body_line);
+        // rr_renderer_draw_image(renderer, &game->mob_trex_head);
         break;
     case rr_mob_id_stump:
         rr_renderer_rotate(renderer, M_PI / 2);
@@ -296,12 +296,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);
 
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[0]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[1]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[2]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[3]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[4]);
-        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor[5]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[0]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[1]);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_tail);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_body);
+        rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_head);
         break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
