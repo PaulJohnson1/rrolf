@@ -34,7 +34,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 {
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
-    char url[500];
+    char url[500] = {0};
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s", param_1,
              param_2);
@@ -62,15 +62,28 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #endif
 }
 
+void rr_api_merge_petals(char const *id, char const *petals, void *captures)
+{
+#ifndef EMSCRIPTEN
+    char url[5000] = {0};
+    RR_RIVET_CURL_PROLOGUE
+    snprintf(url, sizeof(url),
+             "https://rrolf.io/api/user_merge_petals/%s/%s/%s", RR_API_SECRET,
+             id, petals);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    RR_RIVET_CURL_EPILOGUE
+#endif
+}
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                          char const *param_3, void *captures)
 {
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
-    char url[500];
+    char url[500] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), "https://rrolf.io/api/user_craft_petals/%s/%s/%s",
-             param_1, param_2, param_3);
+    snprintf(url, sizeof(url),
+             "https://rrolf.io/api/user_craft_petals/%s/%s/%s", param_1,
+             param_2, param_3);
     curl_easy_setopt(curl, CURLOPT_HTTPPOST, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);

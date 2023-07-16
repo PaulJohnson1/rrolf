@@ -26,10 +26,20 @@ struct rr_component_player_info_petal_slot
     RR_SERVER_ONLY(struct rr_component_player_info_petal petals[10];)
 };
 
+struct rr_drop_picked_up
+{
+    uint64_t count;
+    uint8_t id;
+    uint8_t rarity;
+};
+
 struct rr_component_player_info
 {
     struct rr_component_player_info_petal_slot slots[10];
     struct rr_component_player_info_petal_slot secondary_slots[10];
+    struct rr_drop_picked_up *collected_this_run;
+    struct rr_drop_picked_up *collected_this_run_end;
+    RR_SERVER_ONLY(rr_rivet_account *account;)
     RR_SERVER_ONLY(float global_rotation;)
     float camera_x;
     RR_CLIENT_ONLY(float lerp_camera_x;)

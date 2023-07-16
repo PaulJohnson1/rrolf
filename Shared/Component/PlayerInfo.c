@@ -43,9 +43,34 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
+    char petals_string[5000] = {0}; // Ensure this is large enough
+    char buffer[100] = {0};         // Temporary buffer for each item
+
+    for (struct rr_drop_picked_up *i = this->collected_this_run;
+         i < this->collected_this_run_end; i++)
+    {
+        // Format each item into buffer
+        snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
+                 i->count);
+
+        // If not the first item, append a comma before the item
+        if (i != this->collected_this_run)
+        {
+            strncat(petals_string, ",",
+                    sizeof petals_string - strlen(petals_string) - 1);
+        }
+
+        // Append the item
+        strncat(petals_string, buffer,
+                sizeof petals_string - strlen(petals_string) - 1);
+    }
+
+    rr_api_merge_petals(this->account.uuid, petals_string);
+
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
             rr_simulation_get_health(simulation, this->flower_id), 0);
+    free(this->collected_this_run);
 #endif
 }
 

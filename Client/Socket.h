@@ -23,6 +23,7 @@ struct rr_websocket
     void *user_data;
 #ifdef RIVET_BUILD
     char *rivet_player_token;
+    char *uuid;
 #endif
     void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
 #ifndef EMSCRIPTEN
