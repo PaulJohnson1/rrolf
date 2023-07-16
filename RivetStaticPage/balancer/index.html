@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Ubuntu:700" rel="stylesheet" type="text/css">
+        <style>
+            * {
+                margin: 0px;
+                padding: 0px;
+                overflow:hidden;
+            }
+            .rrolf
+            {
+                position:absolute;
+                left: 0px;
+                right: 0px;
+            }
+            #canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                cursor: default;
+            }
+            .input {
+                width: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="slidecontainer" style="position: absolute; top: 100; left: 100;">
+            <span>Seed:</span><input class="input" id="seed" value="0.25"><p></p>
+            <span>drop c0</span><input class="input" id="d0">
+            <span>drop c1</span><input class="input" id="d1">
+            <span>drop c2</span><input class="input" id="d2">
+            <span>drop c3</span><input class="input" id="d3">
+            <span>drop c4</span><input class="input" id="d4"> 
+            <span>drop c5</span><input class="input" id="d5">
+            <span>drop c6</span><input class="input" id="d6"><p></p>
+            <span>mob c0</span><input class="input" id="m0">
+            <span>mob c1</span><input class="input" id="m1">
+            <span>mob c2</span><input class="input" id="m2">
+            <span>mob c3</span><input class="input" id="m3">
+            <span>mob c4</span><input class="input" id="m4"> 
+            <span>mob c5</span><input class="input" id="m5">
+            <span>mob c6</span><input class="input" id="m6">
+        </div>
+        <script src="index.js"></script>
+    </body>
+</html>

@@ -94,7 +94,8 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     rr_renderer_draw_image(renderer,
                            &game->static_petals[data->id][data->rarity]);
     rr_renderer_context_state_free(renderer, &state);
-
+    if (data->count <= 1)
+        return;
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);
     rr_renderer_set_fill(renderer, 0xffffffff);

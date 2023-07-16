@@ -123,6 +123,7 @@ static void crafting_result_container_on_event(struct rr_ui_element *this,
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
+        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
     }
 }
 
@@ -158,7 +159,8 @@ static void crafting_ring_petal_on_render(struct rr_ui_element *this,
     rr_renderer_draw_image(
         renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
     rr_renderer_context_state_free(renderer, &state);
-
+    if (data->count <= 1)
+        return;
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);
     rr_renderer_set_fill(renderer, 0xffffffff);
@@ -251,7 +253,8 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
         &game->static_petals[game->crafting_data.crafting_id]
                             [game->crafting_data.crafting_rarity + 1]);
     rr_renderer_context_state_free(renderer, &state);
-
+    if (game->crafting_data.success_count <= 1)
+        return;
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);
     rr_renderer_set_fill(renderer, 0xffffffff);
@@ -311,7 +314,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    if (data->count == 0)
+    if (data->count < 5 || game->crafting_data.success_count > 0 || data->rarity == rr_rarity_id_ultra)
         return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -324,7 +327,12 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             game->crafting_data.success_count = 0;
         }
         if (data->count > 5)
-            game->crafting_data.count += 5;
+        {
+            if (rr_bitset_get(&game->input_data->keys_pressed, 16))
+                game->crafting_data.count += data->count;
+            else
+                game->crafting_data.count += 5;
+        }
         else
             game->crafting_data.count += data->count;
     }
@@ -351,7 +359,8 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     rr_renderer_draw_image(renderer,
                            &game->static_petals[data->id][data->rarity]);
     rr_renderer_context_state_free(renderer, &state);
-
+    if (data->count <= 1)
+        return;
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);
     rr_renderer_set_fill(renderer, 0xffffffff);
