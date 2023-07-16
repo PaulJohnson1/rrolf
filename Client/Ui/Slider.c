@@ -29,8 +29,8 @@ static void h_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_set_stroke(renderer, this->fill);
 
     rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, -this->abs_width / 2, 0);
-    rr_renderer_line_to(renderer, this->abs_width / 2, 0);
+    rr_renderer_move_to(renderer, -(this->abs_width - this->abs_height) / 2, 0);
+    rr_renderer_line_to(renderer, (this->abs_width - this->abs_height) / 2, 0);
     rr_renderer_stroke(renderer);
     float offset = (this->abs_width -this->abs_height) * (*data->value - 0.5);
     rr_renderer_begin_path(renderer);
@@ -47,7 +47,7 @@ static void h_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
     }
     if (data->dragging)
     {
-        float real_x = (game->input_data->mouse_x - (this->abs_x - this->abs_width / 2 * renderer->scale)) / (this->abs_width * renderer->scale);
+        float real_x = (game->input_data->mouse_x - (this->abs_x - (this->abs_width - this->abs_height) / 2 * renderer->scale)) / ((this->abs_width - this->abs_height) * renderer->scale);
         *data->value = rr_fclamp(real_x, 0, 1);
     }
 }
