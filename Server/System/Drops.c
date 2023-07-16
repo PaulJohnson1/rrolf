@@ -1,5 +1,7 @@
 #include <Server/System/Drops.h>
 
+#include <stdlib.h>
+
 #include <Server/Simulation.h>
 
 struct drop_pick_up_captures
@@ -36,7 +38,31 @@ static void drop_pick_up(EntityIdx flower, void *_captures)
         return;
     rr_bitset_set(drop->picked_up_by, flower_relations->owner);
     rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
-    //++player_info->inv[drop->id][drop->rarity];
+    
+    for (struct rr_drop_picked_up *i = player_info->collected_this_run;
+         i < player_info->collected_this_run_end; i++)
+    {
+        if (i->id == drop->id && i->rarity == drop->rarity)
+        {
+            ++i->count;
+            rr_component_player_info_signal_inv_update(player_info);
+            return;
+        }
+    }
+
+    // for loop didn't make the function return early so we must create the new
+    // entry
+    uint64_t size =
+        player_info->collected_this_run_end - player_info->collected_this_run;
+    player_info->collected_this_run =
+        realloc(player_info->collected_this_run,
+                (size + 1) * sizeof(struct rr_drop_picked_up));
+    player_info->collected_this_run_end =
+        player_info->collected_this_run + size + 1;
+    player_info->collected_this_run[size].count = 1;
+    player_info->collected_this_run[size].rarity = drop->rarity;
+    player_info->collected_this_run[size].id = drop->id;
+    rr_component_player_info_signal_inv_update(player_info);
 }
 
 static void drop_despawn_tick(EntityIdx entity, void *_captures)

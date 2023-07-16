@@ -21,6 +21,7 @@ struct rr_server_client
     struct rr_server *server;
 #ifdef RIVET_BUILD
     char *rivet_player_token;
+    char *uuid;
 #endif
     int file_descriptor;
     char ip_address[100];

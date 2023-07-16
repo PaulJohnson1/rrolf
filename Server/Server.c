@@ -280,20 +280,34 @@ int rr_server_lws_callback_function(struct lws *socket,
 #ifdef RIVET_BUILD
             uint64_t encountered_size =
                 proto_bug_read_varuint(&encoder, "rivet token size");
-            if (16 + encountered_size >= size)
+            uint64_t uuid_encountered_size =
+                proto_bug_read_varuint(&encoder, "uuid size");
+
+            if (16 + encountered_size + uuid_encountered_size >= size)
             {
-                printf("%lu %lu\n", size, encountered_size);
-                fputs("skid gaming3", stderr);
+                printf("%lu %lu\n", size,
+                       encountered_size + uuid_encountered_size);
+                fputs("skid gaming3", stderr); // invalid size
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
                                  (uint8_t *)"script kiddie3",
                                  sizeof "script kiddie");
                 return 1;
             }
+
+            // Read rivet token
             this->clients[i].rivet_player_token = malloc(encountered_size + 1);
             this->clients[i].rivet_player_token[encountered_size] =
                 0; // don't forget the null terminator lol
             proto_bug_read_string(&encoder, this->clients[i].rivet_player_token,
                                   encountered_size, "rivet token");
+
+            // Read uuid
+            this->clients[i].uuid = malloc(uuid_encountered_size + 1);
+            this->clients[i].uuid[uuid_encountered_size] =
+                0; // null terminator for uuid
+            proto_bug_read_string(&encoder, this->clients[i].uuid,
+                                  uuid_encountered_size, "rivet uuid");
+
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_player_token))

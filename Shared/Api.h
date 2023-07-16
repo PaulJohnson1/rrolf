@@ -22,6 +22,7 @@
 void rr_api_on_get_petals(char *, void *);
 void rr_api_on_craft_result(char *, void *);
 
-void rr_api_get_petals(char const *param_1, char const *param_2, void *);
-void rr_api_craft_petals(char const *param_1, char const *param_2,
-                         char const *param_3, void *);
+void rr_api_get_petals(char const *id, char const *token, void *);
+void rr_api_craft_petals(char const *id, char const *token, char const *petals,
+                         void *);
+void rr_api_merge_petals(char const *id, char const *petals, void *);
