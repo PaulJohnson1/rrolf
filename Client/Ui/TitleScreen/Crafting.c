@@ -73,19 +73,10 @@ void rr_api_on_craft_result(char *data, void *_captures)
         else
         {
             game->inventory[r.id][r.rarity] += r.count;
-            if (r.id == craft->crafting_id &&
-                r.rarity - 1 == craft->crafting_rarity)
-            {
+            if (r.id == craft->crafting_id && r.rarity - 1 == craft->crafting_rarity)
                 craft->success_count += r.count;
-                craft->count = 0;
-                craft->crafting_id = 0;
-                craft->crafting_rarity = 0;
-            }
-            else
-            {
-                craft->count = -r.count;
-                printf("%d\n", craft->count);
-            }
+            else if (r.id == craft->crafting_id && r.rarity == craft->crafting_rarity)
+                craft->count += r.count;
         }
 
         token = strtok(0, ",");
