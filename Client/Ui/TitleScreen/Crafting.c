@@ -331,8 +331,6 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    if (data->secondary_animation > 0.999)
-        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->inventory[data->id][data->rarity] < 5 || game->crafting_data.success_count > 0 || data->rarity == rr_rarity_id_ultra)
@@ -371,6 +369,8 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
                                                 struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
+    if (data->secondary_animation > 0.999)
+        return;
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
