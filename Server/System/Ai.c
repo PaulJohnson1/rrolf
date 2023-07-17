@@ -128,6 +128,13 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             if (delta.x * delta.x + delta.y * delta.y <= 500 * 500)
             {
+                float distance = rr_vector_get_magnitude(&delta);
+                struct rr_vector prediction = delta;
+                struct rr_vector prediction_delta = target_physical->velocity;
+                rr_vector_scale(&prediction_delta, distance / 20);
+                rr_vector_add(&prediction, &prediction_delta);
+                rr_component_physical_set_angle(physical,
+                                                rr_vector_theta(&prediction));
                 break;
             }
         ai->ticks_until_next_action =

@@ -63,7 +63,7 @@ fn get_craft_chance(rarity: u64) -> f32 {
     match rarity {
         0 => 0.5,  // common -> uncommon
         1 => 0.3,  // uncommon -> rare
-        2 => 0.15, //rare -> epic
+        2 => 0.15, // rare -> epic
         3 => 0.05, // epic -> legendary
         4 => 0.03, // legendary -> mythic
         5 => 0.01, // mythic -> ultra

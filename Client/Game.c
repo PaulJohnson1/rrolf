@@ -530,6 +530,11 @@ void rr_game_init(struct rr_game *this)
     if (size)
         this->screen_shake = storage_result[0];
     size = rr_local_storage_get("loadout");
+    float props = 0.5;
+    rr_local_storage_get_bytes("props", &props);
+    printf("read: %f\n", props);
+    this->map_prop_count = props;
+    puts("\n\n\n\n\n\n\n");
     if (size == 0)
         return;
     uint8_t at = 0;
@@ -867,6 +872,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_local_storage_store_chunk("mouse_movement", &Y_N, 1);
     Y_N = this->screen_shake;
     rr_local_storage_store_chunk("screen_shake", &Y_N, 1);
+    float thing = this->map_prop_count;
+    rr_local_storage_store_bytes("props", &thing, sizeof thing);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);

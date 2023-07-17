@@ -19,7 +19,7 @@
 struct rr_spatial_hash;
 #endif
 
-enum rr_simulation_team_id : uint8_t
+enum rr_simulation_team_id
 {
     rr_simulation_team_id_mobs,
     rr_simulation_team_id_players

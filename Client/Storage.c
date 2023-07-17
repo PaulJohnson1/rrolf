@@ -51,6 +51,52 @@ void rr_local_storage_store_chunk(char *name, char *contents, uint32_t len)
 #endif
 }
 
+void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            const string = Module.ReadCstr($0);
+            let bytes = HEAPU8.subarray($1, $1 + $2);
+            // clang-format breaks arrow functions into = > and causes a syntax
+            // error in the javascript
+
+            // clang-format off
+            // size of this localstorage shit literally means exactly nothing.
+            // stuff won't get larger than 100 bytes and if it does, still who
+            // even cares?
+            let hex = [...bytes].map(x => x.toString(16)).join(" ");
+            localStorage[string] = hex;
+            // clang-format on
+        },
+        label, bytes, size);
+#endif
+}
+
+void rr_local_storage_get_bytes(char *label, void *bytes)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            const string = Module.ReadCstr($0);
+            let hex = localStorage[string];
+            if (!hex)
+                return;
+            // clang-format off
+            let bytes = new Uint8Array(hex.split(" ").map(x => parseInt(x, 16)));
+            // clang-format on
+
+            for (let i = 0; i < bytes.length; i++)
+                HEAPU8[$1 + i] = bytes[i];
+
+            // this down here doesn't work for some reason and I spent hours
+            // debugging it
+            // HEAPU8.set($1, bytes);
+        },
+        label, bytes);
+#endif
+}
+
 void rr_storage_layout_save(struct rr_game *game)
 {
     uint8_t arr[61];
