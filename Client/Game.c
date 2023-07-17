@@ -520,14 +520,14 @@ void rr_game_init(struct rr_game *this)
 
     uint32_t size = rr_local_storage_get("display_debug_info");
     this->displaying_debug_information = storage_result[0];
-    if (size) 
+    if (size)
         size = rr_local_storage_get("show_ui_hitboxes");
     this->show_ui_hitbox = storage_result[0];
     size = rr_local_storage_get("mouse_movement");
-    if (size) 
+    if (size)
         this->use_mouse = storage_result[0];
     size = rr_local_storage_get("screen_shake");
-    if (size) 
+    if (size)
         this->screen_shake = storage_result[0];
     size = rr_local_storage_get("loadout");
     if (size == 0)
@@ -1126,8 +1126,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     else
         rr_websocket_connect_to(&game->socket, s, port, 0);
     free(s);
-// captures->socket->rivet_player_token = strdup(token);
-// free(token);
+    // captures->socket->rivet_player_token = strdup(token);
+    // free(token);
     game->socket.rivet_player_token = token;
     game->socket.uuid = game->rivet_account.uuid;
 }

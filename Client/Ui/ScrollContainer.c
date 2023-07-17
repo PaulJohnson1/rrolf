@@ -17,7 +17,7 @@ struct scroll_container_metadata
     uint8_t scroll_focus;
 };
 
-void scroll_bar_poll_events(struct rr_ui_element *this, struct rr_game *game)
+static void scroll_bar_poll_events(struct rr_ui_element *this, struct rr_game *game)
 {
     if (this->completely_hidden)
         return;
@@ -28,7 +28,7 @@ void scroll_bar_poll_events(struct rr_ui_element *this, struct rr_game *game)
     this->elements.start[0]->poll_events(this->elements.start[0], game);
 }
 
-void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void scroll_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     struct scroll_container_metadata *data = this->data;
     this->abs_width = this->width = this->elements.start[0]->width + 10;
