@@ -38,10 +38,10 @@ void validate_loadout(struct rr_game *this)
            (sizeof(uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
     for (uint8_t i = 0; i < 20; ++i)
     {
-        uint8_t id = this->loadout[i].id;
-        uint8_t rarity = this->loadout[i].rarity;
+        uint8_t id = this->settings.loadout[i].id;
+        uint8_t rarity = this->settings.loadout[i].rarity;
         if (temp_inv[id][rarity] == 0)
-            this->loadout[i].id = this->loadout[i].rarity = 0;
+            this->settings.loadout[i].id = this->settings.loadout[i].rarity = 0;
         else
             --temp_inv[id][rarity];
     }
@@ -518,32 +518,13 @@ void rr_game_init(struct rr_game *this)
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
 
-    uint32_t size = rr_local_storage_get("display_debug_info");
-    this->displaying_debug_information = storage_result[0];
-    if (size)
-        size = rr_local_storage_get("show_ui_hitboxes");
-    this->show_ui_hitbox = storage_result[0];
-    size = rr_local_storage_get("mouse_movement");
-    if (size)
-        this->use_mouse = storage_result[0];
-    size = rr_local_storage_get("screen_shake");
-    if (size)
-        this->screen_shake = storage_result[0];
-    size = rr_local_storage_get("loadout");
-    float props = 0.5;
-    rr_local_storage_get_bytes("props", &props);
-    printf("read: %f\n", props);
-    this->map_prop_count = props;
-    puts("\n\n\n\n\n\n\n");
-    if (size == 0)
-        return;
-    uint8_t at = 0;
-    while (at < size)
-    {
-        this->loadout[storage_result[at]].id = storage_result[at + 1];
-        this->loadout[storage_result[at]].rarity = storage_result[at + 2];
-        at += 3;
-    }
+    rr_local_storage_get_bytes("settings", &this->settings);
+    // while (at < size)
+    // {
+    //     this->settings.loadout[storage_result[at]].id = storage_result[at + 1];
+    //     this->settings.loadout[storage_result[at]].rarity = storage_result[at + 2];
+    //     at += 3;
+    // }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -638,7 +619,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               << 4;
             movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
                               << 5;
-            movement_flags |= this->use_mouse << 6;
+            movement_flags |= this->settings.use_mouse << 6;
             proto_bug_write_uint8(&encoder2, movement_flags,
                                   "movement kb flags");
             proto_bug_write_float32(&encoder2,
@@ -678,8 +659,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 if (this->protocol_state & (1 << i))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1, "pos");
-                    proto_bug_write_uint8(&encoder2, this->loadout[i].id, "id");
-                    proto_bug_write_uint8(&encoder2, this->loadout[i].rarity,
+                    proto_bug_write_uint8(&encoder2, this->settings.loadout[i].id, "id");
+                    proto_bug_write_uint8(&encoder2, this->settings.loadout[i].rarity,
                                           "rar");
                 }
             }
@@ -862,18 +843,11 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
-    validate_loadout(this);
-    rr_storage_layout_save(this);
-    char Y_N = this->displaying_debug_information;
-    rr_local_storage_store_chunk("display_debug_info", &Y_N, 1);
-    Y_N = this->show_ui_hitbox;
-    rr_local_storage_store_chunk("show_ui_hitboxes", &Y_N, 1);
-    Y_N = this->use_mouse;
-    rr_local_storage_store_chunk("mouse_movement", &Y_N, 1);
-    Y_N = this->screen_shake;
-    rr_local_storage_store_chunk("screen_shake", &Y_N, 1);
-    float thing = this->map_prop_count;
-    rr_local_storage_store_bytes("props", &thing, sizeof thing);
+    if (this->simulation_ready)
+        validate_loadout(this);
+    // rr_storage_layout_save(this);
+    rr_local_storage_store_bytes("settings", &this->settings,
+                                 sizeof this->settings);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
@@ -902,7 +876,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_translate(this->renderer, -player_info->lerp_camera_x,
                                   -player_info->lerp_camera_y);
 
-            if (this->screen_shake && player_info->flower_id != RR_NULL_ENTITY)
+            if (this->settings.screen_shake &&
+                player_info->flower_id != RR_NULL_ENTITY)
             {
                 if (rr_simulation_get_physical(this->simulation,
                                                player_info->flower_id)
@@ -940,7 +915,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this, this->map_prop_count * 750);
+            render_background(player_info, this, this->settings.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -968,7 +943,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
         render_background(&custom_player_info, this,
-                          this->map_prop_count * 750);
+                          this->settings.map_props * 750);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
@@ -1034,7 +1009,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                           186 /* ; */))
-        this->displaying_debug_information ^= 1;
+        this->settings.displaying_debug_information ^= 1;
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
@@ -1047,7 +1022,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (frame_time > this->debug_info.max_frame_time)
         this->debug_info.max_frame_time = frame_time;
 
-    if (this->displaying_debug_information)
+    if (this->settings.displaying_debug_information)
     {
         struct rr_renderer_context_state state;
         rr_renderer_context_state_init(this->renderer, &state);

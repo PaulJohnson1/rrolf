@@ -69,7 +69,7 @@ static void labeled_button_on_render(struct rr_ui_element *this,
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-struct rr_ui_element *rr_ui_labeled_button_init(char const *text, float height,
+struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
                                                 uint8_t *toggle)
 {
     struct rr_ui_element *this = rr_ui_element_init();

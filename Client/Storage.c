@@ -97,21 +97,21 @@ void rr_local_storage_get_bytes(char *label, void *bytes)
 #endif
 }
 
-void rr_storage_layout_save(struct rr_game *game)
-{
-    uint8_t arr[61];
-    // memset(&arr, 0, sizeof arr);
-    uint8_t at = 0;
-    for (uint8_t i = 0; i < 20; ++i)
-    {
-        struct rr_game_loadout_petal petal = game->loadout[i];
-        if (petal.id == 0)
-            continue;
-        arr[at] = i;
-        arr[at + 1] = petal.id;
-        arr[at + 2] = petal.rarity;
-        at += 3;
-    }
-    arr[at] = 0;
-    rr_local_storage_store_chunk("loadout", (char *)&arr, at);
-}
+// void rr_storage_layout_save(struct rr_game *game)
+// {
+//     uint8_t arr[61];
+//     // memset(&arr, 0, sizeof arr);
+//     uint8_t at = 0;
+//     for (uint8_t i = 0; i < 20; ++i)
+//     {
+//         struct rr_game_loadout_petal petal = game->loadout[i];
+//         if (petal.id == 0)
+//             continue;
+//         arr[at] = i;
+//         arr[at + 1] = petal.id;
+//         arr[at + 2] = petal.rarity;
+//         at += 3;
+//     }
+//     arr[at] = 0;
+//     rr_local_storage_store_chunk("loadout", (char *)&arr, at);
+// }

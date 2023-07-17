@@ -320,8 +320,8 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
     uint32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
-        if (game->loadout[i].id == data->id &&
-            game->loadout[i].rarity == data->rarity)
+        if (game->settings.loadout[i].id == data->id &&
+            game->settings.loadout[i].rarity == data->rarity)
             --count;
     }
     if (data->id == game->crafting_data.crafting_id)
@@ -353,7 +353,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             game->crafting_data.count = 0;
             game->crafting_data.success_count = 0;
         }
-        if (rr_bitset_get(&game->input_data->keys_pressed, 16))
+        if (rr_bitset_get(game->input_data->keys_pressed, 16))
             game->crafting_data.count += data->count;
         else if (data->count > 5)
             game->crafting_data.count += 5;

@@ -40,10 +40,27 @@ struct rr_game_debug_info
     long cumulative_tick_time;
 };
 
+// anything cross reload
+struct rr_game_settings
+{
+    float map_props;
+    struct rr_game_loadout_petal loadout[20];
+    uint8_t use_mouse;
+    uint8_t displaying_debug_information;
+    uint8_t show_ui_hitbox;
+    uint8_t screen_shake;
+};
+
 struct rr_game
 {
     struct rr_game_crafting_data crafting_data;
     struct rr_game_debug_info debug_info;
+    struct rr_game_settings settings;
+
+    struct rr_rivet_account rivet_account;
+    struct rr_game_squad_client squad_members[4];
+    struct rr_websocket socket;
+
     // petal rendering cache
     struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
 
@@ -72,23 +89,21 @@ struct rr_game
     struct rr_renderer tiles[3];
     struct rr_renderer background_features[9];
 
-    struct rr_rivet_account rivet_account;
-    struct rr_game_squad_client squad_members[4];
-    struct rr_websocket socket;
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
     struct rr_ui_element *squad_info_tooltip;
     struct rr_ui_element *rivet_info_tooltip;
-    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
     struct rr_component_player_info *player_info;
+    struct rr_ui_element *window;
+    struct rr_ui_element *prev_focused;
+    struct rr_ui_element *focused;
 
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t protocol_state;
     float expanding_circle_radius;
-    float map_prop_count;
-    struct rr_game_loadout_petal loadout[20];
     EntityIdx player_infos[4];
 
     uint8_t socket_ready;
@@ -98,16 +113,7 @@ struct rr_game
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
     uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
     uint8_t tiles_size;
-
     uint8_t block_ui_input;
-    uint8_t use_mouse;
-    uint8_t displaying_debug_information;
-    uint8_t show_ui_hitbox;
-    uint8_t screen_shake;
-
-    struct rr_ui_element *window;
-    struct rr_ui_element *prev_focused;
-    struct rr_ui_element *focused;
 };
 
 void rr_game_init(struct rr_game *);
