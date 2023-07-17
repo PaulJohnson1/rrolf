@@ -39,8 +39,11 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_simulation_get_relations(simulation, this->parent_id);
     if (relations->team != rr_simulation_team_id_mobs)
         return;
+    //put it here please
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, this->parent_id);
+    struct rr_component_arena *arena = rr_simulation_get_arena(simulation, 1);
+    arena->mob_counters[this->id * rr_rarity_id_max + this->rarity]--;
     uint8_t spawn_ids[4] = {};
     uint8_t spawn_rarities[4] = {};
     uint8_t count = 0;

@@ -110,6 +110,8 @@ static uint8_t loadout_button_should_show(struct rr_ui_element *this,
 static void loadout_button_animate(struct rr_ui_element *this,
                                    struct rr_game *game)
 {
+    if (this->completely_hidden)
+        return;
     struct rr_component_player_info *player_info = game->player_info;
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;

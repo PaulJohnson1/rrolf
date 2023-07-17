@@ -79,15 +79,19 @@ static void spawn_random_mob(struct rr_simulation *this)
         return;
     if (id == rr_mob_id_spinosaurus_head)
         return;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                                   enum rr_mob_id mob_id,
-                                  enum rr_rarity_id rarity_id)
+                                  enum rr_rarity_id rarity_id, enum rr_simulation_team_id team_id)
 {
     EntityIdx entity = rr_simulation_alloc_entity(this);
 
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    if (team_id == rr_simulation_team_id_mobs)
+        arena->mob_counters[mob_id * rr_rarity_id_max + rarity_id]++;
+    
     struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_add_physical(this, entity);
@@ -102,7 +106,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
     float distance =
-        sqrt(rr_frand()) * rr_simulation_get_arena(this, 1)->radius;
+        sqrt(rr_frand()) * arena->radius;
     float angle = rr_frand() * M_PI * 2.0f;
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
@@ -116,7 +120,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                                    mob_data->health * rarity_scale->health);
     health->damage = mob_data->damage * rarity_scale->damage;
 
-    rr_component_relations_set_team(relations, rr_simulation_team_id_mobs);
+    rr_component_relations_set_team(relations, team_id);
     switch (mob_id)
     {
     case rr_mob_id_stump:
@@ -168,7 +172,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         for (uint64_t i = 0; i < 5; ++i)
         {
             new_entity = rr_simulation_alloc_mob(
-                this, rr_mob_id_spinosaurus_body, rarity_id);
+                this, rr_mob_id_spinosaurus_body, rarity_id, team_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
             struct rr_component_physical *new_phys =
@@ -393,7 +397,7 @@ void rr_simulation_write_binary(struct rr_simulation *this,
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY,
                             "entity update id"); // null terminate update list
     proto_bug_write_varuint(encoder, player_info->parent_id,
-                            "pinfo id"); // send client's pinfo
+                            "pinfo id");         // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");
 }
 

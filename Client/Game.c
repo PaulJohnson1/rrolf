@@ -152,11 +152,9 @@ void rr_game_init(struct rr_game *this)
 
     rr_ui_container_add_element(
         this->window,
-        rr_ui_link_toggle(
-            rr_ui_pad(
-                rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
-                10),
-            simulation_not_ready));
+        rr_ui_pad(
+            rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
+            10));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));

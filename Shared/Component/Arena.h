@@ -10,6 +10,8 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_arena
 {
+    // points to u32 of rarity_id_max * mob_id_max
+    uint32_t *mob_counters;
     EntityIdx parent_id;
     uint16_t wave_tick;
     RR_SERVER_ONLY(uint16_t protocol_state;)

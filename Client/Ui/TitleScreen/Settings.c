@@ -14,7 +14,7 @@
 static uint8_t settings_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->top_ui_open == 1 && !game->simulation_ready;
+    return game->top_ui_open == 1;
 }
 
 static void settings_container_animate(struct rr_ui_element *this,
