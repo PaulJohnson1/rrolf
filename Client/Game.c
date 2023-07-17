@@ -520,7 +520,18 @@ void rr_game_init(struct rr_game *this)
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
 
-    uint32_t size = rr_local_storage_get("loadout");
+    uint32_t size = rr_local_storage_get("display_debug_info");
+    this->displaying_debug_information = storage_result[0];
+    if (size) 
+        size = rr_local_storage_get("show_ui_hitboxes");
+    this->show_ui_hitbox = storage_result[0];
+    size = rr_local_storage_get("mouse_movement");
+    if (size) 
+        this->use_mouse = storage_result[0];
+    size = rr_local_storage_get("screen_shake");
+    if (size) 
+        this->screen_shake = storage_result[0];
+    size = rr_local_storage_get("loadout");
     if (size == 0)
         return;
     uint8_t at = 0;
@@ -852,6 +863,14 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     validate_loadout(this);
     rr_storage_layout_save(this);
+    char Y_N = this->displaying_debug_information;
+    rr_local_storage_store_chunk("display_debug_info", &Y_N, 1);
+    Y_N = this->show_ui_hitbox;
+    rr_local_storage_store_chunk("show_ui_hitboxes", &Y_N, 1);
+    Y_N = this->use_mouse;
+    rr_local_storage_store_chunk("mouse_movement", &Y_N, 1);
+    Y_N = this->screen_shake;
+    rr_local_storage_store_chunk("screen_shake", &Y_N, 1);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);

@@ -117,6 +117,20 @@ static uint8_t crafting_ring_should_show(struct rr_ui_element *this,
            game->crafting_data.animation != 0;
 }
 
+static void crafting_ring_petal_on_event(struct rr_ui_element *this,
+                                               struct rr_game *game)
+{
+    struct crafting_ring_button_metadata *data = this->data;
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        game->crafting_data.count = game->crafting_data.success_count = 0;
+        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
+    }
+    else if (data->count > 0)
+        rr_ui_render_tooltip_above(
+            this, game->petal_tooltips[game->crafting_data.crafting_id][game->crafting_data.crafting_rarity], game);
+}
+
 static void crafting_result_container_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
@@ -125,6 +139,9 @@ static void crafting_result_container_on_event(struct rr_ui_element *this,
         game->crafting_data.count = game->crafting_data.success_count = 0;
         game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
     }
+    else if (game->crafting_data.success_count > 0)
+        rr_ui_render_tooltip_above(
+            this, game->petal_tooltips[game->crafting_data.crafting_id][game->crafting_data.crafting_rarity + 1], game);
 }
 
 static void crafting_ring_petal_animate(struct rr_ui_element *this,
@@ -188,7 +205,7 @@ static struct rr_ui_element *crafting_ring_petal_init(uint8_t pos)
     this->abs_height = this->height = 60;
     this->animate = crafting_ring_petal_animate;
     this->on_render = crafting_ring_petal_on_render;
-    this->on_event = crafting_result_container_on_event;
+    this->on_event = crafting_ring_petal_on_event;
     return this;
 }
 
@@ -314,10 +331,10 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    if (data->count < 5 || game->crafting_data.success_count > 0 || data->rarity == rr_rarity_id_ultra)
-        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
+        if (game->inventory[data->id][data->rarity] < 5 || game->crafting_data.success_count > 0 || data->rarity == rr_rarity_id_ultra)
+            return;
         if (game->crafting_data.crafting_id != data->id ||
             game->crafting_data.crafting_rarity != data->rarity)
         {
@@ -326,16 +343,16 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             game->crafting_data.count = 0;
             game->crafting_data.success_count = 0;
         }
-        if (data->count > 5)
-        {
-            if (rr_bitset_get(&game->input_data->keys_pressed, 16))
-                game->crafting_data.count += data->count;
-            else
-                game->crafting_data.count += 5;
-        }
+        if (rr_bitset_get(&game->input_data->keys_pressed, 16))
+            game->crafting_data.count += data->count;
+        else if (data->count > 5)
+            game->crafting_data.count += 5;
         else
             game->crafting_data.count += data->count;
     }
+    else if (data->count > 0)
+        rr_ui_render_tooltip_above(
+            this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static void crafting_container_animate(struct rr_ui_element *this,
