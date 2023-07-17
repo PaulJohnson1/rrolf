@@ -88,7 +88,8 @@
         "queue": "c",
         "set": "c",
         "stack": "c",
-        "unordered_set": "c"
+        "unordered_set": "c",
+        "fstream": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"

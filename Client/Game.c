@@ -521,9 +521,9 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("settings", &this->settings);
     // while (at < size)
     // {
-    //     this->settings.loadout[storage_result[at]].id = storage_result[at + 1];
-    //     this->settings.loadout[storage_result[at]].rarity = storage_result[at + 2];
-    //     at += 3;
+    //     this->settings.loadout[storage_result[at]].id = storage_result[at +
+    //     1]; this->settings.loadout[storage_result[at]].rarity =
+    //     storage_result[at + 2]; at += 3;
     // }
 }
 
@@ -659,9 +659,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 if (this->protocol_state & (1 << i))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1, "pos");
-                    proto_bug_write_uint8(&encoder2, this->settings.loadout[i].id, "id");
-                    proto_bug_write_uint8(&encoder2, this->settings.loadout[i].rarity,
-                                          "rar");
+                    proto_bug_write_uint8(&encoder2,
+                                          this->settings.loadout[i].id, "id");
+                    proto_bug_write_uint8(
+                        &encoder2, this->settings.loadout[i].rarity, "rar");
                 }
             }
             proto_bug_write_uint8(&encoder2, 0, "pos");
@@ -915,7 +916,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this, this->settings.map_props * 750);
+            render_background(player_info, this,
+                              this->settings.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -1080,12 +1082,19 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
     this->socket.on_event = rr_game_websocket_on_event_function;
+
 #ifdef RIVET_BUILD
     rr_rivet_lobbies_find(this);
 #else
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
 #else
+    // for testing
+    // if (!this->socket.rivet_player_token)
+    // {
+    //     this->socket.rivet_player_token = calloc(10, 1);
+    //     this->socket.uuid = calloc(10, 1);
+    // }
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
