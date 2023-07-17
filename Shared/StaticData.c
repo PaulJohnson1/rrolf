@@ -54,8 +54,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  5,  10,
-                                                            15, 20, 50, 5};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 5, 5, 5, 7, 7};
+                                                            15, 25, 50, 5};
+uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 5, 5, 5, 5, 7};
 
 static void init_rarity_coefficients()
 {
