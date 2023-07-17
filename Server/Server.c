@@ -78,7 +78,6 @@ void rr_server_client_write_message(struct rr_server_client *this,
 void rr_server_client_broadcast_update(struct rr_server_client *this)
 {
     struct rr_server *server = this->server;
-    // 128 KB (not needed but just in case)
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, 0, "header");
@@ -110,7 +109,6 @@ void rr_server_client_tick(struct rr_server_client *this)
     }
     else
     {
-        // 128 KB (not needed but just in case)
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, 69, "header");
@@ -136,7 +134,6 @@ void rr_server_client_tick(struct rr_server_client *this)
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
                                        encoder.current - encoder.start);
-        // send squad info
     }
 }
 
@@ -295,17 +292,17 @@ int rr_server_lws_callback_function(struct lws *socket,
                 return 1;
             }
 
-            memset(&this->clients[i].rivet_account, 0, sizeof(struct rr_rivet_account));
+            memset(&this->clients[i].rivet_account, 0,
+                   sizeof(struct rr_rivet_account));
 
             // Read rivet token
-            // this->clients[i].player_info.account.token = malloc(encountered_size + 1);
             this->clients[i].rivet_account.token[encountered_size] =
                 0; // don't forget the null terminator lol
-            proto_bug_read_string(&encoder, this->clients[i].rivet_account.token,
+            proto_bug_read_string(&encoder,
+                                  this->clients[i].rivet_account.token,
                                   encountered_size, "rivet token");
 
             // Read uuid
-            // this->clients[i].rivet_account.uuid = malloc(uuid_encountered_size + 1);
             this->clients[i].rivet_account.uuid[uuid_encountered_size] =
                 0; // null terminator for uuid
             proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
@@ -315,11 +312,11 @@ int rr_server_lws_callback_function(struct lws *socket,
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_account.token))
             {
-                // fputs("skid gaming4", stderr);
-                // lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
-                //                  (uint8_t *)"script kiddie4",
-                //                  sizeof "script kiddie");
-                // return 1;
+                fputs("skid gaming4", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
+                                 (uint8_t *)"script kiddie4",
+                                 sizeof "script kiddie");
+                return 1;
             }
 #endif
 
@@ -402,7 +399,8 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            rr_component_player_info_petal_swap(client->player_info, &this->simulation, pos);
+            rr_component_player_info_petal_swap(client->player_info,
+                                                &this->simulation, pos);
             break;
         }
         case 3:
@@ -414,7 +412,6 @@ int rr_server_lws_callback_function(struct lws *socket,
             uint8_t cheat_type = proto_bug_read_uint8(&encoder, "cheat type");
             if (cheat_type == 1)
             {
-                puts("incr");
                 // increment
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
@@ -431,7 +428,6 @@ int rr_server_lws_callback_function(struct lws *socket,
             }
             if (cheat_type == 2)
             {
-                puts("decr");
                 // decrement
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
