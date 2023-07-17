@@ -162,8 +162,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
-    rr_ui_container_add_element(this->window,
-                                rr_ui_settings_container_init(this));
+
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -268,7 +267,8 @@ void rr_game_init(struct rr_game *this)
                                            rr_ui_loadout_button_init(19))),
                 0, 1),
             simulation_ready));
-
+    rr_ui_container_add_element(this->window,
+                                rr_ui_settings_container_init(this));
     this->squad_info_tooltip = rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
