@@ -34,7 +34,8 @@
 void validate_loadout(struct rr_game *this)
 {
     uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
-    memcpy(&temp_inv, &this->inventory, (sizeof (uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
+    memcpy(&temp_inv, &this->inventory,
+           (sizeof(uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
     for (uint8_t i = 0; i < 20; ++i)
     {
         uint8_t id = this->loadout[i].id;
@@ -465,7 +466,6 @@ void rr_game_init(struct rr_game *this)
                          , 0, 0);
 
     this->tiles_size = 3;
-
     rr_renderer_init(&this->background_features[0]);
     rr_renderer_set_dimensions(&this->background_features[0], 100, 100);
     rr_renderer_draw_svg(&this->background_features[0],
@@ -1123,18 +1123,17 @@ struct on_find_captures
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
 {
     struct rr_game *game = _game;
-    rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
+    // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
 
-    // if (port == 443)
-    //     rr_websocket_connect_to(captures->socket, s, port, 1);
-    // else
-    //     rr_websocket_connect_to(captures->socket, s, port, 0);
+    if (port == 443)
+        rr_websocket_connect_to(&game->socket, s, port, 1);
+    else
+        rr_websocket_connect_to(&game->socket, s, port, 0);
     free(s);
 // captures->socket->rivet_player_token = strdup(token);
 // free(token);
 #ifdef RIVET_BUILD
     game->socket.rivet_player_token = token;
     game->socket.uuid = game->rivet_account.uuid;
-    printf("%s", game->socket.uuid);
 #endif
 }
