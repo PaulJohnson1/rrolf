@@ -57,6 +57,7 @@ set(SRCS
     ../Shared/cJSON.c
     ../Shared/Crypto.c
     ../Shared/pb.c
+    ../Shared/Rivet.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c
@@ -88,7 +89,6 @@ endif()
 
 if(RIVET_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_BUILD")
-    set(SRCS ${SRCS} ../Shared/Rivet.c)
 endif()
 
 add_executable(rrolf-client ${SRCS})

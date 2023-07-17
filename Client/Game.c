@@ -143,14 +143,12 @@ void rr_game_init(struct rr_game *this)
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 
-#ifdef RIVET_BUILD
     strcpy(this->rivet_account.name, "loading");
     strcpy(this->rivet_account.avatar_url, "");
     strcpy(this->rivet_account.token, "");
     strcpy(this->rivet_account.account_number, "#0000");
     strcpy(this->rivet_account.uuid, "no-uuid");
     rr_rivet_identities_create_guest(this);
-#endif
 
     rr_ui_container_add_element(
         this->window,
@@ -573,7 +571,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-#ifdef RIVET_BUILD
             uint64_t token_size = strlen(this->socket.rivet_player_token);
             uint64_t uuid_size = strlen(this->socket.uuid);
             proto_bug_write_varuint(&verify_encoder, token_size,
@@ -584,7 +581,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->socket.uuid,
                                    uuid_size, "rivet uuid");
-#endif
             rr_websocket_send(&this->socket, verify_encoder.start,
                               verify_encoder.current);
             this->socket_ready = 1;
@@ -1113,8 +1109,6 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     free(s);
 // captures->socket->rivet_player_token = strdup(token);
 // free(token);
-#ifdef RIVET_BUILD
     game->socket.rivet_player_token = token;
     game->socket.uuid = game->rivet_account.uuid;
-#endif
 }

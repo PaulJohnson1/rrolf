@@ -16,32 +16,6 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
-int volatile quitting_already = 0;
-
-void sigint_handle(int s)
-{
-    fputs("closing server\n", stderr);
-    if (quitting_already)
-        exit(1234);
-    quitting_already = 1;
-#ifdef RIVET_BUILD
-    char log[1000] = {"lobby id: `"};
-    strcat(log, getenv("RIVET_LOBBY_ID"));
-    strcat(log, "`");
-#else
-    char *log =
-#ifdef RR_WINDOWS
-        "windows"
-#else
-        "linux"
-#endif
-        ;
-#endif
-#ifdef RIVET_BUILD
-    rr_discord_webhook_log("server status", "server shutdown", log, 0xff2222);
-#endif
-}
-
 void rr_api_on_get_petals(char *thing, void *a) { puts(thing); }
 void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
