@@ -564,8 +564,8 @@ static void tick_wave(struct rr_simulation *this)
 
 #undef after_wave_time
 #undef wave_length_seconds
-        rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
     }
+    rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
