@@ -112,7 +112,7 @@ struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t,
                                               void (*)(struct rr_ui_element *,
                                                        struct rr_game *));
 
-struct rr_ui_element *rr_ui_labeled_button_init(char const *, float, uint8_t *);
+struct rr_ui_element *rr_ui_labeled_button_init(char *, float, uint8_t *);
 
 struct rr_ui_element *rr_ui_choose_element_init(
     struct rr_ui_element *, struct rr_ui_element *,

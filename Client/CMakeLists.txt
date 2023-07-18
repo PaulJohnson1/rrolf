@@ -57,6 +57,7 @@ set(SRCS
     ../Shared/cJSON.c
     ../Shared/Crypto.c
     ../Shared/pb.c
+    ../Shared/Rivet.c
     ../Shared/SimulationCommon.c
     ../Shared/StaticData.c
     ../Shared/Utilities.c
@@ -83,12 +84,11 @@ if (WASM_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_rr_rivet_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_wheel_event,_rr_on_socket_event_emscripten,_rr_api_on_get_petals,_rr_api_on_craft_result")
     set(SRCS ${SRCS} Renderer/Wasm.c)
 else()
-    set(SRCS ${SRCS} Renderer/Native.c)
+    set(SRCS ${SRCS} Renderer/Native.cc)
 endif()
 
 if(RIVET_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRIVET_BUILD")
-    set(SRCS ${SRCS} ../Shared/Rivet.c)
 endif()
 
 add_executable(rrolf-client ${SRCS})

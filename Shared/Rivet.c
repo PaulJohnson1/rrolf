@@ -1,8 +1,3 @@
-/**
- * This file is only compiled and linked to the executable if the cmake flag
- * RIVET_BUILD is set.
- */
-
 #include <Shared/Rivet.h>
 
 #include <assert.h>

@@ -30,10 +30,10 @@ static void inventory_button_on_event(struct rr_ui_element *this,
             return;
         for (uint8_t i = 0; i < 20; ++i)
         {
-            if (game->loadout[i].id == 0)
+            if (game->settings.loadout[i].id == 0)
             {
-                game->loadout[i].id = data->id;
-                game->loadout[i].rarity = data->rarity;
+                game->settings.loadout[i].id = data->id;
+                game->settings.loadout[i].rarity = data->rarity;
                 game->protocol_state |= 1 << i;
                 return;
             }
@@ -51,8 +51,8 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
     uint32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
-        if (game->loadout[i].id == data->id &&
-            game->loadout[i].rarity == data->rarity)
+        if (game->settings.loadout[i].id == data->id &&
+            game->settings.loadout[i].rarity == data->rarity)
             --count;
     }
     if (data->id == game->crafting_data.crafting_id)
@@ -144,7 +144,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
                                   rr_ui_scroll_container_init(this, 400)),
                               -1, 1),
             20),
-        0xff5a9fdb);
+        0x40ffffff);
     c->x += 60 + 20;
     c->animate = inventory_container_animate;
     c->should_show = inventory_container_should_show;

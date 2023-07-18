@@ -63,7 +63,7 @@ fn get_craft_chance(rarity: u64) -> f32 {
     match rarity {
         0 => 0.5,  // common -> uncommon
         1 => 0.3,  // uncommon -> rare
-        2 => 0.15, //rare -> epic
+        2 => 0.15, // rare -> epic
         3 => 0.05, // epic -> legendary
         4 => 0.03, // legendary -> mythic
         5 => 0.01, // mythic -> ultra
@@ -78,6 +78,7 @@ fn craft(count: i64, chance: f32) -> (i64, i64) {
     let mut successes = 0;
     let mut count = count;
     while count >= 5 {
+        // don't know rust well enough to make this look any better lol
         if ((rand::thread_rng().gen_range(0..2147483647) as f64 / 2147483647.0) as f32) < chance {
             successes += 1;
             count -= 5;
@@ -123,6 +124,7 @@ struct DatabaseAccount {
     pub petals: serde_json::Value,
 }
 
+// no idea why recursion is so special if it's async but ok
 #[async_recursion]
 async fn user_get(username: &String, password: &String) -> Result<DatabaseAccount> {
     let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
@@ -273,13 +275,11 @@ async fn user_craft_petals(
     // merge
     user_merge_petals(username, &craft_results).await?;
 
-    // create a vector of strings where each string is formatted as "id:rarity:count"
     let results: Vec<String> = craft_results
         .iter()
         .map(|result| format!("{}:{}:{}", result.0, result.1, result.2))
         .collect();
 
-    // join the results with commas and return the result
     Ok(results.join(","))
 }
 

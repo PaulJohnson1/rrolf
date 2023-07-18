@@ -266,7 +266,7 @@ void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
     }
     else if (rarity == 254)
     {
-        rr_renderer_set_fill(renderer, 0x80000000);
+        rr_renderer_set_fill(renderer, 0x40ffffff);
         rr_renderer_begin_path(renderer);
         rr_renderer_round_rect(renderer, -32.0f, -32.0f, 64.0f, 64.0f, 6.0f);
         rr_renderer_fill(renderer);

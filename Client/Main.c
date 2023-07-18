@@ -233,7 +233,7 @@ int main()
     //     return 1;
     // }
 
-    rr_game_connect_socket(&game);
+    // rr_game_connect_socket(&game);
     rr_create_game_thread(&game);
 #endif
 

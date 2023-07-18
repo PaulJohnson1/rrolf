@@ -95,7 +95,7 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
     case rr_ai_state_idle_moving:
     {
         struct rr_vector accel;
-        rr_vector_from_polar(&accel, 0.5f, physical->angle);
+        rr_vector_from_polar(&accel, 2.5f, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -128,13 +128,20 @@ static void system_for_each_function(EntityIdx entity, void *simulation)
         if (ai->ai_aggro_type == rr_ai_aggro_type_pteranodon)
             if (delta.x * delta.x + delta.y * delta.y <= 500 * 500)
             {
+                float distance = rr_vector_get_magnitude(&delta);
+                struct rr_vector prediction = delta;
+                struct rr_vector prediction_delta = target_physical->velocity;
+                rr_vector_scale(&prediction_delta, distance / 20);
+                rr_vector_add(&prediction, &prediction_delta);
+                rr_component_physical_set_angle(physical,
+                                                rr_vector_theta(&prediction));
                 break;
             }
         ai->ticks_until_next_action =
             rand() % 10 + 25; // when the ai is done being pissed, wait a little
                               // until the next action
         // if and only if aggro type is pteranodon and is too close then break
-        rr_vector_set_magnitude(&delta, 0.75f);
+        rr_vector_set_magnitude(&delta, 4.5f);
         rr_vector_add(&physical->acceleration, &delta);
     }
     }

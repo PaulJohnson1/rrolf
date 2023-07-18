@@ -10,7 +10,7 @@
 static void container_on_render(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
-    if (this->fill != 0x00000000 || game->show_ui_hitbox)
+    if (this->fill != 0x00000000 || game->settings.show_ui_hitbox)
     {
         struct rr_renderer *renderer = game->renderer;
         struct rr_renderer_context_state state2;
@@ -32,7 +32,7 @@ static void container_on_render(struct rr_ui_element *this,
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);
         }
-        if (game->show_ui_hitbox)
+        if (game->settings.show_ui_hitbox)
         {
             rr_renderer_begin_path(renderer);
             rr_renderer_round_rect(renderer, -this->abs_width / 2,

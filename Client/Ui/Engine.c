@@ -122,7 +122,7 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
-        if (element->completely_hidden)
+        if (element->completely_hidden || element->width == 0 || element->height == 0)
             continue;
         element->h_justify = -1;
         element->x = width;
@@ -149,7 +149,7 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
-        if (element->completely_hidden)
+        if (element->completely_hidden || element->width == 0 || element->height == 0)
             continue;
         element->v_justify = -1;
         element->y = height;

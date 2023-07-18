@@ -14,7 +14,7 @@
 static uint8_t settings_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->top_ui_open == 1 && !game->simulation_ready;
+    return game->top_ui_open == 1;
 }
 
 static void settings_container_animate(struct rr_ui_element *this,
@@ -80,21 +80,21 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_h_slider_init(200, 20,
-                                                    &game->map_prop_count),
+                                                    &game->settings.map_props),
                                 rr_ui_text_init("map prop count", 15,
                                                 0xffffffff)),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
-                                rr_ui_toggle_box_init(&game->use_mouse),
+                                rr_ui_toggle_box_init(&game->settings.use_mouse),
                                 rr_ui_text_init("Mouse movement", 15,
                                                 0xffffffff)),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
-                                rr_ui_toggle_box_init(&game->screen_shake),
+                                rr_ui_toggle_box_init(&game->settings.screen_shake),
                                 rr_ui_text_init("Screen shake", 15,
                                                 0xffffffff)),
                             -1, -1),
@@ -102,14 +102,14 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(
-                                    &game->displaying_debug_information),
+                                    &game->settings.displaying_debug_information),
                                 rr_ui_text_init("Show debug info", 15,
                                                 0xffffffff)),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
-                                rr_ui_toggle_box_init(&game->show_ui_hitbox),
+                                rr_ui_toggle_box_init(&game->settings.show_ui_hitbox),
                                 rr_ui_text_init("Show ui hitboxes", 15,
                                                 0xffffffff)),
                             -1, -1)),

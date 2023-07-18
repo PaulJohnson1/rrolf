@@ -8,7 +8,7 @@ struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 
-enum rr_ai_state : uint8_t
+enum rr_ai_state
 {
     rr_ai_state_static,
     rr_ai_state_idle,
@@ -17,7 +17,7 @@ enum rr_ai_state : uint8_t
     rr_ai_state_spin2team
 };
 
-enum rr_ai_type : uint8_t
+enum rr_ai_type
 {
     // does nothing, even if attacked
     rr_ai_type_static,
@@ -27,7 +27,7 @@ enum rr_ai_type : uint8_t
     rr_ai_type_aggressive
 };
 
-enum rr_ai_aggro_type : uint8_t
+enum rr_ai_aggro_type
 {
     rr_ai_aggro_type_default,
     rr_ai_aggro_type_pteranodon

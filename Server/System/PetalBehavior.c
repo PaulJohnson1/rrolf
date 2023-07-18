@@ -261,17 +261,13 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
 
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, rr_mob_id_trex,
-                                                slot->rarity == 0 ? 0 : slot->rarity - 1);
+                                                slot->rarity == 0 ? 0 : slot->rarity - 1, rr_simulation_team_id_players);
                     struct rr_component_physical *mob_physical =
                         rr_simulation_get_physical(simulation, mob_id);
-                    struct rr_component_relations *mob_team =
-                        rr_simulation_get_relations(simulation, mob_id);
                     rr_component_physical_set_x(mob_physical,
                                                 petal_physical->x);
                     rr_component_physical_set_y(mob_physical,
                                                 petal_physical->y);
-                    rr_component_relations_set_team(
-                        mob_team, rr_simulation_team_id_players);
                 }
             }
         }

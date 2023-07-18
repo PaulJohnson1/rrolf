@@ -15,10 +15,10 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
         rr_simulation_get_health(simulation, entity);
     if (health->hidden)
         return;
-    if (rr_simulation_has_flower(simulation, health->parent_id))
+    if (rr_simulation_has_flower(simulation, entity))
     {
         struct rr_component_relations *relations =
-            rr_simulation_get_relations(simulation, health->parent_id);
+            rr_simulation_get_relations(simulation, entity);
 
         if (relations->owner == game->player_info->parent_id)
             if (health->health == health->max_health)
@@ -34,7 +34,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     }
     float length = 40;
 
-    if (rr_simulation_has_mob(simulation, health->parent_id))
+    if (rr_simulation_has_mob(simulation, entity))
     {
         struct rr_component_mob *mob =
             rr_simulation_get_mob(simulation, entity);
@@ -52,6 +52,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
                                     length, 6);
             rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity],
                                   length, 6);
+
 
             // mob name
             rr_renderer_set_fill(renderer, 0xffffffff);

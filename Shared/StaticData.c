@@ -17,18 +17,18 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 25, 10, 30.0f, {}},
-    {rr_mob_id_trex, 62.5, 10, 32.0f, {}},
+    {rr_mob_id_trex, 62.5, 15, 32.0f, {}},
     {rr_mob_id_stump, 100, 10, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
-    {rr_mob_id_pteranodon, 37.5, 50, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 35, 40, 30.0f, {}}};
+    {rr_mob_id_pteranodon, 37.5, 30, 26.0f, {}},
+    {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}}};
 
-float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 2, 4, 8, 16, 48, 196};
+float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 1.5, 2.5, 4, 7.5, 18, 40};
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1.0, 1.0, 1.0}, {2.5, 1.6, 1.2}, {8.0, 3.0, 1.6}, {25.0, 7.5, 2.0},
-    {75, 20.0, 2.5}, {250, 50.0, 4},  {1000, 200, 6}};
+    {1.0, 1.0, 1.0}, {2.5, 1.2, 1.2}, {7.5, 1.5, 1.6}, {25.0, 1.8, 2.0},
+    {75, 2.2, 2.5}, {200, 2.8, 4}, {1000, 4.0, 6}};
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
@@ -53,9 +53,9 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  5,  10,
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  12,
                                                             15, 25, 50, 5};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 5, 5, 5, 5, 7};
+uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5, 5, 5, 7};
 
 static void init_rarity_coefficients()
 {
