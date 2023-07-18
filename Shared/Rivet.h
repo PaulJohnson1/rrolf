@@ -2,6 +2,11 @@
 
 #include <Shared/Utilities.h>
 
+#if defined(RIVET_BUILD) && !defined(EMSCRIPTEN)
+// you're welcome bismuth
+#include <curl/curl.h>
+#endif
+
 struct rr_rivet_account
 {
     char account_number[6];
@@ -10,11 +15,6 @@ struct rr_rivet_account
     char name[100];
     char avatar_url[200];
 };
-
-#if defined(RIVET_BUILD) && !defined(EMSCRIPTEN)
-// you're welcome bismuth
-#include <curl/curl.h>
-#endif
 
 // user must define this function.
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port,

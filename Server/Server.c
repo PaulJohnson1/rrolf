@@ -139,6 +139,9 @@ void rr_server_client_tick(struct rr_server_client *this)
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
 {
+    if (rr_simulation_has_health(_captures, entity))
+        rr_component_health_set_health(
+            rr_simulation_get_health(_captures, entity), 0);
     rr_simulation_request_entity_deletion(_captures, entity);
 }
 

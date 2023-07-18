@@ -21,6 +21,7 @@ void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()
 {
+    srand(time(0));
     // signal(SIGINT, sigint_handle);
 #ifdef RIVET_BUILD
     curl_global_init(CURL_GLOBAL_ALL);

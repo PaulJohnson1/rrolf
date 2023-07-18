@@ -22,13 +22,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-struct mob_spawn
-{
-    uint8_t id;
-    uint8_t rarity;
-};
-
-static struct mob_spawn get_mob_spawn_id_rarity(uint32_t wave)
+static uint8_t get_rarity_from_wave(uint32_t wave)
 {
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
@@ -36,9 +30,32 @@ static struct mob_spawn get_mob_spawn_id_rarity(uint32_t wave)
         if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, wave)) >
             rarity_seed)
             break;
+
+    return rarity;
+}
+
+static uint8_t get_id_from_wave(uint32_t wave)
+{
     uint8_t id = rand() % rr_mob_id_max;
-    struct mob_spawn ret = {id, rarity};
-    return ret;
+
+    // spinosaurus doesn't exist
+    if (id == rr_mob_id_spinosaurus_body)
+        id = get_id_from_wave(wave);
+    if (id == rr_mob_id_spinosaurus_head)
+        id = get_id_from_wave(wave);
+
+    return id;
+}
+
+static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
+{
+    if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
+        return 0;
+    if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
+        return 0;
+    if (id == rr_mob_id_dakotaraptor && rarity < rr_rarity_id_legendary)
+        return 0;
+    return 1;
 }
 
 static void spawn_random_mob(struct rr_simulation *this);
@@ -67,13 +84,12 @@ void rr_simulation_init(struct rr_simulation *this)
 static void spawn_random_mob(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    struct mob_spawn id_rar = get_mob_spawn_id_rarity(arena->wave);
-    if (id_rar.id == rr_mob_id_spinosaurus_body)
+    uint8_t id = get_id_from_wave(arena->wave);
+    uint8_t rarity = get_rarity_from_wave(arena->wave);
+    if (!should_spawn_at(arena->wave, id, rarity))
         return;
-    if (id_rar.id == rr_mob_id_spinosaurus_head)
-        return;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id_rar.id, id_rar.rarity,
-                                               rr_simulation_team_id_mobs);
+    EntityIdx mob_id =
+        rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, mob_id);
     float distance = sqrt(rr_frand()) * arena->radius;
@@ -458,16 +474,19 @@ static void spawn_mob_cluster(struct rr_simulation *this)
 {
     uint32_t mob_count = rand() % 4 + 4; // random for some variety
     struct rr_vector central_position = find_position_away_from_players(this);
-    // for (#define i = 0; i < 4; ++i)
-    struct mob_spawn id_rar =
-        get_mob_spawn_id_rarity(rr_simulation_get_arena(this, 1)->wave);
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+
+    uint8_t id = get_id_from_wave(arena->wave);
     for (uint64_t i = 0; i < mob_count; ++i)
     {
-        struct rr_vector delta = {rand() % 100 - 50, rand() % 100 - 50};
+        uint8_t rarity = get_rarity_from_wave(arena->wave);
+        if (!should_spawn_at(arena->wave, id, rarity))
+            continue;
+        struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
         // mob position = delta + central_postiion;
 
-        EntityIdx mob_id = rr_simulation_alloc_mob(
-            this, id_rar.id, id_rar.rarity, rr_simulation_team_id_mobs);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
+                                                   rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
         rr_component_physical_set_x(physical, central_position.x + delta.x);
@@ -482,10 +501,14 @@ static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
     for (uint64_t i = 0; i < mob_count; ++i)
     {
         struct rr_vector position = find_position_away_from_players(this);
-        struct mob_spawn id_rar =
-            get_mob_spawn_id_rarity(rr_simulation_get_arena(this, 1)->wave);
-        EntityIdx mob_id = rr_simulation_alloc_mob(
-            this, id_rar.id, id_rar.rarity, rr_simulation_team_id_mobs);
+        struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+
+        uint8_t id = get_id_from_wave(arena->wave);
+        uint8_t rarity = get_rarity_from_wave(arena->wave);
+        if (!should_spawn_at(arena->wave, id, rarity))
+            continue;
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
+                                                   rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
         rr_component_physical_set_x(physical, position.x);
@@ -512,7 +535,7 @@ static void tick_wave(struct rr_simulation *this)
     // end of wave
 
     // don't want to worry about types so should probably use macros
-#define wave_length_seconds ((arena->wave < 4 ? arena->wave : 4) * 15)
+#define wave_length_seconds (60)
 #define spawn_time 1
 #define after_wave_time 2
     if (arena->wave_tick >=
