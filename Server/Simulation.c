@@ -537,7 +537,7 @@ static void tick_wave(struct rr_simulation *this)
     // end of wave
 
     // don't want to worry about types so should probably use macros
-#define wave_length_seconds (arena->wave < 4 ? arena->wave : 4)
+#define wave_length_seconds ((arena->wave < 4 ? arena->wave : 4) * 15)
 #define spawn_time 1
 #define after_wave_time 2
     if (arena->wave_tick >=
@@ -565,7 +565,6 @@ static void tick_wave(struct rr_simulation *this)
 #undef after_wave_time
 #undef wave_length_seconds
     }
-    puts("ticker");
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
 

@@ -105,7 +105,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
         rr_simulation_get_arena(game->simulation, 1);
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
-    float capac = 60 * 25;
+    float capac = (arena->wave < 4 ? arena->wave : 4) * 15 * 25;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 15);

@@ -24,7 +24,7 @@ struct rr_component_player_info_petal_slot
     uint8_t rarity;
     uint8_t client_cooldown;
     RR_SERVER_ONLY(uint8_t count;)
-    RR_SERVER_ONLY(struct rr_component_player_info_petal petals[10];)
+    RR_SERVER_ONLY(struct rr_component_player_info_petal petals[5];)
 };
 
 struct rr_drop_picked_up
