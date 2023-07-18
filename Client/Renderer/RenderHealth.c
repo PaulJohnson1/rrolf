@@ -64,16 +64,11 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
                                   -18);
         }
         else
+        {
             length *= 0.5f;
-    }
-
-    if (rr_simulation_has_mob(simulation, health->parent_id))
-    {
-        struct rr_component_mob *mob =
-            rr_simulation_get_mob(simulation, entity);
-        if (mob->id == rr_mob_id_spinosaurus_body)
             if (health->health == health->max_health)
                 return;
+        }  
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);
