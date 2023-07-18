@@ -139,8 +139,9 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->protocol_state = (1 << 20) - 1;
     this->settings.slots_unlocked = 5;
+    for (uint8_t i = 0; i < this->settings.slots_unlocked; ++i)
+        this->protocol_state |= ((1 | (1 << 10)) << i);
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 

@@ -16,13 +16,13 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_egg, 1.0f, 25.0f, 0.0f, 125, {4, 4, 4, 4, 4, 4, 5}}};
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 25, 10, 30.0f, {}},
-    {rr_mob_id_trex, 62.5, 15, 32.0f, {}},
-    {rr_mob_id_stump, 100, 10, 26.0f, {}},
+    {rr_mob_id_triceratops, 15, 10, 30.0f, {}},
+    {rr_mob_id_trex, 35, 15, 32.0f, {}},
+    {rr_mob_id_stump, 30, 10, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
-    {rr_mob_id_pteranodon, 37.5, 30, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}}};
+    {rr_mob_id_pteranodon, 30, 30, 26.0f, {}},
+    {rr_mob_id_dakotaraptor, 30, 25, 30.0f, {}}};
 
 float RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {1, 1.5, 2.5, 4, 7.5, 18, 40};
 
