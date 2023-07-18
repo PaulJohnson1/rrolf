@@ -65,11 +65,11 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
                                   -18);
         }
         else
+        {
             length *= 0.5f;
-
-        if (mob->id == rr_mob_id_spinosaurus_body)
             if (health->health == health->max_health)
                 return;
+        }  
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);
