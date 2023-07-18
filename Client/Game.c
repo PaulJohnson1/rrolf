@@ -140,6 +140,7 @@ void rr_game_init(struct rr_game *this)
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
     this->protocol_state = (1 << 20) - 1;
+    this->settings.slots_unlocked = 5;
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 

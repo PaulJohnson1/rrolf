@@ -49,6 +49,7 @@ struct rr_game_settings
     uint8_t displaying_debug_information;
     uint8_t show_ui_hitbox;
     uint8_t screen_shake;
+    uint8_t slots_unlocked;
 };
 
 struct rr_game

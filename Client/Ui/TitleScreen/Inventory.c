@@ -28,7 +28,17 @@ static void inventory_button_on_event(struct rr_ui_element *this,
     {
         if (data->count == 0)
             return;
-        for (uint8_t i = 0; i < 20; ++i)
+        for (uint8_t i = 0; i < game->settings.slots_unlocked; ++i)
+        {
+            if (game->settings.loadout[i].id == 0)
+            {
+                game->settings.loadout[i].id = data->id;
+                game->settings.loadout[i].rarity = data->rarity;
+                game->protocol_state |= 1 << i;
+                return;
+            }
+        }
+        for (uint8_t i = 10; i < 10 + game->settings.slots_unlocked; ++i)
         {
             if (game->settings.loadout[i].id == 0)
             {

@@ -75,13 +75,16 @@ static uint8_t
 title_screen_loadout_button_should_show(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
-    return !game->simulation_ready;
+    struct loadout_button_metadata *data = this->data;
+    return !game->simulation_ready && data->pos % 10 < game->settings.slots_unlocked;
 }
 
 static void title_screen_loadout_button_animate(struct rr_ui_element *this,
                                                 struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
+    if (this->completely_hidden)
+        return;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, 255);
