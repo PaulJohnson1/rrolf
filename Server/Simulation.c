@@ -540,13 +540,6 @@ static void tick_wave(struct rr_simulation *this)
 #define wave_length_seconds ((arena->wave < 4 ? arena->wave : 4) * 15)
 #define spawn_time 1
 #define after_wave_time 2
-    if (arena->wave_tick >=
-        wave_length_seconds * 25 * (spawn_time + after_wave_time))
-    {
-        arena->wave_tick = 0;
-        rr_component_arena_set_wave(arena, arena->wave + 1);
-        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-    }
     // idle spawning
     if (arena->wave_tick <= (wave_length_seconds * 25 * spawn_time))
     {
@@ -564,6 +557,13 @@ static void tick_wave(struct rr_simulation *this)
 
 #undef after_wave_time
 #undef wave_length_seconds
+    }
+    else if (arena->wave_tick >=
+        wave_length_seconds * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
+    {
+        arena->wave_tick = 0;
+        rr_component_arena_set_wave(arena, arena->wave + 1);
+        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
