@@ -22,13 +22,23 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-void move_up_temp_test(EntityIdx entity, void *_captures)
+struct mob_spawn
 {
-    struct rr_simulation *this = _captures;
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(this, entity);
-    rr_component_physical_set_x(physical, 1000);
-    rr_component_physical_set_y(physical, 0);
+    uint8_t id;
+    uint8_t rarity;
+};
+
+static struct mob_spawn get_mob_spawn_id_rarity(uint32_t wave)
+{
+    float rarity_seed = rr_frand();
+    uint8_t rarity = 0;
+    for (; rarity < rr_rarity_id_max - 1; ++rarity)
+        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, wave)) >
+            rarity_seed)
+            break;
+    uint8_t id = rand() % rr_mob_id_max;
+    struct mob_spawn ret = {id, rarity};
+    return ret;
 }
 
 static void spawn_random_mob(struct rr_simulation *this);
@@ -56,42 +66,36 @@ void rr_simulation_init(struct rr_simulation *this)
 
 static void spawn_random_mob(struct rr_simulation *this)
 {
-    float rarity_seed = rr_frand();
-    uint8_t rarity = 0;
-    for (; rarity < rr_rarity_id_max - 1; ++rarity)
-        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1],
-                 powf(1.25, rr_simulation_get_arena(this, 1)->wave)) >
-            rarity_seed)
-            break;
-    // float r = rr_frand();
-    // uint8_t id = rr_mob_id_pteranodon;
-    // if (r -= 0.2, r < 0)
-    //     id = rr_mob_id_triceratops;
-    // else if (r -= 0.2, r < 0)
-    //     id = rr_mob_id_trex;
-    // else if (r -= 0.25, r < 0)
-    //     id = rr_mob_id_stump;
-    // else if (r -= 0.15, r < 0)
-    //     id = rr_mob_id_spinosaurus_head;
-    // uint8_t id = rr_mob_id_stump;
-    uint8_t id = rand() % rr_mob_id_max;
-    if (id == rr_mob_id_spinosaurus_body)
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct mob_spawn id_rar = get_mob_spawn_id_rarity(arena->wave);
+    if (id_rar.id == rr_mob_id_spinosaurus_body)
         return;
-    if (id == rr_mob_id_spinosaurus_head)
+    if (id_rar.id == rr_mob_id_spinosaurus_head)
         return;
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, id_rar.id, id_rar.rarity,
+                                               rr_simulation_team_id_mobs);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this, mob_id);
+    float distance = sqrt(rr_frand()) * arena->radius;
+    float angle = rr_frand() * M_PI * 2.0f;
+    rr_component_physical_set_x(physical, cos(angle) * distance);
+    rr_component_physical_set_y(physical, sin(angle) * distance);
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                                   enum rr_mob_id mob_id,
-                                  enum rr_rarity_id rarity_id, enum rr_simulation_team_id team_id)
+                                  enum rr_rarity_id rarity_id,
+                                  enum rr_simulation_team_id team_id)
 {
     EntityIdx entity = rr_simulation_alloc_entity(this);
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     if (team_id == rr_simulation_team_id_mobs)
+    {
+        arena->mob_count++;
         arena->mob_counters[mob_id * rr_rarity_id_max + rarity_id]++;
-    
+    }
+
     struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_add_physical(this, entity);
@@ -105,14 +109,9 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     struct rr_mob_rarity_scale const *rarity_scale =
         RR_MOB_RARITY_SCALING + rarity_id;
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
-    float distance =
-        sqrt(rr_frand()) * arena->radius;
-    float angle = rr_frand() * M_PI * 2.0f;
-    rr_component_physical_set_x(physical, cos(angle) * distance);
-    rr_component_physical_set_y(physical, sin(angle) * distance);
     rr_component_physical_set_radius(physical,
                                      mob_data->radius * rarity_scale->radius);
-    physical->friction = 0.9;
+    physical->friction = 0.5;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
@@ -246,10 +245,7 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     else
     {
 #define XX(COMPONENT, ID)                                                      \
-    component_flags |=                                                         \
-        (rr_simulation_has_##COMPONENT(simulation, id) &&                      \
-         rr_simulation_get_##COMPONENT(simulation, id)->protocol_state != 0)   \
-        << ID;
+    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
         RR_FOR_EACH_COMPONENT;
 #undef XX
     }
@@ -417,12 +413,6 @@ void rr_simulation_write_binary(struct rr_simulation *this,
         CODE;                                                                  \
     };
 
-static void mob_counter(EntityIdx i, void *a)
-{
-    EntityIdx *count = a;
-    ++*count;
-}
-
 static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
 {
@@ -453,6 +443,106 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
     }
 }
 
+// TODO: make it work
+static struct rr_vector
+find_position_away_from_players(struct rr_simulation *this)
+{
+    float distance = sqrt(rr_frand()) * 1650.0f;
+    float angle = rr_frand() * M_PI * 2;
+    struct rr_vector r = {distance * cosf(angle), distance * sinf(angle)};
+    return r;
+}
+
+// spawn 4-8 of some mob type in around the same position, avoid players
+static void spawn_mob_cluster(struct rr_simulation *this)
+{
+    uint32_t mob_count = rand() % 4 + 4; // random for some variety
+    struct rr_vector central_position = find_position_away_from_players(this);
+    // for (#define i = 0; i < 4; ++i)
+    struct mob_spawn id_rar =
+        get_mob_spawn_id_rarity(rr_simulation_get_arena(this, 1)->wave);
+    for (uint64_t i = 0; i < mob_count; ++i)
+    {
+        struct rr_vector delta = {rand() % 100 - 50, rand() % 100 - 50};
+        // mob position = delta + central_postiion;
+
+        EntityIdx mob_id = rr_simulation_alloc_mob(
+            this, id_rar.id, id_rar.rarity, rr_simulation_team_id_mobs);
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(this, mob_id);
+        rr_component_physical_set_x(physical, central_position.x + delta.x);
+        rr_component_physical_set_y(physical, central_position.y + delta.y);
+    }
+}
+
+// spawn maybe like 50 mobs UNIFORM DIST, NOT CLUSTERED or spawn 12 clusters
+static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
+{
+    uint32_t mob_count = rand() % 10 + count;
+    for (uint64_t i = 0; i < mob_count; ++i)
+    {
+        struct rr_vector position = find_position_away_from_players(this);
+        struct mob_spawn id_rar =
+            get_mob_spawn_id_rarity(rr_simulation_get_arena(this, 1)->wave);
+        EntityIdx mob_id = rr_simulation_alloc_mob(
+            this, id_rar.id, id_rar.rarity, rr_simulation_team_id_mobs);
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(this, mob_id);
+        rr_component_physical_set_x(physical, position.x);
+        rr_component_physical_set_y(physical, position.y);
+    }
+}
+
+static void tick_wave(struct rr_simulation *this)
+{
+    uint8_t any_alive = 0;
+
+    for (uint32_t i = 0; i < sizeof this->flower_tracker; ++i)
+        if (this->flower_tracker[i])
+        {
+            any_alive = 1;
+            break;
+        }
+
+    if (!any_alive)
+        this->game_over = 1;
+
+    // wave logic
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    // end of wave
+
+    // don't want to worry about types so should probably use macros
+#define wave_length_seconds ((arena->wave < 4 ? arena->wave : 4) * 15)
+#define spawn_time 1
+#define after_wave_time 2
+    if (arena->wave_tick >=
+        wave_length_seconds * 25 * (spawn_time + after_wave_time))
+    {
+        arena->wave_tick = 0;
+        rr_component_arena_set_wave(arena, arena->wave + 1);
+        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+    }
+    // idle spawning
+    if (arena->wave_tick <= (wave_length_seconds * 25 * spawn_time))
+    {
+        if (arena->wave_tick % 48 == 0)
+            spawn_random_mob(this);
+
+        for (uint64_t i = 0; i < 15; i++)
+        {
+            if (arena->wave_tick ==
+                (wave_length_seconds * 25 * spawn_time) * i / 15)
+                spawn_mob_cluster(this);
+        }
+        if (arena->wave_tick == (wave_length_seconds * 25 * spawn_time))
+            spawn_mob_swarm(this, 50);
+
+#undef after_wave_time
+#undef wave_length_seconds
+        rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
+    }
+}
+
 void rr_simulation_tick(struct rr_simulation *this)
 {
     RR_TIME_BLOCK("collision_detection",
@@ -468,33 +558,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
     if (!this->game_over)
-    {
-        int any_alive = 0;
-
-        for (uint32_t i = 0; i < sizeof this->flower_tracker; ++i)
-            if (this->flower_tracker[i])
-            {
-                any_alive = 1;
-                break;
-            }
-
-        if (!any_alive)
-            this->game_over = 1;
-
-        struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-        // end of wave
-        if (arena->wave_tick == 15 * 25)
-        {
-            arena->wave_tick = 0;
-            rr_component_arena_set_wave(arena, arena->wave + 1);
-            RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        }
-        rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
-        EntityIdx mobs_in_use = 0;
-        rr_simulation_for_each_mob(this, &mobs_in_use, mob_counter);
-        if (mobs_in_use <= 200 && arena->wave_tick % 8 == 0)
-            spawn_random_mob(this);
-    }
+        tick_wave(this);
 
     // delete pending deletions
     rr_bitset_for_each_bit(
