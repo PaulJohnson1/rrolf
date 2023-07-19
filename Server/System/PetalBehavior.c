@@ -136,6 +136,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         }
         return;
     }
+    struct rr_component_flower *flower = rr_simulation_get_flower(simulation, player_info->flower_id);
+    rr_component_flower_set_face_flags(flower, player_info->input);
     player_info->modifiers.drop_pickup_radius = 25;
     uint32_t rotation_pos = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)

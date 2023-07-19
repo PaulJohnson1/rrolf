@@ -83,10 +83,18 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
             flower->lerp_eye_x = flower->eye_x;
         if (flower->lerp_eye_y == 0)
             flower->lerp_eye_y = flower->eye_y;
+        if (flower->lerp_mouth == 0)
+            flower->lerp_mouth = 15;
         flower->lerp_eye_x =
             rr_lerp(flower->lerp_eye_x, flower->eye_x, 10 * delta);
         flower->lerp_eye_y =
             rr_lerp(flower->lerp_eye_y, flower->eye_y, 10 * delta);
+        if (flower->face_flags & 1)
+            flower->lerp_mouth = rr_lerp(flower->lerp_mouth, 5, 20 * delta);
+        else if (flower->face_flags & 2)
+            flower->lerp_mouth = rr_lerp(flower->lerp_mouth, 8, 20 * delta);
+        else
+            flower->lerp_mouth = rr_lerp(flower->lerp_mouth, 15, 20 * delta);
     }
 
     if (rr_simulation_has_player_info(this, entity))

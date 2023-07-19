@@ -69,6 +69,6 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -6, 10);
-    rr_renderer_quadratic_curve_to(renderer, 0, 15, 6, 10);
+    rr_renderer_quadratic_curve_to(renderer, 0, flower->lerp_mouth, 6, 10);
     rr_renderer_stroke(renderer);
 }
