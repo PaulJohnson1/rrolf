@@ -34,7 +34,7 @@ static void aggressive_find_target(EntityIdx i, void *_captures)
         rr_simulation_get_physical(this, i);
 
     struct rr_vector delta = {ai_physical->x - flower_physical->x,
-                              ai_physical->x - flower_physical->x};
+                              ai_physical->y - flower_physical->y};
 
     float distance = delta.x * delta.x + delta.y * delta.y;
 

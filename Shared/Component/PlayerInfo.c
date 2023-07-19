@@ -36,6 +36,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
 {
     memset(this, 0, sizeof *this);
     this->camera_fov = 0.9f;
+    RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this,

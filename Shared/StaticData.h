@@ -26,6 +26,7 @@ enum rr_petal_id
     rr_petal_id_peas,
     rr_petal_id_leaf,
     rr_petal_id_egg,
+    rr_petal_id_magnet,
     rr_petal_id_max
 };
 
@@ -60,6 +61,7 @@ struct rr_mob_data
 struct rr_petal_data
 {
     uint8_t id;
+    uint8_t min_rarity; //minimum rarity petal can spawn at
     float damage;
     float health;
     float clump_radius;

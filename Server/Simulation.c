@@ -31,7 +31,7 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
             rarity_seed)
             break;
 
-    return rarity;
+    return rarity - 1;
 }
 
 static uint8_t get_id_from_wave(uint32_t wave)
@@ -49,6 +49,8 @@ static uint8_t get_id_from_wave(uint32_t wave)
 
 static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
 {
+    if (rarity == 255)
+        return 0;
     if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
         return 0;
     if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
@@ -532,9 +534,9 @@ static void tick_wave(struct rr_simulation *this)
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-    uint32_t wave_length = 60;
-    uint32_t spawn_time = 1;
-    uint32_t after_wave_time = 2;
+uint32_t wave_length_seconds = ((arena->wave < 4 ? arena->wave : 4) * 15);
+uint32_t spawn_time = 2;
+uint32_t after_wave_time = 1;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
@@ -555,9 +557,15 @@ static void tick_wave(struct rr_simulation *this)
         }
         if (arena->wave_tick == (wave_length * 25 * spawn_time))
             spawn_mob_swarm(this, 50);
-
-        rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
     }
+    else if (arena->wave_tick >=
+        wave_length_seconds * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
+    {
+        arena->wave_tick = 0;
+        rr_component_arena_set_wave(arena, arena->wave + 1);
+        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+    }
+    rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
