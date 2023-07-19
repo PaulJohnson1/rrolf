@@ -150,10 +150,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             rr_component_health_set_health(player_health,
                                            player_health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity]);
         }
-        else if (data->id == rr_petal_id_magnet)
-        {
-            player_info->modifiers.drop_pickup_radius += -50 + data->id * 25;
-        }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
@@ -241,6 +237,10 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     if (inner == 0 || data->clump_radius == 0)
                         --rotation_pos; // clump rotpos --
                     continue;           // player spawned mob
+                }
+                if (data->id == rr_petal_id_magnet)
+                {
+                    player_info->modifiers.drop_pickup_radius += -50 + data->id * 25;
                 }
                 system_flower_petal_movement_logic(
                     simulation, p_petal->simulation_id, player_info,
