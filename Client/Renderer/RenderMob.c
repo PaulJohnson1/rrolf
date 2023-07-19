@@ -32,5 +32,6 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sin(physical->animation);
 
-    rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation);
+    rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation,
+                           physical->turning_animation - physical->lerp_angle);
 }

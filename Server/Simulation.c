@@ -38,7 +38,7 @@ static uint8_t get_id_from_wave(uint32_t wave)
 {
     uint8_t id = rand() % rr_mob_id_max;
 
-    // spinosaurus doesn't exist
+    // pick another id since centipedes (spinosaurus doesn't work right now)
     if (id == rr_mob_id_spinosaurus_body)
         id = get_id_from_wave(wave);
     if (id == rr_mob_id_spinosaurus_head)
@@ -530,38 +530,39 @@ static void tick_wave(struct rr_simulation *this)
     if (!any_alive)
         this->game_over = 1;
 
-    // wave logic
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    // end of wave
 
-    // don't want to worry about types so should probably use macros
-#define wave_length_seconds ((arena->wave < 4 ? arena->wave : 4) * 15)
-#define spawn_time 2
-#define after_wave_time 1
+uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
+uint32_t spawn_time = 2;
+uint32_t after_wave_time = 1;
     // idle spawning
-    if (arena->wave_tick <= (wave_length_seconds * 25 * spawn_time))
+    if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
+        if (arena->wave_tick >=
+            wave_length * 25 * (spawn_time + after_wave_time))
+        {
+            arena->wave_tick = 0;
+            rr_component_arena_set_wave(arena, arena->wave + 1);
+            RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+        }
         if (arena->wave_tick % 48 == 0)
             spawn_random_mob(this);
 
         for (uint64_t i = 0; i < 15; i++)
         {
-            if (arena->wave_tick ==
-                (wave_length_seconds * 25 * spawn_time) * i / 15)
+            if (arena->wave_tick == (wave_length * 25 * spawn_time) * i / 15)
                 spawn_mob_cluster(this);
         }
-        if (arena->wave_tick == (wave_length_seconds * 25 * spawn_time))
+        if (arena->wave_tick == (wave_length * 25 * spawn_time))
             spawn_mob_swarm(this, 50);
     }
     else if (arena->wave_tick >=
-        wave_length_seconds * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
+        wave_length * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
     {
         arena->wave_tick = 0;
         rr_component_arena_set_wave(arena, arena->wave + 1);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
-#undef after_wave_time
-#undef wave_length_seconds
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
 
