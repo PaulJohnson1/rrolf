@@ -221,14 +221,12 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale * data->damage / slot->count;
 
-                    if (data->id == rr_petal_id_missile ||
-                        data->id == rr_petal_id_peas ||
-                        data->id == rr_petal_id_egg)
+                    if (data->secondary_cooldown > 0)
                     {
                         struct rr_component_projectile *projectile =
                             rr_simulation_add_projectile(
                                 simulation, p_petal->simulation_id);
-                        projectile->shoot_delay = 12;
+                        projectile->shoot_delay = data->secondary_cooldown;
                     }
                 }
             }

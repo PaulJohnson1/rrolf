@@ -10,12 +10,11 @@
 struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
 {
     char *cd = malloc((sizeof *cd) * 16);
-    if (id == rr_petal_id_missile || id == rr_petal_id_peas)
-        cd[sprintf(cd, "↻ %.1f + 0.5s",
-                   (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
+    if (RR_PETAL_DATA[id].secondary_cooldown > 0)
+        cd[sprintf(cd, "↻ %.1f + %.1fs",
+                   (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1, (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1)] = 0;
     else
-        cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] =
-            0;
+        cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
     char *hp = malloc((sizeof *hp) * 16);
     hp[sprintf(hp, "%.1f",
                RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity])] = 0;

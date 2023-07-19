@@ -197,6 +197,8 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
+        w = element->abs_width;
+        h = element->abs_height;
         if (count - pos > mod)
             element->x =
                 outer_spacing + (pos % data->width) * (w + inner_spacing);
@@ -209,8 +211,6 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
         element->y = outer_spacing + (pos / data->width) * (h + inner_spacing);
         if (element->completely_hidden)
             continue;
-        w = element->abs_width;
-        h = element->abs_height;
         ++pos;
     }
     data->height = (count + (width - 1)) / width;
