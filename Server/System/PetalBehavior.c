@@ -152,7 +152,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         }
         else if (data->id == rr_petal_id_magnet)
         {
-            player_info->modifiers.drop_pickup_radius += 75 + data->id * 25;
+            player_info->modifiers.drop_pickup_radius += -50 + data->id * 25;
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)

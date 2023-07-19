@@ -23,6 +23,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     dmg[sprintf(dmg, "%.1f",
                 RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] /
                     RR_PETAL_DATA[id].count[rarity])] = 0;
+    
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_container_init(), 10, 5, 6,
@@ -49,6 +50,17 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                                   rr_ui_text_init(dmg, 12, 0xffff4444)),
                               -1, 0)),
         0x80000000);
+    if (id == rr_petal_id_magnet)
+    {
+        char *pickup_radius = malloc((sizeof *pickup_radius) * 8);
+        pickup_radius[sprintf(pickup_radius, "+%d", -50 + 25 * rarity)] = 0;
+        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_text_init("Pickup range: ", 12, 0xff44ff44),
+                rr_ui_text_init(pickup_radius, 12, 0xff44ff44)),
+            -1, 0)
+        );
+    }
     rr_ui_link_toggle(rr_ui_set_justify(this, -1, -1), rr_ui_never_show);
     this->poll_events = rr_ui_no_focus;
     return this;
