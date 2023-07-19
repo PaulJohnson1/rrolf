@@ -52,12 +52,33 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         0x80000000);
     if (id == rr_petal_id_magnet)
     {
-        char *pickup_radius = malloc((sizeof *pickup_radius) * 8);
-        pickup_radius[sprintf(pickup_radius, "+%d", -50 + 25 * rarity)] = 0;
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "+%d", -50 + 25 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
-                rr_ui_text_init("Pickup range: ", 12, 0xff44ff44),
-                rr_ui_text_init(pickup_radius, 12, 0xff44ff44)),
+                rr_ui_text_init("Pickup range: ", 12, 0xff44ffdd),
+                rr_ui_text_init(extra, 12, 0xff44ffdd)),
+            -1, 0)
+        );
+    }
+    else if (id == rr_petal_id_leaf)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.0f/s", 25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity])] = 0;
+        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_text_init("Heal: ", 12, 0xffffff44),
+                rr_ui_text_init(extra, 12, 0xffffff44)),
+            -1, 0)
+        );
+    }
+    else if (id == rr_petal_id_egg)
+    {
+        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_text_init("Spawns: ", 12, 0xffffff44),
+                rr_ui_text_init(RR_RARITY_NAMES[rarity], 12, RR_RARITY_COLORS[rarity]),
+                rr_ui_text_init(" T-Rex", 12, 0xffffff44)),
             -1, 0)
         );
     }
