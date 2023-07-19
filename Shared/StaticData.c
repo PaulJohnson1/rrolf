@@ -14,7 +14,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_peas, rr_rarity_id_rare, 10.0f, 5.0f, 8.0f, 38, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 7.0f, 7.0f, 8.0f, 25, {1, 1, 1, 1, 1, 2, 3}},
     {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 25.0f, 0.0f, 125, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_magnet, rr_rarity_id_epic, 2.0f, 2.0f, 0.0f, 6, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_magnet, rr_rarity_id_epic, 2.0f, 2.0f, 0.0f, 38, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -58,21 +58,31 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  12,
                                                             15, 25, 50, 5};
-uint32_t RR_MOB_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5, 5, 5, 7};
+uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5, 5, 5, 7};
+
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 12, 15, 18, 25};
 
 static void init_rarity_coefficients()
 {
     double sum = 1;
+    double sum2 = 1;
     for (uint64_t a = 1; a < rr_rarity_id_max; ++a)
     {
         sum += (RR_DROP_RARITY_COEFFICIENTS[a + 1] =
                     RR_DROP_RARITY_COEFFICIENTS[a] /
                     RR_DROP_RARITY_COEFFICIENTS[a + 1]);
-        RR_MOB_RARITY_COEFFICIENTS[a] *= RR_MOB_RARITY_COEFFICIENTS[a - 1];
+        sum2 += (RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1] =
+                    RR_MOB_WAVE_RARITY_COEFFICIENTS[a] /
+                    RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1]);
+        RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *= RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
     }
     for (uint64_t a = 1; a <= rr_rarity_id_max; ++a)
+    {
         RR_DROP_RARITY_COEFFICIENTS[a] = RR_DROP_RARITY_COEFFICIENTS[a] / sum +
                                          RR_DROP_RARITY_COEFFICIENTS[a - 1];
+        RR_MOB_WAVE_RARITY_COEFFICIENTS[a] = RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
+                                         RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
+    }
     RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max] = 1;
 }
 
@@ -88,20 +98,17 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
         else
             cap = mob - 1;
 
-        data->loot_table[mob][0] =
-            pow(1 - seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
-        for (uint64_t drop = 0; drop <= cap; ++drop)
+        for (uint64_t drop = 0; drop <= cap + 1; ++drop)
         {
-            double start = RR_DROP_RARITY_COEFFICIENTS[drop];
             double end =
-                drop == cap ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop + 1];
-            data->loot_table[mob][drop + 1] =
-                pow(1 - (1 - end) * seed, RR_MOB_RARITY_COEFFICIENTS[mob]);
-            printf("%f ", data->loot_table[mob][drop + 1] -
-                              data->loot_table[mob][drop]);
+                drop == cap + 1 ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop];
+            if (cap < RR_PETAL_DATA[id].min_rarity)
+                end = 1;
+            else if (drop < RR_PETAL_DATA[id].min_rarity)
+                end = RR_DROP_RARITY_COEFFICIENTS[RR_PETAL_DATA[id].min_rarity];
+            data->loot_table[mob][drop] =
+                pow(1 - (1 - end) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[mob]);
         }
-        for (uint64_t drop = 0; drop < RR_PETAL_DATA[id].min_rarity; ++drop)
-            data->loot_table[mob][drop] = data->loot_table[mob][RR_PETAL_DATA[id].min_rarity];
     }
     printf("------------------------------------------\n");
 }

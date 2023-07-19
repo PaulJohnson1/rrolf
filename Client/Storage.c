@@ -87,13 +87,7 @@ void rr_local_storage_get_bytes(char *label, void *bytes)
             // clang-format off
             let bytes = new Uint8Array(hex.split(" ").map(x => parseInt(x, 16)));
             // clang-format on
-
-            for (let i = 0; i < bytes.length; i++)
-                HEAPU8[$1 + i] = bytes[i];
-
-            // this down here doesn't work for some reason and I spent hours
-            // debugging it
-            // HEAPU8.set($1, bytes);
+            HEAPU8.set(bytes, $1);
         },
         label, bytes);
 #endif
