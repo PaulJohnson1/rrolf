@@ -31,7 +31,7 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
             rarity_seed)
             break;
 
-    return rarity;
+    return rarity - 1;
 }
 
 static uint8_t get_id_from_wave(uint32_t wave)
@@ -49,7 +49,7 @@ static uint8_t get_id_from_wave(uint32_t wave)
 
 static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
 {
-    if (rarity == 0)
+    if (rarity == 255)
         return 0;
     if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
         return 0;
@@ -91,7 +91,7 @@ static void spawn_random_mob(struct rr_simulation *this)
     if (!should_spawn_at(arena->wave, id, rarity))
         return;
     EntityIdx mob_id =
-        rr_simulation_alloc_mob(this, id, rarity - 1, rr_simulation_team_id_mobs);
+        rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, mob_id);
     float distance = sqrt(rr_frand()) * arena->radius;
@@ -487,7 +487,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
         struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
         // mob position = delta + central_postiion;
 
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity - 1,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
                                                    rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
@@ -509,7 +509,7 @@ static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
         uint8_t rarity = get_rarity_from_wave(arena->wave);
         if (!should_spawn_at(arena->wave, id, rarity))
             continue;
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity - 1,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
                                                    rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
