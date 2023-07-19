@@ -12,6 +12,7 @@
 #include <Shared/Rivet.h>
 
 #ifndef EMSCRIPTEN
+#include <glfw/GLFW3.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -225,7 +226,14 @@ int main()
     rr_game_tick(&game, 1);
 
 #ifndef EMSCRIPTEN
-    pthread_t socket_tid;
+    // glfwSetErrorCallback([](int error, char const *description)
+    //                      { std::cerr << "code " << error << ' ' << description << '\n'; });
+
+    glfwInit();
+    GLFWwindow *window = glfwCreateWindow(800, 800, "rrolf native client", NULL, NULL);
+
+
+    // pthread_t socket_tid;
 
     // if (pthread_create(&socket_tid, NULL, rr_create_game_thread, &game) != 0)
     // {

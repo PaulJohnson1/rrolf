@@ -164,7 +164,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
 }
 
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
-                            uint8_t id, float animation_tick)
+                            uint8_t id, float animation_tick, float turning_value)
 {
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
@@ -195,8 +195,11 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
         rr_renderer_context_state_free(renderer, &state);
 
+        rr_renderer_rotate(renderer, turning_value);
         rr_renderer_draw_translated_image(renderer, &game->mob_trex_tail, 0, 150);
+        rr_renderer_rotate(renderer, -turning_value);
         rr_renderer_draw_image(renderer, &game->mob_trex_body);
+        rr_renderer_rotate(renderer, -turning_value / 2);
         rr_renderer_draw_translated_image(renderer, &game->mob_trex_head, 0, -125);
         break;
     case rr_mob_id_stump:

@@ -27,7 +27,7 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
     for (; rarity < rr_rarity_id_max; ++rarity)
-        if (powf(1 - (1 - RR_DROP_RARITY_COEFFICIENTS[rarity]) * 0.2, powf(1.25, wave)) >
+        if (powf(RR_DROP_RARITY_COEFFICIENTS[rarity + 1], powf(1.25, wave)) >
             rarity_seed)
             break;
 
@@ -49,8 +49,6 @@ static uint8_t get_id_from_wave(uint32_t wave)
 
 static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
 {
-    if (rarity == 0)
-        return 0;
     if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
         return 0;
     if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
@@ -91,7 +89,7 @@ static void spawn_random_mob(struct rr_simulation *this)
     if (!should_spawn_at(arena->wave, id, rarity))
         return;
     EntityIdx mob_id =
-        rr_simulation_alloc_mob(this, id, rarity - 1, rr_simulation_team_id_mobs);
+        rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, mob_id);
     float distance = sqrt(rr_frand()) * arena->radius;
@@ -487,7 +485,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
         struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
         // mob position = delta + central_postiion;
 
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity - 1,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
                                                    rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
@@ -509,7 +507,7 @@ static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
         uint8_t rarity = get_rarity_from_wave(arena->wave);
         if (!should_spawn_at(arena->wave, id, rarity))
             continue;
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity - 1,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
                                                    rr_simulation_team_id_mobs);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(this, mob_id);
@@ -537,23 +535,22 @@ static void tick_wave(struct rr_simulation *this)
     uint32_t wave_length = 60;
     uint32_t spawn_time = 1;
     uint32_t after_wave_time = 2;
-    if (arena->wave_tick >=
-        wave_length * 25 * (spawn_time + after_wave_time))
-    {
-        arena->wave_tick = 0;
-        rr_component_arena_set_wave(arena, arena->wave + 1);
-        RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-    }
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
+        if (arena->wave_tick >=
+            wave_length * 25 * (spawn_time + after_wave_time))
+        {
+            arena->wave_tick = 0;
+            rr_component_arena_set_wave(arena, arena->wave + 1);
+            RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+        }
         if (arena->wave_tick % 48 == 0)
             spawn_random_mob(this);
 
         for (uint64_t i = 0; i < 15; i++)
         {
-            if (arena->wave_tick ==
-                (wave_length * 25 * spawn_time) * i / 15)
+            if (arena->wave_tick == (wave_length * 25 * spawn_time) * i / 15)
                 spawn_mob_cluster(this);
         }
         if (arena->wave_tick == (wave_length * 25 * spawn_time))

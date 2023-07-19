@@ -34,7 +34,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
         &this->server->simulation,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
-    rr_component_player_info_set_slot_count(this->player_info, 5);
+    rr_component_player_info_set_slot_count(this->player_info, 10);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
         uint8_t id = this->player_info->slots[i].id = this->loadout[i].id;

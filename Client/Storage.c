@@ -22,6 +22,8 @@ uint32_t rr_local_storage_get(char *name)
         },
         name, &storage_result);
 #endif
+
+    return 0;
 }
 
 void rr_local_storage_store_string(char *name, char *contents)
