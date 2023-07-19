@@ -43,6 +43,7 @@ struct rr_game_debug_info
 // anything cross reload
 struct rr_game_settings
 {
+    uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
     float map_props;
     struct rr_game_loadout_petal loadout[20];
     uint8_t use_mouse;

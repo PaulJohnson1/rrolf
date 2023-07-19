@@ -53,7 +53,7 @@ void rr_api_on_get_petals(char *json, void *a)
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            game->inventory[id][rarity] = 0;
+            game->inventory[id][rarity] = 10;
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -315,6 +315,7 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
+            this->inventory[id][rarity] = 10;
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
                                        50);
@@ -521,7 +522,7 @@ void rr_game_init(struct rr_game *this)
                                &this->settings.displaying_debug_information);
     rr_local_storage_get_bytes("loadout", &this->settings.loadout);
     rr_local_storage_get_bytes("props", &this->settings.map_props);
-    rr_local_storage_get_bytes("screen_sake", &this->settings.screen_shake);
+    rr_local_storage_get_bytes("screen_shake", &this->settings.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->settings.show_ui_hitbox);
     rr_local_storage_get_bytes("slots_count", &this->settings.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->settings.use_mouse);
@@ -861,7 +862,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->settings.loadout);
     rr_local_storage_store_bytes("props", &this->settings.map_props,
                                  sizeof this->settings.map_props);
-    rr_local_storage_store_bytes("screen_sake", &this->settings.screen_shake,
+    rr_local_storage_store_bytes("screen_shake", &this->settings.screen_shake,
                                  sizeof this->settings.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->settings.show_ui_hitbox,
                                  sizeof this->settings.show_ui_hitbox);

@@ -27,6 +27,7 @@ enum rr_petal_id
     rr_petal_id_leaf,
     rr_petal_id_egg,
     rr_petal_id_magnet,
+    rr_petal_id_uranium,
     rr_petal_id_max
 };
 

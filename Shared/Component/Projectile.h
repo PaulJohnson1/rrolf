@@ -12,7 +12,6 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 struct rr_component_projectile
 {
     EntityIdx parent_id;
-    RR_SERVER_ONLY(int32_t shoot_delay;)
     RR_SERVER_ONLY(int32_t ticks_until_death;)
 
     RR_SERVER_ONLY(struct rr_projectile_data const *projectile_data;)

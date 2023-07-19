@@ -27,6 +27,8 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
         if (physical->server_animation_tick > 0)
             rr_component_physical_set_server_animation_tick(
                 physical, physical->server_animation_tick - 1);
+        if (health->damage_paused > 0)
+            health->damage_paused -= 1;
     }
     else
         rr_simulation_request_entity_deletion(this, entity);
@@ -57,10 +59,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
         return;
     uint8_t bypass = rr_simulation_has_petal(this, entity1) ||
                      rr_simulation_has_petal(this, entity2);
-    if (physical1->server_animation_tick == 0 || bypass)
+    if (health1->damage_paused == 0 || bypass)
     {
         rr_component_health_set_health(health1,
                                        health1->health - health2->damage);
+        health1->damage_paused = 5;
         rr_component_physical_set_server_animation_tick(physical1, 5);
 
         if (rr_simulation_has_ai(this, entity1))
@@ -84,10 +87,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
             }
         }
     }
-    if (physical2->server_animation_tick == 0 || bypass)
+    if (health2->damage_paused == 0 || bypass)
     {
         rr_component_health_set_health(health2,
                                        health2->health - health1->damage);
+        health2->damage_paused = 5;
         rr_component_physical_set_server_animation_tick(physical2, 5);
 
         if (rr_simulation_has_ai(this, entity2))

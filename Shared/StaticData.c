@@ -14,7 +14,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_peas, rr_rarity_id_rare, 10.0f, 5.0f, 8.0f, 38, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 7.0f, 7.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 3}},
     {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 25.0f, 0.0f, 12, 125, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_magnet, rr_rarity_id_epic, 2.0f, 2.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_magnet, rr_rarity_id_epic, 2.0f, 2.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 8.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -39,7 +40,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "emscripten", "Basic",   "Light", "Rock", "Stinger",
-    "Faster", "Missile", "Peas",  "Leaf", "Egg", "Magnet.tm"};
+    "Faster", "Missile", "Peas",  "Leaf", "Egg", "Magnet.tm", "Uranium"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -51,7 +52,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Where are the zombies?",
     "Probably the most normal petal there is. Oh wait",
     "It's egg",
-    "Trademarked by the lobsters"};
+    "Trademarked by the lobsters",
+    "Plutonium"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
@@ -125,6 +127,8 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_rock,
                     0.15);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_uranium,
+                    0.005);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
