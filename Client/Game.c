@@ -139,7 +139,7 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->settings.slots_unlocked = 5;
+    this->settings.slots_unlocked = 10;
     for (uint8_t i = 0; i < this->settings.slots_unlocked; ++i)
         this->protocol_state |= ((1 | (1 << 10)) << i);
 
@@ -154,9 +154,8 @@ void rr_game_init(struct rr_game *this)
 
     rr_ui_container_add_element(
         this->window,
-        rr_ui_pad(
-            rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
-            10));
+        rr_ui_pad(rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
+                  10));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
@@ -518,7 +517,15 @@ void rr_game_init(struct rr_game *this)
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
 
-    rr_local_storage_get_bytes("settings", &this->settings);
+    rr_local_storage_get_bytes("debug",
+                               &this->settings.displaying_debug_information);
+    rr_local_storage_get_bytes("loadout", &this->settings.loadout);
+    rr_local_storage_get_bytes("props", &this->settings.map_props);
+    rr_local_storage_get_bytes("screen_sake", &this->settings.screen_shake);
+    rr_local_storage_get_bytes("ui_hitboxes", &this->settings.show_ui_hitbox);
+    rr_local_storage_get_bytes("slots_count", &this->settings.slots_unlocked);
+    rr_local_storage_get_bytes("mouse", &this->settings.use_mouse);
+    // rr_local_storage_get_bytes("settings", &this->settings);
     // while (at < size)
     // {
     //     this->settings.loadout[storage_result[at]].id = storage_result[at +
@@ -847,8 +854,24 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->simulation_ready)
         validate_loadout(this);
     // rr_storage_layout_save(this);
-    rr_local_storage_store_bytes("settings", &this->settings,
-                                 sizeof this->settings);
+    rr_local_storage_store_bytes(
+        "debug", &this->settings.displaying_debug_information,
+        sizeof this->settings.displaying_debug_information);
+    rr_local_storage_store_bytes("loadout", &this->settings.loadout,
+                                 sizeof this->settings.loadout);
+    rr_local_storage_store_bytes("props", &this->settings.map_props,
+                                 sizeof this->settings.map_props);
+    rr_local_storage_store_bytes("screen_sake", &this->settings.screen_shake,
+                                 sizeof this->settings.screen_shake);
+    rr_local_storage_store_bytes("ui_hitboxes", &this->settings.show_ui_hitbox,
+                                 sizeof this->settings.show_ui_hitbox);
+    rr_local_storage_store_bytes("slots_count", &this->settings.slots_unlocked,
+                                 sizeof this->settings.slots_unlocked);
+    rr_local_storage_store_bytes("mouse", &this->settings.use_mouse,
+                                 sizeof this->settings.use_mouse);
+
+    // rr_local_storage_store_bytes("settings", &this->settings,
+    //                              sizeof this->settings);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
