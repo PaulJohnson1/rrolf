@@ -53,7 +53,7 @@ void rr_api_on_get_petals(char *json, void *a)
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            game->inventory[id][rarity] = 10;
+            game->inventory[id][rarity] = 0;
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -315,7 +315,7 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            this->inventory[id][rarity] = 10;
+            this->inventory[id][rarity] = 0;
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
                                        50);
