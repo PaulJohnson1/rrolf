@@ -5,7 +5,7 @@
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, 0.0f, 0.0f, 0.0f, 0, {0, 0, 0, 0, 0, 0, 0}},
-    {rr_petal_id_basic, 10.0f, 10.0f, 0.0f, 37, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_basic, 10.0f, 10.0f, 0.0f, 38, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_light, 7.0f, 5.0f, 0.0f, 16, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock, 5.0f, 80.0f, 0.0f, 100, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, 35.0f, 2.0f, 10.0f, 138, {1, 1, 1, 1, 1, 3, 5}},
@@ -13,7 +13,9 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_missile, 20.0f, 10.0f, 15.0f, 100, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, 10.0f, 5.0f, 8.0f, 38, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, 7.0f, 7.0f, 8.0f, 25, {1, 1, 1, 1, 1, 2, 3}},
-    {rr_petal_id_egg, 1.0f, 25.0f, 0.0f, 125, {4, 4, 4, 4, 4, 4, 5}}};
+    {rr_petal_id_egg, 1.0f, 25.0f, 0.0f, 125, {4, 4, 4, 4, 4, 4, 5}},
+    {rr_petal_id_magnet, 5.0f, 5.0f, 0.0f, 38, {1, 1, 1, 1, 1, 1, 1}}
+};    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 15, 10, 30.0f, {}},
@@ -36,8 +38,8 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    0,        "Basic",   "Light", "Rock", "Stinger",
-    "Faster", "Missile", "Peas",  "Leaf", "Egg"};
+    "emscripten", "Basic",   "Light", "Rock", "Stinger",
+    "Faster", "Missile", "Peas",  "Leaf", "Egg", "Magnet.tm"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -48,7 +50,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "ICBM approved",
     "Where are the zombies?",
     "Probably the most normal petal there is. Oh wait",
-    "It's egg"};
+    "It's egg",
+    "Trademarked by the lobsters"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
@@ -126,6 +129,8 @@ static void init_loot_tables()
                     rr_petal_id_faster, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[2],
                     rr_petal_id_egg, 0.01);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[3],
+                    rr_petal_id_magnet, 0.001);
 }
 
 void rr_static_data_init()

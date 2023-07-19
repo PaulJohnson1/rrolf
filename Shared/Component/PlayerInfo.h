@@ -34,10 +34,16 @@ struct rr_drop_picked_up
     uint8_t rarity;
 };
 
+struct rr_player_info_modifiers
+{
+    float drop_pickup_radius;
+};
+
 struct rr_component_player_info
 {
     struct rr_component_player_info_petal_slot slots[10];
     struct rr_component_player_info_petal_slot secondary_slots[10];
+    RR_SERVER_ONLY(struct rr_player_info_modifiers modifiers;)
     struct rr_drop_picked_up *collected_this_run;
     struct rr_drop_picked_up *collected_this_run_end;
     RR_SERVER_ONLY(struct rr_server_client *client;)
