@@ -123,7 +123,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         break;
     case rr_petal_id_magnet:
         rr_renderer_scale(renderer, 0.5);
-        rr_renderer_translate(renderer, -15, 0);
+        rr_renderer_translate(renderer, -20, 0);
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_stroke(renderer, 0xff363685);
         rr_renderer_set_line_width(renderer, 28);
