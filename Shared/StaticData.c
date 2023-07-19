@@ -60,7 +60,7 @@ double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  12,
                                                             15, 25, 50, 5};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5, 5, 5, 7};
 
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 2, 3, 4, 5, 6, 7};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 12, 15, 18, 25};
 
 static void init_rarity_coefficients()
 {

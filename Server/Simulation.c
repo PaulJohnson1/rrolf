@@ -27,11 +27,11 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
     for (; rarity < rr_rarity_id_max; ++rarity)
-        if (powf(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity]) * 0.2, powf(1.25, wave)) >
+        if (powf(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.2, powf(1.25, wave)) >
             rarity_seed)
             break;
 
-    return rarity - 1;
+    return rarity;
 }
 
 static uint8_t get_id_from_wave(uint32_t wave)
@@ -49,8 +49,6 @@ static uint8_t get_id_from_wave(uint32_t wave)
 
 static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
 {
-    if (rarity == 255)
-        return 0;
     if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
         return 0;
     if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
