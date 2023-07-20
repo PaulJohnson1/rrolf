@@ -54,8 +54,8 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(&this->server->simulation, flower_id);
-    rr_component_health_set_max_health(health, 99999999100);
-    rr_component_health_set_health(health, 19999900);
+    rr_component_health_set_max_health(health, 100);
+    rr_component_health_set_health(health, 100);
     health->damage = 10;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, this->player_info->parent_id);
