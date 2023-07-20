@@ -1146,6 +1146,8 @@ void rr_game_tick(struct rr_game *this, float delta)
 void rr_game_connect_socket(struct rr_game *this)
 {
     memset(this->simulation, 0, sizeof *this->simulation);
+    for (uint8_t i = 0; i < this->settings.slots_unlocked; ++i)
+        this->protocol_state |= ((1 | (1 << 10)) << i);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     this->socket_pending = 1;
