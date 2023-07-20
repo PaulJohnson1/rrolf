@@ -9,6 +9,8 @@
 
 static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
+    if (this->fill == 0x0000000)
+        return;
     struct text_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);

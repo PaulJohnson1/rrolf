@@ -22,7 +22,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 15, 10, 30.0f, {}},
     {rr_mob_id_trex, 35, 15, 32.0f, {}},
-    {rr_mob_id_stump, 50, 10, 26.0f, {}},
+    {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
     {rr_mob_id_pteranodon, 30, 30, 26.0f, {}},
@@ -74,7 +74,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  12,
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  9,  12,
                                                             15, 25, 50, 5};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
                                                               5, 5, 7};
