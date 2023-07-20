@@ -53,13 +53,11 @@ void rr_server_client_free(struct rr_server_client *this)
     puts("client disconnected");
     if (this->server->simulation_active)
     {
-        if (this->player_info != NULL && this->player_info->flower_id != RR_NULL_ENTITY)
-        {
+        if (this->player_info->flower_id != RR_NULL_ENTITY)
             rr_simulation_request_entity_deletion(&this->server->simulation,
                                                   this->player_info->flower_id);
-            rr_simulation_request_entity_deletion(&this->server->simulation,
-                                                this->player_info->parent_id);
-        }
+        rr_simulation_request_entity_deletion(&this->server->simulation,
+                                              this->player_info->parent_id);
     }
 }
 
@@ -95,18 +93,7 @@ void rr_server_client_tick(struct rr_server_client *this)
 {
     if (this->server->simulation_active)
     {
-        if (this->player_info == NULL)
-        {
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, outgoing_message);
-            proto_bug_write_uint8(&encoder, 68, "header");
-            rr_server_client_encrypt_message(this, encoder.start,
-                                         encoder.current - encoder.start);
-            rr_server_client_write_message(this, encoder.start,
-                                       encoder.current - encoder.start);
-            return;
-        }
-        else if (rr_simulation_has_entity(&this->server->simulation,
+        if (rr_simulation_has_entity(&this->server->simulation,
                                      this->player_info->flower_id))
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(
@@ -501,12 +488,6 @@ int rr_server_lws_callback_function(struct lws *socket,
                     proto_bug_read_uint8(&encoder, "rar");
                 pos = proto_bug_read_uint8(&encoder, "pos");
             }
-            if (this->simulation_active && client->player_info == NULL)
-            {
-                //spawn da player ez
-                rr_server_client_create_player_info(client);
-                rr_server_client_create_flower(client);
-            }
             break;
         }
         }
@@ -591,8 +572,8 @@ void rr_server_tick(struct rr_server *this)
                 rr_simulation_init(&this->simulation);
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
-                // char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
-                // rr_rivet_lobbies_set_closed(lobby_token, 1);
+                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
+                rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
@@ -650,8 +631,8 @@ void rr_server_run(struct rr_server *this)
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-       // if (elapsed_time > 1000)
-            //fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        if (elapsed_time > 1000)
+            fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);

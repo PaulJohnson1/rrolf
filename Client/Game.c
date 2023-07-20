@@ -687,26 +687,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             break;
         }
-        case 68:
-        {
-            struct proto_bug encoder2;
-            proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 70, "header");
-            for (uint32_t i = 0; i < 20; ++i)
-            {
-                if (this->protocol_state & (1 << i))
-                {
-                    proto_bug_write_uint8(&encoder2, i + 1, "pos");
-                    proto_bug_write_uint8(&encoder2,
-                                          this->settings.loadout[i].id, "id");
-                    proto_bug_write_uint8(
-                        &encoder2, this->settings.loadout[i].rarity, "rar");
-                }
-            }
-            proto_bug_write_uint8(&encoder2, 0, "pos");
-            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
-            break;
-        }
         case 69:
         {
             this->ticks_until_game_start =
