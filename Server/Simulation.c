@@ -532,8 +532,8 @@ static void tick_wave(struct rr_simulation *this)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
 uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
-uint32_t spawn_time = 2;
-uint32_t after_wave_time = 1;
+uint32_t spawn_time = 1;
+uint32_t after_wave_time = 2;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
