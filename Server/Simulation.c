@@ -25,9 +25,12 @@
 static uint8_t get_rarity_from_wave(uint32_t wave)
 {
     float rarity_seed = rr_frand();
+    uint8_t rarity_cap = rr_rarity_id_rare + ((wave - 1) / 4);
+    if (rarity_cap > rr_rarity_id_ultra)
+        rarity_cap = rr_rarity_id_max;
     uint8_t rarity = 0;
-    for (; rarity < rr_rarity_id_max; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4, pow(1.25, wave)) >
+    for (; rarity < rarity_cap; ++rarity)
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4, pow(1.3, wave)) >
             rarity_seed)
             break;
     return rarity;
@@ -73,7 +76,7 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, 1);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
-    //rr_component_arena_set_wave(arena_component, 1);
+    rr_component_arena_set_wave(arena_component, 1);
 
     printf("simulation size: %lu\n", sizeof *this);
 
@@ -518,9 +521,9 @@ static void tick_wave(struct rr_simulation *this)
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
+uint32_t wave_length = ((arena->wave < 3 ? arena->wave : 3) * 15);
 uint32_t spawn_time = 1;
-uint32_t after_wave_time = 2;
+uint32_t after_wave_time = 1;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {

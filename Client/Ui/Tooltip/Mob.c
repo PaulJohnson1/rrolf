@@ -23,8 +23,7 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_draw_image(renderer,
-                           &game->static_petals[data->id][data->rarity]);
+    rr_renderer_render_petal_with_background(renderer, game, data->id, data->rarity);
 }
 
 static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)

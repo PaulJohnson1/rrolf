@@ -146,8 +146,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_render_petal_with_background(renderer, game, data->prev_id, data->prev_rarity);
 }
 
 static void loadout_button_on_render(struct rr_ui_element *this,
@@ -162,8 +161,7 @@ static void loadout_button_on_render(struct rr_ui_element *this,
     rr_renderer_move_to(renderer, 0, 0);
     rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10, -M_PI / 2 - pct * M_PI * 8, 0);
     rr_renderer_fill(renderer);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_render_petal_with_background(renderer, game, data->prev_id, data->prev_rarity);
 }
 
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)

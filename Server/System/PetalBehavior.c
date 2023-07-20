@@ -210,7 +210,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(
                 player_health, player_health->health +
-                                   0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
+                                   0.015 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
@@ -306,7 +306,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 if (data->id == rr_petal_id_magnet)
                 {
                     player_info->modifiers.drop_pickup_radius +=
-                        -50 + data->id * 25;
+                        -25 + data->id * 25;
                 }
                 system_flower_petal_movement_logic(
                     simulation, p_petal->simulation_id, player_info,
