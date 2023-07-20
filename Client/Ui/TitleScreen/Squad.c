@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include <Client/Game.h>
+#include <Client/InputData.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
@@ -246,29 +247,58 @@ struct rr_ui_element *rr_ui_info_init()
     return element;
 }
 
-static void labeled_button_poll_events(struct rr_ui_element *this,
-                                       struct rr_game *game)
+static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (game->socket_pending)
     {
         this->fill = 0xff999999;
-        data->text = "Connecting...";
+        data->text = "Finding...";
     }
     else
     {
         rr_ui_element_check_if_focused(this, game);
-        this->fill = 0xff1dd129;
+        this->fill = 0xffd4b30c;
         if (game->socket_ready)
-            data->text = "Ready";
+            data->text = "Find Squad";
         else
-            this->fill = 0xff1dd129;
+        {
+            data->text = "Find Squad";
+            this->fill = 0xffd4b30c;
+        }
     }
+}
+
+static void join_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (game->socket_ready)
+        {
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, 69, "header");
+            rr_websocket_send(&game->socket, encoder.start, encoder.current);
+        }
+        else
+        {
+            rr_game_connect_socket(game);
+        }
+    }
+}
+
+struct rr_ui_element *rr_ui_squad_button_init()
+{
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
+    this->fill = 0xffd4b30c;
+    this->poll_events = labeled_button_poll_events;
+    return this;
 }
 
 struct rr_ui_element *rr_ui_join_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 36, 0);
-    this->poll_events = labeled_button_poll_events;
+    //this->poll_events = labeled_button_poll_events;
+    this->on_event = join_button_on_event;
     return this;
 }

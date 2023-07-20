@@ -170,13 +170,16 @@ void rr_game_init(struct rr_game *this)
         rr_ui_link_toggle(
             rr_ui_set_background(
                 rr_ui_v_container_init(
-                    rr_ui_container_init(), 10, 20, 6,
-                    rr_ui_text_init("rrolf.io", 96, 0xffffffff),
-                    rr_ui_h_container_init(
-                        rr_ui_container_init(), 10, 20, 2,
-                        rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
-                        rr_ui_set_background(rr_ui_join_button_init(),
-                                             0xff1dd129)),
+                    rr_ui_container_init(), 10, 20, 3,
+                    rr_ui_v_container_init(rr_ui_container_init(), 0, 20, 4,
+                        rr_ui_text_init("rrolf.io", 96, 0xffffffff),
+                        rr_ui_h_container_init(
+                            rr_ui_container_init(), 10, 20, 2,
+                            rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
+                            rr_ui_set_background(rr_ui_join_button_init(),
+                                             0xff1dd129)
+                        ),
+                        rr_ui_set_justify(rr_ui_set_background(rr_ui_squad_button_init(), 0xff1dd129), 1, 0),
                     rr_ui_set_background(
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
@@ -203,7 +206,7 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                 socket_ready)),
                             socket_pending_or_ready),
-                        0x40ffffff),
+                        0x40ffffff)),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
                                            rr_ui_title_screen_loadout_button_init(0),
                                            rr_ui_title_screen_loadout_button_init(1),
@@ -681,6 +684,26 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                     this->input_data->mouse_y -
                                         this->renderer->height / 2,
                                     "mouse y");
+            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            break;
+        }
+        case 68:
+        {
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 70, "header");
+            for (uint32_t i = 0; i < 20; ++i)
+            {
+                if (this->protocol_state & (1 << i))
+                {
+                    proto_bug_write_uint8(&encoder2, i + 1, "pos");
+                    proto_bug_write_uint8(&encoder2,
+                                          this->settings.loadout[i].id, "id");
+                    proto_bug_write_uint8(
+                        &encoder2, this->settings.loadout[i].rarity, "rar");
+                }
+            }
+            proto_bug_write_uint8(&encoder2, 0, "pos");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             break;
         }
