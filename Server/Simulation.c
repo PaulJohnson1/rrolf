@@ -528,7 +528,7 @@ static void tick_wave(struct rr_simulation *this)
     }
     else if (arena->wave_tick >=
                  wave_length * 25 * (spawn_time + after_wave_time) ||
-             arena->mob_count <= 4)
+             arena->mob_count <= 10)
     {
         printf("wave %d done\n", arena->wave);
         arena->wave_tick = 0;
@@ -537,6 +537,12 @@ static void tick_wave(struct rr_simulation *this)
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
+}
+
+static void count_mobs(EntityIdx a, void *b)
+{
+    uint64_t *c = b;
+    ++*c;
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
@@ -554,8 +560,14 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
     if (!this->game_over)
-        tick_wave(this);
-
+    {
+        uint64_t count;
+        do {
+            tick_wave(this);
+            count = 0;
+            rr_simulation_for_each_mob(this, &count, count_mobs);
+        } while (count < 9);
+    }
     // delete pending deletions
     rr_bitset_for_each_bit(
         this->pending_deletions,

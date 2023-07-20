@@ -572,8 +572,8 @@ void rr_server_tick(struct rr_server *this)
                 rr_simulation_init(&this->simulation);
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
-                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
-                rr_rivet_lobbies_set_closed(lobby_token, 1);
+                // char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
+                // rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
