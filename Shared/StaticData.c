@@ -82,7 +82,8 @@ uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  10,
                                                                 12, 15, 18, 25};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {15, 30, 1, 1, 1, 40, 25};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {15, 30, 1, 1,
+                                                          1,  40, 25};
 double RR_MOB_SPAWN_RARITY_COEFFICIENTS[rr_mob_id_max] = {1, 1, 1, 1, 1, 1, 1};
 
 static void init_rarity_coefficients()
@@ -152,6 +153,8 @@ static void init_loot_tables()
                     0.15);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_uranium,
                     0.005);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_peas,
+                    0.5);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
