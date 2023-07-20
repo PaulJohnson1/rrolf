@@ -43,6 +43,7 @@ struct rr_simulation
 #undef XX
 
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
+    RR_SERVER_ONLY(uint32_t wave_points;)
     uint8_t game_over;
 };
 

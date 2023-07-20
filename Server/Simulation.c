@@ -69,7 +69,7 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, 1);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
-    rr_component_arena_set_wave(arena_component, 1);
+    //rr_component_arena_set_wave(arena_component, 1);
 
     printf("simulation size: %lu\n", sizeof *this);
 
@@ -541,13 +541,6 @@ uint32_t after_wave_time = 2;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
-        if (arena->wave_tick >=
-            wave_length * 25 * (spawn_time + after_wave_time))
-        {
-            arena->wave_tick = 0;
-            rr_component_arena_set_wave(arena, arena->wave + 1);
-            RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        }
         if (arena->wave_tick % 48 == 0)
             spawn_random_mob(this);
 
@@ -562,7 +555,9 @@ uint32_t after_wave_time = 2;
     else if (arena->wave_tick >=
         wave_length * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
     {
+        printf("wave %d done\n", arena->wave);
         arena->wave_tick = 0;
+        this->wave_points = (arena->wave + 2) * 25;
         rr_component_arena_set_wave(arena, arena->wave + 1);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
