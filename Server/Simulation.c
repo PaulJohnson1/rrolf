@@ -72,7 +72,7 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, 1);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
-    //rr_component_arena_set_wave(arena_component, 1);
+    rr_component_arena_set_wave(arena_component, 1);
 
     printf("simulation size: %lu\n", sizeof *this);
 
@@ -538,7 +538,7 @@ static void tick_wave(struct rr_simulation *this)
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
+uint32_t wave_length = ((arena->wave < 3 ? arena->wave : 3) * 15);
 uint32_t spawn_time = 1;
 uint32_t after_wave_time = 2;
     // idle spawning
