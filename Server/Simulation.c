@@ -45,6 +45,8 @@ static uint8_t get_id_from_wave(uint32_t wave)
         id = get_id_from_wave(wave);
     if (id == rr_mob_id_spinosaurus_head)
         id = get_id_from_wave(wave);
+    if (id == rr_mob_id_stump && rand() % 5 == 0)
+        id = get_id_from_wave(wave);
 
     return id;
 }
@@ -56,6 +58,8 @@ static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
         return 0;
     if (id == rr_mob_id_dakotaraptor && rarity < rr_rarity_id_legendary)
+        return 0;
+    if (id == rr_mob_id_triceratops && rarity < rr_rarity_id_unusual)
         return 0;
     return 1;
 }
@@ -138,27 +142,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     health->damage = mob_data->damage * rarity_scale->damage;
 
     rr_component_relations_set_team(relations, team_id);
-    // switch (mob_id)
-    // {
-    // case rr_mob_id_stump:
-    //     rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
-    //     ai->ai_type = rr_ai_type_static;
-    //     break;
-    // case rr_mob_id_pteranodon:
-    // case rr_mob_id_dakotaraptor:
-    // case rr_mob_id_trex:
-    //     ai->ai_type = rr_ai_type_aggressive;
-    //     break;
-    // case rr_mob_id_spinosaurus_head:
-    //     ai->ai_type = rr_ai_type_neutral;
-
-    // case rr_mob_id_spinosaurus_body:
-    // case rr_mob_id_triceratops:
-    //     ai->ai_type = rr_ai_type_passive;
-    //     break;
-    // default:
-    //     RR_UNREACHABLE("forgot to set ai type");
-    // };
 
     switch (mob_id)
     {
