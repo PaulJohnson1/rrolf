@@ -20,7 +20,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 15, 10, 30.0f, {}},
+    {rr_mob_id_triceratops, 25, 10, 30.0f, {}},
     {rr_mob_id_trex, 40, 20, 32.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
