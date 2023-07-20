@@ -27,9 +27,9 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
     float rarity_seed = rr_frand();
     uint8_t rarity_cap = rr_rarity_id_rare + ((wave - 1) / 4);
     if (rarity_cap > rr_rarity_id_ultra)
-        rarity_cap = rr_rarity_id_ultra;
+        rarity_cap = rr_rarity_id_max;
     uint8_t rarity = 0;
-    for (; rarity <= rarity_cap; ++rarity)
+    for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4, pow(1.5, wave)) >
             rarity_seed)
             break;
