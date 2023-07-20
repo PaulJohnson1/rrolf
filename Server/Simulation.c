@@ -90,7 +90,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
     rr_component_physical_set_radius(physical,
                                      mob_data->radius * rarity_scale->radius);
-    physical->friction = 0.5;
+    physical->friction = 0.9;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);

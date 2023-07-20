@@ -63,7 +63,12 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
     {
         if (game->settings.loadout[i].id == data->id &&
             game->settings.loadout[i].rarity == data->rarity)
-            --count;
+        {
+            if (count > 0)
+                --count;
+            else
+                game->settings.loadout[i].id = game->settings.loadout[i].rarity = 0;
+        }
     }
     if (data->id == game->crafting_data.crafting_id)
     {
