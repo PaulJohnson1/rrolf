@@ -18,53 +18,10 @@
 #include <Server/System/PetalBehavior.h>
 #include <Server/System/Respawn.h>
 #include <Server/System/Velocity.h>
+#include <Server/Waves.h>
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
-
-static uint8_t get_rarity_from_wave(uint32_t wave)
-{
-    float rarity_seed = rr_frand();
-    uint8_t rarity_cap = rr_rarity_id_rare + ((wave - 1) / 4);
-    if (rarity_cap > rr_rarity_id_ultra)
-        rarity_cap = rr_rarity_id_max;
-    uint8_t rarity = 0;
-    for (; rarity < rarity_cap; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4, pow(1.3, wave)) >
-            rarity_seed)
-            break;
-    return rarity;
-}
-
-static uint8_t get_id_from_wave(uint32_t wave)
-{
-    uint8_t id = rand() % rr_mob_id_max;
-
-    // pick another id since centipedes (spinosaurus doesn't work right now)
-    if (id == rr_mob_id_spinosaurus_body)
-        id = get_id_from_wave(wave);
-    if (id == rr_mob_id_spinosaurus_head)
-        id = get_id_from_wave(wave);
-    if (id == rr_mob_id_stump && rand() % 5 != 0)
-        id = get_id_from_wave(wave);
-
-    return id;
-}
-
-static int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
-{
-    if (id == rr_mob_id_trex && rarity < rr_rarity_id_rare)
-        return 0;
-    if (id == rr_mob_id_pteranodon && rarity < rr_rarity_id_epic)
-        return 0;
-    if (id == rr_mob_id_dakotaraptor && rarity < rr_rarity_id_legendary)
-        return 0;
-    if (id == rr_mob_id_triceratops && rarity < rr_rarity_id_unusual)
-        return 0;
-    return 1;
-}
-
-static void spawn_random_mob(struct rr_simulation *this);
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -448,14 +405,45 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
     }
 }
 
+struct simulation_id
+{
+    struct rr_simulation *simulation;
+    struct rr_vector test_position;
+    uint8_t invalid;
+};
+
 // TODO: make it work
+static void position_finder(EntityIdx id, void *_captures)
+{
+    struct simulation_id *captures = _captures;
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(captures->simulation, id);
+
+    struct rr_vector delta = {physical->x, physical->y};
+    rr_vector_sub(&delta, &captures->test_position);
+
+    printf("%f %f\n", delta.x, delta.y);
+
+    if (delta.x * delta.x + delta.y * delta.y < 500 * 500)
+        captures->invalid = 1;
+}
+
 static struct rr_vector
 find_position_away_from_players(struct rr_simulation *this)
 {
-    float distance = sqrt(rr_frand()) * 1650.0f;
-    float angle = rr_frand() * M_PI * 2;
-    struct rr_vector r = {distance * cosf(angle), distance * sinf(angle)};
-    return r;
+    struct simulation_id captures;
+    captures.simulation = this;
+    do
+    {
+        float distance = sqrt(rr_frand()) * 1650.0f;
+        float angle = rr_frand() * M_PI * 2;
+        struct rr_vector r = {distance * cosf(angle), distance * sinf(angle)};
+        captures.test_position = r;
+        captures.invalid = 0;
+        rr_simulation_for_each_flower(this, &captures, position_finder);
+    } while (captures.invalid);
+
+    return captures.test_position;
 }
 
 // spawn 4-8 of some mob type in around the same position, avoid players
@@ -521,9 +509,9 @@ static void tick_wave(struct rr_simulation *this)
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-uint32_t wave_length = ((arena->wave < 3 ? arena->wave : 3) * 15);
-uint32_t spawn_time = 1;
-uint32_t after_wave_time = 1;
+    uint32_t wave_length = ((arena->wave < 3 ? arena->wave : 3) * 15);
+    uint32_t spawn_time = 1;
+    uint32_t after_wave_time = 1;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
@@ -539,7 +527,8 @@ uint32_t after_wave_time = 1;
             spawn_mob_swarm(this, 50);
     }
     else if (arena->wave_tick >=
-        wave_length * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
+                 wave_length * 25 * (spawn_time + after_wave_time) ||
+             arena->mob_count <= 4)
     {
         printf("wave %d done\n", arena->wave);
         arena->wave_tick = 0;

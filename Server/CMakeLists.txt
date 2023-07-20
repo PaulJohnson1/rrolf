@@ -29,6 +29,7 @@ set(SRCS
     Server.c
     Simulation.c
     SpatialHash.c
+    Waves.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Centipede.c
