@@ -8,25 +8,25 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 10.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_light, rr_rarity_id_common, 7.0f, 5.0f, 0.0f, 16, 0, {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 80.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 60.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 35.0f, 2.0f, 10.0f, 138, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_faster, rr_rarity_id_rare, 7.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_missile, rr_rarity_id_rare, 20.0f, 10.0f, 15.0f, 100, 12, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_peas, rr_rarity_id_rare, 10.0f, 5.0f, 8.0f, 38, 12, {4, 4, 4, 4, 4, 4, 5}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 15.0f, 10.0f, 15.0f, 100, 12, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_peas, rr_rarity_id_rare, 8.0f, 5.0f, 8.0f, 38, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 7.0f, 7.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 3}},
-    {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 25.0f, 0.0f, 12, 125, {4, 4, 4, 4, 4, 4, 5}},
+    {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 20.0f, 0.0f, 12, 125, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 2.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, 7.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_uranium, rr_rarity_id_rare, 6.5f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 15, 10, 30.0f, {}},
-    {rr_mob_id_trex, 35, 15, 32.0f, {}},
+    {rr_mob_id_trex, 40, 20, 32.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
-    {rr_mob_id_pteranodon, 30, 30, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 30, 25, 30.0f, {}}};
+    {rr_mob_id_pteranodon, 35, 40, 26.0f, {}},
+    {rr_mob_id_dakotaraptor, 35, 30, 30.0f, {}}};
 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
