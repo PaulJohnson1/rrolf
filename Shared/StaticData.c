@@ -56,7 +56,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "emscripten", "Basic", "Light", "Rock", "Stinger",   "Faster",
-    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet.tm", "Uranium"};
+    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
