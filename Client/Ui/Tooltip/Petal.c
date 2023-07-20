@@ -17,10 +17,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
     char *hp = malloc((sizeof *hp) * 16);
     hp[sprintf(hp, "%.1f",
-               RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity])] = 0;
+               RR_PETAL_DATA[id].health * RR_PETAL_RARITY_SCALE[rarity].health)] = 0;
     char *dmg = malloc((sizeof *dmg) * 16);
     dmg[sprintf(dmg, "%.1f",
-                RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity] /
+                RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity].damage /
                     RR_PETAL_DATA[id].count[rarity])] = 0;
     
     struct rr_ui_element *this = rr_ui_set_background(
@@ -63,7 +63,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_leaf)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.0f/s", 25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity])] = 0;
+        extra[sprintf(extra, "%.0f/s", 25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Heal: ", 12, 0xffffff44),

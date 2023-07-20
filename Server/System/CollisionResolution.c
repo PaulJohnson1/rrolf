@@ -30,8 +30,8 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
         return 1; // only drop doesn't care about team
     exclude(petal, petal);
     exclude(petal, flower);
-    exclude(petal, mob);
-    exclude(flower, mob);
+    // exclude(petal, mob);
+    // exclude(flower, mob);
 #undef exclude
 
     return 1;

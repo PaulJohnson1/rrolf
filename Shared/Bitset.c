@@ -32,77 +32,66 @@ void rr_bitset_maybe_set(uint8_t *a, uint64_t i, uint8_t bit)
     else
         rr_bitset_unset(a, i);
 }
+
+// void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures,
+//                             void (*cb)(uint64_t, void *))
+// {
+//     uint8_t *const original_start = start;
+//     uint64_t bitmapsize = (end - start) / sizeof(uint64_t);
+
+//     uint64_t bitset;
+//     for (uint64_t k = 0; k < bitmapsize; ++k)
+//     {
+//         bitset = bitmap[k];
+//         uint64_t p = k * 64;
+//         while (bitset != 0)
+//         {
+//             if (bitset & 0x1)
+//             {
+//                 cb(p, captures);
+//             }
+//             bitset >>= 1;
+//             p += 1;
+//         }
+//     }
+// }
+
+// void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures,
+// void (*cb)(uint64_t, void *))
+// {
+//     uint8_t *const original_start = start;
+
+//     while (start != end)
+//     {
+//         if ((start + 8 < end) && (uint64_t)start % 8 == 0)
+//         {
+//             uint64_t val = *(uint64_t *)start;
+//             while (val)
+//             {
+//                 uint64_t t = __builtin_ctzll(val);
+//                 cb(((start - original_start) << 3) | t, captures);
+//                 val &= val - 1; // clear the rightmost set bit
+//             }
+//             start += 8;
+//         }
+//         else
+//         {
+//             uint8_t val = *start;
+//             while (val)
+//             {
+//                 uint8_t t = __builtin_ctz(val);
+//                 cb(((start - original_start) << 3) | t, captures);
+//                 val &= val - 1; // clear the rightmost set bit
+//             }
+//             start++;
+//         }
+//     }
+// }
+
 void rr_bitset_for_each_bit(uint8_t *start, uint8_t *end, void *captures,
                             void (*cb)(uint64_t, void *))
 {
     uint8_t *const original_start = start;
-    // while (start != end)
-    // {
-    //     if (*start)
-    //         cb(start - original_start, captures);
-    //     start++;
-    // }
-
-    // uint8_t *const original_start = start;
-
-    // // Iterate over the misaligned bytes
-    // while ((uint64_t)start % sizeof(uint64_t))
-    // {
-    //     if (*start)
-    //         cb(start - original_start, captures);
-    //     start++;
-    // }
-
-    // // Iterate over the aligned uint64_t values
-    // for (; start <= (end - sizeof(uint64_t)); start += sizeof(uint64_t))
-    //     if (*(uint64_t *)start)
-    //     {
-    //         uint64_t value = *(uint64_t *)start;
-    //         uint64_t offset = start - original_start;
-
-    //         if (*(uint32_t *)start)
-    //         {
-    //             if (*(uint16_t *)start)
-    //             {
-    //                 if (*(uint8_t *)start)
-    //                     cb(offset, captures);
-    //                 if (*((uint8_t *)start + 1))
-    //                     cb(offset + 1, captures);
-    //             }
-    //             if (*((uint16_t *)start + 1))
-    //             {
-    //                 if (*((uint8_t *)start + 2))
-    //                     cb(offset + 2, captures);
-    //                 if (*((uint8_t *)start + 3))
-    //                     cb(offset + 3, captures);
-    //             }
-    //         }
-    //         if (*((uint32_t *)start + 1))
-    //         {
-    //             if (*((uint16_t *)start + 2))
-    //             {
-    //                 if (*((uint8_t *)start + 4))
-    //                     cb(offset + 4, captures);
-    //                 if (*((uint8_t *)start + 5))
-    //                     cb(offset + 5, captures);
-    //             }
-    //             if (*((uint16_t *)start + 3))
-    //             {
-    //                 if (*((uint8_t *)start + 6))
-    //                     cb(offset + 6, captures);
-    //                 if (*((uint8_t *)start + 7))
-    //                     cb(offset + 7, captures);
-    //             }
-    //         }
-    //     }
-
-    // // Iterate over the remaining misaligned bytes, if any
-    // for (uint8_t *i = start; i < end; i++)
-    // {
-    //     if (*start)
-    //         cb(start - original_start, captures);
-    //     start++;
-    // }
 
     while (start != end)
     {

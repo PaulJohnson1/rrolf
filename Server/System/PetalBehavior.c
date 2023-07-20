@@ -34,7 +34,7 @@ static void uranium_damage(EntityIdx mob, void *_captures)
         rr_component_health_set_health(health,
                                        health->health - captures->damage);
         rr_component_physical_set_server_animation_tick(physical, 5);
-        health->damage_paused = 5;
+        // health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
         if (ai->target_entity == RR_NULL_ENTITY)
             ai->target_entity = captures->flower_id;
@@ -210,7 +210,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(
                 player_health, player_health->health +
-                                   0.04 * RR_PETAL_RARITY_SCALE[slot->rarity]);
+                                   0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
@@ -272,14 +272,15 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rr_component_relations_set_team(
                         relations, rr_simulation_team_id_players);
 
-                    float scale = RR_PETAL_RARITY_SCALE[slot->rarity];
+                    float scale_h = RR_PETAL_RARITY_SCALE[slot->rarity].health;
+                    float scale_d = RR_PETAL_RARITY_SCALE[slot->rarity].damage;
 
                     rr_component_health_set_max_health(health,
-                                                       scale * data->health);
+                                                       scale_h * data->health);
                     rr_component_health_set_health(health,
-                                                   scale * data->health);
+                                                   scale_h * data->health);
                     rr_component_health_set_hidden(health, 1);
-                    health->damage = scale * data->damage / slot->count;
+                    health->damage = scale_d * data->damage / slot->count;
 
                     if (data->secondary_cooldown > 0)
                     {

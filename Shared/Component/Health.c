@@ -45,8 +45,8 @@ void rr_component_health_write(struct rr_component_health *this,
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)
 {
-    if (this->damage_paused)
-        return;
+    // if (this->damage_paused)
+    //     return;
     if (this->health == 0)
         return;
     if (v > this->max_health)
