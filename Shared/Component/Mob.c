@@ -65,33 +65,33 @@ void rr_component_mob_free(struct rr_component_mob *this,
         spawn_rarities[count] = rarity - 1;
         ++count;
     }
-    // for (uint8_t i = 0; i < count; ++i)
-    // {
-    //     EntityIdx entity = rr_simulation_alloc_entity(simulation);
-    //     struct rr_component_physical *drop_physical =
-    //         rr_simulation_add_physical(simulation, entity);
-    //     struct rr_component_drop *drop =
-    //         rr_simulation_add_drop(simulation, entity);
-    //     struct rr_component_relations *relations =
-    //         rr_simulation_add_relations(simulation, entity);
-    //     rr_component_physical_set_x(drop_physical, physical->x);
-    //     rr_component_physical_set_y(drop_physical, physical->y);
-    //     rr_component_physical_set_radius(drop_physical, 25);
+    for (uint8_t i = 0; i < count; ++i)
+    {
+        EntityIdx entity = rr_simulation_alloc_entity(simulation);
+        struct rr_component_physical *drop_physical =
+            rr_simulation_add_physical(simulation, entity);
+        struct rr_component_drop *drop =
+            rr_simulation_add_drop(simulation, entity);
+        struct rr_component_relations *relations =
+            rr_simulation_add_relations(simulation, entity);
+        rr_component_physical_set_x(drop_physical, physical->x);
+        rr_component_physical_set_y(drop_physical, physical->y);
+        rr_component_physical_set_radius(drop_physical, 25);
 
-    //     rr_component_drop_set_id(drop, spawn_ids[i]);
-    //     rr_component_drop_set_rarity(drop, spawn_rarities[i]);
+        rr_component_drop_set_id(drop, spawn_ids[i]);
+        rr_component_drop_set_rarity(drop, spawn_rarities[i]);
 
-    //     rr_component_relations_set_team(relations,
-    //                                     rr_simulation_team_id_players);
-        // drop->ticks_until_despawn = 750;
+        rr_component_relations_set_team(relations,
+                                        rr_simulation_team_id_players);
+        drop->ticks_until_despawn = 25 * 10 * (spawn_rarities[i] + 1);
 
-        // if (count != 1) = 25 * 10 * (spawn_rarities[i] + 1);
-        // {
-        //     float angle = M_PI * 2 * i / count;
-        //     rr_vector_from_polar(&drop_physical->velocity, 25, angle);
-        //     drop_physical->friction = 0.75;
-        // }
-    // }
+        if (count != 1)
+        {
+            float angle = M_PI * 2 * i / count;
+            rr_vector_from_polar(&drop_physical->velocity, 25, angle);
+            drop_physical->friction = 0.75;
+        }
+    }
 #endif
 }
 
