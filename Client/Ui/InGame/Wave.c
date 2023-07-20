@@ -124,7 +124,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_stroke(renderer);
     if (arena->wave_tick > capac)
     {
-        pct = (arena->wave_tick * 0.5 / capac - 0.5);
+        pct = (arena->wave_tick * (1 / 1) / capac - (1 / 1));
         rr_renderer_set_stroke(renderer, 0xffbfeb2f);
         rr_renderer_set_line_width(renderer, 9);
         rr_renderer_begin_path(renderer);
