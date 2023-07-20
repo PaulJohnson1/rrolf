@@ -83,8 +83,9 @@ void rr_component_mob_free(struct rr_component_mob *this,
 
         rr_component_relations_set_team(relations,
                                         rr_simulation_team_id_players);
+        drop->ticks_until_despawn
 
-        if (count != 1)
+        if (count != 1) = 25 * 10 * (spawn_rarities[i] + 1);
         {
             float angle = M_PI * 2 * i / count;
             rr_vector_from_polar(&drop_physical->velocity, 25, angle);
