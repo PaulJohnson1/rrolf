@@ -168,8 +168,8 @@ int rr_server_lws_callback_function(struct lws *socket,
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
-      //  if (this->simulation_active)
-        //    return 0;
+        if (this->simulation_active)
+            return 0;
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
