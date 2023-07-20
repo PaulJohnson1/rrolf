@@ -52,7 +52,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_petal_id_magnet)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "+%d", -50 + 25 * rarity)] = 0;
+        extra[sprintf(extra, "+%d", -25 + 25 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Pickup range: ", 12, 0xff44ffdd),
