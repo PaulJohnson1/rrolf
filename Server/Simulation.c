@@ -539,7 +539,7 @@ uint32_t after_wave_time = 1;
             spawn_mob_swarm(this, 50);
     }
     else if (arena->wave_tick >=
-        wave_length * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 4)
+        wave_length * 25 * (spawn_time + after_wave_time) || arena->mob_count <= 10)
     {
         printf("wave %d done\n", arena->wave);
         arena->wave_tick = 0;

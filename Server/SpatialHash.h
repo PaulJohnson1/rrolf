@@ -3,7 +3,7 @@
 
 #include <Shared/Entity.h>
 
-#define SPATIAL_HASH_GRID_SIZE 8
+#define SPATIAL_HASH_GRID_SIZE 9
 #define RR_SPATIAL_HASH_GRID_LENGTH                                            \
     (((uint32_t)(RR_ARENA_RADIUS * 2) >> SPATIAL_HASH_GRID_SIZE) + 2)
 #define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (RR_MAX_COLLISION_COUNT)
