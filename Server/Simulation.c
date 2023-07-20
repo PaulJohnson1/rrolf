@@ -461,7 +461,7 @@ find_position_away_from_players(struct rr_simulation *this)
 // spawn 4-8 of some mob type in around the same position, avoid players
 static void spawn_mob_cluster(struct rr_simulation *this)
 {
-    uint32_t mob_count = rand() % 4 + 4; // random for some variety
+    uint32_t mob_count = rand() % 4 + 6; // random for some variety
     struct rr_vector central_position = find_position_away_from_players(this);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
@@ -486,7 +486,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
 // spawn maybe like 50 mobs UNIFORM DIST, NOT CLUSTERED or spawn 12 clusters
 static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
 {
-    uint32_t mob_count = rand() % 10 + count;
+    uint32_t mob_count = rand() % 15 + count;
     for (uint64_t i = 0; i < mob_count; ++i)
     {
         struct rr_vector position = find_position_away_from_players(this);
@@ -527,7 +527,7 @@ uint32_t after_wave_time = 1;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
-        if (arena->wave_tick % 48 == 0)
+        if (arena->wave_tick % 24 == 0)
             spawn_random_mob(this);
 
         for (uint64_t i = 0; i < 15; i++)
