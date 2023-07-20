@@ -15,6 +15,7 @@ void render_flower(uint8_t is_frown, struct rr_ui_element *element,
 {
     struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
+    rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
     rr_renderer_set_line_width(renderer, 3);
@@ -280,7 +281,7 @@ static void join_button_on_event(struct rr_ui_element *this, struct rr_game *gam
             proto_bug_write_uint8(&encoder, 69, "header");
             rr_websocket_send(&game->socket, encoder.start, encoder.current);
         }
-        else
+        else if (!game->socket_pending)
         {
             rr_game_connect_socket(game);
         }
