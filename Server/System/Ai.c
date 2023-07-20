@@ -139,7 +139,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         {
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = rand() % 25 + 75;
-            rr_component_physical_set_angle(physical, physical->angle + rr_frand() * 1.5 - 0.75);
+            // rr_component_physical_set_angle(physical, physical->angle + rr_frand() * 1.5 - 0.75);
             break;
         }
 
@@ -183,7 +183,8 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        float target_angle = rr_vector_theta(&delta);
+        struct rr_vector prediction = predict(delta, physical2->velocity, 15);
+        float target_angle = rr_vector_theta(&prediction);
 
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.03));
