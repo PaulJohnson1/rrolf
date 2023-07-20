@@ -10,6 +10,49 @@
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
+struct uranium_captures
+{
+    struct rr_simulation *simulation;
+    EntityIdx flower_id;
+    float x;
+    float y;
+    float damage;
+};
+
+static void uranium_damage(EntityIdx mob, void *_captures)
+{
+    struct uranium_captures *captures = _captures;
+    struct rr_simulation *simulation = captures->simulation;
+    struct rr_component_health *health = rr_simulation_get_health(simulation, mob);
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, mob);
+    if ((physical->x - captures->x) * (physical->x - captures->x) + (physical->y - captures->y) * (physical->y - captures->y) < 901 * 901)
+    {
+        rr_component_health_set_health(health, health->health - captures->damage);
+        rr_component_physical_set_server_animation_tick(physical, 5);
+        health->damage_paused = 5;
+        struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
+        if (ai->target_entity == RR_NULL_ENTITY)
+            ai->target_entity = captures->flower_id;
+    }
+}
+
+static void uranium_petal_system(struct rr_simulation *simulation, struct rr_component_petal *petal)
+{
+    if (--petal->effect_delay == 0)
+    {
+        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
+        struct rr_component_health *health = rr_simulation_get_health(simulation, petal->parent_id);
+        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, petal->parent_id);
+        struct rr_component_health *flower_health = rr_simulation_get_health(simulation, relations->owner);
+        struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, relations->owner);
+        rr_component_health_set_health(flower_health, flower_health->health - health->damage * 2.5);
+        rr_component_physical_set_server_animation_tick(flower_physical, 5);
+        petal->effect_delay = 25;
+        struct uranium_captures captures = { simulation, relations->owner, physical->x, physical->y, health->damage };
+        rr_simulation_for_each_mob(simulation, &captures, uranium_damage);
+    }
+}
+
 static void system_petal_detach(struct rr_simulation *simulation,
                                 struct rr_component_petal *petal,
                                 struct rr_component_player_info *player_info,
@@ -38,7 +81,7 @@ static void system_flower_petal_movement_logic(
     {
         struct rr_component_projectile *projectile =
             rr_simulation_get_projectile(simulation, id);
-        if (--projectile->shoot_delay <= 0)
+        if (--petal->effect_delay <= 0)
         {
             switch (petal->id)
             {
@@ -75,7 +118,7 @@ static void system_flower_petal_movement_logic(
     struct rr_vector position_vector = {physical->x, physical->y};
     struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
     float holdingRadius = 75;
-    if (player_info->input & 1 && !is_projectile)
+    if (player_info->input & 1 && !is_projectile && petal_data->id != rr_petal_id_uranium)
         holdingRadius = 150;
     else if (player_info->input & 2)
         holdingRadius = 45;
@@ -136,6 +179,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         }
         return;
     }
+    struct rr_component_flower *flower = rr_simulation_get_flower(simulation, player_info->flower_id);
+    rr_component_flower_set_face_flags(flower, player_info->input);
     player_info->modifiers.drop_pickup_radius = 25;
     uint32_t rotation_pos = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -219,14 +264,16 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale * data->damage / slot->count;
 
-                    if (data->id == rr_petal_id_missile ||
-                        data->id == rr_petal_id_peas ||
-                        data->id == rr_petal_id_egg)
+                    if (data->secondary_cooldown > 0)
                     {
                         struct rr_component_projectile *projectile =
                             rr_simulation_add_projectile(
                                 simulation, p_petal->simulation_id);
-                        projectile->shoot_delay = 12;
+                        petal->effect_delay = data->secondary_cooldown;
+                    }
+                    else if (slot->id == rr_petal_id_uranium)
+                    {
+                        petal->effect_delay = 25;
                     }
                 }
             }
@@ -247,10 +294,10 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rotation_pos, outer, inner, data);
                 if (data->id == rr_petal_id_egg)
                 {
-                    struct rr_component_projectile *projectile =
-                        rr_simulation_get_projectile(simulation,
+                    struct rr_component_petal *petal =
+                        rr_simulation_get_petal(simulation,
                                                      p_petal->simulation_id);
-                    if (projectile->shoot_delay > 0)
+                    if (petal->effect_delay > 0)
                         continue;
                     rr_simulation_get_petal(simulation, p_petal->simulation_id)
                         ->detached = 1;
@@ -282,7 +329,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->global_rotation += 0.1;
 }
 
-static void system_non_player_owned_petal_movement_logic(EntityIdx id,
+static void system_petal_misc_logic(EntityIdx id,
                                                          void *simulation)
 {
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
@@ -292,6 +339,8 @@ static void system_non_player_owned_petal_movement_logic(EntityIdx id,
         rr_simulation_get_relations(simulation, id);
     if (petal->detached == 0) // it's mob owned if this is true
     {
+        if (petal_data->id == rr_petal_id_uranium)
+            uranium_petal_system(simulation, petal);
         if (!rr_simulation_has_entity(simulation, relations->owner) ||
             physical->has_deletion_animation == 0)
         {
@@ -322,5 +371,5 @@ void rr_system_petal_behavior_tick(struct rr_simulation *simulation)
     rr_simulation_for_each_player_info(simulation, simulation,
                                        rr_system_petal_reload_foreach_function);
     rr_simulation_for_each_petal(simulation, simulation,
-                                 system_non_player_owned_petal_movement_logic);
+                                 system_petal_misc_logic);
 }

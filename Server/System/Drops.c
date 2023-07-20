@@ -75,6 +75,8 @@ static void drop_despawn_tick(EntityIdx entity, void *_captures)
         return;
     }
     --drop->ticks_until_despawn;
+    if (drop->ticks_until_despawn > 25 * 10 * (drop->rarity + 1) - 25)
+        return;
     struct drop_pick_up_captures captures;
     captures.self = entity;
     captures.simulation = this;

@@ -27,10 +27,9 @@ static uint8_t get_rarity_from_wave(uint32_t wave)
     float rarity_seed = rr_frand();
     uint8_t rarity = 0;
     for (; rarity < rr_rarity_id_max; ++rarity)
-        if (powf(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.2, powf(1.25, wave)) >
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.2, pow(1.25, wave)) >
             rarity_seed)
             break;
-
     return rarity;
 }
 
@@ -537,8 +536,8 @@ static void tick_wave(struct rr_simulation *this)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
 uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
-uint32_t spawn_time = 2;
-uint32_t after_wave_time = 1;
+uint32_t spawn_time = 1;
+uint32_t after_wave_time = 2;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {

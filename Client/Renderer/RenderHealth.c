@@ -21,7 +21,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
             rr_simulation_get_relations(simulation, entity);
 
         if (relations->owner == game->player_info->parent_id)
-            if (health->health == health->max_health)
+            if (health->lerp_health / health->max_health > 0.99)
                 return;
     }
 

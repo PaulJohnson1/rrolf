@@ -175,6 +175,24 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_quadratic_curve_to(renderer, 0,-30,0,0);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_uranium:
+        rr_renderer_set_fill(renderer, 0xff63bf2e);
+        rr_renderer_set_stroke(renderer, 0xff509b25);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer,-7,-5);
+        rr_renderer_line_to(renderer,-1,-9);
+        rr_renderer_line_to(renderer,7,-6);
+        rr_renderer_line_to(renderer,9,3);
+        rr_renderer_line_to(renderer,2,9);
+        rr_renderer_line_to(renderer,-5,6);
+        rr_renderer_line_to(renderer,-8,2);
+        rr_renderer_line_to(renderer,-7,-5);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }
@@ -254,7 +272,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer,  0, -75);
-            rr_renderer_rotate(renderer, -turning_value);
+            rr_renderer_rotate(renderer, -0);
             rr_renderer_translate(renderer,  0, 75);
            rr_renderer_draw_translated_image(renderer, &game->mob_triceratops_head, 0, -145);
         rr_renderer_context_state_free(renderer, &state);

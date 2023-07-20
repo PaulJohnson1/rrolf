@@ -27,6 +27,7 @@ enum rr_petal_id
     rr_petal_id_leaf,
     rr_petal_id_egg,
     rr_petal_id_magnet,
+    rr_petal_id_uranium,
     rr_petal_id_max
 };
 
@@ -66,6 +67,7 @@ struct rr_petal_data
     float health;
     float clump_radius;
     uint32_t cooldown;
+    uint32_t secondary_cooldown; //for stuff like projectiles
     uint8_t count[rr_rarity_id_max];
 };
 

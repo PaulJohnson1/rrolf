@@ -24,10 +24,6 @@ void rr_component_drop_init(struct rr_component_drop *this,
                             struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    RR_SERVER_ONLY(
-        this->ticks_until_despawn =
-            25 * 15; // scale seconds by 25 but we do a little trolling
-    )
 }
 
 void rr_component_drop_free(struct rr_component_drop *this,

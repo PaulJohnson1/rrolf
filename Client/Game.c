@@ -124,6 +124,11 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
     return game->socket_ready;
 }
 
+static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
+{
+    return game->socket_pending || game->socket_ready;
+}
+
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -175,24 +180,29 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_set_background(
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
-                                rr_ui_container_init(), 10, 20, 3,
+                                rr_ui_container_init(), 10, 20, 2,
                                 rr_ui_h_container_init(
                                     rr_ui_container_init(), 1, 15, 2,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
                                     rr_ui_info_init(), -1, 0),
-                                rr_ui_h_container_init(
-                                    rr_ui_container_init(), 10, 20, 4,
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[0]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[1]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[2]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[3])),
-                                rr_ui_set_justify(rr_ui_countdown_init(this), 1,
-                                                  0)),
-                            socket_ready),
+                                rr_ui_choose_element_init(
+                                    rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                                    rr_ui_h_container_init(
+                                        rr_ui_container_init(), 10, 20, 4,
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[0]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[1]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[2]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[3])),
+                                    rr_ui_set_justify(rr_ui_countdown_init(this), 1,
+                                                    0)
+                                    ),
+                                rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
+                                socket_ready)),
+                            socket_pending_or_ready),
                         0x40ffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15, 10,
@@ -315,6 +325,7 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
+            this->inventory[id][rarity] = 0;
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
                                        50);
@@ -521,7 +532,7 @@ void rr_game_init(struct rr_game *this)
                                &this->settings.displaying_debug_information);
     rr_local_storage_get_bytes("loadout", &this->settings.loadout);
     rr_local_storage_get_bytes("props", &this->settings.map_props);
-    rr_local_storage_get_bytes("screen_sake", &this->settings.screen_shake);
+    rr_local_storage_get_bytes("screen_shake", &this->settings.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->settings.show_ui_hitbox);
     rr_local_storage_get_bytes("slots_count", &this->settings.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->settings.use_mouse);
@@ -861,7 +872,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->settings.loadout);
     rr_local_storage_store_bytes("props", &this->settings.map_props,
                                  sizeof this->settings.map_props);
-    rr_local_storage_store_bytes("screen_sake", &this->settings.screen_shake,
+    rr_local_storage_store_bytes("screen_shake", &this->settings.screen_shake,
                                  sizeof this->settings.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->settings.show_ui_hitbox,
                                  sizeof this->settings.show_ui_hitbox);

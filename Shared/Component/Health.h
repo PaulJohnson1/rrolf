@@ -17,7 +17,7 @@ struct rr_component_health
     RR_SERVER_ONLY(float damage;)
     EntityIdx parent_id;
     uint8_t hidden : 1;
-    uint8_t damage_paused : 1;
+    RR_SERVER_ONLY(uint8_t damage_paused : 3;)
 };
 
 void rr_component_health_init(struct rr_component_health *,
