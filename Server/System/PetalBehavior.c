@@ -23,11 +23,16 @@ static void uranium_damage(EntityIdx mob, void *_captures)
 {
     struct uranium_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
-    struct rr_component_health *health = rr_simulation_get_health(simulation, mob);
-    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, mob);
-    if ((physical->x - captures->x) * (physical->x - captures->x) + (physical->y - captures->y) * (physical->y - captures->y) < 901 * 901)
+    struct rr_component_health *health =
+        rr_simulation_get_health(simulation, mob);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, mob);
+    if ((physical->x - captures->x) * (physical->x - captures->x) +
+            (physical->y - captures->y) * (physical->y - captures->y) <
+        901 * 901)
     {
-        rr_component_health_set_health(health, health->health - captures->damage);
+        rr_component_health_set_health(health,
+                                       health->health - captures->damage);
         rr_component_physical_set_server_animation_tick(physical, 5);
         health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
@@ -36,19 +41,28 @@ static void uranium_damage(EntityIdx mob, void *_captures)
     }
 }
 
-static void uranium_petal_system(struct rr_simulation *simulation, struct rr_component_petal *petal)
+static void uranium_petal_system(struct rr_simulation *simulation,
+                                 struct rr_component_petal *petal)
 {
     if (--petal->effect_delay == 0)
     {
-        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
-        struct rr_component_health *health = rr_simulation_get_health(simulation, petal->parent_id);
-        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, petal->parent_id);
-        struct rr_component_health *flower_health = rr_simulation_get_health(simulation, relations->owner);
-        struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, relations->owner);
-        rr_component_health_set_health(flower_health, flower_health->health - health->damage * 2.5);
+        struct rr_component_relations *relations =
+            rr_simulation_get_relations(simulation, petal->parent_id);
+        struct rr_component_health *health =
+            rr_simulation_get_health(simulation, petal->parent_id);
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(simulation, petal->parent_id);
+        struct rr_component_health *flower_health =
+            rr_simulation_get_health(simulation, relations->owner);
+        struct rr_component_physical *flower_physical =
+            rr_simulation_get_physical(simulation, relations->owner);
+        rr_component_health_set_health(flower_health, flower_health->health -
+                                                          health->damage * 2.5);
         rr_component_physical_set_server_animation_tick(flower_physical, 5);
         petal->effect_delay = 25;
-        struct uranium_captures captures = { simulation, relations->owner, physical->x, physical->y, health->damage };
+        struct uranium_captures captures = {simulation, relations->owner,
+                                            physical->x, physical->y,
+                                            health->damage};
         rr_simulation_for_each_mob(simulation, &captures, uranium_damage);
     }
 }
@@ -118,7 +132,8 @@ static void system_flower_petal_movement_logic(
     struct rr_vector position_vector = {physical->x, physical->y};
     struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
     float holdingRadius = 75;
-    if (player_info->input & 1 && !is_projectile && petal_data->id != rr_petal_id_uranium)
+    if (player_info->input & 1 && !is_projectile &&
+        petal_data->id != rr_petal_id_uranium)
         holdingRadius = 150;
     else if (player_info->input & 2)
         holdingRadius = 45;
@@ -179,7 +194,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         }
         return;
     }
-    struct rr_component_flower *flower = rr_simulation_get_flower(simulation, player_info->flower_id);
+    struct rr_component_flower *flower =
+        rr_simulation_get_flower(simulation, player_info->flower_id);
     rr_component_flower_set_face_flags(flower, player_info->input);
     player_info->modifiers.drop_pickup_radius = 25;
     uint32_t rotation_pos = 0;
@@ -192,8 +208,9 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         {
             struct rr_component_health *player_health =
                 rr_simulation_get_health(simulation, player_info->flower_id);
-            rr_component_health_set_health(player_health,
-                                           player_health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity]);
+            rr_component_health_set_health(
+                player_health, player_health->health +
+                                   0.04 * RR_PETAL_RARITY_SCALE[slot->rarity]);
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
@@ -287,16 +304,16 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 }
                 if (data->id == rr_petal_id_magnet)
                 {
-                    player_info->modifiers.drop_pickup_radius += -50 + data->id * 25;
+                    player_info->modifiers.drop_pickup_radius +=
+                        -50 + data->id * 25;
                 }
                 system_flower_petal_movement_logic(
                     simulation, p_petal->simulation_id, player_info,
                     rotation_pos, outer, inner, data);
                 if (data->id == rr_petal_id_egg)
                 {
-                    struct rr_component_petal *petal =
-                        rr_simulation_get_petal(simulation,
-                                                     p_petal->simulation_id);
+                    struct rr_component_petal *petal = rr_simulation_get_petal(
+                        simulation, p_petal->simulation_id);
                     if (petal->effect_delay > 0)
                         continue;
                     rr_simulation_get_petal(simulation, p_petal->simulation_id)
@@ -312,8 +329,10 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         0);
 
                     EntityIdx mob_id = p_petal->simulation_id =
-                        rr_simulation_alloc_mob(simulation, rr_mob_id_trex,
-                                                slot->rarity == 0 ? 0 : slot->rarity - 1, rr_simulation_team_id_players);
+                        rr_simulation_alloc_mob(
+                            simulation, rr_mob_id_trex,
+                            slot->rarity == 0 ? 0 : slot->rarity - 1,
+                            rr_simulation_team_id_players);
                     struct rr_component_physical *mob_physical =
                         rr_simulation_get_physical(simulation, mob_id);
                     rr_component_physical_set_x(mob_physical,
@@ -329,8 +348,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->global_rotation += 0.1;
 }
 
-static void system_petal_misc_logic(EntityIdx id,
-                                                         void *simulation)
+static void system_petal_misc_logic(EntityIdx id, void *simulation)
 {
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
     struct rr_component_physical *physical =
@@ -339,7 +357,7 @@ static void system_petal_misc_logic(EntityIdx id,
         rr_simulation_get_relations(simulation, id);
     if (petal->detached == 0) // it's mob owned if this is true
     {
-        if (petal_data->id == rr_petal_id_uranium)
+        if (petal->id == rr_petal_id_uranium)
             uranium_petal_system(simulation, petal);
         if (!rr_simulation_has_entity(simulation, relations->owner) ||
             physical->has_deletion_animation == 0)
