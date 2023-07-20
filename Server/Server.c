@@ -363,6 +363,11 @@ int rr_server_lws_callback_function(struct lws *socket,
                     client->player_accel_x = x / mag_1;
                     client->player_accel_y = y / mag_1;
                 }
+                else
+                {
+                    client->player_accel_x = 0;
+                    client->player_accel_y = 0;
+                }
             }
             else
             {
