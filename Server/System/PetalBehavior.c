@@ -151,8 +151,6 @@ static void system_flower_petal_movement_logic(
         rr_component_physical_set_angle(physical, curr_angle);
     physical->acceleration.x = 0.6f * chase_vector.x;
     physical->acceleration.y = 0.6f * chase_vector.y;
-    if (petal_data->id == rr_petal_id_uranium)
-        uranium_petal_system(simulation, petal);
 }
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                     void *simulation)
@@ -331,7 +329,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->global_rotation += 0.1;
 }
 
-static void system_non_player_owned_petal_movement_logic(EntityIdx id,
+static void system_petal_misc_logic(EntityIdx id,
                                                          void *simulation)
 {
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
@@ -341,6 +339,8 @@ static void system_non_player_owned_petal_movement_logic(EntityIdx id,
         rr_simulation_get_relations(simulation, id);
     if (petal->detached == 0) // it's mob owned if this is true
     {
+        if (petal_data->id == rr_petal_id_uranium)
+            uranium_petal_system(simulation, petal);
         if (!rr_simulation_has_entity(simulation, relations->owner) ||
             physical->has_deletion_animation == 0)
         {
@@ -371,5 +371,5 @@ void rr_system_petal_behavior_tick(struct rr_simulation *simulation)
     rr_simulation_for_each_player_info(simulation, simulation,
                                        rr_system_petal_reload_foreach_function);
     rr_simulation_for_each_petal(simulation, simulation,
-                                 system_non_player_owned_petal_movement_logic);
+                                 system_petal_misc_logic);
 }

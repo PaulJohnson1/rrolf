@@ -124,6 +124,11 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
     return game->socket_ready;
 }
 
+static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
+{
+    return game->socket_pending || game->socket_ready;
+}
+
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -175,24 +180,29 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_set_background(
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
-                                rr_ui_container_init(), 10, 20, 3,
+                                rr_ui_container_init(), 10, 20, 2,
                                 rr_ui_h_container_init(
                                     rr_ui_container_init(), 1, 15, 2,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
                                     rr_ui_info_init(), -1, 0),
-                                rr_ui_h_container_init(
-                                    rr_ui_container_init(), 10, 20, 4,
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[0]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[1]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[2]),
-                                    rr_ui_squad_player_container_init(
-                                        &this->squad_members[3])),
-                                rr_ui_set_justify(rr_ui_countdown_init(this), 1,
-                                                  0)),
-                            socket_ready),
+                                rr_ui_choose_element_init(
+                                    rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                                    rr_ui_h_container_init(
+                                        rr_ui_container_init(), 10, 20, 4,
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[0]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[1]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[2]),
+                                        rr_ui_squad_player_container_init(
+                                            &this->squad_members[3])),
+                                    rr_ui_set_justify(rr_ui_countdown_init(this), 1,
+                                                    0)
+                                    ),
+                                rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
+                                socket_ready)),
+                            socket_pending_or_ready),
                         0x40ffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15, 10,

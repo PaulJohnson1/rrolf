@@ -86,9 +86,9 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         if (flower->lerp_mouth == 0)
             flower->lerp_mouth = 15;
         flower->lerp_eye_x =
-            rr_lerp(flower->lerp_eye_x, flower->eye_x, 10 * delta);
+            rr_lerp(flower->lerp_eye_x, flower->eye_x, 20 * delta);
         flower->lerp_eye_y =
-            rr_lerp(flower->lerp_eye_y, flower->eye_y, 10 * delta);
+            rr_lerp(flower->lerp_eye_y, flower->eye_y, 20 * delta);
         if (flower->face_flags & 1)
             flower->lerp_mouth = rr_lerp(flower->lerp_mouth, 5, 20 * delta);
         else if (flower->face_flags & 2)
@@ -104,11 +104,11 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         if (player_info->lerp_camera_fov == 0)
             player_info->lerp_camera_fov = 0.5;
         player_info->lerp_camera_fov = rr_lerp(
-            player_info->lerp_camera_fov, player_info->camera_fov, 8 * delta);
+            player_info->lerp_camera_fov, player_info->camera_fov, 15 * delta);
         player_info->lerp_camera_x = rr_lerp(player_info->lerp_camera_x,
-                                             player_info->camera_x, 10 * delta);
+                                             player_info->camera_x, 15 * delta);
         player_info->lerp_camera_y = rr_lerp(player_info->lerp_camera_y,
-                                             player_info->camera_y, 10 * delta);
+                                             player_info->camera_y, 15 * delta);
     }
 
     if (rr_simulation_has_health(this, entity))
@@ -118,7 +118,7 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         if (health->lerp_health == 0)
             health->lerp_health = health->health;
         health->lerp_health =
-            rr_lerp(health->lerp_health, health->health, 10 * delta);
+            rr_lerp(health->lerp_health, health->health, 25 * delta);
     }
 }
 
