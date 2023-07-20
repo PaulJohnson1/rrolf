@@ -5,7 +5,7 @@
 
 #ifndef NDEBUG
 #define RR_UNREACHABLE(MESSAGE)                                                \
-    fputs(MESSAGE "\n", stderr);                                               \
+    assert(!MESSAGE);                                               \
     abort()
 #else
 #define RR_UNREACHABLE(MESSAGE) __builtin_unreachable()

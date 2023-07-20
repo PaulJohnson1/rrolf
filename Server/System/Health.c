@@ -66,8 +66,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
         if (rr_simulation_has_ai(this, entity1))
         {
             struct rr_component_ai *ai = rr_simulation_get_ai(this, entity1);
-            if (ai->target_entity ==
-                RR_NULL_ENTITY) // probably replaced by a is null check
+            if (ai->target_entity == RR_NULL_ENTITY)
             {
                 if (rr_simulation_has_petal(this, entity2))
                 {
@@ -79,8 +78,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     ai->target_entity = entity2;
                 }
-                if (ai->ai_type == rr_ai_type_neutral)
-                    ai->ai_state = rr_ai_state_attacking;
+                // if (ai->ai_aggro_type == rr_ai_aggro_type_triceratops)
+                // {
+                //     ai->ai_state = rr_ai_state_waiting_to_charge;
+                //     ai->ticks_until_next_action = 25;
+                // }
             }
         }
     }
@@ -106,8 +108,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     ai->target_entity = entity1;
                 }
-                if (ai->ai_type == rr_ai_type_neutral)
-                    ai->ai_state = rr_ai_state_attacking;
+                // if (ai->ai_aggro_type == rr_ai_aggro_type_triceratops)
+                // {
+                //     ai->ai_state = rr_ai_state_waiting_to_charge;
+                //     ai->ticks_until_next_action = 25;
+                // }
             }
         }
     }
@@ -131,9 +136,6 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
     for (uint32_t i = 0; i < physical->colliding_with_size; ++i)
         colliding_with_function(physical->colliding_with[i], &captures);
-    // rr_bitset_for_each_bit(physical->collisions, physical->collisions +
-    // (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures,
-    // colliding_with_function);
 }
 
 void rr_system_health_tick(struct rr_simulation *this)

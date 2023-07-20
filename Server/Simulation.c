@@ -136,38 +136,42 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     health->damage = mob_data->damage * rarity_scale->damage;
 
     rr_component_relations_set_team(relations, team_id);
-    switch (mob_id)
-    {
-    case rr_mob_id_stump:
-        rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
-        ai->ai_type = rr_ai_type_static;
-        break;
-    case rr_mob_id_pteranodon:
-    case rr_mob_id_dakotaraptor:
-    case rr_mob_id_trex:
-        ai->ai_type = rr_ai_type_aggressive;
-        break;
-    case rr_mob_id_spinosaurus_head:
-        ai->ai_type = rr_ai_type_neutral;
+    // switch (mob_id)
+    // {
+    // case rr_mob_id_stump:
+    //     rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
+    //     ai->ai_type = rr_ai_type_static;
+    //     break;
+    // case rr_mob_id_pteranodon:
+    // case rr_mob_id_dakotaraptor:
+    // case rr_mob_id_trex:
+    //     ai->ai_type = rr_ai_type_aggressive;
+    //     break;
+    // case rr_mob_id_spinosaurus_head:
+    //     ai->ai_type = rr_ai_type_neutral;
 
-    case rr_mob_id_spinosaurus_body:
-    case rr_mob_id_triceratops:
-        ai->ai_type = rr_ai_type_passive;
-        break;
-    default:
-        RR_UNREACHABLE("forgot to set ai type");
-    };
+    // case rr_mob_id_spinosaurus_body:
+    // case rr_mob_id_triceratops:
+    //     ai->ai_type = rr_ai_type_passive;
+    //     break;
+    // default:
+    //     RR_UNREACHABLE("forgot to set ai type");
+    // };
 
     switch (mob_id)
     {
     case rr_mob_id_pteranodon:
         ai->ai_aggro_type = rr_ai_aggro_type_pteranodon;
         break;
-    case rr_mob_id_spinosaurus_head:
+    case rr_mob_id_triceratops:
+        ai->ai_aggro_type = rr_ai_aggro_type_triceratops;
+        break;
     case rr_mob_id_stump:
+        ai->ai_aggro_type = rr_ai_aggro_type_none;
+        break;
+    case rr_mob_id_spinosaurus_head:
     case rr_mob_id_trex:
     case rr_mob_id_spinosaurus_body:
-    case rr_mob_id_triceratops:
     case rr_mob_id_dakotaraptor:
         ai->ai_aggro_type = rr_ai_aggro_type_default;
         break;
@@ -177,7 +181,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
 
     if (mob_id == rr_mob_id_spinosaurus_head)
     {
-        ai->ai_type = rr_ai_type_neutral;
+        // ai->ai_type = rr_ai_type_neutral;
         EntityIdx prev_node = entity;
         struct rr_component_centipede *centipede =
             rr_simulation_add_centipede(this, entity);
