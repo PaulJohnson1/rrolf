@@ -487,8 +487,6 @@ int rr_server_lws_callback_function(struct lws *socket,
         }
         case 70:
         {
-            puts("recved");
-            printf("%d %d\n", size - 1, size);
             uint64_t local_size = size - 1;
             if (local_size % 3 != 1)
                 return 0;
@@ -503,10 +501,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                     proto_bug_read_uint8(&encoder, "rar");
                 pos = proto_bug_read_uint8(&encoder, "pos");
             }
-            puts("end of story");
             if (this->simulation_active && client->player_info == NULL)
             {
-                puts("gotem");
                 //spawn da player ez
                 rr_server_client_create_player_info(client);
                 rr_server_client_create_flower(client);
