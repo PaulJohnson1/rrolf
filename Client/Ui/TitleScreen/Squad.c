@@ -288,11 +288,27 @@ static void join_button_on_event(struct rr_ui_element *this, struct rr_game *gam
     }
 }
 
+static void squad_join_button_on_event(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    struct labeled_button_metadata *data = this->data;
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (!game->socket_pending)
+        {
+            if (game->socket_ready)
+                rr_websocket_disconnect(&game->socket, game);
+            rr_game_connect_socket(game);
+        }
+    }
+}
+
 struct rr_ui_element *rr_ui_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
     this->fill = 0xffd4b30c;
     this->poll_events = labeled_button_poll_events;
+    this->on_event = squad_join_button_on_event;
     return this;
 }
 

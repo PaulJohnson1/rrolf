@@ -20,6 +20,7 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/InGame/Deathscreen.c
     Ui/InGame/Loadout.c
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c

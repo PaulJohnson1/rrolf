@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Game.h>
 #ifndef EMSCRIPTEN
 #include <libwebsockets.h>
 #else
@@ -120,7 +121,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
 #endif
 }
 
-void rr_websocket_disconnect(struct rr_websocket *this)
+void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
 {
 #ifdef EMSCRIPTEN
     EM_ASM({
@@ -130,6 +131,8 @@ void rr_websocket_disconnect(struct rr_websocket *this)
 #else
 #endif
     free(this->rivet_player_token);
+    game->socket_ready = 0;
+    game->simulation_ready = 0;
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)

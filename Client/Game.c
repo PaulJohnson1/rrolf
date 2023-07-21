@@ -235,6 +235,8 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
     rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_waiting_respawn_screen_init());
+    rr_ui_container_add_element(this->window, rr_ui_finished_game_screen());
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_justify(

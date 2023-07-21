@@ -18,21 +18,6 @@ static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
         (*(data->toggle)) ^= 1;
 }
 
-static void squad_join_button_on_event(struct rr_ui_element *this,
-                                       struct rr_game *game)
-{
-    struct labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
-    {
-        if (!game->socket_pending)
-        {
-            if (game->socket_ready)
-                rr_websocket_disconnect(&game->socket);
-            rr_game_connect_socket(game);
-        }
-    }
-}
-
 static void labeled_button_on_render(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
@@ -42,12 +27,14 @@ static void labeled_button_on_render(struct rr_ui_element *this,
         renderer->state.filter.amount = 0.2;
 
     this->abs_width =
-        20 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
+        10 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
+    if (this->abs_width < this->abs_height)
+        this->abs_width = this->abs_height;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
     rr_renderer_set_stroke(renderer, this->fill);
-    rr_renderer_set_line_width(renderer, 6);
+    rr_renderer_set_line_width(renderer, this->abs_height / 8);
     rr_renderer_begin_path(renderer);
     rr_renderer_round_rect(renderer, -this->abs_width / 2,
                            -this->abs_height / 2, this->abs_width,
@@ -77,7 +64,7 @@ struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
     this->abs_height = this->height = height;
     this->abs_width = this->width = rr_renderer_get_text_size(text) * height;
     this->on_render = labeled_button_on_render;
-    this->on_event = squad_join_button_on_event;
+    this->on_event = button_on_event;
     this->fill = 0xff0000ff;
     return this;
 }

@@ -7,6 +7,7 @@ struct lws_context;
 struct lws;
 #else
 #endif
+struct rr_game;
 
 extern uint8_t output_packet[2 * 1024];
 
@@ -35,5 +36,5 @@ struct rr_websocket
 void rr_websocket_init(struct rr_websocket *);
 void rr_websocket_connect_to(struct rr_websocket *, char const *, uint16_t,
                              int secure);
-void rr_websocket_disconnect(struct rr_websocket *);
+void rr_websocket_disconnect(struct rr_websocket *, struct rr_game *);
 void rr_websocket_send(struct rr_websocket *, uint8_t *, uint8_t *);

@@ -12,6 +12,7 @@
 #include <Client/Ui/Engine.h>
 
 #include <Shared/Utilities.h>
+#include <Shared/Api.h>
 
 struct inventory_button_metadata
 {
@@ -154,7 +155,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
                                   rr_ui_container_init(), 10, 10, 2,
-                                  rr_ui_text_init("Inventory", 24, 0xffffffff),
+                                rr_ui_text_init("Inventory", 24, 0xffffffff),
                                   rr_ui_scroll_container_init(this, 400)),
                               -1, 1),
             20),
@@ -191,7 +192,10 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         if (game->bottom_ui_open == 1)
             game->bottom_ui_open = 0;
         else
+        {
             game->bottom_ui_open = 1;
+            rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.token, game);
+        }
     }
 }
 
