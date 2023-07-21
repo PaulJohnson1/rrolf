@@ -241,6 +241,14 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                             uint8_t id, float animation_tick, float turning_value)
 {
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+    rr_renderer_set_line_width(renderer, 8);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, 75);
+    rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
+    /*
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
@@ -371,6 +379,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     }
 
     rr_renderer_context_state_free(renderer, &original_state);
+    */
 }
 
 void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
