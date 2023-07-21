@@ -89,18 +89,21 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         strncat(petals_string, buffer,
                 sizeof petals_string - strlen(petals_string) - 1);
     }
-
-    struct api_join_captures captures;
-    captures.rivet_uuid = this->client->rivet_account.uuid;
-    captures.petals_string = petals_string;
-    pthread_t thread_id;
-    int result = pthread_create(&thread_id, NULL, api_join, &captures);
     if (simulation->game_over)
-        pthread_join(thread_id);
+    {
+        rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
+    }
     else
+    {
+        struct api_join_captures captures;
+        captures.rivet_uuid = this->client->rivet_account.uuid;
+        captures.petals_string = petals_string;
+        pthread_t thread_id;
+        int result = pthread_create(&thread_id, NULL, api_join, &captures);
         pthread_detach(thread_id);
+    }
     // api_join(&captures);
-    //rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
+    //
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
