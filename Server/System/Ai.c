@@ -42,7 +42,7 @@ static void tick_idle_move(EntityIdx entity, struct rr_simulation *simulation)
         rr_simulation_get_physical(simulation, entity);
 
     struct rr_vector accel;
-    rr_vector_from_polar(&accel, 2.5f, physical->angle);
+    rr_vector_from_polar(&accel, 0.5f, physical->angle);
     rr_vector_add(&physical->acceleration, &accel);
 }
 
@@ -58,7 +58,7 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
         ai->ai_state = rr_ai_state_idle;
     }
     struct rr_vector accel;
-    rr_vector_from_polar(&accel, 2.5f, physical->angle);
+    rr_vector_from_polar(&accel, 0.5f, physical->angle);
     rr_vector_add(&physical->acceleration, &accel);
 }
 
@@ -187,7 +187,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         float target_angle = rr_vector_theta(&prediction);
 
         rr_component_physical_set_angle(
-            physical, rr_angle_lerp(physical->angle, target_angle, 0.03));
+            physical, rr_angle_lerp(physical->angle, target_angle, 0.05));
 
         rr_vector_from_polar(&accel, 2, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);

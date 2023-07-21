@@ -539,10 +539,18 @@ static void tick_wave(struct rr_simulation *this)
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
 
+struct count_mob_captures
+{
+    struct rr_simulation *simulation;
+    uint64_t *count;
+};
+
 static void count_mobs(EntityIdx a, void *b)
 {
-    uint64_t *c = b;
-    ++*c;
+    struct count_mob_captures *c = b;
+    struct rr_component_relations *r = rr_simulation_get_relations(c->simulation, a);
+    if (r->team != rr_simulation_team_id_players)
+        ++*c->count;
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
@@ -559,13 +567,16 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
 
+    struct count_mob_captures captures;
+    captures.simulation = this;
     if (!this->game_over)
     {
         uint64_t count;
+        captures.count = &count;
         do {
             tick_wave(this);
             count = 0;
-            rr_simulation_for_each_mob(this, &count, count_mobs);
+            rr_simulation_for_each_mob(this, &captures, count_mobs);
         } while (count < 9);
     }
     // delete pending deletions
