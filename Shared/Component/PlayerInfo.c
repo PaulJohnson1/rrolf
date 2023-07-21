@@ -6,6 +6,7 @@
 #ifdef RR_SERVER
 #include <pthread.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/time.h>
 
 #include <Server/Client.h>
@@ -46,6 +47,7 @@ void *api_join(void *_captures)
 {
     struct api_join_captures *captures = _captures;
     rr_api_merge_petals(captures->rivet_uuid, captures->petals_string);
+    puts("api join thread end");
     return NULL;
 }
 
@@ -89,6 +91,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         strncat(petals_string, buffer,
                 sizeof petals_string - strlen(petals_string) - 1);
     }
+    puts("api join start");
     if (simulation->game_over)
     {
         rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
@@ -102,6 +105,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         int result = pthread_create(&thread_id, NULL, api_join, &captures);
         pthread_detach(thread_id);
     }
+    puts("api join end");
     // api_join(&captures);
     //
 
