@@ -74,9 +74,17 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
     if (data->id == game->crafting_data.crafting_id)
     {
         if (data->rarity == game->crafting_data.crafting_rarity)
-            count -= game->crafting_data.count;
-        else if (data->rarity == game->crafting_data.crafting_rarity + 1)
-            count -= game->crafting_data.success_count;
+        {
+            if (count >= game->crafting_data.count)
+                count -= game->crafting_data.count;
+            else
+            {
+                game->crafting_data.count = count;
+                count = 0;
+            }
+        }
+        //else if (data->rarity == game->crafting_data.crafting_rarity + 1)
+           // count -= game->crafting_data.success_count;
     }
     data->count = count;
     return count;
