@@ -5,6 +5,8 @@
 
 #ifdef RR_SERVER
 #include <pthread.h>
+#include <unistd.h>
+#include <sys/time.h>
 
 #include <Server/Client.h>
 #endif
@@ -33,20 +35,26 @@ enum
     state_flags_all = 0b111111
 };
 
-// #ifdef RR_SERVER
-// struct api_join_captures
-// {
-//     char const *rivet_uuid;
-//     char *petals_string;
-// };
+#ifdef RR_SERVER
+struct api_join_captures
+{
+    char const *rivet_uuid;
+    char *petals_string;
+};
 
-// void *api_join(void *_captures)
-// {
-//     struct api_join_captures *captures = _captures;
-//     rr_api_merge_petals(captures->rivet_uuid, captures->petals_string);
-//     return NULL;
-// }
-// #endif
+void *api_join(void *_captures)
+{
+    struct api_join_captures *captures = _captures;
+    rr_api_merge_petals(captures->rivet_uuid, captures->petals_string);
+    return NULL;
+}
+
+void *sleeper(void *arg)
+{
+    usleep(10000000);
+    return NULL;
+}
+#endif
 
 void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
@@ -82,14 +90,17 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                 sizeof petals_string - strlen(petals_string) - 1);
     }
 
-    // struct api_join_captures captures;
-    // captures.rivet_uuid = this->client->rivet_account.uuid;
-    // captures.petals_string = petals_string;
-    // pthread_t thread_id;
-    // int result = pthread_create(&thread_id, NULL, api_join, &captures);
-    // pthread_detach(thread_id);
+    struct api_join_captures captures;
+    captures.rivet_uuid = this->client->rivet_account.uuid;
+    captures.petals_string = petals_string;
+    pthread_t thread_id;
+    int result = pthread_create(&thread_id, NULL, api_join, &captures);
+    if (simulation->game_over)
+        pthread_join(thread_id);
+    else
+        pthread_detach(thread_id);
     // api_join(&captures);
-    rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
+    //rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
