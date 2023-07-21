@@ -398,6 +398,8 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
                 physical, physical->server_animation_tick - 1);
             physical->ticked_animation = 1;
         }
+        if (rr_simulation_has_health(simulation, id))
+            rr_component_health_set_health(rr_simulation_get_health(simulation, id), 0);
     }
     else
     {
