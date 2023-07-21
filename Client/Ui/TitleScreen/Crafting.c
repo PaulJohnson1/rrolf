@@ -88,7 +88,7 @@ void rr_api_on_craft_result(char *data, void *_captures)
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->crafting_data.animation == 0)
     {
         if (game->crafting_data.success_count == 0 &&
             game->crafting_data.count >= 5 &&
