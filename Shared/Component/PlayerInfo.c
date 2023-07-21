@@ -70,7 +70,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    char* petals_string[5000] = {0}; // Ensure this is large enough
+    char petals_string[5000] = {0}; // Ensure this is large enough
     char buffer[100] = {0};         // Temporary buffer for each item
 
     for (struct rr_drop_picked_up *i = this->collected_this_run;
