@@ -426,8 +426,12 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            rr_component_player_info_petal_swap(client->player_info,
-                                                &this->simulation, pos);
+            while (pos != 0 && pos <= 10)
+            {
+                rr_component_player_info_petal_swap(client->player_info,
+                                                &this->simulation, pos - 1);
+                pos = proto_bug_read_uint8(&encoder, "petal switch");
+            }
             break;
         }
         case 3:

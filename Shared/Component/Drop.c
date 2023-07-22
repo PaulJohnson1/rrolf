@@ -61,9 +61,6 @@ void rr_component_drop_read(struct rr_component_drop *this,
     FOR_EACH_PUBLIC_FIELD
 #undef X
     if (state & state_flags_hidden)
-    {
         this->hidden = proto_bug_read_uint8(encoder, "drop hidden");
-        printf("Fdsadfsadf %d\n", this->hidden);
-    }
 }
 #endif

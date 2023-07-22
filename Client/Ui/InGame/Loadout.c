@@ -53,7 +53,8 @@ static void petal_switch_button_event(struct rr_ui_element *this,
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
         proto_bug_write_uint8(&encoder, 2, "header");
-        proto_bug_write_uint8(&encoder, data->pos % 10, "petal switch");
+        proto_bug_write_uint8(&encoder, (data->pos % 10) + 1, "petal switch");
+        proto_bug_write_uint8(&encoder, 0, "petal switch");
         rr_websocket_send(&game->socket, encoder.start, encoder.current);
     }
     else
