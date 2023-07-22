@@ -74,8 +74,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  9,  12,
-                                                            15, 25, 50, 5};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  12,
+                                                            16, 25, 45, 5};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
                                                               5, 5, 7};
 
@@ -142,33 +142,29 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 static void init_loot_tables()
 {
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
-                    rr_petal_id_light, 0.05);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1],
-                    rr_petal_id_leaf, 0.15);
+                    rr_petal_id_light, 0.15);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_light,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_rock,
                     0.25);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_stinger,
+                    0.10);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_faster,
+                    0.05);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_rock,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.15);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_uranium,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_leaf,
+                    0.25);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_egg,
                     0.005);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_peas,
-                    0.5);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
-                    rr_petal_id_stinger, 0.1);
+                    rr_petal_id_magnet, 0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
-                    rr_petal_id_leaf, 0.2);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
-                    rr_petal_id_faster, 0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[2],
-                    rr_petal_id_egg, 0.01);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[3],
-                    rr_petal_id_magnet, 0.02);
+                    rr_petal_id_uranium, 0.01);
 }
 
 void rr_static_data_init()

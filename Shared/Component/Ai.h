@@ -28,6 +28,7 @@ enum rr_ai_aggro_type
     rr_ai_aggro_type_default,
     rr_ai_aggro_type_static,
     rr_ai_aggro_type_pteranodon,
+    rr_ai_aggro_type_t_rex,
     rr_ai_aggro_type_triceratops
 };
 
