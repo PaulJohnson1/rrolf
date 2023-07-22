@@ -38,6 +38,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s", param_1,
              param_2);
+    printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
