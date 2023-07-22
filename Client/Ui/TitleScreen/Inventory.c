@@ -59,7 +59,7 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
                                             struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    uint32_t count = game->inventory[data->id][data->rarity];
+    int32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
         if (game->settings.loadout[i].id == data->id &&
