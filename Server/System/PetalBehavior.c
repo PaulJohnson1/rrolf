@@ -233,13 +233,13 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             }
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
-                uint8_t cd =
+                float cd =
                     ((float)p_petal->cooldown_ticks / data->cooldown) * 255;
                 if (cd > max_cd)
                 {
                     if (cd > 255)
                         cd = 255;
-                    max_cd = cd;
+                    max_cd = (uint8_t) cd;
                 }
                 if (--p_petal->cooldown_ticks <= 0)
                 {
