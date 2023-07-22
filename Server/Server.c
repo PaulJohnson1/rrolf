@@ -32,6 +32,7 @@ static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 //loadout validation
 void rr_api_on_get_petals(char *json, void *_client)
 {
+    puts("attempting petal validation");
     struct rr_server_client *client = _client;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     memset(&inventory[0], 0, sizeof inventory);
@@ -381,6 +382,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                 0; // null terminator for uuid
             proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
+            
+            printf("client connect info: %s %s\n", this->clients[i].rivet_account.uuid, this->clients[i].rivet_account.token);
 
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
