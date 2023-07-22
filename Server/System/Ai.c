@@ -58,7 +58,7 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
         ai->ai_state = rr_ai_state_idle;
     }
     struct rr_vector accel;
-    rr_vector_from_polar(&accel, 0.5f, physical->angle);
+    rr_vector_from_polar(&accel, 1.0f, physical->angle);
     rr_vector_add(&physical->acceleration, &accel);
 }
 
@@ -189,7 +189,59 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.05));
 
-        rr_vector_from_polar(&accel, 2, physical->angle);
+        rr_vector_from_polar(&accel, 4, physical->angle);
+        rr_vector_add(&physical->acceleration, &accel);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+static void tick_ai_aggro_t_rex(EntityIdx entity,
+                                      struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = ai_get_nearest_flower(entity, simulation);
+    if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
+    {
+        ai->ai_state = rr_ai_state_attacking;
+        ai->ticks_until_next_action = 25;
+    }
+    else
+    {
+        ai->target_entity = RR_NULL_ENTITY;
+        ai->ai_state = rr_ai_state_idle;
+    }
+    
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_idle:
+        tick_idle(entity, simulation);
+        break;
+
+    case rr_ai_state_idle_moving:
+        tick_idle_moving(entity, simulation);
+        break;
+    case rr_ai_state_attacking:
+    {
+        struct rr_vector accel;
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        //struct rr_vector prediction = predict(delta, physical2->velocity, 4);
+        float target_angle = rr_vector_theta(&delta);
+
+        rr_component_physical_set_angle(
+            physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
+
+        rr_vector_from_polar(&accel, 2.5, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -205,7 +257,8 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    ai->target_entity = ai_get_nearest_flower(entity, simulation);
+    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = ai_get_nearest_flower(entity, simulation);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_missile_shoot_delay))
@@ -248,7 +301,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         if (distance > 500)
         {
             struct rr_vector accel;
-            rr_vector_from_polar(&accel, 0.25f, physical->angle);
+            rr_vector_from_polar(&accel, 0.8f, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
         }
         break;
@@ -340,6 +393,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_ai_aggro_type_triceratops:
         tick_ai_aggro_triceratops(entity, this);
+        break;
+    case rr_ai_aggro_type_t_rex:
+        tick_ai_aggro_t_rex(entity, this);
         break;
     case rr_ai_aggro_type_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);
