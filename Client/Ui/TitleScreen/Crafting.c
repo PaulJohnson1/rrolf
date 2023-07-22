@@ -269,8 +269,8 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
-    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer,
                                   game->crafting_data.crafting_rarity + 1);
     rr_renderer_render_petal_with_background(renderer, game, game->crafting_data.crafting_id, game->crafting_data.crafting_rarity + 1);
