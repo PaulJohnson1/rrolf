@@ -146,9 +146,9 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_rock,
                     0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_stinger,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_faster,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_faster,
                     0.05);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
