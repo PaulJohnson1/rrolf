@@ -630,7 +630,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
-            proto_bug_write_varint(&verify_encoder, account_token_size,
+            proto_bug_write_varuint(&verify_encoder, account_token_size,
                                    "rivet account token size");
             proto_bug_write_string(&verify_encoder,
                                    this->socket.rivet_player_token, token_size,
