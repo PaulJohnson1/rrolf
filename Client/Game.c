@@ -55,6 +55,8 @@ void rr_api_on_get_petals(char *json, void *a)
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             game->inventory[id][rarity] = 0;
+    
+    puts("get start");
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -73,7 +75,7 @@ void rr_api_on_get_petals(char *json, void *a)
         cJSON_Delete(parsed);
         return;
     }
-
+    puts("get mid");
     for (cJSON *petal_key = petals->child; petal_key != NULL;
          petal_key = petal_key->next)
     {
@@ -92,6 +94,7 @@ void rr_api_on_get_petals(char *json, void *a)
     }
 
     cJSON_Delete(parsed);
+    puts("get end");
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
