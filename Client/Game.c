@@ -707,10 +707,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         proto_bug_read_uint8(&encoder, "rar");
                 }
             }
+            printf("%d protocol\n", this->protocol_state);
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            for (uint32_t i = 0; i < 20; ++i)
+            for (uint32_t i = 0; i < this->settings.slots_unlocked; ++i)
             {
                 if (this->protocol_state & (1 << i))
                 {
@@ -719,6 +720,14 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                           this->settings.loadout[i].id, "id");
                     proto_bug_write_uint8(
                         &encoder2, this->settings.loadout[i].rarity, "rar");
+                }
+                if (this->protocol_state & (1 << (i + 10)))
+                {
+                    proto_bug_write_uint8(&encoder2, i + 1 + 10, "pos");
+                    proto_bug_write_uint8(&encoder2,
+                                          this->settings.loadout[i + 10].id, "id");
+                    proto_bug_write_uint8(
+                        &encoder2, this->settings.loadout[i + 10].rarity, "rar");
                 }
             }
             proto_bug_write_uint8(&encoder2, 0, "pos");
@@ -1071,14 +1080,24 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_write_uint8(&encoder, 3, "cheat type");
             rr_websocket_send(&this->socket, encoder.start, encoder.current);
         }
-        if (this->simulation_ready &&
-            rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              13 /* enter */))
+        if (this->simulation_ready)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, 1, "header");
-            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+            proto_bug_write_uint8(&encoder, 2, "header");
+            uint8_t should_write = 0;
+            uint8_t switch_all = rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
+            for (uint8_t n = 0; n < this->settings.slots_unlocked; ++n)
+                if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 48 + n) || switch_all)
+                {
+                    proto_bug_write_uint8(&encoder, n == 0 ? 10 : n, "petal switch");
+                    should_write = 1;
+                }
+            if (should_write)
+            {
+                proto_bug_write_uint8(&encoder, 0, "petal switch");
+                rr_websocket_send(&this->socket, encoder.start, encoder.current);
+            }
         }
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
