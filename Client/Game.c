@@ -820,6 +820,8 @@ void player_info_finder(struct rr_game *this)
 static void render_background(struct rr_component_player_info *player_info,
                               struct rr_game *this, uint32_t prop_amount)
 {
+    if (this->settings.ourpetsnake_mode)
+        return;
     double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
