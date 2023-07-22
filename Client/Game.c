@@ -632,7 +632,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_string(&verify_encoder,
                                    this->socket.rivet_player_token, token_size,
                                    "rivet token");
-            printf("%s %s bruh no gg\n", this->socket.rivet_player_token, this->socket.uuid);
             proto_bug_write_string(&verify_encoder, this->socket.uuid,
                                    uuid_size, "rivet uuid");
             rr_websocket_send(&this->socket, verify_encoder.start,
