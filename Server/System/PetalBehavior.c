@@ -115,9 +115,9 @@ static void system_flower_petal_movement_logic(
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
-                rr_vector_from_polar(&physical->acceleration, 10.0f,
+                rr_vector_from_polar(&physical->acceleration, 7.5f,
                                      physical->angle);
-                rr_vector_from_polar(&physical->velocity, 100.0f,
+                rr_vector_from_polar(&physical->velocity, 80.0f,
                                      physical->angle);
                 projectile->ticks_until_death = 25;
                 break;
