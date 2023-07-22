@@ -510,6 +510,7 @@ void rr_server_init(struct rr_server *this)
 {
     printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
+    this->countdown_ticks = 25 * 120;
     rr_static_data_init();
     rr_simulation_init(&this->simulation);
 }
@@ -572,6 +573,11 @@ void rr_server_tick(struct rr_server *this)
             if (rr_bitset_get(this->clients_in_use, i))
                 all_ready &= this->clients[i].ready;
 
+        if (this->countdown_ticks > 0)
+            --this->countdown_ticks;
+        else
+            all_ready = 1;
+        
         if (client_count && all_ready)
         {
             if (--this->ticks_until_simulation_create == 0)
