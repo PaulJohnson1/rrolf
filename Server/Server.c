@@ -37,15 +37,21 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
     rr_component_player_info_set_slot_count(this->player_info, 10);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
-        uint8_t id = this->player_info->slots[i].id = this->loadout[i].id;
+        uint8_t id = = this->loadout[i].id;
         uint8_t rarity = this->player_info->slots[i].rarity =
             this->loadout[i].rarity;
         if (rarity > rr_rarity_id_legendary)
             id = rr_petal_id_no_petal;
+        this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        this->player_info->secondary_slots[i].id = this->loadout[i + 10].id;
-        this->player_info->secondary_slots[i].rarity =
-            this->loadout[i + 10].rarity;
+
+        id = this->loadout[i + 10].id;
+        rarity = this->loadout[i + 10].rarity;
+        if (rarity > rr_rarity_id_legendary)
+            id = rr_petal_id_no_petal;
+        this->player_info->secondary_slots[i].id = id;
+        this->player_info->secondary_slots[i].rarity = rarity;
+            
     }
     // rr_server_client_create_flower(this);
 }
