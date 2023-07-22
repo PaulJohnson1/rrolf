@@ -50,6 +50,7 @@ void validate_loadout(struct rr_game *this)
 void rr_api_on_get_petals(char *json, void *a)
 {
     struct rr_game *game = a;
+    puts(json);
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
