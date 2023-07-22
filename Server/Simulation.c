@@ -426,8 +426,6 @@ static void position_finder(EntityIdx id, void *_captures)
     struct rr_vector delta = {physical->x, physical->y};
     rr_vector_sub(&delta, &captures->test_position);
 
-    printf("%f %f\n", delta.x, delta.y);
-
     if (delta.x * delta.x + delta.y * delta.y < 500 * 500)
         captures->invalid = 1;
 }
