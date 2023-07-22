@@ -707,7 +707,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         proto_bug_read_uint8(&encoder, "rar");
                 }
             }
-            printf("%d protocol\n", this->protocol_state);
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");

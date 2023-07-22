@@ -150,12 +150,7 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
         EntityIdx id = slot->petals[i].simulation_id;
         if (id != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, id))
         {
-            struct rr_component_physical *physical =
-                rr_simulation_get_physical(simulation, id);
-            struct rr_component_health *health =
-                rr_simulation_get_health(simulation, id);
-
-            rr_component_health_set_health(health, 0);
+            rr_simulation_request_entity_deletion(simulation, id);
 
             slot->petals[i].simulation_id = RR_NULL_ENTITY;
         }
@@ -169,7 +164,7 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
 
     slot->count = RR_PETAL_DATA[slot->id].count[slot->rarity];
     for (uint32_t i = 0; i < slot->count; ++i)
-        slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown;
+        slot->petals[i].cooldown_ticks = RR_PETAL_DATA[slot->id].cooldown + 25;
     this->protocol_state |= state_flags_petals;
 }
 
