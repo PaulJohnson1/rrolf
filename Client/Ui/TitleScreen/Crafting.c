@@ -313,16 +313,29 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    uint32_t count = game->inventory[data->id][data->rarity];
+    int32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
         if (game->settings.loadout[i].id == data->id &&
             game->settings.loadout[i].rarity == data->rarity)
-            --count;
+            {
+                if (count > 0)
+                    --count;
+                else
+                    game->settings.loadout[i].id = 0;
+            }
     }
     if (data->id == game->crafting_data.crafting_id)
         if (data->rarity == game->crafting_data.crafting_rarity)
-            count -= game->crafting_data.count;
+        {
+            if (count >= game->crafting_data.count)
+                count -= game->crafting_data.count;
+            else
+            {
+                game->crafting_data.count = count;
+                count = 0;
+            }
+        }
     data->count = count;
     data->secondary_animation =
         rr_lerp(data->secondary_animation, count == 0, 0.2);

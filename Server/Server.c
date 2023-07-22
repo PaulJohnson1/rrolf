@@ -569,10 +569,15 @@ void rr_server_tick(struct rr_server *this)
     else
     {
         uint8_t all_ready = 1;
+        uint8_t has_client = 0;
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (rr_bitset_get(this->clients_in_use, i))
+            {
                 all_ready &= this->clients[i].ready;
-
+                has_client = 1;
+            }
+        if (!has_client)
+            this->countdown_ticks = 25 * 120;
         if (this->countdown_ticks > 0)
             --this->countdown_ticks;
         else
