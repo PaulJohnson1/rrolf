@@ -58,6 +58,7 @@ void rr_api_on_get_petals(char *json, void *a)
     
     puts("get start");
     cJSON *parsed = cJSON_Parse(json);
+    puts("parse end");
     if (parsed == NULL)
     {
         const char *error_ptr = cJSON_GetErrorPtr();
@@ -67,8 +68,10 @@ void rr_api_on_get_petals(char *json, void *a)
         }
         return;
     }
+    puts("get smid");
 
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
+    puts("get petals");
     if (petals == NULL || !cJSON_IsObject(petals))
     {
         fprintf(stderr, "petals is missing or is not an object\n");
