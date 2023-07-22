@@ -37,7 +37,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
     rr_component_player_info_set_slot_count(this->player_info, 10);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
-        uint8_t id = = this->loadout[i].id;
+        uint8_t id = this->loadout[i].id;
         uint8_t rarity = this->player_info->slots[i].rarity =
             this->loadout[i].rarity;
         if (rarity > rr_rarity_id_legendary)
