@@ -355,8 +355,10 @@ int rr_server_lws_callback_function(struct lws *socket,
                 proto_bug_read_varuint(&encoder, "rivet token size");
             uint64_t uuid_encountered_size =
                 proto_bug_read_varuint(&encoder, "uuid size");
+            uint64_t account_token_size =
+                proto_bug_read_varuint(&encoder, "rivet account token size");
 
-            if (16 + encountered_size + uuid_encountered_size >= size)
+            if (16 + encountered_size + uuid_encountered_size + account_token_size >= size)
             {
                 printf("%lu %lu\n", size,
                        encountered_size + uuid_encountered_size);
@@ -382,8 +384,11 @@ int rr_server_lws_callback_function(struct lws *socket,
                 0; // null terminator for uuid
             proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
-            
-            printf("client connect info: %s %s\n", this->clients[i].rivet_account.uuid, this->clients[i].rivet_account.token);
+            this->clients[i].rivet_account.server_account_token[account_token_size] =
+                0; // null terminator for uuid
+            proto_bug_read_string(&encoder, this->clients[i].rivet_account.server_account_token,
+                                  account_token_size, "rivet account token");
+            printf("client connect info: %s %s\n", this->clients[i].rivet_account.uuid, this->clients[i].rivet_account.server_account_token);
 
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
@@ -674,7 +679,7 @@ void rr_server_tick(struct rr_server *this)
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
-                        rr_api_get_petals(&this->clients[i].rivet_account.uuid[0], &this->clients[i].rivet_account.token[7], &this->clients[i]);
+                        rr_api_get_petals(&this->clients[i].rivet_account.uuid[0], &this->clients[i].rivet_account.server_account_token[0], &this->clients[i]);
                         rr_server_client_create_player_info(this->clients + i);
                         rr_server_client_create_flower(this->clients + i);
                     }
