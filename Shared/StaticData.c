@@ -156,15 +156,15 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_leaf,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_egg,
-                    0.005);
+                    0.01);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
-                    rr_petal_id_magnet, 0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
                     rr_petal_id_uranium, 0.01);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
+                    rr_petal_id_magnet, 0.015);
 }
 
 void rr_static_data_init()

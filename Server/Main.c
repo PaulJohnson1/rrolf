@@ -17,7 +17,6 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
-void rr_api_on_get_petals(char *thing, void *a) { puts(thing); }
 void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()

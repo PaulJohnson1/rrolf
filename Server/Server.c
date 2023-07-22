@@ -11,7 +11,9 @@
 #include <Server/Client.h>
 #include <Server/Logs.h>
 #include <Server/Simulation.h>
+#include <Shared/Api.h>
 #include <Shared/Bitset.h>
+#include <Shared/cJSON.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Crypto.h>
 #include <Shared/Rivet.h>
@@ -26,6 +28,67 @@
 #endif
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
+
+//loadout validation
+void rr_api_on_get_petals(char *json, void *_client)
+{
+    struct rr_server_client *client = _client;
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    memset(&inventory[0], 0, sizeof inventory);
+
+    cJSON *parsed = cJSON_Parse(json);
+    if (parsed == NULL)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL)
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        return;
+    }
+
+    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
+    if (petals == NULL || !cJSON_IsObject(petals))
+    {
+        fprintf(stderr, "petals is missing or is not an object\n");
+        cJSON_Delete(parsed);
+        return;
+    }
+
+    for (cJSON *petal_key = petals->child; petal_key != NULL;
+         petal_key = petal_key->next)
+    {
+        char *key = petal_key->string;
+        char *sub_key1 = strtok(key, ":");
+        char *sub_key2 = strtok(NULL, ":");
+
+        if (sub_key1 && sub_key2)
+        {
+            int index1 = atoi(sub_key1);
+            int index2 = atoi(sub_key2);
+
+            inventory[index1][index2] =
+                petal_key->valueint; // Assuming the value is a double.
+        }
+    }
+
+    cJSON_Delete(parsed);
+    for (uint8_t i = 0; i < 20; ++i)
+    {
+        uint8_t id = client->loadout[i].id;
+        if (id != 0)
+        {
+            uint8_t rarity = client->loadout[i].rarity;
+            if (inventory[id][rarity] > 0)
+                --inventory[id][rarity];
+            else
+            {
+                memset(&client->loadout[0], 0, sizeof client->loadout);
+                puts("petals are invalid");
+                return;
+            }
+        }
+    }
+    puts("petals are valid");
+}
 
 void rr_server_client_create_player_info(struct rr_server_client *this)
 {
@@ -329,6 +392,11 @@ int rr_server_lws_callback_function(struct lws *socket,
                                  sizeof "script kiddie");
                 return 1;
             }
+#else
+            char *a = "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CPnuyerRMRD5jufylzEaEgoQtqkl1fW3T9qjC2O2quAxUCIWUhQKEgoQMA_HPa1FQvKeoamhq2772CIWChQKEgoQ3ygUOJpQSRSvswUAWZWV3A.oHlGfq2TM0XMFE0-GF0qh6PXlQpmQyr3bTBWSCJYODnPA1pc9p7RYdOC8Td30RRh6EStVkbkDzFAFY-TTMk7Cg";
+            memcpy(&this->clients[i].rivet_account.token[0], a, 300);
+            a = "5a1c3e5e-6f4d-4b4c-b3f5-21763d371e2c";
+            memcpy(&this->clients[i].rivet_account.uuid[0], a, 100);
 #endif
 
             puts("socket verified");
@@ -498,6 +566,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                     proto_bug_read_uint8(&encoder, "id");
                 client->loadout[pos - 1].rarity =
                     proto_bug_read_uint8(&encoder, "rar");
+                if (client->loadout[pos - 1].rarity > rr_rarity_id_ultra || client->loadout[pos - 1].id >= rr_petal_id_max)
+                    client->loadout[pos - 1].id = client->loadout[pos - 1].rarity = 0;
                 pos = proto_bug_read_uint8(&encoder, "pos");
             }
             break;
@@ -601,6 +671,7 @@ void rr_server_tick(struct rr_server *this)
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
+                        rr_api_get_petals(&this->clients[i].rivet_account.uuid[0], &this->clients[i].rivet_account.token[0], &this->clients[i]);
                         rr_server_client_create_player_info(this->clients + i);
                         rr_server_client_create_flower(this->clients + i);
                     }
