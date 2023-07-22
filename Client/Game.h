@@ -51,6 +51,7 @@ struct rr_game_settings
     uint8_t show_ui_hitbox;
     uint8_t screen_shake;
     uint8_t slots_unlocked;
+    uint8_t ourpetsnake_mode;
 };
 
 struct rr_game

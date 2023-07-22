@@ -115,9 +115,9 @@ static void system_flower_petal_movement_logic(
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
-                rr_vector_from_polar(&physical->acceleration, 10.0f,
+                rr_vector_from_polar(&physical->acceleration, 7.5f,
                                      physical->angle);
-                rr_vector_from_polar(&physical->velocity, 100.0f,
+                rr_vector_from_polar(&physical->velocity, 80.0f,
                                      physical->angle);
                 projectile->ticks_until_death = 25;
                 break;
@@ -382,7 +382,10 @@ static void system_petal_misc_logic(EntityIdx id, void *simulation)
     }
     else
     {
-        rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+        if (petal->id == rr_petal_id_missile)
+            rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+        else if (petal->id == rr_petal_id_peas)
+            rr_vector_from_polar(&physical->acceleration, 7.5f, physical->angle);
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
             0)
             rr_simulation_request_entity_deletion(simulation, id);
