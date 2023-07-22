@@ -382,7 +382,10 @@ static void system_petal_misc_logic(EntityIdx id, void *simulation)
     }
     else
     {
-        rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+        if (petal->id == rr_petal_id_missile)
+            rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
+        else if (petal->id == rr_petal_id_peas)
+            rr_vector_from_polar(&physical->acceleration, 7.5f, physical->angle);
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
             0)
             rr_simulation_request_entity_deletion(simulation, id);

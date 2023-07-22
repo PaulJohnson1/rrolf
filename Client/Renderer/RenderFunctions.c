@@ -241,6 +241,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                             uint8_t id, float animation_tick, float turning_value)
 {
+    if (game->settings.ourpetsnake_mode)
+        return;
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
