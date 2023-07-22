@@ -241,7 +241,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
-        rr_vector_from_polar(&accel, 2.5, physical->angle);
+        rr_vector_from_polar(&accel, 1.95, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
