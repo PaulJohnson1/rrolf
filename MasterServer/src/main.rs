@@ -374,7 +374,7 @@ async fn main() -> std::io::Result<()> {
                     .service(user_craft_petals_req),
             )
     })
-    .workers(10)
+    .workers(1)
     .bind(("127.0.0.1", 55554))?
     .run()
     .await
