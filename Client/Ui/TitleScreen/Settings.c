@@ -74,7 +74,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
             rr_ui_v_pad(
                 rr_ui_set_justify(
                     rr_ui_v_container_init(
-                        rr_ui_container_init(), 10, 10, 6,
+                        rr_ui_container_init(), 10, 10, 7,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
