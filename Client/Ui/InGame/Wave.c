@@ -182,10 +182,10 @@ struct rr_ui_element *rr_ui_wave_container_init()
         inner_container->width = inner_container->abs_width;
         inner_container->height = inner_container->abs_height;
         rr_ui_v_container_set(inner_container);
+        rr_ui_set_justify(inner_container, -1, -1);
         rr_ui_container_add_element(outer_container, inner_container);
     }
     rr_ui_h_container_set(outer_container);
-    outer_container->v_justify = -1;
     outer_container->width = outer_container->abs_width;
     outer_container->height = outer_container->abs_height;
     return rr_ui_set_justify(

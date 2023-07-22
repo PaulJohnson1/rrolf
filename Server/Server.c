@@ -498,6 +498,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                     proto_bug_read_uint8(&encoder, "id");
                 client->loadout[pos - 1].rarity =
                     proto_bug_read_uint8(&encoder, "rar");
+                if (client->loadout[pos - 1].rarity > rr_rarity_id_ultra || client->loadout[pos - 1].id >= rr_petal_id_max)
+                    client->loadout[pos - 1].id = client->loadout[pos - 1].rarity = 0;
                 pos = proto_bug_read_uint8(&encoder, "pos");
             }
             break;
