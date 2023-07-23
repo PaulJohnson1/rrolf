@@ -79,8 +79,7 @@ static void system_petal_detach(struct rr_simulation *simulation,
     ppetal->simulation_id = RR_NULL_ENTITY;
     ppetal->cooldown_ticks = petal_data->cooldown;
 }
-// sinc ethis is static, the fucntion name doesn't need any sorto f prefix and
-// can just be petal_logic
+
 static void system_flower_petal_movement_logic(
     struct rr_simulation *simulation, EntityIdx id,
     struct rr_component_player_info *player_info, uint32_t rotation_pos,
@@ -167,6 +166,50 @@ static void system_flower_petal_movement_logic(
     physical->acceleration.x += 0.6f * chase_vector.x;
     physical->acceleration.y += 0.6f * chase_vector.y;
 }
+
+static void petal_modifiers(struct rr_simulation *simulation, struct rr_component_player_info *player_info)
+{
+    struct rr_component_flower *flower =
+        rr_simulation_get_flower(simulation, player_info->flower_id);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, player_info->flower_id);
+    rr_component_flower_set_face_flags(flower, player_info->input);
+    player_info->modifiers.drop_pickup_radius = 25;
+    for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
+    {
+        struct rr_component_player_info_petal_slot *slot =
+                &player_info->slots[outer];
+        struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
+        if (data->id == rr_petal_id_leaf)
+        {
+            struct rr_component_health *player_health =
+                rr_simulation_get_health(simulation, player_info->flower_id);
+            rr_component_health_set_health(
+                player_health, player_health->health +
+                                   0.03 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
+        }
+        else if (data->id == rr_petal_id_faster)
+            player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
+        else if (data->id == rr_petal_id_speed)
+        {
+            float speed = 1 + 0.04 + 0.02 * slot->rarity;
+            if (speed > physical->acceleration_scale)
+                physical->acceleration_scale = speed;
+        }
+        else
+            for (uint32_t inner = 0; inner < slot->count; ++inner)
+            {
+                if (slot->petals[inner].simulation_id == RR_NULL_ENTITY)
+                    continue;
+                if (data->id == rr_petal_id_magnet)
+                {
+                    player_info->modifiers.drop_pickup_radius +=
+                        -25 + data->id * 25;
+                }
+            }
+    }
+}
+
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                     void *simulation)
 {
@@ -183,10 +226,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             {
                 if (slot->petals[inner].simulation_id != RR_NULL_ENTITY)
                 {
-                    struct rr_component_health *health =
-                        rr_simulation_get_health(
-                            simulation, slot->petals[inner].simulation_id);
-                    rr_component_health_set_health(health, 0);
+                    rr_simulation_request_entity_deletion(simulation, slot->petals[inner].simulation_id);
                     slot->petals[inner].simulation_id = RR_NULL_ENTITY;
                 }
                 slot->petals[inner].cooldown_ticks = data->cooldown;
@@ -194,32 +234,18 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         }
         return;
     }
-    struct rr_component_flower *flower =
-        rr_simulation_get_flower(simulation, player_info->flower_id);
-    rr_component_flower_set_face_flags(flower, player_info->input);
-    player_info->modifiers.drop_pickup_radius = 25;
+    petal_modifiers(simulation, player_info);
     uint32_t rotation_pos = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot =
             &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
-        if (data->id == rr_petal_id_leaf)
-        {
-            struct rr_component_health *player_health =
-                rr_simulation_get_health(simulation, player_info->flower_id);
-            rr_component_health_set_health(
-                player_health, player_health->health +
-                                   0.03 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
-        }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0)
                 ++rotation_pos; // clump rotpos ++
-            // specials
-            if (data->id == rr_petal_id_faster)
-                player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
             if (p_petal->simulation_id != RR_NULL_ENTITY &&
@@ -306,11 +332,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     if (inner == 0 || data->clump_radius == 0)
                         --rotation_pos; // clump rotpos --
                     continue;           // player spawned mob
-                }
-                if (data->id == rr_petal_id_magnet)
-                {
-                    player_info->modifiers.drop_pickup_radius +=
-                        -25 + data->id * 25;
                 }
                 system_flower_petal_movement_logic(
                     simulation, p_petal->simulation_id, player_info,

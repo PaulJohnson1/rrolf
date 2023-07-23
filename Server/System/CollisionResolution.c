@@ -92,15 +92,19 @@ static void colliding_with_function(uint64_t i, void *_captures)
         struct rr_vector perp1 = {physical1->velocity.x - parallel1.x, physical1->velocity.y - parallel1.y};
         struct rr_vector parallel2 = {delta.x * scale2, delta.y * scale2};
         struct rr_vector perp2 = {physical2->velocity.x - parallel2.x, physical2->velocity.y - parallel2.y};
-        float restitution = 1.0f;
+        float restitution = 0.5f;
         if (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
-            rr_vector_set(&physical1->velocity,
-                            (parallel2.x * v1_Coeff + parallel1.x * v_SharedCoeff) * restitution + perp1.x,
-                            (parallel2.y * v1_Coeff + parallel1.y * v_SharedCoeff) * restitution + perp1.y);
+        {
+            float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution;
+            physical1->acceleration.x += kb * delta.x;
+            physical1->acceleration.y += kb * delta.y;
+        }
         if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
-            rr_vector_set(&physical2->velocity,
-                        (parallel1.x * v2_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
-                        (parallel1.y * v2_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
+        {
+            float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution;
+            physical2->acceleration.x += kb * delta.x;
+            physical2->acceleration.y += kb * delta.y;
+        }
     }
 }
 

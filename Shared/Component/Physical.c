@@ -25,6 +25,7 @@ void rr_component_physical_init(struct rr_component_physical *this,
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->mass = 1;)
     RR_SERVER_ONLY(this->has_deletion_animation = 1;)
+    RR_SERVER_ONLY(this->acceleration_scale = 1;)
 }
 
 void rr_component_physical_free(struct rr_component_physical *this,

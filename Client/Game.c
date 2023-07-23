@@ -958,7 +958,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         struct rr_renderer_context_state state1;
         struct rr_renderer_context_state state2;
         player_info_finder(this);
-        if (this->player_info != 0)
+        if (this->player_info != NULL)
         {
             // screen shake
             rr_renderer_context_state_init(this->renderer, &state1);

@@ -16,7 +16,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_leaf, rr_rarity_id_unusual, 7.0f, 7.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 3}},
     {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 20.0f, 0.0f, 12, 125, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 2.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -56,7 +57,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "emscripten", "Basic", "Light", "Rock", "Stinger",   "Faster",
-    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium"};
+    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -69,7 +70,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Probably the most normal petal there is. Oh wait",
     "It's egg",
     "Trademarked by the lobsters",
-    "Plutonium"};
+    "Plutonium",
+    "Speed is speed"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
@@ -143,13 +145,15 @@ static void init_loot_tables()
 {
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
                     rr_petal_id_light, 0.15);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1], rr_petal_id_faster,
+                    0.05);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[2], rr_petal_id_speed,
+                    0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_rock,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_faster,
-                    0.05);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.15);
