@@ -81,8 +81,8 @@ void rr_ui_render_tooltip_above(struct rr_ui_element *this,
                   (tooltip->abs_height + this->height / 2 + 10));
     if (tooltip->x < 10)
         tooltip->x = 10;
-    else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
-        tooltip->x = game->renderer->width - 10 - tooltip->abs_width;
+    else if (tooltip->x > game->renderer->width / game->renderer->scale - 10 - tooltip->abs_width)
+        tooltip->x = game->renderer->width / game->renderer->scale - 10 - tooltip->abs_width;
     if (tooltip->y < 10)
         tooltip->y = 10;
 }
@@ -97,8 +97,8 @@ void rr_ui_render_tooltip_below(struct rr_ui_element *this,
         (this->abs_y / game->renderer->scale + (this->height / 2 + 10));
     if (tooltip->x < 10)
         tooltip->x = 10;
-    else if (tooltip->x > game->renderer->width - 10 - tooltip->abs_width)
-        tooltip->x = game->renderer->width - 10 - tooltip->abs_width;
+    else if (tooltip->x > game->renderer->width / game->renderer->scale - 10 - tooltip->abs_width)
+        tooltip->x = game->renderer->width / game->renderer->scale - 10 - tooltip->abs_width;
     if (tooltip->y > game->renderer->height - tooltip->abs_height - 10)
         tooltip->y = game->renderer->height - tooltip->abs_height - 10;
 }

@@ -356,8 +356,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
 
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(
-                            simulation, rr_mob_id_trex,
-                            slot->rarity == 0 ? 0 : slot->rarity - 1,
+                            simulation, rr_mob_id_trex, slot->rarity,
                             rr_simulation_team_id_players);
                     struct rr_component_physical *mob_physical =
                         rr_simulation_get_physical(simulation, mob_id);

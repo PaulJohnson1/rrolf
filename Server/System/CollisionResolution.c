@@ -84,7 +84,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
         float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
         float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
 
-        // struct rr_vector delta = (ball2Position - ball1Position).Normalize();
         rr_vector_normalize(&delta);
         float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y * delta.y);
         float scale2 = (physical2->velocity.x * delta.x + physical2->velocity.y * delta.y);
@@ -96,16 +95,16 @@ static void colliding_with_function(uint64_t i, void *_captures)
         if (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
         {
             float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution;
-            if (kb > 2)
-                kb = 2;
+            if (kb > 1)
+                kb = 1;
             physical1->acceleration.x += kb * delta.x;
             physical1->acceleration.y += kb * delta.y;
         }
         if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
         {
             float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution;
-            if (kb < -2)
-                kb = -2;
+            if (kb < -1)
+                kb = -1;
             physical2->acceleration.x += kb * delta.x;
             physical2->acceleration.y += kb * delta.y;
         }
