@@ -68,7 +68,7 @@ static void player_hud_on_render(struct rr_ui_element *this, struct rr_game *gam
             rr_renderer_set_stroke(renderer, 0xff222222);
             rr_renderer_set_fill(renderer, 0xffffffff);
             rr_renderer_set_line_join(renderer, 1);
-            rr_renderer_set_line_width(renderer, 1);
+            rr_renderer_set_line_width(renderer, 3);
             rr_renderer_begin_path(renderer);
             rr_renderer_move_to(renderer, 0, -8);
             rr_renderer_line_to(renderer, 10, 0);

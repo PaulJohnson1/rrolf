@@ -390,9 +390,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                 return 1;
             }
 #else
-            char *a = "Bearer game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CPnuyerRMRD5jufylzEaEgoQtqkl1fW3T9qjC2O2quAxUCIWUhQKEgoQMA_HPa1FQvKeoamhq2772CIWChQKEgoQ3ygUOJpQSRSvswUAWZWV3A.oHlGfq2TM0XMFE0-GF0qh6PXlQpmQyr3bTBWSCJYODnPA1pc9p7RYdOC8Td30RRh6EStVkbkDzFAFY-TTMk7Cg";
-            memcpy(&this->clients[i].rivet_account.token[0], a, 300);
-            a = "5a1c3e5e-6f4d-4b4c-b3f5-21763d371e2c";
+            char *a = "7bfdcff4-9cb5-435f-93fd-fb37cad3e598";
             memcpy(&this->clients[i].rivet_account.uuid[0], a, 100);
 #endif
 

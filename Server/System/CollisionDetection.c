@@ -49,7 +49,13 @@ static void grid_filter_candidates(struct rr_simulation *this,
     float collision_radius = physical1->radius + physical2->radius;
     if ((delta.x * delta.x + delta.y * delta.y) <
         collision_radius * collision_radius)
+    {
         physical1->colliding_with[physical1->colliding_with_size++] = entity2;
+        #ifndef RIVET_BUILD
+        if (physical1->colliding_with_size >= RR_MAX_COLLISION_COUNT)
+            puts("entity cram limit exceeded");
+        #endif
+    }
 }
 
 static void find_collisions(struct rr_simulation *this)
