@@ -60,6 +60,7 @@ static void player_hud_on_render(struct rr_ui_element *this, struct rr_game *gam
         rr_component_flower_render(player_info->flower_id, game);
         if (data->pos != 0 && game->player_info != NULL)
         {
+            printf("%d %f %f %f %f\n", data->pos, player_info->camera_x, game->player_info->camera_x, player_info->camera_y, game->player_info->camera_y);
             struct rr_vector vector = {player_info->camera_x - game->player_info->camera_x, player_info->camera_y - game->player_info->camera_y};
             rr_renderer_rotate(renderer, rr_vector_theta(&vector));
             rr_renderer_translate(renderer, this->abs_height * 0.6, 0);
