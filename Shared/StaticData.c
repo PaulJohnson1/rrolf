@@ -69,9 +69,9 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Where are the zombies?",
     "Probably the most normal petal there is. Oh wait",
     "It's egg",
-    "Trademarked by the lobsters",
-    "Plutonium",
-    "Speed is speed"};
+    "Increases loot pickup radius. Stacks because why not",
+    "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
+    "Increases your movement speed. Also stacks"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
