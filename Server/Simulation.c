@@ -562,9 +562,9 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("drops", { rr_system_drops_tick(this); });
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
-    RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("collision_resolution",
                   { rr_system_collision_resolution_tick(this); });
+    RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });

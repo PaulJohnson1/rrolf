@@ -164,8 +164,8 @@ static void system_flower_petal_movement_logic(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
         rr_component_physical_set_angle(physical, curr_angle);
-    physical->acceleration.x = 0.6f * chase_vector.x;
-    physical->acceleration.y = 0.6f * chase_vector.y;
+    physical->acceleration.x += 0.6f * chase_vector.x;
+    physical->acceleration.y += 0.6f * chase_vector.y;
 }
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                     void *simulation)
@@ -210,7 +210,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(
                 player_health, player_health->health +
-                                   0.025 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
+                                   0.03 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         uint8_t max_cd = 0;
         for (uint64_t inner = 0; inner < slot->count; ++inner)
@@ -263,7 +263,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                 player_info->camera_y);
                     rr_component_physical_set_angle(physical,
                                                     rr_frand() * M_PI * 2);
-                    physical->mass = 5;
+                    physical->mass = 1.5;
                     physical->friction = 0.75;
 
                     rr_component_petal_set_id(petal, data->id);
