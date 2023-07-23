@@ -63,17 +63,17 @@ static void player_hud_on_render(struct rr_ui_element *this, struct rr_game *gam
             struct rr_component_physical *physical = rr_simulation_get_physical(game->simulation, player_info->parent_id);
             struct rr_vector vector = {physical->x - game->player_info->camera_x, physical->y - game->player_info->camera_y};
             rr_renderer_rotate(renderer, rr_vector_theta(&vector));
-            rr_renderer_translate(renderer, this->abs_height * 0.55, 0);
+            rr_renderer_translate(renderer, this->abs_height * 0.6, 0);
             rr_renderer_set_line_cap(renderer, 1);
             rr_renderer_set_stroke(renderer, 0xff222222);
             rr_renderer_set_fill(renderer, 0xffffffff);
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_set_line_width(renderer, 1);
             rr_renderer_begin_path(renderer);
-            rr_renderer_move_to(renderer, 0, -5);
-            rr_renderer_line_to(renderer, 6, 0);
-            rr_renderer_line_to(renderer, 0, 5);
-            rr_renderer_line_to(renderer, 0, -5);
+            rr_renderer_move_to(renderer, 0, -8);
+            rr_renderer_line_to(renderer, 10, 0);
+            rr_renderer_line_to(renderer, 0, 8);
+            rr_renderer_line_to(renderer, 0, -8);
             rr_renderer_fill(renderer);
             rr_renderer_stroke(renderer);
         }

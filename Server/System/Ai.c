@@ -384,8 +384,11 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
 
             ai->ticks_until_next_action = 50;
 
-            rr_vector_from_polar(&physical->acceleration, -2,
+            struct rr_vector recoil;
+
+            rr_vector_from_polar(&recoil, -2,
                                  physical->angle); // recoil
+            rr_vector_add(&physical->acceleration, &recoil);
         }
         break;
 
