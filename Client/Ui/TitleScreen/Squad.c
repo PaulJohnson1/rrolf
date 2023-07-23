@@ -198,7 +198,7 @@ static void squad_countdown(struct rr_ui_element *this, struct rr_game *game)
 {
     struct dynamic_text_metadata *data = this->data;
     if (game->ticks_until_game_start == 125)
-        data->text = "";
+        data->text[0] = 0;
     else
         data->text[sprintf(data->text, "Starting in %d",
                            game->ticks_until_game_start / 25)] = 0;
