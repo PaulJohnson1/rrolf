@@ -22,6 +22,7 @@ set(SRCS
     Ui/Engine.c
     Ui/InGame/Deathscreen.c
     Ui/InGame/Loadout.c
+    Ui/InGame/Squad.c
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c
     Ui/TitleScreen/Crafting.c
