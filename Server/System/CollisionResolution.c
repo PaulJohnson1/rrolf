@@ -97,10 +97,10 @@ static void colliding_with_function(uint64_t i, void *_captures)
             rr_vector_set(&physical1->velocity,
                             (parallel2.x * v1_Coeff + parallel1.x * v_SharedCoeff) * restitution + perp1.x,
                             (parallel2.y * v1_Coeff + parallel1.y * v_SharedCoeff) * restitution + perp1.y);
-        if (scale1 * v1_Coeff - scale2 * v_SharedCoeff < 0)
+        if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
             rr_vector_set(&physical2->velocity,
-                        (parallel1.x * v1_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
-                        (parallel1.y * v1_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
+                        (parallel1.x * v2_Coeff - parallel2.x * v_SharedCoeff) * restitution + perp2.x,
+                        (parallel1.y * v2_Coeff - parallel2.y * v_SharedCoeff) * restitution + perp2.y);
     }
 }
 

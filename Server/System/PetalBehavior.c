@@ -263,7 +263,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                 player_info->camera_y);
                     rr_component_physical_set_angle(physical,
                                                     rr_frand() * M_PI * 2);
-                    physical->mass = 1.5;
+                    physical->mass = 5;
                     physical->friction = 0.75;
 
                     rr_component_petal_set_id(petal, data->id);

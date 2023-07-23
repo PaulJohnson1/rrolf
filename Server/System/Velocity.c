@@ -20,8 +20,6 @@ void rr_system_velocity_foreach_function(EntityIdx id, void *simulation)
         if (physical->acceleration.x != 0.0f ||
             physical->acceleration.y != 0.0f)
             {
-                        printf("%f %f flower\n", physical->acceleration.x, physical->acceleration.y);
-
             rr_component_flower_set_eye_angle(
                 rr_simulation_get_flower(simulation, id),
                 rr_vector_theta(&physical->acceleration));
