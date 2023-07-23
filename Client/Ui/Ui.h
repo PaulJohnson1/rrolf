@@ -160,3 +160,5 @@ struct rr_ui_element *rr_ui_crafting_toggle_button_init();
 
 struct rr_ui_element *rr_ui_waiting_respawn_screen_init();
 struct rr_ui_element *rr_ui_finished_game_screen();
+
+struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);

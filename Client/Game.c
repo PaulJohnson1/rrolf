@@ -237,6 +237,18 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
     rr_ui_container_add_element(this->window, rr_ui_waiting_respawn_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen());
+    rr_ui_container_add_element(this->window, rr_ui_pad(
+        rr_ui_v_pad(
+            rr_ui_set_justify(
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 4,
+                    rr_ui_in_game_player_hud_init(0),
+                    rr_ui_in_game_player_hud_init(1),
+                    rr_ui_in_game_player_hud_init(2),
+                    rr_ui_in_game_player_hud_init(3)
+                )
+            , -1, -1)
+        , 100)
+    , 50));
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_justify(
@@ -945,8 +957,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
         struct rr_renderer_context_state state2;
-        // rr_simulation_for_each_entity(this->simulation, this->simulation,
-        // player_info_finder);
+        player_info_finder(this);
         if (this->player_info != 0)
         {
             // screen shake
