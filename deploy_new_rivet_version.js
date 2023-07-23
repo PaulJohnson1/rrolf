@@ -38,7 +38,7 @@ function build_frontend()
 
     process.chdir("frontend_release_build");
   
-    spawnSync("cmake", ["../Client", "-DDEBUG_BUILD=0", "-DWASM_BUILD=1", "-DRIVET_BUILD=1"], {stdio: "inherit"});
+    spawnSync("cmake", ["../Client", "-DDEBUG_BUILD=1", "-DWASM_BUILD=1", "-DRIVET_BUILD=1"], {stdio: "inherit"});
   
     spawnSync("make", ["-j2"], {stdio: "inherit"});
   
