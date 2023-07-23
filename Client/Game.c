@@ -626,20 +626,14 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "verification");
             uint64_t token_size = strlen(this->socket.rivet_player_token);
             uint64_t uuid_size = strlen(this->socket.uuid);
-            uint64_t account_token_size = strlen(this->rivet_account.token);
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
-            proto_bug_write_varuint(&verify_encoder, account_token_size,
-                                   "rivet account token size");
             proto_bug_write_string(&verify_encoder,
                                    this->socket.rivet_player_token, token_size,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->socket.uuid,
                                    uuid_size, "rivet uuid");
-            proto_bug_write_string(&verify_encoder,
-                                   this->rivet_account.token, account_token_size,
-                                   "rivet account token");
             rr_websocket_send(&this->socket, verify_encoder.start,
                               verify_encoder.current);
             this->socket_ready = 1;
