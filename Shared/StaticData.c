@@ -71,7 +71,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "It's egg",
     "Increases loot pickup radius. Stacks because why not",
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
-    "Increases your movement speed. Also stacks"};
+    "Increases your movement speed. Does not stack"};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};

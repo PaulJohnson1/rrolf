@@ -106,7 +106,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_speed)
     {
         char *extra = malloc((sizeof *extra) * 16);
-        extra[sprintf(extra, "%d", 4 + 3 * rarity)] = 0;
+        extra[sprintf(extra, "%d", 6 + 4 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Speed increase: ", 12, 0xffbf29c2),
