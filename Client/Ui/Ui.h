@@ -23,7 +23,7 @@ struct labeled_button_metadata
 
 struct text_metadata
 {
-    char *text;
+    char const *text;
     float size;
 };
 
