@@ -108,7 +108,7 @@ static EntityIdx ai_get_nearest_flower(EntityIdx entity,
         if (d < closest_distance)
         {
             closest_distance = d;
-            closest_flower = flowers[i];
+            closest_flower = mobs[i];
         }
     }
 
