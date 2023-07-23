@@ -156,7 +156,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_leaf,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_egg,
-                    0.01);
+                    0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);

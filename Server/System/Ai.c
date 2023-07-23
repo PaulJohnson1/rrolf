@@ -9,7 +9,9 @@
 #include <Shared/Vector.h>
 
 static EntityIdx flowers[8] = {0};
+static EntityIdx mobs[1024] = {0};
 static uint64_t flowers_size = 0;
+static uint64_t mobs_size = 0;
 
 void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
 {
@@ -65,14 +67,38 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
 static EntityIdx ai_get_nearest_flower(EntityIdx entity,
                                        struct rr_simulation *simulation)
 {
+    uint8_t team_id = rr_simulation_get_relations(simulation, entity)->team;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     float closest_distance = 1500.0f * 1500.0f; // 1.5k is default range
     EntityIdx closest_flower = RR_NULL_ENTITY;
-    for (uint64_t i = 0; i < flowers_size; i++)
+    if (team_id == rr_simulation_team_id_mobs)
     {
+        for (uint64_t i = 0; i < flowers_size; i++)
+        {
+            struct rr_component_physical *physical2 =
+                rr_simulation_get_physical(simulation, flowers[i]);
+
+            struct rr_vector delta = {physical->x, physical->y};
+            struct rr_vector target_pos = {physical2->x, physical2->y};
+            rr_vector_sub(&delta, &target_pos);
+
+            float d = delta.x * delta.x + delta.y * delta.y;
+            if (d < closest_distance)
+            {
+                closest_distance = d;
+                closest_flower = flowers[i];
+            }
+        }
+    }
+    for (uint64_t i = 0; i < mobs_size; i++)
+    {
+        struct rr_component_relations *relations2 =
+            rr_simulation_get_relations(simulation, mobs[i]);
+        if (relations2->team == team_id)
+            continue;
         struct rr_component_physical *physical2 =
-            rr_simulation_get_physical(simulation, flowers[i]);
+            rr_simulation_get_physical(simulation, mobs[i]);
 
         struct rr_vector delta = {physical->x, physical->y};
         struct rr_vector target_pos = {physical2->x, physical2->y};
@@ -301,7 +327,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         if (distance > 500)
         {
             struct rr_vector accel;
-            rr_vector_from_polar(&accel, 0.8f, physical->angle);
+            rr_vector_from_polar(&accel, 2.0f, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
         }
         break;
@@ -333,8 +359,8 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             rr_component_physical_set_radius(
                 physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
             physical2->friction = 0.5f;
-            physical2->mass = 2.0f;
-            rr_vector_from_polar(&physical2->acceleration, 15, physical->angle);
+            physical2->mass = 1.0f;
+            rr_vector_from_polar(&physical2->acceleration, 80, physical->angle);
 
             rr_component_relations_set_team(
                 relations,
@@ -346,12 +372,12 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
 
             rr_component_health_set_max_health(
                 health, RR_MOB_DATA[mob->id].health *
-                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
+                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.1);
             rr_component_health_set_health(
                 health, RR_MOB_DATA[mob->id].health *
-                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
+                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.1);
             health->damage = RR_MOB_DATA[mob->id].damage *
-                             RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.1f;
+                             RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.25f;
             rr_component_health_set_hidden(health, 1);
 
             projectile->ticks_until_death = 50;
@@ -407,14 +433,15 @@ static void system_for_each(EntityIdx entity, void *simulation)
     ai->ticks_until_next_action--;
 }
 
-static void cache_id(EntityIdx id, void *x) { flowers[flowers_size++] = id; }
+static void cache_flower_id(EntityIdx id, void *x) { flowers[flowers_size++] = id; }
+static void cache_mob_id(EntityIdx id, void *x) { mobs[mobs_size++] = id; }
 
 void rr_system_ai_tick(struct rr_simulation *simulation)
 {
     // cache flower ids
-    for (uint64_t i = 0; i < flowers_size; i++)
-        flowers[i] = 0;
     flowers_size = 0;
-    rr_simulation_for_each_flower(simulation, 0, cache_id);
+    mobs_size = 0;
+    rr_simulation_for_each_flower(simulation, 0, cache_flower_id);
+    rr_simulation_for_each_mob(simulation, 0, cache_mob_id);
     rr_simulation_for_each_ai(simulation, simulation, system_for_each);
 }
