@@ -197,7 +197,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
             if (speed > physical->acceleration_scale)
                 physical->acceleration_scale = speed;
             */
-           physical->acceleration_scale += 0.04 + 0.03 * slot->rarity;
+           physical->acceleration_scale *= 1.04 + 0.03 * slot->rarity;
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
