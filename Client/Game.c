@@ -50,15 +50,12 @@ void validate_loadout(struct rr_game *this)
 void rr_api_on_get_petals(char *json, void *a)
 {
     struct rr_game *game = a;
-    puts(json);
 
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             game->inventory[id][rarity] = 0;
     
-    puts("get start");
     cJSON *parsed = cJSON_Parse(json);
-    puts("parse end");
     if (parsed == NULL)
     {
         const char *error_ptr = cJSON_GetErrorPtr();
@@ -68,17 +65,14 @@ void rr_api_on_get_petals(char *json, void *a)
         }
         return;
     }
-    puts("get smid");
 
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    puts("get petals");
     if (petals == NULL || !cJSON_IsObject(petals))
     {
         fprintf(stderr, "petals is missing or is not an object\n");
         cJSON_Delete(parsed);
         return;
     }
-    puts("get mid");
     for (cJSON *petal_key = petals->child; petal_key != NULL;
          petal_key = petal_key->next)
     {
@@ -97,7 +91,6 @@ void rr_api_on_get_petals(char *json, void *a)
     }
 
     cJSON_Delete(parsed);
-    puts("get end");
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
