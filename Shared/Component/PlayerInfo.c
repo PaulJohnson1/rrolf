@@ -104,13 +104,9 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
     {
         char *malloc_string = malloc(sizeof petals_string);
         char *malloc_uuid = malloc(sizeof this->client->rivet_account.uuid);
-        puts("works");
         memcpy(malloc_string, &petals_string, sizeof petals_string);
         memcpy(malloc_uuid, &this->client->rivet_account.uuid, sizeof this->client->rivet_account.uuid);
-        puts("still works");
-        printf("%d\n", sizeof this->client->rivet_account.uuid);
         struct api_join_captures *captures = malloc(sizeof *captures);
-        puts("wwww");
         captures->rivet_uuid = malloc_uuid;
         captures->petals_string = malloc_string;
         pthread_t thread_id;
@@ -118,9 +114,6 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         pthread_detach(thread_id);
         
     }
-    puts("api join end");
-    // api_join(&captures);
-    //
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(

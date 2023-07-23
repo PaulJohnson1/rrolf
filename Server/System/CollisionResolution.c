@@ -92,7 +92,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
         struct rr_vector perp1 = {physical1->velocity.x - parallel1.x, physical1->velocity.y - parallel1.y};
         struct rr_vector parallel2 = {delta.x * scale2, delta.y * scale2};
         struct rr_vector perp2 = {physical2->velocity.x - parallel2.x, physical2->velocity.y - parallel2.y};
-        float restitution = 0.5f;
+        float restitution = 0.05f;
         if (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
         {
             float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution;
