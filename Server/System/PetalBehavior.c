@@ -192,9 +192,12 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
             player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
         else if (data->id == rr_petal_id_speed)
         {
-            float speed = 1 + 0.04 + 0.02 * slot->rarity;
+            /*
+            float speed = 1 + 0.05 + 0.04 * slot->rarity;
             if (speed > physical->acceleration_scale)
                 physical->acceleration_scale = speed;
+            */
+           physical->acceleration_scale += 0.04 + 0.03 * slot->rarity;
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
