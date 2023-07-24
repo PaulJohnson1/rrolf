@@ -156,12 +156,6 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     switch (ai->ai_state)
     {
     case rr_ai_state_recovering_after_charge:
-        if (ai->ticks_until_next_action == 0)
-        {
-            ai->ai_state = rr_ai_state_attacking;
-            ai->ticks_until_next_action = rand() % 25 + 33;
-            break;
-        }
     case rr_ai_state_idle:
         tick_idle(entity, simulation);
         break;
@@ -199,7 +193,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     {
         if (ai->ticks_until_next_action == 0)
         {
-            ai->ai_state = rr_ai_state_recovering_after_charge;
+            ai->ai_state = rr_ai_state_waiting_to_charge;
             ai->ticks_until_next_action = rand() % 25 + 25;
             break;
         }
