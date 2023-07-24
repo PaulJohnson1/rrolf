@@ -500,9 +500,15 @@ void rr_game_init(struct rr_game *this)
                          , 0, 0);
 
     rr_renderer_init(&this->mob_stump);
-    rr_renderer_set_dimensions(&this->mob_stump, 800, 600);
+    rr_renderer_set_dimensions(&this->mob_stump, 400, 300);
     rr_renderer_draw_svg(&this->mob_stump,
 #include <Client/Assets/Mob/Stump.h>
+                         , 0, 0);
+    
+    rr_renderer_init(&this->mob_fern);
+    rr_renderer_set_dimensions(&this->mob_fern, 200, 200);
+    rr_renderer_draw_svg(&this->mob_fern,
+#include <Client/Assets/Mob/Fern.h>
                          , 0, 0);
 
     rr_renderer_init(&this->tiles[0]);
@@ -557,13 +563,13 @@ void rr_game_init(struct rr_game *this)
     rr_renderer_init(&this->background_features[5]);
     rr_renderer_set_dimensions(&this->background_features[5], 200, 200);
     rr_renderer_draw_svg(&this->background_features[5],
-#include <Client/Assets/MapFeature/Fern4.h>
+#include <Client/Assets/MapFeature/Fern3.h>
                          , 0, 0);
 
     rr_renderer_init(&this->background_features[6]);
     rr_renderer_set_dimensions(&this->background_features[6], 200, 200);
     rr_renderer_draw_svg(&this->background_features[6],
-#include <Client/Assets/MapFeature/Fern5.h>
+#include <Client/Assets/MapFeature/Fern4.h>
                          , 0, 0);
 
     rr_renderer_init(&this->background_features[7]);

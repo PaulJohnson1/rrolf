@@ -24,6 +24,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 75, 5, 30.0f, {}},
     {rr_mob_id_trex, 40, 20, 32.0f, {}},
+    {rr_mob_id_fern, 10, 5, 32.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
@@ -76,7 +77,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Lazy dev got off his couch and added a heal petal. Check it out"
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
-    "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
+    "Triceratops", "T-Rex", "Fern", "Stump", "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  12,
@@ -158,17 +159,18 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
 
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[0],
+                    rr_petal_id_azalea, 0.10);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[1],
+                    rr_petal_id_leaf, 0.25);
+    
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.15);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_leaf,
-                    0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[2], rr_petal_id_egg,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_egg,
                     0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
-                    rr_petal_id_azalea, 0.10);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
                     rr_petal_id_uranium, 0.01);

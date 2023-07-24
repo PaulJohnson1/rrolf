@@ -108,6 +108,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     case rr_mob_id_triceratops:
         ai->ai_aggro_type = rr_ai_aggro_type_triceratops;
         break;
+    case rr_mob_id_fern:
     case rr_mob_id_stump:
         ai->ai_aggro_type = rr_ai_aggro_type_none;
         break;

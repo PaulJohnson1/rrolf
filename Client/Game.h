@@ -88,6 +88,8 @@ struct rr_game
 
     struct rr_renderer mob_stump;
 
+    struct rr_renderer mob_fern;
+
     // background
     struct rr_renderer tiles[3];
     struct rr_renderer background_features[9];
@@ -107,7 +109,7 @@ struct rr_game
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t protocol_state;
     float expanding_circle_radius;
-    EntityIdx player_infos[4];
+    EntityIdx player_infos[8];
 
     uint8_t socket_ready;
     uint8_t socket_pending;

@@ -337,9 +337,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     
     rr_renderer_draw_translated_image(renderer, &game->mob_trex_head, 0, -125);
     break;
+    case rr_mob_id_fern:
+        rr_renderer_scale(renderer, 0.45f);
+        rr_renderer_draw_image(renderer, &game->mob_fern);
+        break;
     case rr_mob_id_stump:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.4f);
         rr_renderer_draw_image(renderer, &game->mob_stump);
         break;
     case rr_mob_id_spinosaurus_head:
@@ -456,7 +460,7 @@ void rr_renderer_render_petal_with_background(struct rr_renderer *renderer, stru
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_text_align(renderer, 1);
     rr_renderer_set_text_baseline(renderer, 1);
-    float text_size = text_length > 52 / 14 ? 52 / text_length : 14;
+    float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
     rr_renderer_set_text_size(renderer, text_size);
     rr_renderer_set_line_width(renderer, text_size * 0.12);
     rr_renderer_begin_path(renderer);
