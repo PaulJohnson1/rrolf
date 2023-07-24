@@ -46,12 +46,8 @@ struct api_join_captures
 void *api_join(void *_captures)
 {
     struct api_join_captures *captures = _captures;
-    printf("%p\n", captures);
     rr_api_merge_petals(captures->rivet_uuid, captures->petals_string);
     puts("api join thread end");
-    free(captures->rivet_uuid);
-    free(captures->petals_string);
-    free(captures);
     return NULL;
 }
 
@@ -74,7 +70,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    char petals_string[2000] = {0}; // Ensure this is large enough
+    char petals_string[5000] = {0}; // Ensure this is large enough
     char buffer[100] = {0};         // Temporary buffer for each item
 
     for (struct rr_drop_picked_up *i = this->collected_this_run;
@@ -88,20 +84,25 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         if (i != this->collected_this_run)
         {
             strncat(petals_string, ",",
-                    (sizeof petals_string) - strlen(petals_string) - 1);
+                    5000 - strlen(petals_string) - 1);
         }
 
         // Append the item
         strncat(petals_string, buffer,
-                (sizeof petals_string) - strlen(petals_string) - 1);
+                5000 - strlen(petals_string) - 1);
     }
     puts("api join start");
-    if (simulation->game_over)
+    if (1)
     {
         rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
     }
     else
     {
+        /*
+        struct api_join_captures captures;
+        captures.rivet_uuid = this->client->rivet_account.uuid;
+        captures.petals_string = petals_string;
+=======
         char *malloc_string = malloc(sizeof petals_string);
         char *malloc_uuid = malloc(sizeof this->client->rivet_account.uuid);
         memcpy(malloc_string, &petals_string, sizeof petals_string);
@@ -109,10 +110,11 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         struct api_join_captures *captures = malloc(sizeof *captures);
         captures->rivet_uuid = malloc_uuid;
         captures->petals_string = malloc_string;
+>>>>>>> e52dac9bf67d3b6db5440698b48194adb5e76a8f
         pthread_t thread_id;
-        int result = pthread_create(&thread_id, NULL, api_join, captures);
+        int result = pthread_create(&thread_id, NULL, api_join, &captures);
         pthread_detach(thread_id);
-        
+        */
     }
 
     if (this->flower_id != RR_NULL_ENTITY)
