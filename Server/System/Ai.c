@@ -200,8 +200,8 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         if (ai->ticks_until_next_action == 0)
         {
             ai->ai_state = rr_ai_state_recovering_after_charge;
-            ai->ticks_until_next_action = rand() % 25 + 50;
-            ai->target_entity = 0;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+            break;
         }
 
         if (ai->target_entity == RR_NULL_ENTITY)
