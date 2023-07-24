@@ -17,7 +17,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_egg, rr_rarity_id_epic, 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 8.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -54,10 +55,10 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
     0xffde1f1f, 0xff1fdbde, 0xffff2b75};
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Unusual", "Rare", "Epic", "Legendary", "Mythic", "Ultra"};
+    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Dev"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "emscripten", "Basic", "Light", "Rock", "Stinger",   "Faster",
-    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed"};
+    "Secret", "Basic", "Light", "Rock", "Stinger", "Faster",
+    "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -71,7 +72,9 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "It's egg",
     "Increases loot pickup radius. Stacks because why not",
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
-    "Increases your movement speed. Does not stack"};
+    "Increases your movement speed. Does not stack",
+    "Lazy dev got off his couch and added a heal petal. Check it out"
+};
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex",      "Stump",       "Spinosaurus",
     "Spinosaurus", "Pteranodon", "Dakotaraptor"};
@@ -164,6 +167,8 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.25);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
+                    rr_petal_id_azalea, 0.10);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
                     rr_petal_id_uranium, 0.01);

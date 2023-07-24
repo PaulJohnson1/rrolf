@@ -89,12 +89,16 @@ static void system_flower_petal_movement_logic(
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, id);
+    struct rr_component_physical *flower_physical =
+        rr_simulation_get_physical(simulation, player_info->flower_id);
+    struct rr_vector position_vector = {physical->x, physical->y};
+    struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
     uint8_t is_projectile = rr_simulation_has_projectile(simulation, id);
     if (is_projectile)
     {
         struct rr_component_projectile *projectile =
             rr_simulation_get_projectile(simulation, id);
-        if (--petal->effect_delay <= 0)
+        if (petal->effect_delay <= 0)
         {
             switch (petal->id)
             {
@@ -120,16 +124,35 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 25;
                 break;
+            case rr_petal_id_azalea:
+            {
+                struct rr_component_health *flower_health = rr_simulation_get_health(simulation, player_info->flower_id);
+                if (flower_health->health < flower_health->max_health)
+                {
+                    struct rr_vector delta = {(flower_vector.x - position_vector.x), (flower_vector.y - position_vector.y)};
+                    if (rr_vector_get_magnitude(&delta) < flower_physical->radius + physical->radius)
+                    {
+                        //heal
+                        rr_component_health_set_health(flower_health, flower_health->health + 10 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
+                        rr_simulation_request_entity_deletion(simulation, id);
+                        return;
+                    }
+                    else
+                    {
+                        rr_vector_scale(&delta, 0.4);
+                        rr_vector_add(&physical->acceleration, &delta);
+                    }
+                }
+                break;
+            }
             default:
                 break;
             }
         }
+        else
+            --petal->effect_delay;
     }
 
-    struct rr_component_physical *flower_physical =
-        rr_simulation_get_physical(simulation, player_info->flower_id);
-    struct rr_vector position_vector = {physical->x, physical->y};
-    struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
     float holdingRadius = 75;
     if (player_info->input & 1 && !is_projectile &&
         petal_data->id != rr_petal_id_uranium && petal_data->id != rr_petal_id_magnet)

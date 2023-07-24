@@ -29,6 +29,7 @@ enum rr_petal_id
     rr_petal_id_magnet,
     rr_petal_id_uranium,
     rr_petal_id_speed,
+    rr_petal_id_azalea,
     rr_petal_id_max
 };
 
