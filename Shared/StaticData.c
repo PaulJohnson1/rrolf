@@ -33,12 +33,12 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1,   1.3},
-    {1.3, 1.8},
-    {1.8, 2.4},
-    {2.4, 3.2},
-    {3.2, 4.0},
-    {4.0, 10.0},
+    {1,   1},
+    {1.3, 1.5},
+    {1.8, 2.2},
+    {2.4, 2.9},
+    {3.2, 3.6},
+    {4.0, 9.0},
     {10,  25.0}
 };
 

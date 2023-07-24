@@ -209,7 +209,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
                 rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(
                 player_health, player_health->health +
-                                   0.03 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
+                                   0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         else if (data->id == rr_petal_id_faster)
             player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
