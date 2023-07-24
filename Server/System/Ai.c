@@ -141,6 +141,17 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
+    
+    if (ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving)
+    {
+        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        {
+            ai->ai_state = rr_ai_state_waiting_to_charge;
+            ai->ticks_until_next_action = 25;
+        }
+    }
+    if (ai->target_entity != RR_NULL_ENTITY && !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = RR_NULL_ENTITY;
 
     switch (ai->ai_state)
     {
@@ -151,13 +162,14 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
 
     case rr_ai_state_idle_moving:
         tick_idle_moving(entity, simulation);
-
+        /*
         ai->target_entity = ai_get_nearest_flower(entity, simulation);
         if (rr_simulation_has_entity(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_waiting_to_charge;
             ai->ticks_until_next_action = rand() % 25 + 25;
         }
+        */
         break;
     case rr_ai_state_waiting_to_charge:
     {
@@ -169,10 +181,10 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
             break;
         }
 
-        if (!rr_simulation_has_entity(simulation, ai->target_entity))
+        if (ai->target_entity == RR_NULL_ENTITY)
         {
             ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 50;
+            ai->ticks_until_next_action = 25;
             break;
         }
 
@@ -195,10 +207,10 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
             ai->target_entity = 0;
         }
 
-        if (!rr_simulation_has_entity(simulation, ai->target_entity))
+        if (ai->target_entity == RR_NULL_ENTITY)
         {
             ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 50;
+            ai->ticks_until_next_action = 25;
             break;
         }
 
@@ -215,7 +227,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         //rr_component_physical_set_angle(
             //physical, rr_angle_lerp(physical->angle, target_angle, 0.05));
 
-        rr_vector_from_polar(&accel, 2.5, physical->angle);
+        rr_vector_from_polar(&accel, 3.25, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
