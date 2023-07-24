@@ -18,7 +18,7 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_rotate(renderer,
                        physical->lerp_angle + physical->lerp_radius * 0.25);
     rr_renderer_scale(renderer, physical->lerp_radius * 0.04);
-    rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.1);
+    rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.05);
     float animation_tick =
         ((2 * drop->hidden - 1) * physical->lerp_server_animation_tick +
          (1 - drop->hidden) * 5) *

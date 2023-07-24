@@ -29,7 +29,9 @@ uint8_t get_id_from_wave(uint32_t wave)
         id = get_id_from_wave(wave);
     if (id == rr_mob_id_spinosaurus_head)
         id = get_id_from_wave(wave);
-    if (id == rr_mob_id_stump && rand() % 5 != 0)
+    if (id == rr_mob_id_stump && rand() % 4 != 0)
+        id = get_id_from_wave(wave);
+    if (id == rr_mob_id_fern && rand() % 5 != 0)
         id = get_id_from_wave(wave);
 
     return id;
