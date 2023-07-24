@@ -41,12 +41,12 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0, 2,
                                   rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                                  rr_ui_text_init(hp, 12, 0xff44ff44)),
+                                  rr_ui_text_init(hp, 12, 0xffffffff)),
                               -1, 0),
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0, 2,
                                   rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                  rr_ui_text_init(dmg, 12, 0xffff4444)),
+                                  rr_ui_text_init(dmg, 12, 0xffffffff)),
                               -1, 0)),
         0x80000000);
     if (id == rr_petal_id_magnet)
@@ -56,7 +56,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Pickup range: ", 12, 0xff44ffdd),
-                rr_ui_text_init(extra, 12, 0xff44ffdd)),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
             -1, 0)
         );
     }
@@ -67,7 +67,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Heal: ", 12, 0xffffff44),
-                rr_ui_text_init(extra, 12, 0xffffff44)),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
             -1, 0)
         );
     }
@@ -77,7 +77,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                 rr_ui_container_init(), 0, 0, 3,
                 rr_ui_text_init("Spawns: ", 12, 0xffe07422),
                 rr_ui_text_init(RR_RARITY_NAMES[rarity], 12, RR_RARITY_COLORS[rarity]),
-                rr_ui_text_init(" T-Rex", 12, 0xffe07422)),
+                rr_ui_text_init(" T-Rex", 12, 0xffffffff)),
             -1, 0)
         );
     }
@@ -88,7 +88,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Petal rotation: ", 12, 0xffd11b67),
-                rr_ui_text_init(extra, 12, 0xffd11b67)),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
             -1, 0)
         );
     }
@@ -99,18 +99,18 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
                 rr_ui_text_init("Self poison: ", 12, 0xffbf29c2),
-                rr_ui_text_init(extra, 12, 0xffbf29c2)),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
             -1, 0)
         );
     }
     else if (id == rr_petal_id_speed)
     {
         char *extra = malloc((sizeof *extra) * 16);
-        extra[sprintf(extra, "%d", 6 + 4 * rarity)] = 0;
+        extra[sprintf(extra, "%.1f%%", 5 + 3.5 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0, 2,
-                rr_ui_text_init("Speed increase: ", 12, 0xffbf29c2),
-                rr_ui_text_init(extra, 12, 0xffbf29c2)),
+                rr_ui_text_init("Speed increase: ", 12, 0xff5682c4),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
             -1, 0)
         );
     }
