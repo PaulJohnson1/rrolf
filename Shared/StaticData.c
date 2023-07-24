@@ -22,7 +22,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 25, 10, 30.0f, {}},
+    {rr_mob_id_triceratops, 75, 5, 30.0f, {}},
     {rr_mob_id_trex, 40, 20, 32.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
@@ -55,7 +55,7 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
     0xffde1f1f, 0xff1fdbde, 0xffff2b75};
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Dev"};
+    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Common"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Light", "Rock", "Stinger", "Faster",
     "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea"};

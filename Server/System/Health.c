@@ -19,11 +19,11 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
 
-    // heal 1% of max hp per second (0.0004 is 0.01 / 25)
+    // heal 0.5% of max hp per second (0.0002 is 0.01 / 25)
     if (health->health > 0)
     {
         rr_component_health_set_health(health, health->health +
-                                                   health->max_health * 0.0004);
+                                                   health->max_health * 0.0002);
         if (physical->server_animation_tick > 0)
             rr_component_physical_set_server_animation_tick(
                 physical, physical->server_animation_tick - 1);
@@ -78,14 +78,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = relations->owner;
                 }
                 else // allows for mob targeting
-                {
                     ai->target_entity = entity2;
-                }
-                // if (ai->ai_aggro_type == rr_ai_aggro_type_triceratops)
-                // {
-                //     ai->ai_state = rr_ai_state_waiting_to_charge;
-                //     ai->ticks_until_next_action = 25;
-                // }
             }
         }
     }
@@ -109,14 +102,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = relations->owner;
                 }
                 else
-                {
                     ai->target_entity = entity1;
-                }
-                // if (ai->ai_aggro_type == rr_ai_aggro_type_triceratops)
-                // {
-                //     ai->ai_state = rr_ai_state_waiting_to_charge;
-                //     ai->ticks_until_next_action = 25;
-                // }
+ 
             }
         }
     }
