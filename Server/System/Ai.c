@@ -64,7 +64,7 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
     return closest_flower;
 }
 
-static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
+static uint8_t check_if_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
 {
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
         ai->target_entity = ai_get_nearest_target(ai->parent_id, simulation, 1000);
@@ -72,7 +72,7 @@ static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulat
     {
         if (ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving)
         {
-            ai->ai_state = rr_ai_state_attacking;
+            return 1;
             ai->ticks_until_next_action = 25;
         }
     }
@@ -82,7 +82,7 @@ static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulat
         ai->ai_state = rr_ai_state_idle;
         ai->ticks_until_next_action = rand() % 25 + 25;
     }
-    
+    return 0;
 }
 
 static void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
@@ -254,7 +254,8 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    find_aggro(ai, simulation);
+    if (check_if_aggro(ai, simulation)) 
+        ai->ai_state = rr_ai_state_attacking;
     
     switch (ai->ai_state)
     {
@@ -417,7 +418,8 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    find_aggro(ai, simulation);
+    if (check_if_aggro(ai, simulation))
+        ai->ai_state = rr_ai_state_waiting_to_charge;
 
     switch (ai->ai_state)
     {
