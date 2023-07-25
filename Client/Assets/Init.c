@@ -141,7 +141,7 @@ static void mob_stump_and_fern_init(struct rr_game *this)
 static void mob_pachycephalosaurus_init(struct rr_game *this)
 {
     rr_renderer_init(&this->mob_pachycephalosaurus_head);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_head, 192, 336);
+    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_head, 144, 240);
     rr_renderer_draw_svg(&this->mob_pachycephalosaurus_head,
 #include <Client/Assets/Mob/Pachycephalosaurus/Head.h>
                          , 0, 0);

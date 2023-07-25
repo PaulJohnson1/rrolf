@@ -13,7 +13,24 @@ static EntityIdx mobs[1024] = {0};
 static uint64_t flowers_size = 0;
 static uint64_t mobs_size = 0;
 
-void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
+static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
+{
+    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
+    if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
+    {
+        ai->ai_state = rr_ai_state_attacking;
+        ai->ticks_until_next_action = 25;
+    }
+    else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
+    {
+        ai->target_entity = RR_NULL_ENTITY;
+        ai->ai_state = rr_ai_state_idle;
+        ai->ticks_until_next_action = rand() % 25 + 25;
+    }
+    
+}
+static void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -233,19 +250,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
-    if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
-    {
-        ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 25;
-    }
-    else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
-    {
-        ai->target_entity = RR_NULL_ENTITY;
-        ai->ai_state = rr_ai_state_idle;
-        ai->ticks_until_next_action = rand() % 25 + 25;
-    }
+    find_aggro(ai, simulation);
     
     switch (ai->ai_state)
     {
@@ -401,6 +406,77 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     }
 }
 
+static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
+                                      struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+    find_aggro(ai, simulation);
+
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_recovering_after_charge:
+    case rr_ai_state_idle:
+        tick_idle(entity, simulation);
+        break;
+
+    case rr_ai_state_idle_moving:
+        tick_idle_moving(entity, simulation);
+        break;
+    case rr_ai_state_waiting_to_charge:
+    {
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_attacking;
+            ai->ticks_until_next_action = rand() % 25 + 33;
+            break;
+        }
+
+        if (ai->target_entity == RR_NULL_ENTITY)
+        {
+            ai->ai_state = rr_ai_state_idle_moving;
+            ai->ticks_until_next_action = 25;
+            break;
+        }
+
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction = predict(delta, physical2->velocity, 15);
+        rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
+        break;
+    }
+    case rr_ai_state_attacking:
+    {
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_waiting_to_charge;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+            break;
+        }
+
+        if (ai->target_entity == RR_NULL_ENTITY)
+        {
+            ai->ai_state = rr_ai_state_idle_moving;
+            ai->ticks_until_next_action = 25;
+            break;
+        }
+
+        struct rr_vector accel;
+
+        rr_vector_from_polar(&accel, 3.25, physical->angle);
+        rr_vector_add(&physical->acceleration, &accel);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void system_for_each(EntityIdx entity, void *simulation)
 {
     struct rr_simulation *this = simulation;
@@ -455,6 +531,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_ai_aggro_type_triceratops:
         tick_ai_aggro_triceratops(entity, this);
+        break;
+    case rr_ai_aggro_type_pachycephalosaurus:
+        tick_ai_aggro_pachycephalosaurus(entity, this);
         break;
     case rr_ai_aggro_type_t_rex:
         tick_ai_aggro_t_rex(entity, this);
