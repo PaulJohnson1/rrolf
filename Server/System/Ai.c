@@ -422,7 +422,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         struct rr_component_physical *flower_physical = rr_simulation_get_physical(this, relations->owner);
         float dx = flower_physical->x - physical->x;
         float dy = flower_physical->y - physical->y;
-        if ((ai->ai_state == rr_ai_state_returning_to_owner && dx * dx + dy * dy > 200 * 200))
+        if ((ai->ai_state == rr_ai_state_returning_to_owner && dx * dx + dy * dy > (250 + physical->radius) * (250 + physical->radius)))
         {
             struct rr_vector accel = {dx, dy};
             rr_vector_set_magnitude(&accel, 1.5);
@@ -430,7 +430,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             return;
         }
-        else if (dx * dx + dy * dy > 500 * 500)
+        else if (dx * dx + dy * dy > (400 + physical->radius) * (400 + physical->radius))
         {
             ai->ai_state = rr_ai_state_returning_to_owner;
             struct rr_vector accel = {dx, dy};
