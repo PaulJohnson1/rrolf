@@ -6,6 +6,7 @@ project(rrolf-client)
 include_directories(..)
 
 set(SRCS
+    Assets/Init.c
     Renderer/Common.c
     Renderer/RenderDrop.c
     Renderer/RenderFlower.c

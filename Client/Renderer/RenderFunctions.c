@@ -396,6 +396,66 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_head);
         rr_renderer_context_state_free(renderer, &state);
         break;
+    case rr_mob_id_pachycephalosaurus:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
+            rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[0]);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
+            rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[1]);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, 155);
+            rr_renderer_rotate(renderer, turning_value);
+            rr_renderer_translate(renderer,  0, -155);
+            rr_renderer_draw_translated_image(renderer, &game->mob_pachycephalosaurus_tail, 0, 155);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_body);
+        
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, -135);
+            rr_renderer_rotate(renderer, -0);
+            rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_head);
+        rr_renderer_context_state_free(renderer, &state);
+        break;
+    case rr_mob_id_ornithomimus:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 70, 0);
+            rr_renderer_rotate(renderer, animation_tick * 0.1f);
+            rr_renderer_draw_image(renderer, &game->mob_ornithomimus_wings[0]);
+        rr_renderer_context_state_free(renderer, &state);
+        
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, -70, 0);
+            rr_renderer_rotate(renderer, animation_tick * -0.1f);
+            rr_renderer_draw_image(renderer, &game->mob_ornithomimus_wings[1]);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, 155);
+            rr_renderer_rotate(renderer, turning_value);
+            rr_renderer_translate(renderer,  0, -155);
+            rr_renderer_draw_translated_image(renderer, &game->mob_ornithomimus_tail, 0, 155);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_draw_image(renderer, &game->mob_ornithomimus_body);
+        
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, -125);
+            rr_renderer_rotate(renderer, -0);
+            rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head);
+        rr_renderer_context_state_free(renderer, &state);
+        break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);

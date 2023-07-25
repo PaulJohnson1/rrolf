@@ -86,6 +86,16 @@ struct rr_game
     struct rr_renderer mob_dakotaraptor_tail;
     struct rr_renderer mob_dakotaraptor_wings[2];
 
+    struct rr_renderer mob_pachycephalosaurus_body;
+    struct rr_renderer mob_pachycephalosaurus_head;
+    struct rr_renderer mob_pachycephalosaurus_legs[2];
+    struct rr_renderer mob_pachycephalosaurus_tail;
+
+    struct rr_renderer mob_ornithomimus_body;
+    struct rr_renderer mob_ornithomimus_head;
+    struct rr_renderer mob_ornithomimus_tail;
+    struct rr_renderer mob_ornithomimus_wings[2];
+
     struct rr_renderer mob_stump;
 
     struct rr_renderer mob_fern;

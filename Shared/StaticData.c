@@ -24,12 +24,15 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 75, 5, 30.0f, {}},
     {rr_mob_id_trex, 40, 20, 32.0f, {}},
-    {rr_mob_id_fern, 10, 5, 32.0f, {}},
+    {rr_mob_id_fern, 10, 5, 25.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
     {rr_mob_id_pteranodon, 35, 40, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 35, 30, 30.0f, {}}};
+    {rr_mob_id_dakotaraptor, 35, 30, 30.0f, {}},
+    {rr_mob_id_pachycephalosaurus, 15, 10, 25.0f, {}},
+    {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}}
+};
 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
@@ -58,7 +61,7 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Common"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Basic", "Light", "Rock", "Stinger", "Faster",
+    "Secret", "Basic", "Pellet", "Rock", "Stinger", "Faster",
     "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
@@ -78,7 +81,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex", "Fern", "Stump", "Spinosaurus",
-    "Spinosaurus", "Pteranodon", "Dakotaraptor"};
+    "Spinosaurus", "Pteranodon", "Dakotaraptor", "Pachycephalosaurus",
+    "Ornithomimus"};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  12,
                                                             16, 25, 45, 5};
@@ -147,11 +151,9 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 
 static void init_loot_tables()
 {
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
-                    rr_petal_id_light, 0.15);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1], rr_petal_id_faster,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0], rr_petal_id_faster,
                     0.05);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[2], rr_petal_id_speed,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1], rr_petal_id_speed,
                     0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_rock,
@@ -176,6 +178,9 @@ static void init_loot_tables()
                     rr_petal_id_uranium, 0.01);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
                     rr_petal_id_magnet, 0.015);
+
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
+                    rr_petal_id_light, 0.15);
 }
 
 void rr_static_data_init()
