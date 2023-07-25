@@ -13,74 +13,6 @@ static EntityIdx mobs[1024] = {0};
 static uint64_t flowers_size = 0;
 static uint64_t mobs_size = 0;
 
-static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
-{
-    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
-    if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
-    {
-        ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 25;
-    }
-    else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
-    {
-        ai->target_entity = RR_NULL_ENTITY;
-        ai->ai_state = rr_ai_state_idle;
-        ai->ticks_until_next_action = rand() % 25 + 25;
-    }
-    
-}
-static void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
-{
-    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-
-    if (ai->ticks_until_next_action == 0)
-    {
-        ai->ticks_until_next_action = rand() % 33 + 25;
-        ai->ai_state = rr_ai_state_idle_moving;
-        rr_component_physical_set_angle(
-            physical, physical->angle + (rr_frand() - 0.5) * M_PI);
-    }
-}
-
-static struct rr_vector predict(struct rr_vector delta,
-                                struct rr_vector velocity, float speed)
-{
-    float distance = rr_vector_get_magnitude(&delta);
-    rr_vector_scale(&velocity, distance / speed);
-    rr_vector_add(&delta, &velocity);
-    return delta;
-}
-
-static void tick_idle_move(EntityIdx entity, struct rr_simulation *simulation)
-{
-    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-
-    struct rr_vector accel;
-    rr_vector_from_polar(&accel, 0.5f, physical->angle);
-    rr_vector_add(&physical->acceleration, &accel);
-}
-
-static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
-{
-    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-
-    if (ai->ticks_until_next_action == 0)
-    {
-        ai->ticks_until_next_action = rand() % 50 + 25;
-        ai->ai_state = rr_ai_state_idle;
-    }
-    struct rr_vector accel;
-    rr_vector_from_polar(&accel, 1.0f, physical->angle);
-    rr_vector_add(&physical->acceleration, &accel);
-}
-
 static EntityIdx ai_get_nearest_target(EntityIdx entity,
                                        struct rr_simulation *simulation, float range)
 {
@@ -130,6 +62,75 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
     }
 
     return closest_flower;
+}
+
+static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
+{
+    if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = ai_get_nearest_target(ai->parent_id, simulation, 1000);
+    if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
+    {
+        ai->ai_state = rr_ai_state_attacking;
+        ai->ticks_until_next_action = 25;
+    }
+    else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
+    {
+        ai->target_entity = RR_NULL_ENTITY;
+        ai->ai_state = rr_ai_state_idle;
+        ai->ticks_until_next_action = rand() % 25 + 25;
+    }
+    
+}
+
+static void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    if (ai->ticks_until_next_action == 0)
+    {
+        ai->ticks_until_next_action = rand() % 33 + 25;
+        ai->ai_state = rr_ai_state_idle_moving;
+        rr_component_physical_set_angle(
+            physical, physical->angle + (rr_frand() - 0.5) * M_PI);
+    }
+}
+
+static struct rr_vector predict(struct rr_vector delta,
+                                struct rr_vector velocity, float speed)
+{
+    float distance = rr_vector_get_magnitude(&delta);
+    rr_vector_scale(&velocity, distance / speed);
+    rr_vector_add(&delta, &velocity);
+    return delta;
+}
+
+static void tick_idle_move(EntityIdx entity, struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    struct rr_vector accel;
+    rr_vector_from_polar(&accel, 0.5f, physical->angle);
+    rr_vector_add(&physical->acceleration, &accel);
+}
+
+static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    if (ai->ticks_until_next_action == 0)
+    {
+        ai->ticks_until_next_action = rand() % 50 + 25;
+        ai->ai_state = rr_ai_state_idle;
+    }
+    struct rr_vector accel;
+    rr_vector_from_polar(&accel, 1.0f, physical->angle);
+    rr_vector_add(&physical->acceleration, &accel);
 }
 
 static void tick_ai_aggro_default(EntityIdx entity,
