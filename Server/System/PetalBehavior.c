@@ -336,7 +336,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale_d * data->damage / slot->count;
                     if (data->id == rr_petal_id_bone)
-                        health->damage_reduction = 2 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
+                        health->damage_reduction = 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
 
                     if (data->secondary_cooldown > 0)
                     {
