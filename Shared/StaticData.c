@@ -80,7 +80,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
     "Increases your movement speed. Does not stack",
     "Lazy dev got off his couch and added a heal petal. Check it out",
-    "It came from a skeleton"
+    "Gives the player armor. Does not stack"
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex", "Fern", "Stump", "Spinosaurus",

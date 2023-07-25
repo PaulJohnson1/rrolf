@@ -197,8 +197,13 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
         rr_simulation_get_flower(simulation, player_info->flower_id);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, player_info->flower_id);
+    struct rr_component_health *player_health =
+        rr_simulation_get_health(simulation, player_info->flower_id);
     rr_component_flower_set_face_flags(flower, player_info->input);
+    //reset
+    physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    health->damage_reduction = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot =
@@ -206,8 +211,6 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         if (data->id == rr_petal_id_leaf)
         {
-            struct rr_component_health *player_health =
-                rr_simulation_get_health(simulation, player_info->flower_id);
             rr_component_health_set_health(
                 player_health, player_health->health +
                                    0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
@@ -230,6 +233,9 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
                     player_info->modifiers.drop_pickup_radius +=
                         -25 + data->id * 25;
                 }
+                if (data->id == rr_petal_id_bone)
+                    if (health->damage_reduction < 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;)
+                        health->damage_reduction = 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
             }
     }
 }
@@ -335,8 +341,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                    scale_h * data->health);
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale_d * data->damage / slot->count;
-                    if (data->id == rr_petal_id_bone)
-                        health->damage_reduction = 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
 
                     if (data->secondary_cooldown > 0)
                     {
