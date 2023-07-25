@@ -7,7 +7,7 @@
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 10.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_light, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 16, 0, {1, 2, 2, 3, 3, 5, 5}},
+    {rr_petal_id_light, rr_rarity_id_common, 8.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 55.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 35.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_faster, rr_rarity_id_rare, 7.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
@@ -66,7 +66,7 @@ char const *RR_PETAL_NAMES[rr_petal_id_max] = {
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
-    "No fee, I'm traveling light",
+    "Low damage, but there's lots",
     "Dwayne",
     "Ow that hurts",
     "Gotta go fast",

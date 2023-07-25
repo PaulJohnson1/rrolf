@@ -451,7 +451,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_draw_image(renderer, &game->mob_ornithomimus_body);
         
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0, -125);
+            rr_renderer_translate(renderer, 0, -145);
             rr_renderer_rotate(renderer, -0);
             rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head);
         rr_renderer_context_state_free(renderer, &state);
