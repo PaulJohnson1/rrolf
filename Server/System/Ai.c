@@ -305,7 +305,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
          ai->ai_state != rr_ai_state_missile_shoot_delay))
     {
         ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 100;
+        ai->ticks_until_next_action = 50;
     }
 
     switch (ai->ai_state)
@@ -351,7 +351,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         if (ai->ticks_until_next_action == 0)
         {
             ai->ai_state = rr_ai_state_attacking;
-            ai->ticks_until_next_action = rand() % 50 + 75;
+            ai->ticks_until_next_action = rand() % 25 + 50;
 
             struct rr_component_mob *mob =
                 rr_simulation_get_mob(simulation, entity);
@@ -392,7 +392,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                 health, RR_MOB_DATA[mob->id].health *
                             RR_MOB_RARITY_SCALING[mob->rarity].health * 0.2);
             health->damage = RR_MOB_DATA[mob->id].damage *
-                             RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.5f;
+                             RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.25f;
             rr_component_health_set_hidden(health, 1);
 
             projectile->ticks_until_death = 50;
