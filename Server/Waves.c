@@ -26,6 +26,7 @@ uint8_t get_id_from_wave(uint32_t wave)
     for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
         if (seed < RR_MOB_ID_RARITY_COEFFICIENTS[id])
             return id;
+    return rr_mob_id_max - 1;
 }
 
 int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
