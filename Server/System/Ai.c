@@ -72,8 +72,8 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai, struct rr_simulation *
     {
         if (ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving)
         {
-            return 1;
             ai->ticks_until_next_action = 25;
+            return 1;
         }
     }
     else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
