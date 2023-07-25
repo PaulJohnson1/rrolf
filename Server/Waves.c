@@ -14,7 +14,7 @@ uint8_t get_rarity_from_wave(uint32_t wave)
         rarity_cap = rr_rarity_id_max;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.2, pow(1.3, wave)) >
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3, pow(1.3, wave)) >
             rarity_seed)
             break;
     return rarity;

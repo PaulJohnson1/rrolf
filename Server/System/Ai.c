@@ -244,6 +244,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;
+        ai->ticks_until_next_action = rand() % 25 + 25;
     }
     
     switch (ai->ai_state)
@@ -415,6 +416,35 @@ static void system_for_each(EntityIdx entity, void *simulation)
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
+    struct rr_component_relations *relations = rr_simulation_get_relations(this, entity);
+    if (relations->team == rr_simulation_team_id_players || ai->ai_state == rr_ai_state_returning_to_owner)
+    {
+        struct rr_component_physical *flower_physical = rr_simulation_get_physical(this, relations->owner);
+        float dx = flower_physical->x - physical->x;
+        float dy = flower_physical->y - physical->y;
+        if ((ai->ai_state == rr_ai_state_returning_to_owner && dx * dx + dy * dy > 200 * 200))
+        {
+            struct rr_vector accel = {dx, dy};
+            rr_vector_set_magnitude(&accel, 1.5);
+            rr_vector_add(&physical->acceleration, &accel);
+            rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
+            return;
+        }
+        else if (dx * dx + dy * dy > 500 * 500)
+        {
+            ai->ai_state = rr_ai_state_returning_to_owner;
+            struct rr_vector accel = {dx, dy};
+            rr_vector_set_magnitude(&accel, 1.5);
+            rr_vector_add(&physical->acceleration, &accel);
+            rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
+            return;
+        }
+        else if (ai->ai_state == rr_ai_state_returning_to_owner)
+        {
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+        }
+    }
 
     switch (ai->ai_aggro_type)
     {

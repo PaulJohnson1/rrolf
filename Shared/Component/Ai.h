@@ -19,7 +19,9 @@ enum rr_ai_state
     rr_ai_state_recovering_after_charge,
 
     // hornet
-    rr_ai_state_missile_shoot_delay
+    rr_ai_state_missile_shoot_delay,
+    // player mobs
+    rr_ai_state_returning_to_owner
 };
 
 enum rr_ai_aggro_type

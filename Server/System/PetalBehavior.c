@@ -381,6 +381,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         rr_simulation_alloc_mob(
                             simulation, rr_mob_id_trex, slot->rarity,
                             rr_simulation_team_id_players);
+                    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, mob_id);
+                    rr_component_relations_set_owner(relations, player_info->flower_id);
                     struct rr_component_physical *mob_physical =
                         rr_simulation_get_physical(simulation, mob_id);
                     rr_component_physical_set_x(mob_physical,

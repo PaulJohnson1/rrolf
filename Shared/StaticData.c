@@ -22,7 +22,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 75, 5, 30.0f, {}},
+    {rr_mob_id_triceratops, 75, 10, 30.0f, {}},
     {rr_mob_id_trex, 40, 20, 32.0f, {}},
     {rr_mob_id_fern, 10, 5, 25.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
@@ -93,7 +93,7 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  10,
                                                                 12, 15, 18, 25};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {5, 4, 2, 1, 0, 0, 3, 5, 6, 10};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {5, 6, 2, 1, 0, 0, 3, 8, 6, 3};
 
 static void init_game_coefficients()
 {
