@@ -484,7 +484,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
 }
 
 // spawn maybe like 50 mobs UNIFORM DIST, NOT CLUSTERED or spawn 12 clusters
-static void spawn_mob_swarm(struct rr_simulation *this, uint32_t count)
+static void spawn_mob_swarm(struct rr_simulation *this)
 {
     uint32_t mob_attempts = 0;
     while (mob_attempts < 100 && this->wave_points > 2) {
@@ -538,7 +538,7 @@ static void tick_wave(struct rr_simulation *this)
                 spawn_mob_cluster(this);
         
         if (arena->wave_tick == (wave_length * 25 * spawn_time))
-            spawn_mob_swarm(this, 50);
+            spawn_mob_swarm(this);
     }
     else if (arena->wave_tick >=
                  wave_length * 25 * (spawn_time + after_wave_time) ||
