@@ -24,7 +24,7 @@ void tick_idle(EntityIdx entity, struct rr_simulation *simulation)
         ai->ticks_until_next_action = rand() % 33 + 25;
         ai->ai_state = rr_ai_state_idle_moving;
         rr_component_physical_set_angle(
-            physical, physical->angle + rr_frand() * M_PI - M_PI * 0.5f);
+            physical, physical->angle + (rr_frand() - 0.5) * M_PI);
     }
 }
 
@@ -240,7 +240,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
         ai->ai_state = rr_ai_state_attacking;
         ai->ticks_until_next_action = 25;
     }
-    else
+    else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;
