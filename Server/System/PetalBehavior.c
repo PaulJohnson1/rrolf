@@ -23,6 +23,8 @@ static void uranium_damage(EntityIdx mob, void *_captures)
 {
     struct uranium_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
+    if (rr_simulation_get_relations(simulation, mob)->team == rr_simulation_team_id_players)
+        return;
     struct rr_component_health *health =
         rr_simulation_get_health(simulation, mob);
     struct rr_component_physical *physical =
