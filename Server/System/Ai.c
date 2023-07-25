@@ -234,7 +234,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 500);
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
     if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
     {
         ai->ai_state = rr_ai_state_attacking;
@@ -288,7 +288,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         rr_simulation_get_physical(simulation, entity);
 
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 500);
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_missile_shoot_delay))

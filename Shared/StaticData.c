@@ -87,6 +87,9 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Spinosaurus", "Pteranodon", "Dakotaraptor", "Pachycephalosaurus",
     "Ornithomimus"};
 
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {45, 60, 15, 5, 0, 0, 35, 1, 45, 20};
+
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  12,
                                                             16, 25, 45, 5};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
@@ -95,8 +98,6 @@ uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  10,
                                                                 12, 15, 18, 25};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {5, 6, 2, 1, 0, 0, 3, 8, 6, 3};
 
 static void init_game_coefficients()
 {
