@@ -234,7 +234,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
                         -25 + data->id * 25;
                 }
                 if (data->id == rr_petal_id_bone)
-                    if (health->damage_reduction < 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;)
+                    if (health->damage_reduction < 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
                         health->damage_reduction = 3.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
             }
     }
