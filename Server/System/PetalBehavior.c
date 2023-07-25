@@ -335,6 +335,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                    scale_h * data->health);
                     rr_component_health_set_hidden(health, 1);
                     health->damage = scale_d * data->damage / slot->count;
+                    if (data->id == rr_petal_id_bone)
+                        health->damage_reduction = 2 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
 
                     if (data->secondary_cooldown > 0)
                     {
@@ -371,12 +373,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     struct rr_component_physical *petal_physical =
                         rr_simulation_get_physical(simulation,
                                                    p_petal->simulation_id);
-                    // rr_simulation_request_entity_deletion(simulation,
-                    // p_petal->simulation_id);
-                    rr_component_health_set_health(
-                        rr_simulation_get_health(simulation,
-                                                 p_petal->simulation_id),
-                        0);
+                    rr_simulation_request_entity_deletion(simulation, p_petal->simulation_id);
 
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(
