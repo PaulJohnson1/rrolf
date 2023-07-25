@@ -60,15 +60,34 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0, 2,
                                   rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                                  rr_ui_text_init(hp, 12, 0xff44ff44)),
+                                  rr_ui_text_init(hp, 12, 0xffffffff)),
                               -1, 0),
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0, 2,
                                   rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                  rr_ui_text_init(dmg, 12, 0xffff4444)),
+                                  rr_ui_text_init(dmg, 12, 0xffffffff)),
                               -1, 0),
             rr_ui_static_space_init(10)),
         0x80000000);
+    if (id == rr_mob_id_pteranodon)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.1f", 0.2 * RR_MOB_RARITY_SCALING[rarity].health)] = 0;
+        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_text_init("Missile health: ", 12, 0xff44ff44),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
+            -1, 0)
+        );
+        extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.1f", 0.5 * RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_text_init("Missile damage: ", 12, 0xffff4444),
+                rr_ui_text_init(extra, 12, 0xffffffff)),
+            -1, 0)
+        );
+    }
     for (uint8_t i = 0; i < 4; ++i)
     {
         if (RR_MOB_DATA[id].loot[i].id == 0)
