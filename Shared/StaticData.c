@@ -19,7 +19,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -73,9 +73,9 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Ow that hurts",
     "Gotta go fast",
     "ICBM approved",
-    "Where are the zombies?",
-    "Probably the most normal petal there is. Oh wait",
-    "It's egg",
+    "",
+    "Heals you gradually",
+    "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Stacks because why not",
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
     "Increases your movement speed. Does not stack",
