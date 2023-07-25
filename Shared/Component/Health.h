@@ -15,6 +15,7 @@ struct rr_component_health
     RR_CLIENT_ONLY(float lerp_health;)
     float max_health;
     RR_SERVER_ONLY(float damage;)
+    RR_SERVER_ONLY(float damage_reduction;)
     EntityIdx parent_id;
     uint8_t hidden : 1;
     RR_SERVER_ONLY(uint8_t damage_paused : 3;)
@@ -30,6 +31,8 @@ RR_SERVER_ONLY(void rr_component_health_write(struct rr_component_health *,
 RR_CLIENT_ONLY(void rr_component_health_read(struct rr_component_health *,
                                              struct proto_bug *);)
 
+
 RR_DECLARE_PUBLIC_FIELD(health, float, health)
 RR_DECLARE_PUBLIC_FIELD(health, float, max_health)
 RR_DECLARE_PUBLIC_FIELD(health, uint8_t, hidden)
+RR_SERVER_ONLY(void rr_component_health_do_damage(struct rr_component_health *, float);)

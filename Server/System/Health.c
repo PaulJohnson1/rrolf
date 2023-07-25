@@ -61,8 +61,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                      rr_simulation_has_petal(this, entity2);
     if (health1->damage_paused == 0 || bypass)
     {
-        rr_component_health_set_health(health1,
-                                       health1->health - health2->damage);
+        rr_component_health_do_damage(health1, health2->damage);
         health1->damage_paused = 5;
         rr_component_physical_set_server_animation_tick(physical1, 5);
 
@@ -84,8 +83,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
     if (health2->damage_paused == 0 || bypass)
     {
-        rr_component_health_set_health(health2,
-                                       health2->health - health1->damage);
+        rr_component_health_do_damage(health2, health1->damage);
         health2->damage_paused = 5;
         rr_component_physical_set_server_animation_tick(physical2, 5);
 

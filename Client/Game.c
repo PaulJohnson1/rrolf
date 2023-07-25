@@ -392,7 +392,6 @@ void rr_game_init(struct rr_game *this)
     }
 
     rr_assets_init(this);
-    
 
     rr_local_storage_get_bytes("debug",
                                &this->settings.displaying_debug_information);

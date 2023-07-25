@@ -43,10 +43,22 @@ void rr_component_health_write(struct rr_component_health *this,
 #undef X
 }
 
+void rr_component_health_do_damage(struct rr_component_health *this, float v)
+{
+    if (this->health == 0)
+        return;
+    if (v <= this->damage_reduction)
+        return;
+    v = this->health - (v - this->damage_reduction);
+    if (v < 0)
+        v = 0;
+    this->health = v;
+    this->protocol_state |= state_flags_health;
+}
+
+
 void rr_component_health_set_health(struct rr_component_health *this, float v)
 {
-    // if (this->damage_paused)
-    //     return;
     if (this->health == 0)
         return;
     if (v > this->max_health)

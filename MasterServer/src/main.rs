@@ -171,6 +171,8 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
         petals: json!({
             "1:0": 5
         }),
+        highest_wave: 1,
+        in_game: 0
     };
     let request_json = serde_json::json!({
         "key": format!("{}/game/players/{}", DIRECTORY_SECRET, username),

@@ -226,6 +226,27 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
+    case rr_petal_id_bone:
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 15, 0);
+        rr_renderer_bezier_curve_to(renderer, 20, -1, 19, -8, 15, -9);
+        rr_renderer_bezier_curve_to(renderer, 11, -10, 11, -4, 9, -4);
+        rr_renderer_line_to(renderer, -9, -4);
+        rr_renderer_bezier_curve_to(renderer, -11, -4, -11, -10, -15, -9);
+        rr_renderer_bezier_curve_to(renderer, -19, -8, -20, -1, -15, 0);
+        rr_renderer_bezier_curve_to(renderer, -20, 1, -19, 8, -15, 9);
+        rr_renderer_bezier_curve_to(renderer, -11, 10, -11, 4, -9, 4);
+        rr_renderer_line_to(renderer, 9, 4);
+        rr_renderer_bezier_curve_to(renderer, 11, 4, 11, 10, 15, 9);
+        rr_renderer_bezier_curve_to(renderer, 19, 8, 20, 1, 15, 0);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }
@@ -244,6 +265,8 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
         else if (id == rr_petal_id_leaf)
             rr_renderer_rotate(renderer, -1.0f);
         else if (id == rr_petal_id_magnet)
+            rr_renderer_rotate(renderer, -1.0f);
+        else if (id == rr_petal_id_bone)
             rr_renderer_rotate(renderer, -1.0f);
         rr_renderer_render_petal(renderer, id);
     }

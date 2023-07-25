@@ -33,8 +33,7 @@ static void uranium_damage(EntityIdx mob, void *_captures)
             (physical->y - captures->y) * (physical->y - captures->y) <
         901 * 901)
     {
-        rr_component_health_set_health(health,
-                                       health->health - captures->damage);
+        rr_component_health_do_damage(health, captures->damage);
         rr_component_physical_set_server_animation_tick(physical, 5);
         // health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
@@ -414,9 +413,6 @@ static void system_petal_misc_logic(EntityIdx id, void *simulation)
         if (!rr_simulation_has_entity(simulation, relations->owner) ||
             physical->has_deletion_animation == 0)
         {
-            struct rr_component_health *health =
-                rr_simulation_get_health(simulation, id);
-            rr_component_health_set_health(health, 0);
             rr_simulation_request_entity_deletion(simulation, id);
             return;
         }
