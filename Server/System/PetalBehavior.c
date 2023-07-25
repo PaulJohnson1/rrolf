@@ -197,7 +197,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
         rr_simulation_get_flower(simulation, player_info->flower_id);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, player_info->flower_id);
-    struct rr_component_health *player_health =
+    struct rr_component_health *health =
         rr_simulation_get_health(simulation, player_info->flower_id);
     rr_component_flower_set_face_flags(flower, player_info->input);
     //reset
@@ -212,7 +212,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
         if (data->id == rr_petal_id_leaf)
         {
             rr_component_health_set_health(
-                player_health, player_health->health +
+                health, health->health +
                                    0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         else if (data->id == rr_petal_id_faster)
