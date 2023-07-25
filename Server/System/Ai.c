@@ -70,8 +70,11 @@ static void find_aggro(struct rr_component_ai *ai, struct rr_simulation *simulat
         ai->target_entity = ai_get_nearest_target(ai->parent_id, simulation, 1000);
     if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
     {
-        ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 25;
+        if (ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving)
+        {
+            ai->ai_state = rr_ai_state_attacking;
+            ai->ticks_until_next_action = 25;
+        }
     }
     else if (ai->ai_state == rr_ai_state_attacking || ai->target_entity != RR_NULL_ENTITY)
     {
@@ -277,8 +280,9 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
-        rr_vector_from_polar(&accel, 1.95, physical->angle);
+        rr_vector_from_polar(&accel, 1.9, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
+        ai->ticks_until_next_action = 2;
         break;
     }
     default:
