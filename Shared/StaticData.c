@@ -23,15 +23,15 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 75, 10, 30.0f, {}},
-    {rr_mob_id_trex, 40, 20, 32.0f, {}},
+    {rr_mob_id_triceratops, 75, 15, 30.0f, {}},
+    {rr_mob_id_trex, 40, 25, 32.0f, {}},
     {rr_mob_id_fern, 10, 5, 25.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
     {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
     {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
     {rr_mob_id_pteranodon, 35, 40, 26.0f, {}},
     {rr_mob_id_dakotaraptor, 35, 30, 30.0f, {}},
-    {rr_mob_id_pachycephalosaurus, 15, 10, 25.0f, {}},
+    {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
     {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}}
 };
 
@@ -186,7 +186,7 @@ static void init_loot_tables()
                     rr_petal_id_magnet, 0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[0],
-                    rr_petal_id_bone, 0.15);
+                    rr_petal_id_bone, 0.05);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
                     rr_petal_id_light, 0.15);

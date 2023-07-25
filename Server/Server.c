@@ -11,6 +11,7 @@
 #include <Server/Client.h>
 #include <Server/Logs.h>
 #include <Server/Simulation.h>
+#include <Server/Waves.h>
 #include <Shared/Api.h>
 #include <Shared/Bitset.h>
 #include <Shared/cJSON.h>
@@ -99,6 +100,7 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
     rr_component_player_info_set_slot_count(this->player_info, 10);
+    struct rr_component_arena *arena = rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
     {
         uint8_t id = this->loadout[i].id;
@@ -106,12 +108,21 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
             this->loadout[i].rarity;
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
+        if (arena->wave < rarity * 4)
+        {
+            arena->wave = rarity * 4;
+            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
+        }
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
-        this->player_info->secondary_slots[i].rarity = rarity;
-            
+        this->player_info->secondary_slots[i].rarity = rarity; 
+        if (arena->wave < rarity * 4)
+        {
+            arena->wave = rarity * 4;
+            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
+        }
     }
     // rr_server_client_create_flower(this);
 }
