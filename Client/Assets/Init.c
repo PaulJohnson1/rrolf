@@ -180,7 +180,7 @@ static void mob_ornithomimus_init(struct rr_game *this)
                          , 0, 0);
 
     rr_renderer_init(&this->mob_ornithomimus_body);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_body, 144, 240);
+    rr_renderer_set_dimensions(&this->mob_ornithomimus_body, 192, 336);
     rr_renderer_draw_svg(&this->mob_ornithomimus_body,
 #include <Client/Assets/Mob/Ornithomimus/Body.h>
                          , 0, 0);
