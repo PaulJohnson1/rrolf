@@ -92,11 +92,10 @@ uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  10,
                                                                 12, 15, 18, 25};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {15, 30, 1, 1,
-                                                          1,  40, 25};
-double RR_MOB_SPAWN_RARITY_COEFFICIENTS[rr_mob_id_max] = {1, 1, 1, 1, 1, 1, 1};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {5, 4, 2, 1, 0, 0, 3, 5, 6, 10};
 
-static void init_rarity_coefficients()
+static void init_game_coefficients()
 {
     double sum = 1;
     double sum2 = 1;
@@ -120,6 +119,10 @@ static void init_rarity_coefficients()
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
     }
     RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max] = 1;
+    for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
+        RR_MOB_ID_RARITY_COEFFICIENTS[mob] += RR_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
+    for (uint64_t mob = 0; mob < rr_mob_id_max; ++mob)
+        RR_MOB_ID_RARITY_COEFFICIENTS[mob] /= RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
 }
 
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
@@ -185,6 +188,6 @@ static void init_loot_tables()
 
 void rr_static_data_init()
 {
-    init_rarity_coefficients();
+    init_game_coefficients();
     init_loot_tables();
 }

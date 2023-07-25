@@ -99,7 +99,7 @@ extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
-extern double RR_MOB_SPAWN_RARITY_COEFFICIENTS[rr_mob_id_max];
+extern double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];

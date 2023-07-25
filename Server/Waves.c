@@ -14,7 +14,7 @@ uint8_t get_rarity_from_wave(uint32_t wave)
         rarity_cap = rr_rarity_id_max;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4, pow(1.3, wave)) >
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.2, pow(1.3, wave)) >
             rarity_seed)
             break;
     return rarity;
@@ -22,19 +22,10 @@ uint8_t get_rarity_from_wave(uint32_t wave)
 
 uint8_t get_id_from_wave(uint32_t wave)
 {
-    uint8_t id = rand() % rr_mob_id_max;
-
-    // pick another id since centipedes (spinosaurus doesn't work right now)
-    if (id == rr_mob_id_spinosaurus_body)
-        id = get_id_from_wave(wave);
-    if (id == rr_mob_id_spinosaurus_head)
-        id = get_id_from_wave(wave);
-    if (id == rr_mob_id_stump && rand() % 4 != 0)
-        id = get_id_from_wave(wave);
-    if (id == rr_mob_id_fern && rand() % 5 != 0)
-        id = get_id_from_wave(wave);
-
-    return id;
+    double seed = rr_frand();
+    for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
+        if (seed < RR_MOB_ID_RARITY_COEFFICIENTS[id])
+            return id;
 }
 
 int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)

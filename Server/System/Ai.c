@@ -64,13 +64,13 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
     rr_vector_add(&physical->acceleration, &accel);
 }
 
-static EntityIdx ai_get_nearest_flower(EntityIdx entity,
-                                       struct rr_simulation *simulation)
+static EntityIdx ai_get_nearest_target(EntityIdx entity,
+                                       struct rr_simulation *simulation, float range)
 {
     uint8_t team_id = rr_simulation_get_relations(simulation, entity)->team;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    float closest_distance = 1500.0f * 1500.0f; // 1.5k is default range
+    float closest_distance = range * range; // 1.5k is default range
     EntityIdx closest_flower = RR_NULL_ENTITY;
     if (team_id == rr_simulation_team_id_mobs)
     {
@@ -234,7 +234,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_flower(entity, simulation);
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 500);
     if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
     {
         ai->ai_state = rr_ai_state_attacking;
@@ -287,7 +287,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         rr_simulation_get_physical(simulation, entity);
 
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_flower(entity, simulation);
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 500);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_missile_shoot_delay))
