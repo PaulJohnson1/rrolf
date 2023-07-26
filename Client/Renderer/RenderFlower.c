@@ -63,6 +63,7 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_set_fill(renderer, 0xffffe763);
     if (flower->lerp_mouth >= 8)
         return;
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_translate(renderer, 0, -flower->lerp_mouth - 7.8);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -12, 0);
@@ -70,4 +71,5 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_line_to(renderer, 0, 6);
     rr_renderer_line_to(renderer, -12, 0);
     rr_renderer_fill(renderer);
+    rr_renderer_context_state_free(renderer, &state);
 }
