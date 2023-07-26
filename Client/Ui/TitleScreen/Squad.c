@@ -130,8 +130,8 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal)
     data->petal = petal;
     data->prev_id = 0;
     this->data = data;
-    this->abs_width = this->width = 15;
-    this->abs_height = this->height = 15;
+    this->abs_width = this->width = 20;
+    this->abs_height = this->height = 20;
     this->on_render = squad_loadout_button_on_render;
     this->animate = squad_loadout_button_animate;
     this->should_show = squad_loadout_button_should_show;
@@ -161,19 +161,25 @@ struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
-    struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 2);
+    struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 5);
     for (uint8_t i = 0; i < 20; ++i)
         rr_ui_container_add_element(
             loadout,
             rr_ui_set_justify(squad_loadout_button_init(&member->loadout[i]),
                               -1, -1));
-    // manually set the size if we want it to stay constant
-    loadout->abs_width = loadout->width = 2 * 10 + (15 + 5) * 5 - 10;
-    loadout->abs_height = loadout->height = 2 * 10 + (15 + 5) * 4 - 10;
-    struct rr_ui_element *a = rr_ui_v_container_init(
-        rr_ui_container_init(), 0, 10, 3, rr_ui_player_init(member),
-        rr_ui_text_init(&member->name[0], 18, 0xffffffff), loadout);
-    struct rr_ui_element *this = rr_ui_choose_element_init(a, b, choose);
+    struct rr_ui_element *top = rr_ui_v_container_init(
+        rr_ui_container_init(), 0, 10, 2, 
+        rr_ui_player_init(member),
+        rr_ui_text_init(&member->name[0], 14, 0xffffffff)
+    );
+    rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 20);
+    rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
+    struct rr_ui_element *squad_container = rr_ui_container_init();
+    squad_container->abs_width = squad_container->width = 120;
+    squad_container->abs_height = squad_container->abs_height = 200;
+    rr_ui_container_add_element(squad_container, loadout);
+    rr_ui_container_add_element(squad_container, top);
+    struct rr_ui_element *this = rr_ui_choose_element_init(squad_container, b, choose);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
 
