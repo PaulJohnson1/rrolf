@@ -13,7 +13,7 @@ void rr_system_velocity_foreach_function(EntityIdx id, void *simulation)
         rr_simulation_get_physical(simulation, id);
     rr_vector_scale(&physical->velocity, physical->friction);
     if (physical->webbed)
-        physical->acceleration_scale *= 0.75;
+        physical->acceleration_scale *= 0.25;
     struct rr_vector accel = {physical->acceleration.x * physical->acceleration_scale, physical->acceleration.y * physical->acceleration_scale};
     rr_vector_add(&physical->velocity, &accel);
     physical->acceleration_scale = 1;
