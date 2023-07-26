@@ -39,7 +39,7 @@ struct rr_renderer
     cairo_t *context;
     cairo_surface_t *surface;
 #else
-uint32_t context_id;
+    uint32_t context_id;
 #endif
     float width;
     float height;
@@ -117,6 +117,7 @@ void rr_renderer_stroke_text(struct rr_renderer *, char const *, float,
 
 float rr_renderer_get_text_size(char const *);
 
+void rr_renderer_execute_order_66();
 #ifdef __cplusplus
 }
 #endif
