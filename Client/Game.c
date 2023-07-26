@@ -979,6 +979,10 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
+        debug_mspt[sprintf(
+            debug_mspt, "ctx calls: %d", rr_renderer_get_op_size())] = 0;
+        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, -15);
+        rr_renderer_fill_text(this->renderer, debug_mspt, 0, -15);
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
