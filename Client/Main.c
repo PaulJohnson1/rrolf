@@ -96,7 +96,7 @@ void rr_main_loop(struct rr_game *this)
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
                 new Array(256).fill(0).map(function(_, i) { return i; });
-            window.onkeydown = async function({which, repeat})
+            window.onkeydown = async function({which})
             {
                 Module._rr_key_event($0, 1, which);
             };
