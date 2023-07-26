@@ -15,7 +15,7 @@ struct renderer_args
     char const *text_arg;
 };
 
-static struct renderer_args instruction_tape[16384];
+static struct renderer_args instruction_tape[20000];
 static uint32_t instruction_size;
 
 void rr_renderer_init(struct rr_renderer *this)

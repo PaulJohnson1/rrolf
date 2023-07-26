@@ -108,20 +108,20 @@ void rr_server_client_create_player_info(struct rr_server_client *this)
             this->loadout[i].rarity;
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        if (arena->wave < rarity * 3)
+        if (arena->wave < rarity * 4)
         {
-            arena->wave = rarity * 3;
-            this->server->simulation.wave_points = get_points_from_wave(rarity * 3);
+            arena->wave = rarity * 4;
+            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
         }
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity; 
-        if (arena->wave < rarity * 3)
+        if (arena->wave < rarity * 4)
         {
-            arena->wave = rarity * 3;
-            this->server->simulation.wave_points = get_points_from_wave(rarity * 3);
+            arena->wave = rarity * 4;
+            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
         }
     }
     // rr_server_client_create_flower(this);
