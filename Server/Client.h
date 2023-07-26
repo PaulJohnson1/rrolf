@@ -33,4 +33,4 @@ struct rr_server_client
 };
 
 void rr_server_client_init(struct rr_server_client *);
-void rr_server_client_create_flower(struct rr_server_client *, uint8_t);
+void rr_server_client_create_flower(struct rr_server_client *);

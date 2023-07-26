@@ -105,5 +105,6 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
+    rr_simulation_create_component_vectors(this);
     rr_system_interpolation_tick(this, 1 - powf(0.9f, delta * 10));
 }

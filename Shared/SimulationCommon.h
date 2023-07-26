@@ -39,7 +39,9 @@ struct rr_simulation
 #undef XX
 
 #define XX(COMPONENT, ID)                                                      \
-    struct rr_component_##COMPONENT COMPONENT##_components[RR_MAX_ENTITY_COUNT];
+    struct rr_component_##COMPONENT COMPONENT##_components[RR_MAX_ENTITY_COUNT]; \
+    EntityIdx COMPONENT##_vector[RR_MAX_ENTITY_COUNT];                           \
+    EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
 #undef XX
 
@@ -53,6 +55,7 @@ int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
 void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
 void rr_simulation_for_each_entity(struct rr_simulation *, void *,
                                    void (*cb)(EntityIdx, void *));
+void rr_simulation_create_component_vectors(struct rr_simulation *);
 
 // internal use
 void __rr_simulation_pending_deletion_free_components(uint64_t, void *);

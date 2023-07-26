@@ -92,13 +92,14 @@ void rr_api_on_get_petals(char *json, void *_client)
     puts("petals are valid");
 }
 
-void rr_server_client_create_player_info(struct rr_server_client *this)
+static void rr_server_client_create_player_info(struct rr_server_client *this, uint8_t pos)
 {
     puts("creating player info");
     this->player_info = rr_simulation_add_player_info(
         &this->server->simulation,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
+    this->player_info->client_id = pos;
     rr_component_player_info_set_slot_count(this->player_info, 10);
     struct rr_component_arena *arena = rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
@@ -703,8 +704,8 @@ void rr_server_tick(struct rr_server *this)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
                         rr_api_get_petals(&this->clients[i].rivet_account.uuid[0], RR_API_SECRET, &this->clients[i]);
-                        rr_server_client_create_player_info(this->clients + i);
-                        rr_server_client_create_flower(this->clients + i, i);
+                        rr_server_client_create_player_info(this->clients + i, i);
+                        rr_server_client_create_flower(this->clients + i);
                     }
             }
         }

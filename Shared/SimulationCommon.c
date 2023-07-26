@@ -70,6 +70,21 @@ void rr_simulation_for_each_entity_function(uint64_t _id, void *_captures)
     captures->user_cb(id, captures->user_captures);
 }
 
+void rr_simulation_create_component_vectors(struct rr_simulation *this)
+{
+    #define XX(COMPONENT, ID)                                                      \
+    this->COMPONENT##_count = 0;                                                   \
+    for (EntityIdx entity = 1; entity < RR_MAX_ENTITY_COUNT; ++entity)             \
+    {                                                                              \
+        if (rr_bitset_get(&this->COMPONENT##_tracker[0], entity) == 0)  \
+            continue; \
+        this->COMPONENT##_vector[this->COMPONENT##_count++] = entity; \
+    }
+    RR_FOR_EACH_COMPONENT;
+    #undef XX
+}
+
+
 void rr_simulation_for_each_entity(struct rr_simulation *this,
                                    void *user_captures,
                                    void (*cb)(EntityIdx, void *))
@@ -101,6 +116,9 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
         captures.user_cb = cb;                                                 \
         captures.user_captures = user_captures;                                \
         captures.simulation = this;                                            \
+        for (uint16_t pos = 0; pos < this->COMPONENT##_count; ++pos)           \
+            cb(this->COMPONENT##_vector[pos], user_captures);                  \
+        return; \
         rr_bitset_for_each_bit(&this->COMPONENT##_tracker[0],                  \
                                &this->COMPONENT##_tracker[0] +                 \
                                    (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),     \

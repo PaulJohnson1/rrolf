@@ -273,7 +273,7 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
     {
         struct rr_component_drop *drop =
             rr_simulation_get_drop(simulation, entity);
-        drop->inspecting = captures->player_info->parent_id;
+        drop->inspecting = captures->player_info->client_id;
         if (rr_bitset_get(&drop->picked_up_this_tick[0], drop->inspecting))
             drop->protocol_state |= 4;
         else
@@ -572,6 +572,8 @@ static void count_mobs(EntityIdx a, void *b)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
+    rr_simulation_create_component_vectors(this);
+    //printf("%d %d %d\n", this->physical_count, this->mob_count, this->health_count);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });

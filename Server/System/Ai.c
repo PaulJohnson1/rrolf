@@ -8,11 +8,6 @@
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
-static EntityIdx flowers[8] = {0};
-static EntityIdx mobs[1024] = {0};
-static uint64_t flowers_size = 0;
-static uint64_t mobs_size = 0;
-
 static EntityIdx ai_get_nearest_target(EntityIdx entity,
                                        struct rr_simulation *simulation, float range)
 {
@@ -23,10 +18,10 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
     EntityIdx closest_flower = RR_NULL_ENTITY;
     if (team_id == rr_simulation_team_id_mobs)
     {
-        for (uint64_t i = 0; i < flowers_size; i++)
+        for (uint64_t i = 0; i < simulation->flower_count; i++)
         {
             struct rr_component_physical *physical2 =
-                rr_simulation_get_physical(simulation, flowers[i]);
+                rr_simulation_get_physical(simulation, simulation->flower_vector[i]);
 
             struct rr_vector delta = {physical->x, physical->y};
             struct rr_vector target_pos = {physical2->x, physical2->y};
@@ -36,18 +31,18 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
             if (d < closest_distance)
             {
                 closest_distance = d;
-                closest_flower = flowers[i];
+                closest_flower = physical2->parent_id;
             }
         }
     }
-    for (uint64_t i = 0; i < mobs_size; i++)
+    for (uint64_t i = 0; i < simulation->mob_count; i++)
     {
         struct rr_component_relations *relations2 =
-            rr_simulation_get_relations(simulation, mobs[i]);
+            rr_simulation_get_relations(simulation, simulation->mob_vector[i]);
         if (relations2->team == team_id)
             continue;
         struct rr_component_physical *physical2 =
-            rr_simulation_get_physical(simulation, mobs[i]);
+            rr_simulation_get_physical(simulation, simulation->mob_vector[i]);
 
         struct rr_vector delta = {physical->x, physical->y};
         struct rr_vector target_pos = {physical2->x, physical2->y};
@@ -57,7 +52,7 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
         if (d < closest_distance)
         {
             closest_distance = d;
-            closest_flower = mobs[i];
+            closest_flower = physical2->parent_id;
         }
     }
 
@@ -556,15 +551,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     ai->ticks_until_next_action--;
 }
 
-static void cache_flower_id(EntityIdx id, void *x) { flowers[flowers_size++] = id; }
-static void cache_mob_id(EntityIdx id, void *x) { mobs[mobs_size++] = id; }
-
 void rr_system_ai_tick(struct rr_simulation *simulation)
 {
-    // cache flower ids
-    flowers_size = 0;
-    mobs_size = 0;
-    rr_simulation_for_each_flower(simulation, 0, cache_flower_id);
-    rr_simulation_for_each_mob(simulation, 0, cache_mob_id);
     rr_simulation_for_each_ai(simulation, simulation, system_for_each);
 }

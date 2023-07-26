@@ -10,34 +10,36 @@ struct drop_pick_up_captures
     EntityIdx self;
 };
 
-static void drop_pick_up(EntityIdx flower, void *_captures)
+static void drop_pick_up(EntityIdx entity, void *_captures)
 {
     struct drop_pick_up_captures *captures = _captures;
     struct rr_simulation *this = captures->simulation;
     EntityIdx drop_id = captures->self;
     struct rr_component_drop *drop = rr_simulation_get_drop(this, drop_id);
 
+    struct rr_component_flower *flower =
+        rr_simulation_get_flower(this, entity);
+    if (rr_bitset_get(drop->picked_up_by, flower->client_id))
+        return;
     struct rr_component_relations *flower_relations =
-        rr_simulation_get_relations(this, flower);
+        rr_simulation_get_relations(this, entity);
     if (!rr_simulation_has_entity(this, flower_relations->owner))
         return;
+
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, flower_relations->owner);
-
-    if (rr_bitset_get(drop->picked_up_by, flower_relations->owner))
-        return;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, drop_id);
 
     struct rr_component_physical *flower_physical =
-        rr_simulation_get_physical(this, flower);
+        rr_simulation_get_physical(this, entity);
 
     struct rr_vector delta = {physical->x - flower_physical->x,
                               physical->y - flower_physical->y};
     if (rr_vector_get_magnitude(&delta) > physical->radius + player_info->modifiers.drop_pickup_radius)
         return;
-    rr_bitset_set(drop->picked_up_by, flower_relations->owner);
-    rr_bitset_set(drop->picked_up_this_tick, flower_relations->owner);
+    rr_bitset_set(drop->picked_up_by, flower->client_id);
+    rr_bitset_set(drop->picked_up_this_tick, flower->client_id);
 
     for (struct rr_drop_picked_up *i = player_info->collected_this_run;
          i < player_info->collected_this_run_end; i++)

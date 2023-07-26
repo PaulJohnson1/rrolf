@@ -59,8 +59,8 @@ struct rr_component_player_info
     EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
     RR_SERVER_ONLY(uint16_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
+    RR_SERVER_ONLY(uint8_t client_id;)
     uint8_t slot_count;
-    uint8_t client_id; // clients 0, 1, 2, 3
     RR_SERVER_ONLY(
         uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 };
