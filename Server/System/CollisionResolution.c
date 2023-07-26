@@ -48,7 +48,7 @@ static void web_logic(struct rr_simulation *this, EntityIdx entity1, EntityIdx e
         return;
     if (!rr_simulation_has_mob(this, entity2))
         return;
-    rr_simulation_get_physical(this, entity2)->acceleration_scale *= 0.5;
+    rr_simulation_get_physical(this, entity2)->webbed = 1;
 }
 
 // that's for the casting which is not impm

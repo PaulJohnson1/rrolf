@@ -46,10 +46,11 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float lerp_server_animation_tick;)
     RR_SERVER_ONLY(uint32_t query_id);
-    uint8_t server_animation_tick : 6;
+    uint8_t server_animation_tick : 4;
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
     RR_SERVER_ONLY(uint8_t ticked_animation : 1;)
     RR_SERVER_ONLY(uint8_t has_deletion_animation : 1;)
+    RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     EntityIdx parent_id;
     // RR_SERVER_ONLY(uint8_t has_collisions;)
