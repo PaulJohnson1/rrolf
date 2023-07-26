@@ -169,8 +169,6 @@ static void init_loot_tables()
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_web,
-                    1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[0],
                     rr_petal_id_azalea, 0.10);
@@ -192,6 +190,8 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[0],
                     rr_petal_id_bone, 0.05);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[1], rr_petal_id_web,
+                    0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
                     rr_petal_id_light, 0.15);
