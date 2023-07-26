@@ -200,6 +200,10 @@ void rr_server_client_tick(struct rr_server_client *this)
                 "bitbit");
             proto_bug_write_uint8(&encoder, this->server->clients[i].ready,
                                   "ready");
+            uint32_t nick_len = strlen(&this->server->clients[i].client_nickname[0]);
+            proto_bug_write_varuint(&encoder, nick_len,
+                                  "nick size");    
+            proto_bug_write_string(&encoder, &this->server->clients[i].client_nickname[0], nick_len, "nick");             
             for (uint8_t j = 0; j < 20; ++j)
             {
                 proto_bug_write_uint8(
@@ -578,6 +582,27 @@ int rr_server_lws_callback_function(struct lws *socket,
             }
             break;
         }
+        case 71:
+        {
+            uint64_t nickname_size =
+                proto_bug_read_varuint(&encoder, "nick length");
+
+            if (nickname_size > 16)
+            {
+                puts("nick too long");
+                return 0;
+            }
+
+            memset(&this->clients[i].client_nickname, 0,
+                   sizeof(this->clients[i].client_nickname));
+
+            this->clients[i].client_nickname[nickname_size] =
+                0; // don't forget the null terminator lol
+            proto_bug_read_string(&encoder,
+                                  this->clients[i].client_nickname,
+                                  nickname_size, "nick");
+            break;
+        }
         }
     }
     default:
@@ -679,7 +704,7 @@ void rr_server_tick(struct rr_server *this)
                     {
                         rr_api_get_petals(&this->clients[i].rivet_account.uuid[0], RR_API_SECRET, &this->clients[i]);
                         rr_server_client_create_player_info(this->clients + i);
-                        rr_server_client_create_flower(this->clients + i);
+                        rr_server_client_create_flower(this->clients + i, i);
                     }
             }
         }

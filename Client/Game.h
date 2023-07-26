@@ -18,6 +18,7 @@ struct rr_game_squad_client
 {
     uint8_t in_use;
     uint8_t ready;
+    char name[18];
     struct rr_game_loadout_petal loadout[20];
 };
 
@@ -122,6 +123,8 @@ struct rr_game
     uint32_t protocol_state;
     float expanding_circle_radius;
     EntityIdx player_infos[8];
+
+    char nickname[17];
 
     uint8_t socket_ready;
     uint8_t socket_pending;

@@ -24,7 +24,7 @@ struct rr_server_client
     struct rr_server_client_loadout_petal loadout[20];
     int file_descriptor;
     char ip_address[100];
-    char client_nickname[16];
+    char client_nickname[18];
     uint8_t received_first_packet : 1;
     uint8_t verified : 1;
     uint8_t ready : 1;
@@ -33,4 +33,4 @@ struct rr_server_client
 };
 
 void rr_server_client_init(struct rr_server_client *);
-void rr_server_client_create_flower(struct rr_server_client *);
+void rr_server_client_create_flower(struct rr_server_client *, uint8_t);

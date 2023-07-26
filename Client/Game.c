@@ -176,7 +176,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20, 2,
-                            rr_ui_text_init("name input (TODO)", 25, 0xffffffff),
+                            rr_ui_text_input_init(400, 36, &this->nickname[0], 16),
                             rr_ui_set_background(rr_ui_join_button_init(),
                                              0xff1dd129)
                         ),
@@ -482,19 +482,19 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_uint8(&encoder2, 0, "movement type");
             uint8_t movement_flags = 0;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 87) ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'w') ||
                  rr_bitset_get(this->input_data->keys_pressed, 38))
                 << 0;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 65) ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'a') ||
                  rr_bitset_get(this->input_data->keys_pressed, 37))
                 << 1;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 83) ||
+                (rr_bitset_get(this->input_data->keys_pressed, 's') ||
                  rr_bitset_get(this->input_data->keys_pressed, 40))
                 << 2;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 68) ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'd') ||
                  rr_bitset_get(this->input_data->keys_pressed, 39))
                 << 3;
             movement_flags |= this->input_data->mouse_buttons << 4;
@@ -526,6 +526,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "bitbit");
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
+                uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
+                proto_bug_read_string(&encoder, &this->squad_members[i].name[0], length, "nick");
+                this->squad_members[i].name[length] = 0;
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =
@@ -556,7 +559,14 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         &encoder2, this->settings.loadout[i + 10].rarity, "rar");
                 }
             }
+            //write nickname
             proto_bug_write_uint8(&encoder2, 0, "pos");
+            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 71, "header");
+            uint32_t len = strlen(&this->nickname[0]);
+            proto_bug_write_varuint(&encoder2, len, "nick length");
+            proto_bug_write_string(&encoder2, &this->nickname[0], len, "nick");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             this->protocol_state = 0;
             break;

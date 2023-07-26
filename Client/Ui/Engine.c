@@ -255,13 +255,17 @@ void rr_ui_container_refactor(struct rr_ui_element *c)
                 continue;
             rr_ui_container_refactor(element);
         }
-        if (c->resizeable == rr_ui_h_container)
-            rr_ui_h_container_set(c);
-        else if (c->resizeable == rr_ui_v_container)
-            rr_ui_v_container_set(c);
-        else if (c->resizeable == rr_ui_choose_container)
-            rr_ui_choose_container_set(c);
-        else if (c->resizeable == rr_ui_grid_container)
-            rr_ui_grid_container_set(c);
+        if (c->resizeable)
+        {
+            c->abs_width = c->abs_height = 0;
+            if (c->resizeable == rr_ui_h_container)
+                rr_ui_h_container_set(c);
+            else if (c->resizeable == rr_ui_v_container)
+                rr_ui_v_container_set(c);
+            else if (c->resizeable == rr_ui_choose_container)
+                rr_ui_choose_container_set(c);
+            else if (c->resizeable == rr_ui_grid_container)
+                rr_ui_grid_container_set(c);
+        }
     }
 }

@@ -184,7 +184,7 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     loadout->abs_height = loadout->height = 2 * 10 + (15 + 5) * 4 - 10;
     struct rr_ui_element *a = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, 3, rr_ui_player_init(member),
-        rr_ui_text_init("name (TODO)", 18, 0xffffffff), loadout);
+        rr_ui_text_init(&member->name[0], 18, 0xffffffff), loadout);
     struct rr_ui_element *this = rr_ui_choose_element_init(a, b, choose);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;

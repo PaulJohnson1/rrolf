@@ -12,6 +12,7 @@ struct rr_component_flower
 {
     EntityIdx parent_id;
     uint8_t face_flags;
+    uint8_t client_id;
     RR_SERVER_ONLY(uint8_t protocol_state;)
     float eye_angle;
     RR_CLIENT_ONLY(float eye_x;)
@@ -32,4 +33,5 @@ RR_CLIENT_ONLY(void rr_component_flower_read(struct rr_component_flower *,
                                              struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(flower, uint8_t, face_flags)
+RR_DECLARE_PUBLIC_FIELD(flower, uint8_t, client_id)
 RR_DECLARE_PUBLIC_FIELD(flower, float, eye_angle)

@@ -19,7 +19,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     {
         struct rr_component_relations *relations =
             rr_simulation_get_relations(simulation, entity);
-
+        
         if (relations->owner == game->player_info->parent_id)
             if (health->lerp_health / health->max_health > 0.99)
                 return;
@@ -70,6 +70,19 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
             if (health->health == health->max_health)
                 return;
         }  
+    }
+    else if (rr_simulation_has_flower(simulation, entity))
+    {
+        struct rr_component_flower *flower = rr_simulation_get_flower(simulation, entity);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff000000);
+        rr_renderer_set_text_size(renderer, 12);
+        rr_renderer_set_text_align(renderer, 0);
+        rr_renderer_set_text_baseline(renderer, 0);
+        rr_renderer_stroke_text(renderer, &game->squad_members[flower->client_id].name[0], -length,
+                                -18);
+        rr_renderer_fill_text(renderer, &game->squad_members[flower->client_id].name[0], -length,
+                            -18);
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);

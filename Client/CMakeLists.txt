@@ -35,6 +35,7 @@ set(SRCS
     Ui/TitleScreen/Squad.c
     Ui/Slider.c
     Ui/Text.c
+    Ui/TextInput.c
     Ui/ToggleBox.c
     Ui/Tooltip/Petal.c
     Ui/Tooltip/Mob.c

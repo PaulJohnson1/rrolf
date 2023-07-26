@@ -9,13 +9,15 @@
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(eye_angle, float32)                                                      \
-    X(face_flags, uint8)
+    X(face_flags, uint8)                                                       \
+    X(client_id, uint8)
 
 enum
 {
     state_flags_face_flags = 0b000001,
     state_flags_eye_angle = 0b000010,
-    state_flags_all = 0b000011
+    state_flags_client_id = 0b000010,
+    state_flags_all = 0b000111
 };
 
 void rr_component_flower_init(struct rr_component_flower *this,
@@ -52,6 +54,7 @@ void rr_component_flower_write(struct rr_component_flower *this,
 }
 
 RR_DEFINE_PUBLIC_FIELD(flower, uint8_t, face_flags)
+RR_DEFINE_PUBLIC_FIELD(flower, uint8_t, client_id)
 RR_DEFINE_PUBLIC_FIELD(flower, float, eye_angle)
 #endif
 

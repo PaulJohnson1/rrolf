@@ -58,6 +58,14 @@ static void player_hud_on_render(struct rr_ui_element *this, struct rr_game *gam
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
         rr_component_flower_render(player_info->flower_id, game);
+        rr_renderer_set_text_baseline(renderer, 1);
+        rr_renderer_set_text_align(renderer, 0);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_text_size(renderer, 18);
+        rr_renderer_set_line_width(renderer, 18 * 0.12);
+        rr_renderer_stroke_text(renderer, &game->squad_members[data->pos].name[0], 35, 0);
+        rr_renderer_fill_text(renderer, &game->squad_members[data->pos].name[0], 35, 0);
         if (data->pos != 0 && game->player_info != NULL)
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(game->simulation, player_info->flower_id);

@@ -22,7 +22,7 @@ void rr_server_client_init(struct rr_server_client *this)
            this->serverbound_encryption_key);
 }
 
-void rr_server_client_create_flower(struct rr_server_client *this)
+void rr_server_client_create_flower(struct rr_server_client *this, uint8_t pos)
 {
     if (this->player_info == NULL)
     {
@@ -53,7 +53,8 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
-    rr_simulation_add_flower(&this->server->simulation, flower_id);
+    struct rr_component_flower *flower = rr_simulation_add_flower(&this->server->simulation, flower_id);
+    rr_component_flower_set_client_id(flower, pos);
     rr_component_health_set_max_health(health, 100);
     rr_component_health_set_health(health, 100);
     health->damage = 10;
