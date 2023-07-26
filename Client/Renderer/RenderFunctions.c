@@ -180,7 +180,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_set_stroke(renderer, 0xff509b25);
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_width(renderer, 4);
+        rr_renderer_set_line_width(renderer, 3);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer,-7,-5);
         rr_renderer_line_to(renderer,-1,-9);
@@ -190,8 +190,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_line_to(renderer,-5,6);
         rr_renderer_line_to(renderer,-8,2);
         rr_renderer_line_to(renderer,-7,-5);
-        rr_renderer_stroke(renderer);
         rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_speed:
         rr_renderer_set_fill(renderer, 0xff1945f5);
@@ -223,15 +223,15 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_quadratic_curve_to(renderer, 16, -1.959434878635765e-15, 6.4721359549995805, 4.702282018339784);
         rr_renderer_quadratic_curve_to(renderer, 4.944271909999161, 15.216904260722456, -2.472135954999578, 7.608452130361229);
         rr_renderer_quadratic_curve_to(renderer, -12.944271909999157, 9.404564036679574, -8, 1.959434878635765e-15);
-        rr_renderer_stroke(renderer);
         rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_bone:
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_line_cap(renderer, 1);
         rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_width(renderer, 4);
+        rr_renderer_set_line_width(renderer, 5);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 15, 0);
         rr_renderer_bezier_curve_to(renderer, 20, -1, 19, -8, 15, -9);
