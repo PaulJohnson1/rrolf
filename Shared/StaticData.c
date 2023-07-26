@@ -88,7 +88,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Ornithomimus"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {45, 60, 15, 5, 0, 0, 35, 1, 45, 20};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 0, 0, 50, 1, 45, 20};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  10,  12,
                                                             16, 25, 45, 5};
