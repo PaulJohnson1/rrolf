@@ -8,7 +8,7 @@
 
 uint32_t get_points_from_wave(uint32_t wave)
 {
-    return 30 + (wave - 1) * 20;
+    return 30 + (wave - 1) * 45;
 }
 
 uint8_t get_rarity_from_wave(uint32_t wave)
