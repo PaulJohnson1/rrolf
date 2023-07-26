@@ -6,9 +6,10 @@
 static void asset_web_init(struct rr_game *this)
 {
     rr_renderer_init(&this->asset_web);
-    rr_renderer_set_dimensions(&this->asset_web, 25, 25);
+    rr_renderer_set_dimensions(&this->asset_web, 250, 250);
     struct rr_renderer *renderer = &this->asset_web;
-    rr_renderer_translate(renderer, 12.5, 12.5);
+    rr_renderer_translate(renderer, 125, 125);
+    rr_renderer_scale(renderer, 10);
     rr_renderer_set_stroke(renderer, 0xffffffff);
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_set_line_width(renderer, 0.75);

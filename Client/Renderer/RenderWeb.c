@@ -20,6 +20,6 @@ void rr_component_web_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_scale(
         renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
     rr_renderer_rotate(renderer, physical->lerp_angle);
-    rr_renderer_scale(renderer, physical->lerp_radius * 0.1);
+    rr_renderer_scale(renderer, physical->lerp_radius * 0.01);
     rr_renderer_draw_image(renderer, &game->asset_web);
 }
