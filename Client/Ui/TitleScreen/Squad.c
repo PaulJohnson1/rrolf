@@ -13,49 +13,38 @@
 void render_flower(uint8_t is_frown, struct rr_ui_element *element,
                    struct rr_game *game)
 {
-    struct rr_renderer_context_state state;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
     rr_renderer_set_line_width(renderer, 3);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 0, 0, element->width * 0.5);
+    rr_renderer_arc(renderer, 0, 0, 25);
     rr_renderer_fill(renderer);
     rr_renderer_stroke(renderer);
-    rr_renderer_scale(renderer, element->width / 50);
-    struct rr_renderer_context_state state1;
-    rr_renderer_context_state_init(renderer, &state1);
+    struct rr_renderer_context_state state;
+    rr_renderer_context_state_init(renderer, &state);
     rr_renderer_set_fill(renderer, 0xff222222);
-    rr_renderer_scale2(renderer, 1, 2);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, -7, -2.5, 3.25);
+    rr_renderer_ellipse(renderer, -7, -5, 3.25, 6.5);
     rr_renderer_fill(renderer);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, -7, -2.5, 3);
+    rr_renderer_ellipse(renderer, 7, -5, 3.25, 6.5);
+    rr_renderer_fill(renderer);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_ellipse(renderer, -7, -5, 3, 6);
+    rr_renderer_ellipse(renderer, 7, -5, 3, 6);
     rr_renderer_clip(renderer);
-    rr_renderer_scale2(renderer, 1, 0.5);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, -7 + 3, -5 + 0, 3);
-    rr_renderer_fill(renderer);
-    rr_renderer_context_state_free(renderer, &state1);
-
-    rr_renderer_context_state_init(renderer, &state1);
-    rr_renderer_set_fill(renderer, 0xff222222);
-    rr_renderer_scale2(renderer, 1, 2);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 7, -2.5, 3.25);
+    rr_renderer_arc(renderer, -7 + 3, -5 + 0,
+                    3);
     rr_renderer_fill(renderer);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 7, -2.5, 3);
-    rr_renderer_clip(renderer);
-    rr_renderer_scale2(renderer, 1, 0.5);
-    rr_renderer_set_fill(renderer, 0xffffffff);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 7 + 3, -5 + 0, 3);
+    rr_renderer_arc(renderer, 7 + 3, -5 + 0,
+                    3);
     rr_renderer_fill(renderer);
-    rr_renderer_context_state_free(renderer, &state1);
+    rr_renderer_context_state_free(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, 1.5);
     rr_renderer_set_line_cap(renderer, 1);
@@ -63,7 +52,6 @@ void render_flower(uint8_t is_frown, struct rr_ui_element *element,
     rr_renderer_move_to(renderer, -6, 10);
     rr_renderer_quadratic_curve_to(renderer, 0, is_frown ? 4 : 15, 6, 10);
     rr_renderer_stroke(renderer);
-    rr_renderer_context_state_free(renderer, &state);
 }
 
 static void render_flower_frown(struct rr_ui_element *element,

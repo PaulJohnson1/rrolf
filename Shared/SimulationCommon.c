@@ -118,11 +118,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
         captures.simulation = this;                                            \
         for (uint16_t pos = 0; pos < this->COMPONENT##_count; ++pos)           \
             cb(this->COMPONENT##_vector[pos], user_captures);                  \
-        return; \
-        rr_bitset_for_each_bit(&this->COMPONENT##_tracker[0],                  \
-                               &this->COMPONENT##_tracker[0] +                 \
-                                   (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),     \
-                               &captures, COMPONENT##for_each);                \
+        return;                                                                \
     }                                                                          \
                                                                                \
     uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this,          \

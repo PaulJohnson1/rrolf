@@ -596,7 +596,7 @@ void rr_renderer_execute_order_66()
                     Module.ctxs[ctx_id].arc(args[0], args[1], args[2], args[3], args[4], args[5]);
                     break;
                 case 18:
-                    Module.ctxs[ctx_id].ellipse(args[0], args[1], args[2], args[3], 0, 6.283185307179586);
+                    Module.ctxs[ctx_id].ellipse(args[0], args[1], args[2], args[3], 0, 6.283185307179586, 0);
                     break;
                 case 19:
                     Module.ctxs[ctx_id].rect(args[0], args[1], args[2], args[3]);
