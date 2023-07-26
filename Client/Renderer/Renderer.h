@@ -118,6 +118,7 @@ void rr_renderer_stroke_text(struct rr_renderer *, char const *, float,
 float rr_renderer_get_text_size(char const *);
 
 void rr_renderer_execute_order_66();
+uint32_t rr_renderer_get_op_size();
 #ifdef __cplusplus
 }
 #endif

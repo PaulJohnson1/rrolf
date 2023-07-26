@@ -2,7 +2,7 @@
 
 #include <math.h>
 #include <string.h>
-
+#include <stdlib.h>
 #include <emscripten.h>
 
 #include <Shared/Utilities.h>
@@ -460,7 +460,10 @@ void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x,
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = x;
     instruction_tape[instruction_size].args[1] = y;
-    instruction_tape[instruction_size].text_arg = c;
+    uint32_t len = strlen(c) + 1;
+    char *text = malloc(len * (sizeof *text));
+    memcpy(text, c, len * sizeof *text);
+    instruction_tape[instruction_size].text_arg = text;
     ++instruction_size;
     return;
     EM_ASM(
@@ -477,7 +480,10 @@ void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = x;
     instruction_tape[instruction_size].args[1] = y;
-    instruction_tape[instruction_size].text_arg = c;
+    uint32_t len = strlen(c) + 1;
+    char *text = malloc(len * (sizeof *text));
+    memcpy(text, c, len * sizeof *text);
+    instruction_tape[instruction_size].text_arg = text;
     ++instruction_size;
     return;
     EM_ASM(
@@ -511,7 +517,8 @@ void rr_renderer_execute_order_66()
             const ctx_id = Module.HEAPU32[instr + 4 >> 2];
             const argptr = instr + 8;
             const args = Module.HEAPF32.subarray(argptr >> 2, argptr + 24 >> 2);
-            let char_arg = Module.HEAPU32[argptr + 24 >> 2];
+            const char_arg = Module.HEAPU32[argptr + 24 >> 2];
+            let str;
             switch (Module.HEAPU8[instr])
             {
                 case 0:
@@ -616,12 +623,14 @@ void rr_renderer_execute_order_66()
                     Module.ctxs[ctx_id].clip("evenodd");
                     break;
                 case 27:
-                    char_arg = Module.ReadCstr(char_arg);
-                    Module.ctxs[ctx_id].fillText(char_arg, args[0], args[1]);
+                    str = Module.ReadCstr(char_arg);
+                    Module.ctxs[ctx_id].fillText(str, args[0], args[1]);
+                    Module._free(char_arg);
                     break;
                 case 28:
-                    char_arg = Module.ReadCstr(char_arg);
-                    Module.ctxs[ctx_id].strokeText(char_arg, args[0], args[1]);
+                    str = Module.ReadCstr(char_arg);
+                    Module.ctxs[ctx_id].strokeText(str, args[0], args[1]);
+                    Module._free(char_arg);
                     break;
                 default:
                     break;
@@ -629,4 +638,9 @@ void rr_renderer_execute_order_66()
         }
     }, &instruction_tape[0], instruction_size, sizeof (struct renderer_args));
     instruction_size = 0;
+}
+
+uint32_t rr_renderer_get_op_size()
+{
+    return instruction_size;
 }

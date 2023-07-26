@@ -979,15 +979,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        debug_mspt[sprintf(
-            debug_mspt,
-            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
-            this->debug_info.cumulative_tick_time * 0.001f /
-                (this->debug_info.count + 1),
-            this->debug_info.max_tick_time * 0.001f,
-            this->debug_info.cumulative_frame_time * 0.001f /
-                (this->debug_info.count + 1),
-            this->debug_info.max_frame_time * 0.001f)] = 0;
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
