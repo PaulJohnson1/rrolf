@@ -23,6 +23,7 @@ set(SRCS
     System/PetalBehavior.c
     System/Respawn.c
     System/Velocity.c
+    System/Web.c
     Main.c
     Client.c
     Logs.c

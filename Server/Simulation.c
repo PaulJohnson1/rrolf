@@ -18,6 +18,7 @@
 #include <Server/System/PetalBehavior.h>
 #include <Server/System/Respawn.h>
 #include <Server/System/Velocity.h>
+#include <Server/System/Web.h>
 #include <Server/Waves.h>
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
@@ -578,6 +579,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("collision_resolution",
                   { rr_system_collision_resolution_tick(this); });
+    RR_TIME_BLOCK("web", { rr_system_web_tick(this); });
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
