@@ -632,6 +632,18 @@ void render_flower_component(EntityIdx entity, void *_captures)
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
+void render_web_component(EntityIdx entity, void *_captures)
+{
+    struct rr_game *this = _captures;
+    struct rr_renderer_context_state state;
+    rr_renderer_context_state_init(this->renderer, &state);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(this->simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
+    rr_component_web_render(entity, this);
+    rr_renderer_context_state_free(this->renderer, &state);
+}
+
 void player_info_finder(struct rr_game *this)
 {
     struct rr_simulation *simulation = this->simulation;
@@ -833,6 +845,8 @@ void rr_game_tick(struct rr_game *this, float delta)
                                           render_health_component);
             rr_simulation_for_each_drop(this->simulation, this,
                                         render_drop_component);
+            rr_simulation_for_each_web(this->simulation, this,
+                                          render_web_component);
             rr_simulation_for_each_mob(this->simulation, this,
                                        render_mob_component);
             rr_simulation_for_each_petal(this->simulation, this,

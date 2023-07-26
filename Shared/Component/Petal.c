@@ -7,6 +7,13 @@
 #include <Shared/SimulationCommon.h>
 #include <Shared/pb.h>
 
+#ifdef RR_SERVER
+#include <math.h>
+
+#include <Server/Simulation.h>
+#include <Shared/Utilities.h>
+#endif
+
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(rarity, uint8)                                                           \
     X(id, uint8)
@@ -28,6 +35,21 @@ void rr_component_petal_init(struct rr_component_petal *this,
 void rr_component_petal_free(struct rr_component_petal *this,
                              struct rr_simulation *simulation)
 {
+#ifdef RR_SERVER
+    if (this->id != rr_petal_id_web || this->detached == 0)
+        return;
+    EntityIdx id = rr_simulation_alloc_entity(simulation);
+    struct rr_component_physical *physical = rr_simulation_add_physical(simulation, id);
+    struct rr_component_relations *relations = rr_simulation_add_relations(simulation, id);
+    struct rr_component_web *web = rr_simulation_add_web(simulation, id);
+    struct rr_component_physical *petal_phys = rr_simulation_get_physical(simulation, this->parent_id);
+    rr_component_physical_set_x(physical, petal_phys->x);
+    rr_component_physical_set_y(physical, petal_phys->y);
+    rr_component_physical_set_radius(physical, 40 + this->rarity * 15);
+    physical->mass = 1;
+    physical->friction = 0;
+    web->ticks_until_death = 5 * 25;
+#endif
 }
 
 #ifdef RR_SERVER

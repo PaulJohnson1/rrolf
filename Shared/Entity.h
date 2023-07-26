@@ -19,4 +19,5 @@ typedef uint16_t EntityIdx;
     XX(ai, 12)                                                                 \
     XX(physical, 10)                                                           \
     XX(centipede, 7)                                                           \
-    XX(arena, 9)
+    XX(arena, 9)                                                               \
+    XX(web, 13)

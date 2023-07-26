@@ -10,8 +10,7 @@
 
 static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
                                        EntityIdx b)
-{
-
+{                                                            
 #define exclude(component_a, component_b)                                      \
     if (rr_simulation_has_##component_a(this, a) &&                            \
         rr_simulation_has_##component_b(this, b))                              \
@@ -43,6 +42,15 @@ struct colliding_with_captures
     struct rr_component_physical *physical;
 };
 
+static void web_logic(struct rr_simulation *this, EntityIdx entity1, EntityIdx entity2)
+{
+    if (rr_simulation_get_relations(this, entity2)->team == rr_simulation_team_id_players)
+        return;
+    if (!rr_simulation_has_mob(this, entity2))
+        return;
+    rr_simulation_get_physical(this, entity2)->acceleration_scale *= 0.5;
+}
+
 // that's for the casting which is not impm
 static void colliding_with_function(uint64_t i, void *_captures)
 {
@@ -54,6 +62,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
 
     if (!should_entities_collide(this, entity1, entity2))
         return;
+    
+    if (rr_simulation_has_web(this, entity1))
+        return web_logic(this, entity1, entity2);
+    else if (rr_simulation_has_web(this, entity2))
+        return web_logic(this, entity2, entity1);
 
     struct rr_component_physical *physical2 =
         rr_simulation_get_physical(captures->simulation, entity2);

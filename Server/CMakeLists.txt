@@ -42,6 +42,7 @@ set(SRCS
     ../Shared/Component/PlayerInfo.c
     ../Shared/Component/Projectile.c
     ../Shared/Component/Relations.c
+    ../Shared/Component/Web.c
     ../Shared/Api.c
     ../Shared/Bitset.c
     ../Shared/cJSON.c

@@ -32,7 +32,6 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
     if (rr_simulation_has_health(this, entity) &&
         rr_simulation_get_health(this, entity)->health == 0)
         return;
-
     rr_spatial_hash_insert(this->grid, entity);
 }
 

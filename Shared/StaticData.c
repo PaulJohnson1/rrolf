@@ -19,7 +19,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_web, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 88, 12, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -64,7 +65,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Pellet", "Rock", "Stinger", "Light",
     "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea",
-    "Bone"};
+    "Bone", "Web"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -80,7 +81,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
     "Increases your movement speed. Does not stack",
     "Lazy dev got off his couch and added a heal petal. Check it out",
-    "Gives the player armor. Stacks with itself"
+    "Gives the player armor. Stacks with itself",
+    "Web"
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex", "Fern", "Stump", "Spinosaurus",
@@ -167,6 +169,8 @@ static void init_loot_tables()
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_web,
+                    1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[0],
                     rr_petal_id_azalea, 0.10);

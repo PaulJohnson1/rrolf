@@ -9,7 +9,7 @@ struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 
-struct rr_component_projectile
+struct rr_component_web
 {
     EntityIdx parent_id;
     RR_SERVER_ONLY(int32_t ticks_until_death;)
@@ -17,12 +17,12 @@ struct rr_component_projectile
     RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 
-void rr_component_projectile_init(struct rr_component_projectile *,
+void rr_component_web_init(struct rr_component_web *,
                                   struct rr_simulation *);
-void rr_component_projectile_free(struct rr_component_projectile *,
+void rr_component_web_free(struct rr_component_web *,
                                   struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_projectile_write(
-                   struct rr_component_projectile *, struct proto_bug *, int);)
-RR_CLIENT_ONLY(void rr_component_projectile_read(
-                   struct rr_component_projectile *, struct proto_bug *);)
+RR_SERVER_ONLY(void rr_component_web_write(
+                   struct rr_component_web *, struct proto_bug *, int);)
+RR_CLIENT_ONLY(void rr_component_web_read(
+                   struct rr_component_web *, struct proto_bug *);)

@@ -14,6 +14,7 @@ set(SRCS
     Renderer/RenderHealth.c
     Renderer/RenderMob.c
     Renderer/RenderPetal.c
+    Renderer/RenderWeb.c
     Storage.c
     System/Interpolation.c
     Ui/Button.c
@@ -56,6 +57,7 @@ set(SRCS
     ../Shared/Component/PlayerInfo.c
     ../Shared/Component/Projectile.c
     ../Shared/Component/Relations.c
+    ../Shared/Component/Web.c
     ../Shared/Bitset.c
     ../Shared/cJSON.c
     ../Shared/Crypto.c

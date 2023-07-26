@@ -31,6 +31,7 @@ enum rr_petal_id
     rr_petal_id_speed,
     rr_petal_id_azalea,
     rr_petal_id_bone,
+    rr_petal_id_web,
     rr_petal_id_max
 };
 

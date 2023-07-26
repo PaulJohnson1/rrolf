@@ -12,6 +12,7 @@
 #include <Shared/Component/PlayerInfo.h>
 #include <Shared/Component/Projectile.h>
 #include <Shared/Component/Relations.h>
+#include <Shared/Component/Web.h>
 #include <Shared/Entity.h>
 #include <Shared/Utilities.h>
 

@@ -247,6 +247,22 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_stroke(renderer);
         rr_renderer_fill(renderer);
         break;
+    case rr_petal_id_web:
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xffcfcfcf);
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_line_join(renderer, 1);
+        rr_renderer_set_line_width(renderer, 3);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer,11,0);
+        rr_renderer_quadratic_curve_to(renderer,4.319756031036377,3.138486623764038,3.399186611175537,10.46162223815918);
+        rr_renderer_quadratic_curve_to(renderer,-1.6500004529953003,5.0781779289245605,-8.899188041687012,6.46563720703125);
+        rr_renderer_quadratic_curve_to(renderer,-5.339512348175049,-5.722046125811175e-7,-8.899186134338379,-6.465639114379883);
+        rr_renderer_quadratic_curve_to(renderer,-1.6499993801116943,-5.078178405761719,3.399188280105591,-10.461621284484863);
+        rr_renderer_quadratic_curve_to(renderer,4.319756507873535,-3.138485908508301,11,0.000001923301169881597);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }

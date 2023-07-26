@@ -146,6 +146,20 @@ static void system_flower_petal_movement_logic(
                 }
                 break;
             }
+            case rr_petal_id_web:
+                if ((player_info->input & 3) == 0)
+                    break;
+                system_petal_detach(simulation, petal, player_info, outer_pos,
+                                    inner_pos, petal_data);
+                if (player_info->input & 1)
+                {
+                    rr_vector_from_polar(&physical->acceleration, 10.0f,
+                                        physical->angle);
+                    rr_vector_from_polar(&physical->velocity, 50.0f,
+                                        physical->angle);
+                }
+                projectile->ticks_until_death = 20;
+                break;
             default:
                 break;
             }
