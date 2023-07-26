@@ -118,26 +118,6 @@ void rr_main_loop(struct rr_game *this)
                     0, +!!button)};
             window.onwheel =
                 function({deltaY}){Module._rr_wheel_event($0, deltaY)};
-            Module.paths = new Array(128).fill(null);
-            Module.availablePaths =
-                new Array(128).fill(0).map(function(_, i) { return i; });
-            Module.addPath = function()
-            {
-                if (Module.availablePaths.length)
-                {
-                    const index = Module.availablePaths.pop();
-                    Module.paths[index] = new Path2D();
-                    return index;
-                }
-                throw new Error(
-                    'Out of Paths: Can be fixed by allowing more paths');
-                return -1;
-            };
-            Module.removePath = function(index)
-            {
-                Module.paths[index] = null;
-                Module.availablePaths.push(index);
-            };
             Module.addCtx = function()
             {
                 if (Module.availableCtxs.length)

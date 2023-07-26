@@ -446,9 +446,9 @@ int rr_server_lws_callback_function(struct lws *socket,
                     x++;
                 if (x != 0 || y != 0 && x == x && y == y && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
-                    float mag_1 = sqrtf(x * x + y * y);
-                    client->player_accel_x = x / mag_1;
-                    client->player_accel_y = y / mag_1;
+                    float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                    client->player_accel_x = x * mag_1;
+                    client->player_accel_y = y * mag_1;
                 }
                 else
                 {
@@ -472,8 +472,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                         scale = 1;
                     else if (scale < 0)
                         scale = 0;
-                    client->player_accel_x = x / mag_1 * scale;
-                    client->player_accel_y = y / mag_1 * scale;
+                    client->player_accel_x = x / mag_1 * scale * 2.5;
+                    client->player_accel_y = y / mag_1 * scale * 2.5;
                 }
                 else
                 {

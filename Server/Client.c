@@ -49,7 +49,7 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     rr_component_physical_set_x(physical, cos(angle) * distance);
     rr_component_physical_set_y(physical, sin(angle) * distance);
     rr_component_physical_set_radius(physical, 25.0f);
-    physical->friction = 0.9;
+    physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
