@@ -73,15 +73,15 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     }
     else if (rr_simulation_has_flower(simulation, entity))
     {
-        struct rr_component_flower *flower = rr_simulation_get_flower(simulation, entity);
+        struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, rr_simulation_get_relations(simulation, entity)->owner);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_stroke(renderer, 0xff000000);
         rr_renderer_set_text_size(renderer, 12);
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, &game->squad_members[flower->client_id].name[0], -length,
+        rr_renderer_stroke_text(renderer, &game->squad_members[player_info->client_id].name[0], -length,
                                 -18);
-        rr_renderer_fill_text(renderer, &game->squad_members[flower->client_id].name[0], -length,
+        rr_renderer_fill_text(renderer, &game->squad_members[player_info->client_id].name[0], -length,
                             -18);
     }
     // the health bar

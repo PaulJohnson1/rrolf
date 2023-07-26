@@ -21,6 +21,8 @@ struct rr_input_data
     // c version of addeventlistener("keydown")
     uint8_t keys_pressed_this_tick[RR_BITSET_ROUND(256)];
     uint8_t keys_released_this_tick[RR_BITSET_ROUND(256)];
+
+    uint8_t keycodes_pressed_this_tick[RR_BITSET_ROUND(256)];
 };
 
 void rr_input_data_init(struct rr_input_data *);

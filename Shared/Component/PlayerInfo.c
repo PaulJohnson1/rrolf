@@ -23,17 +23,19 @@
     X(camera_fov, float32)                                                     \
     X(flower_id, varuint)                                                      \
     X(camera_x, float32)                                                       \
-    X(slot_count, varuint)
+    X(slot_count, varuint)                                                     \
+    X(client_id, uint8)
 
 enum
 {
-    state_flags_camera_y = 0b000001,
-    state_flags_camera_fov = 0b000010,
-    state_flags_flower_id = 0b000100,
-    state_flags_camera_x = 0b001000,
-    state_flags_slot_count = 0b010000,
-    state_flags_petals = 0b100000,
-    state_flags_all = 0b111111
+    state_flags_client_id = 0b0000001,
+    state_flags_camera_y = 0b0000010,
+    state_flags_camera_fov = 0b0000100,
+    state_flags_flower_id = 0b0001000,
+    state_flags_camera_x = 0b0010000,
+    state_flags_slot_count = 0b0100000,
+    state_flags_petals = 0b1000000,
+    state_flags_all = 0b1111111
 };
 
 #ifdef RR_SERVER
@@ -192,7 +194,7 @@ RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_y)
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_fov)
 RR_DEFINE_PUBLIC_FIELD(player_info, uint32_t, slot_count)
 RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
-
+RR_DEFINE_PUBLIC_FIELD(player_info, uint8_t, client_id);
 #endif
 
 #ifdef RR_CLIENT

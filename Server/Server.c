@@ -99,7 +99,7 @@ static void rr_server_client_create_player_info(struct rr_server_client *this, u
         &this->server->simulation,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
-    this->player_info->client_id = pos;
+    rr_component_player_info_set_client_id(this->player_info, pos);
     rr_component_player_info_set_slot_count(this->player_info, 10);
     struct rr_component_arena *arena = rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)

@@ -62,7 +62,7 @@ static EntityIdx ai_get_nearest_target(EntityIdx entity,
 static uint8_t check_if_aggro(struct rr_component_ai *ai, struct rr_simulation *simulation)
 {
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(ai->parent_id, simulation, 1000);
+        ai->target_entity = ai_get_nearest_target(ai->parent_id, simulation, 1550);
     if (ai->target_entity != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, ai->target_entity))
     {
         if (ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving)
@@ -297,7 +297,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         rr_simulation_get_physical(simulation, entity);
 
     if (ai->target_entity == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 1000);
+        ai->target_entity = ai_get_nearest_target(entity, simulation, 1550);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_missile_shoot_delay))

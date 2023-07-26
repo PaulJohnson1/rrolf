@@ -45,17 +45,18 @@ static void *rr_create_game_thread(void *arg)
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
-void rr_key_event(struct rr_game *this, uint8_t type, uint32_t key)
+void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which, uint32_t key)
 {
     if (type == 1)
     {
-        rr_bitset_set(this->input_data->keys_pressed, key);
-        rr_bitset_set(this->input_data->keys_pressed_this_tick, key);
+        rr_bitset_set(this->input_data->keys_pressed, which);
+        rr_bitset_set(this->input_data->keys_pressed_this_tick, which);
+        rr_bitset_set(this->input_data->keycodes_pressed_this_tick, key);
     }
     else
     {
-        rr_bitset_unset(this->input_data->keys_pressed, key);
-        rr_bitset_unset(this->input_data->keys_released_this_tick, key);
+        rr_bitset_unset(this->input_data->keys_pressed, which);
+        rr_bitset_unset(this->input_data->keys_released_this_tick, which);
     }
 }
 
@@ -96,13 +97,13 @@ void rr_main_loop(struct rr_game *this)
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
                 new Array(256).fill(0).map(function(_, i) { return i; });
-            window.onkeydown = async function({which})
+            window.onkeydown = async function({which, key})
             {
-                Module._rr_key_event($0, 1, which);
+                Module._rr_key_event($0, 1, which, key);
             };
-            window.onkeyup = async function({which})
+            window.onkeyup = async function({which, key})
             {
-                Module._rr_key_event($0, 0, which);
+                Module._rr_key_event($0, 0, which, key);
             };
             window.onmousedown =
                 function({clientX, clientY, button}){Module._rr_mouse_event(

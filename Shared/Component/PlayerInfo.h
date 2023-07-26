@@ -59,7 +59,7 @@ struct rr_component_player_info
     EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
     RR_SERVER_ONLY(uint16_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
-    RR_SERVER_ONLY(uint8_t client_id;)
+    uint8_t client_id;
     uint8_t slot_count;
     RR_SERVER_ONLY(
         uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
@@ -86,3 +86,4 @@ RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_y);
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_fov);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint32_t, slot_count);
 RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
+RR_DECLARE_PUBLIC_FIELD(player_info, uint8_t, client_id);
