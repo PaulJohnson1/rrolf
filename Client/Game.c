@@ -424,6 +424,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     case rr_websocket_event_type_close:
         // memset the clients
         puts("websocket closed");
+        this->socket_ready = 0;
+        this->socket_pending = 0;
         break;
     case rr_websocket_event_type_data:
     {
@@ -1001,6 +1003,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_execute_order_66();
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
+    memset(this->input_data->keycodes_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     this->input_data->mouse_buttons_up_this_tick = 0;
     this->input_data->mouse_buttons_down_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;

@@ -99,11 +99,11 @@ void rr_main_loop(struct rr_game *this)
                 new Array(256).fill(0).map(function(_, i) { return i; });
             window.onkeydown = async function({which, key})
             {
-                Module._rr_key_event($0, 1, which, key);
+                Module._rr_key_event($0, 1, which, key.length === 1 ? key.charCodeAt() : which);
             };
             window.onkeyup = async function({which, key})
             {
-                Module._rr_key_event($0, 0, which, key);
+                Module._rr_key_event($0, 0, which, key.length === 1 ? key.charCodeAt() : which);
             };
             window.onmousedown =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
