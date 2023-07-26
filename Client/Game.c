@@ -482,19 +482,19 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_uint8(&encoder2, 0, "movement type");
             uint8_t movement_flags = 0;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'w') ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
                  rr_bitset_get(this->input_data->keys_pressed, 38))
                 << 0;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'a') ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
                  rr_bitset_get(this->input_data->keys_pressed, 37))
                 << 1;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 's') ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
                  rr_bitset_get(this->input_data->keys_pressed, 40))
                 << 2;
             movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'd') ||
+                (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
                  rr_bitset_get(this->input_data->keys_pressed, 39))
                 << 3;
             movement_flags |= this->input_data->mouse_buttons << 4;

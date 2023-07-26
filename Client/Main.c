@@ -96,13 +96,13 @@ void rr_main_loop(struct rr_game *this)
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
                 new Array(256).fill(0).map(function(_, i) { return i; });
-            window.onkeydown = async function({which, key, repeat})
+            window.onkeydown = async function({which, repeat})
             {
-                Module._rr_key_event($0, 1, key.length === 1 ? key.charCodeAt() : which);
+                Module._rr_key_event($0, 1, which);
             };
-            window.onkeyup = async function({which, key})
+            window.onkeyup = async function({which})
             {
-                Module._rr_key_event($0, 0, key.length === 1 ? key.charCodeAt() : which);
+                Module._rr_key_event($0, 0, which);
             };
             window.onmousedown =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
