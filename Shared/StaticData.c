@@ -62,7 +62,7 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Common"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Basic", "Pellet", "Rock", "Stinger", "Faster",
+    "Secret", "Basic", "Pellet", "Rock", "Stinger", "Light",
     "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea",
     "Bone"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
@@ -71,7 +71,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Low damage, but there's lots",
     "Dwayne",
     "Ow that hurts",
-    "Gotta go fast",
+    "Makes your petals lighter so you spin faster",
     "ICBM approved",
     "",
     "Heals you gradually",
