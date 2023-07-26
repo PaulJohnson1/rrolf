@@ -170,7 +170,7 @@ static void system_flower_petal_movement_logic(
 
     float holdingRadius = 75;
     if (player_info->input & 1 && !is_projectile &&
-        petal_data->id != rr_petal_id_uranium && petal_data->id != rr_petal_id_magnet)
+        petal_data->id != rr_petal_id_uranium && petal_data->id != rr_petal_id_magnet && petal_data->id != rr_petal_id_bone)
         holdingRadius = 150;
     else if (player_info->input & 2)
         holdingRadius = 45;

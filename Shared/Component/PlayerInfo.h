@@ -60,6 +60,7 @@ struct rr_component_player_info
     RR_SERVER_ONLY(uint16_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
     uint8_t slot_count;
+    uint8_t client_id; // clients 0, 1, 2, 3
     RR_SERVER_ONLY(
         uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 };

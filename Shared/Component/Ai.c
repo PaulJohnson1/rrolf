@@ -4,6 +4,7 @@
 
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
+#include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
 void rr_component_ai_init(struct rr_component_ai *this,
@@ -11,6 +12,7 @@ void rr_component_ai_init(struct rr_component_ai *this,
 {
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->ai_state = rr_ai_state_idle;)
+    RR_SERVER_ONLY(this->has_prediction = rr_frand() < 0.25;)
 }
 
 void rr_component_ai_free(struct rr_component_ai *this,

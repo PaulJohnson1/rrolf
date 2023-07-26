@@ -12,7 +12,7 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 struct rr_component_web
 {
     EntityIdx parent_id;
-    RR_SERVER_ONLY(int32_t ticks_until_death;)
+    RR_SERVER_ONLY(int16_t ticks_until_death;)
 
     RR_SERVER_ONLY(uint32_t protocol_state;)
 };
