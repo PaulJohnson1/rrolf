@@ -104,7 +104,10 @@ static struct rr_vector predict(struct rr_vector delta,
                                 struct rr_vector velocity, float speed)
 {
     float distance = rr_vector_get_magnitude(&delta);
-    rr_vector_scale(&velocity, distance / speed);
+    if (speed != 0)
+        rr_vector_scale(&velocity, distance / speed);
+    else
+        rr_vector_set_(&velocity, 0, 0);
     rr_vector_add(&delta, &velocity);
     return delta;
 }
