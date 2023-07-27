@@ -48,6 +48,18 @@ static void container_on_render(struct rr_ui_element *this,
         rr_ui_render_element(this->elements.start[i], game);
 }
 
+static void flex_container_on_render(struct rr_ui_element *this,
+                                struct rr_game *game)
+{
+    if (this->container->resizeable)
+    {
+        struct rr_ui_container_metadata *data = this->container->data;
+        if (this->abs_width < this->container->abs_width - data->outer_spacing * 2)
+            this->abs_width = this->container->abs_width - data->outer_spacing * 2;
+    }
+    container_on_render(this, game);
+}
+
 void rr_ui_container_poll_events(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -91,16 +103,6 @@ struct rr_ui_element *rr_ui_container_init()
     return this;
 }
 
-struct rr_ui_element *rr_ui_flex_container_init()
-{
-    struct rr_ui_element *this = rr_ui_element_init();
-    struct rr_ui_container_metadata *data = malloc(sizeof *data);
-    this->data = data;
-    this->on_render = container_on_render;
-    this->poll_events = rr_ui_container_poll_events;
-    return this;
-}
-
 struct rr_ui_element *rr_ui_2d_container_init(uint8_t width, uint8_t height,
                                               float outer_spacing,
                                               float inner_spacing)
@@ -115,5 +117,21 @@ struct rr_ui_element *rr_ui_2d_container_init(uint8_t width, uint8_t height,
     this->on_render = container_on_render;
     this->poll_events = rr_ui_container_poll_events;
     this->resizeable = rr_ui_grid_container;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left, struct rr_ui_element *right, float pad)
+{
+    struct rr_ui_element *this = rr_ui_element_init();
+    struct rr_ui_container_metadata *data = malloc(sizeof *data);
+    this->data = data;
+    rr_ui_container_add_element(this, left);
+    rr_ui_container_add_element(this, right);
+    left->h_justify = -1;
+    right->h_justify = 1;
+    this->abs_width = this->width = left->abs_width + pad + right->abs_width;
+    this->abs_height = this->height = left->abs_height > right->abs_height ? left->abs_height : right->abs_height;
+    this->on_render = flex_container_on_render;
+    this->poll_events = rr_ui_container_poll_events;
     return this;
 }

@@ -26,11 +26,11 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_container_init(), 10, 5, 6,
-            rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 20, 2,
-                rr_ui_set_justify(
-                    rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), -1, 0),
-                rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 1, 0)),
+            rr_ui_flex_container_init(
+                rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), -1, 0),
+                rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 1, 0),
+                20
+            ),
             rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16,
                                               RR_RARITY_COLORS[rarity]),
                               -1, 0),
