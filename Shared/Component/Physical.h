@@ -22,6 +22,8 @@ struct rr_component_physical_spatial_hash_bounds
     uint8_t inserted;
 };
 
+RR_SERVER_ONLY(struct rr_component_player_info;)
+
 // check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
@@ -65,7 +67,7 @@ void rr_component_physical_free(struct rr_component_physical *,
                                 struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_physical_write(struct rr_component_physical *,
-                                                struct proto_bug *, int);)
+                                                struct proto_bug *, int, struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_physical_read(struct rr_component_physical *,
                                                struct proto_bug *);)
 

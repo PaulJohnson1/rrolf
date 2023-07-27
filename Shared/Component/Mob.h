@@ -7,6 +7,7 @@
 struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
+RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_mob
 {
@@ -20,7 +21,7 @@ void rr_component_mob_init(struct rr_component_mob *, struct rr_simulation *);
 void rr_component_mob_free(struct rr_component_mob *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_mob_write(struct rr_component_mob *,
-                                           struct proto_bug *, int);)
+                                           struct proto_bug *, int, struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_mob_read(struct rr_component_mob *,
                                           struct proto_bug *);)
 

@@ -185,10 +185,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_link_toggle(
                             rr_ui_v_container_init(
                                 rr_ui_container_init(), 10, 20, 2,
-                                rr_ui_h_container_init(
-                                    rr_ui_container_init(), 1, 15, 2,
-                                    rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_info_init(), -1, 0),
+                                rr_ui_text_init("Squad", 18, 0xffffffff),
                                 rr_ui_choose_element_init(
                                     rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
                                     rr_ui_h_container_init(
@@ -327,29 +324,6 @@ void rr_game_init(struct rr_game *this)
             simulation_ready));
     rr_ui_container_add_element(this->window,
                                 rr_ui_settings_container_init(this));
-    this->squad_info_tooltip = rr_ui_container_add_element(
-        this->window,
-        rr_ui_link_toggle(
-            rr_ui_set_justify(
-                rr_ui_set_background(
-                    rr_ui_v_container_init(
-                        rr_ui_container_init(), 10, 10, 2,
-                        rr_ui_set_justify(
-                            rr_ui_h_container_init(
-                                rr_ui_container_init(), 5, 10, 2,
-                                rr_ui_flower_init(0, 35),
-                                rr_ui_text_init("- ready", 15, 0xffffffff)),
-                            -1, 0),
-                        rr_ui_set_justify(
-                            rr_ui_h_container_init(
-                                rr_ui_container_init(), 5, 10, 2,
-                                rr_ui_flower_init(1, 35),
-                                rr_ui_text_init("- not ready", 15, 0xffffffff)),
-                            -1, 0)),
-                    0x80000000),
-                -1, -1),
-            rr_ui_never_show));
-    this->squad_info_tooltip->poll_events = rr_ui_no_focus;
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,

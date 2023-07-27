@@ -10,10 +10,17 @@
 #include <Client/Ui/Engine.h>
 #include <Shared/Utilities.h>
 
-void render_flower(uint8_t is_frown, struct rr_ui_element *element,
+struct squad_flower_metadata
+{
+    float mouth;
+    struct rr_game_squad_client *member;
+};
+
+void render_flower(struct rr_ui_element *element,
                    struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
+    struct squad_flower_metadata *data = element->data;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
@@ -50,34 +57,14 @@ void render_flower(uint8_t is_frown, struct rr_ui_element *element,
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -6, 10);
-    rr_renderer_quadratic_curve_to(renderer, 0, is_frown ? 4 : 15, 6, 10);
+    rr_renderer_quadratic_curve_to(renderer, 0, 5 + data->mouth * 10, 6, 10);
     rr_renderer_stroke(renderer);
 }
 
-static void render_flower_frown(struct rr_ui_element *element,
-                                struct rr_game *game)
+static void flower_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    render_flower(1, element, game);
-}
-
-static void render_flower_not_frown(struct rr_ui_element *element,
-                                    struct rr_game *game)
-{
-    render_flower(0, element, game);
-}
-
-struct rr_ui_element *rr_ui_flower_init(uint8_t frowning, float size)
-{
-    struct rr_ui_element *element = rr_ui_element_init();
-    element->width = element->abs_width = element->height =
-        element->abs_height = size;
-
-    if (frowning)
-        element->on_render = render_flower_frown;
-    else
-        element->on_render = render_flower_not_frown;
-
-    return element;
+    struct squad_flower_metadata *data = this->data;
+    data->mouth = rr_lerp(data->mouth, data->member->ready, 0.4);
 }
 
 static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
@@ -85,6 +72,21 @@ static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
     struct rr_ui_choose_element_metadata *data = this->data;
     struct rr_game_squad_client *member = data->data;
     return member->in_use;
+}
+
+static struct rr_ui_element *rr_ui_flower_init(struct rr_game_squad_client *member, float size)
+{
+    struct rr_ui_element *this = rr_ui_element_init();
+    struct squad_flower_metadata *data = malloc(sizeof *data);
+    data->mouth = 0;
+    data->member = member;
+    this->data = data;
+    this->width = this->abs_width = this->height =
+        this->abs_height = size;
+
+    this->on_render = render_flower;
+    this->animate = flower_animate;
+    return this;
 }
 
 struct squad_loadout_button_metadata
@@ -138,23 +140,19 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal)
     return this;
 }
 
-static uint8_t should_be_ready(struct rr_ui_element *choose,
-                               struct rr_game *game)
+static void background_change_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    return ((struct rr_game_squad_client
-                 *)((struct rr_ui_choose_element_metadata *)choose->data)
-                ->data)
-        ->ready;
-}
-
-static struct rr_ui_element *
-rr_ui_player_init(struct rr_game_squad_client *player)
-{
-    struct rr_ui_element *choose_container = rr_ui_choose_element_init(
-        rr_ui_flower_init(0, 50), rr_ui_flower_init(1, 50), should_be_ready);
-    ((struct rr_ui_choose_element_metadata *)choose_container->data)->data =
-        player;
-    return choose_container;
+    struct rr_ui_choose_element_metadata *data = this->data;
+    if (data->choose(this, game))
+    {
+        struct rr_game_squad_client *member = data->data;
+        if (member->ready)
+            this->container->fill = 0x4023ff45;
+        else
+            this->container->fill = 0x40ff4523;
+    }
+    else
+        this->container->fill = 0x40000000;
 }
 
 struct rr_ui_element *
@@ -169,7 +167,7 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
                               -1, -1));
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, 2, 
-        rr_ui_player_init(member),
+        rr_ui_flower_init(member, 50),
         rr_ui_text_init(&member->name[0], 14, 0xffffffff)
     );
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 20);
@@ -182,6 +180,7 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     struct rr_ui_element *this = rr_ui_choose_element_init(squad_container, b, choose);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
+    this->animate = background_change_animate;
 
     return rr_ui_set_background(
         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 1, this),
@@ -208,39 +207,6 @@ struct info_metadata
     struct rr_ui_element *question_mark;
     struct rr_ui_element *tooltip;
 };
-
-static void info_data_on_event(struct rr_ui_element *this, struct rr_game *game)
-{
-    rr_ui_render_tooltip_above(this, game->squad_info_tooltip, game);
-}
-
-static void render_info(struct rr_ui_element *element, struct rr_game *game)
-{
-    rr_renderer_begin_path(game->renderer);
-    rr_renderer_set_line_width(game->renderer, 2.0f);
-    rr_renderer_set_stroke(game->renderer, 0x40000000);
-    rr_renderer_arc(game->renderer, 0.0f, 0.0f, 10.0f);
-    rr_renderer_stroke(game->renderer);
-    // the ? text element
-    struct info_metadata *data = element->data;
-
-    data->question_mark->on_render(data->question_mark, game);
-}
-
-struct rr_ui_element *rr_ui_info_init()
-{
-    struct rr_ui_element *element = rr_ui_element_init();
-    element->data = malloc(sizeof(struct info_metadata));
-    struct info_metadata *data = element->data;
-    data->question_mark = rr_ui_text_init("?", 18, 0xffffffff);
-
-    element->abs_width = element->abs_height = element->width =
-        element->height = 20;
-
-    element->on_render = render_info;
-    element->on_event = info_data_on_event;
-    return element;
-}
 
 static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
 {

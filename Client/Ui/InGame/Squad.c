@@ -10,6 +10,34 @@
 
 #include <Shared/Vector.h>
 
+static void render_dead_flower(struct rr_game *game)
+{
+    struct rr_renderer *renderer = game->renderer;
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_set_stroke(renderer, 0xffcfbb50);
+    rr_renderer_set_fill(renderer, 0xffffe763);
+    rr_renderer_set_line_width(renderer, 3);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, 25);
+    rr_renderer_fill(renderer);
+    rr_renderer_stroke(renderer);
+    rr_renderer_set_stroke(renderer, 0xff222222);
+    rr_renderer_set_line_width(renderer, 1.5);
+    rr_renderer_set_line_cap(renderer, 1);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, -10, -8);
+    rr_renderer_line_to(renderer, -4, -2);
+    rr_renderer_move_to(renderer, -4, -8);
+    rr_renderer_line_to(renderer, -10, -2);
+    rr_renderer_move_to(renderer, 10, -8);
+    rr_renderer_line_to(renderer, 4, -2);
+    rr_renderer_move_to(renderer, 4, -8);
+    rr_renderer_line_to(renderer, 10, -2);
+    rr_renderer_move_to(renderer, -6, 10);
+    rr_renderer_quadratic_curve_to(renderer, 0, 5, 6, 10);
+    rr_renderer_stroke(renderer);
+}
+
 struct player_hud_metadata
 {
     uint8_t pos;
@@ -31,9 +59,27 @@ static void player_hud_on_render(struct rr_ui_element *this, struct rr_game *gam
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(game->simulation, game->player_infos[data->pos]);
-    if (player_info->flower_id == RR_NULL_ENTITY)
+    if (player_info->flower_id == RR_NULL_ENTITY || rr_simulation_get_health(game->simulation, player_info->flower_id)->health == 0)
     {
-
+        float length = this->abs_width / 2;
+        rr_renderer_set_line_cap(renderer, 1);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_line_width(renderer, 25);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -length, 0);
+        rr_renderer_line_to(renderer, length, 0);
+        rr_renderer_stroke(renderer);
+        rr_renderer_translate(renderer, -length, 0);
+        rr_renderer_scale(renderer, this->abs_height / 50);
+        render_dead_flower(game);
+        rr_renderer_set_text_baseline(renderer, 1);
+        rr_renderer_set_text_align(renderer, 0);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_text_size(renderer, 18);
+        rr_renderer_set_line_width(renderer, 18 * 0.12);
+        rr_renderer_stroke_text(renderer, &game->squad_members[player_info->client_id].name[0], 35, 0);
+        rr_renderer_fill_text(renderer, &game->squad_members[player_info->client_id].name[0], 35, 0);
     }
     else
     {

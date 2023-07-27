@@ -109,7 +109,6 @@ struct rr_game
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
-    struct rr_ui_element *squad_info_tooltip;
     struct rr_ui_element *rivet_info_tooltip;
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;

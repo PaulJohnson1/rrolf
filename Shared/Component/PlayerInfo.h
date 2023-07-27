@@ -57,7 +57,7 @@ struct rr_component_player_info
     RR_SERVER_ONLY(uint32_t protocol_state;)
     EntityIdx parent_id;
     EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
-    RR_SERVER_ONLY(uint16_t rotation_count;)
+    RR_SERVER_ONLY(uint8_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
     uint8_t client_id;
     uint8_t slot_count;
@@ -77,7 +77,7 @@ RR_SERVER_ONLY(
                                              struct rr_simulation *, uint8_t);)
 
 RR_SERVER_ONLY(void rr_component_player_info_write(
-                   struct rr_component_player_info *, struct proto_bug *, int);)
+                   struct rr_component_player_info *, struct proto_bug *, int, struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_player_info_read(
                    struct rr_component_player_info *, struct proto_bug *);)
 

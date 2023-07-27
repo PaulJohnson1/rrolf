@@ -36,7 +36,7 @@ void rr_component_physical_free(struct rr_component_physical *this,
 
 #ifdef RR_SERVER
 void rr_component_physical_write(struct rr_component_physical *this,
-                                 struct proto_bug *encoder, int is_creation)
+                                 struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "physical component state");

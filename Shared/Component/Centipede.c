@@ -33,7 +33,7 @@ void rr_component_centipede_free(struct rr_component_centipede *this,
 
 #ifdef RR_SERVER
 void rr_component_centipede_write(struct rr_component_centipede *this,
-                                  struct proto_bug *encoder, int is_creation)
+                                  struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
 }
 

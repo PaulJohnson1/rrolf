@@ -166,14 +166,14 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
 }
 
 void rr_component_player_info_write(struct rr_component_player_info *this,
-                                    struct proto_bug *encoder, int is_creation)
+                                    struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "player_info component state");
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
-    if (state & state_flags_petals)
+    if (this->parent_id == client->parent_id && (state & state_flags_petals))
     {
         for (uint32_t i = 0; i < this->slot_count; ++i)
         {

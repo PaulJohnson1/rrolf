@@ -19,7 +19,7 @@ void rr_component_projectile_free(struct rr_component_projectile *this,
 
 #ifdef RR_SERVER
 void rr_component_projectile_write(struct rr_component_projectile *this,
-                                   struct proto_bug *encoder, int is_creation)
+                                   struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
 }
 

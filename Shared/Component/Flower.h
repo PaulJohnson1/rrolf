@@ -7,6 +7,7 @@
 struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
+RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_flower
 {
@@ -27,7 +28,7 @@ void rr_component_flower_free(struct rr_component_flower *,
                               struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_flower_write(struct rr_component_flower *,
-                                              struct proto_bug *, int);)
+                                              struct proto_bug *, int, struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_flower_read(struct rr_component_flower *,
                                              struct proto_bug *);)
 

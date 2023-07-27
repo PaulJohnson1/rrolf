@@ -229,7 +229,7 @@ void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     if (component_flags & (1 << ID))                                           \
         rr_component_##COMPONENT##_write(                                      \
             rr_simulation_get_##COMPONENT(simulation, id), encoder,            \
-            is_creation);
+            is_creation, player_info);
     RR_FOR_EACH_COMPONENT;
 #undef XX
 }
@@ -269,16 +269,7 @@ void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         return;
 
     rr_bitset_set(captures->entities_in_view, entity);
-    if (rr_simulation_has_drop(simulation, entity))
-    {
-        struct rr_component_drop *drop =
-            rr_simulation_get_drop(simulation, entity);
-        drop->inspecting = captures->player_info->client_id;
-        if (rr_bitset_get(&drop->picked_up_this_tick[0], drop->inspecting))
-            drop->protocol_state |= 4;
-        else
-            drop->protocol_state &= 3;
-    }
+    return;
 }
 
 void rr_simulation_find_entities_in_view(

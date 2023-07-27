@@ -55,7 +55,7 @@ void rr_component_petal_free(struct rr_component_petal *this,
 
 #ifdef RR_SERVER
 void rr_component_petal_write(struct rr_component_petal *this,
-                              struct proto_bug *encoder, int is_creation)
+                              struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "petal component state");

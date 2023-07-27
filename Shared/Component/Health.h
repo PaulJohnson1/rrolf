@@ -7,6 +7,7 @@
 struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
+RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_health
 {
@@ -27,7 +28,7 @@ void rr_component_health_free(struct rr_component_health *,
                               struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_health_write(struct rr_component_health *,
-                                              struct proto_bug *, int);)
+                                              struct proto_bug *, int, struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_health_read(struct rr_component_health *,
                                              struct proto_bug *);)
 

@@ -19,7 +19,7 @@ void rr_component_web_free(struct rr_component_web *this,
 
 #ifdef RR_SERVER
 void rr_component_web_write(struct rr_component_web *this,
-                                   struct proto_bug *encoder, int is_creation)
+                                   struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
 {
 }
 
