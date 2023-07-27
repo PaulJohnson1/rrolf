@@ -142,7 +142,7 @@ static void system_flower_petal_movement_logic(
                     {
                         rr_vector_scale(&delta, 0.4);
                         rr_vector_add(&physical->acceleration, &delta);
-                        break;
+                        return;
                     }
                 }
                 else
@@ -166,9 +166,9 @@ static void system_flower_petal_movement_logic(
                         }
                         else
                         {
-                            rr_vector_scale(&delta, 0.4);
+                            rr_vector_scale(&delta, 0.5);
                             rr_vector_add(&physical->acceleration, &delta);
-                            break;
+                            return;
                         }
                     }
                 }
