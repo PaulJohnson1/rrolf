@@ -67,6 +67,7 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     this->animate(this, game);
     if (this->completely_hidden == 0)
         this->on_render(this, game);
+    this->first_frame = 0;
     rr_renderer_context_state_free(game->renderer, &state);
 }
 
