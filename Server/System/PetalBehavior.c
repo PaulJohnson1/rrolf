@@ -144,6 +144,32 @@ static void system_flower_petal_movement_logic(
                         rr_vector_add(&physical->acceleration, &delta);
                     }
                 }
+                else
+                {
+                    for (uint32_t i = 0; i < simulation->flower_count; ++i)
+                    {
+                        EntityIdx potential = simulation->flower_vector[i];
+                        struct rr_component_physical *target_physical =  rr_simulation_get_physical(simulation, potential);
+                        struct rr_vector delta = {(target_physical->x - position_vector.x), (target_physical->y - position_vector.y)};
+                        if (rr_vector_get_magnitude(&delta) < 200)
+                            continue;
+                        flower_health = rr_simulation_get_health(simulation, potential);
+                        if (flower_health->health == flower_health->max_health)
+                            continue;
+                        if (rr_vector_get_magnitude(&delta) < target_physical->radius + physical->radius)
+                        {
+                            //heal
+                            rr_component_health_set_health(flower_health, flower_health->health + 10 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
+                            rr_simulation_request_entity_deletion(simulation, id);
+                            return;
+                        }
+                        else
+                        {
+                            rr_vector_scale(&delta, 0.4);
+                            rr_vector_add(&physical->acceleration, &delta);
+                        }
+                    }
+                }
                 break;
             }
             case rr_petal_id_web:
