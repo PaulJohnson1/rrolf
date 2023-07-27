@@ -62,7 +62,6 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     this->animation =
         rr_lerp(this->animation, this->should_show(this, game) == 0,
                 0.4 + 0.6 * this->first_frame);
-    this->first_frame = 0;
 
     this->completely_hidden = this->animation > 0.99;
     this->animate(this, game);
