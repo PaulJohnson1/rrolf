@@ -426,7 +426,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         puts("websocket closed");
         this->socket_ready = 0;
         this->socket_pending = 0;
-        free(this->rivet_player_token);
+        free(this->socket.rivet_player_token);
         break;
     case rr_websocket_event_type_data:
     {
