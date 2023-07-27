@@ -27,6 +27,7 @@ struct rr_ui_element *rr_ui_waiting_respawn_screen_init()
 {
     struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
         rr_ui_text_init("You Died", 48, 0xffffffff),
+        rr_ui_static_space_init(100),
         rr_ui_text_init("You will respawn next wave", 24, 0xffffffff),
         NULL
     );

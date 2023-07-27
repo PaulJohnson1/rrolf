@@ -7,10 +7,10 @@
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 10.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_light, rr_rarity_id_common, 8.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
+    {rr_petal_id_pellet, rr_rarity_id_common, 8.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 55.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 35.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
-    {rr_petal_id_faster, rr_rarity_id_rare, 7.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_light, rr_rarity_id_rare, 7.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile, rr_rarity_id_rare, 15.0f, 5.0f, 15.0f, 37, 12, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 15.0f, 2.0f, 8.0f, 50, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 10.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 3}},
@@ -160,7 +160,7 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 
 static void init_loot_tables()
 {
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0], rr_petal_id_faster,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0], rr_petal_id_light,
                     0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1], rr_petal_id_speed,
                     0.1);
@@ -194,7 +194,7 @@ static void init_loot_tables()
                     0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
-                    rr_petal_id_light, 0.15);
+                    rr_petal_id_pellet, 0.15);
 }
 
 void rr_static_data_init()

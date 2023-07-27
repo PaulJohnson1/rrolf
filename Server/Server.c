@@ -172,10 +172,6 @@ void rr_server_client_tick(struct rr_server_client *this)
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(
                 &this->server->simulation, this->player_info->flower_id);
-            rr_component_player_info_set_camera_x(this->player_info,
-                                                  physical->x);
-            rr_component_player_info_set_camera_y(this->player_info,
-                                                  physical->y);
             rr_vector_set(&physical->acceleration, this->player_accel_x,
                           this->player_accel_y);
         }

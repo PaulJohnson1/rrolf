@@ -14,6 +14,7 @@ endif()
 
 set(SRCS
     System/Ai.c
+    System/Camera.c
     System/Centipede.c
     System/CollisionDetection.c
     System/CollisionResolution.c

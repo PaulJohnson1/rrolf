@@ -218,7 +218,7 @@ static void system_flower_petal_movement_logic(
                              curr_angle);
         rr_vector_add(&chase_vector, &clump_vector);
     }
-    if (petal->id == rr_petal_id_faster)
+    if (petal->id == rr_petal_id_light)
     {
         struct rr_vector random_vector;
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
@@ -257,7 +257,7 @@ static void petal_modifiers(struct rr_simulation *simulation, struct rr_componen
                 health, health->health +
                                    0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
-        else if (data->id == rr_petal_id_faster)
+        else if (data->id == rr_petal_id_light)
             player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
         else if (data->id == rr_petal_id_speed)
         {

@@ -22,7 +22,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
-    case rr_petal_id_light:
+    case rr_petal_id_pellet:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_line_width(renderer, 3.0f);
@@ -60,7 +60,7 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_fill(renderer);
         rr_renderer_stroke(renderer);
         break;
-    case rr_petal_id_faster:
+    case rr_petal_id_light:
         rr_renderer_set_stroke(renderer, 0xffcecfa3);
         rr_renderer_set_fill(renderer, 0xfffeffc9);
         rr_renderer_set_line_width(renderer, 3.0f);

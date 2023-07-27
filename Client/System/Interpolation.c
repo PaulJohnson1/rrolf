@@ -106,9 +106,9 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         player_info->lerp_camera_fov = rr_lerp(
             player_info->lerp_camera_fov, player_info->camera_fov, 15 * delta);
         player_info->lerp_camera_x = rr_lerp(player_info->lerp_camera_x,
-                                             player_info->camera_x, 15 * delta);
+                                             player_info->camera_x, 10 * delta);
         player_info->lerp_camera_y = rr_lerp(player_info->lerp_camera_y,
-                                             player_info->camera_y, 15 * delta);
+                                             player_info->camera_y, 10 * delta);
     }
 
     if (rr_simulation_has_health(this, entity))

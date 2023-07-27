@@ -9,6 +9,7 @@
 
 #include <Server/SpatialHash.h>
 #include <Server/System/Ai.h>
+#include <Server/System/Camera.h>
 #include <Server/System/Centipede.h>
 #include <Server/System/CollisionDetection.h>
 #include <Server/System/CollisionResolution.h>
@@ -567,7 +568,8 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
-
+    RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
+    
     struct count_mob_captures captures;
     captures.simulation = this;
     if (!this->game_over)
