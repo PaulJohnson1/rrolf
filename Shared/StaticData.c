@@ -21,7 +21,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 63, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_seed, rr_rarity_id_legendary, 5.0f, 5.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
