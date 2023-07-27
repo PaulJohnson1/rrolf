@@ -82,7 +82,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                 console.log("close", a, b);
                 Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
             };
-            socket.onerror = function(a, b) { console.log("error", a, b); socket.close(); };
+            socket.onerror = function(a, b) { console.log("error", a, b); };
             socket.onmessage = async function(event)
             {
                 Module.HEAPU8.set(new Uint8Array(event.data), $3);
