@@ -12,7 +12,7 @@
 extern "C"
 {
 #endif
-#define INSTRUCTION_QUEUE_MAX_SIZE 16384
+#define INSTRUCTION_QUEUE_MAX_SIZE 4096
 
 struct rr_renderer_paint
 {

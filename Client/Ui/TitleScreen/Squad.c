@@ -108,8 +108,10 @@ static void squad_loadout_button_animate(struct rr_ui_element *this,
 {
     struct squad_loadout_button_metadata *data = this->data;
     if (data->petal->id != 0)
+    {
         data->prev_id = data->petal->id;
-    data->prev_rarity = data->petal->rarity;
+        data->prev_rarity = data->petal->rarity;
+    }
     rr_renderer_scale(game->renderer, (1 - this->animation));
 }
 

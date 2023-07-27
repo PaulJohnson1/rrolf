@@ -973,6 +973,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_context_state_free(this->renderer, &grand_state);
 
     rr_renderer_execute_instructions();
+    rr_renderer_reset_instruction_queue();
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keycodes_pressed_this_tick, 0, RR_BITSET_ROUND(256));
