@@ -227,27 +227,6 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_bone:
-    /*
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xffcfcfcf);
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_set_line_join(renderer, 1);
-        rr_renderer_set_line_width(renderer, 5);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, 15, 0);
-        rr_renderer_bezier_curve_to(renderer, 20, -1, 19, -8, 15, -9);
-        rr_renderer_bezier_curve_to(renderer, 11, -10, 11, -4, 9, -4);
-        rr_renderer_line_to(renderer, -9, -4);
-        rr_renderer_bezier_curve_to(renderer, -11, -4, -11, -10, -15, -9);
-        rr_renderer_bezier_curve_to(renderer, -19, -8, -20, -1, -15, 0);
-        rr_renderer_bezier_curve_to(renderer, -20, 1, -19, 8, -15, 9);
-        rr_renderer_bezier_curve_to(renderer, -11, 10, -11, 4, -9, 4);
-        rr_renderer_line_to(renderer, 9, 4);
-        rr_renderer_bezier_curve_to(renderer, 11, 4, 11, 10, 15, 9);
-        rr_renderer_bezier_curve_to(renderer, 19, 8, 20, 1, 15, 0);
-        rr_renderer_stroke(renderer);
-        rr_renderer_fill(renderer);
-    */
         rr_renderer_scale(renderer, 0.1);
         rr_renderer_set_fill(renderer, 0xffa19a84);
         rr_renderer_begin_path(renderer);
@@ -388,6 +367,26 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_quadratic_curve_to(renderer,-1.6499993801116943,-5.078178405761719,3.399188280105591,-10.461621284484863);
         rr_renderer_quadratic_curve_to(renderer,4.319756507873535,-3.138485908508301,11,0.000001923301169881597);
         rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
+    case rr_petal_id_seed:
+        rr_renderer_set_stroke(renderer, 0xffaaaa00);
+        rr_renderer_set_fill(renderer, 0xff888800);
+        rr_renderer_set_line_width(renderer, 3.0f);
+        rr_renderer_set_line_join(renderer, 1.0f);
+        rr_renderer_set_line_cap(renderer, 1.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -20.0f, 0.0f);
+        rr_renderer_line_to(renderer, -15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, -10.0f, -12.0f, 5.0f, -12.0f,
+                                    15.0f, 0.0f);
+        rr_renderer_bezier_curve_to(renderer, 5.0f, 12.0f, -10.0f, 12.0f,
+                                    -15.0f, 0.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, -9.0f, 0.0f);
+        rr_renderer_quadratic_curve_to(renderer, 0.0f, -1.5f, 7.5f, 0.0f);
         rr_renderer_stroke(renderer);
         break;
     default:

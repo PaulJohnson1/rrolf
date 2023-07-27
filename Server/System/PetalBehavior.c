@@ -188,6 +188,17 @@ static void system_flower_petal_movement_logic(
                 }
                 projectile->ticks_until_death = 20;
                 break;
+            case rr_petal_id_seed:
+                if (simulation->player_info_count > simulation->flower_count)
+                {
+                    if (!petal->detached)
+                    {
+                        projectile->ticks_until_death = 1350 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                        petal->detached = 1;
+                    }
+                    return;
+                }
+                break;
             default:
                 break;
             }
@@ -441,8 +452,9 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->global_rotation += 0.1;
 }
 
-static void system_petal_misc_logic(EntityIdx id, void *simulation)
+static void system_petal_misc_logic(EntityIdx id, void *_simulation)
 {
+    struct rr_simulation *simulation = _simulation;
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, id);
@@ -471,9 +483,27 @@ static void system_petal_misc_logic(EntityIdx id, void *simulation)
             rr_vector_from_polar(&physical->acceleration, 10.0f, physical->angle);
         else if (petal->id == rr_petal_id_peas)
             rr_vector_from_polar(&physical->acceleration, 7.5f, physical->angle);
+        else if (petal->id == rr_petal_id_seed)
+            if (simulation->player_info_count <= simulation->flower_count)
+                rr_simulation_request_entity_deletion(simulation, id);
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
             0)
+        {
             rr_simulation_request_entity_deletion(simulation, id);
+            if (petal->id == rr_petal_id_seed)
+            {
+                for (uint32_t i = 0; i < simulation->player_info_count; ++i)
+                {
+                    if (rr_simulation_get_player_info(simulation, simulation->player_info_vector[i])->flower_id != RR_NULL_ENTITY)
+                        continue;
+                    EntityIdx flower = rr_simulation_alloc_player(simulation->player_info_vector[i], simulation);
+                    struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, flower);
+                    rr_component_physical_set_x(flower_physical, physical->x);
+                    rr_component_physical_set_y(flower_physical, physical->y);
+                    return;
+                }
+            }
+        }
     }
 }
 

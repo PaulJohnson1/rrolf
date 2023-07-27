@@ -135,6 +135,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
         rr_component_##COMPONENT##_init(this->COMPONENT##_components + entity, \
                                         this);                                 \
         this->COMPONENT##_components[entity].parent_id = entity;               \
+        this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;          \
         return rr_simulation_get_##COMPONENT(this, entity);                    \
     }                                                                          \
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
