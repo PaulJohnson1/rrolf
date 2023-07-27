@@ -158,6 +158,7 @@ void rr_game_init(struct rr_game *this)
     strcpy(this->rivet_account.uuid, "no-uuid");
     rr_rivet_identities_create_guest(this);
 
+    // clang-format off
     rr_ui_container_add_element(
         this->window,
         rr_ui_pad(rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
@@ -170,66 +171,78 @@ void rr_game_init(struct rr_game *this)
         this->window,
         rr_ui_link_toggle(
             rr_ui_set_background(
-                rr_ui_v_container_init(
-                    rr_ui_container_init(), 10, 20, 3,
-                    rr_ui_v_container_init(rr_ui_container_init(), 0, 20, 4,
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
+                    rr_ui_v_container_init(rr_ui_container_init(), 0, 20,
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
-                            rr_ui_container_init(), 10, 20, 2,
+                            rr_ui_container_init(), 10, 20,
                             rr_ui_text_input_init(400, 36, &this->nickname[0], 16),
-                            rr_ui_set_background(rr_ui_join_button_init(),
-                                             0xff1dd129)
+                            rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
+                            NULL
                         ),
                         rr_ui_set_justify(rr_ui_set_background(rr_ui_squad_button_init(), 0xff1dd129), 1, 0),
-                    rr_ui_set_background(
-                        rr_ui_link_toggle(
-                            rr_ui_v_container_init(
-                                rr_ui_container_init(), 10, 20, 2,
-                                rr_ui_text_init("Squad", 18, 0xffffffff),
-                                rr_ui_choose_element_init(
-                                    rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
-                                    rr_ui_h_container_init(
-                                        rr_ui_container_init(), 10, 20, 4,
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[0]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[1]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[2]),
-                                        rr_ui_squad_player_container_init(
-                                            &this->squad_members[3])),
-                                    rr_ui_set_justify(rr_ui_countdown_init(this), 1,
-                                                    0)
+                        rr_ui_set_background(
+                            rr_ui_link_toggle(
+                                rr_ui_v_container_init(
+                                    rr_ui_container_init(), 10, 20,
+                                    rr_ui_text_init("Squad", 18, 0xffffffff),
+                                    rr_ui_choose_element_init(
+                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
+                                        rr_ui_h_container_init(
+                                            rr_ui_container_init(), 10, 20,
+                                            rr_ui_squad_player_container_init(
+                                                &this->squad_members[0]),
+                                            rr_ui_squad_player_container_init(
+                                                &this->squad_members[1]),
+                                            rr_ui_squad_player_container_init(
+                                                &this->squad_members[2]),
+                                            rr_ui_squad_player_container_init(
+                                                &this->squad_members[3]),
+                                            NULL
+                                        ),
+                                        rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
+                                        NULL
                                     ),
-                                rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
-                                socket_ready)),
+                                    rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
+                                    socket_ready),
+                                    NULL
+                                ),
                             socket_pending_or_ready),
-                        0x40ffffff)),
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
-                                           rr_ui_title_screen_loadout_button_init(0),
-                                           rr_ui_title_screen_loadout_button_init(1),
-                                           rr_ui_title_screen_loadout_button_init(2),
-                                           rr_ui_title_screen_loadout_button_init(3),
-                                           rr_ui_title_screen_loadout_button_init(4),
-                                           rr_ui_title_screen_loadout_button_init(5),
-                                           rr_ui_title_screen_loadout_button_init(6),
-                                           rr_ui_title_screen_loadout_button_init(7),
-                                           rr_ui_title_screen_loadout_button_init(8),
-                                           rr_ui_title_screen_loadout_button_init(9)),
-                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15, 10,
-                                           rr_ui_title_screen_loadout_button_init(10),
-                                           rr_ui_title_screen_loadout_button_init(11),
-                                           rr_ui_title_screen_loadout_button_init(12),
-                                           rr_ui_title_screen_loadout_button_init(13),
-                                           rr_ui_title_screen_loadout_button_init(14),
-                                           rr_ui_title_screen_loadout_button_init(15),
-                                           rr_ui_title_screen_loadout_button_init(16),
-                                           rr_ui_title_screen_loadout_button_init(17),
-                                           rr_ui_title_screen_loadout_button_init(18),
-                                           rr_ui_title_screen_loadout_button_init(19)),
-                    rr_ui_text_init("powered by Rivet", 15, 0xffffffff)),
-                0x00000000),
-            simulation_not_ready));
+                        0x40ffffff),
+                        NULL
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15,
+                        rr_ui_title_screen_loadout_button_init(0),
+                        rr_ui_title_screen_loadout_button_init(1),
+                        rr_ui_title_screen_loadout_button_init(2),
+                        rr_ui_title_screen_loadout_button_init(3),
+                        rr_ui_title_screen_loadout_button_init(4),
+                        rr_ui_title_screen_loadout_button_init(5),
+                        rr_ui_title_screen_loadout_button_init(6),
+                        rr_ui_title_screen_loadout_button_init(7),
+                        rr_ui_title_screen_loadout_button_init(8),
+                        rr_ui_title_screen_loadout_button_init(9),
+                        NULL
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 15,
+                        rr_ui_title_screen_loadout_button_init(10),
+                        rr_ui_title_screen_loadout_button_init(11),
+                        rr_ui_title_screen_loadout_button_init(12),
+                        rr_ui_title_screen_loadout_button_init(13),
+                        rr_ui_title_screen_loadout_button_init(14),
+                        rr_ui_title_screen_loadout_button_init(15),
+                        rr_ui_title_screen_loadout_button_init(16),
+                        rr_ui_title_screen_loadout_button_init(17),
+                        rr_ui_title_screen_loadout_button_init(18),
+                        rr_ui_title_screen_loadout_button_init(19),
+                        NULL
+                    ),
+                    rr_ui_text_init("powered by Rivet", 15, 0xffffffff),
+                    NULL
+                ),
+            0x00000000),
+        simulation_not_ready)
+    );
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
     rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
@@ -238,11 +251,12 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
             rr_ui_set_justify(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 20, 4,
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
                     rr_ui_in_game_player_hud_init(0),
                     rr_ui_in_game_player_hud_init(1),
                     rr_ui_in_game_player_hud_init(2),
-                    rr_ui_in_game_player_hud_init(3)
+                    rr_ui_in_game_player_hud_init(3),
+                    NULL
                 )
             , -1, -1)
         , 100)
@@ -251,20 +265,22 @@ void rr_game_init(struct rr_game *this)
         this->window,
         rr_ui_set_justify(
             rr_ui_link_toggle(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 3,
-                                       rr_ui_inventory_toggle_button_init(),
-                                       rr_ui_mob_gallery_toggle_button_init(),
-                                       rr_ui_crafting_toggle_button_init()),
-                simulation_not_ready),
-            -1, 1));
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+                    rr_ui_inventory_toggle_button_init(),
+                    rr_ui_mob_gallery_toggle_button_init(),
+                    rr_ui_crafting_toggle_button_init(),
+                    NULL
+                ),
+            simulation_not_ready),
+        -1, 1)
+    );
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
             rr_ui_set_justify(
-                rr_ui_v_container_init(
-                    rr_ui_container_init(), 15, 15, 2,
+                rr_ui_v_container_init(rr_ui_container_init(), 15, 15,
                     rr_ui_h_container_init(
-                        rr_ui_container_init(), 0, 15, 12,
+                        rr_ui_container_init(), 0, 15,
                         rr_ui_text_init("[x]", 18, 0xffffffff),
                         rr_ui_loadout_button_init(0),
                         rr_ui_loadout_button_init(1),
@@ -276,66 +292,84 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_loadout_button_init(7),
                         rr_ui_loadout_button_init(8),
                         rr_ui_loadout_button_init(9),
-                        rr_ui_text_init("[x]", 18, 0x00000000)),
+                        rr_ui_text_init("[x]", 18, 0x00000000),
+                        NULL
+                    ),
                     rr_ui_h_container_init(
-                        rr_ui_container_init(), 0, 15, 10,
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_container_init(), 0, 15,
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
                             rr_ui_loadout_button_init(10),
-                            rr_ui_text_init("[1]", 14, 0xffffffff)
+                            rr_ui_text_init("[1]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
                             rr_ui_loadout_button_init(11),
-                            rr_ui_text_init("[2]", 14, 0xffffffff)
+                            rr_ui_text_init("[2]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(12),
-                            rr_ui_text_init("[3]", 14, 0xffffffff)
+                            rr_ui_text_init("[3]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(13),
-                            rr_ui_text_init("[4]", 14, 0xffffffff)
+                            rr_ui_text_init("[4]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(14),
-                            rr_ui_text_init("[5]", 14, 0xffffffff)
+                            rr_ui_text_init("[5]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(15),
-                            rr_ui_text_init("[6]", 14, 0xffffffff)
+                            rr_ui_text_init("[6]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(16),
-                            rr_ui_text_init("[7]", 14, 0xffffffff)
+                            rr_ui_text_init("[7]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(17),
-                            rr_ui_text_init("[8]", 14, 0xffffffff)
+                            rr_ui_text_init("[8]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(18),
-                            rr_ui_text_init("[9]", 14, 0xffffffff)
+                            rr_ui_text_init("[9]", 14, 0xffffffff),
+                            NULL
                         ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 2, 
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_loadout_button_init(19),
-                            rr_ui_text_init("[0]", 14, 0xffffffff)
-                        )
-                    )),
-                0, 1),
-            simulation_ready));
+                            rr_ui_text_init("[0]", 14, 0xffffffff),
+                            NULL
+                        ),
+                        NULL
+                    ),
+                    NULL
+                ),
+            0, 1),
+        simulation_ready)
+    );
     rr_ui_container_add_element(this->window,
                                 rr_ui_settings_container_init(this));
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
-            rr_ui_set_justify(rr_ui_set_background(
-                                  rr_ui_h_container_init(
-                                      rr_ui_container_init(), 10, 0, 1,
-                                      rr_ui_text_init(this->rivet_account.uuid,
-                                                      16, 0xffffffff)),
-                                  0x80000000),
-                              -1, -1),
-            rr_ui_never_show));
+            rr_ui_set_justify(
+                rr_ui_set_background(
+                    rr_ui_h_container_init(rr_ui_container_init(), 10, 0,
+                        rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
+                        NULL
+                    ),
+                0x80000000),
+            -1, -1),
+        rr_ui_never_show)
+    );
     this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
@@ -375,13 +409,7 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("ui_hitboxes", &this->settings.show_ui_hitbox);
     rr_local_storage_get_bytes("slots_count", &this->settings.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->settings.use_mouse);
-    // rr_local_storage_get_bytes("settings", &this->settings);
-    // while (at < size)
-    // {
-    //     this->settings.loadout[storage_result[at]].id = storage_result[at +
-    //     1]; this->settings.loadout[storage_result[at]].rarity =
-    //     storage_result[at + 2]; at += 3;
-    // }
+    // clang-format on
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,

@@ -25,11 +25,11 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
-            rr_ui_container_init(), 10, 5, 6,
+            rr_ui_container_init(), 10, 5,
             rr_ui_flex_container_init(
                 rr_ui_set_justify(rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), -1, 0),
                 rr_ui_set_justify(rr_ui_text_init(cd, 16, 0xffffffff), 1, 0),
-                20
+                30
             ),
             rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16,
                                               RR_RARITY_COLORS[rarity]),
@@ -39,24 +39,29 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                 rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), -1,
                 0),
             rr_ui_set_justify(rr_ui_h_container_init(
-                                  rr_ui_container_init(), 0, 0, 2,
+                                  rr_ui_container_init(), 0, 0,
                                   rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                                  rr_ui_text_init(hp, 12, 0xffffffff)),
+                                  rr_ui_text_init(hp, 12, 0xffffffff),
+                                  NULL
+                                ),
                               -1, 0),
             rr_ui_set_justify(rr_ui_h_container_init(
-                                  rr_ui_container_init(), 0, 0, 2,
+                                  rr_ui_container_init(), 0, 0,
                                   rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                  rr_ui_text_init(dmg, 12, 0xffffffff)),
-                              -1, 0)),
+                                  rr_ui_text_init(dmg, 12, 0xffffffff),
+                                  NULL),
+                              -1, 0),
+            NULL),
         0x80000000);
     if (id == rr_petal_id_magnet)
     {
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "+%d", -25 + 25 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Pickup range: ", 12, 0xff44ffdd),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -65,19 +70,21 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%.1f/s", 25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Heal: ", 12, 0xffffff44),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
     else if (id == rr_petal_id_egg)
     {
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 3,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Spawns: ", 12, 0xffe07422),
                 rr_ui_text_init(RR_RARITY_NAMES[rarity], 12, RR_RARITY_COLORS[rarity]),
-                rr_ui_text_init(" T-Rex", 12, 0xffffffff)),
+                rr_ui_text_init(" T-Rex", 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -86,9 +93,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 16);
         extra[sprintf(extra, "%.1f rad/s", (0.008 + 0.004 * rarity) * 25)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Petal rotation: ", 12, 0xffd11b67),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -97,9 +105,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 16);
         extra[sprintf(extra, "%.1f hp/s", RR_PETAL_DATA[id].damage * RR_PETAL_RARITY_SCALE[rarity].damage * 2.5)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Self poison: ", 12, 0xffbf29c2),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -108,9 +117,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 16);
         extra[sprintf(extra, "%.1f%%", 5 + 3.5 * rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Speed increase: ", 12, 0xff5682c4),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -119,9 +129,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%.1f", 10 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Heal: ", 12, 0xffffff44),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -130,9 +141,10 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%.1f", 2.5 * RR_PETAL_RARITY_SCALE[rarity].health)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Damage reduction: ", 12, 0xff666666),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }
@@ -141,17 +153,19 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%d", 50 + rarity * 15)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Web radius: ", 12, 0xffafafaf),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
         extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%ds", 5 + rarity)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0, 2,
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Web duration: ", 12, 0xff2596be),
-                rr_ui_text_init(extra, 12, 0xffffffff)),
+                rr_ui_text_init(extra, 12, 0xffffffff),
+                NULL),
             -1, 0)
         );
     }

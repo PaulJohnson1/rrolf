@@ -170,11 +170,11 @@ static struct rr_ui_element *wave_bar_init()
 struct rr_ui_element *rr_ui_wave_container_init()
 {
     struct rr_ui_element *outer_container =
-        rr_ui_h_container_init(rr_ui_container_init(), 10, 10, 0);
+        rr_ui_h_container_init(rr_ui_container_init(), 10, 10, NULL);
     for (uint8_t i = 0; i < rr_mob_id_max; ++i)
     {
         struct rr_ui_element *inner_container =
-            rr_ui_v_container_init(rr_ui_container_init(), 0, -30, 0);
+            rr_ui_v_container_init(rr_ui_container_init(), 0, -30, NULL);
         for (uint8_t j = 0; j < rr_rarity_id_max; ++j)
         {
             rr_ui_container_add_element(inner_container, mob_button_init(i, j));
@@ -190,9 +190,10 @@ struct rr_ui_element *rr_ui_wave_container_init()
     outer_container->height = outer_container->abs_height;
     return rr_ui_set_justify(
         rr_ui_v_container_init(
-            rr_ui_container_init(), 10, 10, 3,
+            rr_ui_container_init(), 10, 10,
             rr_ui_dynamic_text_init(36, 0xffffffff, wave_text_function),
             wave_bar_init(),
-            outer_container),
+            outer_container,
+            NULL),
         0, -1);
 }

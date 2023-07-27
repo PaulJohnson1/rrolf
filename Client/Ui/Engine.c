@@ -3,19 +3,19 @@
 #include <stdio.h>
 
 struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
-                                             float outer_spacing,
-                                             float inner_spacing,
-                                             uint32_t count, ...)
+                                             int32_t outer_spacing,
+                                             int32_t inner_spacing, ...)
 {
     va_list args;
-    va_start(args, count);
+    va_start(args, inner_spacing);
     c->x = c->y = 0;
     float height = 0; // outer spacing
     float width = outer_spacing;
-    for (uint32_t i = 0; i < count; ++i)
+    while (1)
     {
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
-
+        if (element == NULL)
+            break;
         element->container = c;
         element->h_justify = -1;
         element->x = width;
@@ -41,19 +41,19 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
 }
 
 struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
-                                             float outer_spacing,
-                                             float inner_spacing,
-                                             uint32_t count, ...)
+                                             int32_t outer_spacing,
+                                             int32_t inner_spacing, ...)
 {
     va_list args;
-    va_start(args, count);
+    va_start(args, inner_spacing);
     c->x = c->y = 0;
     float width = 0; // outer spacing
     float height = outer_spacing;
-    for (uint32_t i = 0; i < count; ++i)
+    while (1)
     {
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
-
+        if (element == NULL)
+            break;
         element->container = c;
         element->v_justify = -1;
         element->y = height;

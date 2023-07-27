@@ -74,7 +74,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
             rr_ui_v_pad(
                 rr_ui_set_justify(
                     rr_ui_v_container_init(
-                        rr_ui_container_init(), 10, 10, 7,
+                        rr_ui_container_init(), 10, 10,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
@@ -82,21 +82,24 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_h_slider_init(150, 20,
                                                     &game->settings.map_props),
                                 rr_ui_text_init("map props", 12,
-                                                0xffffffff)),
+                                                0xffffffff),
+                            NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->settings.use_mouse),
                                 rr_ui_text_init("Mouse movement", 15,
-                                                0xffffffff)),
+                                                0xffffffff),
+                            NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->settings.screen_shake),
                                 rr_ui_text_init("Screen shake", 15,
-                                                0xffffffff)),
+                                                0xffffffff),
+                            NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
@@ -104,22 +107,26 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_toggle_box_init(
                                     &game->settings.displaying_debug_information),
                                 rr_ui_text_init("Show debug info", 15,
-                                                0xffffffff)),
+                                                0xffffffff),
+                            NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10, 2,
                                 rr_ui_toggle_box_init(&game->settings.show_ui_hitbox),
                                 rr_ui_text_init("Show ui hitboxes", 15,
-                                                0xffffffff)),
+                                                0xffffffff),
+                            NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
-                                rr_ui_container_init(), 5, 10, 2,
+                                rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(&game->settings.ourpetsnake_mode),
                                 rr_ui_text_init("Potato pc mode", 15,
-                                                0xffffffff)),
-                            -1, -1)
+                                                0xffffffff), 
+                            NULL),
+                            -1, -1),
+                        NULL
                         ),
                     -1, -1),
                 80),

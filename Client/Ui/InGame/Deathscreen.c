@@ -25,9 +25,10 @@ static uint8_t game_over(struct rr_ui_element *this, struct rr_game *game)
 
 struct rr_ui_element *rr_ui_waiting_respawn_screen_init()
 {
-    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
         rr_ui_text_init("You Died", 48, 0xffffffff),
-        rr_ui_text_init("You will respawn next wave", 24, 0xffffffff)
+        rr_ui_text_init("You will respawn next wave", 24, 0xffffffff),
+        NULL
     );
     this->should_show = waiting_respawn;
     return this;
@@ -37,9 +38,10 @@ struct rr_ui_element *rr_ui_finished_game_screen()
 {
     struct rr_ui_element *leave_game = rr_ui_labeled_button_init("Leave game", 36, NULL);
     leave_game->on_event = abandon_game_event;
-    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 2,
+    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
         rr_ui_text_init("You Died", 48, 0xffffffff),
-        leave_game
+        leave_game,
+        NULL
     );
     this->should_show = game_over;
     return this;

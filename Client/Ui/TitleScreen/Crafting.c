@@ -456,11 +456,12 @@ struct rr_ui_element *rr_ui_crafting_container_init()
         rr_ui_pad(
             rr_ui_set_justify(
                 rr_ui_v_container_init(
-                    rr_ui_container_init(), 10, 10, 3,
+                    rr_ui_container_init(), 10, 10,
                     rr_ui_text_init("Crafting", 24, 0xffffffff),
-                    rr_ui_h_container_init(rr_ui_container_init(), 0, 25, 2,
-                                           crafting_button_init(), craft),
-                    rr_ui_scroll_container_init(this, 300)),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 25,
+                                           crafting_button_init(), craft, NULL),
+                    rr_ui_scroll_container_init(this, 300),
+                    NULL),
                 -1, 1),
             20),
         0x40ffffff);

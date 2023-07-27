@@ -162,9 +162,10 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
-                                  rr_ui_container_init(), 10, 10, 2,
+                                  rr_ui_container_init(), 10, 10,
                                 rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(this, 400)),
+                                  rr_ui_scroll_container_init(this, 400),
+                                  NULL),
                               -1, 1),
             20),
         0x40ffffff);
