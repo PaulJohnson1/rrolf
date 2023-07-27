@@ -12,6 +12,7 @@
 extern "C"
 {
 #endif
+#define INSTRUCTION_QUEUE_MAX_SIZE 16384
 
 struct rr_renderer_paint
 {
@@ -117,8 +118,9 @@ void rr_renderer_stroke_text(struct rr_renderer *, char const *, float,
 
 float rr_renderer_get_text_size(char const *);
 
-void rr_renderer_execute_order_66();
+void rr_renderer_execute_instructions();
 uint32_t rr_renderer_get_op_size();
+void rr_renderer_reset_instruction_queue();
 #ifdef __cplusplus
 }
 #endif

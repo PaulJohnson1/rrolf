@@ -15,8 +15,9 @@ struct renderer_args
     char const *text_arg;
 };
 
-static struct renderer_args instruction_tape[20000];
+static struct renderer_args instruction_tape[INSTRUCTION_QUEUE_MAX_SIZE];
 static uint32_t instruction_size;
+static uint32_t rollovers;
 
 void rr_renderer_init(struct rr_renderer *this)
 {
@@ -54,7 +55,8 @@ void rr_renderer_set_fill(struct rr_renderer *this, uint32_t c)
     instruction_tape[instruction_size].args[1] = green;
     instruction_tape[instruction_size].args[2] = blue;
     instruction_tape[instruction_size].args[3] = (float)(c >> 24) * 1.0f/255.0f;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -74,7 +76,8 @@ void rr_renderer_set_stroke(struct rr_renderer *this, uint32_t c)
     instruction_tape[instruction_size].args[1] = green;
     instruction_tape[instruction_size].args[2] = blue;
     instruction_tape[instruction_size].args[3] = (float)(c >> 24) * 1.0f/255.0f;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -83,7 +86,8 @@ void rr_renderer_set_line_width(struct rr_renderer *this, float w)
     instruction_tape[instruction_size].type = 2;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = w;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -92,7 +96,8 @@ void rr_renderer_set_text_size(struct rr_renderer *this, float s)
     instruction_tape[instruction_size].type = 3;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = s;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -101,7 +106,8 @@ void rr_renderer_set_global_alpha(struct rr_renderer *this, float a)
     instruction_tape[instruction_size].type = 4;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = a;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -110,7 +116,8 @@ void rr_renderer_set_line_cap(struct rr_renderer *this, uint8_t l)
     instruction_tape[instruction_size].type = 5;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = l;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -119,7 +126,8 @@ void rr_renderer_set_line_join(struct rr_renderer *this, uint8_t l)
     instruction_tape[instruction_size].type = 6;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = l;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -128,7 +136,8 @@ void rr_renderer_set_text_align(struct rr_renderer *this, uint8_t l)
     instruction_tape[instruction_size].type = 7;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = l;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -137,7 +146,8 @@ void rr_renderer_set_text_baseline(struct rr_renderer *this, uint8_t l)
     instruction_tape[instruction_size].type = 8;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = l;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -151,7 +161,8 @@ void rr_renderer_update_transform(struct rr_renderer *this)
     instruction_tape[instruction_size].args[3] = this->state.transform_matrix[3];
     instruction_tape[instruction_size].args[4] = this->state.transform_matrix[4];
     instruction_tape[instruction_size].args[5] = this->state.transform_matrix[5];
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -159,7 +170,8 @@ void rr_renderer_save(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 10;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -167,7 +179,8 @@ void rr_renderer_restore(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 11;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -175,7 +188,8 @@ void rr_renderer_begin_path(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 12;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -185,7 +199,8 @@ void rr_renderer_move_to(struct rr_renderer *this, float x, float y)
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = x;
     instruction_tape[instruction_size].args[1] = y;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -195,7 +210,8 @@ void rr_renderer_line_to(struct rr_renderer *this, float x, float y)
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = x;
     instruction_tape[instruction_size].args[1] = y;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -208,7 +224,8 @@ void rr_renderer_quadratic_curve_to(struct rr_renderer *this, float x1,
     instruction_tape[instruction_size].args[1] = y1;
     instruction_tape[instruction_size].args[2] = x;
     instruction_tape[instruction_size].args[3] = y;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -223,7 +240,8 @@ void rr_renderer_bezier_curve_to(struct rr_renderer *this, float x1, float y1,
     instruction_tape[instruction_size].args[3] = y2;
     instruction_tape[instruction_size].args[4] = x;
     instruction_tape[instruction_size].args[5] = y;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 void rr_renderer_partial_arc(struct rr_renderer *this, float x, float y,
@@ -237,7 +255,8 @@ void rr_renderer_partial_arc(struct rr_renderer *this, float x, float y,
     instruction_tape[instruction_size].args[3] = sa;
     instruction_tape[instruction_size].args[4] = ea;
     instruction_tape[instruction_size].args[5] = ccw;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -250,7 +269,8 @@ void rr_renderer_ellipse(struct rr_renderer *this, float x, float y, float rx,
     instruction_tape[instruction_size].args[1] = y;
     instruction_tape[instruction_size].args[2] = rx;
     instruction_tape[instruction_size].args[3] = ry;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -263,7 +283,8 @@ void rr_renderer_rect(struct rr_renderer *this, float x, float y, float w,
     instruction_tape[instruction_size].args[1] = y;
     instruction_tape[instruction_size].args[2] = w;
     instruction_tape[instruction_size].args[3] = h;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -274,7 +295,8 @@ void rr_renderer_draw_translated_image(struct rr_renderer *this, struct rr_rende
     instruction_tape[instruction_size].args[0] = image->context_id;
     instruction_tape[instruction_size].args[1] = -image->width / 2 + x;
     instruction_tape[instruction_size].args[2] = -image->height / 2 + y;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -313,7 +335,8 @@ void rr_renderer_fill_rect(struct rr_renderer *this, float x, float y, float w,
     instruction_tape[instruction_size].args[1] = y;
     instruction_tape[instruction_size].args[2] = w;
     instruction_tape[instruction_size].args[3] = h;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -326,7 +349,8 @@ void rr_renderer_stroke_rect(struct rr_renderer *this, float x, float y,
     instruction_tape[instruction_size].args[1] = y;
     instruction_tape[instruction_size].args[2] = w;
     instruction_tape[instruction_size].args[3] = h;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -334,7 +358,8 @@ void rr_renderer_fill(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 23;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -342,7 +367,8 @@ void rr_renderer_stroke(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 24;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -350,7 +376,8 @@ void rr_renderer_clip(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 25;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -358,7 +385,8 @@ void rr_renderer_clip2(struct rr_renderer *this)
 {
     instruction_tape[instruction_size].type = 26;
     instruction_tape[instruction_size].context_id = this->context_id;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -373,7 +401,8 @@ void rr_renderer_fill_text(struct rr_renderer *this, char const *c, float x,
     char *text = malloc(len * (sizeof *text));
     memcpy(text, c, len * sizeof *text);
     instruction_tape[instruction_size].text_arg = text;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
@@ -387,7 +416,8 @@ void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
     char *text = malloc(len * (sizeof *text));
     memcpy(text, c, len * sizeof *text);
     instruction_tape[instruction_size].text_arg = text;
-    ++instruction_size;
+    if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
+        rr_renderer_execute_instructions();
     return;
 }
 
@@ -405,8 +435,9 @@ float rr_renderer_get_text_size(char const *c)
     return 0.0f;
 }
 
-void rr_renderer_execute_order_66()
+void rr_renderer_execute_instructions()
 {
+    ++rollovers;
     EM_ASM({
         for (let n = 0; n < $1; ++n)
         {
@@ -539,5 +570,10 @@ void rr_renderer_execute_order_66()
 
 uint32_t rr_renderer_get_op_size()
 {
-    return instruction_size;
+    return instruction_size + rollovers * INSTRUCTION_QUEUE_MAX_SIZE;
+}
+
+void rr_renderer_reset_instruction_queue()
+{
+    instruction_size = rollovers = 0;
 }

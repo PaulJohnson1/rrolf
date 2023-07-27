@@ -110,20 +110,14 @@ static void rr_server_client_create_player_info(struct rr_server_client *this, u
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
         if (arena->wave < rarity * 4)
-        {
             arena->wave = rarity * 4;
-            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
-        }
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity; 
         if (arena->wave < rarity * 4)
-        {
             arena->wave = rarity * 4;
-            this->server->simulation.wave_points = get_points_from_wave(rarity * 4);
-        }
     }
     // rr_server_client_create_flower(this);
 }
@@ -707,6 +701,7 @@ void rr_server_tick(struct rr_server *this)
                         rr_server_client_create_player_info(this->clients + i, i);
                         rr_server_client_create_flower(this->clients + i);
                     }
+                this->simulation.wave_points = get_points_from_wave(rr_simulation_get_arena(&this->simulation, 1)->wave, client_count);
             }
         }
         else

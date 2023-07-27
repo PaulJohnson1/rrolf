@@ -35,7 +35,6 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_simulation_add_arena(this, 1);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
     rr_component_arena_set_wave(arena_component, 1);
-    this->wave_points = get_points_from_wave(1);
 
     printf("simulation size: %lu\n", sizeof *this);
 
@@ -504,16 +503,7 @@ static void spawn_mob_swarm(struct rr_simulation *this)
 
 static void tick_wave(struct rr_simulation *this)
 {
-    uint8_t any_alive = 0;
-
-    for (uint32_t i = 0; i < sizeof this->flower_tracker; ++i)
-        if (this->flower_tracker[i])
-        {
-            any_alive = 1;
-            break;
-        }
-
-    if (!any_alive)
+    if (this->flower_count == 0)
         this->game_over = 1;
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
@@ -541,7 +531,7 @@ static void tick_wave(struct rr_simulation *this)
         printf("wave %d done\n", arena->wave);
         rr_component_arena_set_wave(arena, arena->wave + 1);
         arena->wave_tick = 0;
-        this->wave_points = get_points_from_wave(arena->wave);
+        this->wave_points = get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
@@ -582,15 +572,6 @@ void rr_simulation_tick(struct rr_simulation *this)
     captures.simulation = this;
     if (!this->game_over)
     {
-        /*
-        uint64_t count;
-        captures.count = &count;
-        do {
-            tick_wave(this);
-            count = 0;
-            rr_simulation_for_each_mob(this, &captures, count_mobs);
-        } while (count < 9);
-        */
        tick_wave(this);
     }
     // delete pending deletions

@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-extern uint32_t get_points_from_wave(uint32_t);
+extern uint32_t get_points_from_wave(uint32_t, uint32_t);
 extern uint8_t get_id_from_wave(uint32_t);
 extern uint8_t get_rarity_from_wave(uint32_t);
 
