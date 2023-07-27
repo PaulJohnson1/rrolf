@@ -152,7 +152,7 @@ static void system_flower_petal_movement_logic(
                         EntityIdx potential = simulation->flower_vector[i];
                         struct rr_component_physical *target_physical =  rr_simulation_get_physical(simulation, potential);
                         struct rr_vector delta = {(target_physical->x - position_vector.x), (target_physical->y - position_vector.y)};
-                        if (rr_vector_get_magnitude(&delta) < 200)
+                        if (rr_vector_get_magnitude(&delta) > 200)
                             continue;
                         flower_health = rr_simulation_get_health(simulation, potential);
                         if (flower_health->health == flower_health->max_health)
