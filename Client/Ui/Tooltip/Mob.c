@@ -101,7 +101,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         struct rr_loot_data *data = &RR_MOB_DATA[id].loot[i];
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
-        for (uint8_t r = 1; r < rr_rarity_id_mythic + 3; ++r)
+        for (uint8_t r = 1; r < rr_rarity_id_mythic + 1; ++r)
         {
             if (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1] <
                 0.00001)
@@ -122,9 +122,14 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                                        rr_ui_text_init(d, 11, 0xffffffff),
                                        NULL));
         }
+        rr_ui_h_container_set(temp);
+        temp->width = temp->abs_width;
+        temp->height = temp->abs_height;
         rr_ui_container_add_element(this, rr_ui_set_justify(temp, -1, -1));
     }
     rr_ui_link_toggle(rr_ui_set_justify(this, -1, -1), rr_ui_never_show);
+    rr_ui_v_container_set(this);
+    printf("%f %f\n", this->abs_width, this->abs_height);
     this->poll_events = rr_ui_no_focus;
     return this;
 }

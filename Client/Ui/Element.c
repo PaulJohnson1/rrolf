@@ -75,6 +75,7 @@ void rr_ui_render_tooltip_above(struct rr_ui_element *this,
                                 struct rr_ui_element *tooltip,
                                 struct rr_game *game)
 {
+    printf("%f %f\n", tooltip->abs_width, tooltip->abs_height);
     tooltip->should_show = rr_ui_always_show;
     tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
     tooltip->y = (this->abs_y / game->renderer->scale -
