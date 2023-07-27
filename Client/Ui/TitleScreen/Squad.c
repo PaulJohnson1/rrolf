@@ -202,12 +202,6 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
     return rr_ui_dynamic_text_init(18, 0xffffffff, squad_countdown);
 }
 
-struct info_metadata
-{
-    struct rr_ui_element *question_mark;
-    struct rr_ui_element *tooltip;
-};
-
 static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
