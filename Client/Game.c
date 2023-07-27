@@ -424,9 +424,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     case rr_websocket_event_type_close:
         // memset the clients
         puts("websocket closed");
-        this->socket_ready = 0;
-        this->socket_pending = 0;
-        free(this->socket.rivet_player_token);
         break;
     case rr_websocket_event_type_data:
     {
@@ -565,13 +562,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             //write nickname
             proto_bug_write_uint8(&encoder2, 0, "pos");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
-            struct proto_bug encoder3;
-            proto_bug_init(&encoder3, output_packet);
-            proto_bug_write_uint8(&encoder3, 71, "header");
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 71, "header");
             uint32_t len = strlen(&this->nickname[0]);
-            proto_bug_write_varuint(&encoder3, len, "nick length");
-            proto_bug_write_string(&encoder3, &this->nickname[0], len, "nick");
-            rr_websocket_send(&this->socket, encoder3.start, encoder3.current);
+            proto_bug_write_varuint(&encoder2, len, "nick length");
+            proto_bug_write_string(&encoder2, &this->nickname[0], len, "nick");
+            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             this->protocol_state = 0;
             break;
         }
