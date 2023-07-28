@@ -1,5 +1,6 @@
 #include <Client/Assets/Init.h>
 
+#include <Client/Assets/Render.h>
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 
@@ -166,13 +167,13 @@ static void mob_dakotaraptor_init(struct rr_game *this)
 static void mob_stump_and_fern_init(struct rr_game *this)
 {
     rr_renderer_init(&this->mob_stump);
-    rr_renderer_set_dimensions(&this->mob_stump, 400, 300);
+    rr_renderer_set_dimensions(&this->mob_stump, 864, 864);
     rr_renderer_draw_svg(&this->mob_stump,
 #include <Client/Assets/Mob/Stump.h>
                          , 0, 0);
     
     rr_renderer_init(&this->mob_fern);
-    rr_renderer_set_dimensions(&this->mob_fern, 200, 200);
+    rr_renderer_set_dimensions(&this->mob_fern, 672, 672);
     rr_renderer_draw_svg(&this->mob_fern,
 #include <Client/Assets/Mob/Fern.h>
                          , 0, 0);
@@ -322,13 +323,13 @@ static void tiles_init(struct rr_game *this)
 
 void rr_assets_init(struct rr_game *this)
 {
+    mob_ornithomimus_init(this);
+    mob_pachycephalosaurus_init(this);
+    mob_stump_and_fern_init(this);
+    mob_dakotaraptor_init(this);
     mob_triceratops_init(this);
     mob_pteranodon_init(this);
     mob_t_rex_init(this);
-    mob_dakotaraptor_init(this);
-    mob_stump_and_fern_init(this);
-    mob_pachycephalosaurus_init(this);
-    mob_ornithomimus_init(this);
     tiles_init(this);
 
     asset_web_init(this);

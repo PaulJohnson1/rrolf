@@ -99,7 +99,7 @@ uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
                                                               12, 12, 50};
 
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  8,  10,
-                                                                12, 15, 18, 25};
+                                                                12, 18, 25, 30};
 
 
 static void init_game_coefficients()

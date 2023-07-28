@@ -6,14 +6,36 @@ project(rrolf-client)
 include_directories(..)
 
 set(SRCS
+    Assets/Mob/Dakotaraptor/Body.c
+    Assets/Mob/Dakotaraptor/Head.c
+    Assets/Mob/Dakotaraptor/Tail.c
+    Assets/Mob/Dakotaraptor/Wing1.c
+    Assets/Mob/Dakotaraptor/Wing2.c
+    Assets/Mob/Ornithomimus/Body.c
+    Assets/Mob/Ornithomimus/Head.c
+    Assets/Mob/Ornithomimus/Tail.c
+    Assets/Mob/Ornithomimus/Wing1.c
+    Assets/Mob/Ornithomimus/Wing2.c
+    Assets/Mob/Pachycephalosaurus/Body.c
+    Assets/Mob/Pachycephalosaurus/Head.c
+    Assets/Mob/Pachycephalosaurus/Leg1.c
+    Assets/Mob/Pachycephalosaurus/Leg2.c
+    Assets/Mob/Pachycephalosaurus/Tail.c
     Assets/Mob/Pteranodon/Body.c
     Assets/Mob/Pteranodon/Wing1.c
     Assets/Mob/Pteranodon/Wing2.c
+    Assets/Mob/Rex/Body.c
+    Assets/Mob/Rex/Head.c
+    Assets/Mob/Rex/Leg1.c
+    Assets/Mob/Rex/Leg2.c
+    Assets/Mob/Rex/Tail.c
     Assets/Mob/Triceratops/Body.c
     Assets/Mob/Triceratops/Head.c
     Assets/Mob/Triceratops/Leg1.c
     Assets/Mob/Triceratops/Leg2.c
     Assets/Mob/Triceratops/Tail.c
+    Assets/Mob/Fern.c
+    Assets/Mob/Stump.c
     Assets/Init.c
     Renderer/Common.c
     Renderer/RenderDrop.c
