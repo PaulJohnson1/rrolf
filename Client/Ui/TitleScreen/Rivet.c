@@ -9,6 +9,8 @@
 static void rivet_container_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
+    if (game->pressed != this)
+        return;
     if (!(game->input_data->mouse_buttons & 1))
         rr_ui_render_tooltip_below(this, game->rivet_info_tooltip, game);
 }
@@ -31,6 +33,7 @@ struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *game)
         rr_ui_h_container_init(
             rr_ui_container_init(), 10, 10,
             rr_ui_settings_toggle_button_init(),
+            rr_ui_changelog_toggle_button_init(),
             rr_ui_set_background(
                 rr_ui_h_container_init(
                     rr_ui_container_init(), 5, 0,

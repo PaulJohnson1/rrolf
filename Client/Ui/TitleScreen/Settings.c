@@ -48,6 +48,8 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 void settings_toggle_button_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
+    if (game->pressed != this)
+        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->top_ui_open == 1)

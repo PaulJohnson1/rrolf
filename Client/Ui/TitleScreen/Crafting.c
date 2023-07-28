@@ -88,6 +88,8 @@ void rr_api_on_craft_result(char *data, void *_captures)
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
+    if (game->pressed != this)
+        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1 && game->crafting_data.animation == 0)
     {
         if (game->crafting_data.success_count == 0 &&
@@ -121,7 +123,7 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
     struct crafting_ring_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
         game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
@@ -138,6 +140,8 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
 static void crafting_result_container_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
+    if (game->pressed != this)
+        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
@@ -357,7 +361,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
     {
         if (game->inventory[data->id][data->rarity] < 5 ||
             game->crafting_data.success_count > 0 ||
@@ -500,6 +504,8 @@ static void crafting_toggle_on_render(struct rr_ui_element *this,
 void crafting_toggle_button_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
+    if (game->pressed != this)
+        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->bottom_ui_open == 3)

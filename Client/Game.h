@@ -117,6 +117,7 @@ struct rr_game
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;
     struct rr_ui_element *focused;
+    struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t protocol_state;

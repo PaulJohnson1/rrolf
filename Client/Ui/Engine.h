@@ -14,6 +14,7 @@ struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *, int8_t, int8_t);
 struct rr_ui_element *rr_ui_h_pah(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_v_pad(struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_pad(struct rr_ui_element *, float);
+struct rr_ui_element *rr_ui_justify_all(struct rr_ui_element *, int8_t);
 
 void rr_ui_h_container_set(struct rr_ui_element *);
 void rr_ui_v_container_set(struct rr_ui_element *);

@@ -112,6 +112,17 @@ struct rr_ui_element *rr_ui_pad(struct rr_ui_element *c, float pad)
     return c;
 }
 
+struct rr_ui_element *rr_ui_justify_all(struct rr_ui_element *c, int8_t pos)
+{
+    if (c->resizeable == rr_ui_h_container)
+        for (uint32_t i = 0; i < c->elements.size; ++i)
+            c->elements.start[i]->v_justify = pos;
+    else if (c->resizeable == rr_ui_v_container)
+        for (uint32_t i = 0; i < c->elements.size; ++i)
+            c->elements.start[i]->h_justify = pos;
+    return c;
+}
+
 void rr_ui_h_container_set(struct rr_ui_element *c)
 {
     struct rr_ui_container_metadata *data = c->data;
@@ -219,29 +230,6 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
                                 inner_spacing;
     c->abs_width = c->width =
         2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
-    // positioning
-    /*
-    uint32_t pos = 0;
-    float h = 0;
-    for (uint32_t i = 0; i < c->elements.size; ++i)
-    {
-        struct rr_ui_element *element = c->elements.start[i];
-        if (element->completely_hidden)
-            continue;
-        element->x = outer_spacing +
-                     (pos % data->width) * (element->abs_width + inner_spacing);
-        element->y = outer_spacing + (pos / data->width) *
-                                         (element->abs_height + inner_spacing);
-        h = element->abs_height;
-        ++pos;
-    }
-    c->abs_height = c->height =
-        2 * outer_spacing +
-        ((pos + (data->width - 1)) / data->width) * (h + inner_spacing) -
-        inner_spacing;
-    c->abs_width = c->width =
-        2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
-        */
 }
 
 void rr_ui_container_refactor(struct rr_ui_element *c)
