@@ -15,8 +15,21 @@ void rr_system_camera_tick(struct rr_simulation *this)
             struct rr_component_physical *physical = rr_simulation_get_physical(this, player_info->flower_id);
             rr_component_player_info_set_camera_x(player_info, physical->x);
             rr_component_player_info_set_camera_y(player_info, physical->y);
+            continue;
         }
-        else if (this->flower_count > 0)
+        uint8_t has_seed = 0;
+        for (EntityIdx j = 0; j < this->petal_count; ++j)
+        {
+            struct rr_component_petal *petal = rr_simulation_get_petal(this, j);
+            if (petal->id != rr_petal_id_seed || petal->detached == 0)
+                continue;
+            struct rr_component_physical *physical = rr_simulation_get_physical(this, this->petal_vector[j]);
+            rr_component_player_info_set_camera_x(player_info, physical->x);
+            rr_component_player_info_set_camera_y(player_info, physical->y);
+            has_seed = 1;
+            break;
+        }
+        if (this->flower_count > 0 && !has_seed)
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(this, this->flower_vector[0]);
             rr_component_player_info_set_camera_x(player_info, physical->x);
