@@ -878,7 +878,18 @@ void rr_game_tick(struct rr_game *this, float delta)
         struct rr_component_player_info custom_player_info;
         rr_component_player_info_init(&custom_player_info, 0);
         custom_player_info.lerp_camera_fov = 0.9;
+        uint32_t alpha = (uint32_t)(0.9 * 51)
+                             << 24;
         struct rr_renderer_context_state state;
+        rr_renderer_context_state_init(this->renderer, &state);
+        rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+        rr_renderer_set_fill(this->renderer, 0xff45230a);
+        rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
+                                this->renderer->height);
+        rr_renderer_set_fill(this->renderer, alpha);
+        rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
+                                this->renderer->height);
+        rr_renderer_context_state_free(this->renderer, &state);
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
