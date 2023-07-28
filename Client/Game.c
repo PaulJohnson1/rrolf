@@ -427,6 +427,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         break;
     case rr_websocket_event_type_close:
         // memset the clients
+        this->socket_pending = 0;
+        this->socket_ready = 0;
         puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
