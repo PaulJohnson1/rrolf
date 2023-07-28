@@ -108,16 +108,16 @@ static void colliding_with_function(uint64_t i, void *_captures)
         if (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
         {
             float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution + 0.5;
-            if (kb > 2)
-                kb = 2;
+            if (kb > 0.5)
+                kb = 0.5;
             physical1->acceleration.x += kb * delta.x;
             physical1->acceleration.y += kb * delta.y;
         }
         if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
         {
             float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution - 0.5;
-            if (kb < -2)
-                kb = -2;
+            if (kb < -0.5)
+                kb = -0.5;
             physical2->acceleration.x += kb * delta.x;
             physical2->acceleration.y += kb * delta.y;
         }
