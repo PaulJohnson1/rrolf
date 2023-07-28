@@ -111,6 +111,10 @@ struct rr_ui_element *rr_ui_changelog_container_init()
                         rr_ui_scroll_container_init(
                             rr_ui_justify_all(
                                 rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+                                    rr_ui_text_init("7/28/2023", 24, 0xffffffff),
+                                    rr_ui_static_space_init(10),
+                                    rr_ui_text_init("Made pteranodon not shoot while chasing", 16, 0xffffffff),
+                                    changelog_divider_init(),
                                     rr_ui_text_init("7/27/2023", 24, 0xffffffff),
                                     rr_ui_static_space_init(10),
                                     rr_ui_text_init("Added seed. drops from fern", 16, 0xffffffff),
