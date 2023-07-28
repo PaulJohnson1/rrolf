@@ -16,7 +16,7 @@ enum rr_ai_state
     rr_ai_state_attacking,
 
     // triceratops
-    rr_ai_state_waiting_to_charge,
+    rr_ai_state_waiting_to_attack,
     rr_ai_state_recovering_after_charge,
 
     // hornet

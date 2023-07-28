@@ -165,7 +165,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     {
         if (rr_simulation_has_entity(simulation, ai->target_entity))
         {
-            ai->ai_state = rr_ai_state_waiting_to_charge;
+            ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = 25;
         }
     }
@@ -182,7 +182,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     case rr_ai_state_idle_moving:
         tick_idle_moving(entity, simulation);
         break;
-    case rr_ai_state_waiting_to_charge:
+    case rr_ai_state_waiting_to_attack:
     {
         if (ai->ticks_until_next_action == 0)
         {
@@ -212,7 +212,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     {
         if (ai->ticks_until_next_action == 0)
         {
-            ai->ai_state = rr_ai_state_waiting_to_charge;
+            ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = rand() % 25 + 25;
             break;
         }
@@ -316,12 +316,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         tick_idle_moving(entity, simulation);
         break;
     case rr_ai_state_attacking:
-        if (ai->ticks_until_next_action == 0)
-        {
-            ai->ai_state = rr_ai_state_missile_shoot_delay;
-            ai->ticks_until_next_action = 10;
-        }
-
         if (!rr_simulation_has_entity(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_idle;
@@ -342,6 +336,12 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             struct rr_vector accel;
             rr_vector_from_polar(&accel, 2.0f, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
+            ai->ticks_until_next_action = 2;
+        }
+        else
+        {
+            ai->ai_state = rr_ai_state_missile_shoot_delay;
+            ai->ticks_until_next_action = 10;
         }
         break;
 
@@ -415,7 +415,7 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     if (check_if_aggro(ai, simulation))
-        ai->ai_state = rr_ai_state_waiting_to_charge;
+        ai->ai_state = rr_ai_state_waiting_to_attack;
 
     switch (ai->ai_state)
     {
@@ -427,7 +427,7 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
     case rr_ai_state_idle_moving:
         tick_idle_moving(entity, simulation);
         break;
-    case rr_ai_state_waiting_to_charge:
+    case rr_ai_state_waiting_to_attack:
     {
         if (ai->ticks_until_next_action == 0)
         {
@@ -457,7 +457,7 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
     {
         if (ai->ticks_until_next_action == 0)
         {
-            ai->ai_state = rr_ai_state_waiting_to_charge;
+            ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = rand() % 25 + 25;
             break;
         }

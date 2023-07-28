@@ -29,7 +29,7 @@ static void loadout_button_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
+    if ((game->input_data->mouse_buttons_up_this_tick & 1) && game->pressed == this)
     {
         game->settings.loadout[data->pos].id = 0;
         game->settings.loadout[data->pos].rarity = 0;

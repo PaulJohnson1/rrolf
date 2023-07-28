@@ -894,7 +894,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (!this->block_ui_input)
     {
         this->window->poll_events(this->window, this);
-
+        if (this->pressed != NULL && !rr_ui_mouse_over(this->pressed, this))
+            this->pressed = NULL;
         if (this->focused != NULL)
             this->focused->on_event(this->focused, this);
         else
