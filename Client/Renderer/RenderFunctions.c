@@ -467,7 +467,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                             uint8_t id, float animation_tick, float turning_value, uint8_t use_image_cache)
 {
     if (game->settings.ourpetsnake_mode)
-        use_image_cache = 1;
+        use_image_cache = 0;
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
