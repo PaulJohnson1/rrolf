@@ -346,6 +346,20 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         break;
 
     case rr_ai_state_missile_shoot_delay:
+        if (!rr_simulation_has_entity(simulation, ai->target_entity))
+        {
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = 50;
+            break;
+        }
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction = predict(delta, physical2->velocity, ai->has_prediction * 20); //make this less op
+        rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
         if (ai->ticks_until_next_action == 0)
         {
             ai->ai_state = rr_ai_state_attacking;
