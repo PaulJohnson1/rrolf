@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include <Client/Assets/Render.h>
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
@@ -463,10 +464,10 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
 
 // clang-format off
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
-                            uint8_t id, float animation_tick, float turning_value)
+                            uint8_t id, float animation_tick, float turning_value, uint8_t caching)
 {
     if (game->settings.ourpetsnake_mode)
-        return;
+        caching = 1;
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
@@ -479,28 +480,43 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
-            rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[0]);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[0]);
+            else
+                rr_triceratops_leg1_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
-            rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[1]);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[1]);
+            else
+                rr_triceratops_leg2_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer,  0, 75);
             rr_renderer_rotate(renderer, turning_value);
-            rr_renderer_translate(renderer,  0, -75);
-            rr_renderer_draw_translated_image(renderer, &game->mob_triceratops_tail, 0, 155);
+            rr_renderer_translate(renderer,  0, -75 + 155);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_triceratops_tail);
+            else
+                rr_triceratops_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
-        
-        rr_renderer_draw_image(renderer, &game->mob_triceratops_body);
-        
+
+        if (caching)
+            rr_renderer_draw_image(renderer, &game->mob_triceratops_body);
+        else
+            rr_triceratops_body_draw(renderer);
+
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer,  0, -75);
             rr_renderer_rotate(renderer, -0);
-            rr_renderer_translate(renderer,  0, 75);
-           rr_renderer_draw_translated_image(renderer, &game->mob_triceratops_head, 0, -145);
+            rr_renderer_translate(renderer,  0, 75 - 145);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_triceratops_head);
+            else
+                rr_triceratops_head_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_trex:
@@ -547,14 +563,25 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
-            rr_renderer_draw_translated_image(renderer, &game->mob_pteranodon_wings[0], 175, 0);
+            rr_renderer_translate(renderer, 175, 0);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
+            else
+                rr_pteranodon_wing1_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
-            rr_renderer_draw_translated_image(renderer, &game->mob_pteranodon_wings[1], -175, 0);
+            rr_renderer_translate(renderer, -175, 0);
+            if (caching)
+                rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
+            else
+                rr_pteranodon_wing2_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
+        if (caching)
+            rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
+        else
+            rr_pteranodon_body_draw(renderer);
         break;
     case rr_mob_id_dakotaraptor:
         rr_renderer_rotate(renderer, M_PI / 2);

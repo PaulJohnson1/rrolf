@@ -961,17 +961,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                           186 /* ; */))
         this->settings.displaying_debug_information ^= 1;
-    gettimeofday(&end, NULL);
-    long time_elapsed =
-        (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    this->debug_info.cumulative_tick_time += time_elapsed;
-    if (time_elapsed > this->debug_info.max_tick_time)
-        this->debug_info.max_tick_time = time_elapsed;
-    long frame_time =
-        end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
-    this->debug_info.cumulative_frame_time += frame_time;
-    if (frame_time > this->debug_info.max_frame_time)
-        this->debug_info.max_frame_time = frame_time;
 
     if (this->settings.displaying_debug_information)
     {
@@ -1007,6 +996,18 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     rr_renderer_execute_instructions();
     rr_renderer_reset_instruction_queue();
+    gettimeofday(&end, NULL);
+    long time_elapsed =
+        (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+    this->debug_info.cumulative_tick_time += time_elapsed;
+    if (time_elapsed > this->debug_info.max_tick_time)
+        this->debug_info.max_tick_time = time_elapsed;
+    long frame_time =
+        end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
+    this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
+    this->debug_info.cumulative_frame_time += frame_time;
+    if (frame_time > this->debug_info.max_frame_time)
+        this->debug_info.max_frame_time = frame_time;
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keycodes_pressed_this_tick, 0, RR_BITSET_ROUND(256));
@@ -1016,8 +1017,10 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
     if (++this->debug_info.count == 10)
+    {
         memset(&this->debug_info, 0, sizeof this->debug_info);
-    this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
+        this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
+    }
 }
 
 void rr_game_connect_socket(struct rr_game *this)

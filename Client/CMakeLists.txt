@@ -6,6 +6,14 @@ project(rrolf-client)
 include_directories(..)
 
 set(SRCS
+    Assets/Mob/Pteranodon/Body.c
+    Assets/Mob/Pteranodon/Wing1.c
+    Assets/Mob/Pteranodon/Wing2.c
+    Assets/Mob/Triceratops/Body.c
+    Assets/Mob/Triceratops/Head.c
+    Assets/Mob/Triceratops/Leg1.c
+    Assets/Mob/Triceratops/Leg2.c
+    Assets/Mob/Triceratops/Tail.c
     Assets/Init.c
     Renderer/Common.c
     Renderer/RenderDrop.c

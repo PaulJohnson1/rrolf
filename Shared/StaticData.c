@@ -93,7 +93,6 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 0, 0, 30, 25, 45, 20};
-
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0,  1,  9,  15,
                                                             20, 50, 250, 2};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 5,
@@ -135,7 +134,6 @@ static void init_game_coefficients()
 
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 {
-    printf("loot table with seed %f\n", seed);
     data->id = id;
     for (uint64_t mob = 0; mob < rr_rarity_id_max; ++mob)
     {
@@ -157,7 +155,6 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
                 pow(1 - (1 - end) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[mob]);
         }
     }
-    printf("------------------------------------------\n");
 }
 
 static void init_loot_tables()

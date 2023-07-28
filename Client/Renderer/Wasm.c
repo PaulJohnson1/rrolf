@@ -321,6 +321,7 @@ void rr_renderer_draw_svg(struct rr_renderer *this, char *svg, float x, float y)
                                      });
             const url = DOMURL.createObjectURL(svgBlob);
             img.src = url;
+            console.log(string);
             img.onload = function() { Module.ctxs[$0].drawImage(img, 0, 0); };
         },
         this->context_id, svg, x, y);

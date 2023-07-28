@@ -76,7 +76,7 @@ static void mob_button_on_render(struct rr_ui_element *this, struct rr_game *gam
                                     RR_MOB_DATA[data->id].radius);
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
-    rr_renderer_render_mob(renderer, game, data->id, 0, 0);
+    rr_renderer_render_mob(renderer, game, data->id, 0, 0, 1);
 
     rr_renderer_context_state_free(renderer, &state);
     rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);

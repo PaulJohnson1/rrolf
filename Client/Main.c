@@ -150,6 +150,9 @@ void rr_main_loop(struct rr_game *this)
                 return new TextDecoder().decode(
                     Module.HEAPU8.subarray(start, ptr - 1));
             };
+
+
+
             function loop(time)
             {
                 if (window.start == null)
