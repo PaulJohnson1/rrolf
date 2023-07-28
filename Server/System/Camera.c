@@ -20,7 +20,7 @@ void rr_system_camera_tick(struct rr_simulation *this)
         uint8_t has_seed = 0;
         for (EntityIdx j = 0; j < this->petal_count; ++j)
         {
-            struct rr_component_petal *petal = rr_simulation_get_petal(this, j);
+            struct rr_component_petal *petal = rr_simulation_get_petal(this, this->petal_vector[j]);
             if (petal->id != rr_petal_id_seed || petal->detached == 0)
                 continue;
             struct rr_component_physical *physical = rr_simulation_get_physical(this, this->petal_vector[j]);
