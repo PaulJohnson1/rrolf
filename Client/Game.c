@@ -1032,7 +1032,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.on_event = rr_game_websocket_on_event_function;
 
 #ifdef RIVET_BUILD
-    game->rivet_lobby_pending = 1;
+    this->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
 #ifdef RR_WINDOWS
