@@ -177,10 +177,11 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     struct rr_ui_element *squad_container = rr_ui_container_init();
     squad_container->abs_width = squad_container->width = 120;
-    squad_container->abs_height = squad_container->abs_height = 200;
+    squad_container->abs_height = squad_container->height = 200;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
     struct rr_ui_element *this = rr_ui_choose_element_init(squad_container, b, choose);
+    rr_ui_choose_container_set(this);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
     this->animate = background_change_animate;

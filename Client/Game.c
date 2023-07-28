@@ -357,7 +357,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window,
                                 rr_ui_settings_container_init(this));
     rr_ui_container_add_element(this->window,
-                                rr_ui_changelog_container_init(this));
+                                rr_ui_changelog_container_init());
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
