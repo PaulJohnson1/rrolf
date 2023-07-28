@@ -1032,6 +1032,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket.on_event = rr_game_websocket_on_event_function;
 
 #ifdef RIVET_BUILD
+    game->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
 #ifdef RR_WINDOWS
@@ -1058,6 +1059,7 @@ struct on_find_captures
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
 {
     struct rr_game *game = _game;
+    game->rivet_lobby_pending = 0;
     if (port == 0 || s == NULL || token == NULL)
     {
         //error;

@@ -209,10 +209,15 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
 static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
-    if (game->socket_pending)
+    if (game->rivet_lobby_pending)
     {
         this->fill = 0xff999999;
         data->text = "Finding...";
+    }
+    else if (game->socket_pending)
+    {
+        this->fill = 0xff999999;
+        data->text = "Joining...";
     }
     else
     {
