@@ -140,7 +140,11 @@ void rr_rivet_lobbies_find(void *captures)
                     HEAPU8[$token + token.length] = 0;
                     Module._rr_rivet_lobby_on_find($host, $token,
                                                    json.ports.default.port, $0);
-                });
+                })
+                .catch(function(error) => {
+                    Module._rr_rivet_lobby_on_find(0, 0,
+                                                   0, $0);
+                })
         },
         captures);
 #endif

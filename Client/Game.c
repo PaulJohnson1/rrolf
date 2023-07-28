@@ -1057,6 +1057,13 @@ struct on_find_captures
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
 {
     struct rr_game *game = _game;
+    if (port == 0 || s == NULL || token == NULL)
+    {
+        //error;
+        game->socket_pending = 0;
+        game->socket_ready = 0;
+        return;
+    }
     // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
 
     if (port == 443)
