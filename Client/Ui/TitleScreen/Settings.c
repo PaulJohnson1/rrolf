@@ -45,7 +45,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-void settings_toggle_button_on_event(struct rr_ui_element *this,
+static void settings_toggle_button_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     if (game->pressed != this)

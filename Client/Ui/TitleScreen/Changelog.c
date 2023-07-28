@@ -14,7 +14,7 @@
 static uint8_t changelog_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->top_ui_open == 2;
+    return game->top_ui_open == 2 && !game->simulation_ready;
 }
 
 static void changelog_container_animate(struct rr_ui_element *this,
@@ -46,7 +46,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_stroke(renderer);
 }
 
-void changelog_toggle_button_on_event(struct rr_ui_element *this,
+static void changelog_toggle_button_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     if (game->pressed != this)
@@ -89,6 +89,11 @@ static struct rr_ui_element *changelog_divider_init()
     return this;
 }
 
+static uint8_t changelog_button_should_show(struct rr_ui_element *this, struct rr_game *game)
+{
+    return !game->simulation_ready;
+}
+
 struct rr_ui_element *rr_ui_changelog_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
@@ -96,6 +101,7 @@ struct rr_ui_element *rr_ui_changelog_toggle_button_init()
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = changelog_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;
+    this->should_show = changelog_button_should_show;
     return this;
 }
 
@@ -114,22 +120,18 @@ struct rr_ui_element *rr_ui_changelog_container_init()
                                     rr_ui_text_init("7/28/2023", 24, 0xffffffff),
                                     rr_ui_static_space_init(10),
                                     rr_ui_text_init("Made pteranodon not shoot while chasing", 16, 0xffffffff),
+                                    rr_ui_text_init("Made death cameras follow seed and other alive players", 16, 0xffffffff),
                                     changelog_divider_init(),
                                     rr_ui_text_init("7/27/2023", 24, 0xffffffff),
                                     rr_ui_static_space_init(10),
                                     rr_ui_text_init("Added seed. drops from fern", 16, 0xffffffff),
                                     rr_ui_text_init("Added a lot of performance improvements", 16, 0xffffffff),
-                                    rr_ui_text_init("Removed server lag ez", 16, 0xffffffff),
+                                    rr_ui_text_init("Rebalanced drop rates", 16, 0xffffffff),
                                     changelog_divider_init(),
                                     rr_ui_text_init("7/25/2023", 24, 0xffffffff),
                                     rr_ui_static_space_init(10),
                                     rr_ui_text_init("We have began working on a new game called rrolf.io", 16, 0xffffffff),
                                     rr_ui_text_init("I heard it's about dinos", 16, 0xffffffff),
-                                    changelog_divider_init(),
-                                    rr_ui_text_init("???", 24, 0xffffffff),
-                                    rr_ui_static_space_init(10),
-                                    rr_ui_text_init("Changelogs were invented", 16, 0xffffffff),
-                                    rr_ui_text_init("They're pretty cool", 16, 0xffffffff),
                                     NULL
                                 ),
                             -1)
