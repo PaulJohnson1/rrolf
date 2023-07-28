@@ -245,7 +245,7 @@ static void join_button_on_event(struct rr_ui_element *this, struct rr_game *gam
             proto_bug_write_uint8(&encoder, 69, "header");
             rr_websocket_send(&game->socket, encoder.start, encoder.current);
         }
-        else if (!game->socket_pending)
+        else if (!game->socket_pending && !game->rivet_lobby_pending)
         {
             rr_game_connect_socket(game);
         }
