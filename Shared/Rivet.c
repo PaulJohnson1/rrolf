@@ -141,7 +141,7 @@ void rr_rivet_lobbies_find(void *captures)
                     Module._rr_rivet_lobby_on_find($host, $token,
                                                    json.ports.default.port, $0);
                 })
-                .catch(function(error) => {
+                .catch(function(error) {
                     Module._rr_rivet_lobby_on_find(0, 0,
                                                    0, $0);
                 })
