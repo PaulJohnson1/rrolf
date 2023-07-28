@@ -94,6 +94,7 @@ static void system_flower_petal_movement_logic(
         rr_simulation_get_physical(simulation, player_info->flower_id);
     struct rr_vector position_vector = {physical->x, physical->y};
     struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
+    float curr_angle = player_info->global_rotation + rotation_pos * 2 * M_PI / player_info->rotation_count;
     uint8_t is_projectile = rr_simulation_has_projectile(simulation, id);
     if (is_projectile)
     {
@@ -181,10 +182,12 @@ static void system_flower_petal_movement_logic(
                                     inner_pos, petal_data);
                 if (player_info->input & 1)
                 {
+                    float angle = player_info->global_rotation +
+                       rotation_pos * 2 * M_PI / player_info->rotation_count;
                     rr_vector_from_polar(&physical->acceleration, 10.0f,
-                                        physical->angle);
+                                        curr_angle);
                     rr_vector_from_polar(&physical->velocity, 50.0f,
-                                        physical->angle);
+                                        curr_angle);
                 }
                 projectile->ticks_until_death = 20;
                 break;
@@ -213,8 +216,6 @@ static void system_flower_petal_movement_logic(
         holdingRadius = 150;
     else if (player_info->input & 2)
         holdingRadius = 45;
-    float curr_angle = player_info->global_rotation +
-                       rotation_pos * 2 * M_PI / player_info->rotation_count;
     struct rr_vector chase_vector;
     rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
     rr_vector_add(&chase_vector, &flower_vector);
@@ -235,7 +236,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    if (!is_projectile)
+    if (!is_projectile || petal->id == rr_petal_id_seed || petal->id == rr_petal_id_web)
         rr_component_physical_set_angle(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
