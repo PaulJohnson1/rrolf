@@ -93,6 +93,13 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
 
     {
+        float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
+        rr_vector_normalize(&delta);
+        physical1->acceleration.x += coeff * 0.5 * delta.x;
+        physical1->acceleration.y += coeff * 0.5 * delta.y;
+        physical2->acceleration.x += (1 - coeff) * -0.5 * delta.x;
+        physical2->acceleration.y += (1 - coeff) * -0.5 * delta.y;
+        /*
         float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
         float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
         float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
@@ -121,6 +128,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
             physical2->acceleration.x += kb * delta.x;
             physical2->acceleration.y += kb * delta.y;
         }
+        */
     }
 }
 
