@@ -316,6 +316,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         tick_idle_moving(entity, simulation);
         break;
     case rr_ai_state_attacking:
+    {
         if (!rr_simulation_has_entity(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_idle;
@@ -344,8 +345,9 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             ai->ticks_until_next_action = 62;
         }
         break;
-
+    }
     case rr_ai_state_missile_shoot_delay:
+    {
         if (!rr_simulation_has_entity(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_idle;
@@ -416,7 +418,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             rr_vector_add(&physical->acceleration, &recoil);
         }
         break;
-
+    }
     default:
         break;
     }
