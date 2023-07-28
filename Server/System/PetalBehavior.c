@@ -491,7 +491,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             0)
         {
             rr_simulation_request_entity_deletion(simulation, id);
-            if (petal->id == rr_petal_id_seed)
+            if (petal->id == rr_petal_id_seed && physical->has_deletion_animation)
             {
                 for (uint32_t i = 0; i < simulation->player_info_count; ++i)
                 {
