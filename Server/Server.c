@@ -545,8 +545,8 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (cheat_type == 3)
             {
             }
-            break;
 #endif
+            break;
         }
         case 69:
         {

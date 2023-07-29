@@ -137,7 +137,6 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
 
 void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)
 {
-    printf("debug only: headers will be shuffled. %d\n", *start);
     rr_encrypt(start, end - start, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
