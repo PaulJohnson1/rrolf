@@ -92,8 +92,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Ornithomimus"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
-//double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 0, 0, 30, 25, 45, 20};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 15, 0, 0, 0, 0, 0, 0, 0};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 0, 0, 30, 25, 45, 20};
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 20, 50, 250, 2};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 6, 11, 12, 50};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 12, 18, 25, 30};
@@ -171,7 +170,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[1],
                     rr_petal_id_leaf, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[2],
-                    rr_petal_id_seed, 0.0075 * 0.001);
+                    rr_petal_id_seed, 0.0075);
     
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.15);
