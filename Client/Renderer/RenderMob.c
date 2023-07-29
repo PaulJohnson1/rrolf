@@ -33,5 +33,5 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
     float sinusoid_animation = sinf(physical->animation);
 
     rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation,
-                           physical->turning_animation - physical->lerp_angle, physical->lerp_server_animation_tick == 0 || rr_simulation_get_health(simulation, entity)->health == 0);
+                           physical->turning_animation - physical->lerp_angle, physical->lerp_server_animation_tick > 0.5 || rr_simulation_get_health(simulation, entity)->health == 0);
 }
