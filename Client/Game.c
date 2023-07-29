@@ -922,6 +922,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 #endif
     if (this->socket_ready)
     {
+#ifndef RIVET_BUILD
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               75 /* k */))
         {
@@ -949,6 +950,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_write_uint8(&encoder, 3, "cheat type");
             rr_websocket_send(&this->socket, encoder.start, encoder.current);
         }
+#endif
         if (this->simulation_ready)
         {
             struct proto_bug encoder;
