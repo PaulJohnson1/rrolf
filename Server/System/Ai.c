@@ -342,7 +342,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         else
         {
             ai->ai_state = rr_ai_state_missile_shoot_delay;
-            ai->ticks_until_next_action = 50 + rand() % 25;
+            ai->ticks_until_next_action = 25;
         }
         break;
     }
@@ -365,22 +365,18 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         if (ai->ticks_until_next_action == 0)
         {
             ai->ai_state = rr_ai_state_attacking;
-            ai->ticks_until_next_action = rand() % 25 + 25;
+            ai->ticks_until_next_action = rand() % 25 + 38;
 
             struct rr_component_mob *mob =
                 rr_simulation_get_mob(simulation, entity);
             // spawn a missile
-            EntityIdx petal_id = rr_simulation_alloc_entity(simulation);
+            EntityIdx petal_id = rr_simulation_alloc_petal(simulation, rr_petal_id_missile, mob->rarity, mob->parent_id);
             struct rr_component_physical *physical2 =
-                rr_simulation_add_physical(simulation, petal_id);
-            struct rr_component_petal *petal =
-                rr_simulation_add_petal(simulation, petal_id);
-            struct rr_component_relations *relations =
-                rr_simulation_add_relations(simulation, petal_id);
+                rr_simulation_get_physical(simulation, petal_id);
             struct rr_component_health *health =
-                rr_simulation_add_health(simulation, petal_id);
+                rr_simulation_get_health(simulation, petal_id);
             struct rr_component_projectile *projectile =
-                rr_simulation_add_projectile(simulation, petal_id);
+                rr_simulation_get_projectile(simulation, petal_id);
 
             rr_component_physical_set_x(physical2, physical->x);
             rr_component_physical_set_y(physical2, physical->y);
@@ -391,13 +387,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             physical2->mass = 1.0f;
             rr_vector_from_polar(&physical2->acceleration, 80, physical->angle);
 
-            rr_component_relations_set_team(
-                relations,
-                rr_simulation_get_relations(simulation, entity)->team);
-            rr_component_relations_set_owner(relations, ai->parent_id);
-            rr_component_petal_set_id(petal, rr_petal_id_missile);
-            rr_component_petal_set_rarity(petal, mob->rarity);
-            petal->detached = 1;
+            rr_component_petal_set_detached(rr_simulation_get_petal(simulation, petal_id), 1);
 
             rr_component_health_set_max_health(
                 health, RR_MOB_DATA[mob->id].health *
@@ -424,7 +414,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     }
 }
 
-static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
+;static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
                                       struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);

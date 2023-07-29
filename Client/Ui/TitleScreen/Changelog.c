@@ -117,6 +117,11 @@ struct rr_ui_element *rr_ui_changelog_container_init()
                         rr_ui_scroll_container_init(
                             rr_ui_justify_all(
                                 rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+                                    rr_ui_text_init("7/29/2023", 24, 0xffffffff),
+                                    rr_ui_static_space_init(10),
+                                    rr_ui_text_init("Petas now act as one entity before being shot", 16, 0xffffffff),
+                                    rr_ui_text_init("Buffed peas", 16, 0xffffffff),
+                                    changelog_divider_init(),
                                     rr_ui_text_init("7/28/2023", 24, 0xffffffff),
                                     rr_ui_static_space_init(10),
                                     rr_ui_text_init("Made pteranodon not shoot while chasing", 16, 0xffffffff),

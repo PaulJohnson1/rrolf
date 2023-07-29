@@ -74,7 +74,7 @@ static void system_petal_detach(struct rr_simulation *simulation,
                                 uint32_t outer_pos, uint32_t inner_pos,
                                 struct rr_petal_data const *petal_data)
 {
-    petal->detached = 1;
+    rr_component_petal_set_detached(petal, 1);
     struct rr_component_player_info_petal *ppetal =
         &player_info->slots[outer_pos].petals[inner_pos];
     ppetal->simulation_id = RR_NULL_ENTITY;
@@ -121,11 +121,27 @@ static void system_flower_petal_movement_logic(
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
-                rr_vector_from_polar(&physical->acceleration, 5.0f,
+                rr_vector_from_polar(&physical->acceleration, 4.0f,
                                      physical->angle);
                 rr_vector_from_polar(&physical->velocity, 50.0f,
                                      physical->angle);
-                projectile->ticks_until_death = 25;
+                projectile->ticks_until_death = 15;
+                uint32_t count = petal_data->count[petal->rarity];
+                for (uint32_t i = 1; i < count; ++i)
+                {
+                    EntityIdx new_petal = rr_simulation_alloc_petal(simulation, petal->id, petal->rarity, flower_physical->parent_id);
+                    struct rr_component_physical *new_physical = rr_simulation_get_physical(simulation, new_petal);
+                    rr_component_physical_set_angle(new_physical, physical->angle + i * 2 * M_PI / count);
+                    rr_component_physical_set_x(new_physical, physical->x);
+                    rr_component_physical_set_y(new_physical, physical->y);
+                    rr_vector_from_polar(&new_physical->acceleration, 4.0f,
+                                     new_physical->angle);
+                    rr_vector_from_polar(&new_physical->velocity, 50.0f,
+                                     new_physical->angle);
+                    rr_component_petal_set_detached(rr_simulation_get_petal(simulation, new_petal), 1);
+                    struct rr_component_projectile *new_projectile = rr_simulation_get_projectile(simulation, new_petal);
+                    new_projectile->ticks_until_death = 15;
+                }
                 break;
             case rr_petal_id_azalea:
             {
@@ -198,7 +214,7 @@ static void system_flower_petal_movement_logic(
                     if (!petal->detached)
                     {
                         projectile->ticks_until_death = 1350 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
-                        petal->detached = 1;
+                        rr_component_petal_set_detached(petal, 1);
                     }
                     return;
                 }
@@ -237,7 +253,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    if (!is_projectile || petal->id == rr_petal_id_seed || petal->id == rr_petal_id_web)
+    if (!is_projectile || petal->id == rr_petal_id_seed || petal->id == rr_petal_id_web || petal->id == rr_petal_id_peas)
         rr_component_physical_set_angle(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
@@ -326,6 +342,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         uint8_t max_cd = 0;
+        slot->count = slot->id == rr_petal_id_peas ? 1 : RR_PETAL_DATA[slot->id].count[slot->rarity];
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0)
@@ -354,59 +371,10 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 if (--p_petal->cooldown_ticks <= 0)
                 {
                     p_petal->simulation_id =
-                        rr_simulation_alloc_entity(simulation);
-                    struct rr_component_physical *physical =
-                        rr_simulation_add_physical(simulation,
-                                                   p_petal->simulation_id);
-                    struct rr_component_petal *petal = rr_simulation_add_petal(
-                        simulation, p_petal->simulation_id);
-                    struct rr_component_relations *relations =
-                        rr_simulation_add_relations(simulation,
-                                                    p_petal->simulation_id);
-                    struct rr_component_health *health =
-                        rr_simulation_add_health(simulation,
-                                                 p_petal->simulation_id);
-                    rr_component_physical_set_radius(physical, 10);
-                    rr_component_physical_set_x(physical,
-                                                player_info->camera_x);
-                    rr_component_physical_set_y(physical,
-                                                player_info->camera_y);
-                    rr_component_physical_set_angle(physical,
-                                                    rr_frand() * M_PI * 2);
-                    physical->mass = 5;
-                    physical->friction = 0.75;
-
-                    rr_component_petal_set_id(petal, data->id);
-                    rr_component_petal_set_rarity(petal, slot->rarity);
-
-                    rr_component_relations_set_owner(
-                        relations,
-                        player_info
-                            ->flower_id); // flower owns petal, not player
-                    rr_component_relations_set_team(
-                        relations, rr_simulation_team_id_players);
-
-                    float scale_h = RR_PETAL_RARITY_SCALE[slot->rarity].health;
-                    float scale_d = RR_PETAL_RARITY_SCALE[slot->rarity].damage;
-
-                    rr_component_health_set_max_health(health,
-                                                       scale_h * data->health);
-                    rr_component_health_set_health(health,
-                                                   scale_h * data->health);
-                    rr_component_health_set_hidden(health, 1);
-                    health->damage = scale_d * data->damage / slot->count;
-
-                    if (data->secondary_cooldown > 0)
-                    {
-                        struct rr_component_projectile *projectile =
-                            rr_simulation_add_projectile(
-                                simulation, p_petal->simulation_id);
-                        petal->effect_delay = data->secondary_cooldown;
-                    }
-                    else if (slot->id == rr_petal_id_uranium)
-                    {
-                        petal->effect_delay = 25;
-                    }
+                        rr_simulation_alloc_petal(simulation, slot->id, slot->rarity, player_info->flower_id);
+                    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, p_petal->simulation_id);
+                    rr_component_physical_set_x(physical, player_info->camera_x);
+                    rr_component_physical_set_y(physical, player_info->camera_y);
                 }
             }
             else
@@ -426,8 +394,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         simulation, p_petal->simulation_id);
                     if (petal->effect_delay > 0)
                         continue;
-                    rr_simulation_get_petal(simulation, p_petal->simulation_id)
-                        ->detached = 1;
+                    rr_component_petal_set_detached(petal, 1);
                     struct rr_component_physical *petal_physical =
                         rr_simulation_get_physical(simulation,
                                                    p_petal->simulation_id);

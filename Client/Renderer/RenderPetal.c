@@ -30,5 +30,8 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game)
         rr_renderer_scale(renderer,
                           RR_MOB_RARITY_SCALING[petal->rarity].radius);
     }
-    rr_renderer_render_petal(renderer, petal->id);
+    if (petal->id != rr_petal_id_peas || petal->detached == 1)
+        rr_renderer_render_petal(renderer, petal->id);
+    else
+        rr_renderer_render_static_petal(renderer, petal->id, petal->rarity);
 }

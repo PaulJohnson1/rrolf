@@ -16,13 +16,15 @@
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(rarity, uint8)                                                           \
-    X(id, uint8)
+    X(id, uint8)                                                               \
+    X(detached, uint8)
 
 enum
 {
     state_flags_rarity = 0b000001,
     state_flags_id = 0b000010,
-    state_flags_all = 0b000011
+    state_flags_detached = 0b000100,
+    state_flags_all = 0b000111
 };
 
 void rr_component_petal_init(struct rr_component_petal *this,
@@ -66,6 +68,7 @@ void rr_component_petal_write(struct rr_component_petal *this,
 
 RR_DEFINE_PUBLIC_FIELD(petal, uint8_t, id)
 RR_DEFINE_PUBLIC_FIELD(petal, uint8_t, rarity)
+RR_DEFINE_PUBLIC_FIELD(petal, uint8_t, detached)
 #endif
 
 #ifdef RR_CLIENT

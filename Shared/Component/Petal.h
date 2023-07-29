@@ -33,3 +33,4 @@ RR_CLIENT_ONLY(void rr_component_petal_read(struct rr_component_petal *,
 
 RR_DECLARE_PUBLIC_FIELD(petal, uint8_t, id)
 RR_DECLARE_PUBLIC_FIELD(petal, uint8_t, rarity)
+RR_DECLARE_PUBLIC_FIELD(petal, uint8_t, detached)
