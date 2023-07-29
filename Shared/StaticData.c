@@ -51,11 +51,11 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
     {1.6, 1.1, 1.2},
-    {2.5, 1.3, 1.6}, 
-    {4,   1.6, 2.0},
-    {25,  2,   3},
-    {50,  2.5, 5},
-    {200, 10,  8}};
+    {2.5, 1.3, 1.5}, 
+    {4,   1.6, 1.8},
+    {25,  2,   2.5},
+    {50,  2.5, 4},
+    {200, 10,  6}};
 // clang-format on
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
