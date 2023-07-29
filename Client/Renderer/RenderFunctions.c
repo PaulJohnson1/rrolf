@@ -578,7 +578,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_stump:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.1f);
+        rr_renderer_scale(renderer, 0.12f);
         if (use_image_cache)
             rr_renderer_draw_image(renderer, &game->mob_stump);
         else
