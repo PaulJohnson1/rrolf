@@ -467,7 +467,16 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                             uint8_t id, float animation_tick, float turning_value, uint8_t use_image_cache)
 {
     if (game->settings.ourpetsnake_mode)
-        use_image_cache = 0;
+    {
+        rr_renderer_set_fill(renderer, 0xff888888);
+        rr_renderer_set_stroke(renderer, 0xff6c6c6c);
+        rr_renderer_set_line_width(renderer, 5);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0, 0, RR_MOB_DATA[id].radius);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        return;
+    }
     struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
