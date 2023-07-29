@@ -185,7 +185,7 @@ static void init_loot_tables()
                     rr_petal_id_missile, 0.25);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
-                    rr_petal_id_uranium, 0.01);
+                    rr_petal_id_uranium, 0.005);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
                     rr_petal_id_magnet, 0.015);
 
