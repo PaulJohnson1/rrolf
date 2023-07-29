@@ -43,7 +43,7 @@ void rr_component_drop_write(struct rr_component_drop *this,
     FOR_EACH_PUBLIC_FIELD
     if (state & state_flags_hidden)
         proto_bug_write_uint8(
-            encoder, rr_bitset_get(&this->picked_up_by[0], client->client_id),
+            encoder, rr_bitset_get(&this->picked_up_by[0], client->client_id) + (is_creation != 0),
             "drop hidden");
 #undef X
 }
