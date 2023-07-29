@@ -474,17 +474,6 @@ int rr_server_lws_callback_function(struct lws *socket,
             client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
-        case 1:
-        {
-            // if (size < 1)
-            // {
-            //     puts("someone sent a spawn packet with size < 1");
-            //     return 0;
-            // }
-            // rr_server_client_create_flower(client);
-            // ctor player
-            break;
-        }
         case 2:
         {
             if (size < 2)

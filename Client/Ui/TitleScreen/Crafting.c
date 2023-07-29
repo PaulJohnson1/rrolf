@@ -346,10 +346,8 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
         }
     data->count = count;
     if (this->first_frame)
-    {
         data->secondary_animation = count == 0;
-        puts("firstrame");
-    }
+
     data->secondary_animation =
         rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
