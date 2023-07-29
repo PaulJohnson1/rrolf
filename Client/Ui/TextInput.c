@@ -22,14 +22,14 @@ static void text_input_on_render(struct rr_ui_element *this, struct rr_game *gam
     struct rr_renderer *renderer = game->renderer;
     if (data->focused)
     {
-        for (uint8_t i = 32; i < 216; i++)
+        for (uint8_t i = 1; i < 255; i++)
             if (rr_bitset_get(game->input_data->keycodes_pressed_this_tick, i) && data->len < data->max)
                 {
                     data->text[data->len++] = i;
                     data->text[data->len] = 0;
                 }
         
-        if (rr_bitset_get(game->input_data->keycodes_pressed_this_tick, 8) && data->len > 0)
+        if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 8) && data->len > 0)
             data->text[--data->len] = 0;
     }
     

@@ -97,13 +97,17 @@ void rr_main_loop(struct rr_game *this)
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
                 new Array(256).fill(0).map(function(_, i) { return i; });
-            window.onkeydown = async function({which, key})
+            window.onkeydown = function(e)
             {
-                Module._rr_key_event($0, 1, which, key.length === 1 ? key.charCodeAt() : which);
+                Module._rr_key_event($0, 1, e.which, (e.key.length === 1) * e.key.charCodeAt());
+                if (e.metaKey || e.ctrlKey)
+                    e.preventDefault();
             };
-            window.onkeyup = async function({which, key})
+            window.onkeyup = function(e)
             {
-                Module._rr_key_event($0, 0, which, key.length === 1 ? key.charCodeAt() : which);
+                Module._rr_key_event($0, 0, e.which, (e.key.length === 1) * e.key.charCodeAt());
+                if (e.metaKey || e.ctrlKey)
+                    e.preventDefault();
             };
             window.onmousedown =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
