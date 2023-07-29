@@ -167,7 +167,7 @@ static void mob_dakotaraptor_init(struct rr_game *this)
 static void mob_stump_and_fern_init(struct rr_game *this)
 {
     rr_renderer_init(&this->mob_stump);
-    rr_renderer_set_dimensions(&this->mob_stump, 864, 864);
+    rr_renderer_set_dimensions(&this->mob_stump, 1152, 864);
     rr_renderer_draw_svg(&this->mob_stump,
 #include <Client/Assets/Mob/Stump.h>
                          , 0, 0);
