@@ -466,7 +466,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                             uint8_t id, float animation_tick, float turning_value, uint8_t use_image_cache)
 {
-    if (game->settings.ourpetsnake_mode)
+    if (game->cache.ourpetsnake_mode)
     {
         rr_renderer_set_fill(renderer, 0xff888888);
         rr_renderer_set_stroke(renderer, 0xff6c6c6c);

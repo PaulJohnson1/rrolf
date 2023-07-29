@@ -13,7 +13,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_health *health =
         rr_simulation_get_health(simulation, entity);
-    if (health->hidden)
+    if (health->hidden || rr_simulation_has_petal(simulation, entity))
         return;
     if (rr_simulation_has_flower(simulation, entity))
     {

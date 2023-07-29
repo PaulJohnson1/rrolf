@@ -8,6 +8,17 @@
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
 
+#define RR_DEBUG_POLL_SIZE 10
+
+struct rr_game_debug_info
+{
+    uint8_t frame_pos;
+    uint8_t websocket_pos;
+    long tick_times[RR_DEBUG_POLL_SIZE];
+    long frame_times[RR_DEBUG_POLL_SIZE];
+    long message_sizes[RR_DEBUG_POLL_SIZE];
+};
+
 struct rr_game_loadout_petal
 {
     uint8_t id;
@@ -31,18 +42,8 @@ struct rr_game_crafting_data
     uint8_t crafting_rarity;
 };
 
-struct rr_game_debug_info
-{
-    uint8_t count;
-    long last_tick_time;
-    long max_frame_time;
-    long cumulative_frame_time;
-    long max_tick_time;
-    long cumulative_tick_time;
-};
-
 // anything cross reload
-struct rr_game_settings
+struct rr_game_cache
 {
     uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
     float map_props;
@@ -59,7 +60,7 @@ struct rr_game
 {
     struct rr_game_crafting_data crafting_data;
     struct rr_game_debug_info debug_info;
-    struct rr_game_settings settings;
+    struct rr_game_cache cache;
 
     struct rr_rivet_account rivet_account;
     struct rr_game_squad_client squad_members[4];

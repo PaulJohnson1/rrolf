@@ -39,10 +39,10 @@ void validate_loadout(struct rr_game *this)
            (sizeof(uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
     for (uint8_t i = 0; i < 20; ++i)
     {
-        uint8_t id = this->settings.loadout[i].id;
-        uint8_t rarity = this->settings.loadout[i].rarity;
+        uint8_t id = this->cache.loadout[i].id;
+        uint8_t rarity = this->cache.loadout[i].rarity;
         if (temp_inv[id][rarity] == 0)
-            this->settings.loadout[i].id = this->settings.loadout[i].rarity = 0;
+            this->cache.loadout[i].id = this->cache.loadout[i].rarity = 0;
         else
             --temp_inv[id][rarity];
     }
@@ -145,8 +145,8 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->settings.slots_unlocked = 10;
-    for (uint8_t i = 0; i < this->settings.slots_unlocked; ++i)
+    this->cache.slots_unlocked = 10;
+    for (uint8_t i = 0; i < this->cache.slots_unlocked; ++i)
         this->protocol_state |= ((1 | (1 << 10)) << i);
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
@@ -404,13 +404,13 @@ void rr_game_init(struct rr_game *this)
     rr_assets_init(this);
 
     rr_local_storage_get_bytes("debug",
-                               &this->settings.displaying_debug_information);
-    rr_local_storage_get_bytes("loadout", &this->settings.loadout);
-    rr_local_storage_get_bytes("props", &this->settings.map_props);
-    rr_local_storage_get_bytes("screen_shake", &this->settings.screen_shake);
-    rr_local_storage_get_bytes("ui_hitboxes", &this->settings.show_ui_hitbox);
-    rr_local_storage_get_bytes("slots_count", &this->settings.slots_unlocked);
-    rr_local_storage_get_bytes("mouse", &this->settings.use_mouse);
+                               &this->cache.displaying_debug_information);
+    rr_local_storage_get_bytes("loadout", &this->cache.loadout);
+    rr_local_storage_get_bytes("props", &this->cache.map_props);
+    rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
+    rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
+    rr_local_storage_get_bytes("slots_count", &this->cache.slots_unlocked);
+    rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
     // clang-format on
 }
 
@@ -508,7 +508,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               << 4;
             movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
                               << 5;
-            movement_flags |= this->settings.use_mouse << 6;
+            movement_flags |= this->cache.use_mouse << 6;
             proto_bug_write_uint8(&encoder2, movement_flags,
                                   "movement kb flags");
             proto_bug_write_float32(&encoder2,
@@ -546,23 +546,23 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            for (uint32_t i = 0; i < this->settings.slots_unlocked; ++i)
+            for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
             {
                 if (this->protocol_state & (1 << i))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1, "pos");
                     proto_bug_write_uint8(&encoder2,
-                                          this->settings.loadout[i].id, "id");
+                                          this->cache.loadout[i].id, "id");
                     proto_bug_write_uint8(
-                        &encoder2, this->settings.loadout[i].rarity, "rar");
+                        &encoder2, this->cache.loadout[i].rarity, "rar");
                 }
                 if (this->protocol_state & (1 << (i + 10)))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1 + 10, "pos");
                     proto_bug_write_uint8(&encoder2,
-                                          this->settings.loadout[i + 10].id, "id");
+                                          this->cache.loadout[i + 10].id, "id");
                     proto_bug_write_uint8(
-                        &encoder2, this->settings.loadout[i + 10].rarity, "rar");
+                        &encoder2, this->cache.loadout[i + 10].rarity, "rar");
                 }
             }
             //write nickname
@@ -675,7 +675,7 @@ void player_info_finder(struct rr_game *this)
 static void render_background(struct rr_component_player_info *player_info,
                               struct rr_game *this, uint32_t prop_amount)
 {
-    if (this->settings.ourpetsnake_mode)
+    if (this->cache.ourpetsnake_mode)
         return;
     double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
@@ -769,20 +769,20 @@ void rr_game_tick(struct rr_game *this, float delta)
         validate_loadout(this);
     // rr_storage_layout_save(this);
     rr_local_storage_store_bytes(
-        "debug", &this->settings.displaying_debug_information,
-        sizeof this->settings.displaying_debug_information);
-    rr_local_storage_store_bytes("loadout", &this->settings.loadout,
-                                 sizeof this->settings.loadout);
-    rr_local_storage_store_bytes("props", &this->settings.map_props,
-                                 sizeof this->settings.map_props);
-    rr_local_storage_store_bytes("screen_shake", &this->settings.screen_shake,
-                                 sizeof this->settings.screen_shake);
-    rr_local_storage_store_bytes("ui_hitboxes", &this->settings.show_ui_hitbox,
-                                 sizeof this->settings.show_ui_hitbox);
-    rr_local_storage_store_bytes("slots_count", &this->settings.slots_unlocked,
-                                 sizeof this->settings.slots_unlocked);
-    rr_local_storage_store_bytes("mouse", &this->settings.use_mouse,
-                                 sizeof this->settings.use_mouse);
+        "debug", &this->cache.displaying_debug_information,
+        sizeof this->cache.displaying_debug_information);
+    rr_local_storage_store_bytes("loadout", &this->cache.loadout,
+                                 sizeof this->cache.loadout);
+    rr_local_storage_store_bytes("props", &this->cache.map_props,
+                                 sizeof this->cache.map_props);
+    rr_local_storage_store_bytes("screen_shake", &this->cache.screen_shake,
+                                 sizeof this->cache.screen_shake);
+    rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,
+                                 sizeof this->cache.show_ui_hitbox);
+    rr_local_storage_store_bytes("slots_count", &this->cache.slots_unlocked,
+                                 sizeof this->cache.slots_unlocked);
+    rr_local_storage_store_bytes("mouse", &this->cache.use_mouse,
+                                 sizeof this->cache.use_mouse);
 
     // rr_local_storage_store_bytes("settings", &this->settings,
     //                              sizeof this->settings);
@@ -813,7 +813,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_translate(this->renderer, -player_info->lerp_camera_x,
                                   -player_info->lerp_camera_y);
 
-            if (this->settings.screen_shake &&
+            if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
             {
                 if (rr_simulation_get_physical(this->simulation,
@@ -853,7 +853,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_global_alpha(this->renderer, 1);
 
             render_background(player_info, this,
-                              this->settings.map_props * 750);
+                              this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -894,7 +894,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
         render_background(&custom_player_info, this,
-                          this->settings.map_props * 750);
+                          this->cache.map_props * 750);
         rr_renderer_context_state_free(this->renderer, &state);
     }
     // ui
@@ -958,7 +958,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_write_uint8(&encoder, 2, "header");
             uint8_t should_write = 0;
             uint8_t switch_all = rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
-            for (uint8_t n = 0; n < this->settings.slots_unlocked; ++n)
+            for (uint8_t n = 0; n < this->cache.slots_unlocked; ++n)
                 if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 48 + n) || switch_all)
                 {
                     proto_bug_write_uint8(&encoder, n == 0 ? 10 : n, "petal switch");
@@ -973,9 +973,9 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                           186 /* ; */))
-        this->settings.displaying_debug_information ^= 1;
+        this->cache.displaying_debug_information ^= 1;
 
-    if (this->settings.displaying_debug_information)
+    if (this->cache.displaying_debug_information)
     {
         struct rr_renderer_context_state state;
         rr_renderer_context_state_init(this->renderer, &state);
@@ -987,15 +987,31 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_translate(this->renderer, this->renderer->width - 5,
                               this->renderer->height - 5);
         static char debug_mspt[100];
+        long tick_sum = 0;
+        long tick_max = 0;
+        long frame_sum = 0;
+        long frame_max = 0;
+        for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i) 
+        {
+            long t_t = this->debug_info.tick_times[i];
+            long f_t = this->debug_info.frame_times[i];
+            tick_sum += t_t;
+            frame_sum += f_t;
+            if (t_t > tick_max)
+                tick_max = t_t;
+            if (f_t > frame_max)
+                frame_max = f_t;
+        }
+
         debug_mspt[sprintf(
             debug_mspt,
             "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
-            this->debug_info.cumulative_tick_time * 0.001f /
-                (this->debug_info.count + 1),
-            this->debug_info.max_tick_time * 0.001f,
-            this->debug_info.cumulative_frame_time * 0.001f /
-                (this->debug_info.count + 1),
-            this->debug_info.max_frame_time * 0.001f)] = 0;
+            tick_sum * 0.001f /
+                RR_DEBUG_POLL_SIZE,
+            tick_max * 0.001f,
+            frame_sum * 0.001f /
+                RR_DEBUG_POLL_SIZE,
+            frame_max * 0.001f)] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
         debug_mspt[sprintf(
@@ -1012,15 +1028,12 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    this->debug_info.cumulative_tick_time += time_elapsed;
-    if (time_elapsed > this->debug_info.max_tick_time)
-        this->debug_info.max_tick_time = time_elapsed;
-    long frame_time =
-        end.tv_sec * 1000000 + end.tv_usec - this->debug_info.last_tick_time;
-    this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
-    this->debug_info.cumulative_frame_time += frame_time;
-    if (frame_time > this->debug_info.max_frame_time)
-        this->debug_info.max_frame_time = frame_time;
+    long frame_time = delta * 1000000.0f;
+
+    this->debug_info.tick_times[this->debug_info.frame_pos] = time_elapsed;
+    this->debug_info.frame_times[this->debug_info.frame_pos] = frame_time;
+    this->debug_info.frame_pos = (this->debug_info.frame_pos + 1) % RR_DEBUG_POLL_SIZE;
+
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keycodes_pressed_this_tick, 0, RR_BITSET_ROUND(256));
@@ -1029,17 +1042,12 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->mouse_state_this_tick = 0;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    if (++this->debug_info.count == 10)
-    {
-        memset(&this->debug_info, 0, sizeof this->debug_info);
-        this->debug_info.last_tick_time = end.tv_sec * 1000000 + end.tv_usec;
-    }
 }
 
 void rr_game_connect_socket(struct rr_game *this)
 {
     memset(this->simulation, 0, sizeof *this->simulation);
-    for (uint8_t i = 0; i < this->settings.slots_unlocked; ++i)
+    for (uint8_t i = 0; i < this->cache.slots_unlocked; ++i)
         this->protocol_state |= ((1 | (1 << 10)) << i);
     this->socket_ready = 0;
     this->simulation_ready = 0;

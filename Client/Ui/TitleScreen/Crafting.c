@@ -324,13 +324,13 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
     int32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
-        if (game->settings.loadout[i].id == data->id &&
-            game->settings.loadout[i].rarity == data->rarity)
+        if (game->cache.loadout[i].id == data->id &&
+            game->cache.loadout[i].rarity == data->rarity)
             {
                 if (count > 0)
                     --count;
                 else
-                    game->settings.loadout[i].id = 0;
+                    game->cache.loadout[i].id = 0;
             }
     }
     if (data->id == game->crafting_data.crafting_id)

@@ -29,22 +29,22 @@ static void inventory_button_on_event(struct rr_ui_element *this,
     {
         if (data->count == 0)
             return;
-        for (uint8_t i = 0; i < game->settings.slots_unlocked; ++i)
+        for (uint8_t i = 0; i < game->cache.slots_unlocked; ++i)
         {
-            if (game->settings.loadout[i].id == 0)
+            if (game->cache.loadout[i].id == 0)
             {
-                game->settings.loadout[i].id = data->id;
-                game->settings.loadout[i].rarity = data->rarity;
+                game->cache.loadout[i].id = data->id;
+                game->cache.loadout[i].rarity = data->rarity;
                 game->protocol_state |= 1 << i;
                 return;
             }
         }
-        for (uint8_t i = 10; i < 10 + game->settings.slots_unlocked; ++i)
+        for (uint8_t i = 10; i < 10 + game->cache.slots_unlocked; ++i)
         {
-            if (game->settings.loadout[i].id == 0)
+            if (game->cache.loadout[i].id == 0)
             {
-                game->settings.loadout[i].id = data->id;
-                game->settings.loadout[i].rarity = data->rarity;
+                game->cache.loadout[i].id = data->id;
+                game->cache.loadout[i].rarity = data->rarity;
                 game->protocol_state |= 1 << i;
                 return;
             }
@@ -62,13 +62,13 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
     int32_t count = game->inventory[data->id][data->rarity];
     for (uint32_t i = 0; i < 20; ++i)
     {
-        if (game->settings.loadout[i].id == data->id &&
-            game->settings.loadout[i].rarity == data->rarity)
+        if (game->cache.loadout[i].id == data->id &&
+            game->cache.loadout[i].rarity == data->rarity)
         {
             if (count > 0)
                 --count;
             else
-                game->settings.loadout[i].id = game->settings.loadout[i].rarity = 0;
+                game->cache.loadout[i].id = game->cache.loadout[i].rarity = 0;
         }
     }
     if (data->id == game->crafting_data.crafting_id)

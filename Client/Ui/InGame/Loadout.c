@@ -31,13 +31,13 @@ static void loadout_button_on_event(struct rr_ui_element *this,
     struct loadout_button_metadata *data = this->data;
     if ((game->input_data->mouse_buttons_up_this_tick & 1) && game->pressed == this)
     {
-        game->settings.loadout[data->pos].id = 0;
-        game->settings.loadout[data->pos].rarity = 0;
+        game->cache.loadout[data->pos].id = 0;
+        game->cache.loadout[data->pos].rarity = 0;
         game->protocol_state |= 1 << data->pos;
     }
     else
     {
-        if (game->settings.loadout[data->pos].id == 0)
+        if (game->cache.loadout[data->pos].id == 0)
             return;
         rr_ui_render_tooltip_above(
             this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
@@ -77,7 +77,7 @@ title_screen_loadout_button_should_show(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    return !game->simulation_ready && data->pos % 10 < game->settings.slots_unlocked;
+    return !game->simulation_ready && data->pos % 10 < game->cache.slots_unlocked;
 }
 
 static void title_screen_loadout_button_animate(struct rr_ui_element *this,
@@ -89,8 +89,8 @@ static void title_screen_loadout_button_animate(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, 255);
-    uint8_t id = game->settings.loadout[data->pos].id;
-    uint8_t rarity = game->settings.loadout[data->pos].rarity;
+    uint8_t id = game->cache.loadout[data->pos].id;
+    uint8_t rarity = game->cache.loadout[data->pos].rarity;
     data->secondary_animation =
         rr_lerp(data->secondary_animation, id == 0, 0.2);
     if (id != 0)

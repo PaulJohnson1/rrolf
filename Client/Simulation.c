@@ -6,12 +6,11 @@
 #include <string.h>
 #include <sys/time.h>
 
+#include <Client/Game.h>
 #include <Client/System/Interpolation.h>
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
 
-long last = 0;
-int ttt = 0;
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -91,16 +90,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
     gettimeofday(&end, NULL);
     long elapsed_time =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    // printf("tick took %ld microseconds\n", elapsed_time);
-    long now_time = (end.tv_sec) * 1000000 + (end.tv_usec);
-    if (ttt++ == 10)
-    {
-#ifndef RIVET_BUILD
-        printf("%ld ms tick\n", (now_time - last) / 10000);
-#endif
-        ttt = 0;
-        last = now_time;
-    }
+    //game->debug_info.message_sizes[game->debug_info.websocket_pos] = 
 }
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
