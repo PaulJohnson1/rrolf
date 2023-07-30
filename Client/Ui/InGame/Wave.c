@@ -19,14 +19,6 @@ struct mob_button_metadata
     uint8_t rarity;
 };
 
-static void mob_button_on_event(struct rr_ui_element *this,
-                                struct rr_game *game)
-{
-    struct mob_button_metadata *data = this->data;
-    rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
-                               game);
-}
-
 static void wave_text_on_render(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
@@ -144,7 +136,6 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     element->abs_width = element->abs_height = element->width =
         element->height = 50;
     element->on_render = mob_button_on_render;
-    element->on_event = mob_button_on_event;
     element->should_show = mob_button_should_show;
     element->data = data;
     return element;
