@@ -27,6 +27,11 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
             renderer, (physical->lerp_server_animation_tick) * 0.2);
         rr_renderer_scale(
             renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
+        if (!mob->counted_as_killed)
+        {
+            mob->counted_as_killed = 1;
+            ++game->cache.mob_kills[mob->id][mob->rarity];
+        }
     }
     if (physical->animation > 2 * M_PI)
         physical->animation = fmod(physical->animation, 2 * M_PI);

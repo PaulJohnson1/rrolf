@@ -176,7 +176,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
-                            rr_ui_text_input_init(400, 36, &this->nickname[0], 16),
+                            rr_ui_text_input_init(400, 36, &this->cache.nickname[0], 16),
                             rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
                             NULL
                         ),
@@ -411,7 +411,12 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
     rr_local_storage_get_bytes("slots_count", &this->cache.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
+    rr_local_storage_get_bytes("nickname", &this->cache.nickname);
+
+    rr_local_storage_get_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
+    rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
     // clang-format on
+    this->tiles_size = 3;
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -570,9 +575,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 71, "header");
-            uint32_t len = strlen(&this->nickname[0]);
+            uint32_t len = strlen(&this->cache.nickname[0]);
             proto_bug_write_varuint(&encoder2, len, "nick length");
-            proto_bug_write_string(&encoder2, &this->nickname[0], len, "nick");
+            proto_bug_write_string(&encoder2, &this->cache.nickname[0], len, "nick");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             this->protocol_state = 0;
             break;
@@ -765,9 +770,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
-    if (this->simulation_ready)
-        validate_loadout(this);
-    // rr_storage_layout_save(this);
+    validate_loadout(this);
+
     rr_local_storage_store_bytes(
         "debug", &this->cache.displaying_debug_information,
         sizeof this->cache.displaying_debug_information);
@@ -783,12 +787,14 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.slots_unlocked);
     rr_local_storage_store_bytes("mouse", &this->cache.use_mouse,
                                  sizeof this->cache.use_mouse);
+    rr_local_storage_store_bytes("nickname", &this->cache.nickname,
+                                 strlen(&this->cache.nickname[0]));
+    
+    rr_local_storage_store_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
+    rr_local_storage_store_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
 
-    // rr_local_storage_store_bytes("settings", &this->settings,
-    //                              sizeof this->settings);
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
-    // rr_renderer_set_grayscale(this->renderer, this->grayscale * 100);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
     // render off-game elements

@@ -17,15 +17,32 @@ struct mob_button_metadata
 {
     uint8_t id;
     uint8_t rarity;
-    float lerp_width;
+    float secondary_animation;
 };
 
 static void mob_button_on_event(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
+    if (data->secondary_animation > 0.999)
+        return;
     rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
                                game);
+}
+
+static void mob_button_animate(struct rr_ui_element *this,
+                                struct rr_game *game)
+{
+    struct mob_button_metadata *data = this->data;
+    struct rr_renderer *renderer = game->renderer;
+    rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
+    rr_renderer_render_background(renderer, 254);
+    uint32_t count = game->cache.mob_kills[data->id][data->rarity];
+    if (this->first_frame)
+        data->secondary_animation = count == 0;
+    data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
+    this->completely_hidden = 0;
+    rr_renderer_scale(renderer, 1 - data->secondary_animation);
 }
 
 static void wave_text_on_render(struct rr_ui_element *this,
@@ -58,9 +75,10 @@ static void mob_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
+    if (data->secondary_animation > 0.999)
+        return;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
     rr_renderer_render_background(renderer, data->rarity);
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
@@ -112,16 +130,17 @@ static void wave_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
 
 static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
 {
-    struct rr_ui_element *element = rr_ui_element_init();
+    struct rr_ui_element *this = rr_ui_element_init();
     struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
-    element->abs_width = element->abs_height = element->width =
-        element->height = 50;
-    element->on_render = mob_button_on_render;
-    element->on_event = mob_button_on_event;
-    element->data = data;
-    return element;
+    this->abs_width = this->abs_height = this->width =
+        this->height = 50;
+    this->on_render = mob_button_on_render;
+    this->on_event = mob_button_on_event;
+    this->animate = mob_button_animate;
+    this->data = data;
+    return this;
 }
 
 static uint8_t mob_container_should_show(struct rr_ui_element *this,

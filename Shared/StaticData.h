@@ -42,8 +42,6 @@ enum rr_mob_id
     rr_mob_id_trex,
     rr_mob_id_fern,
     rr_mob_id_stump,
-    rr_mob_id_spinosaurus_head,
-    rr_mob_id_spinosaurus_body,
     rr_mob_id_pteranodon,
     rr_mob_id_dakotaraptor,
     rr_mob_id_pachycephalosaurus,

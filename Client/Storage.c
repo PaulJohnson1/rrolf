@@ -5,8 +5,9 @@
 #endif
 
 #include <Client/Game.h>
+#include <Shared/pb.h>
 
-uint8_t storage_result[4 * 1024] = {0};
+uint8_t storage_result[16 * 1024] = {0};
 
 uint32_t rr_local_storage_get(char *name)
 {
@@ -39,20 +40,6 @@ void rr_local_storage_store_string(char *name, char *contents)
 #endif
 }
 
-void rr_local_storage_store_chunk(char *name, char *contents, uint32_t len)
-{
-#ifdef EMSCRIPTEN
-    EM_ASM(
-        {
-            const string = Module.ReadCstr($0);
-            const string2 =
-                new TextDecoder().decode(Module.HEAPU8.subarray($1, $1 + $2));
-            window.localStorage[string] = string2;
-        },
-        name, contents, len);
-#endif
-}
-
 void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
 {
 #ifdef EMSCRIPTEN
@@ -75,39 +62,66 @@ void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
 #endif
 }
 
-void rr_local_storage_get_bytes(char *label, void *bytes)
+uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
 {
 #ifdef EMSCRIPTEN
-    EM_ASM(
+    return EM_ASM_INT(
         {
             const string = Module.ReadCstr($0);
             let hex = localStorage[string];
             if (!hex)
-                return;
+                return 0;
             // clang-format off
             let bytes = new Uint8Array(hex.split(" ").map(x => parseInt(x, 16)));
             // clang-format on
+            const len = bytes.length;
             HEAPU8.set(bytes, $1);
+            return len;
         },
         label, bytes);
 #endif
 }
 
-// void rr_storage_layout_save(struct rr_game *game)
-// {
-//     uint8_t arr[61];
-//     // memset(&arr, 0, sizeof arr);
-//     uint8_t at = 0;
-//     for (uint8_t i = 0; i < 20; ++i)
-//     {
-//         struct rr_game_loadout_petal petal = game->loadout[i];
-//         if (petal.id == 0)
-//             continue;
-//         arr[at] = i;
-//         arr[at + 1] = petal.id;
-//         arr[at + 2] = petal.rarity;
-//         at += 3;
-//     }
-//     arr[at] = 0;
-//     rr_local_storage_store_chunk("loadout", (char *)&arr, at);
-// }
+void rr_local_storage_store_id_rarity(char *label, uint32_t *start, uint8_t id_count, uint8_t rarity_count)
+{
+    uint32_t at = 0;
+    for (uint8_t id = 0; id < id_count; ++id)
+    {
+        for (uint8_t rarity = 0; rarity < rarity_count; ++rarity)
+        {
+            if (start[id * rarity_count + rarity] == 0)
+                continue;
+            storage_result[at++] = id;
+            storage_result[at++] = rarity;
+            uint32_t amount = start[id * rarity_count + rarity];
+            while (amount > 127ull)
+            {
+                storage_result[at++] = (amount << 1) | 1;
+                amount >>= 7ull;
+            }
+            storage_result[at++] = amount << 1;
+        }
+    }
+    rr_local_storage_store_bytes(label, &storage_result[0], at);
+}
+
+void rr_local_storage_get_id_rarity(char *label, uint32_t *start, uint8_t id_count, uint8_t rarity_count)
+{
+    uint32_t size = rr_local_storage_get_bytes(label, &storage_result[0]);
+    uint32_t at = 0;
+    while (at < size)
+    {
+        uint8_t id = storage_result[at++];
+        uint8_t rarity = storage_result[at++];
+        uint8_t byte;
+        uint32_t count = 0ull;
+        uint64_t shift = 0ull;
+        do
+        {
+            byte = storage_result[at++];
+            count |= ((byte & 254ull) << shift) >> 1;
+            shift += 7ull;
+        } while (byte & 1ull);
+        start[id * rarity_count + rarity] = count;
+    }
+}

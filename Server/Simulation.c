@@ -213,8 +213,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     case rr_mob_id_pachycephalosaurus:
         ai->ai_aggro_type = rr_ai_aggro_type_pachycephalosaurus;
         break;
-    case rr_mob_id_spinosaurus_head:
-    case rr_mob_id_spinosaurus_body:
     case rr_mob_id_ornithomimus:
         ai->ai_aggro_type = rr_ai_aggro_type_default;
         break;
@@ -222,7 +220,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         RR_UNREACHABLE("forgot to set ai aggro type");
     };
 
-    if (mob_id == rr_mob_id_spinosaurus_head)
+    if (mob_id == 255 && 0)
     {
         // ai->ai_type = rr_ai_type_neutral;
         EntityIdx prev_node = entity;
@@ -234,7 +232,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         for (uint64_t i = 0; i < 5; ++i)
         {
             new_entity = rr_simulation_alloc_mob(
-                this, rr_mob_id_spinosaurus_body, rarity_id, team_id);
+                this, 255, rarity_id, team_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
             struct rr_component_physical *new_phys =

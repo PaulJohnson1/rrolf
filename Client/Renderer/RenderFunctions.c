@@ -584,10 +584,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         else
             rr_stump_draw(renderer);
         break;
-    case rr_mob_id_spinosaurus_head:
-        break;
-    case rr_mob_id_spinosaurus_body:
-        break;
     case rr_mob_id_pteranodon:
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.2f);

@@ -14,6 +14,7 @@ struct rr_component_mob
     EntityIdx parent_id;
     uint8_t id;
     uint8_t rarity;
+    RR_CLIENT_ONLY(uint8_t counted_as_killed;)
     RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 

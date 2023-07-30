@@ -20,6 +20,7 @@ static void text_input_on_render(struct rr_ui_element *this, struct rr_game *gam
     struct rr_renderer_context_state state;
     struct rr_ui_text_input_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    data->len = strlen(data->text);
     if (data->focused)
     {
         for (uint8_t i = 1; i < 255; i++)
@@ -58,6 +59,7 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text, uint8_
     memset(data, 0, sizeof *data);
 
     data->max = max_length;
+    data->len = strlen(text);
     data->text = text;
     element->data = data;
     element->abs_width = element->width = w;

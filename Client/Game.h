@@ -54,6 +54,7 @@ struct rr_game_cache
     uint8_t screen_shake;
     uint8_t slots_unlocked;
     uint8_t ourpetsnake_mode;
+    char nickname[17];
 };
 
 struct rr_game
@@ -125,7 +126,6 @@ struct rr_game
     float expanding_circle_radius;
     EntityIdx player_infos[8];
 
-    char nickname[17];
 
     uint8_t socket_ready;
     uint8_t socket_pending;

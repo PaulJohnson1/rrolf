@@ -29,8 +29,6 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_trex, 40, 25, 32.0f, {}},
     {rr_mob_id_fern, 10, 5, 25.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
-    {rr_mob_id_spinosaurus_head, 25, 10, 10.0f, {}},
-    {rr_mob_id_spinosaurus_body, 25, 10, 10.0f, {}},
     {rr_mob_id_pteranodon, 35, 40, 26.0f, {}},
     {rr_mob_id_dakotaraptor, 35, 30, 30.0f, {}},
     {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
@@ -87,12 +85,11 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "What does this one do"
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
-    "Triceratops", "T-Rex", "Fern", "Stump", "Spinosaurus",
-    "Spinosaurus", "Pteranodon", "Dakotaraptor", "Pachycephalosaurus",
+    "Triceratops", "T-Rex", "Fern", "Stump", "Pteranodon", "Dakotaraptor", "Pachycephalosaurus",
     "Ornithomimus"};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 0, 0, 6, 9, 5, 2};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 0, 0, 30, 25, 45, 20};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 6, 9, 5, 2};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20};
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 25, 50, 250, 2};
 uint32_t RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 4, 5, 6, 10, 15, 50};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 12, 18, 25, 30};
