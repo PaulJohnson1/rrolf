@@ -144,7 +144,7 @@ find_position_away_from_players(struct rr_simulation *this)
 // spawn 4-8 of some mob type in around the same position, avoid players
 static void spawn_mob_cluster(struct rr_simulation *this)
 {
-    uint32_t mob_count = rand() % 3 + 3; // random for some variety
+    uint32_t mob_count = rand() % 3 + 2; // random for some variety
     struct rr_vector central_position = find_position_away_from_players(this);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
@@ -209,11 +209,11 @@ static void tick_wave(struct rr_simulation *this)
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
-        if (arena->wave_tick % 18 == 0)
+        if (arena->wave_tick % 36 == 0)
             spawn_random_mob(this);
 
-        for (uint64_t i = 0; i < 6; i++)
-            if (arena->wave_tick + 1 == (wave_length * 25 * spawn_time) * i / 6)
+        for (uint64_t i = 0; i < 4; i++)
+            if (arena->wave_tick + 1 == (wave_length * 25 * spawn_time) * i / 4)
                 spawn_mob_cluster(this);
         
         if (arena->wave_tick == (wave_length * 25 * spawn_time))
