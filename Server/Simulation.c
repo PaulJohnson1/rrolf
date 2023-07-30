@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/time.h>
 
+#include <Server/EntityAllocation.h>
 #include <Server/SpatialHash.h>
 #include <Server/System/Ai.h>
 #include <Server/System/Camera.h>
@@ -46,98 +47,10 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-EntityIdx rr_simulation_alloc_player(EntityIdx entity, struct rr_simulation *this)
-{
-    struct rr_component_player_info *player_info =
-        rr_simulation_get_player_info(this, entity);
-    EntityIdx flower_id = rr_simulation_alloc_entity(this);
-    struct rr_component_physical *physical =
-        rr_simulation_add_physical(this, flower_id);
-    struct rr_component_health *health =
-        rr_simulation_add_health(this, flower_id);
-    struct rr_component_relations *relations =
-        rr_simulation_add_relations(this, flower_id);
-    float distance = sqrt((float)rand() / (float)RAND_MAX) *
-                     rr_simulation_get_arena(this, 1)->radius;
-    float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
-    rr_component_physical_set_x(physical, cos(angle) * distance);
-    rr_component_physical_set_y(physical, sin(angle) * distance);
-    rr_component_physical_set_radius(physical, 25.0f);
-    physical->friction = 0.75;
-    if (rand() < RAND_MAX / 1000)
-        rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
-
-    rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100);
-    rr_component_health_set_health(health, 100);
-    health->damage = 10;
-    rr_component_relations_set_team(relations, rr_simulation_team_id_players);
-    rr_component_relations_set_owner(relations, entity);
-    rr_component_player_info_set_camera_x(player_info, physical->x);
-    rr_component_player_info_set_camera_y(player_info, physical->y);
-    rr_component_player_info_set_flower_id(player_info, flower_id);
-    return flower_id;
-}
-
-EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id, uint8_t rarity, EntityIdx owner)
-{
-    struct rr_petal_data const *data = &RR_PETAL_DATA[id];
-    EntityIdx petal_id =
-        rr_simulation_alloc_entity(this);
-    struct rr_component_physical *physical =
-        rr_simulation_add_physical(this,
-                                    petal_id);
-    struct rr_component_petal *petal = rr_simulation_add_petal(
-        this, petal_id);
-    struct rr_component_relations *relations =
-        rr_simulation_add_relations(this,
-                                    petal_id);
-    struct rr_component_health *health =
-        rr_simulation_add_health(this,
-                                    petal_id);
-    rr_component_physical_set_radius(physical, 10);
-    rr_component_physical_set_angle(physical,
-                                    rr_frand() * M_PI * 2);
-    physical->mass = 5;
-    physical->friction = 0.75;
-
-    rr_component_petal_set_id(petal, id);
-    rr_component_petal_set_rarity(petal, rarity);
-
-    rr_component_relations_set_owner(
-        relations,
-        owner); // flower owns petal, not player
-    rr_component_relations_set_team(
-        relations, rr_simulation_get_relations(this, owner)->team);
-
-    float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
-    float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
-
-    rr_component_health_set_max_health(health,
-                                        scale_h * data->health);
-    rr_component_health_set_health(health,
-                                    scale_h * data->health);
-    rr_component_health_set_hidden(health, 1);
-    health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
-
-    if (data->secondary_cooldown > 0)
-    {
-        struct rr_component_projectile *projectile =
-            rr_simulation_add_projectile(
-                this, petal_id);
-        petal->effect_delay = data->secondary_cooldown;
-    }
-    else if (id == rr_petal_id_uranium)
-    {
-        petal->effect_delay = 25;
-    }
-    return petal_id;
-}
-
 static void spawn_random_mob(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint8_t id = get_id_from_wave(arena->wave);
+    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
     uint8_t rarity = get_rarity_from_wave(arena->wave);
     if (!should_spawn_at(arena->wave, id, rarity))
         return;
@@ -154,316 +67,8 @@ static void spawn_random_mob(struct rr_simulation *this)
     rr_component_physical_set_y(physical, sin(angle) * distance);
 }
 
-EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
-                                  enum rr_mob_id mob_id,
-                                  enum rr_rarity_id rarity_id,
-                                  enum rr_simulation_team_id team_id)
-{
-    EntityIdx entity = rr_simulation_alloc_entity(this);
-
-    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (team_id == rr_simulation_team_id_mobs)
-    {
-        arena->mob_count++;
-        arena->mob_counters[mob_id * rr_rarity_id_max + rarity_id]++;
-    }
-
-    struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
-    struct rr_component_physical *physical =
-        rr_simulation_add_physical(this, entity);
-    struct rr_component_health *health = rr_simulation_add_health(this, entity);
-    struct rr_component_relations *relations =
-        rr_simulation_add_relations(this, entity);
-    struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
-    // init team elsewhere
-    rr_component_mob_set_id(mob, mob_id);
-    rr_component_mob_set_rarity(mob, rarity_id);
-    struct rr_mob_rarity_scale const *rarity_scale =
-        RR_MOB_RARITY_SCALING + rarity_id;
-    struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
-    rr_component_physical_set_radius(physical,
-                                     mob_data->radius * rarity_scale->radius);
-    rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
-    physical->friction = 0.8;
-    physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
-    rr_component_health_set_max_health(health,
-                                       mob_data->health * rarity_scale->health);
-    rr_component_health_set_health(health,
-                                   mob_data->health * rarity_scale->health);
-    health->damage = mob_data->damage * rarity_scale->damage;
-
-    rr_component_relations_set_team(relations, team_id);
-
-    switch (mob_id)
-    {
-    case rr_mob_id_pteranodon:
-        ai->ai_aggro_type = rr_ai_aggro_type_pteranodon;
-        break;
-    case rr_mob_id_triceratops:
-        ai->ai_aggro_type = rr_ai_aggro_type_triceratops;
-        break;
-    case rr_mob_id_fern:
-    case rr_mob_id_stump:
-        ai->ai_aggro_type = rr_ai_aggro_type_none;
-        break;
-    case rr_mob_id_trex:
-    case rr_mob_id_dakotaraptor:
-        ai->ai_aggro_type = rr_ai_aggro_type_t_rex;
-        break;
-    case rr_mob_id_pachycephalosaurus:
-        ai->ai_aggro_type = rr_ai_aggro_type_pachycephalosaurus;
-        break;
-    case rr_mob_id_ornithomimus:
-        ai->ai_aggro_type = rr_ai_aggro_type_default;
-        break;
-    default:
-        RR_UNREACHABLE("forgot to set ai aggro type");
-    };
-
-    if (mob_id == 255 && 0)
-    {
-        // ai->ai_type = rr_ai_type_neutral;
-        EntityIdx prev_node = entity;
-        struct rr_component_centipede *centipede =
-            rr_simulation_add_centipede(this, entity);
-        struct rr_vector extension;
-        rr_vector_from_polar(&extension, physical->radius * 2, physical->angle);
-        EntityIdx new_entity = RR_NULL_ENTITY;
-        for (uint64_t i = 0; i < 5; ++i)
-        {
-            new_entity = rr_simulation_alloc_mob(
-                this, 255, rarity_id, team_id);
-            centipede->child_node = new_entity;
-            centipede = rr_simulation_add_centipede(this, new_entity);
-            struct rr_component_physical *new_phys =
-                rr_simulation_get_physical(this, new_entity);
-            rr_component_physical_set_x(new_phys,
-                                        physical->x + extension.x * (i + 1));
-            rr_component_physical_set_y(new_phys,
-                                        physical->y + extension.y * (i + 1));
-            centipede->parent_node = entity;
-            entity = new_entity;
-        }
-    }
-
-    return entity;
-}
-
-EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
-{
-    for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; i++)
-    {
-        if (!rr_simulation_has_entity(this, i))
-        {
-            if (rr_bitset_get_bit(this->recently_deleted, i))
-                continue;
-            rr_bitset_set(this->entity_tracker, i);
-#ifndef NDEBUG
-            printf("created with id %d\n", i);
-#endif
-            return i;
-        }
-    }
-
-    RR_UNREACHABLE("ran out of entity ids");
-}
-
-struct rr_protocol_for_each_function_captures
-{
-    struct rr_simulation *simulation;
-    struct proto_bug *encoder;
-    struct rr_component_player_info *player_info;
-    uint8_t *entities_in_view;
-};
-
-void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
-{
-    EntityIdx id = _id;
-    struct rr_protocol_for_each_function_captures *captures = _captures;
-    struct rr_simulation *simulation = captures->simulation;
-    struct proto_bug *encoder = captures->encoder;
-    struct rr_component_player_info *player_info = captures->player_info;
-    uint8_t *new_entities_in_view = captures->entities_in_view;
-
-    proto_bug_write_varuint(encoder, id, "entity update id");
-
-    uint8_t is_creation = 0;
-
-    if (!rr_bitset_get_bit(player_info->entities_in_view, id))
-    {
-        is_creation = 1;
-        rr_bitset_set(player_info->entities_in_view, id);
-    }
-
-    uint32_t component_flags = 0;
-    if (is_creation)
-    {
-#define XX(COMPONENT, ID)                                                      \
-    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-        RR_FOR_EACH_COMPONENT;
-#undef XX
-    }
-    else
-    {
-#define XX(COMPONENT, ID)                                                      \
-    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-        RR_FOR_EACH_COMPONENT;
-#undef XX
-    }
-
-    proto_bug_write_varuint(encoder, component_flags, "entity component flags");
-#define XX(COMPONENT, ID)                                                      \
-    if (component_flags & (1 << ID))                                           \
-        rr_component_##COMPONENT##_write(                                      \
-            rr_simulation_get_##COMPONENT(simulation, id), encoder,            \
-            is_creation, player_info);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-}
-
-struct rr_simulation_find_entities_in_view_for_each_function_captures
-{
-    int32_t view_width;
-    int32_t view_height;
-    int32_t view_x;
-    int32_t view_y;
-    uint8_t *entities_in_view;
-    struct rr_component_player_info *player_info;
-    struct rr_simulation *simulation;
-};
-
-void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
-                                                           void *data)
-{
-    struct rr_simulation_find_entities_in_view_for_each_function_captures
-        *captures = data;
-    struct rr_simulation *simulation = captures->simulation;
-
-    if (!rr_simulation_has_entity(simulation, entity))
-        return;
-
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-
-    if (physical->x + physical->radius <
-            captures->view_x - captures->view_width ||
-        physical->x - physical->radius >
-            captures->view_x + captures->view_width ||
-        physical->y + physical->radius <
-            captures->view_y - captures->view_height ||
-        physical->y - physical->radius >
-            captures->view_y + captures->view_height)
-        return;
-
-    rr_bitset_set(captures->entities_in_view, entity);
-    return;
-}
-
-void rr_simulation_find_entities_in_view(
-    struct rr_simulation *this, struct rr_component_player_info *player_info,
-    uint8_t *entities_in_view)
-{
-    struct rr_simulation_find_entities_in_view_for_each_function_captures
-        captures;
-    memset(&captures, 0, sizeof captures);
-    captures.view_width = (int32_t)(1280.0f / player_info->camera_fov);
-    captures.view_height = (int32_t)(720.0f / player_info->camera_fov);
-    captures.view_x = (int32_t)player_info->camera_x;
-    captures.view_y = (int32_t)player_info->camera_y;
-    captures.entities_in_view = entities_in_view;
-    captures.player_info = player_info;
-    captures.simulation = this;
-
-    rr_bitset_set(entities_in_view, player_info->parent_id);
-    // don't add the player into the view if it is null (player died lmfao skill
-    // issue)
-    if (player_info->flower_id != RR_NULL_ENTITY)
-        rr_bitset_set(entities_in_view, player_info->flower_id);
-
-    rr_bitset_set(captures.entities_in_view, 1);
-    rr_simulation_for_each_physical(
-        this, &captures, rr_simulation_find_entities_in_view_for_each_function);
-}
-
-void rr_simulation_write_entity_deletions_function(uint64_t _id,
-                                                   void *_captures)
-{
-    EntityIdx id = _id;
-    struct rr_protocol_for_each_function_captures *captures = _captures;
-    struct rr_component_player_info *player_info = captures->player_info;
-    struct proto_bug *encoder = captures->encoder;
-    uint8_t *new_entities_in_view = captures->entities_in_view;
-
-    if (!rr_bitset_get_bit(new_entities_in_view, id))
-    {
-        // deletion spotted!
-        rr_bitset_unset(player_info->entities_in_view, id);
-        proto_bug_write_varuint(encoder, id, "entity deletion id");
-    }
-}
-
-void rr_simulation_write_binary(struct rr_simulation *this,
-                                struct proto_bug *encoder,
-                                struct rr_component_player_info *player_info)
-{
-    uint8_t new_entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    memset(new_entities_in_view, 0,
-           (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)) *
-               (sizeof *new_entities_in_view));
-
-    rr_simulation_find_entities_in_view(this, player_info,
-                                        &new_entities_in_view[0]);
-    for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
-        if (rr_bitset_get_bit(this->player_info_tracker, i))
-        {
-            rr_bitset_set(new_entities_in_view, i);
-            struct rr_component_player_info *p_info =
-                rr_simulation_get_player_info(this, i);
-            if (p_info->flower_id != RR_NULL_ENTITY)
-                rr_bitset_set(new_entities_in_view, p_info->flower_id);
-        }
-
-    struct rr_protocol_for_each_function_captures captures;
-    captures.simulation = this;
-    captures.encoder = encoder;
-    captures.player_info = player_info;
-    captures.entities_in_view = new_entities_in_view;
-
-    rr_bitset_for_each_bit(&player_info->entities_in_view[0],
-                           &player_info->entities_in_view[0] +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           &captures,
-                           rr_simulation_write_entity_deletions_function);
-    proto_bug_write_varuint(
-        encoder, RR_NULL_ENTITY,
-        "entity deletion id"); // null terminate deletion list
-
-    rr_bitset_for_each_bit(new_entities_in_view,
-                           new_entities_in_view +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           &captures, rr_simulation_write_entity_function);
-    proto_bug_write_varuint(encoder, RR_NULL_ENTITY,
-                            "entity update id"); // null terminate update list
-    proto_bug_write_varuint(encoder, player_info->parent_id,
-                            "pinfo id");         // send client's pinfo
-    proto_bug_write_uint8(encoder, this->game_over, "game over");
-}
-
-//#define RR_TIME_BLOCK(LABEL, CODE)                                                                 \
-    {                                                                                              \
-                                                                                                   \
-        struct timeval start;                                                                      \
-        struct timeval end;                                                                        \
-        gettimeofday(&start, NULL);                                                                \
-        CODE;                                                                                      \
-        gettimeofday(&end, NULL);                                                                  \
-        long elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
-        printf(LABEL " took \t\t\t%lu time\n", elapsed_time);                                      \
-    }
 #define RR_TIME_BLOCK(_, CODE)                                                 \
-    {                                                                          \
-        CODE;                                                                  \
-    };
+    { CODE; };
 
 static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
@@ -543,7 +148,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
     struct rr_vector central_position = find_position_away_from_players(this);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-    uint8_t id = get_id_from_wave(arena->wave);
+    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
     for (uint64_t i = 0; i < mob_count; ++i)
     {
         uint8_t rarity = get_rarity_from_wave(arena->wave);
@@ -573,7 +178,7 @@ static void spawn_mob_swarm(struct rr_simulation *this)
         struct rr_vector position = find_position_away_from_players(this);
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-        uint8_t id = get_id_from_wave(arena->wave);
+        uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
         uint8_t rarity = get_rarity_from_wave(arena->wave);
         if (!should_spawn_at(arena->wave, id, rarity))
             continue;
@@ -588,6 +193,8 @@ static void spawn_mob_swarm(struct rr_simulation *this)
         rr_component_physical_set_y(physical, position.y);
     }
 }
+
+#define SPECIAL_WAVE_COUNT 3
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -616,27 +223,16 @@ static void tick_wave(struct rr_simulation *this)
                  wave_length * 25 * (spawn_time + after_wave_time) ||
              arena->mob_count <= 10)
     {
-        printf("wave %d done\n", arena->wave);
         rr_component_arena_set_wave(arena, arena->wave + 1);
         arena->wave_tick = 0;
         this->wave_points = get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
+        if (rr_frand() > 0.2)
+            this->special_wave_id = 0;
+        else
+            this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
-}
-
-struct count_mob_captures
-{
-    struct rr_simulation *simulation;
-    uint64_t *count;
-};
-
-static void count_mobs(EntityIdx a, void *b)
-{
-    struct count_mob_captures *c = b;
-    struct rr_component_relations *r = rr_simulation_get_relations(c->simulation, a);
-    if (r->team != rr_simulation_team_id_players)
-        ++*c->count;
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
@@ -657,12 +253,8 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
     
-    struct count_mob_captures captures;
-    captures.simulation = this;
     if (!this->game_over)
-    {
        tick_wave(this);
-    }
     // delete pending deletions
     rr_bitset_for_each_bit(
         this->pending_deletions,

@@ -10,6 +10,7 @@
 #ifdef RR_SERVER
 #include <math.h>
 
+#include <Server/EntityAllocation.h>
 #include <Server/Simulation.h>
 #include <Shared/Utilities.h>
 #endif

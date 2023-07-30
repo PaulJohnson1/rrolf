@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include <Server/EntityAllocation.h>
 #include <Server/Simulation.h>
 
 #include <Shared/Entity.h>

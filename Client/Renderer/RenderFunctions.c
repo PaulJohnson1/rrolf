@@ -427,7 +427,7 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas)
         rr_renderer_rotate(renderer, 1.0f - M_PI / 4.0f);
-    if (count == 1)
+    if (count <= 1)
     {
         if (id == rr_petal_id_missile)
             rr_renderer_rotate(renderer, 1.0f);

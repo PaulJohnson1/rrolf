@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include <Server/EntityAllocation.h>
 #include <Server/Simulation.h>
 
 static void respawn_system_tick(EntityIdx entity, void *_captures)

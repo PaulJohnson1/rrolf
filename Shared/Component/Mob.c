@@ -10,6 +10,7 @@
 #include <Shared/Utilities.h>
 #include <math.h>
 
+#include <Server/EntityAllocation.h>
 #include <Server/Simulation.h>
 #include <Shared/StaticData.h>
 #endif

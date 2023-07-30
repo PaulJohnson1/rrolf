@@ -26,11 +26,13 @@ set(SRCS
     System/Velocity.c
     System/Web.c
     Main.c
+    EntityAllocation.c
     Client.c
     Logs.c
     Server.c
     Simulation.c
     SpatialHash.c
+    UpdateProtocol.c
     Waves.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c

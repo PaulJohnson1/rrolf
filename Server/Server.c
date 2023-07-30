@@ -9,8 +9,10 @@
 #include <libwebsockets.h>
 
 #include <Server/Client.h>
+#include <Server/EntityAllocation.h>
 #include <Server/Logs.h>
 #include <Server/Simulation.h>
+#include <Server/UpdateProtocol.h>
 #include <Server/Waves.h>
 #include <Shared/Api.h>
 #include <Shared/Bitset.h>
