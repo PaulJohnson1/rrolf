@@ -25,8 +25,8 @@ pub enum Error {
     InvalidCountFormat,
     InvalidPassword,
     InvalidJson,
-    InvalidReqwest,
-    InvalidReqwestResponse,
+    Invalidrequest,
+    InvalidrequestResponse,
     InvalidPetalsFormat,
     InsufficientFunds,
     AccountAlreadyExists,
@@ -42,8 +42,8 @@ impl fmt::Display for Error {
             Error::InvalidCountFormat => write!(f, "InvalidCountFormat"),
             Error::InvalidPassword => write!(f, "InvalidPassword"),
             Error::InvalidJson => write!(f, "InvalidJson"),
-            Error::InvalidReqwest => write!(f, "InvalidReqwest"),
-            Error::InvalidReqwestResponse => write!(f, "InvalidReqwestResponse"),
+            Error::Invalidrequest => write!(f, "Invalidrequest"),
+            Error::InvalidrequestResponse => write!(f, "InvalidrequestResponse"),
             Error::InvalidPetalsFormat => write!(f, "InvalidPetalsFormat"),
             Error::InsufficientFunds => write!(f, "InsufficientFunds"),
             Error::AccountAlreadyExists => write!(f, "AccountAlreadyExists"),
@@ -91,14 +91,14 @@ fn craft(count: i64, chance: f32) -> (i64, i64) {
 
 async fn make_request(
     url: &str,
-    method: reqwest::Method,
+    method: request::Method,
     body: Option<String>,
 ) -> Result<serde_json::Value> {
     match &body {
         Some(x) => println!("{} /{}\n{}", url, method.to_string(), x.clone()),
         None => println!("{} /{}\nno body", url, method.to_string()),
     };
-    let client = reqwest::Client::new();
+    let client = request::Client::new();
     let mut request = client
         .request(method, url)
         .header("Authorization", format!("Bearer {CLOUD_TOKEN}"));
@@ -107,11 +107,11 @@ async fn make_request(
         request = request.body(body);
     }
 
-    let response = request.send().await.map_err(|_| Error::InvalidReqwest)?;
+    let response = request.send().await.map_err(|_| Error::Invalidrequest)?;
     let text = response
         .text()
         .await
-        .map_err(|_| Error::InvalidReqwestResponse)?;
+        .map_err(|_| Error::InvalidrequestResponse)?;
     let value: serde_json::Value = serde_json::from_str(&text).map_err(|_| Error::InvalidJson)?;
 
     Ok(value)
@@ -128,7 +128,7 @@ struct DatabaseAccount {
 #[async_recursion]
 async fn user_get(username: &String, password: &String) -> Result<DatabaseAccount> {
     let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
-    let a = make_request(&url, reqwest::Method::GET, None).await?;
+    let a = make_request(&url, request::Method::GET, None).await?;
 
     if a["value"].is_null() {
         if password == SERVER_SECRET {
@@ -152,7 +152,7 @@ async fn user_get(username: &String, password: &String) -> Result<DatabaseAccoun
 async fn user_exists(username: &String) -> Result<bool> {
     let data = make_request(
         &format!("{}/game/players/{}", DIRECTORY_SECRET, username),
-        reqwest::Method::GET,
+        request::Method::GET,
         None,
     )
     .await?;
@@ -181,7 +181,7 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
     });
     make_request(
         &url,
-        reqwest::Method::PUT,
+        request::Method::PUT,
         Some(serde_json::to_string(&request_json).map_err(|_| Error::InvalidJson)?),
     )
     .await?;
@@ -218,7 +218,7 @@ async fn user_merge_petals(username: &String, petals: &Vec<Petal>) -> Result<()>
     });
     make_request(
         &url,
-        reqwest::Method::PUT,
+        request::Method::PUT,
         Some(serde_json::to_string(&request_json).map_err(|_| Error::InvalidJson)?),
     )
     .await?;
