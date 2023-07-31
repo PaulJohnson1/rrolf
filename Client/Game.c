@@ -770,6 +770,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
+    rr_renderer_reset_instruction_queue();
     validate_loadout(this);
 
     rr_local_storage_store_bytes(
@@ -797,7 +798,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
-    // render off-game elements
 
     if (this->simulation_ready)
     {
@@ -1030,7 +1030,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     rr_renderer_context_state_free(this->renderer, &grand_state);
 
     rr_renderer_execute_instructions();
-    rr_renderer_reset_instruction_queue();
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
