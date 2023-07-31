@@ -55,7 +55,7 @@ void rr_api_on_get_petals(char *json, void *a)
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             game->inventory[id][rarity] = 0;
-    
+
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -125,7 +125,8 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
     return game->socket_ready;
 }
 
-static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     return game->socket_pending || game->socket_ready;
 }
@@ -456,21 +457,23 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "c encryption key");
             this->socket.serverbound_encryption_key =
                 proto_bug_read_uint64(&encoder, "s encryption key");
+
+            // respond
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, &output_packet[0]);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            uint64_t token_size = strlen(this->socket.rivet_player_token);
-            uint64_t uuid_size = strlen(this->socket.uuid);
+            uint64_t token_size = strlen(this->rivet_account.token);
+            uint64_t uuid_size = strlen(this->rivet_account.uuid);
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
             proto_bug_write_string(&verify_encoder,
-                                   this->socket.rivet_player_token, token_size,
+                                   this->rivet_account.token, token_size,
                                    "rivet token");
-            proto_bug_write_string(&verify_encoder, this->socket.uuid,
+            proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
             rr_websocket_send(&this->socket, verify_encoder.start,
                               verify_encoder.current);
@@ -538,7 +541,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
-                proto_bug_read_string(&encoder, &this->squad_members[i].name[0], length, "nick");
+                proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
+                                      length, "nick");
                 this->squad_members[i].name[length] = 0;
                 for (uint32_t j = 0; j < 20; ++j)
                 {
@@ -556,10 +560,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 if (this->protocol_state & (1 << i))
                 {
                     proto_bug_write_uint8(&encoder2, i + 1, "pos");
+                    proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
+                                          "id");
                     proto_bug_write_uint8(&encoder2,
-                                          this->cache.loadout[i].id, "id");
-                    proto_bug_write_uint8(
-                        &encoder2, this->cache.loadout[i].rarity, "rar");
+                                          this->cache.loadout[i].rarity, "rar");
                 }
                 if (this->protocol_state & (1 << (i + 10)))
                 {
@@ -570,14 +574,15 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         &encoder2, this->cache.loadout[i + 10].rarity, "rar");
                 }
             }
-            //write nickname
+            // write nickname
             proto_bug_write_uint8(&encoder2, 0, "pos");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 71, "header");
             uint32_t len = strlen(&this->cache.nickname[0]);
             proto_bug_write_varuint(&encoder2, len, "nick length");
-            proto_bug_write_string(&encoder2, &this->cache.nickname[0], len, "nick");
+            proto_bug_write_string(&encoder2, &this->cache.nickname[0], len,
+                                   "nick");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
             this->protocol_state = 0;
             break;
@@ -789,9 +794,12 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.use_mouse);
     rr_local_storage_store_bytes("nickname", &this->cache.nickname,
                                  strlen(&this->cache.nickname[0]));
-    
-    rr_local_storage_store_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
-    rr_local_storage_store_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
+
+    rr_local_storage_store_id_rarity("inventory", &this->inventory[0][0],
+                                     rr_petal_id_max, rr_rarity_id_max);
+    rr_local_storage_store_id_rarity("mob gallery",
+                                     &this->cache.mob_kills[0][0],
+                                     rr_mob_id_max, rr_rarity_id_max);
 
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
@@ -858,8 +866,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
 
-            render_background(player_info, this,
-                              this->cache.map_props * 750);
+            render_background(player_info, this, this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
 
@@ -868,7 +875,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_simulation_for_each_drop(this->simulation, this,
                                         render_drop_component);
             rr_simulation_for_each_web(this->simulation, this,
-                                          render_web_component);
+                                       render_web_component);
             rr_simulation_for_each_mob(this->simulation, this,
                                        render_mob_component);
             rr_simulation_for_each_petal(this->simulation, this,
@@ -884,17 +891,16 @@ void rr_game_tick(struct rr_game *this, float delta)
         struct rr_component_player_info custom_player_info;
         rr_component_player_info_init(&custom_player_info, 0);
         custom_player_info.lerp_camera_fov = 0.9;
-        uint32_t alpha = (uint32_t)(0.9 * 51)
-                             << 24;
+        uint32_t alpha = (uint32_t)(0.9 * 51) << 24;
         struct rr_renderer_context_state state;
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
         rr_renderer_set_fill(this->renderer, 0xff45230a);
         rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
-                                this->renderer->height);
+                              this->renderer->height);
         rr_renderer_set_fill(this->renderer, alpha);
         rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
-                                this->renderer->height);
+                              this->renderer->height);
         rr_renderer_context_state_free(this->renderer, &state);
         rr_renderer_context_state_init(this->renderer, &state);
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
@@ -963,17 +969,22 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 2, "header");
             uint8_t should_write = 0;
-            uint8_t switch_all = rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
+            uint8_t switch_all = rr_bitset_get_bit(
+                this->input_data->keys_pressed_this_tick, 'X');
             for (uint8_t n = 0; n < this->cache.slots_unlocked; ++n)
-                if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 48 + n) || switch_all)
+                if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                                      48 + n) ||
+                    switch_all)
                 {
-                    proto_bug_write_uint8(&encoder, n == 0 ? 10 : n, "petal switch");
+                    proto_bug_write_uint8(&encoder, n == 0 ? 10 : n,
+                                          "petal switch");
                     should_write = 1;
                 }
             if (should_write)
             {
                 proto_bug_write_uint8(&encoder, 0, "petal switch");
-                rr_websocket_send(&this->socket, encoder.start, encoder.current);
+                rr_websocket_send(&this->socket, encoder.start,
+                                  encoder.current);
             }
         }
     }
@@ -997,7 +1008,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         long tick_max = 0;
         long frame_sum = 0;
         long frame_max = 0;
-        for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i) 
+        for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i)
         {
             long t_t = this->debug_info.tick_times[i];
             long f_t = this->debug_info.frame_times[i];
@@ -1012,16 +1023,12 @@ void rr_game_tick(struct rr_game *this, float delta)
         debug_mspt[sprintf(
             debug_mspt,
             "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
-            tick_sum * 0.001f /
-                RR_DEBUG_POLL_SIZE,
-            tick_max * 0.001f,
-            frame_sum * 0.001f /
-                RR_DEBUG_POLL_SIZE,
-            frame_max * 0.001f)] = 0;
+            tick_sum * 0.001f / RR_DEBUG_POLL_SIZE, tick_max * 0.001f,
+            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f)] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        debug_mspt[sprintf(
-            debug_mspt, "ctx calls: %d", rr_renderer_get_op_size())] = 0;
+        debug_mspt[sprintf(debug_mspt, "ctx calls: %d",
+                           rr_renderer_get_op_size())] = 0;
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, -15);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, -15);
         rr_renderer_context_state_free(this->renderer, &state);
@@ -1038,11 +1045,13 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     this->debug_info.tick_times[this->debug_info.frame_pos] = time_elapsed;
     this->debug_info.frame_times[this->debug_info.frame_pos] = frame_time;
-    this->debug_info.frame_pos = (this->debug_info.frame_pos + 1) % RR_DEBUG_POLL_SIZE;
+    this->debug_info.frame_pos =
+        (this->debug_info.frame_pos + 1) % RR_DEBUG_POLL_SIZE;
 
     memset(this->input_data->keys_pressed_this_tick, 0, RR_BITSET_ROUND(256));
     memset(this->input_data->keys_released_this_tick, 0, RR_BITSET_ROUND(256));
-    memset(this->input_data->keycodes_pressed_this_tick, 0, RR_BITSET_ROUND(256));
+    memset(this->input_data->keycodes_pressed_this_tick, 0,
+           RR_BITSET_ROUND(256));
     this->input_data->mouse_buttons_up_this_tick = 0;
     this->input_data->mouse_buttons_down_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
@@ -1092,7 +1101,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     game->rivet_lobby_pending = 0;
     if (port == 0 || s == NULL || token == NULL)
     {
-        //error;
+        // error;
         game->socket_pending = 0;
         game->socket_ready = 0;
         return;
@@ -1107,6 +1116,6 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     free(s);
     // captures->socket->rivet_player_token = strdup(token);
     // free(token);
-    game->socket.rivet_player_token = token;
-    game->socket.uuid = game->rivet_account.uuid;
+    // game->socket.rivet_player_token = token;
+    // game->socket.uuid = game->rivet_account.uuid;
 }
