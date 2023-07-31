@@ -5,9 +5,11 @@
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #else
-#include <cairo/cairo.h>
+// todo: skia
 #endif
 
+// reason this is here is because this header is also included in the native.cc
+// file and in the wasm.c file for the target specific function implementations.
 #ifdef __cplusplus
 extern "C"
 {
@@ -37,16 +39,16 @@ struct rr_renderer_context_state
 struct rr_renderer
 {
 #ifndef EMSCRIPTEN
-    cairo_t *context;
-    cairo_surface_t *surface;
+    // todo: skia
 #else
-    uint32_t context_id;
+uint32_t context_id;
 #endif
+    struct rr_renderer_context_state state;
     float width;
     float height;
     float scale;
 
-    struct rr_renderer_context_state state;
+    uint8_t matrix_moddified;
 };
 
 void rr_renderer_init(struct rr_renderer *);

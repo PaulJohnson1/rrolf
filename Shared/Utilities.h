@@ -4,9 +4,8 @@
 #include <stdio.h>
 
 #ifndef NDEBUG
-#define RR_UNREACHABLE(MESSAGE)                                                \
-    assert(!MESSAGE);                                               \
-    abort()
+#include <assert.h>
+#define RR_UNREACHABLE(MESSAGE) assert(!MESSAGE)
 #else
 #define RR_UNREACHABLE(MESSAGE) __builtin_unreachable()
 #endif
