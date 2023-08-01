@@ -1113,8 +1113,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     else
         rr_websocket_connect_to(&game->socket, s, port, 0);
     free(s);
-    captures->socket->rivet_player_token = strdup(token);
+    // captures->socket->rivet_player_token = strdup(token);
     // free(token);
-    game->socket.rivet_player_token = token;
+    game->socket.rivet_player_token = strdup(token);
     // game->socket.uuid = game->rivet_account.uuid;
 }
