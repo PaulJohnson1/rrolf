@@ -48,6 +48,11 @@ void rr_api_on_get_petals(char *json, void *_client)
             fprintf(stderr, "Error before: %s\n", error_ptr);
         return;
     }
+    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
+    if (max_wave == NULL)
+        client->max_wave = 100000;
+    else
+        client->max_wave = max_wave->valueint;
 
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
     if (petals == NULL || !cJSON_IsObject(petals))
@@ -70,7 +75,7 @@ void rr_api_on_get_petals(char *json, void *_client)
             int index2 = atoi(sub_key2);
 
             inventory[index1][index2] =
-                petal_key->valueint; // Assuming the value is a double.
+                petal_key->valueint; // Assuming the value is an int.
         }
     }
 
@@ -113,15 +118,15 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
             this->loadout[i].rarity;
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        if (arena->wave < rarity * 4)
-            arena->wave = rarity * 4;
+        //if (arena->wave < rarity * 4)
+            //arena->wave = rarity * 4;
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity;
-        if (arena->wave < rarity * 4)
-            arena->wave = rarity * 4;
+        //if (arena->wave < rarity * 4)
+            //arena->wave = rarity * 4;
     }
     // rr_server_client_create_flower(this);
 }
@@ -219,9 +224,6 @@ void rr_server_client_tick(struct rr_server_client *this)
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
 {
-    if (rr_simulation_has_health(_captures, entity))
-        rr_component_health_set_health(
-            rr_simulation_get_health(_captures, entity), 0);
     rr_simulation_request_entity_deletion(_captures, entity);
 }
 
@@ -687,6 +689,7 @@ void rr_server_tick(struct rr_server *this)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
+                uint32_t min_wave_spawn = 5555555; //ez
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
@@ -696,9 +699,13 @@ void rr_server_tick(struct rr_server *this)
                         rr_server_client_create_player_info(this->clients + i,
                                                             i);
                         rr_server_client_create_flower(this->clients + i);
+                        if (min_wave_spawn > this->clients[i].max_wave)
+                            min_wave_spawn = this->clients[i].max_wave;
                     }
+                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                rr_component_arena_set_wave(arena, min_wave_spawn * 3 / 4 + 1);
                 this->simulation.wave_points = get_points_from_wave(
-                    rr_simulation_get_arena(&this->simulation, 1)->wave,
+                    arena->wave,
                     client_count);
             }
         }

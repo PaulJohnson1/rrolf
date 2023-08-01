@@ -13,6 +13,7 @@
 #include <Server/Logs.h>
 #include <Server/Server.h>
 #include <Shared/Api.h>
+#include <Shared/MagicNumber.h>
 #include <Shared/Rivet.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
@@ -21,6 +22,7 @@ void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()
 {
+    printf("server on version %llu\n", RR_SECRET8 ^ 255);
     srand(time(0));
     // signal(SIGINT, sigint_handle);
 #ifdef RIVET_BUILD
