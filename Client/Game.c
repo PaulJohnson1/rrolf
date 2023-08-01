@@ -542,7 +542,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "ready");
                 this->squad_members[i].requested_start_wave_percent =
                     proto_bug_read_float32(&encoder,
-                                           "requested start wave percent");
+                                           "requested start wave percent") / 0.75;
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
                                       length, "nick");
@@ -558,15 +558,19 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            proto_bug_write_float32(&encoder2, this->cache.wave_start_percent,
+            proto_bug_write_float32(&encoder2, this->cache.wave_start_percent * 0.75,
                                     "requested wave");
-            proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked * 2,
+            proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
                                   "loadout count");
-            for (uint32_t i = 0; i < this->cache.slots_unlocked * 2; ++i)
+            for (uint32_t i = 0; i < this->cache.slots_unlocked ; ++i)
             {
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
                                       "id");
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i].rarity,
+                                      "rarity");
+                proto_bug_write_uint8(&encoder2, this->cache.loadout[i + 10].id,
+                                      "id");
+                proto_bug_write_uint8(&encoder2, this->cache.loadout[i + 10].rarity,
                                       "rarity");
             }
             // write nickname

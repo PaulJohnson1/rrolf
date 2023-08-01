@@ -560,14 +560,14 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             float requested_start_wave =
                 proto_bug_read_float32(&encoder, "requested wave");
-            if (requested_start_wave > 0.7)
+            if (requested_start_wave > 0.75)
                 break;
             client->requested_start_wave_percent = requested_start_wave;
 
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 
-            if (loadout_count > 20)
+            if (loadout_count > 10)
                 break;
 
             for (uint8_t i = 0; i < loadout_count; i++)
@@ -580,6 +580,14 @@ int rr_server_lws_callback_function(struct lws *socket,
                     break;
                 client->loadout[i].rarity = rarity;
                 client->loadout[i].id = id;
+                id = proto_bug_read_uint8(&encoder, "id");
+                rarity = proto_bug_read_uint8(&encoder, "rarity");
+                if (id > rr_petal_id_max)
+                    break;
+                if (rarity > rr_rarity_id_max)
+                    break;
+                client->loadout[i + 10].rarity = rarity;
+                client->loadout[i + 10].id = id;
             }
 
             break;

@@ -9,8 +9,6 @@
 static void rivet_container_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
-    if (game->pressed != this)
-        return;
     if (!(game->input_data->mouse_buttons & 1))
         rr_ui_render_tooltip_below(this, game->rivet_info_tooltip, game);
 }
