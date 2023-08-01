@@ -344,7 +344,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             client->received_first_packet = 1;
             if (size < 16)
             {
-                fputs("skid gaming1", stderr);
+                fputs("skid gaming1\n", stderr);
                 lws_close_reason(
                     socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */,
                     (uint8_t *)"script kiddie1", sizeof "script kiddie");
@@ -356,7 +356,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                 proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
-                fputs("skid gaming2", stderr);
+                fputs("skid gaming2\n", stderr);
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
                                  (uint8_t *)"script kiddie2",
                                  sizeof "script kiddie");
@@ -374,7 +374,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             {
                 printf("%lu %lu\n", size,
                        encountered_size + uuid_encountered_size);
-                fputs("skid gaming3", stderr); // invalid size
+                fputs("skid gaming3\n", stderr); // invalid size
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
                                  (uint8_t *)"script kiddie3",
                                  sizeof "script kiddie");
@@ -399,12 +399,12 @@ int rr_server_lws_callback_function(struct lws *socket,
 
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
-                   this->clients[i].rivet_account_token);
+                   this->clients[i].rivet_account.token);
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_account.token))
             {
-                fputs("skid gaming4", stderr);
+                fputs("skid gaming4\n", stderr);
                 lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
                                  (uint8_t *)"script kiddie4",
                                  sizeof "script kiddie");
