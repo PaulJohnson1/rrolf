@@ -398,6 +398,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                                   uuid_encountered_size, "rivet uuid");
 
 #ifdef RIVET_BUILD
+            printf("client connecting with token: %s\n",
+                   this->clients[i].rivet_account_token);
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_account.token))
@@ -722,7 +724,9 @@ void rr_server_tick(struct rr_server *this)
 
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
-                rr_component_arena_set_wave(arena, (uint32_t)((float)min_wave_spawn * start_wave_mean) + 1);
+                rr_component_arena_set_wave(
+                    arena,
+                    (uint32_t)((float)min_wave_spawn * start_wave_mean) + 1);
                 this->simulation.wave_points =
                     get_points_from_wave(arena->wave, client_count);
             }
