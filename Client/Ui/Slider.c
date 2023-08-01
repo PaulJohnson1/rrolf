@@ -38,7 +38,7 @@ static void h_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
     if (rr_ui_mouse_over(this, game) &&
         game->input_data->mouse_buttons_down_this_tick & 1)
     {
-        data->dragging = 1;
+        data->dragging = !!this->stop_event_propagation;
     }
     else if (game->input_data->mouse_buttons_up_this_tick & 1 && data->dragging)
     {
@@ -56,7 +56,7 @@ static void h_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
 }
 
 struct rr_ui_element *rr_ui_h_slider_init(float width, float height,
-                                          float *value)
+                                          float *value, uint8_t allow_input)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct rr_ui_slider_metadata *data = malloc(sizeof *data);
@@ -66,6 +66,7 @@ struct rr_ui_element *rr_ui_h_slider_init(float width, float height,
     this->abs_width = this->width = width;
     this->abs_height = this->height = height;
     this->on_render = h_slider_on_render;
+    this->stop_event_propagation = !!allow_input;
     this->fill = 0xff555555;
     return this;
 }

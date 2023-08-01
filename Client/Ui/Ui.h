@@ -120,7 +120,7 @@ struct rr_ui_element *rr_ui_choose_element_init(
 
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
-struct rr_ui_element *rr_ui_h_slider_init(float, float, float *);
+struct rr_ui_element *rr_ui_h_slider_init(float, float, float *, uint8_t);
 struct rr_ui_element *rr_ui_v_slider_init(float, float, float *);
 
 struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t);
