@@ -33,7 +33,6 @@ static void loadout_button_on_event(struct rr_ui_element *this,
     {
         game->cache.loadout[data->pos].id = 0;
         game->cache.loadout[data->pos].rarity = 0;
-        game->protocol_state |= 1 << data->pos;
     }
     else
     {

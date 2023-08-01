@@ -35,7 +35,6 @@ static void inventory_button_on_event(struct rr_ui_element *this,
             {
                 game->cache.loadout[i].id = data->id;
                 game->cache.loadout[i].rarity = data->rarity;
-                game->protocol_state |= 1 << i;
                 return;
             }
         }
@@ -45,7 +44,6 @@ static void inventory_button_on_event(struct rr_ui_element *this,
             {
                 game->cache.loadout[i].id = data->id;
                 game->cache.loadout[i].rarity = data->rarity;
-                game->protocol_state |= 1 << i;
                 return;
             }
         }

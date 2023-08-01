@@ -147,8 +147,6 @@ void rr_game_init(struct rr_game *this)
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
     this->cache.slots_unlocked = 10;
-    for (uint8_t i = 0; i < this->cache.slots_unlocked; ++i)
-        this->protocol_state |= ((1 | (1 << 10)) << i);
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 
@@ -581,7 +579,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_string(&encoder2, &this->cache.nickname[0], len,
                                    "nick");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
-            this->protocol_state = 0;
             break;
         }
         default:
@@ -1061,8 +1058,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 void rr_game_connect_socket(struct rr_game *this)
 {
     memset(this->simulation, 0, sizeof *this->simulation);
-    for (uint8_t i = 0; i < this->cache.slots_unlocked; ++i)
-        this->protocol_state |= ((1 | (1 << 10)) << i);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     rr_websocket_init(&this->socket);
