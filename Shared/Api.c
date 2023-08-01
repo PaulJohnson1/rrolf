@@ -68,7 +68,6 @@ void rr_api_merge_petals(char const *id, char const *petals)
 #ifndef EMSCRIPTEN
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    printf("merging %p into %p\n", petals, id);
     printf("merging %s into %s\n", petals, id);
     snprintf(url, sizeof(url),
              "https://rrolf.io/api/user_merge_petals/%s/%s/%s", RR_API_SECRET,
