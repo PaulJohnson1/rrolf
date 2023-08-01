@@ -14,6 +14,8 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
+#define PETALS_PER_CRAFT 5
+
 struct crafting_ring_metadata
 {
     float angle;
@@ -93,7 +95,7 @@ static void craft_button_on_event(struct rr_ui_element *this,
     if (game->input_data->mouse_buttons_up_this_tick & 1 && game->crafting_data.animation == 0)
     {
         if (game->crafting_data.success_count == 0 &&
-            game->crafting_data.count >= 5 &&
+            game->crafting_data.count >= PETALS_PER_CRAFT &&
             game->crafting_data.crafting_id != 0 &&
             game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
         {
@@ -160,7 +162,7 @@ static void crafting_ring_petal_animate(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
     struct crafting_ring_button_metadata *data = this->data;
-    data->count = (game->crafting_data.count + data->pos) / 5;
+    data->count = (game->crafting_data.count + data->pos) / PETALS_PER_CRAFT;
     if (this->first_frame)
         data->secondary_animation = data->count == 0;
     data->secondary_animation = rr_lerp(
@@ -254,11 +256,8 @@ static struct rr_ui_element *crafting_ring_init()
     this->abs_width = this->width = 300;
     this->abs_height = this->height = 300;
     this->on_render = crafting_ring_on_render;
-    rr_ui_container_add_element(this, crafting_ring_petal_init(0));
-    rr_ui_container_add_element(this, crafting_ring_petal_init(1));
-    rr_ui_container_add_element(this, crafting_ring_petal_init(2));
-    rr_ui_container_add_element(this, crafting_ring_petal_init(3));
-    rr_ui_container_add_element(this, crafting_ring_petal_init(4));
+    for (uint32_t i = 0; i < PETALS_PER_CRAFT; ++i)
+        rr_ui_container_add_element(this, crafting_ring_petal_init(i));
     this->poll_events = rr_ui_container_poll_events;
     this->should_show = crafting_ring_should_show;
     return this;
@@ -317,6 +316,46 @@ static struct rr_ui_element *crafting_button_init()
     return this;
 }
 
+static void crafting_chance_text_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_text_metadata *data = this->data;
+    if (game->crafting_data.crafting_id == 0)
+    {
+        data->text = "Chance: --%";
+        this->fill = 0xff888888;
+        return;
+    }
+    this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
+    switch(game->crafting_data.crafting_rarity)
+    {
+        case rr_rarity_id_common:
+            data->text = "Chance: 50%";
+            break;
+        case rr_rarity_id_unusual:
+            data->text = "Chance: 30%";
+            break;
+        case rr_rarity_id_rare:
+            data->text = "Chance: 15%";
+            break;
+        case rr_rarity_id_epic:
+            data->text = "Chance: 5%";
+            break;
+        case rr_rarity_id_legendary:
+            data->text = "Chance: 3%";
+            break;
+        case rr_rarity_id_mythic:
+            data->text = "Chance: 1%";
+            break;
+    }
+}
+
+static struct rr_ui_element *crafting_chance_text_init()
+{
+    struct rr_ui_element *this = rr_ui_text_init("Chance: --%", 14, 0xff888888);
+    this->animate = crafting_chance_text_animate;
+    return this;
+}
+
 static void crafting_inventory_button_animate(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
@@ -361,7 +400,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
     struct crafting_inventory_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
     {
-        if (game->inventory[data->id][data->rarity] < 5 ||
+        if (game->inventory[data->id][data->rarity] < PETALS_PER_CRAFT ||
             game->crafting_data.success_count > 0 ||
             data->rarity == rr_rarity_id_ultra)
             return;
@@ -375,8 +414,8 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
         }
         if (rr_bitset_get(game->input_data->keys_pressed, 16))
             game->crafting_data.count += data->count;
-        else if (data->count > 5)
-            game->crafting_data.count += 5;
+        else if (data->count > PETALS_PER_CRAFT)
+            game->crafting_data.count += PETALS_PER_CRAFT;
         else
             game->crafting_data.count += data->count;
     }
@@ -469,7 +508,14 @@ struct rr_ui_element *rr_ui_crafting_container_init()
                     rr_ui_container_init(), 10, 10,
                     rr_ui_text_init("Crafting", 24, 0xffffffff),
                     rr_ui_h_container_init(rr_ui_container_init(), 0, 25,
-                                           crafting_button_init(), craft, NULL),
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
+                            rr_ui_text_init("Chance: --%", 14, 0x00000000),
+                            crafting_button_init(), 
+                            crafting_chance_text_init(),
+                            NULL
+                        ),
+                        craft, 
+                    NULL),
                     rr_ui_scroll_container_init(this, 300),
                     NULL),
                 -1, 1),

@@ -11,7 +11,7 @@ static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     if (this->fill == 0x0000000)
         return;
-    struct text_metadata *data = this->data;
+    struct rr_ui_text_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     this->abs_width = this->width =
@@ -29,7 +29,7 @@ static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 static void dynamic_text_on_render(struct rr_ui_element *this,
                                    struct rr_game *game)
 {
-    struct dynamic_text_metadata *data = this->data;
+    struct rr_ui_dynamic_text_metadata *data = this->data;
     data->get_text(this, game);
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
@@ -49,7 +49,7 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
                                       uint32_t fill)
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    struct text_metadata *data = malloc(sizeof *data);
+    struct rr_ui_text_metadata *data = malloc(sizeof *data);
     this->abs_height = this->height = size;
     this->abs_width = this->width =
         rr_renderer_get_text_size(text) * this->height;
@@ -66,7 +66,7 @@ struct rr_ui_element *rr_ui_dynamic_text_init(
     void (*get_text)(struct rr_ui_element *, struct rr_game *))
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    struct dynamic_text_metadata *data = malloc(sizeof *data);
+    struct rr_ui_dynamic_text_metadata *data = malloc(sizeof *data);
     this->abs_height = this->height = size;
     this->abs_width = this->width = 50;
     this->fill = fill;
