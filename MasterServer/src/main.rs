@@ -8,7 +8,7 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-type Petal = (u64, u64, i64);
+type IdRarityCount = (u64, u64, i64);
 
 type Result<T> = std::result::Result<T, Error>;
 
@@ -29,6 +29,7 @@ pub enum Error {
     InvalidReqwestResponse,
     InvalidPetalsFormat,
     InsufficientFunds,
+    FailedParse,
     AccountAlreadyExists,
     AccountDoesNotExist,
 }
@@ -45,6 +46,7 @@ impl fmt::Display for Error {
             Error::InvalidReqwest => write!(f, "InvalidReqwest"),
             Error::InvalidReqwestResponse => write!(f, "InvalidReqwestResponse"),
             Error::InvalidPetalsFormat => write!(f, "InvalidPetalsFormat"),
+            Error::FailedParse => write!(f, "FailedParse"),
             Error::InsufficientFunds => write!(f, "InsufficientFunds"),
             Error::AccountAlreadyExists => write!(f, "AccountAlreadyExists"),
             Error::AccountDoesNotExist => write!(f, "AccountDoesNotExist"),
@@ -126,7 +128,7 @@ struct DatabaseAccount {
     pub is_online: bool,
     pub petals: serde_json::Value,
     pub petal_crafts: serde_json::Value,
-    pub mob_gallery: serde_json::Value
+    pub mob_gallery: serde_json::Value,
 }
 
 async fn user_fix_account(username: &String) -> Result<()> {
@@ -140,10 +142,7 @@ async fn user_fix_account(username: &String) -> Result<()> {
     let original = &original["value"];
 
     let mut modded: serde_json::Map<String, serde_json::Value> =
-        original.clone()
-        .as_object()
-        .unwrap()
-        .clone();
+        original.clone().as_object().unwrap().clone();
 
     let default_account = DatabaseAccount {
         password: String::from(""),
@@ -153,10 +152,14 @@ async fn user_fix_account(username: &String) -> Result<()> {
         is_online: false,
         petals: json!({}),
         petal_crafts: json!({}),
-        mob_gallery: json!({})
+        mob_gallery: json!({}),
     };
 
-    for (k, v) in serde_json::to_value(default_account).map_err(|_| Error::InvalidJson)?.as_object().unwrap() {
+    for (k, v) in serde_json::to_value(default_account)
+        .map_err(|_| Error::InvalidJson)?
+        .as_object()
+        .unwrap()
+    {
         if !modded.contains_key(k) {
             modded.insert(k.clone(), v.clone());
         }
@@ -195,8 +198,7 @@ async fn user_get(username: &String, password: &String) -> Result<DatabaseAccoun
         return user_get(username, password).await;
     }
 
-    let b: DatabaseAccount =
-        serde_json::from_str(&a["value"].to_string()).unwrap();
+    let b: DatabaseAccount = serde_json::from_str(&a["value"].to_string()).unwrap();
 
     if password != SERVER_SECRET && b.password != password.as_str() {
         return Err(Error::InvalidPassword);
@@ -231,7 +233,7 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
         mob_gallery: json!({}),
         is_online: false,
         maximum_wave: 1,
-        xp: 0.0
+        xp: 0.0,
     };
     let request_json = serde_json::json!({
         "key": format!("{}/game/players/{}", DIRECTORY_SECRET, username),
@@ -247,7 +249,7 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
     Ok(())
 }
 
-async fn user_merge_petals(username: &String, petals: &Vec<Petal>) -> Result<()> {
+async fn user_merge_petals(username: &String, petals: &Vec<IdRarityCount>) -> Result<()> {
     let mut user: DatabaseAccount = user_get(username, &SERVER_SECRET.to_string()).await?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
@@ -285,10 +287,74 @@ async fn user_merge_petals(username: &String, petals: &Vec<Petal>) -> Result<()>
     Ok(())
 }
 
+async fn user_on_close(
+    username: &String,
+    petals: &Vec<IdRarityCount>,
+    wave: u32,
+    gallery: &Vec<IdRarityCount>,
+) -> Result<()> {
+    let mut user: DatabaseAccount = user_get(username, &SERVER_SECRET.to_string()).await?;
+
+    let mut petal_counts: BTreeMap<String, serde_json::Value> =
+        serde_json::from_value(user.petals).map_err(|_| Error::FailedParse)?;
+    let mut gallery_counts: BTreeMap<String, serde_json::Value> =
+        serde_json::from_value(user.mob_gallery).map_err(|_| Error::FailedParse)?;
+
+    for petal in petals {
+        let key = format!("{}:{}", petal.0, petal.1);
+        let count = petal.2;
+        let entry = petal_counts
+            .entry(key)
+            .or_insert_with(|| serde_json::Value::Number(0.into()));
+
+        if let Some(value) = entry.as_i64() {
+            *entry = json!(value + count);
+        } else {
+            return Err(Error::InvalidCountFormat);
+        }
+    }
+
+    for e in gallery {
+        let key = format!("{}:{}", e.0, e.1);
+        let count = e.2;
+        let entry = gallery_counts
+            .entry(key)
+            .or_insert_with(|| serde_json::Value::Number(0.into()));
+
+        if let Some(value) = entry.as_i64() {
+            *entry = json!(value + count);
+        } else {
+            return Err(Error::InvalidCountFormat);
+        }
+    }
+
+    user.petals = serde_json::to_value(&petal_counts).map_err(|_| Error::InvalidJson)?;
+    user.mob_gallery = serde_json::to_value(&gallery_counts).map_err(|_| Error::InvalidJson)?;
+
+    if wave > user.maximum_wave {
+        user.maximum_wave = wave;
+    }
+
+    let url = rivet_url(NAMESPACE_ID);
+    let request_json = serde_json::json!({
+        "key":serde_json::value::to_value(format!("{}/game/players/{}", DIRECTORY_SECRET, username)).unwrap(),
+        "namespace_id": NAMESPACE_ID.to_string(),
+        "value": user
+    });
+    make_request(
+        &url,
+        reqwest::Method::PUT,
+        Some(serde_json::to_string(&request_json).map_err(|_| Error::InvalidJson)?),
+    )
+    .await?;
+
+    Ok(())
+}
+
 async fn user_craft_petals(
     username: &String,
     password: &String,
-    petals: &mut Vec<Petal>,
+    petals: &mut Vec<IdRarityCount>,
 ) -> Result<String> {
     // Check if each petal has enough quantity
     for petal in petals.iter() {
@@ -344,7 +410,7 @@ async fn user_craft_petals(
     Ok(results.join(","))
 }
 
-fn parse_petals_string(petals_string: &str) -> Result<Vec<Petal>> {
+fn parse_petals_string(petals_string: &str) -> Result<Vec<IdRarityCount>> {
     let mut petals = vec![];
     for entry in petals_string.split(",") {
         let parts: Vec<&str> = entry.split(":").collect();
@@ -393,9 +459,9 @@ async fn user_fix_req(uri: web::Path<String>) -> ActixResult<impl Responder> {
     }
 }
 
-#[get("user_on_close/{server_secret}/{username}/{petals_collected}/{wave}/{gallery} ")]
-async fn user_merge_petals_req(
-    uri: web::Path<(String, String, String)>,
+#[get("user_on_close/{server_secret}/{username}/{petals_collected}/{wave}/{gallery}")]
+async fn user_on_close_req(
+    uri: web::Path<(String, String, String, String, String)>,
 ) -> ActixResult<impl Responder> {
     if uri.0 != SERVER_SECRET {
         return Ok(HttpResponse::BadRequest().body("Invalid server auth"));
@@ -404,7 +470,18 @@ async fn user_merge_petals_req(
         Ok(x) => x,
         Err(x) => return Ok(HttpResponse::BadRequest().body(x.to_string())),
     };
-    match user_on_close(&uri.1.to_string(), &petals).await {
+
+    let gallery = match parse_petals_string(&uri.4.to_string()) {
+        Ok(x) => x,
+        Err(x) => return Ok(HttpResponse::BadRequest().body(x.to_string())),
+    };
+
+    let wave: u32 = match uri.3.parse() {
+        Ok(x) => x,
+        Err(x) => return Ok(HttpResponse::BadRequest().body(x.to_string())),
+    };
+
+    match user_on_close(&uri.1.to_string(), &petals, wave, &gallery).await {
         Ok(_) => Ok(HttpResponse::Ok().body("success")),
         Err(x) => Ok(HttpResponse::BadRequest().body(x.to_string())),
     }
@@ -439,9 +516,9 @@ async fn main() -> std::io::Result<()> {
                     .service(user_get_req)
                     .service(user_create_req)
                     .service(user_exists_req)
-                    .service(user_merge_petals_req)
+                    .service(user_on_close_req)
                     .service(user_craft_petals_req)
-                    .service(user_fix_req)
+                    .service(user_fix_req),
             )
     })
     .workers(1)
