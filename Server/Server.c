@@ -118,15 +118,15 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
             this->loadout[i].rarity;
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        //if (arena->wave < rarity * 4)
-            //arena->wave = rarity * 4;
+        // if (arena->wave < rarity * 4)
+        // arena->wave = rarity * 4;
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity;
-        //if (arena->wave < rarity * 4)
-            //arena->wave = rarity * 4;
+        // if (arena->wave < rarity * 4)
+        // arena->wave = rarity * 4;
     }
     // rr_server_client_create_flower(this);
 }
@@ -360,13 +360,13 @@ int rr_server_lws_callback_function(struct lws *socket,
                 return 1;
             }
 
-// #ifdef RIVET_BUILD
+            // #ifdef RIVET_BUILD
             uint64_t encountered_size =
                 proto_bug_read_varuint(&encoder, "rivet token size");
-// #endif
+            // #endif
             uint64_t uuid_encountered_size =
                 proto_bug_read_varuint(&encoder, "uuid size");
-// #ifdef RIVET_BUILD
+            // #ifdef RIVET_BUILD
             if (16 + encountered_size + uuid_encountered_size >= size)
             {
                 printf("%lu %lu\n", size,
@@ -386,7 +386,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             proto_bug_read_string(&encoder,
                                   this->clients[i].rivet_account.token,
                                   encountered_size, "rivet token");
-// #endif
+            // #endif
 
             // Read uuid
             this->clients[i].rivet_account.uuid[uuid_encountered_size] =
@@ -553,24 +553,27 @@ int rr_server_lws_callback_function(struct lws *socket,
         }
         case 70:
         {
-            uint64_t local_size = size - 1;
-            if (local_size % 3 != 1)
-                return 0;
-            uint8_t pos = proto_bug_read_uint8(&encoder, "pos");
-            while (pos)
+            float requested_wave_percent =
+                proto_bug_read_float32(&encoder, "requested wave");
+
+            uint8_t loadout_count =
+                proto_bug_read_uint8(&encoder, "loadout count");
+            
+            if (loadout_count > 20)
+                break;
+
+            for (uint8_t i = 0; i < loadout_count; i++)
             {
-                if (pos > 20)
-                    return 0;
-                client->loadout[pos - 1].id =
-                    proto_bug_read_uint8(&encoder, "id");
-                client->loadout[pos - 1].rarity =
-                    proto_bug_read_uint8(&encoder, "rar");
-                if (client->loadout[pos - 1].rarity > rr_rarity_id_ultra ||
-                    client->loadout[pos - 1].id >= rr_petal_id_max)
-                    client->loadout[pos - 1].id =
-                        client->loadout[pos - 1].rarity = 0;
-                pos = proto_bug_read_uint8(&encoder, "pos");
+                uint8_t id = proto_bug_read_uint8(&encoder, "id");
+                uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
+                if (id > rr_petal_id_max)
+                    break;
+                if (rarity > rr_rarity_id_max)
+                    break;
+                client->loadout[i].rarity = rarity;
+                client->loadout[i].id = id;
             }
+
             break;
         }
         case 71:
@@ -689,7 +692,7 @@ void rr_server_tick(struct rr_server *this)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
-                uint32_t min_wave_spawn = 5555555; //ez
+                uint32_t min_wave_spawn = 5555555; // ez
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
@@ -702,11 +705,11 @@ void rr_server_tick(struct rr_server *this)
                         if (min_wave_spawn > this->clients[i].max_wave)
                             min_wave_spawn = this->clients[i].max_wave;
                     }
-                struct rr_component_arena *arena = rr_simulation_get_arena(&this->simulation, 1);
+                struct rr_component_arena *arena =
+                    rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave(arena, min_wave_spawn * 3 / 4 + 1);
-                this->simulation.wave_points = get_points_from_wave(
-                    arena->wave,
-                    client_count);
+                this->simulation.wave_points =
+                    get_points_from_wave(arena->wave, client_count);
             }
         }
         else

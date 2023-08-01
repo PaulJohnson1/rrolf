@@ -187,18 +187,20 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_v_container_init(
                                     rr_ui_container_init(), 10, 20,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
+                                    rr_ui_h_container_init(
+                                        rr_ui_container_init(), 5, 10,
+                                        rr_ui_text_init("initial wave:", 14, -1),
+                                        rr_ui_h_slider_init(300, 20, &this->cache.wave_start_percent),
+                                        NULL
+                                    ),
                                     rr_ui_choose_element_init(
                                         rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
                                         rr_ui_h_container_init(
                                             rr_ui_container_init(), 10, 20,
-                                            rr_ui_squad_player_container_init(
-                                                &this->squad_members[0]),
-                                            rr_ui_squad_player_container_init(
-                                                &this->squad_members[1]),
-                                            rr_ui_squad_player_container_init(
-                                                &this->squad_members[2]),
-                                            rr_ui_squad_player_container_init(
-                                                &this->squad_members[3]),
+                                            rr_ui_squad_player_container_init(&this->squad_members[0]),
+                                            rr_ui_squad_player_container_init(&this->squad_members[1]),
+                                            rr_ui_squad_player_container_init(&this->squad_members[2]),
+                                            rr_ui_squad_player_container_init(&this->squad_members[3]),
                                             NULL
                                         ),
                                         rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
@@ -408,6 +410,7 @@ void rr_game_init(struct rr_game *this)
                                &this->cache.displaying_debug_information);
     rr_local_storage_get_bytes("loadout", &this->cache.loadout);
     rr_local_storage_get_bytes("props", &this->cache.map_props);
+    rr_local_storage_get_bytes("wave_start_percent", &this->cache.wave_start_percent);
     rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
     rr_local_storage_get_bytes("slots_count", &this->cache.slots_unlocked);
@@ -470,9 +473,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
-            proto_bug_write_string(&verify_encoder,
-                                   this->rivet_account.token, token_size,
-                                   "rivet token");
+            proto_bug_write_string(&verify_encoder, this->rivet_account.token,
+                                   token_size, "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
             rr_websocket_send(&this->socket, verify_encoder.start,
@@ -555,28 +557,20 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
+            proto_bug_write_float32(&encoder2, this->cache.wave_start_percent,
+                                    "requested wave");
+            proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked * 2,
+                                  "loadout count");
+            for (uint32_t i = 0; i < this->cache.slots_unlocked * 2; ++i)
             {
-                if (this->protocol_state & (1 << i))
-                {
-                    proto_bug_write_uint8(&encoder2, i + 1, "pos");
-                    proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
-                                          "id");
-                    proto_bug_write_uint8(&encoder2,
-                                          this->cache.loadout[i].rarity, "rar");
-                }
-                if (this->protocol_state & (1 << (i + 10)))
-                {
-                    proto_bug_write_uint8(&encoder2, i + 1 + 10, "pos");
-                    proto_bug_write_uint8(&encoder2,
-                                          this->cache.loadout[i + 10].id, "id");
-                    proto_bug_write_uint8(
-                        &encoder2, this->cache.loadout[i + 10].rarity, "rar");
-                }
+                proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
+                                      "id");
+                proto_bug_write_uint8(&encoder2, this->cache.loadout[i].rarity,
+                                      "rarity");
             }
             // write nickname
-            proto_bug_write_uint8(&encoder2, 0, "pos");
             rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 71, "header");
             uint32_t len = strlen(&this->cache.nickname[0]);
@@ -759,7 +753,7 @@ static void render_background(struct rr_component_player_info *player_info,
         render_map_feature
     }
     // trees over everything
-    for (uint64_t i = 0; i < prop_amount / 50; i++)
+    for (uint64_t i = 1000000; i < (1000000 + prop_amount / 50); i++)
     {
         uint64_t selected_feature = 8;
         render_map_feature
@@ -784,6 +778,9 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.loadout);
     rr_local_storage_store_bytes("props", &this->cache.map_props,
                                  sizeof this->cache.map_props);
+    rr_local_storage_store_bytes("wave_start_percent",
+                                 &this->cache.wave_start_percent,
+                                 sizeof this->cache.wave_start_percent);
     rr_local_storage_store_bytes("screen_shake", &this->cache.screen_shake,
                                  sizeof this->cache.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,

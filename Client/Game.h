@@ -47,6 +47,7 @@ struct rr_game_cache
 {
     uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
     float map_props;
+    float wave_start_percent;
     struct rr_game_loadout_petal loadout[20];
     uint8_t use_mouse;
     uint8_t displaying_debug_information;

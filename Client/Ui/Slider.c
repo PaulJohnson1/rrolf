@@ -106,12 +106,13 @@ static void v_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
         // float real_y = -(game->input_data->mouse_y -
         //                 (this->abs_y - (this->abs_height - this->abs_width) /
         //                                    2 * renderer->scale)) /
-        //                ((this->abs_height - this->abs_width) * renderer->scale);
-        float real_y = 1 - ((game->input_data->mouse_y) - 
-                (this->abs_y - (this->abs_height - this->abs_width) /
-                                       2 * renderer->scale)) /
-               ((this->abs_height - this->abs_width) * renderer->scale);
-
+        //                ((this->abs_height - this->abs_width) *
+        //                renderer->scale);
+        float real_y =
+            1 - ((game->input_data->mouse_y) -
+                 (this->abs_y -
+                  (this->abs_height - this->abs_width) / 2 * renderer->scale)) /
+                    ((this->abs_height - this->abs_width) * renderer->scale);
 
         *data->value = rr_fclamp(real_y, 0, 1);
     }
