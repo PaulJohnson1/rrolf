@@ -27,10 +27,11 @@ struct rr_game_loadout_petal
 
 struct rr_game_squad_client
 {
+    struct rr_game_loadout_petal loadout[20];
+    float requested_start_wave_percent;
+    char name[18];
     uint8_t in_use;
     uint8_t ready;
-    char name[18];
-    struct rr_game_loadout_petal loadout[20];
 };
 
 struct rr_game_crafting_data

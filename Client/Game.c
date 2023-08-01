@@ -190,7 +190,7 @@ void rr_game_init(struct rr_game *this)
                                     rr_ui_h_container_init(
                                         rr_ui_container_init(), 5, 10,
                                         rr_ui_text_init("initial wave:", 14, -1),
-                                        rr_ui_h_slider_init(300, 20, &this->cache.wave_start_percent),
+                                        rr_ui_h_slider_init(300, 20, &this->cache.wave_start_percent, 1),
                                         NULL
                                     ),
                                     rr_ui_choose_element_init(
@@ -542,6 +542,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "bitbit");
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
+                this->squad_members[i].requested_start_wave_percent =
+                    proto_bug_read_float32(&encoder,
+                                           "requested start wave percent");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
                                       length, "nick");

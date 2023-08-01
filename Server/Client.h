@@ -22,6 +22,7 @@ struct rr_server_client
     struct rr_component_player_info *player_info;
     float player_accel_x;
     float player_accel_y;
+    float requested_start_wave_percent;
     uint32_t max_wave;
     int file_descriptor;
     char ip_address[100];

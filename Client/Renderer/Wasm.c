@@ -434,16 +434,25 @@ void rr_renderer_stroke_text(struct rr_renderer *this, char const *c, float x,
 
 float rr_renderer_get_text_size(char const *c)
 {
+    // clang-format off
     return EM_ASM_DOUBLE(
         {
+            if (!window.cached_texts)
+                window.cached_texts = {};
             let string = "";
             while (Module.HEAPU8[$0])
                 string += String.fromCharCode(Module.HEAPU8[$0++]);
+
+            if (window.cached_texts[string] !== undefined)
+                return window.cached_texts[string];
+
             Module.ctxs[0].font = '1px Ubuntu';
-            return Module.ctxs[0].measureText(string).width;
+            let w = Module.ctxs[0].measureText(string).width;
+            window.cached_texts[string] = w;
+            return w;
         },
         c);
-    return 0.0f;
+    // clang-format on
 }
 
 void rr_renderer_execute_instructions()

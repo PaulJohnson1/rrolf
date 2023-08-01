@@ -170,9 +170,8 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, 
         rr_ui_flower_init(member, 50),
-        // rr_ui_h_slider_init(50, 10, calloc(1, sizeof(float), 0)),
+        rr_ui_h_slider_init(50, 10, &member->requested_start_wave_percent, 0),
         rr_ui_text_init(&member->name[0], 14, 0xffffffff),
-        rr_ui_h_slider_init(0, 1, &member->in_use, 0),
         NULL
     );
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 20);

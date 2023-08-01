@@ -200,6 +200,9 @@ void rr_server_client_tick(struct rr_server_client *this)
                 "bitbit");
             proto_bug_write_uint8(&encoder, this->server->clients[i].ready,
                                   "ready");
+            proto_bug_write_float32(
+                &encoder, this->server->clients[i].requested_start_wave_percent,
+                "requested start wave percent");
             uint32_t nick_len =
                 strlen(&this->server->clients[i].client_nickname[0]);
             proto_bug_write_varuint(&encoder, nick_len, "nick size");
@@ -553,12 +556,15 @@ int rr_server_lws_callback_function(struct lws *socket,
         }
         case 70:
         {
-            float requested_wave_percent =
+            float requested_start_wave =
                 proto_bug_read_float32(&encoder, "requested wave");
+            if (requested_start_wave > 0.7)
+                break;
+            client->requested_start_wave_percent = requested_start_wave;
 
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
-            
+
             if (loadout_count > 20)
                 break;
 
@@ -693,6 +699,9 @@ void rr_server_tick(struct rr_server *this)
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
                 uint32_t min_wave_spawn = 5555555; // ez
+                float start_wave_total = 0;
+                uint64_t client_count = 0;
+
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {
@@ -702,12 +711,18 @@ void rr_server_tick(struct rr_server *this)
                         rr_server_client_create_player_info(this->clients + i,
                                                             i);
                         rr_server_client_create_flower(this->clients + i);
+                        client_count++;
+
+                        start_wave_total +=
+                            this->clients[i].requested_start_wave_percent;
                         if (min_wave_spawn > this->clients[i].max_wave)
                             min_wave_spawn = this->clients[i].max_wave;
                     }
+                float start_wave_mean = start_wave_total / client_count;
+
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
-                rr_component_arena_set_wave(arena, min_wave_spawn * 3 / 4 + 1);
+                rr_component_arena_set_wave(arena, (uint32_t)((float)min_wave_spawn * start_wave_mean) + 1);
                 this->simulation.wave_points =
                     get_points_from_wave(arena->wave, client_count);
             }

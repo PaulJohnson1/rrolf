@@ -50,9 +50,9 @@ struct rr_ui_container_metadata
 
 struct rr_ui_element_vector
 {
+    struct rr_ui_element **start;
     uint32_t size;
     uint32_t capacity;
-    struct rr_ui_element **start;
 };
 
 struct rr_ui_element
