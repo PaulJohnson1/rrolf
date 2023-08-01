@@ -48,9 +48,9 @@ void rr_api_on_get_petals(char *json, void *_client)
             fprintf(stderr, "Error before: %s\n", error_ptr);
         return;
     }
-    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "max_wave");
+    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
     if (max_wave == NULL)
-        client->max_wave = 0;
+        client->max_wave = 100000;
     else
         client->max_wave = max_wave->valueint;
 
@@ -224,9 +224,6 @@ void rr_server_client_tick(struct rr_server_client *this)
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
 {
-    if (rr_simulation_has_health(_captures, entity))
-        rr_component_health_set_health(
-            rr_simulation_get_health(_captures, entity), 0);
     rr_simulation_request_entity_deletion(_captures, entity);
 }
 
@@ -692,7 +689,7 @@ void rr_server_tick(struct rr_server *this)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
-                uint32_t min_wave_spawn = 10241024; //ez
+                uint32_t min_wave_spawn = 5555555; //ez
                 for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
                     if (rr_bitset_get(this->clients_in_use, i))
                     {

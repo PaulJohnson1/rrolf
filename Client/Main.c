@@ -87,6 +87,7 @@ void rr_wheel_event(struct rr_game *this, float delta)
 
 void rr_main_loop(struct rr_game *this)
 {
+    printf("client on version %llu\n", RR_SECRET8 ^ 255);
 #ifdef EMSCRIPTEN
     EM_ASM(
         {

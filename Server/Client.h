@@ -13,17 +13,17 @@ struct rr_server_client_loadout_petal
 struct rr_server_client
 {
     struct rr_rivet_account rivet_account;
+    struct rr_server_client_loadout_petal loadout[20];
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
     struct rr_server *server;
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
-    int file_descriptor;
     float player_accel_x;
     float player_accel_y;
     uint32_t max_wave;
-    struct rr_server_client_loadout_petal loadout[20];
+    int file_descriptor;
     char ip_address[100];
     char client_nickname[18];
     uint8_t received_first_packet : 1;

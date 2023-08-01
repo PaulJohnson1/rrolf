@@ -39,28 +39,28 @@ enum
 };
 
 #ifdef RR_SERVER
-struct api_join_captures
-{
-    char const *rivet_uuid;
-    char *petals_string;
-};
+// struct api_join_captures
+// {
+//     char const *rivet_uuid;
+//     char *petals_string;
+// };
 
-void *api_join(void *_captures)
-{
-    struct api_join_captures *captures = _captures;
-    rr_api_merge_petals(captures->rivet_uuid, captures->petals_string);
-    free(captures->rivet_uuid);
-    free(captures->petals_string);
-    free(captures);
-    puts("api join thread end");
-    return NULL;
-}
+// void *api_join(void *_captures)
+// {
+//     struct api_join_captures *captures = _captures;
+//     rr_api_on_close(captures->rivet_uuid, captures->petals_string);
+//     free(captures->rivet_uuid);
+//     free(captures->petals_string);
+//     free(captures);
+//     puts("api join thread end");
+//     return NULL;
+// }
 
-void *sleeper(void *arg)
-{
-    usleep(10000000);
-    return NULL;
-}
+// void *sleeper(void *arg)
+// {
+//     usleep(10000000);
+//     return NULL;
+// }
 #endif
 
 void rr_component_player_info_init(struct rr_component_player_info *this,
@@ -96,24 +96,26 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
         strncat(petals_string, buffer,
                 5000 - strlen(petals_string) - 1);
     }
+    if (petals_string[0] == 0)
+        memcpy(petals_string, "0:0:0", sizeof "0:0:0");
     puts("api join start");
-    if (1)
-    {
-        rr_api_merge_petals(this->client->rivet_account.uuid, petals_string);
-    }
-    else
-    {
-        char *malloc_string = malloc(sizeof petals_string);
-        char *malloc_uuid = malloc(sizeof this->client->rivet_account.uuid);
-        memcpy(malloc_string, &petals_string, sizeof petals_string);
-        memcpy(malloc_uuid, &this->client->rivet_account.uuid, sizeof this->client->rivet_account.uuid);
-        struct api_join_captures *captures = malloc(sizeof *captures);
-        captures->rivet_uuid = malloc_uuid;
-        captures->petals_string = malloc_string;
-        pthread_t thread_id;
-        int result = pthread_create(&thread_id, NULL, api_join, &captures);
-        pthread_detach(thread_id);
-    }
+    // if (1)
+    // {
+    rr_api_on_close(this->client->rivet_account.uuid, petals_string, rr_simulation_get_arena(simulation, 1)->wave, "0:0:0");
+    // }
+    // else
+    // {
+    //     char *malloc_string = malloc(sizeof petals_string);
+    //     char *malloc_uuid = malloc(sizeof this->client->rivet_account.uuid);
+    //     memcpy(malloc_string, &petals_string, sizeof petals_string);
+    //     memcpy(malloc_uuid, &this->client->rivet_account.uuid, sizeof this->client->rivet_account.uuid);
+    //     struct api_join_captures *captures = malloc(sizeof *captures);
+    //     captures->rivet_uuid = malloc_uuid;
+    //     captures->petals_string = malloc_string;
+    //     pthread_t thread_id;
+    //     int result = pthread_create(&thread_id, NULL, api_join, &captures);
+    //     pthread_detach(thread_id);
+    // }
 
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(

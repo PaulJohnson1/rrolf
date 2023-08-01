@@ -63,15 +63,16 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #endif
 }
 
-void rr_api_merge_petals(char const *id, char const *petals)
+void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
+                     char const *gallery)
 {
 #ifndef EMSCRIPTEN
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    printf("merging %s into %s\n", petals, id);
     snprintf(url, sizeof(url),
-             "https://rrolf.io/api/user_merge_petals/%s/%s/%s", RR_API_SECRET,
-             id, petals);
+             "https://rrolf.io/api/user_on_close/%s/%s/%s/%d/%s", RR_API_SECRET,
+             id, petals, wave, gallery);
+    puts(url);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     RR_RIVET_CURL_EPILOGUE
 #endif
