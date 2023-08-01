@@ -157,6 +157,23 @@ static void background_change_animate(struct rr_ui_element *this, struct rr_game
         this->container->fill = 0x40000000;
 }
 
+static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    struct rr_game_squad_client *client = data->data;
+    data->text[sprintf(data->text, "Start at %.0f%%",
+                           client->requested_start_wave * 100)] = 0;
+}
+
+static struct rr_ui_element *rr_ui_wave_spawn_element_init(struct rr_game_squad_client *member)
+{
+    struct rr_ui_element *this = rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    data->data = member;
+    return this;
+}
+
+
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 {
@@ -170,7 +187,8 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, 
         rr_ui_flower_init(member, 50),
-        rr_ui_h_slider_init(50, 10, &member->requested_start_wave_percent, 0),
+        rr_ui_wave_spawn_element_init(member),
+        rr_ui_text_init("of max wave", 12, 0xffffffff),
         rr_ui_text_init(&member->name[0], 14, 0xffffffff),
         NULL
     );

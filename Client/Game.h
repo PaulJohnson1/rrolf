@@ -28,7 +28,7 @@ struct rr_game_loadout_petal
 struct rr_game_squad_client
 {
     struct rr_game_loadout_petal loadout[20];
-    float requested_start_wave_percent;
+    float requested_start_wave;
     char name[18];
     uint8_t in_use;
     uint8_t ready;
@@ -126,7 +126,7 @@ struct rr_game
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[8];
 
-
+    uint8_t squad_pos;
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t rivet_lobby_pending;

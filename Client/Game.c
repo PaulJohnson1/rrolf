@@ -540,9 +540,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "bitbit");
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
-                this->squad_members[i].requested_start_wave_percent =
+                this->squad_members[i].requested_start_wave =
                     proto_bug_read_float32(&encoder,
-                                           "requested start wave percent") / 0.75;
+                                           "requested start wave");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
                                       length, "nick");
@@ -555,6 +555,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         proto_bug_read_uint8(&encoder, "rar");
                 }
             }
+            this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
