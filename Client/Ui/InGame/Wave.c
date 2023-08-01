@@ -145,7 +145,7 @@ static void wave_text_function(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_component_arena *arena =
         rr_simulation_get_arena(game->simulation, 1);
-    struct dynamic_text_metadata *data = this->data;
+    struct rr_ui_dynamic_text_metadata *data = this->data;
     data->text[sprintf(data->text, "Wave %d", arena->wave)] = 0;
 }
 

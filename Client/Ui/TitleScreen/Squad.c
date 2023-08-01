@@ -193,7 +193,7 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
 
 static void squad_countdown(struct rr_ui_element *this, struct rr_game *game)
 {
-    struct dynamic_text_metadata *data = this->data;
+    struct rr_ui_dynamic_text_metadata *data = this->data;
     if (game->ticks_until_game_start == 125)
         data->text[0] = 0;
     else

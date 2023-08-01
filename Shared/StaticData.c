@@ -92,9 +92,10 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {7, 10, 1, 3, 6, 9, 5, 
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 12, 18, 25, 50};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 25, 50, 250, 5};
-static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 6, 7, 8, 12, 30};
-
+//double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 25, 50, 250, 5};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 25, 150, 600, 125};
+//static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 6, 7, 8, 12, 30};
+static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 7.5, 9, 10, 15, 50};
 
 static void init_game_coefficients()
 {
@@ -153,12 +154,12 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 
 static void init_loot_tables()
 {
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0], rr_petal_id_light,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0], rr_petal_id_rock,
                     0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1], rr_petal_id_speed,
                     0.1);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_rock,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_bone,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
                     0.10);
@@ -184,7 +185,7 @@ static void init_loot_tables()
                     rr_petal_id_magnet, 0.015);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[0],
-                    rr_petal_id_bone, 0.05);
+                    rr_petal_id_light, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[1], rr_petal_id_web,
                     0.1);
 

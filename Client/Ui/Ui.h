@@ -21,13 +21,13 @@ struct labeled_button_metadata
     char *text;
 };
 
-struct text_metadata
+struct rr_ui_text_metadata
 {
     char const *text;
     float size;
 };
 
-struct dynamic_text_metadata
+struct rr_ui_dynamic_text_metadata
 {
     char *text;
     float size;
