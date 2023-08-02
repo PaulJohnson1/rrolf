@@ -193,31 +193,37 @@ void rr_server_client_tick(struct rr_server_client *this)
         proto_bug_write_uint8(&encoder, 69, "header");
         proto_bug_write_uint8(
             &encoder, this->server->ticks_until_simulation_create, "countdown");
+        uint8_t pos = 0;
         for (uint32_t i = 0; i < 4; ++i)
         {
+            struct rr_server_client *curr_client = &this->server->clients[i];
+            if (curr_client == this)
+                pos = i;
             proto_bug_write_uint8(
                 &encoder, rr_bitset_get(&this->server->clients_in_use[0], i),
                 "bitbit");
-            proto_bug_write_uint8(&encoder, this->server->clients[i].ready,
+            proto_bug_write_uint8(&encoder, curr_client->ready,
                                   "ready");
             proto_bug_write_float32(
-                &encoder, this->server->clients[i].requested_start_wave_percent,
-                "requested start wave percent");
+                &encoder, curr_client->requested_start_wave_percent,
+                "requested start wave");
             uint32_t nick_len =
-                strlen(&this->server->clients[i].client_nickname[0]);
+                strlen(&curr_client->client_nickname[0]);
             proto_bug_write_varuint(&encoder, nick_len, "nick size");
             proto_bug_write_string(&encoder,
-                                   &this->server->clients[i].client_nickname[0],
+                                   &curr_client->client_nickname[0],
                                    nick_len, "nick");
             for (uint8_t j = 0; j < 20; ++j)
             {
                 proto_bug_write_uint8(
-                    &encoder, this->server->clients[i].loadout[j].id, "id");
+                    &encoder, curr_client->loadout[j].id, "id");
                 proto_bug_write_uint8(
-                    &encoder, this->server->clients[i].loadout[j].rarity,
+                    &encoder, curr_client->loadout[j].rarity,
                     "rar");
             }
         }
+        proto_bug_write_uint8(&encoder, pos,
+                                  "sqpos");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -560,14 +566,14 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             float requested_start_wave =
                 proto_bug_read_float32(&encoder, "requested wave");
-            if (requested_start_wave > 0.7)
+            if (requested_start_wave > 0.75)
                 break;
             client->requested_start_wave_percent = requested_start_wave;
 
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 
-            if (loadout_count > 20)
+            if (loadout_count > 10)
                 break;
 
             for (uint8_t i = 0; i < loadout_count; i++)
@@ -580,6 +586,14 @@ int rr_server_lws_callback_function(struct lws *socket,
                     break;
                 client->loadout[i].rarity = rarity;
                 client->loadout[i].id = id;
+                id = proto_bug_read_uint8(&encoder, "id");
+                rarity = proto_bug_read_uint8(&encoder, "rarity");
+                if (id > rr_petal_id_max)
+                    break;
+                if (rarity > rr_rarity_id_max)
+                    break;
+                client->loadout[i + 10].rarity = rarity;
+                client->loadout[i + 10].id = id;
             }
 
             break;

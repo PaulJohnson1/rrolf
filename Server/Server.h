@@ -16,6 +16,7 @@ struct rr_server
     uint8_t clients_in_use[RR_BITSET_ROUND(RR_MAX_CLIENT_COUNT)];
     uint8_t simulation_active;
     int8_t ticks_until_simulation_create;
+    uint8_t pos;
     struct lws_context *server;
     struct rr_server_client clients[RR_MAX_CLIENT_COUNT];
     struct rr_simulation simulation;

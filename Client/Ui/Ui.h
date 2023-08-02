@@ -32,6 +32,7 @@ struct rr_ui_dynamic_text_metadata
     char *text;
     float size;
     void (*get_text)(struct rr_ui_element *, struct rr_game *);
+    void *data;
 };
 
 struct rr_ui_choose_element_metadata

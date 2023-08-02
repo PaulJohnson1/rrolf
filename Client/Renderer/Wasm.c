@@ -437,19 +437,11 @@ float rr_renderer_get_text_size(char const *c)
     // clang-format off
     return EM_ASM_DOUBLE(
         {
-            if (!window.cached_texts)
-                window.cached_texts = {};
             let string = "";
             while (Module.HEAPU8[$0])
                 string += String.fromCharCode(Module.HEAPU8[$0++]);
-
-            if (window.cached_texts[string] !== undefined)
-                return window.cached_texts[string];
-
             Module.ctxs[0].font = '1px Ubuntu';
-            let w = Module.ctxs[0].measureText(string).width;
-            window.cached_texts[string] = w;
-            return w;
+            return Module.ctxs[0].measureText(string).width;
         },
         c);
     // clang-format on
@@ -464,10 +456,9 @@ void rr_renderer_execute_instructions()
             {
                 const instr = n * $2 + $0;
                 const ctx_id = Module.HEAPU32[instr + 4 >> 2];
-                const argptr = instr + 8;
                 const args =
-                    Module.HEAPF32.subarray(argptr >> 2, argptr + 24 >> 2);
-                const char_arg = Module.HEAPU32[argptr + 24 >> 2];
+                    Module.HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
+                const char_arg = Module.HEAPU32[instr + 32 >> 2];
                 let str;
                 switch (Module.HEAPU8[instr])
                 {
