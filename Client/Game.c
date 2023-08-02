@@ -778,7 +778,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             struct rr_renderer *renderer = &this->mob_name_cache[i];
             float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-            rr_renderer_init(renderer);
+            if (this->ticks_until_text_cache == 24)
+                rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 16);
             rr_renderer_set_text_size(renderer, 12);
             rr_renderer_set_fill(renderer, 0xffffffff);
@@ -793,7 +794,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             struct rr_renderer *renderer = &this->rarity_name_cache[i];
             float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-            rr_renderer_init(renderer);
+            if (this->ticks_until_text_cache == 24)
+                rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 18);
             rr_renderer_set_text_size(renderer, 14);
             rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
@@ -807,7 +809,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         for (uint32_t i = 0; i < rr_petal_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->petal_name_cache[i];
-            rr_renderer_init(renderer);
+            if (this->ticks_until_text_cache == 24)
+                rr_renderer_init(renderer);
             float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
             rr_renderer_set_dimensions(renderer, 54, 18);
             rr_renderer_set_fill(renderer, 0xffffffff);
