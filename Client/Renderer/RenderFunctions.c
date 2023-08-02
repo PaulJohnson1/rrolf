@@ -802,16 +802,6 @@ void rr_renderer_render_petal_with_background(struct rr_renderer *renderer, stru
     rr_renderer_draw_image(
         renderer, &game->static_petals[id][rarity]);
     rr_renderer_translate(renderer, 0, 20);
-    float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[id]);
-    rr_renderer_set_fill(renderer, 0xffffffff);
-    rr_renderer_set_stroke(renderer, 0xff222222);
-    rr_renderer_set_text_align(renderer, 1);
-    rr_renderer_set_text_baseline(renderer, 1);
-    float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
-    rr_renderer_set_text_size(renderer, text_size);
-    rr_renderer_set_line_width(renderer, text_size * 0.12);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[id], 0, 0);
-    rr_renderer_fill_text(renderer, RR_PETAL_NAMES[id], 0, 0);
+    rr_renderer_draw_image(renderer, &game->petal_name_cache[id]);
 }
 // clang-format on

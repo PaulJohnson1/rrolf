@@ -770,6 +770,58 @@ static void render_background(struct rr_component_player_info *player_info,
 
 void rr_game_tick(struct rr_game *this, float delta)
 {
+    if (!this->not_first_frame)
+    {
+        //text caching
+        for (uint32_t i = 0; i < rr_mob_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->mob_name_cache[i];
+            float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 16);
+            rr_renderer_set_text_size(renderer, 12);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 12);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->rarity_name_cache[i];
+            float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 18);
+            rr_renderer_set_text_size(renderer, 14);
+            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 14);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->petal_name_cache[i];
+            rr_renderer_init(renderer);
+            float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
+            rr_renderer_set_dimensions(renderer, 54, 18);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_text_align(renderer, 1);
+            rr_renderer_set_text_baseline(renderer, 1);
+            float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
+            rr_renderer_set_text_size(renderer, text_size);
+            rr_renderer_set_line_width(renderer, text_size * 0.12);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+            rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+        }
+        this->not_first_frame = 69;
+    }
     struct timeval start;
     struct timeval end;
 
@@ -1058,6 +1110,25 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->mouse_state_this_tick = 0;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
+    long tick_sum = 0;
+    long tick_max = 0;
+    long frame_sum = 0;
+    long frame_max = 0;
+    for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i)
+    {
+        long t_t = this->debug_info.tick_times[i];
+        long f_t = this->debug_info.frame_times[i];
+        tick_sum += t_t;
+        frame_sum += f_t;
+        if (t_t > tick_max)
+            tick_max = t_t;
+        if (f_t > frame_max)
+            frame_max = f_t;
+    }
+    printf(
+            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f\n",
+            tick_sum * 0.001f / RR_DEBUG_POLL_SIZE, tick_max * 0.001f,
+            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f);
 }
 
 void rr_game_connect_socket(struct rr_game *this)

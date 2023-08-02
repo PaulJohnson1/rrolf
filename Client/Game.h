@@ -105,11 +105,15 @@ struct rr_game
 
     struct rr_renderer mob_fern;
 
+    struct rr_renderer asset_web;
     // background
     struct rr_renderer tiles[3];
     struct rr_renderer background_features[9];
 
-    struct rr_renderer asset_web;
+    //text cache
+    struct rr_renderer rarity_name_cache[rr_rarity_id_max];
+    struct rr_renderer mob_name_cache[rr_mob_id_max];
+    struct rr_renderer petal_name_cache[rr_petal_id_max];
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
@@ -136,6 +140,7 @@ struct rr_game
     uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
     uint8_t tiles_size;
     uint8_t block_ui_input;
+    uint8_t not_first_frame;
 };
 
 void rr_game_init(struct rr_game *);

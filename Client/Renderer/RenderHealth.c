@@ -39,28 +39,11 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
         struct rr_component_mob *mob =
             rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
-            // mob rarity
-        rr_renderer_set_fill(renderer, RR_RARITY_COLORS[mob->rarity]);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_text_size(renderer, 14);
-        rr_renderer_set_line_width(renderer, 1.68);
-        rr_renderer_set_text_align(renderer, 2);
-        rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[mob->rarity],
-                                length, 6);
-        rr_renderer_fill_text(renderer, RR_RARITY_NAMES[mob->rarity],
-                                length, 6);
-
+        // mob rarity
+        rr_renderer_draw_translated_image(renderer, &game->rarity_name_cache[mob->rarity], length - game->rarity_name_cache[mob->rarity].width / 2 + 2, 14 - 2);
 
         // mob name
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xff000000);
-        rr_renderer_set_text_size(renderer, 12);
-        rr_renderer_set_text_align(renderer, 0);
-        rr_renderer_stroke_text(renderer, RR_MOB_NAMES[mob->id], -length,
-                                -18);
-        rr_renderer_fill_text(renderer, RR_MOB_NAMES[mob->id], -length,
-                                -18);
+        rr_renderer_draw_translated_image(renderer, &game->mob_name_cache[mob->id], -length + game->mob_name_cache[mob->id].width / 2 - 2, -12 - 2);
     }
     else if (rr_simulation_has_flower(simulation, entity))
     {
