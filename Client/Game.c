@@ -1113,25 +1113,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->mouse_state_this_tick = 0;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    long tick_sum = 0;
-    long tick_max = 0;
-    long frame_sum = 0;
-    long frame_max = 0;
-    for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i)
-    {
-        long t_t = this->debug_info.tick_times[i];
-        long f_t = this->debug_info.frame_times[i];
-        tick_sum += t_t;
-        frame_sum += f_t;
-        if (t_t > tick_max)
-            tick_max = t_t;
-        if (f_t > frame_max)
-            frame_max = f_t;
-    }
-    printf(
-            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f\n",
-            tick_sum * 0.001f / RR_DEBUG_POLL_SIZE, tick_max * 0.001f,
-            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f);
 }
 
 void rr_game_connect_socket(struct rr_game *this)

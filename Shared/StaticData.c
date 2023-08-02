@@ -90,7 +90,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5, 10, 1, 3, 6, 12, 5, 2};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20};
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 12, 18, 25, 50};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 15, 25, 50, 100};
 
 //double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 25, 50, 250, 5};
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 25, 150, 600, 125};
