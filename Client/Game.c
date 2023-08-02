@@ -771,7 +771,7 @@ static void render_background(struct rr_component_player_info *player_info,
 
 void rr_game_tick(struct rr_game *this, float delta)
 {
-    if (this->ticks_until_text_cache == 0)
+    if (this->ticks_until_text_cache == 0 || this->ticks_until_text_cache == 24)
     {
         //text caching
         for (uint32_t i = 0; i < rr_mob_id_max; ++i)
@@ -821,7 +821,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
             rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
         }
-        this->ticks_until_text_cache = 255;
+        if (this->ticks_until_text_cache == 0)
+            this->ticks_until_text_cache = 255;
     }
     else if (this->ticks_until_text_cache < 25)
         --this->ticks_until_text_cache;
