@@ -225,7 +225,7 @@ extern "C"
                 assertion_fail_message,
                 "proto_bug exception: read invalid data (maybe OOB)\n"
                 "invalid read at: %s:%u\n"
-                "expected: %llX; encountered: %" PRIu64 "X\n",
+                "expected: %llX; encountered: %" PRIX64 "\n",
                 file, line, 0x1234567890abcdefull, magic)] = 0;
 
             fputs(assertion_fail_message, stderr);

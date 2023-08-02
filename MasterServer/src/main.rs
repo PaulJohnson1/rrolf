@@ -186,7 +186,6 @@ async fn user_fix_account(username: &String) -> Result<()> {
 // no idea why recursion is so special if it's async but ok
 #[async_recursion]
 async fn user_get(username: &String, password: &String) -> Result<DatabaseAccount> {
-    user_fix_account(username).await?;
     let url = rivet_url(&format!("{}/game/players/{}", DIRECTORY_SECRET, username));
     let a = make_request(&url, reqwest::Method::GET, None).await?;
 
@@ -250,6 +249,7 @@ async fn user_create(username: &String, password: &String, safe: bool) -> Result
 }
 
 async fn user_merge_petals(username: &String, petals: &Vec<IdRarityCount>) -> Result<()> {
+    user_fix_account(username).await?;
     let mut user: DatabaseAccount = user_get(username, &SERVER_SECRET.to_string()).await?;
 
     let mut game_amounts: BTreeMap<String, serde_json::Value> =
@@ -293,6 +293,7 @@ async fn user_on_close(
     wave: u32,
     gallery: &Vec<IdRarityCount>,
 ) -> Result<()> {
+    user_fix_account(username).await?;
     let mut user: DatabaseAccount = user_get(username, &SERVER_SECRET.to_string()).await?;
 
     let mut petal_counts: BTreeMap<String, serde_json::Value> =
@@ -356,6 +357,7 @@ async fn user_craft_petals(
     password: &String,
     petals: &mut Vec<IdRarityCount>,
 ) -> Result<String> {
+    user_fix_account(username).await?;
     // Check if each petal has enough quantity
     for petal in petals.iter() {
         if petal.2 < 5 {
