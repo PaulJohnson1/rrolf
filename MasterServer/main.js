@@ -32,7 +32,7 @@ function format_id_rarity(entry)
 function log(type, args)
 {
     // todo: save to some sort of log file
-    console.log(`${new Date().toJSON()}::[${type}]: ${args.join("/")}`);
+    console.log(`${new Date().toJSON()}::[${type}]: ${args.join("\t")}`);
 }
 
 function get_rivet_url(key)
@@ -77,6 +77,7 @@ function apply_missing_defaults(account)
     if (!account.username) account.username = "";
     if (!account.maximum_wave) account.maximum_wave = 1;
     if (!account.xp) account.xp = 1;
+    if (!account.playing) account.playing = 0;
     if (!account.petals) account.petals = {"1:0": 5};
     if (!account.petal_crafts) account.petal_crafts = {};
     if (!account.mob_gallery) account.mob_gallery = {};
@@ -210,13 +211,27 @@ function parse_id_rarity_count(string)
     return result;
 }
 
+app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res) => {
+    const {username} = req.params;
+    handle_error(res, async () => {
+        log("user_on_close", [username, wave_end, petals_string]);
+        const user = await db_read_user(username, SERVER_SECRET);
+        const resp = JSON.stringify(user);
+        user.playing = 1;
+        await write_db_entry(username, user);
+        return resp;
+    });
+});
+
 app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:wave_end/:gallery`, async (req, res) => {
     const {username, petals_string, wave_end, gallery} = req.params;
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
+        if (!user.playing) throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (!(user.maximum_wave > wave_end)) user.maximum_wave = wave_end;
+        user.playing = 0;
         await write_db_entry(username, user);
         return "success";
     });
@@ -231,7 +246,7 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
 app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, async (req, res) => {
     const {username, password, petals_string} = req.params;
     handle_error(res, async () => {
-        log("crafted petals", [petals_string])
+        log("crafted petals", [username, petals_string])
         const petals = parse_id_rarity_count(petals_string);
         const user = await db_read_user(username, password);
         const results = craft_user_petals(user, petals);
