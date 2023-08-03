@@ -378,7 +378,7 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
     // clang-format on
     this->tiles_size = 3;
-    this->ticks_until_text_cache = 1;
+    this->ticks_until_text_cache = 24;
     for (uint32_t i = 0; i < rr_mob_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->mob_name_cache[i];
