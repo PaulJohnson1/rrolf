@@ -38,20 +38,10 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     }
 
     uint32_t component_flags = 0;
-    if (is_creation)
-    {
 #define XX(COMPONENT, ID)                                                      \
     component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
         RR_FOR_EACH_COMPONENT;
 #undef XX
-    }
-    else
-    {
-#define XX(COMPONENT, ID)                                                      \
-    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-        RR_FOR_EACH_COMPONENT;
-#undef XX
-    }
 
     proto_bug_write_varuint(encoder, component_flags, "entity component flags");
 #define XX(COMPONENT, ID)                                                      \

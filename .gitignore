@@ -1,5 +1,6 @@
 build/
 frontend_release_build/
+node_modules/
 
 rrolf-client
 rrolf-client.wasm

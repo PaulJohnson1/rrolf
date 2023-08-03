@@ -24,14 +24,11 @@ struct rr_component_physical_spatial_hash_bounds
 
 RR_SERVER_ONLY(struct rr_component_player_info;)
 
-// check if there's rr_component_physical_set function before setting a field
 struct rr_component_physical
 {
     struct rr_vector velocity;
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
-    // RR_SERVER_ONLY(uint32_t query_id;)
-    // RR_SERVER_ONLY(struct rr_component_physical_spatial_hash_bounds bounds;)
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float restitution;)
     RR_SERVER_ONLY(float friction;)
@@ -55,8 +52,6 @@ struct rr_component_physical
     RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     EntityIdx parent_id;
-    // RR_SERVER_ONLY(uint8_t has_collisions;)
-    // RR_SERVER_ONLY(uint8_t collisions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
