@@ -379,6 +379,53 @@ void rr_game_init(struct rr_game *this)
     // clang-format on
     this->tiles_size = 3;
     this->ticks_until_text_cache = 1;
+    for (uint32_t i = 0; i < rr_mob_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->mob_name_cache[i];
+            float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 16);
+            rr_renderer_set_text_size(renderer, 12);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 12);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->rarity_name_cache[i];
+            float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 18);
+            rr_renderer_set_text_size(renderer, 14);
+            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 14);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->petal_name_cache[i];
+            rr_renderer_init(renderer);
+            float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
+            rr_renderer_set_dimensions(renderer, 54, 18);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_text_align(renderer, 1);
+            rr_renderer_set_text_baseline(renderer, 1);
+            float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
+            rr_renderer_set_text_size(renderer, text_size);
+            rr_renderer_set_line_width(renderer, text_size * 0.12);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+            rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+        }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -737,7 +784,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             struct rr_renderer *renderer = &this->mob_name_cache[i];
             float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-            rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 16);
             rr_renderer_set_text_size(renderer, 12);
             rr_renderer_set_fill(renderer, 0xffffffff);
@@ -752,7 +798,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             struct rr_renderer *renderer = &this->rarity_name_cache[i];
             float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-            rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 18);
             rr_renderer_set_text_size(renderer, 14);
             rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
@@ -766,7 +811,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         for (uint32_t i = 0; i < rr_petal_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->petal_name_cache[i];
-            rr_renderer_init(renderer);
             float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
             rr_renderer_set_dimensions(renderer, 54, 18);
             rr_renderer_set_fill(renderer, 0xffffffff);
