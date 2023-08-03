@@ -152,7 +152,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     float test = 0;
 
     struct rr_ui_element *this = rr_ui_2d_container_init(5, 6, 15, 15);
-    for (uint8_t rarity = rr_rarity_id_ultra; rarity != 255; --rarity)
+    for (uint8_t rarity = rr_rarity_id_max - 1; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
             rr_ui_container_add_element(this,
                                         inventory_button_init(id, rarity));

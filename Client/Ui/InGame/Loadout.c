@@ -110,6 +110,11 @@ static uint8_t loadout_button_should_show(struct rr_ui_element *this,
     return player_info->slot_count > data->pos % 10;
 }
 
+static uint8_t secondary_loadout_should_show(struct rr_ui_element *this, struct rr_game *game)
+{
+    return this->elements.start[0]->should_show(this->elements.start[0], game);
+}
+
 static void loadout_button_animate(struct rr_ui_element *this,
                                    struct rr_game *game)
 {
@@ -199,4 +204,21 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos)
     this->should_show = loadout_button_should_show;
     this->on_event = petal_switch_button_event;
     return this;
+}
+
+struct rr_ui_element *rr_ui_secondary_loadout_button_init(uint8_t pos)
+{
+    struct rr_ui_element *this = rr_ui_loadout_button_init(pos + 10);
+    char *text = pos == 0 ? "[1]" :
+    pos == 1 ? "[2]" : pos == 2 ? "[3]" : 
+    pos == 3 ? "[4]" : pos == 4 ? "[5]" :
+    pos == 5 ? "[6]" : pos == 6 ? "[7]" : 
+    pos == 7 ? "[8]" : pos == 8 ? "[9]" : "[0]";
+    struct rr_ui_element *c = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
+        this,
+        rr_ui_text_init(text, 14, 0xffffffff),
+        NULL
+    );
+    c->should_show = secondary_loadout_should_show;
+    return c;
 }

@@ -108,7 +108,7 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
     rr_component_player_info_set_client_id(this->player_info, pos);
-    rr_component_player_info_set_slot_count(this->player_info, 10);
+    rr_component_player_info_set_slot_count(this->player_info, 5);
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
@@ -526,6 +526,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                     rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave_tick(arena, 0);
                 rr_component_arena_set_wave(arena, arena->wave + 1);
+                this->simulation.wave_points = get_points_from_wave(arena->wave, 1);
                 rr_simulation_for_each_mob(&this->simulation, &this->simulation,
                                            delete_entity_function);
                 rr_simulation_for_each_drop(&this->simulation,

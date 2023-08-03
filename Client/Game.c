@@ -146,7 +146,7 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->cache.slots_unlocked = 10;
+    this->cache.slots_unlocked = 5;
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 
@@ -298,56 +298,16 @@ void rr_game_init(struct rr_game *this)
                     ),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15,
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                            rr_ui_loadout_button_init(10),
-                            rr_ui_text_init("[1]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                            rr_ui_loadout_button_init(11),
-                            rr_ui_text_init("[2]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(12),
-                            rr_ui_text_init("[3]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(13),
-                            rr_ui_text_init("[4]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(14),
-                            rr_ui_text_init("[5]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(15),
-                            rr_ui_text_init("[6]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(16),
-                            rr_ui_text_init("[7]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(17),
-                            rr_ui_text_init("[8]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(18),
-                            rr_ui_text_init("[9]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(19),
-                            rr_ui_text_init("[0]", 14, 0xffffffff),
-                            NULL
-                        ),
+                        rr_ui_secondary_loadout_button_init(0),
+                        rr_ui_secondary_loadout_button_init(1),
+                        rr_ui_secondary_loadout_button_init(2),
+                        rr_ui_secondary_loadout_button_init(3),
+                        rr_ui_secondary_loadout_button_init(4),
+                        rr_ui_secondary_loadout_button_init(5),
+                        rr_ui_secondary_loadout_button_init(6),
+                        rr_ui_secondary_loadout_button_init(7),
+                        rr_ui_secondary_loadout_button_init(8),
+                        rr_ui_secondary_loadout_button_init(9),
                         NULL
                     ),
                     NULL
@@ -411,7 +371,6 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("wave_start_percent", &this->cache.wave_start_percent);
     rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
-    rr_local_storage_get_bytes("slots_count", &this->cache.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
     rr_local_storage_get_bytes("nickname", &this->cache.nickname);
 
@@ -419,6 +378,54 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
     // clang-format on
     this->tiles_size = 3;
+    this->ticks_until_text_cache = 1;
+    for (uint32_t i = 0; i < rr_mob_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->mob_name_cache[i];
+            float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 16);
+            rr_renderer_set_text_size(renderer, 12);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 12);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->rarity_name_cache[i];
+            float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
+            rr_renderer_init(renderer);
+            rr_renderer_set_dimensions(renderer, length, 18);
+            rr_renderer_set_text_size(renderer, 14);
+            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_line_width(renderer, 0.12 * 14);
+            rr_renderer_set_text_align(renderer, 0);
+            rr_renderer_set_text_baseline(renderer, 0);
+            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+        }
+        for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+        {
+            struct rr_renderer *renderer = &this->petal_name_cache[i];
+            rr_renderer_init(renderer);
+            float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
+            rr_renderer_set_dimensions(renderer, 54, 18);
+            rr_renderer_set_fill(renderer, 0xffffffff);
+            rr_renderer_set_stroke(renderer, 0xff222222);
+            rr_renderer_set_text_align(renderer, 1);
+            rr_renderer_set_text_baseline(renderer, 1);
+            float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
+            rr_renderer_set_text_size(renderer, text_size);
+            rr_renderer_set_line_width(renderer, text_size * 0.12);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+            rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+        }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -770,14 +777,13 @@ static void render_background(struct rr_component_player_info *player_info,
 
 void rr_game_tick(struct rr_game *this, float delta)
 {
-    if (!this->not_first_frame)
+    if (this->ticks_until_text_cache == 0)
     {
         //text caching
         for (uint32_t i = 0; i < rr_mob_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->mob_name_cache[i];
             float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-            rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 16);
             rr_renderer_set_text_size(renderer, 12);
             rr_renderer_set_fill(renderer, 0xffffffff);
@@ -792,7 +798,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             struct rr_renderer *renderer = &this->rarity_name_cache[i];
             float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-            rr_renderer_init(renderer);
             rr_renderer_set_dimensions(renderer, length, 18);
             rr_renderer_set_text_size(renderer, 14);
             rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
@@ -806,7 +811,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         for (uint32_t i = 0; i < rr_petal_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->petal_name_cache[i];
-            rr_renderer_init(renderer);
             float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
             rr_renderer_set_dimensions(renderer, 54, 18);
             rr_renderer_set_fill(renderer, 0xffffffff);
@@ -820,8 +824,10 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
             rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
         }
-        this->not_first_frame = 69;
+        this->ticks_until_text_cache = 255;
     }
+    else if (this->ticks_until_text_cache < 25)
+        --this->ticks_until_text_cache;
     struct timeval start;
     struct timeval end;
 
@@ -842,8 +848,6 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,
                                  sizeof this->cache.show_ui_hitbox);
-    rr_local_storage_store_bytes("slots_count", &this->cache.slots_unlocked,
-                                 sizeof this->cache.slots_unlocked);
     rr_local_storage_store_bytes("mouse", &this->cache.use_mouse,
                                  sizeof this->cache.use_mouse);
     rr_local_storage_store_bytes("nickname", &this->cache.nickname,
@@ -1110,25 +1114,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->mouse_state_this_tick = 0;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    long tick_sum = 0;
-    long tick_max = 0;
-    long frame_sum = 0;
-    long frame_max = 0;
-    for (uint32_t i = 0; i < RR_DEBUG_POLL_SIZE; ++i)
-    {
-        long t_t = this->debug_info.tick_times[i];
-        long f_t = this->debug_info.frame_times[i];
-        tick_sum += t_t;
-        frame_sum += f_t;
-        if (t_t > tick_max)
-            tick_max = t_t;
-        if (f_t > frame_max)
-            frame_max = f_t;
-    }
-    printf(
-            "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f\n",
-            tick_sum * 0.001f / RR_DEBUG_POLL_SIZE, tick_max * 0.001f,
-            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
