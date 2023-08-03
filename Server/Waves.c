@@ -44,8 +44,15 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
     }
     else if (special_wave_id == 2)
         return rr_mob_id_triceratops;
-    else
+    else if (special_wave_id == 3)
         return rr_mob_id_trex;
+    else
+    {
+        if (rr_frand() > 0.5)
+            return rr_mob_id_fern;
+        else
+            return rr_mob_id_pteranodon;
+    }
 }
 
 int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)

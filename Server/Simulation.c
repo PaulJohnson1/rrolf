@@ -119,7 +119,7 @@ static void position_finder(EntityIdx id, void *_captures)
     struct rr_vector delta = {physical->x, physical->y};
     rr_vector_sub(&delta, &captures->test_position);
 
-    if (delta.x * delta.x + delta.y * delta.y < 500 * 500)
+    if (delta.x * delta.x + delta.y * delta.y < 750 * 750)
         captures->invalid = 1;
 }
 
@@ -194,7 +194,7 @@ static void spawn_mob_swarm(struct rr_simulation *this)
     }
 }
 
-#define SPECIAL_WAVE_COUNT 3
+#define SPECIAL_WAVE_COUNT 4
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -227,7 +227,7 @@ static void tick_wave(struct rr_simulation *this)
         arena->wave_tick = 0;
         this->wave_points = get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        if (rr_frand() > 0.2496843483753245)
+        if (rr_frand() > 1/3)
             this->special_wave_id = 0;
         else
             this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);
