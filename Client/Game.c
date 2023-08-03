@@ -146,7 +146,7 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->cache.slots_unlocked = 10;
+    this->cache.slots_unlocked = 5;
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 
@@ -298,56 +298,16 @@ void rr_game_init(struct rr_game *this)
                     ),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 15,
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                            rr_ui_loadout_button_init(10),
-                            rr_ui_text_init("[1]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                            rr_ui_loadout_button_init(11),
-                            rr_ui_text_init("[2]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(12),
-                            rr_ui_text_init("[3]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(13),
-                            rr_ui_text_init("[4]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(14),
-                            rr_ui_text_init("[5]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(15),
-                            rr_ui_text_init("[6]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(16),
-                            rr_ui_text_init("[7]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(17),
-                            rr_ui_text_init("[8]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(18),
-                            rr_ui_text_init("[9]", 14, 0xffffffff),
-                            NULL
-                        ),
-                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                            rr_ui_loadout_button_init(19),
-                            rr_ui_text_init("[0]", 14, 0xffffffff),
-                            NULL
-                        ),
+                        rr_ui_secondary_loadout_button_init(0),
+                        rr_ui_secondary_loadout_button_init(1),
+                        rr_ui_secondary_loadout_button_init(2),
+                        rr_ui_secondary_loadout_button_init(3),
+                        rr_ui_secondary_loadout_button_init(4),
+                        rr_ui_secondary_loadout_button_init(5),
+                        rr_ui_secondary_loadout_button_init(6),
+                        rr_ui_secondary_loadout_button_init(7),
+                        rr_ui_secondary_loadout_button_init(8),
+                        rr_ui_secondary_loadout_button_init(9),
                         NULL
                     ),
                     NULL
@@ -411,7 +371,6 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("wave_start_percent", &this->cache.wave_start_percent);
     rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
-    rr_local_storage_get_bytes("slots_count", &this->cache.slots_unlocked);
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
     rr_local_storage_get_bytes("nickname", &this->cache.nickname);
 
@@ -845,8 +804,6 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,
                                  sizeof this->cache.show_ui_hitbox);
-    rr_local_storage_store_bytes("slots_count", &this->cache.slots_unlocked,
-                                 sizeof this->cache.slots_unlocked);
     rr_local_storage_store_bytes("mouse", &this->cache.use_mouse,
                                  sizeof this->cache.use_mouse);
     rr_local_storage_store_bytes("nickname", &this->cache.nickname,
