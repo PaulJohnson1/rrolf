@@ -13,7 +13,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_light, rr_rarity_id_rare, 7.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile, rr_rarity_id_rare, 5.0f, 5.0f, 15.0f, 37, 12, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 15.0f, 5.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 10.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 3}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 10.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2,}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 100, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 8.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 6.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -43,7 +43,7 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {2.4, 2.9},
     {3.2, 3.6},
     {4.0, 9.0},
-    {10,  25.0}
+    {10.0, 25.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -52,8 +52,9 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {2.5, 1.3, 1.5}, 
     {4,   1.6, 1.8},
     {25,  2,   2.5},
-    {50,  2.5, 4},
-    {250, 10,  6}};
+    {50,  2.5, 4.0},
+    {250, 10,  6.0},
+};
 // clang-format on
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
@@ -90,18 +91,16 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5, 10, 1, 3, 6, 12, 5, 2};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20};
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 5, 10, 15, 25, 50, 100};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 5, 10, 15, 25, 50, 100};
 
-//double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 10, 15, 25, 50, 250, 5};
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 8, 10, 25, 150, 600, 125};
-//static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 6, 7, 8, 12, 30};
-static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {3, 5, 7.5, 9, 10, 15, 50};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 25, 150, 600, 125};
+static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {3, 5, 7.5, 9, 10, 15, 50};
 
 static void init_game_coefficients()
 {
     double sum = 1;
     double sum2 = 1;
-    for (uint64_t a = 1; a < rr_rarity_id_max; ++a)
+    for (uint64_t a = 1; a <= rr_rarity_id_ultra; ++a)
     {
         sum += (RR_DROP_RARITY_COEFFICIENTS[a + 1] =
                     RR_DROP_RARITY_COEFFICIENTS[a] /
@@ -112,7 +111,7 @@ static void init_game_coefficients()
         RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *=
             RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
     }
-    for (uint64_t a = 1; a <= rr_rarity_id_max; ++a)
+    for (uint64_t a = 1; a <= rr_rarity_id_ultra + 1; ++a)
     {
         RR_DROP_RARITY_COEFFICIENTS[a] = RR_DROP_RARITY_COEFFICIENTS[a] / sum +
                                          RR_DROP_RARITY_COEFFICIENTS[a - 1];
@@ -120,7 +119,7 @@ static void init_game_coefficients()
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
     }
-    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_max] = 1;
+    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
         RR_MOB_ID_RARITY_COEFFICIENTS[mob] += RR_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
     for (uint64_t mob = 0; mob < rr_mob_id_max; ++mob)
@@ -130,7 +129,7 @@ static void init_game_coefficients()
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 {
     data->id = id;
-    for (uint64_t mob = 0; mob < rr_rarity_id_max; ++mob)
+    for (uint64_t mob = 0; mob <= rr_rarity_id_ultra; ++mob)
     {
         uint64_t cap = mob;
         if (mob < rr_rarity_id_mythic)

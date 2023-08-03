@@ -526,6 +526,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                     rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave_tick(arena, 0);
                 rr_component_arena_set_wave(arena, arena->wave + 1);
+                this->simulation.wave_points = get_points_from_wave(arena->wave, 1);
                 rr_simulation_for_each_mob(&this->simulation, &this->simulation,
                                            delete_entity_function);
                 rr_simulation_for_each_drop(&this->simulation,
