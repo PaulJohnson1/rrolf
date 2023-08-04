@@ -287,7 +287,7 @@ void rr_server_client_tick(struct rr_server_client *this)
             if (curr_client == this)
                 pos = i;
             proto_bug_write_uint8(
-                &encoder, rr_bitset_get(&this->server->clients_in_use[0], i),
+                &encoder, rr_bitset_get(&this->server->clients_in_use[0], i) && curr_client->verified,
                 "bitbit");
             proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
             proto_bug_write_float32(&encoder,
