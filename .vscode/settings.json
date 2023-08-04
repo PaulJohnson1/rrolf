@@ -94,7 +94,8 @@
         "pb.h": "c",
         "drops.h": "c",
         "math.h": "c",
-        "api.h": "c"
+        "api.h": "c",
+        "cstdio": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "${workspaceFolder}/$Recycle.Bin/S-1-5-21-1596268716-635563774-242917149-1003/$R3SIXXV/libs/atomic/test/test_cmake"
