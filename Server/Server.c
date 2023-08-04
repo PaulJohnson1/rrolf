@@ -32,6 +32,49 @@
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
+void rr_api_on_open_result(char *json, void *captures)
+{
+    puts(json);
+    struct rr_api_account *account = captures;
+    cJSON *parsed = cJSON_Parse(json);
+    if (parsed == NULL)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL)
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        return;
+    }
+
+    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
+    cJSON *xp = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
+    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
+    cJSON *already_playing = cJSON_GetObjectItemCaseSensitive(parsed, "already_playing");
+    cJSON *username = cJSON_GetObjectItemCaseSensitive(parsed, "username");
+    cJSON *password = cJSON_GetObjectItemCaseSensitive(parsed, "password");
+    for (cJSON *petal_key = petals->child; petal_key != NULL;
+         petal_key = petal_key->next)
+    {
+        char *key = petal_key->string;
+        char *sub_key1 = strtok(key, ":");
+        char *sub_key2 = strtok(NULL, ":");
+
+        if (sub_key1 && sub_key2)
+        {
+            int index1 = atoi(sub_key1);
+            int index2 = atoi(sub_key2);
+
+            account->petals[index1][index2] =
+                petal_key->valueint;
+        }
+    }
+    account->xp = xp->valuedouble;
+    account->already_playing = already_playing->valueint;
+    account->username = strdup(username->valuestring);
+    account->password = strdup(password->valuestring);
+    account->maximum_wave = max_wave->valueint;
+    cJSON_Delete(parsed);
+}
+
 // loadout validation
 void rr_api_on_get_petals(char *json, void *_client)
 {
@@ -75,7 +118,7 @@ void rr_api_on_get_petals(char *json, void *_client)
             int index2 = atoi(sub_key2);
 
             inventory[index1][index2] =
-                petal_key->valueint; // Assuming the value is an int.
+                petal_key->valueint;
         }
     }
 
@@ -133,6 +176,50 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
 
 void rr_server_client_free(struct rr_server_client *this)
 {
+    char petals_string[50000] = {0}; // Ensure this is large enough
+    char buffer[1000] = {0};         // Temporary buffer for each item
+    uint32_t wave = 0;
+
+    if (this->server->simulation_active)
+    {
+        wave = rr_simulation_get_arena(&this->server->simulation, 1)->wave;
+        for (struct rr_drop_picked_up *i =
+                 this->player_info->collected_this_run;
+             i < this->player_info->collected_this_run_end; i++)
+        {
+            // Format each item into buffer
+            snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
+                     i->count);
+
+            // If not the first item, append a comma before the item
+            if (i != this->player_info->collected_this_run)
+            {
+                strncat(petals_string, ",", 5000 - strlen(petals_string) - 1);
+            }
+
+            // Append the item
+            strncat(petals_string, buffer, 5000 - strlen(petals_string) - 1);
+        }
+    }
+    if (petals_string[0] == 0)
+        memcpy(petals_string, "0:0:0", sizeof "0:0:0");
+    // if (1)
+    // {
+    rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "0:0:0");
+    // }
+    // else
+    // {
+    //     char *malloc_string = malloc(sizeof petals_string);
+    //     char *malloc_uuid = malloc(sizeof
+    //     this->client->rivet_account.uuid); memcpy(malloc_string,
+    //     &petals_string, sizeof petals_string); memcpy(malloc_uuid,
+    //     &this->client->rivet_account.uuid, sizeof
+    //     this->client->rivet_account.uuid); struct api_join_captures
+    //     *captures = malloc(sizeof *captures); captures->rivet_uuid =
+    //     malloc_uuid; captures->petals_string = malloc_string; pthread_t
+    //     thread_id; int result = pthread_create(&thread_id, NULL,
+    //     api_join, &captures); pthread_detach(thread_id);
+    // }
     puts("client disconnected");
     if (this->server->simulation_active)
     {
@@ -202,28 +289,23 @@ void rr_server_client_tick(struct rr_server_client *this)
             proto_bug_write_uint8(
                 &encoder, rr_bitset_get(&this->server->clients_in_use[0], i),
                 "bitbit");
-            proto_bug_write_uint8(&encoder, curr_client->ready,
-                                  "ready");
-            proto_bug_write_float32(
-                &encoder, curr_client->requested_start_wave_percent,
-                "requested start wave");
-            uint32_t nick_len =
-                strlen(&curr_client->client_nickname[0]);
+            proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
+            proto_bug_write_float32(&encoder,
+                                    curr_client->requested_start_wave_percent,
+                                    "requested start wave");
+            uint32_t nick_len = strlen(&curr_client->client_nickname[0]);
             proto_bug_write_varuint(&encoder, nick_len, "nick size");
-            proto_bug_write_string(&encoder,
-                                   &curr_client->client_nickname[0],
+            proto_bug_write_string(&encoder, &curr_client->client_nickname[0],
                                    nick_len, "nick");
             for (uint8_t j = 0; j < 20; ++j)
             {
-                proto_bug_write_uint8(
-                    &encoder, curr_client->loadout[j].id, "id");
-                proto_bug_write_uint8(
-                    &encoder, curr_client->loadout[j].rarity,
-                    "rar");
+                proto_bug_write_uint8(&encoder, curr_client->loadout[j].id,
+                                      "id");
+                proto_bug_write_uint8(&encoder, curr_client->loadout[j].rarity,
+                                      "rar");
             }
         }
-        proto_bug_write_uint8(&encoder, pos,
-                                  "sqpos");
+        proto_bug_write_uint8(&encoder, pos, "sqpos");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -260,8 +342,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                 char log[100] = {"ip: `"};
                 strcat(log, this->clients[i].ip_address);
                 strcat(log, "`");
-                // rr_discord_webhook_log("player status", "client connected",
-                // log, 0x44ff44);
+                // rr_discord_webhook_log("player status", "client
+                // connected", log, 0x44ff44);
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
@@ -350,11 +432,11 @@ int rr_server_lws_callback_function(struct lws *socket,
             client->received_first_packet = 1;
             if (size < 16)
             {
-                fputs("skid gaming1\n", stderr);
-                lws_close_reason(
-                    socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE /* troll */,
-                    (uint8_t *)"script kiddie1", sizeof "script kiddie");
-                return 1;
+                fputs("invlid size\n", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"invalid size",
+                                 sizeof "invalid size");
+                return -1;
             }
 
             proto_bug_read_uint64(&encoder, "useless bytes");
@@ -362,11 +444,10 @@ int rr_server_lws_callback_function(struct lws *socket,
                 proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
-                fputs("skid gaming2\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
-                                 (uint8_t *)"script kiddie2",
-                                 sizeof "script kiddie");
-                return 1;
+                fputs("invalid verification\n", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"invalid v", sizeof "invalid v");
+                return -1;
             }
 
             // #ifdef RIVET_BUILD
@@ -380,11 +461,11 @@ int rr_server_lws_callback_function(struct lws *socket,
             {
                 printf("%lu %lu\n", size,
                        encountered_size + uuid_encountered_size);
-                fputs("skid gaming3\n", stderr); // invalid size
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
-                                 (uint8_t *)"script kiddie3",
-                                 sizeof "script kiddie");
-                return 1;
+                fputs("invalid size2\n", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"invalid size2",
+                                 sizeof "invalid size2");
+                return -1;
             }
 
             memset(&this->clients[i].rivet_account, 0,
@@ -410,13 +491,27 @@ int rr_server_lws_callback_function(struct lws *socket,
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_account.token))
             {
-                fputs("skid gaming4\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_MESSAGE_TOO_LARGE,
-                                 (uint8_t *)"script kiddie4",
-                                 sizeof "script kiddie");
-                return 1;
+                fputs("rivet error\n", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"rivet error",
+                                 sizeof "rivet error");
+                return -1;
             }
 #endif
+
+            struct rr_api_account account = {0};
+            rr_api_on_open(this->clients[i].rivet_account.uuid, &account);
+
+            printf("%u\n", account.already_playing);
+
+            if (account.already_playing)
+            {
+                fputs("already playing\n", stderr);
+                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"already playing",
+                                 sizeof "already playing");
+                return -1;
+            }
 
             puts("socket verified");
             client->verified = 1;
@@ -526,7 +621,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                     rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave_tick(arena, 0);
                 rr_component_arena_set_wave(arena, arena->wave + 1);
-                this->simulation.wave_points = get_points_from_wave(arena->wave, 1);
+                this->simulation.wave_points =
+                    get_points_from_wave(arena->wave, 1);
                 rr_simulation_for_each_mob(&this->simulation, &this->simulation,
                                            delete_entity_function);
                 rr_simulation_for_each_drop(&this->simulation,
@@ -749,11 +845,10 @@ void rr_server_tick(struct rr_server *this)
         else
             this->ticks_until_simulation_create =
 #ifdef RIVET_BUILD
-                125
+                125;
 #else
-                2
+                2;
 #endif
-                ;
     }
 }
 
@@ -775,19 +870,18 @@ void rr_server_run(struct rr_server *this)
     assert(this->server);
     this->ticks_until_simulation_create =
 #ifdef RIVET_BUILD
-        125
+        125;
 #else
-        24
+        24;
 #endif
-        ;
     while (1)
     {
         struct timeval start;
         struct timeval end;
 
-        gettimeofday(
-            &start,
-            NULL); // gettimeofday actually starts from unix timestamp 0 (goofy)
+        gettimeofday(&start,
+                     NULL); // gettimeofday actually starts from unix
+                            // timestamp 0 (goofy)
         lws_service(this->server, -1);
         rr_server_tick(this);
         gettimeofday(&end, NULL);

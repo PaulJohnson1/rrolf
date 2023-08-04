@@ -10,7 +10,7 @@
 #endif
 
 #define RR_RIVET_CURL_PROLOGUE                                                 \
-    int err = 0;                                                               \
+    CURLcode err;                                                               \
     CURL *curl = curl_easy_init();                                             \
     assert(curl);
 
@@ -34,7 +34,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 {
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
-    char url[500] = {0};
+    char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s", param_1,
              param_2);
@@ -72,11 +72,28 @@ void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
     snprintf(url, sizeof(url),
              "https://rrolf.io/api/user_on_close/%s/%s/%s/%d/%s", RR_API_SECRET,
              id, petals, wave, gallery);
-    puts(url);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     RR_RIVET_CURL_EPILOGUE
 #endif
 }
+
+void rr_api_on_open(char const *uuid, void *captures)
+{
+#ifndef EMSCRIPTEN
+    char readBuffer[50000] = {0};
+    char url[5000] = {0};
+    RR_RIVET_CURL_PROLOGUE
+    snprintf(url, sizeof(url), "https://rrolf.io/api/user_on_open/%s/%s",
+             RR_API_SECRET, uuid);
+    printf("url is %s\n", url);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    RR_RIVET_CURL_EPILOGUE
+    rr_api_on_open_result(readBuffer, captures);
+#endif
+}
+
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                          char const *param_3, void *captures)
 {

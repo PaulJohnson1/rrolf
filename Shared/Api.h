@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Utilities.h>
+#include <Shared/StaticData.h>
 
 #ifdef RR_SERVER
 #define RR_API_SECRET                                                          \
@@ -9,20 +10,22 @@
 #define RR_API_SECRET "the_rrolf_api_secret_key_that_no_one_will_guess"
 #endif
 
-#define RR_RIVET_CURL_PROLOGUE                                                 \
-    int err = 0;                                                               \
-    CURL *curl = curl_easy_init();                                             \
-    assert(curl);
-
-#define RR_RIVET_CURL_EPILOGUE                                                 \
-    err = curl_easy_perform(curl);                                             \
-    assert(!err);                                                              \
-    curl_easy_cleanup(curl);
+struct rr_api_account
+{
+    double xp;
+    char const *username;
+    char const *password;
+    uint32_t maximum_wave;
+    uint32_t petals[rr_petal_id_max][rr_rarity_id_max];
+    uint8_t already_playing;
+};
 
 void rr_api_on_get_petals(char *, void *);
 void rr_api_on_craft_result(char *, void *);
+void rr_api_on_open_result(char *, void *);
 
 void rr_api_get_petals(char const *, char const *, void *);
 void rr_api_craft_petals(char const *, char const *, char const *,
                          void *);
 void rr_api_on_close(char const *, char const *, uint32_t, char const *);
+void rr_api_on_open(char const *uuid, void *captures);

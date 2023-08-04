@@ -75,48 +75,6 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    char petals_string[5000] = {0}; // Ensure this is large enough
-    char buffer[100] = {0};         // Temporary buffer for each item
-
-    for (struct rr_drop_picked_up *i = this->collected_this_run;
-         i < this->collected_this_run_end; i++)
-    {
-        // Format each item into buffer
-        snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
-                 i->count);
-
-        // If not the first item, append a comma before the item
-        if (i != this->collected_this_run)
-        {
-            strncat(petals_string, ",",
-                    5000 - strlen(petals_string) - 1);
-        }
-
-        // Append the item
-        strncat(petals_string, buffer,
-                5000 - strlen(petals_string) - 1);
-    }
-    if (petals_string[0] == 0)
-        memcpy(petals_string, "0:0:0", sizeof "0:0:0");
-    puts("api join start");
-    // if (1)
-    // {
-    rr_api_on_close(this->client->rivet_account.uuid, petals_string, rr_simulation_get_arena(simulation, 1)->wave, "0:0:0");
-    // }
-    // else
-    // {
-    //     char *malloc_string = malloc(sizeof petals_string);
-    //     char *malloc_uuid = malloc(sizeof this->client->rivet_account.uuid);
-    //     memcpy(malloc_string, &petals_string, sizeof petals_string);
-    //     memcpy(malloc_uuid, &this->client->rivet_account.uuid, sizeof this->client->rivet_account.uuid);
-    //     struct api_join_captures *captures = malloc(sizeof *captures);
-    //     captures->rivet_uuid = malloc_uuid;
-    //     captures->petals_string = malloc_string;
-    //     pthread_t thread_id;
-    //     int result = pthread_create(&thread_id, NULL, api_join, &captures);
-    //     pthread_detach(thread_id);
-    // }
-
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
             rr_simulation_get_health(simulation, this->flower_id), 0);

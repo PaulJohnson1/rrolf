@@ -161,7 +161,7 @@ static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_dynamic_text_metadata *data = this->data;
     struct rr_game_squad_client *client = data->data;
-    data->text[sprintf(data->text, "Start at %.0f%%",
+    data->text[sprintf(data->text, "%.0f%%",
                            client->requested_start_wave * 100)] = 0;
 }
 

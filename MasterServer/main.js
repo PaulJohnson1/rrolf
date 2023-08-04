@@ -233,7 +233,7 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
         log("user_on_close", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
         const resp = JSON.stringify(user);
-        user.already_playing = 1;
+        user.already_playing++;
         await write_db_entry(username, user);
         return resp;
     });
@@ -248,7 +248,7 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
             throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (!(user.maximum_wave > wave_end)) user.maximum_wave = wave_end;
-        user.already_playing = 0;
+        user.already_playing--;
         await write_db_entry(username, user);
         return "success";
     });

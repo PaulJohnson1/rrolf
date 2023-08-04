@@ -39,6 +39,8 @@ struct rr_player_info_modifiers
     float drop_pickup_radius;
 };
 
+
+
 struct rr_component_player_info
 {
     struct rr_component_player_info_petal_slot slots[10];
