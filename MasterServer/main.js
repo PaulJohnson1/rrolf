@@ -32,7 +32,7 @@ function format_id_rarity(entry)
 function log(type, args)
 {
     // todo: save to some sort of log file
-    console.log(`${new Date().toJSON()}::[${type}]: ${args.join("\t")}`);
+    console.log(`${new Date().toJSON()}::[${type}]:\t${args.join("\t")}`);
 }
 
 function get_rivet_url(key)
@@ -73,14 +73,30 @@ only passes around the accounst object instead which results in fewer requests
 */
 function apply_missing_defaults(account)
 {
-    if (!account.password) account.password = "";
-    if (!account.username) account.username = "";
-    if (!account.maximum_wave) account.maximum_wave = 1;
-    if (!account.xp) account.xp = 1;
-    if (!account.playing) account.playing = 0;
-    if (!account.petals) account.petals = {"1:0": 5};
-    if (!account.petal_crafts) account.petal_crafts = {};
-    if (!account.mob_gallery) account.mob_gallery = {};
+    const defaults = {
+        password: "",
+        username: "",
+        maximum_wave: 1,
+        xp: 0,
+        already_playing: 0,
+        petals: {"1:0": 5},
+        petal_crafts: {},
+        mob_gallery: {}
+    };
+
+    // Fill in any missing defaults
+    for (let prop in defaults) {
+        if (!account.hasOwnProperty(prop)) {
+            account[prop] = defaults[prop];
+        }
+    }
+
+    // Remove any extra properties
+    for (let prop in account) {
+        if (!defaults.hasOwnProperty(prop)) {
+            delete account[prop];
+        }
+    }
 
     return account;
 }
@@ -214,10 +230,10 @@ function parse_id_rarity_count(string)
 app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res) => {
     const {username} = req.params;
     handle_error(res, async () => {
-        log("user_on_close", [username, wave_end, petals_string]);
+        log("user_on_close", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
         const resp = JSON.stringify(user);
-        user.playing = 1;
+        user.already_playing = 1;
         await write_db_entry(username, user);
         return resp;
     });
@@ -228,10 +244,11 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
-        if (!user.playing) throw new Error("Player was not online when close happened");
+        if (!user.already_playing)
+            throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (!(user.maximum_wave > wave_end)) user.maximum_wave = wave_end;
-        user.playing = 0;
+        user.already_playing = 0;
         await write_db_entry(username, user);
         return "success";
     });
