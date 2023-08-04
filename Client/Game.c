@@ -866,6 +866,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     if (this->simulation_ready)
     {
+        memset(&this->squad_members[0], 0, sizeof this->squad_members);
         rr_simulation_tick(this->simulation, delta);
 
         this->renderer->state.filter.amount = 0;

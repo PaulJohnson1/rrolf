@@ -827,7 +827,7 @@ void rr_server_tick(struct rr_server *this)
                         client_count++;
 
                         start_wave_total +=
-                            this->clients[i].requested_start_wave_percent;
+                            this->clients[i].requested_start_wave_percent * this->clients[i].max_wave;
                     }
                 float start_wave_mean = start_wave_total / client_count;
 
