@@ -356,6 +356,46 @@ static struct rr_ui_element *crafting_chance_text_init()
     return this;
 }
 
+static void crafting_xp_text_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_text_metadata *data = this->data;
+    if (game->crafting_data.crafting_id == 0)
+    {
+        data->text = "? xp per craft";
+        this->fill = 0xff888888;
+        return;
+    }
+    this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity];
+    switch(game->crafting_data.crafting_rarity)
+    {
+        case rr_rarity_id_common:
+            data->text = "1 xp per craft";
+            break;
+        case rr_rarity_id_unusual:
+            data->text = "3 xp per craft";
+            break;
+        case rr_rarity_id_rare:
+            data->text = "5 xp per craft";
+            break;
+        case rr_rarity_id_epic:
+            data->text = "15 xp per craft";
+            break;
+        case rr_rarity_id_legendary:
+            data->text = "30 xp per craft";
+            break;
+        case rr_rarity_id_mythic:
+            data->text = "100 xp per craft";
+            break;
+    }
+}
+
+static struct rr_ui_element *crafting_xp_text_init()
+{
+    struct rr_ui_element *this = rr_ui_text_init("? xp per craft", 14, 0xff888888);
+    this->animate = crafting_xp_text_animate;
+    return this;
+}
+
 static void crafting_inventory_button_animate(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
@@ -509,9 +549,11 @@ struct rr_ui_element *rr_ui_crafting_container_init()
                     rr_ui_text_init("Crafting", 24, 0xffffffff),
                     rr_ui_h_container_init(rr_ui_container_init(), 0, 25,
                         rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                            rr_ui_text_init("Chance: --%", 14, 0x00000000),
+                            rr_ui_static_space_init(14),
+                            rr_ui_text_init("                                   ", 14, 0x00000000),
                             crafting_button_init(), 
                             crafting_chance_text_init(),
+                            crafting_xp_text_init(),
                             NULL
                         ),
                         craft, 

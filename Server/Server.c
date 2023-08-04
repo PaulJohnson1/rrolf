@@ -290,8 +290,8 @@ void rr_server_client_tick(struct rr_server_client *this)
                 &encoder, rr_bitset_get(&this->server->clients_in_use[0], i) && curr_client->verified,
                 "bitbit");
             proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
-            proto_bug_write_float32(&encoder,
-                                    curr_client->requested_start_wave_percent,
+            proto_bug_write_varuint(&encoder,
+                                    curr_client->requested_start_wave_percent * curr_client->max_wave + 1,
                                     "requested start wave");
             uint32_t nick_len = strlen(&curr_client->client_nickname[0]);
             proto_bug_write_varuint(&encoder, nick_len, "nick size");
@@ -512,6 +512,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                                  sizeof "already playing");
                 return -1;
             }
+            client->max_wave = account.maximum_wave;
 
             puts("socket verified");
             client->verified = 1;
@@ -761,7 +762,7 @@ void rr_server_tick(struct rr_server *this)
 
     uint8_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-        if (rr_bitset_get(this->clients_in_use, i))
+        if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified)
         {
             rr_server_client_tick(this->clients + i);
             ++client_count;
@@ -811,7 +812,6 @@ void rr_server_tick(struct rr_server *this)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, 1);
 #endif
-                uint32_t min_wave_spawn = 5555555; // ez
                 float start_wave_total = 0;
                 uint64_t client_count = 0;
 
@@ -828,8 +828,6 @@ void rr_server_tick(struct rr_server *this)
 
                         start_wave_total +=
                             this->clients[i].requested_start_wave_percent;
-                        if (min_wave_spawn > this->clients[i].max_wave)
-                            min_wave_spawn = this->clients[i].max_wave;
                     }
                 float start_wave_mean = start_wave_total / client_count;
 
@@ -837,7 +835,7 @@ void rr_server_tick(struct rr_server *this)
                     rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave(
                     arena,
-                    (uint32_t)((float)min_wave_spawn * start_wave_mean) + 1);
+                    (uint32_t)(start_wave_mean + 1));
                 this->simulation.wave_points =
                     get_points_from_wave(arena->wave, client_count);
             }
