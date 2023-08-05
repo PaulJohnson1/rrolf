@@ -94,6 +94,8 @@ function apply_missing_defaults(account)
         mob_gallery: {}
     };
 
+    account.user_playing = 0;
+
     // Fill in any missing defaults
     for (let prop in defaults) {
         if (!account.hasOwnProperty(prop)) {
@@ -260,7 +262,7 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
         log("user_on_open", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
         const resp = JSON.stringify(user);
-        user.already_playing++;
+        user.already_playing=0;
         await write_db_entry(username, user);
         return resp;
     });
@@ -272,12 +274,12 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
-        if (!user.already_playing)
-            throw new Error("Player was not online when close happened");
+        // if (!user.already_playing)
+        //     throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (user.maximum_wave < wave_end)
             user.maximum_wave = wave_end;
-        user.already_playing--;
+        user.already_playing=0;
         await write_db_entry(username, user);
         return "success";
     });
@@ -286,11 +288,13 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
 app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
     const {username, password} = req.params;
     log("user_get", [username]);
-    const user = await db_read_user(username, password);
-    delete user.failed_crafts;
-    delete user.password;
-    delete user.already_playing;
-    handle_error(res, async () => JSON.stringify(user));
+    handle_error(res, async () => {
+        const user = await db_read_user(username, password);
+        delete user.failed_crafts;
+        delete user.password;
+        delete user.already_playing;
+        return JSON.stringify(user)
+    });
 });
 
 app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, async (req, res) => {
