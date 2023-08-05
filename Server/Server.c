@@ -152,7 +152,7 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
     rr_component_player_info_set_client_id(this->player_info, pos);
-    rr_component_player_info_set_slot_count(this->player_info, 5);
+    rr_component_player_info_set_slot_count(this->player_info, 8);
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
@@ -781,7 +781,8 @@ void rr_server_tick(struct rr_server *this)
         {
             this->simulation_active = 0;
 #ifdef RIVET_BUILD
-            exit(123123);
+            usleep(5000000)
+            exit(0);
 #endif
             free(this->simulation.grid);
             rr_simulation_init(&this->simulation);
