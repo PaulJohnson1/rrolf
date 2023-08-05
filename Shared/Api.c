@@ -9,8 +9,14 @@
 #include <emscripten.h>
 #endif
 
+#ifdef RIVET_BUILD
+#define BASE_API_URL "https://rrolf.io/api/"
+#else
+#define BASE_API_URL "http://localhost:55554/api/"
+#endif
+
 #define RR_RIVET_CURL_PROLOGUE                                                 \
-    CURLcode err;                                                               \
+    CURLcode err;                                                              \
     CURL *curl = curl_easy_init();                                             \
     assert(curl);
 
@@ -36,8 +42,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
     char readBuffer[50000] = {0};
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), "https://rrolf.io/api/user_get/%s/%s", param_1,
-             param_2);
+    snprintf(url, sizeof(url), BASE_API_URL "user_get/%s/%s", param_1, param_2);
     printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -48,7 +53,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #else
     EM_ASM(
         {
-            fetch("https://rrolf.io/api/user_get/" + UTF8ToString($0) + '/' +
+            fetch(UTF8ToString($3) + "user_get/" + UTF8ToString($0) + '/' +
                   UTF8ToString($1))
                 .then(function(response){return response.text()})
                 .then(function(data) {
@@ -59,7 +64,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
                     Module._rr_api_on_get_petals($a, $2);
                 });
         },
-        param_1, param_2, captures);
+        param_1, param_2, captures, BASE_API_URL);
 #endif
 }
 
@@ -70,7 +75,7 @@ void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url),
-             "https://rrolf.io/api/user_on_close/%s/%s/%s/%d/%s", RR_API_SECRET,
+             BASE_API_URL "user_on_close/%s/%s/%s/%d/%s", RR_API_SECRET,
              id, petals, wave, gallery);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     RR_RIVET_CURL_EPILOGUE
@@ -83,8 +88,8 @@ void rr_api_on_open(char const *uuid, void *captures)
     char readBuffer[50000] = {0};
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), "https://rrolf.io/api/user_on_open/%s/%s",
-             RR_API_SECRET, uuid);
+    snprintf(url, sizeof(url), BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
+             uuid);
     printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -101,9 +106,8 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
     char readBuffer[50000] = {0};
     char url[500] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url),
-             "https://rrolf.io/api/user_craft_petals/%s/%s/%s", param_1,
-             param_2, param_3);
+    snprintf(url, sizeof(url), BASE_API_URL "user_craft_petals/%s/%s/%s",
+             param_1, param_2, param_3);
     curl_easy_setopt(curl, CURLOPT_HTTPPOST, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -113,7 +117,7 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
 #else
     EM_ASM(
         {
-            fetch("https://rrolf.io/api/user_craft_petals/" + UTF8ToString($0) +
+            fetch(UTF8ToString($4) + "user_craft_petals/" + UTF8ToString($0) +
                   '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
                 .then(function(response){return response.text()})
                 .then(function(data) {
@@ -124,6 +128,6 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
                     Module._rr_api_on_craft_result($a, $3);
                 });
         },
-        param_1, param_2, param_3, captures);
+        param_1, param_2, param_3, captures, BASE_API_URL);
 #endif
 }

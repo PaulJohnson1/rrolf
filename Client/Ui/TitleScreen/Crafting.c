@@ -54,7 +54,7 @@ struct craft_captures
 
 void rr_api_on_craft_result(char *data, void *_captures)
 {
-    // parse format of type id:rarity:count,id:rarity:count
+    // parse format of type delta_xp|id:rarity:count,id:rarity:count
     // and if it's the same id:rarity as the petal that is being crafted, reset
     // the animation and set the success count
     struct craft_captures *captures = _captures;
@@ -64,7 +64,18 @@ void rr_api_on_craft_result(char *data, void *_captures)
 
     craft->animation = 0;
 
-    char *token = strtok(data, ",");
+    char *xp_token = strtok(data, "|");
+    if (xp_token)
+    {
+        float xp;
+        if (sscanf(xp_token, "%f", &xp) != 1)
+            puts("Error parsing XP");
+        // else
+        //     game->xp += xp; // Assuming game struct has an 'xp' field
+    }
+
+    char *token = strtok(NULL, ",");
+
     while (token)
     {
         struct server_response r;
@@ -92,7 +103,8 @@ static void craft_button_on_event(struct rr_ui_element *this,
 {
     if (game->pressed != this)
         return;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->crafting_data.animation == 0)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        game->crafting_data.animation == 0)
     {
         if (game->crafting_data.success_count == 0 &&
             game->crafting_data.count >= PETALS_PER_CRAFT &&
@@ -125,7 +137,8 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
     struct crafting_ring_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        game->pressed == this)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
         game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
@@ -170,7 +183,7 @@ static void crafting_ring_petal_animate(struct rr_ui_element *this,
         data->count == 0 || data->prev_id != game->crafting_data.crafting_id ||
             data->prev_rarity != game->crafting_data.crafting_rarity,
         0.4);
-        
+
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
     rr_renderer_render_background(game->renderer, 254);
     if (game->crafting_data.crafting_id != 0)
@@ -190,7 +203,8 @@ static void crafting_ring_petal_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id, data->prev_rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+                                             data->prev_rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;
@@ -279,7 +293,9 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer,
                                   game->crafting_data.crafting_rarity + 1);
-    rr_renderer_render_petal_with_background(renderer, game, game->crafting_data.crafting_id, game->crafting_data.crafting_rarity + 1);
+    rr_renderer_render_petal_with_background(
+        renderer, game, game->crafting_data.crafting_id,
+        game->crafting_data.crafting_rarity + 1);
     rr_renderer_context_state_free(renderer, &state);
     if (game->crafting_data.success_count <= 1)
         return;
@@ -316,7 +332,8 @@ static struct rr_ui_element *crafting_button_init()
     return this;
 }
 
-static void crafting_chance_text_animate(struct rr_ui_element *this, struct rr_game *game)
+static void crafting_chance_text_animate(struct rr_ui_element *this,
+                                         struct rr_game *game)
 {
     struct rr_ui_text_metadata *data = this->data;
     if (game->crafting_data.crafting_id == 0)
@@ -326,26 +343,26 @@ static void crafting_chance_text_animate(struct rr_ui_element *this, struct rr_g
         return;
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
-    switch(game->crafting_data.crafting_rarity)
+    switch (game->crafting_data.crafting_rarity)
     {
-        case rr_rarity_id_common:
-            data->text = "Chance: 50%";
-            break;
-        case rr_rarity_id_unusual:
-            data->text = "Chance: 30%";
-            break;
-        case rr_rarity_id_rare:
-            data->text = "Chance: 15%";
-            break;
-        case rr_rarity_id_epic:
-            data->text = "Chance: 5%";
-            break;
-        case rr_rarity_id_legendary:
-            data->text = "Chance: 3%";
-            break;
-        case rr_rarity_id_mythic:
-            data->text = "Chance: 1%";
-            break;
+    case rr_rarity_id_common:
+        data->text = "Chance: 50%";
+        break;
+    case rr_rarity_id_unusual:
+        data->text = "Chance: 30%";
+        break;
+    case rr_rarity_id_rare:
+        data->text = "Chance: 15%";
+        break;
+    case rr_rarity_id_epic:
+        data->text = "Chance: 5%";
+        break;
+    case rr_rarity_id_legendary:
+        data->text = "Chance: 3%";
+        break;
+    case rr_rarity_id_mythic:
+        data->text = "Chance: 1%";
+        break;
     }
 }
 
@@ -405,12 +422,12 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
     {
         if (game->cache.loadout[i].id == data->id &&
             game->cache.loadout[i].rarity == data->rarity)
-            {
-                if (count > 0)
-                    --count;
-                else
-                    game->cache.loadout[i].id = 0;
-            }
+        {
+            if (count > 0)
+                --count;
+            else
+                game->cache.loadout[i].id = 0;
+        }
     }
     if (data->id == game->crafting_data.crafting_id)
         if (data->rarity == game->crafting_data.crafting_rarity)
@@ -438,7 +455,8 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        game->pressed == this)
     {
         if (game->inventory[data->id][data->rarity] < PETALS_PER_CRAFT ||
             game->crafting_data.success_count > 0 ||
@@ -484,7 +502,8 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->id, data->rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->id,
+                                             data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;

@@ -5,7 +5,8 @@
 
 #include <Shared/Utilities.h>
 
-EntityIdx rr_simulation_alloc_player(EntityIdx entity, struct rr_simulation *this)
+EntityIdx rr_simulation_alloc_player(EntityIdx entity,
+                                     struct rr_simulation *this)
 {
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, entity);
@@ -38,52 +39,43 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity, struct rr_simulation *thi
     return flower_id;
 }
 
-EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id, uint8_t rarity, EntityIdx owner)
+EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id,
+                                    uint8_t rarity, EntityIdx owner)
 {
     struct rr_petal_data const *data = &RR_PETAL_DATA[id];
-    EntityIdx petal_id =
-        rr_simulation_alloc_entity(this);
+    EntityIdx petal_id = rr_simulation_alloc_entity(this);
     struct rr_component_physical *physical =
-        rr_simulation_add_physical(this,
-                                    petal_id);
-    struct rr_component_petal *petal = rr_simulation_add_petal(
-        this, petal_id);
+        rr_simulation_add_physical(this, petal_id);
+    struct rr_component_petal *petal = rr_simulation_add_petal(this, petal_id);
     struct rr_component_relations *relations =
-        rr_simulation_add_relations(this,
-                                    petal_id);
+        rr_simulation_add_relations(this, petal_id);
     struct rr_component_health *health =
-        rr_simulation_add_health(this,
-                                    petal_id);
+        rr_simulation_add_health(this, petal_id);
     rr_component_physical_set_radius(physical, 10);
-    rr_component_physical_set_angle(physical,
-                                    rr_frand() * M_PI * 2);
+    rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
     physical->mass = 5;
     physical->friction = 0.75;
 
     rr_component_petal_set_id(petal, id);
     rr_component_petal_set_rarity(petal, rarity);
 
-    rr_component_relations_set_owner(
-        relations,
-        owner); // flower owns petal, not player
+    rr_component_relations_set_owner(relations,
+                                     owner); // flower owns petal, not player
     rr_component_relations_set_team(
         relations, rr_simulation_get_relations(this, owner)->team);
 
     float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
     float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
 
-    rr_component_health_set_max_health(health,
-                                        scale_h * data->health);
-    rr_component_health_set_health(health,
-                                    scale_h * data->health);
+    rr_component_health_set_max_health(health, scale_h * data->health);
+    rr_component_health_set_health(health, scale_h * data->health);
     rr_component_health_set_hidden(health, 1);
     health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
 
     if (data->secondary_cooldown > 0)
     {
         struct rr_component_projectile *projectile =
-            rr_simulation_add_projectile(
-                this, petal_id);
+            rr_simulation_add_projectile(this, petal_id);
         petal->effect_delay = data->secondary_cooldown;
     }
     else if (id == rr_petal_id_uranium)
@@ -170,8 +162,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         EntityIdx new_entity = RR_NULL_ENTITY;
         for (uint64_t i = 0; i < 5; ++i)
         {
-            new_entity = rr_simulation_alloc_mob(
-                this, 255, rarity_id, team_id);
+            new_entity = rr_simulation_alloc_mob(this, 255, rarity_id, team_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
             struct rr_component_physical *new_phys =

@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const rng = require("./rng");
 const app = express();
-app.use(cors());
 const port = 55554;
 const namespace = "/api";
 
@@ -11,11 +11,21 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const PETALS_TO_UPGRADE = 5;
 
-const CRAFT_CHANCES = [0.5, 0.3, 0.15, 0.05, 0.03, 0.01, 0];
+const CRAFT_CHANCES = [
+    rng.get_magic_chance(0.5),
+    rng.get_magic_chance(0.3),
+    rng.get_magic_chance(0.15),
+    rng.get_magic_chance(0.05),
+    rng.get_magic_chance(0.03),
+    rng.get_magic_chance(0.01),
+    0
+];
+const CRAFT_XP_GAINS = [1, 10, 100, 1000, 10000, 100000, 1000000];
+
+app.use(cors());
 
 app.use(function (req, res, next) {
-    res.removeHeader("X-Powered-By");
-    res.appendHeader("X-Powered_By", "nginx")
+    res.setHeader("X-Powered-By", "custom rrolf http server written in c")
     next();
 });
 
@@ -80,7 +90,7 @@ function apply_missing_defaults(account)
         xp: 0,
         already_playing: 0,
         petals: {"1:0": 5},
-        petal_crafts: {},
+        failed_crafts: {},
         mob_gallery: {}
     };
 
@@ -98,26 +108,36 @@ function apply_missing_defaults(account)
         }
     }
 
+    account.maximum_wave = parseInt(account.maximum_wave);
+
     return account;
 }
 
-function craft(count, chance)
+function craft(count, initial_fails, chance)
 {
     if (chance === 0)
         return {count, successes: 0};
     let successes = 0;
+    let fails = initial_fails;
+    let attempts = 0;
     while (count >= PETALS_TO_UPGRADE)
     {
-        if (Math.random() < chance)
+        attempts++;
+        let this_chance = chance * (fails + 1);
+        if (Math.random() < this_chance)
         {
+            fails = 0;
             successes++;
             count -= PETALS_TO_UPGRADE;
         }
         else
+        {
+            fails++;
             count -= ((Math.random() * (PETALS_TO_UPGRADE - 1)) | 0) + 1;
+        }
     }
 
-    return {count, successes};
+    return {count, successes, attempts, fails};
 }
 
 async function write_db_entry(username, data)
@@ -181,14 +201,21 @@ function craft_user_petals(user, petals)
         if (petals[i].count > user.petals[format_id_rarity(petals[i])])
             throw new Error("insufficient funds");
 
+    let new_xp = 0;
     const results = [];
     for (let i = 0; i < petals.length; i++)
     {
         const {id, rarity, count} = petals[i];
-        const {successes, count: new_count} = craft(count, CRAFT_CHANCES[rarity]);
+        const key = format_id_rarity(petals[i]);
+        const {successes, attempts, fails: new_fails, count: new_count} = craft(count, user.failed_crafts[key] || 0, CRAFT_CHANCES[rarity]);
+        user.failed_crafts[key] = new_fails;
+        new_xp += attempts * CRAFT_XP_GAINS[rarity];
+        new_xp += successes * CRAFT_XP_GAINS[rarity + 1];
         results.push({id, rarity: rarity + 1, count: successes});
         results.push({id, rarity, count: new_count - count});
     }
+
+    user.xp += new_xp;
 
     user_merge_petals(user, results);
 
@@ -196,7 +223,7 @@ function craft_user_petals(user, petals)
     for (let i = 0; i < results.length; i++)
         results[i] = format_id_rarity_count(results[i]);
     
-    return results.join(",");
+    return new_xp + "|" + results.join(",");
 }
 
 // example: 1:0:123,1:5:1236
@@ -240,7 +267,8 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
 });
 
 app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:wave_end/:gallery`, async (req, res) => {
-    const {username, petals_string, wave_end, gallery} = req.params;
+    const {username, petals_string, wave_end_str, gallery} = req.params;
+    const wave_end = parseInt(wave_end_str);
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
@@ -258,7 +286,11 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
 app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
     const {username, password} = req.params;
     log("user_get", [username]);
-    handle_error(res, async () => JSON.stringify(await db_read_user(username, password)));
+    const user = await db_read_user(username, password);
+    delete user.failed_crafts;
+    delete user.password;
+    delete user.already_playing;
+    handle_error(res, async () => JSON.stringify(user));
 });
 
 app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, async (req, res) => {
