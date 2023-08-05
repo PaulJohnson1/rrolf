@@ -25,8 +25,7 @@ const CRAFT_XP_GAINS = [1, 10, 100, 1000, 10000, 100000, 1000000];
 app.use(cors());
 
 app.use(function (req, res, next) {
-    res.removeHeader("X-Powered-By");
-    res.appendHeader("X-Powered-By", "custom rrolf http server written in c")
+    res.setHeader("X-Powered-By", "custom rrolf http server written in c")
     next();
 });
 
@@ -108,6 +107,8 @@ function apply_missing_defaults(account)
             delete account[prop];
         }
     }
+
+    account.maximum_wave = parseInt(account.maximum_wave);
 
     return account;
 }
