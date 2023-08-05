@@ -203,10 +203,10 @@ void rr_server_client_free(struct rr_server_client *this)
         }
     }
     if (petals_string[0] == 0)
-        memcpy(petals_string, "0:0:0", sizeof "0:0:0");
+        memcpy(petals_string, "1:0:0", sizeof "1:0:0");
     // if (1)
     // {
-    rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "0:0:0");
+    rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "1:0:0");
     // }
     // else
     // {
