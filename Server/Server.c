@@ -548,7 +548,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                     y++;
                 if (movementFlags & 8)
                     x++;
-                if (x != 0 || y != 0 && x == x && y == y && fabsf(x) < 10000 &&
+                if ((x != 0 || y != 0) && x == x && y == y && fabsf(x) < 10000 &&
                                   fabsf(y) < 10000)
                 {
                     float mag_1 = 2.5 / sqrtf(x * x + y * y);
