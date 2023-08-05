@@ -232,6 +232,18 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
         2 * outer_spacing + (data->width) * (h + inner_spacing) - inner_spacing;
 }
 
+static void rr_ui_scroll_container_set(struct rr_ui_element *c)
+{
+    float w = 0;
+    for (uint32_t i = 0; i < c->elements.size; ++i)
+    {
+        struct rr_ui_element *element = c->elements.start[i];
+        if (w < element->width)
+            w = element->width;
+    }
+    c->abs_width = c->width = w + 10;
+}
+
 void rr_ui_container_refactor(struct rr_ui_element *c)
 {
     if (c->elements.size != 0)
@@ -245,7 +257,6 @@ void rr_ui_container_refactor(struct rr_ui_element *c)
         }
         if (c->resizeable)
         {
-            c->abs_width = c->abs_height = 0;
             if (c->resizeable == rr_ui_h_container)
                 rr_ui_h_container_set(c);
             else if (c->resizeable == rr_ui_v_container)
@@ -254,6 +265,8 @@ void rr_ui_container_refactor(struct rr_ui_element *c)
                 rr_ui_choose_container_set(c);
             else if (c->resizeable == rr_ui_grid_container)
                 rr_ui_grid_container_set(c);
+            else if (c->resizeable == rr_ui_scroll_container)
+                rr_ui_scroll_container_set(c);
         }
     }
 }

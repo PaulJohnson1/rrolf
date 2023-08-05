@@ -484,9 +484,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    uuid_size, "rivet uuid");
             rr_websocket_send(&this->socket, verify_encoder.start,
                               verify_encoder.current);
-            this->socket_ready = 1;
             return;
         }
+        this->socket_ready = 1;
 
         this->socket.clientbound_encryption_key =
             rr_get_hash(this->socket.clientbound_encryption_key);

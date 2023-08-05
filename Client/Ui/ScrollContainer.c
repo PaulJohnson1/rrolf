@@ -31,7 +31,6 @@ static void scroll_container_poll_events(struct rr_ui_element *this, struct rr_g
 static void scroll_container_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
     struct scroll_container_metadata *data = this->data;
-    this->abs_width = this->width = this->elements.start[0]->width + 10;
     if (rr_ui_mouse_over(this, game) && game->input_data->scroll_delta != 0)
     {
         struct scroll_container_metadata *data = this->data;
@@ -118,5 +117,6 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *c,
     this->abs_width = this->width = c->width + 10; // 5 is the scrollbar width
     this->on_render = scroll_container_on_render;
     this->poll_events = scroll_container_poll_events;
+    this->resizeable = rr_ui_scroll_container;
     return this;
 }

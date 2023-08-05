@@ -12,7 +12,8 @@ enum rr_ui_resizeable_type
     rr_ui_h_container = 1,
     rr_ui_v_container = 2,
     rr_ui_choose_container = 3,
-    rr_ui_grid_container = 4
+    rr_ui_grid_container = 4,
+    rr_ui_scroll_container = 5
 };
 
 struct labeled_button_metadata

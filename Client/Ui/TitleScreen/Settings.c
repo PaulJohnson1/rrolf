@@ -132,7 +132,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                         ),
                     -1, -1),
                 80),
-            0x40ffffff),
+            0x80ffffff),
         10);
     this->animate = settings_container_animate;
     this->should_show = settings_container_should_show;

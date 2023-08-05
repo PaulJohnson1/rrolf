@@ -93,8 +93,8 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5, 10, 1, 3, 6, 12, 5,
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 5, 10, 15, 25, 50, 100};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 12.5, 18, 25, 100, 250, 50};
-static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {2, 3, 8, 16, 20, 24, 40};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 12.5, 18, 25, 150, 250, 50};
+static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {2, 3, 7.5, 15, 20, 25, 40};
 
 static void init_game_coefficients()
 {
