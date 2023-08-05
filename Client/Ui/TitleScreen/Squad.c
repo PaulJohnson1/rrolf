@@ -224,7 +224,7 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
     return rr_ui_dynamic_text_init(18, 0xffffffff, squad_countdown);
 }
 
-static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_game *game)
+static void squad_find_button_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (game->rivet_lobby_pending)
@@ -251,6 +251,19 @@ static void labeled_button_poll_events(struct rr_ui_element *this, struct rr_gam
     }
 }
 
+static void ready_button_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct labeled_button_metadata *data = this->data;
+    if (!game->socket_ready)
+    {
+        this->fill = 0xff999999;
+    }
+    else
+    {
+        this->fill = 0xff34da23;
+    }
+}
+
 static void join_button_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -262,10 +275,6 @@ static void join_button_on_event(struct rr_ui_element *this, struct rr_game *gam
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 69, "header");
             rr_websocket_send(&game->socket, encoder.start, encoder.current);
-        }
-        else if (!game->socket_pending && !game->rivet_lobby_pending)
-        {
-            rr_game_connect_socket(game);
         }
     }
 }
@@ -289,7 +298,7 @@ struct rr_ui_element *rr_ui_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
     this->fill = 0xffd4b30c;
-    this->poll_events = labeled_button_poll_events;
+    this->animate = squad_find_button_animate;
     this->on_event = squad_join_button_on_event;
     return this;
 }
@@ -297,7 +306,7 @@ struct rr_ui_element *rr_ui_squad_button_init()
 struct rr_ui_element *rr_ui_join_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 36, 0);
-    //this->poll_events = labeled_button_poll_events;
+    this->animate = ready_button_animate;
     this->on_event = join_button_on_event;
     return this;
 }

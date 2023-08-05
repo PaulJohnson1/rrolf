@@ -17,6 +17,13 @@ static void default_function(struct rr_ui_element *this, struct rr_game *game)
     return; // does nothing
 }
 
+static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        game->top_ui_open = game->bottom_ui_open = 0;
+    return; // does nothing
+}
+
 static void default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     this->width = this->abs_width * (1 - this->animation);
@@ -146,7 +153,7 @@ struct rr_ui_element *rr_ui_element_init()
     memset(this, 0, sizeof *this);
     this->first_frame = 1;
     this->on_render = default_function;
-    this->on_event = default_function; // null on_event
+    this->on_event = default_on_event; // null on_event
     this->should_show = rr_ui_always_show;
     this->poll_events = rr_ui_element_check_if_focused;
     this->animate = default_animate;
