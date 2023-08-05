@@ -436,7 +436,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     switch (type)
     {
     case rr_websocket_event_type_open:
-        this->socket_pending = 0;
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
@@ -486,6 +485,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               verify_encoder.current);
             return;
         }
+        this->socket_pending = 0;
         this->socket_ready = 1;
 
         this->socket.clientbound_encryption_key =

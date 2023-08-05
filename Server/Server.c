@@ -72,6 +72,7 @@ void rr_api_on_open_result(char *json, void *captures)
     account->username = strdup(username->valuestring);
     account->password = strdup(password->valuestring);
     account->maximum_wave = max_wave->valueint;
+    printf("max wave is %d\n", account->maximum_wave);
     cJSON_Delete(parsed);
 }
 
