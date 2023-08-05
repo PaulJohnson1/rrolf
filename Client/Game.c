@@ -41,7 +41,7 @@ void validate_loadout(struct rr_game *this)
     {
         uint8_t id = this->cache.loadout[i].id;
         uint8_t rarity = this->cache.loadout[i].rarity;
-        if (temp_inv[id][rarity] == 0)
+        if (temp_inv[id][rarity] == 0 || (i % 10) >= this->cache.slots_unlocked)
             this->cache.loadout[i].id = this->cache.loadout[i].rarity = 0;
         else
             --temp_inv[id][rarity];
@@ -548,7 +548,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
                 this->squad_members[i].requested_start_wave =
-                    proto_bug_read_float32(&encoder,
+                    proto_bug_read_varuint(&encoder,
                                            "requested start wave");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
@@ -866,6 +866,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     if (this->simulation_ready)
     {
+        memset(&this->squad_members[0], 0, sizeof this->squad_members);
         rr_simulation_tick(this->simulation, delta);
 
         this->renderer->state.filter.amount = 0;
@@ -1028,15 +1029,18 @@ void rr_game_tick(struct rr_game *this, float delta)
             uint8_t should_write = 0;
             uint8_t switch_all = rr_bitset_get_bit(
                 this->input_data->keys_pressed_this_tick, 'X');
-            for (uint8_t n = 0; n < this->cache.slots_unlocked; ++n)
+            for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
                 if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                                      48 + n) ||
+                                      '0' + n) ||
                     switch_all)
                 {
-                    proto_bug_write_uint8(&encoder, n == 0 ? 10 : n,
+                    proto_bug_write_uint8(&encoder, n,
                                           "petal switch");
                     should_write = 1;
                 }
+            if (this->cache.slots_unlocked == 10 && (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, '0') || switch_all))
+                proto_bug_write_uint8(&encoder, 10,
+                                          "petal switch");
             if (should_write)
             {
                 proto_bug_write_uint8(&encoder, 0, "petal switch");

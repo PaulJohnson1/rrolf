@@ -158,9 +158,9 @@ void rr_encrypt(uint8_t *start, uint64_t size, uint64_t key)
     // bytes for this
     uint32_t counter;
     for (uint64_t i = 0; i < 4; i++)
-        cipher_key[i] = key = rr_get_hash(key);
+        cipher_key[i] = key = rr_get_hash(rr_get_hash(rr_get_hash(rr_get_hash(rr_get_hash(key)))));
     for (uint64_t i = 0; i < 3; i++)
-        nonce[i] = key = rr_get_hash(key);
+        nonce[i] = key = rr_get_hash(rr_get_hash(key));
     counter = rr_get_hash(key);
 
     ChaCha20XOR((uint8_t *)cipher_key, counter, (uint8_t *)nonce, clone, start,

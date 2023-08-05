@@ -10,6 +10,18 @@
 static void container_on_render(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
+    if (this->h_flex)
+    {
+        struct rr_ui_container_metadata *data = this->container->data;
+        if (this->abs_width < this->container->abs_width - data->outer_spacing * 2)
+            this->abs_width = this->container->abs_width - data->outer_spacing * 2;
+    }
+    if (this->v_flex)
+    {
+        struct rr_ui_container_metadata *data = this->container->data;
+        if (this->abs_height < this->container->abs_height - data->outer_spacing * 2)
+            this->abs_height = this->container->abs_height - data->outer_spacing * 2;
+    }
     if (this->fill != 0x00000000 || game->cache.show_ui_hitbox)
     {
         struct rr_renderer *renderer = game->renderer;
@@ -46,18 +58,6 @@ static void container_on_render(struct rr_ui_element *this,
     }
     for (uint32_t i = 0; i < this->elements.size; ++i)
         rr_ui_render_element(this->elements.start[i], game);
-}
-
-static void flex_container_on_render(struct rr_ui_element *this,
-                                struct rr_game *game)
-{
-    if (this->container->resizeable)
-    {
-        struct rr_ui_container_metadata *data = this->container->data;
-        if (this->abs_width < this->container->abs_width - data->outer_spacing * 2)
-            this->abs_width = this->container->abs_width - data->outer_spacing * 2;
-    }
-    container_on_render(this, game);
 }
 
 void rr_ui_container_poll_events(struct rr_ui_element *this,
@@ -131,7 +131,8 @@ struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left, stru
     right->h_justify = 1;
     this->abs_width = this->width = left->abs_width + pad + right->abs_width;
     this->abs_height = this->height = left->abs_height > right->abs_height ? left->abs_height : right->abs_height;
-    this->on_render = flex_container_on_render;
+    this->h_flex = 1;
+    this->on_render = container_on_render;
     this->poll_events = rr_ui_container_poll_events;
     return this;
 }
