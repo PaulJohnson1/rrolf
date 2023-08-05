@@ -275,8 +275,8 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
         if (!user.already_playing)
             throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
-        if (!(user.maximum_wave >= parseInt(wave_end)))
-            user.maximum_wave = parseInt(wave_end);
+        if (user.maximum_wave < wave_end)
+            user.maximum_wave = wave_end;
         user.already_playing--;
         await write_db_entry(username, user);
         return "success";
