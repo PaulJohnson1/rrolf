@@ -166,7 +166,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
                                   NULL),
                               -1, 1),
             20),
-        0x80ffffff);
+        0x40ffffff);
     c->x += 60 + 20;
     c->animate = inventory_container_animate;
     c->should_show = inventory_container_should_show;

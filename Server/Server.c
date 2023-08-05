@@ -569,7 +569,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                 }
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
-                if (x != 0 || y != 0 && x == x && y == y && fabsf(x) < 10000 &&
+                if ((x != 0 || y != 0) && x == x && y == y && fabsf(x) < 10000 &&
                                   fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
@@ -597,10 +597,15 @@ int rr_server_lws_callback_function(struct lws *socket,
                 puts("someone sent a petal switch packet with size < 2");
                 return 0;
             }
+            else if (size > 70)
+            {
+                puts("someone sent a petal switch packet with size > 70");
+                return 0;
+            }
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            while (pos != 0 && pos <= 10)
+            while (pos != 0 && pos <= 10 && encoder.current - encoder.start < size)
             {
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
@@ -664,7 +669,7 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             float requested_start_wave =
                 proto_bug_read_float32(&encoder, "requested wave");
-            if (requested_start_wave > 0.75)
+            if (!(requested_start_wave <= 0.75 && requested_start_wave >= 0))
                 break;
             client->requested_start_wave_percent = requested_start_wave;
 
@@ -678,17 +683,17 @@ int rr_server_lws_callback_function(struct lws *socket,
             {
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
                 uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
-                if (id > rr_petal_id_max)
+                if (id >= rr_petal_id_max)
                     break;
-                if (rarity > rr_rarity_id_max)
+                if (rarity >= rr_rarity_id_max)
                     break;
                 client->loadout[i].rarity = rarity;
                 client->loadout[i].id = id;
                 id = proto_bug_read_uint8(&encoder, "id");
                 rarity = proto_bug_read_uint8(&encoder, "rarity");
-                if (id > rr_petal_id_max)
+                if (id >= rr_petal_id_max)
                     break;
-                if (rarity > rr_rarity_id_max)
+                if (rarity >= rr_rarity_id_max)
                     break;
                 client->loadout[i + 10].rarity = rarity;
                 client->loadout[i + 10].id = id;

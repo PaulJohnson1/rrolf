@@ -144,7 +144,7 @@ struct rr_ui_element *rr_ui_changelog_container_init()
                         ),
                     -1, -1),
                 80),
-            0x80ffffff),
+            0x40ffffff),
         10);
     this->animate = changelog_container_animate;
     this->should_show = changelog_container_should_show;
