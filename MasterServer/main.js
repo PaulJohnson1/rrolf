@@ -200,7 +200,7 @@ function craft_user_petals(user, petals)
             throw new Error("need at least " + PETALS_TO_UPGRADE + " in each craft entry");
 
     for (let i = 0; i < petals.length; i++)
-        if (petals[i].count > user.petals[format_id_rarity(petals[i])])
+        if (!(petals[i].count <= user.petals[format_id_rarity(petals[i])]))
             throw new Error("insufficient funds");
 
     let new_xp = 0;
