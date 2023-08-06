@@ -48,8 +48,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_stinger:
-        rr_renderer_set_fill(renderer, 0xff333333);
-        rr_renderer_set_stroke(renderer, 0xff292929);
+        rr_renderer_set_fill(renderer, 0xffd4b30c);
+        rr_renderer_set_stroke(renderer, 0xffd4b30c);
         rr_renderer_set_line_width(renderer, 3.0f);
         rr_renderer_set_line_join(renderer, 1.0f);
         rr_renderer_set_line_cap(renderer, 1.0f);
@@ -71,8 +71,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_stroke(renderer);
         break;
     case rr_petal_id_missile:
-        rr_renderer_set_fill(renderer, 0xff333333);
-        rr_renderer_set_stroke(renderer, 0xff333333);
+        rr_renderer_set_fill(renderer, 0xffd4b30c);
+        rr_renderer_set_stroke(renderer, 0xffd4b30c);
         rr_renderer_set_line_width(renderer, 5.0f);
         rr_renderer_set_line_join(renderer, 1.0f);
         rr_renderer_set_line_cap(renderer, 1.0f);

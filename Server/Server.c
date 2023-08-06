@@ -780,7 +780,7 @@ void rr_server_tick(struct rr_server *this)
         if (!client_count)
         {
             this->simulation_active = 0;
-#ifndef RIVET_BUILDa
+#ifdef RIVET_BUILD
             usleep(5000000);
             exit(0);
 #endif
