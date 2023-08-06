@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
 const rng = require("./rng");
 const app = express();
 const port = 55554;
@@ -21,6 +23,14 @@ const CRAFT_CHANCES = [
     0
 ];
 const CRAFT_XP_GAINS = [1, 10, 100, 1000, 10000, 100000, 1000000];
+
+let database = {};
+const databaseFilePath = path.join(__dirname, "database.json");
+if (fs.existsSync(databaseFilePath))
+{
+    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+    database = JSON.parse(databaseData);
+}
 
 app.use(cors());
 
@@ -144,12 +154,15 @@ function craft(count, initial_fails, chance)
 
 async function write_db_entry(username, data)
 {
-    await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    changed = true;
+    database[username] = structuredClone(data);
+    // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    const user = structuredClone({value: database[username]});
+    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         const user = apply_missing_defaults({});
@@ -262,7 +275,7 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
         log("user_on_open", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
         const resp = JSON.stringify(user);
-        user.already_playing=0;
+        user.already_playing++;
         await write_db_entry(username, user);
         return resp;
     });
@@ -274,12 +287,12 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
-        // if (!user.already_playing)
-        //     throw new Error("Player was not online when close happened");
+        if (!user.already_playing)
+            throw new Error("Player was not online when close happened");
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (user.maximum_wave < wave_end)
             user.maximum_wave = wave_end;
-        user.already_playing=0;
+        user.already_playing--;
         await write_db_entry(username, user);
         return "success";
     });
@@ -312,6 +325,37 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
 app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });
+
+const saveDatabaseToFile = () => {
+    if (changed)
+    {
+        changed = false;
+        console.log("saving database to file:", databaseFilePath);
+        const databaseData = JSON.stringify(database, null, 2);
+        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    }
+    else
+        console.log("tried save, was not changed");
+};
+
+let quit = false;
+const try_save_exit = () =>
+{
+    if (!quit)
+    {
+        quit = true;
+        saveDatabaseToFile();
+    }
+    process.exit();
+}
+
+process.on("beforeExit", try_save_exit);
+process.on("exit", try_save_exit)
+process.on("SIGTERM", try_save_exit);
+process.on("SIGINT", try_save_exit);
+process.on("uncaughtException", try_save_exit);
+
+setInterval(saveDatabaseToFile, 60000);
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
