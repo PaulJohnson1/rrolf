@@ -780,7 +780,7 @@ void rr_server_tick(struct rr_server *this)
         {
             this->simulation_active = 0;
 #ifdef RIVET_BUILD
-            usleep(5000000)
+            usleep(5000000);
             exit(0);
 #endif
             free(this->simulation.grid);
