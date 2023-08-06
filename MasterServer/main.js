@@ -25,6 +25,7 @@ const CRAFT_CHANCES = [
 const CRAFT_XP_GAINS = [1, 10, 100, 1000, 10000, 100000, 1000000];
 
 let database = {};
+let changed = false;
 const databaseFilePath = path.join(__dirname, "database.json");
 if (fs.existsSync(databaseFilePath))
 {
@@ -155,13 +156,13 @@ function craft(count, initial_fails, chance)
 async function write_db_entry(username, data)
 {
     changed = true;
-    database[username] = JSON.parse(JSON.stringify(data));
+    database[username] = structuredClone(data);
     // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
-    const user = JSON.parse(JSON.stringify({value: database[username]}));
+    const user = structuredClone({value: database[username]});
     // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
