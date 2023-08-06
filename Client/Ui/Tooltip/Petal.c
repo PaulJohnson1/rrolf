@@ -166,7 +166,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_web)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.0f", 40 + RR_PETAL_RARITY_SCALE[rarity].damage * 10)] = 0;
+        extra[sprintf(extra, "%.0f", 40 + RR_PETAL_RARITY_SCALE[rarity].damage * 30)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Web radius: ", 12, 0xffafafaf),
