@@ -209,11 +209,11 @@ static void tick_wave(struct rr_simulation *this)
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
-        if (arena->wave_tick % 36 == 0)
+        if (arena->wave_tick % 24 == 0)
             spawn_random_mob(this);
 
-        for (uint64_t i = 0; i < 4; i++)
-            if (arena->wave_tick + 1 == (wave_length * 25 * spawn_time) * i / 4)
+        for (uint64_t i = 0; i < 5; i++)
+            if (arena->wave_tick + 1 == (wave_length * 25 * spawn_time) * i / 5)
                 spawn_mob_cluster(this);
         
         if (arena->wave_tick == (wave_length * 25 * spawn_time))

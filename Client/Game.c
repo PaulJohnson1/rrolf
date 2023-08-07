@@ -347,7 +347,11 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
+            #ifndef RIVET_BUILD
+            this->inventory[id][rarity] = 1;
+            #else
             this->inventory[id][rarity] = 0;
+            #endif
             rr_renderer_init(&this->static_petals[id][rarity]);
             rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
                                        50);
@@ -467,7 +471,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
 
             // respond
             struct proto_bug verify_encoder;
-            proto_bug_init(&verify_encoder, &output_packet[0]);
+            proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
@@ -481,8 +485,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    token_size, "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
-            rr_websocket_send(&this->socket, verify_encoder.start,
-                              verify_encoder.current);
+            rr_websocket_send(&this->socket, verify_encoder.current - verify_encoder.start);
+            rr_websocket_send_all(&this->socket);
             return;
         }
         this->socket_pending = 0;
@@ -534,7 +538,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                     this->input_data->mouse_y -
                                         this->renderer->height / 2,
                                     "mouse y");
-            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         }
         case 69:
@@ -582,7 +586,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                       "rarity");
             }
             // write nickname
-            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 71, "header");
@@ -590,7 +594,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&encoder2, len, "nick length");
             proto_bug_write_string(&encoder2, &this->cache.nickname[0], len,
                                    "nick");
-            rr_websocket_send(&this->socket, encoder2.start, encoder2.current);
+            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         }
         default:
@@ -866,7 +870,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     if (this->simulation_ready)
     {
-        memset(&this->squad_members[0], 0, sizeof this->squad_members);
         rr_simulation_tick(this->simulation, delta);
 
         this->renderer->state.filter.amount = 0;
@@ -1000,7 +1003,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 3, "header");
             proto_bug_write_uint8(&encoder, 2, "cheat type");
-            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+            rr_websocket_send(&this->socket, encoder.current - encoder.start);
         }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               76 /* l */))
@@ -1009,7 +1012,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 3, "header");
             proto_bug_write_uint8(&encoder, 1, "cheat type");
-            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+            rr_websocket_send(&this->socket, encoder.current - encoder.start);
         }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               86 /* v */))
@@ -1018,7 +1021,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 3, "header");
             proto_bug_write_uint8(&encoder, 3, "cheat type");
-            rr_websocket_send(&this->socket, encoder.start, encoder.current);
+            rr_websocket_send(&this->socket, encoder.current - encoder.start);
         }
 #endif
         if (this->simulation_ready)
@@ -1044,8 +1047,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             if (should_write)
             {
                 proto_bug_write_uint8(&encoder, 0, "petal switch");
-                rr_websocket_send(&this->socket, encoder.start,
-                                  encoder.current);
+                rr_websocket_send(&this->socket, encoder.current - encoder.start);
             }
         }
     }
@@ -1099,6 +1101,9 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     rr_renderer_execute_instructions();
     rr_renderer_reset_instruction_queue();
+
+    if (this->socket_ready)
+        rr_websocket_send_all(&this->socket);
     gettimeofday(&end, NULL);
     long time_elapsed =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);

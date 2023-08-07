@@ -15,7 +15,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                    (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1, (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1)] = 0;
     else if (id == rr_petal_id_seed)
         cd[sprintf(cd, "↻ %.1f + %.1fs",
-                   (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1, 54 / RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
+                   (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1, 108 / RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
     else
         cd[sprintf(cd, "↻ %.1fs", (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1)] = 0;
     char *hp = malloc((sizeof *hp) * 16);
@@ -59,7 +59,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_petal_id_missile)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 40 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
+        extra[sprintf(extra, "%.1f", 25 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
         rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
                 rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Damage when shot: ", 12, 0xffff4444),

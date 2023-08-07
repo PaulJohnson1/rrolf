@@ -274,7 +274,7 @@ static void join_button_on_event(struct rr_ui_element *this, struct rr_game *gam
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 69, "header");
-            rr_websocket_send(&game->socket, encoder.start, encoder.current);
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
 }
@@ -285,7 +285,7 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
     struct labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (!game->socket_pending)
+        if (!game->socket_pending && !game->rivet_lobby_pending)
         {
             if (game->socket_ready)
                 rr_websocket_disconnect(&game->socket, game);

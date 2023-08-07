@@ -46,7 +46,7 @@ static void asset_web_init(struct rr_game *this)
 
 static void mob_triceratops_init(struct rr_game *this)
 {
-     rr_renderer_init(&this->mob_triceratops_head);
+    rr_renderer_init(&this->mob_triceratops_head);
     rr_renderer_set_dimensions(&this->mob_triceratops_head, 192, 336);
     rr_renderer_draw_svg(&this->mob_triceratops_head,
 #include <Client/Assets/Mob/Triceratops/Head.h>
@@ -129,6 +129,49 @@ static void mob_t_rex_init(struct rr_game *this)
     rr_renderer_draw_svg(&this->mob_trex_tail,
 #include <Client/Assets/Mob/Rex/Tail.h>
                          , 0, 0);
+}
+
+static void mob_t_rex_friendly_init(struct rr_game *this)
+{
+    struct rr_renderer *renderer = &this->mob_trex_friendly_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 244);
+    rr_renderer_translate(renderer, 72, 122);
+    renderer->state.filter.color = 0xffabab00;
+    renderer->state.filter.amount = 0.5;
+    rr_t_rex_head_draw(renderer);
+
+    renderer = &this->mob_trex_friendly_legs[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    renderer->state.filter.color = 0xffabab00;
+    renderer->state.filter.amount = 0.5;
+    rr_t_rex_leg1_draw(renderer);
+
+    renderer = &this->mob_trex_friendly_legs[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    renderer->state.filter.color = 0xffabab00;
+    renderer->state.filter.amount = 0.5;
+    rr_t_rex_leg2_draw(renderer);
+
+    renderer = &this->mob_trex_friendly_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    renderer->state.filter.color = 0xffabab00;
+    renderer->state.filter.amount = 0.5;
+    rr_t_rex_body_draw(renderer);
+
+    renderer = &this->mob_trex_friendly_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    renderer->state.filter.color = 0xffabab00;
+    renderer->state.filter.amount = 0.5;
+    rr_t_rex_tail_draw(renderer);
 }
 
 static void mob_dakotaraptor_init(struct rr_game *this)
@@ -330,6 +373,7 @@ void rr_assets_init(struct rr_game *this)
     mob_triceratops_init(this);
     mob_pteranodon_init(this);
     mob_t_rex_init(this);
+    mob_t_rex_friendly_init(this);
     tiles_init(this);
 
     asset_web_init(this);

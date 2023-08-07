@@ -424,6 +424,8 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
 void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
                                      uint8_t rarity)
 {
+    struct rr_renderer_context_state state;
+    rr_renderer_context_state_init(renderer, &state);
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas)
         rr_renderer_rotate(renderer, 1.0f - M_PI / 4.0f);
@@ -460,11 +462,12 @@ void rr_renderer_render_static_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_rotate(renderer, M_PI * 2.0f / count);
         }
     }
+    rr_renderer_context_state_free(renderer, &state);
 }
 
 // clang-format off
 void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
-                            uint8_t id, float animation_tick, float turning_value, uint8_t use_image_cache)
+                            uint8_t id, float animation_tick, float turning_value, uint8_t flags)
 {
     if (game->cache.ourpetsnake_mode)
     {
@@ -489,7 +492,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[0]);
             else
                 rr_triceratops_leg1_draw(renderer);
@@ -497,7 +500,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_triceratops_legs[1]);
             else
                 rr_triceratops_leg2_draw(renderer);
@@ -507,13 +510,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_translate(renderer,  0, 75);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, -75 + 155);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_triceratops_tail);
             else
                 rr_triceratops_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_triceratops_body);
         else
             rr_triceratops_body_draw(renderer);
@@ -522,7 +525,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_translate(renderer,  0, -75);
             rr_renderer_rotate(renderer, -0);
             rr_renderer_translate(renderer,  0, 75 - 145);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_triceratops_head);
             else
                 rr_triceratops_head_draw(renderer);
@@ -534,16 +537,16 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
-            if (use_image_cache)
-                rr_renderer_draw_image(renderer, &game->mob_trex_legs[0]);
+            if (flags & 1)
+                rr_renderer_draw_image(renderer, flags & 2 ? &game->mob_trex_friendly_legs[0] : &game->mob_trex_legs[0]);
             else
                 rr_t_rex_leg1_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
-            if (use_image_cache)
-                rr_renderer_draw_image(renderer, &game->mob_trex_legs[1]);
+            if (flags & 1)
+                rr_renderer_draw_image(renderer, flags & 2 ? &game->mob_trex_friendly_legs[1] : &game->mob_trex_legs[1]);
             else
                 rr_t_rex_leg2_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
@@ -552,26 +555,26 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_translate(renderer,  0, 75);
         rr_renderer_rotate(renderer, turning_value);
         rr_renderer_translate(renderer,  0, -75 + 150);
-        if (use_image_cache)
-            rr_renderer_draw_image(renderer, &game->mob_trex_tail);
+        if (flags & 1)
+            rr_renderer_draw_image(renderer, flags & 2 ? &game->mob_trex_friendly_tail : &game->mob_trex_tail);
         else
             rr_t_rex_tail_draw(renderer);
     rr_renderer_context_state_free(renderer, &state);
     
-    if (use_image_cache)
-        rr_renderer_draw_image(renderer, &game->mob_trex_body);
+    if (flags & 1)
+        rr_renderer_draw_image(renderer, flags & 2 ? &game->mob_trex_friendly_body : &game->mob_trex_body);
     else
         rr_t_rex_body_draw(renderer);
     
     rr_renderer_translate(renderer, 0, -125);
-    if (use_image_cache)
-        rr_renderer_draw_image(renderer, &game->mob_trex_head);
+    if (flags & 1)
+        rr_renderer_draw_image(renderer, flags & 2 ? &game->mob_trex_friendly_head : &game->mob_trex_head);
     else
         rr_t_rex_head_draw(renderer);
     break;
     case rr_mob_id_fern:
         rr_renderer_scale(renderer, 0.15f);
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_fern);
         else
             rr_fern_draw(renderer);
@@ -579,7 +582,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
     case rr_mob_id_stump:
         rr_renderer_rotate(renderer, M_PI / 2);
         rr_renderer_scale(renderer, 0.12f);
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_stump);
         else
             rr_stump_draw(renderer);
@@ -591,7 +594,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
             rr_renderer_translate(renderer, 175, 0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[0]);
             else
                 rr_pteranodon_wing1_draw(renderer);
@@ -600,12 +603,12 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
             rr_renderer_translate(renderer, -175, 0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pteranodon_wings[1]);
             else
                 rr_pteranodon_wing2_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_pteranodon_body);
         else
             rr_pteranodon_body_draw(renderer);
@@ -617,7 +620,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, -65, 0);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[0]);
             else
                 rr_dakotaraptor_wing1_draw(renderer);
@@ -626,7 +629,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 65, 0);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_wings[1]);
             else
                 rr_dakotaraptor_wing2_draw(renderer);
@@ -636,13 +639,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, 0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_tail);
             else
                 rr_dakotaraptor_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_body);
         else
             rr_dakotaraptor_body_draw(renderer);
@@ -650,7 +653,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -125);
             rr_renderer_rotate(renderer, -0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_head);
             else
                 rr_dakotaraptor_head_draw(renderer);
@@ -662,7 +665,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[0]);
             else
                 rr_pachycephalosaurus_leg1_draw(renderer);
@@ -670,7 +673,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[1]);
             else
                 rr_pachycephalosaurus_leg2_draw(renderer);
@@ -680,13 +683,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, -0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_tail);
             else
                 rr_pachycephalosaurus_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_body);
         else
             rr_pachycephalosaurus_body_draw(renderer);
@@ -694,7 +697,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -135);
             rr_renderer_rotate(renderer, -0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_head);
             else
                 rr_pachycephalosaurus_head_draw(renderer);
@@ -707,7 +710,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 70, 0);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ornithomimus_wings[0]);
             else
                 rr_ornithomimus_wing1_draw(renderer);
@@ -716,7 +719,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, -70, 0);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ornithomimus_wings[1]);
             else
                 rr_ornithomimus_wing2_draw(renderer);
@@ -726,13 +729,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, -0);
-            if (use_image_cache)
+            if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ornithomimus_tail);
             else
                 rr_ornithomimus_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
-        if (use_image_cache)
+        if (flags)
             rr_renderer_draw_image(renderer, &game->mob_ornithomimus_body);
         else
             rr_ornithomimus_body_draw(renderer);

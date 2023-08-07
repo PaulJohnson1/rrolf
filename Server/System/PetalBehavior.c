@@ -122,7 +122,7 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
-                    40 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 break;
             case rr_petal_id_peas:
                 if ((player_info->input & 1) == 0)
@@ -248,7 +248,7 @@ static void system_flower_petal_movement_logic(
                     if (!petal->detached)
                     {
                         projectile->ticks_until_death =
-                            1350 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                            2700 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                         rr_component_petal_set_detached(petal, 1);
                     }
                     return;

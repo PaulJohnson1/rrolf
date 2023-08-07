@@ -13,7 +13,10 @@
 
 #include <Shared/Crypto.h>
 
-uint8_t output_packet[2 * 1024] = {0};
+uint8_t *output_packet;
+static uint8_t output_buffer_pool[16 * 1024] = {0};
+static uint32_t packet_lengths[32] = {0};
+static uint32_t at = 0;
 
 #ifdef EMSCRIPTEN
 void rr_on_socket_event_emscripten(struct rr_websocket *this,
@@ -135,14 +138,30 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     game->simulation_ready = 0;
 }
 
-void rr_websocket_send(struct rr_websocket *this, uint8_t *start, uint8_t *end)
+void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 {
-    rr_encrypt(start, end - start, this->serverbound_encryption_key);
+    rr_encrypt(output_packet, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
-#ifndef EMSCRIPTEN
-    lws_write(this->socket, start, end - start, LWS_WRITE_BINARY);
-#else
-    EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $1)); }, start, end);
-#endif
+    //printf("pooling packet of length %d at ptr %p\n", length, output_packet);
+    #ifndef EMSCRIPTEN
+        lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
+    #else
+        EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); }, output_packet, length);
+    #endif
+    //packet_lengths[at] = length;
+    //output_packet += length;
+    //++at;
+}
+
+void rr_websocket_send_all(struct rr_websocket *this)
+{
+    uint8_t *offset = &output_buffer_pool[0];
+    for (uint32_t i = 0; i < at; ++i)
+    {
+        //printf("sending packret of length %d at ptr %p\n", packet_lengths[i], offset);
+        offset += packet_lengths[i];
+    }
+    at = 0;
+    output_packet = &output_buffer_pool[0];
 }
