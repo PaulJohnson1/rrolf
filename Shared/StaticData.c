@@ -26,7 +26,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, 50, 10, 30.0f, {}},
+    {rr_mob_id_triceratops, 50, 15, 30.0f, {}},
     {rr_mob_id_trex, 30, 25, 32.0f, {}},
     {rr_mob_id_fern, 10, 5, 25.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
@@ -34,7 +34,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}},
     {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
     {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}},
-    {rr_mob_id_ankylosaurus, 30, 15, 25.0f, {}}
+    {rr_mob_id_ankylosaurus, 75, 10, 25.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
