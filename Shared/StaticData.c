@@ -22,7 +22,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 63, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_gravel, rr_rarity_id_unusual, 8.0f, 5.0f, 0.0f, 13, 13, {2, 2, 3, 3, 3, 3, 4}}
+    {rr_petal_id_gravel, rr_rarity_id_unusual, 8.0f, 5.0f, 0.0f, 13, 13, {2, 2, 3, 3, 3, 3, 4}},
+    {rr_petal_id_club, rr_rarity_id_unusual, 3.0f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -55,7 +56,7 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {12,  2.4, 1.8},
     {40,  3.6, 2.5},
     {80,  5.6, 4.0},
-    {150, 10,  6.0},
+    {160, 12,  6.0},
 };
 // clang-format on
 
@@ -65,9 +66,9 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Basic", "Pellet", "Rock", "Stinger", "Light",
+    "Secret", "Basic", "Pellet", "Rock", "Spikes", "Light",
     "Missile",    "Peas",  "Leaf",  "Egg",  "Magnet", "Uranium", "Speed", "Azalea",
-    "Bone", "Web", "Seed", "Gravel"};
+    "Bone", "Web", "Seed", "Gravel", "Club"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -86,7 +87,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Gives the player armor. Stacks with itself",
     "Web",
     "What does this one do",
-    "Tiny rocks that stay on the ground and trip dinos"
+    "Tiny rocks that stay on the ground and trip dinos",
+    "Heavy and sturdy"
 };
 char const *RR_MOB_NAMES[rr_mob_id_max] = {
     "Triceratops", "T-Rex", "Fern", "Stump", "Pteranodon", "Dakotaraptor", "Pachycephalosaurus",
@@ -94,7 +96,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5, 10, 1, 3, 6, 12, 5, 2, 6};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30, 25, 45, 20, 25};
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 5, 10, 15, 30, 75, 150};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 5, 8, 15, 40, 100, 1000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 12.5, 18, 25, 150, 250, 50};
 static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {2, 3, 7.5, 15, 20, 25, 40};
@@ -194,7 +196,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
                     rr_petal_id_pellet, 0.15);
     
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_ankylosaurus].loot[0], rr_petal_id_rock,
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_ankylosaurus].loot[0], rr_petal_id_club,
                     0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ankylosaurus].loot[1], rr_petal_id_gravel,
                     0.05);

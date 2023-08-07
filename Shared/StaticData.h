@@ -34,6 +34,7 @@ enum rr_petal_id
     rr_petal_id_web,
     rr_petal_id_seed,
     rr_petal_id_gravel,
+    rr_petal_id_club,
     rr_petal_id_max
 };
 

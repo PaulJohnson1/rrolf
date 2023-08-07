@@ -267,6 +267,7 @@ static void system_flower_petal_movement_logic(
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
                 projectile->ticks_until_death = 125;
+                physical->friction = 0.4;
                 break;
             }
             default:
@@ -314,8 +315,8 @@ static void system_flower_petal_movement_logic(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
         rr_component_physical_set_angle(physical, curr_angle);
-    physical->acceleration.x += 0.4f * chase_vector.x;
-    physical->acceleration.y += 0.4f * chase_vector.y;
+    physical->acceleration.x += 0.5f * chase_vector.x;
+    physical->acceleration.y += 0.5f * chase_vector.y;
 }
 
 static void petal_modifiers(struct rr_simulation *simulation,
