@@ -248,7 +248,7 @@ static void system_flower_petal_movement_logic(
                     if (!petal->detached)
                     {
                         projectile->ticks_until_death =
-                            1350 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                            2700 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                         rr_component_petal_set_detached(petal, 1);
                     }
                     return;
