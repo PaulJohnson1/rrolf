@@ -343,6 +343,9 @@ void rr_game_init(struct rr_game *this)
                                         this->mob_tooltips[id][rarity]);
         }
     }
+    rr_renderer_init(&this->static_petals);
+    rr_renderer_set_dimensions(&this->static_petals, 50 * rr_petal_id_max,
+                                       50 * rr_rarity_id_max);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -352,12 +355,8 @@ void rr_game_init(struct rr_game *this)
             #else
             this->inventory[id][rarity] = 0;
             #endif
-            rr_renderer_init(&this->static_petals[id][rarity]);
-            rr_renderer_set_dimensions(&this->static_petals[id][rarity], 50,
-                                       50);
-            rr_renderer_translate(&this->static_petals[id][rarity], 25, 25);
-            rr_renderer_render_static_petal(&this->static_petals[id][rarity],
-                                            id, rarity);
+            rr_renderer_set_transform(&this->static_petals, 1, 0, 25 + 50 * id, 0, 1, 25 + 50 * rarity);
+            rr_renderer_render_static_petal(&this->static_petals, id, rarity);
             this->petal_tooltips[id][rarity] =
                 rr_ui_petal_tooltip_init(id, rarity);
             rr_ui_container_add_element(this->window,

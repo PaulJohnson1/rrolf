@@ -139,6 +139,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         break;
     case rr_mob_id_trex:
     case rr_mob_id_dakotaraptor:
+    case rr_mob_id_ankylosaurus:
         ai->ai_aggro_type = rr_ai_aggro_type_t_rex;
         break;
     case rr_mob_id_pachycephalosaurus:

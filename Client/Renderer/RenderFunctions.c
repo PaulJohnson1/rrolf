@@ -416,6 +416,15 @@ void rr_renderer_render_petal(struct rr_renderer *renderer, uint8_t id)
         rr_renderer_bezier_curve_to(renderer, 19.069269999999975, 2.7732499999999964, 30.560969999999976, 2.7732499999999964, 37.648829999999975, 9.861109999999996);
         rr_renderer_fill(renderer);
         break;
+    case rr_petal_id_gravel:
+        rr_renderer_set_stroke(renderer, 0xff606060);
+        rr_renderer_set_fill(renderer, 0xff777777);
+        rr_renderer_set_line_width(renderer, 3.0f);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
+        rr_renderer_fill(renderer);
+        rr_renderer_stroke(renderer);
+        break;
     default:
         break;
     }
@@ -746,6 +755,29 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head); //fix
         rr_renderer_context_state_free(renderer, &state);
         break;
+    case rr_mob_id_ankylosaurus:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, 155);
+            rr_renderer_rotate(renderer, turning_value);
+            rr_renderer_translate(renderer,  0, -0);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_tail);
+            else;
+        rr_renderer_context_state_free(renderer, &state);
+
+        if (flags)
+            rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_body);
+        else;
+        
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, -145);
+            rr_renderer_rotate(renderer, -0);
+            rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_head); //fix
+        rr_renderer_context_state_free(renderer, &state);
+        break;
     case 255:
         rr_renderer_set_stroke(renderer, 0xffcfcfcf);
         rr_renderer_set_fill(renderer, 0xffffffff);
@@ -802,8 +834,8 @@ void rr_renderer_render_background(struct rr_renderer *renderer, uint8_t rarity)
 void rr_renderer_render_petal_with_background(struct rr_renderer *renderer, struct rr_game *game, uint8_t id, uint8_t rarity)
 {
     rr_renderer_translate(renderer, 0, -5);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[id][rarity]);
+    rr_renderer_draw_clipped_image(
+        renderer, &game->static_petals, 25 + 50 * id, 25 + 50 * rarity, 50, 50, 0, 0);
     rr_renderer_translate(renderer, 0, 20);
     rr_renderer_draw_image(renderer, &game->petal_name_cache[id]);
 }
