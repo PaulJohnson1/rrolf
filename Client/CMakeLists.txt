@@ -6,6 +6,9 @@ project(rrolf-client)
 include_directories(..)
 
 set(SRCS
+    Assets/Mob/Ankylosaurus/Body.c
+    Assets/Mob/Ankylosaurus/Head.c
+    Assets/Mob/Ankylosaurus/Tail.c
     Assets/Mob/Dakotaraptor/Body.c
     Assets/Mob/Dakotaraptor/Head.c
     Assets/Mob/Dakotaraptor/Tail.c

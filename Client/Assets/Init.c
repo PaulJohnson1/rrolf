@@ -290,23 +290,23 @@ static void mob_ornithomimus_init(struct rr_game *this)
 
 static void mob_ankylosaurus_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_ankylosaurus_head);
-    rr_renderer_set_dimensions(&this->mob_ankylosaurus_head, 144, 144);
-    rr_renderer_draw_svg(&this->mob_ankylosaurus_head,
-#include <Client/Assets/Mob/Ankylosaurus/Head.h>
-                         , 0, 0);
-    
-    rr_renderer_init(&this->mob_ankylosaurus_body);
-    rr_renderer_set_dimensions(&this->mob_ankylosaurus_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_ankylosaurus_body,
-#include <Client/Assets/Mob/Ankylosaurus/Body.h>
-                         , 0, 0);
-    
-    rr_renderer_init(&this->mob_ankylosaurus_tail);
-    rr_renderer_set_dimensions(&this->mob_ankylosaurus_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_ankylosaurus_tail,
-#include <Client/Assets/Mob/Ankylosaurus/Tail.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_ankylosaurus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 144);
+    rr_renderer_translate(renderer, 72, 72);
+    rr_ankylosaurus_head_draw(renderer);
+
+    renderer = &this->mob_ankylosaurus_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ankylosaurus_body_draw(renderer);
+
+    renderer = &this->mob_ankylosaurus_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ankylosaurus_tail_draw(renderer);
 }
 
 static void tiles_init(struct rr_game *this)

@@ -532,7 +532,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer,  0, -75);
-            rr_renderer_rotate(renderer, -0);
             rr_renderer_translate(renderer,  0, 75 - 145);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_triceratops_head);
@@ -661,7 +660,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -125);
-            rr_renderer_rotate(renderer, -0);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_dakotaraptor_head);
             else
@@ -691,7 +689,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
-            rr_renderer_translate(renderer,  0, -0);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_tail);
             else
@@ -705,7 +702,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -135);
-            rr_renderer_rotate(renderer, -0);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_head);
             else
@@ -737,7 +733,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
-            rr_renderer_translate(renderer,  0, -0);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ornithomimus_tail);
             else
@@ -751,7 +746,6 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -145);
-            rr_renderer_rotate(renderer, -0);
             rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head); //fix
         rr_renderer_context_state_free(renderer, &state);
         break;
@@ -762,20 +756,23 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, 155);
             rr_renderer_rotate(renderer, turning_value);
-            rr_renderer_translate(renderer,  0, -0);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_tail);
-            else;
+            else
+                rr_ankylosaurus_body_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         if (flags)
             rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_body);
-        else;
+        else
+            rr_ankylosaurus_body_draw(renderer);
         
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -145);
-            rr_renderer_rotate(renderer, -0);
-            rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_head); //fix
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_head); //fix
+            else
+                rr_ankylosaurus_head_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
         break;
     case 255:
