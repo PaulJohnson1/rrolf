@@ -72,7 +72,6 @@ void rr_api_on_open_result(char *json, void *captures)
     account->username = strdup(username->valuestring);
     account->password = strdup(password->valuestring);
     account->maximum_wave = max_wave->valueint;
-    printf("max wave is %d\n", account->maximum_wave);
     cJSON_Delete(parsed);
 }
 
@@ -339,12 +338,6 @@ int rr_server_lws_callback_function(struct lws *socket,
                 this->clients[i].server = this;
                 this->clients[i].file_descriptor = lws_get_socket_fd(socket);
                 this->clients[i].socket_handle = socket;
-                lws_get_peer_simple(socket, this->clients[i].ip_address, 100);
-                char log[100] = {"ip: `"};
-                strcat(log, this->clients[i].ip_address);
-                strcat(log, "`");
-                // rr_discord_webhook_log("player status", "client
-                // connected", log, 0x44ff44);
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
@@ -780,7 +773,6 @@ void rr_server_tick(struct rr_server *this)
         {
             this->simulation_active = 0;
 #ifdef RIVET_BUILD
-            usleep(5000000);
             exit(0);
 #endif
             free(this->simulation.grid);
