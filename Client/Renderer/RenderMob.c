@@ -16,9 +16,10 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
-    rr_renderer_add_color_filter(renderer, 0xffff0000, physical->lerp_server_animation_tick * 0.08);
     if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_players)
-        rr_renderer_add_color_filter(renderer, 0xffabab00, 0.25);
+        rr_renderer_add_color_filter(renderer, 0xffabab00, 0.5);
+    rr_renderer_add_color_filter(renderer, 0xffff0000, physical->lerp_server_animation_tick * 0.08);
+
 
     rr_renderer_rotate(renderer, physical->lerp_angle);
     rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[mob->rarity].radius);

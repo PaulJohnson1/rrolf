@@ -138,7 +138,7 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 144, 244);
     rr_renderer_translate(renderer, 72, 122);
     renderer->state.filter.color = 0xffabab00;
-    renderer->state.filter.amount = 0.25;
+    renderer->state.filter.amount = 0.5;
     rr_t_rex_head_draw(renderer);
 
     renderer = &this->mob_trex_friendly_legs[0];
@@ -146,7 +146,7 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 240, 240);
     rr_renderer_translate(renderer, 120, 120);
     renderer->state.filter.color = 0xffabab00;
-    renderer->state.filter.amount = 0.25;
+    renderer->state.filter.amount = 0.5;
     rr_t_rex_leg1_draw(renderer);
 
     renderer = &this->mob_trex_friendly_legs[1];
@@ -154,7 +154,7 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 240, 240);
     rr_renderer_translate(renderer, 120, 120);
     renderer->state.filter.color = 0xffabab00;
-    renderer->state.filter.amount = 0.25;
+    renderer->state.filter.amount = 0.5;
     rr_t_rex_leg2_draw(renderer);
 
     renderer = &this->mob_trex_friendly_body;
@@ -162,7 +162,7 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 192, 336);
     rr_renderer_translate(renderer, 96, 168);
     renderer->state.filter.color = 0xffabab00;
-    renderer->state.filter.amount = 0.25;
+    renderer->state.filter.amount = 0.5;
     rr_t_rex_body_draw(renderer);
 
     renderer = &this->mob_trex_friendly_tail;
@@ -170,7 +170,7 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 192, 336);
     rr_renderer_translate(renderer, 96, 168);
     renderer->state.filter.color = 0xffabab00;
-    renderer->state.filter.amount = 0.25;
+    renderer->state.filter.amount = 0.5;
     rr_t_rex_tail_draw(renderer);
 }
 
