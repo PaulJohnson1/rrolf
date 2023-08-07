@@ -120,13 +120,9 @@ static void spawn_random_mob(struct rr_simulation *this)
     if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
         return;
     this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id]; 
-    EntityIdx mob_id =
-        rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(this, mob_id);
     struct rr_vector pos = find_position_away_from_players(this);
-    rr_component_physical_set_x(physical, pos.x);
-    rr_component_physical_set_y(physical, pos.y);
+    EntityIdx mob_id =
+        rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity, rr_simulation_team_id_mobs);
 }
 
 // spawn 4-8 of some mob type in around the same position, avoid players
@@ -148,12 +144,9 @@ static void spawn_mob_cluster(struct rr_simulation *this)
         struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
         // mob position = delta + central_postiion;
 
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, central_position.x + delta.x, 
+        central_position.y + delta.y, id, rarity,
                                                    rr_simulation_team_id_mobs);
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, central_position.x + delta.x);
-        rr_component_physical_set_y(physical, central_position.y + delta.y);
     }
 }
 
@@ -173,12 +166,8 @@ static void spawn_mob_swarm(struct rr_simulation *this)
         if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
             return;
         this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, position.x, position.y, id, rarity,
                                                    rr_simulation_team_id_mobs);
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, position.x);
-        rr_component_physical_set_y(physical, position.y);
     }
 }
 

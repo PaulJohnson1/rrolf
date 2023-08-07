@@ -27,7 +27,10 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
             physical->lerp_x = physical->x;
         if (physical->lerp_y == 0)
             physical->lerp_y = physical->y;
-
+        
+        physical->velocity.x = physical->x - physical->lerp_x;
+        physical->velocity.y = physical->y - physical->lerp_y;
+        
         physical->lerp_x = rr_lerp(physical->lerp_x, physical->x, 10 * delta);
         physical->lerp_y = rr_lerp(physical->lerp_y, physical->y, 10 * delta);
         physical->lerp_velocity.x =
@@ -46,13 +49,12 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->turning_animation =
             rr_angle_lerp(physical->turning_animation, physical->angle, 6 * delta);
 
-        physical->animation +=
-            (2 * (physical->parent_id % 2) - 1) * delta *
-            (rr_vector_get_magnitude(&physical->lerp_velocity) *
-                 (1 - rr_simulation_has_drop(this, entity)) +
-             1) *
-            2;
-        if (!rr_simulation_has_drop(this, entity) ||
+        uint8_t has_drop = rr_simulation_has_drop(this, entity);
+        if (!has_drop)
+            physical->animation +=
+                (2 * (physical->parent_id % 2) - 1) * delta *
+                (rr_vector_get_magnitude(&physical->lerp_velocity) * 0.5 + 1) * 2;
+        if (!has_drop ||
             rr_simulation_get_drop(this, entity)->hidden == 0)
         {
             if (physical->server_animation_tick == 5)
@@ -129,4 +131,5 @@ void rr_system_interpolation_tick(struct rr_simulation *simulation, float delta)
     captures.delta = delta;
     rr_simulation_for_each_entity(simulation, &captures,
                                   system_interpolation_for_each_function);
+    simulation->updated_this_tick = 0;
 }

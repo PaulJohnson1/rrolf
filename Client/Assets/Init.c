@@ -257,13 +257,13 @@ static void mob_pachycephalosaurus_init(struct rr_game *this)
 
 static void mob_ornithomimus_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_ornithomimus_head);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_head, 144, 240);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_head,
-#include <Client/Assets/Mob/Ornithomimus/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_ornithomimus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_ornithomimus_head_draw(renderer);
 
-    struct rr_renderer *renderer = &this->mob_ornithomimus_body;
+    renderer = &this->mob_ornithomimus_body;
     rr_renderer_init(renderer);
     rr_renderer_set_dimensions(renderer, 192, 336);
     rr_renderer_translate(renderer, 96, 168);

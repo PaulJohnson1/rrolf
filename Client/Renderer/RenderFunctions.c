@@ -746,7 +746,10 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0, -145);
-            rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head); //fix
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_ornithomimus_head); //fix
+            else
+                rr_ornithomimus_head_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_ankylosaurus:
@@ -759,7 +762,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_ankylosaurus_tail);
             else
-                rr_ankylosaurus_body_draw(renderer);
+                rr_ankylosaurus_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
 
         if (flags)

@@ -13,6 +13,7 @@ enum rr_ai_state
 {
     rr_ai_state_idle,
     rr_ai_state_idle_moving,
+    rr_ai_state_chasing,
     rr_ai_state_attacking,
 
     // triceratops
@@ -33,7 +34,8 @@ enum rr_ai_aggro_type
     rr_ai_aggro_type_pteranodon,
     rr_ai_aggro_type_t_rex,
     rr_ai_aggro_type_triceratops,
-    rr_ai_aggro_type_pachycephalosaurus
+    rr_ai_aggro_type_pachycephalosaurus,
+    rr_ai_aggro_type_ankylosaurus
 };
 
 struct rr_component_ai

@@ -42,3 +42,5 @@ void rr_ornithomimus_tail_draw(struct rr_renderer *);
 void rr_ankylosaurus_head_draw(struct rr_renderer *);
 void rr_ankylosaurus_body_draw(struct rr_renderer *);
 void rr_ankylosaurus_tail_draw(struct rr_renderer *);
+
+void rr_map_prop_beech_tree_draw(struct rr_renderer *);
