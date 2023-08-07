@@ -93,3 +93,34 @@ void rr_renderer_round_rect(struct rr_renderer *this, float x, float y, float w,
     rr_renderer_line_to(this, x, y + r);
     rr_renderer_quadratic_curve_to(this, x, y, x + r, y);
 }
+
+
+void rr_renderer_add_color_filter(struct rr_renderer *this, uint32_t color, float amount)
+{
+    if (this->state.filter.amount == 0 || (this->state.filter.color << 8) == 0)
+    {
+        this->state.filter.color = color;
+        this->state.filter.amount = amount;
+        return;
+    }
+    float alpha = this->state.filter.amount;
+    uint32_t c1 = this->state.filter.color;
+    float new_amount = 1 - (1 - alpha) * (1 - amount);
+    uint8_t old_red = (c1 >> 16) & 255;
+    uint8_t c_red = (color >> 16) & 255;
+    uint8_t new_red = rr_fclamp((old_red * alpha * (1 - amount) + c_red * amount) / (new_amount), 0, 255);
+    uint8_t old_green = (c1 >> 8) & 255;
+    uint8_t c_green = (color >> 8) & 255;
+    uint8_t new_green = rr_fclamp((old_green * alpha * (1 - amount) + c_green * amount) / (new_amount), 0, 255);
+    uint8_t old_blue = (c1) & 255;
+    uint8_t c_blue = (color) & 255;
+    uint8_t new_blue = rr_fclamp((old_blue * alpha * (1 - amount) + c_blue * amount) / (new_amount), 0, 255);
+    this->state.filter.color = (255 << 24) | (new_red << 16) | (new_green << 8) | new_blue;
+    this->state.filter.amount = new_amount;
+}
+
+void rr_renderer_reset_color_filter(struct rr_renderer *this)
+{
+    this->state.filter.color = 0x00000000;
+    this->state.filter.amount = 0;
+}

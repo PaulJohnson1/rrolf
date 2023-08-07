@@ -79,7 +79,12 @@ struct rr_game
     struct rr_renderer mob_trex_head;
     struct rr_renderer mob_trex_body;
     struct rr_renderer mob_trex_tail;
-    struct rr_renderer mob_trex_legs[2]; // contains: [{leg, arm}, {arm, leg}]
+    struct rr_renderer mob_trex_legs[2];
+
+    struct rr_renderer mob_trex_friendly_head;
+    struct rr_renderer mob_trex_friendly_body;
+    struct rr_renderer mob_trex_friendly_tail;
+    struct rr_renderer mob_trex_friendly_legs[2];
 
     struct rr_renderer mob_triceratops_head;
     struct rr_renderer mob_triceratops_body;

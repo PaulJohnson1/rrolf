@@ -59,6 +59,9 @@ void rr_renderer_context_state_init(struct rr_renderer *,
 void rr_renderer_context_state_free(struct rr_renderer *,
                                     struct rr_renderer_context_state *);
 
+void rr_renderer_add_color_filter(struct rr_renderer *, uint32_t, float);
+void rr_renderer_reset_color_filter(struct rr_renderer *);
+
 void rr_renderer_set_fill(struct rr_renderer *, uint32_t);
 void rr_renderer_set_stroke(struct rr_renderer *, uint32_t);
 
