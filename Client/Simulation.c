@@ -25,10 +25,6 @@ void rr_simulation_entity_create_with_id(struct rr_simulation *this,
 void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 {
     struct rr_simulation *this = game->simulation;
-    struct timeval start;
-    struct timeval end;
-
-    gettimeofday(&start, NULL);
     EntityIdx id = 0;
     while (1)
     {
@@ -37,7 +33,8 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
             break;
         assert(id < RR_MAX_ENTITY_COUNT);
         assert(rr_bitset_get_bit(this->entity_tracker, id));
-        rr_simulation_request_entity_deletion(this, id);
+        __rr_simulation_pending_deletion_free_components(id, this);
+        __rr_simulation_pending_deletion_unset_entity(id, this);
     }
 
     // assuming that player info is written first (is it though)
@@ -75,22 +72,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
     game->player_info = rr_simulation_get_player_info(
         this, proto_bug_read_varuint(encoder, "pinfo id"));
     this->game_over = proto_bug_read_uint8(encoder, "game over");
-    rr_bitset_for_each_bit(
-        this->pending_deletions,
-        this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        __rr_simulation_pending_deletion_free_components);
-    rr_bitset_for_each_bit(this->pending_deletions,
-                           this->pending_deletions +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           this, __rr_simulation_pending_deletion_unset_entity);
-    memset(this->pending_deletions, 0,
-           RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) *
-               sizeof *this->pending_deletions);
-
-    gettimeofday(&end, NULL);
-    long elapsed_time =
-        (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    // game->debug_info.message_sizes[game->debug_info.websocket_pos] =
+    this->updated_this_tick = 1;
 }
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)

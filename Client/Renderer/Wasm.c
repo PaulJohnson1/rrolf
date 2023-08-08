@@ -10,7 +10,8 @@
 struct renderer_args
 {
     uint8_t type;
-    uint32_t context_id;
+    uint16_t context_id;
+    uint16_t context_id_2;
     float args[6];
     char const *text_arg;
 };
@@ -294,23 +295,31 @@ void rr_renderer_rect(struct rr_renderer *this, float x, float y, float w,
         rr_renderer_execute_instructions();
 }
 
-void rr_renderer_draw_translated_image(struct rr_renderer *this,
-                                       struct rr_renderer *image, float x,
-                                       float y)
+void rr_renderer_draw_clipped_image(struct rr_renderer *this, struct rr_renderer *image, float sx, float sy, float sw, float sh, float dx, float dy)
 {
     update_if_transformed(this);
     instruction_tape[instruction_size].type = 20;
     instruction_tape[instruction_size].context_id = this->context_id;
-    instruction_tape[instruction_size].args[0] = image->context_id;
-    instruction_tape[instruction_size].args[1] = -image->width / 2 + x;
-    instruction_tape[instruction_size].args[2] = -image->height / 2 + y;
+    instruction_tape[instruction_size].context_id_2 = image->context_id;
+    instruction_tape[instruction_size].args[0] = sx - sw / 2;
+    instruction_tape[instruction_size].args[1] = sy - sh / 2;
+    instruction_tape[instruction_size].args[2] = sw;
+    instruction_tape[instruction_size].args[3] = sh;
+    instruction_tape[instruction_size].args[4] = dx - sw / 2;
+    instruction_tape[instruction_size].args[5] = dy - sh / 2;
     if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
         rr_renderer_execute_instructions();
 }
 
+void rr_renderer_draw_translated_image(struct rr_renderer *this,
+                                       struct rr_renderer *image, float x,
+                                       float y)
+{
+    rr_renderer_draw_clipped_image(this, image, image->width / 2, image->height / 2, image->width, image->height, x, y);
+}
+
 void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *image)
 {
-    update_if_transformed(this);
     rr_renderer_draw_translated_image(this, image, 0, 0);
 }
 
@@ -455,7 +464,8 @@ void rr_renderer_execute_instructions()
             for (let n = 0; n < $1; ++n)
             {
                 const instr = n * $2 + $0;
-                const ctx_id = Module.HEAPU32[instr + 4 >> 2];
+                const ctx_id = Module.HEAPU16[instr + 2 >> 1];
+                const ctx_id_2 = Module.HEAPU16[instr + 4 >> 1];
                 const args =
                     Module.HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
                 const char_arg = Module.HEAPU32[instr + 32 >> 2];
@@ -554,8 +564,8 @@ void rr_renderer_execute_instructions()
                                              args[3]);
                     break;
                 case 20:
-                    Module.ctxs[ctx_id].drawImage(Module.ctxs[args[0]].canvas,
-                                                  args[1], args[2]);
+                    Module.ctxs[ctx_id].drawImage(Module.ctxs[ctx_id_2].canvas,
+                                                  args[0], args[1], args[2], args[3], args[4], args[5], args[2], args[3]);
                     break;
                 case 21:
                     Module.ctxs[ctx_id].fillRect(args[0], args[1], args[2],

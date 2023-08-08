@@ -33,6 +33,8 @@ enum rr_petal_id
     rr_petal_id_bone,
     rr_petal_id_web,
     rr_petal_id_seed,
+    rr_petal_id_gravel,
+    rr_petal_id_club,
     rr_petal_id_max
 };
 
@@ -46,6 +48,7 @@ enum rr_mob_id
     rr_mob_id_dakotaraptor,
     rr_mob_id_pachycephalosaurus,
     rr_mob_id_ornithomimus,
+    rr_mob_id_ankylosaurus,
     rr_mob_id_max
 };
 

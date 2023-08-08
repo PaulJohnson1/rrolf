@@ -70,7 +70,7 @@ struct rr_game
     struct rr_websocket socket;
 
     // petal rendering cache
-    struct rr_renderer static_petals[rr_petal_id_max][rr_rarity_id_max];
+    struct rr_renderer static_petals;
 
     // mob assets cache
     struct rr_renderer mob_pteranodon_body;
@@ -105,6 +105,10 @@ struct rr_game
     struct rr_renderer mob_ornithomimus_head;
     struct rr_renderer mob_ornithomimus_tail;
     struct rr_renderer mob_ornithomimus_wings[2];
+
+    struct rr_renderer mob_ankylosaurus_body;
+    struct rr_renderer mob_ankylosaurus_head;
+    struct rr_renderer mob_ankylosaurus_tail;
 
     struct rr_renderer mob_stump;
 

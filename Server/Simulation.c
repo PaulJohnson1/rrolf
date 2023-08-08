@@ -47,26 +47,6 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-static void spawn_random_mob(struct rr_simulation *this)
-{
-    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
-    uint8_t rarity = get_rarity_from_wave(arena->wave);
-    if (!should_spawn_at(arena->wave, id, rarity))
-        return;
-    if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
-        return;
-    this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-    EntityIdx mob_id =
-        rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(this, mob_id);
-    float distance = sqrt(rr_frand()) * arena->radius;
-    float angle = rr_frand() * M_PI * 2.0f;
-    rr_component_physical_set_x(physical, cos(angle) * distance);
-    rr_component_physical_set_y(physical, sin(angle) * distance);
-}
-
 #define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
         CODE;                                                                  \
@@ -105,43 +85,46 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
     }
 }
 
-struct simulation_id
-{
-    struct rr_simulation *simulation;
-    struct rr_vector test_position;
-    uint8_t invalid;
-};
-
-// TODO: make it work
-static void position_finder(EntityIdx id, void *_captures)
-{
-    struct simulation_id *captures = _captures;
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(captures->simulation, id);
-
-    struct rr_vector delta = {physical->x, physical->y};
-    rr_vector_sub(&delta, &captures->test_position);
-
-    if (delta.x * delta.x + delta.y * delta.y < 750 * 750)
-        captures->invalid = 1;
-}
-
 static struct rr_vector
 find_position_away_from_players(struct rr_simulation *this)
 {
-    struct simulation_id captures;
-    captures.simulation = this;
-    do
+    struct rr_vector ret;
+    uint8_t invalid = 1;
+    while (invalid)
     {
-        float distance = sqrt(rr_frand()) * 1650.0f;
-        float angle = rr_frand() * M_PI * 2;
-        struct rr_vector r = {distance * cosf(angle), distance * sinf(angle)};
-        captures.test_position = r;
-        captures.invalid = 0;
-        rr_simulation_for_each_flower(this, &captures, position_finder);
-    } while (captures.invalid);
+        float rad = sqrtf(rr_frand()) * 1650;
+        float angle = rr_frand() * 2 * M_PI;
+        ret.x = rad * cosf(angle);
+        ret.y = rad * sinf(angle);
+        invalid = 0;
+        for (uint16_t i = 0; i < this->flower_count; ++i)
+        {
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(this, this->flower_vector[i]);
+            struct rr_vector delta = {ret.x - physical->x, ret.y - physical->y};
+            if (rr_vector_get_magnitude(&delta) < 500)
+            {
+                invalid = 1;
+                break;
+            }
+        }
+    }
+    return ret;
+}
 
-    return captures.test_position;
+static void spawn_random_mob(struct rr_simulation *this)
+{
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
+    uint8_t rarity = get_rarity_from_wave(arena->wave);
+    if (!should_spawn_at(arena->wave, id, rarity))
+        return;
+    if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
+        return;
+    this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
+    struct rr_vector pos = find_position_away_from_players(this);
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity,
+                                               rr_simulation_team_id_mobs);
 }
 
 // spawn 4-8 of some mob type in around the same position, avoid players
@@ -163,12 +146,9 @@ static void spawn_mob_cluster(struct rr_simulation *this)
         struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
         // mob position = delta + central_postiion;
 
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
-                                                   rr_simulation_team_id_mobs);
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, central_position.x + delta.x);
-        rr_component_physical_set_y(physical, central_position.y + delta.y);
+        EntityIdx mob_id = rr_simulation_alloc_mob(
+            this, central_position.x + delta.x, central_position.y + delta.y,
+            id, rarity, rr_simulation_team_id_mobs);
     }
 }
 
@@ -176,7 +156,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
 static void spawn_mob_swarm(struct rr_simulation *this)
 {
     uint32_t mob_attempts = 0;
-    while (mob_attempts < 100 && this->wave_points > 2)
+    while (mob_attempts < 200 && this->wave_points > 2)
     {
         ++mob_attempts;
         struct rr_vector position = find_position_away_from_players(this);
@@ -189,16 +169,13 @@ static void spawn_mob_swarm(struct rr_simulation *this)
         if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
             return;
         this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, id, rarity,
-                                                   rr_simulation_team_id_mobs);
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(this, mob_id);
-        rr_component_physical_set_x(physical, position.x);
-        rr_component_physical_set_y(physical, position.y);
+        EntityIdx mob_id =
+            rr_simulation_alloc_mob(this, position.x, position.y, id, rarity,
+                                    rr_simulation_team_id_mobs);
     }
 }
 
-#define SPECIAL_WAVE_COUNT 4
+#define SPECIAL_WAVE_COUNT 5
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -232,7 +209,7 @@ static void tick_wave(struct rr_simulation *this)
         this->wave_points =
             get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        if (rr_frand() > 1 / 3)
+        if (rr_frand() > 0.3333334)
             this->special_wave_id = 0;
         else
             this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);

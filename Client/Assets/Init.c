@@ -76,89 +76,89 @@ static void asset_web_init(struct rr_game *this)
 
 static void mob_triceratops_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_triceratops_head);
-    rr_renderer_set_dimensions(&this->mob_triceratops_head, 192, 336);
-    rr_renderer_draw_svg(&this->mob_triceratops_head,
-#include <Client/Assets/Mob/Triceratops/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_triceratops_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_triceratops_head_draw(renderer);
 
-    rr_renderer_init(&this->mob_triceratops_body);
-    rr_renderer_set_dimensions(&this->mob_triceratops_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_triceratops_body,
-#include <Client/Assets/Mob/Triceratops/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_triceratops_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_triceratops_body_draw(renderer);
 
-    rr_renderer_init(&this->mob_triceratops_legs[0]);
-    rr_renderer_set_dimensions(&this->mob_triceratops_legs[0], 240, 240);
-    rr_renderer_draw_svg(&this->mob_triceratops_legs[0],
-#include <Client/Assets/Mob/Triceratops/Leg1.h>
-                         , 0, 0);
+    renderer = &this->mob_triceratops_legs[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_triceratops_leg1_draw(renderer);
 
-    rr_renderer_init(&this->mob_triceratops_legs[1]);
-    rr_renderer_set_dimensions(&this->mob_triceratops_legs[1], 240, 240);
-    rr_renderer_draw_svg(&this->mob_triceratops_legs[1],
-#include <Client/Assets/Mob/Triceratops/Leg2.h>
-                         , 0, 0);
+    renderer = &this->mob_triceratops_legs[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_triceratops_leg2_draw(renderer);
 
-    rr_renderer_init(&this->mob_triceratops_tail);
-    rr_renderer_set_dimensions(&this->mob_triceratops_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_triceratops_tail,
-#include <Client/Assets/Mob/Triceratops/Tail.h>
-                         , 0, 0);
+    renderer = &this->mob_triceratops_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_triceratops_tail_draw(renderer);
 }
 
 static void mob_pteranodon_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_pteranodon_wings[0]);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[0], 432, 288);
-    rr_renderer_draw_svg(&this->mob_pteranodon_wings[0],
-#include <Client/Assets/Mob/Pteranodon/Wing1.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_pteranodon_wings[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 432, 288);
+    rr_renderer_translate(renderer, 216, 144);
+    rr_pteranodon_wing1_draw(renderer);
 
-    rr_renderer_init(&this->mob_pteranodon_wings[1]);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_wings[1], 432, 288);
-    rr_renderer_draw_svg(&this->mob_pteranodon_wings[1],
-#include <Client/Assets/Mob/Pteranodon/Wing2.h>
-                         , 0, 0);
+    renderer = &this->mob_pteranodon_wings[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 432, 288);
+    rr_renderer_translate(renderer, 216, 144);
+    rr_pteranodon_wing2_draw(renderer);
 
-    rr_renderer_init(&this->mob_pteranodon_body);
-    rr_renderer_set_dimensions(&this->mob_pteranodon_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_pteranodon_body,
-#include <Client/Assets/Mob/Pteranodon/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_pteranodon_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pteranodon_body_draw(renderer);
 }
 
 static void mob_t_rex_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_trex_head);
-    rr_renderer_set_dimensions(&this->mob_trex_head, 144, 244);
-    rr_renderer_draw_svg(&this->mob_trex_head,
-#include <Client/Assets/Mob/Rex/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_trex_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 244);
+    rr_renderer_translate(renderer, 72, 122);
+    rr_t_rex_head_draw(renderer);
 
-    rr_renderer_init(&this->mob_trex_legs[0]);
-    rr_renderer_set_dimensions(&this->mob_trex_legs[0], 240, 240);
-    rr_renderer_draw_svg(&this->mob_trex_legs[0],
-#include <Client/Assets/Mob/Rex/Leg1.h>
-                         , 0, 0);
+    renderer = &this->mob_trex_legs[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_t_rex_leg1_draw(renderer);
 
-    rr_renderer_init(&this->mob_trex_legs[1]);
-    rr_renderer_set_dimensions(&this->mob_trex_legs[1], 240, 240);
-    rr_renderer_draw_svg(&this->mob_trex_legs[1],
-#include <Client/Assets/Mob/Rex/Leg2.h>
-                         , 0, 0);
+    renderer = &this->mob_trex_legs[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_t_rex_leg2_draw(renderer);
 
-    rr_renderer_init(&this->mob_trex_body);
-    rr_renderer_set_dimensions(&this->mob_trex_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_trex_body,
-#include <Client/Assets/Mob/Rex/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_trex_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_t_rex_body_draw(renderer);
 
-    rr_renderer_init(&this->mob_trex_tail);
-    rr_renderer_set_dimensions(&this->mob_trex_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_trex_tail,
-#include <Client/Assets/Mob/Rex/Tail.h>
-                         , 0, 0);
+    renderer = &this->mob_trex_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_t_rex_tail_draw(renderer);
 }
 
 static void mob_t_rex_friendly_init(struct rr_game *this)
@@ -206,116 +206,137 @@ static void mob_t_rex_friendly_init(struct rr_game *this)
 
 static void mob_dakotaraptor_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_dakotaraptor_head);
-    rr_renderer_set_dimensions(&this->mob_dakotaraptor_head, 144, 240);
-    rr_renderer_draw_svg(&this->mob_dakotaraptor_head,
-#include <Client/Assets/Mob/Dakotaraptor/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_dakotaraptor_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_dakotaraptor_head_draw(renderer);
 
-    rr_renderer_init(&this->mob_dakotaraptor_body);
-    rr_renderer_set_dimensions(&this->mob_dakotaraptor_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_dakotaraptor_body,
-#include <Client/Assets/Mob/Dakotaraptor/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_dakotaraptor_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_dakotaraptor_body_draw(renderer);
+    
+    renderer = &this->mob_dakotaraptor_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_dakotaraptor_tail_draw(renderer);
 
-    rr_renderer_init(&this->mob_dakotaraptor_tail);
-    rr_renderer_set_dimensions(&this->mob_dakotaraptor_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_dakotaraptor_tail,
-#include <Client/Assets/Mob/Dakotaraptor/Tail.h>
-                         , 0, 0);
+    renderer = &this->mob_dakotaraptor_wings[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_dakotaraptor_wing1_draw(renderer);
 
-    rr_renderer_init(&this->mob_dakotaraptor_wings[0]);
-    rr_renderer_set_dimensions(&this->mob_dakotaraptor_wings[0], 144, 240);
-    rr_renderer_draw_svg(&this->mob_dakotaraptor_wings[0],
-#include <Client/Assets/Mob/Dakotaraptor/Wing1.h>
-                         , 0, 0);
-
-    rr_renderer_init(&this->mob_dakotaraptor_wings[1]);
-    rr_renderer_set_dimensions(&this->mob_dakotaraptor_wings[1], 144, 240);
-    rr_renderer_draw_svg(&this->mob_dakotaraptor_wings[1],
-#include <Client/Assets/Mob/Dakotaraptor/Wing2.h>
-                         , 0, 0);
+    renderer = &this->mob_dakotaraptor_wings[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_dakotaraptor_wing2_draw(renderer);
 }
 
 static void mob_stump_and_fern_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_stump);
-    rr_renderer_set_dimensions(&this->mob_stump, 1152, 864);
-    rr_renderer_draw_svg(&this->mob_stump,
-#include <Client/Assets/Mob/Stump.h>
-                         , 0, 0);
-
-    rr_renderer_init(&this->mob_fern);
-    rr_renderer_set_dimensions(&this->mob_fern, 672, 672);
-    rr_renderer_draw_svg(&this->mob_fern,
-#include <Client/Assets/Mob/Fern.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_stump;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 864, 864);
+    rr_renderer_translate(renderer, 432, 432);
+    rr_stump_draw(renderer);
+    
+    renderer = &this->mob_fern;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 672, 672);
+    rr_renderer_translate(renderer, 336, 336);
+    rr_fern_draw(renderer);
 }
 
 static void mob_pachycephalosaurus_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_pachycephalosaurus_head);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_head, 144, 240);
-    rr_renderer_draw_svg(&this->mob_pachycephalosaurus_head,
-#include <Client/Assets/Mob/Pachycephalosaurus/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_pachycephalosaurus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_pachycephalosaurus_head_draw(renderer);
 
-    rr_renderer_init(&this->mob_pachycephalosaurus_body);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_pachycephalosaurus_body,
-#include <Client/Assets/Mob/Pachycephalosaurus/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_pachycephalosaurus_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pachycephalosaurus_body_draw(renderer);
+ 
+    renderer = &this->mob_pachycephalosaurus_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pachycephalosaurus_tail_draw(renderer);
 
-    rr_renderer_init(&this->mob_pachycephalosaurus_tail);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_pachycephalosaurus_tail,
-#include <Client/Assets/Mob/Pachycephalosaurus/Tail.h>
-                         , 0, 0);
+    renderer = &this->mob_pachycephalosaurus_legs[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_pachycephalosaurus_leg1_draw(renderer);
 
-    rr_renderer_init(&this->mob_pachycephalosaurus_legs[0]);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_legs[0], 240, 240);
-    rr_renderer_draw_svg(&this->mob_pachycephalosaurus_legs[0],
-#include <Client/Assets/Mob/Pachycephalosaurus/Leg1.h>
-                         , 0, 0);
-
-    rr_renderer_init(&this->mob_pachycephalosaurus_legs[1]);
-    rr_renderer_set_dimensions(&this->mob_pachycephalosaurus_legs[1], 240, 240);
-    rr_renderer_draw_svg(&this->mob_pachycephalosaurus_legs[1],
-#include <Client/Assets/Mob/Pachycephalosaurus/Leg2.h>
-                         , 0, 0);
+    renderer = &this->mob_pachycephalosaurus_legs[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_pachycephalosaurus_leg2_draw(renderer);
 }
 
 static void mob_ornithomimus_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->mob_ornithomimus_head);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_head, 144, 240);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_head,
-#include <Client/Assets/Mob/Ornithomimus/Head.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->mob_ornithomimus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_ornithomimus_head_draw(renderer);
 
-    rr_renderer_init(&this->mob_ornithomimus_body);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_body, 192, 336);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_body,
-#include <Client/Assets/Mob/Ornithomimus/Body.h>
-                         , 0, 0);
+    renderer = &this->mob_ornithomimus_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ornithomimus_body_draw(renderer);
 
-    rr_renderer_init(&this->mob_ornithomimus_tail);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_tail, 192, 336);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_tail,
-#include <Client/Assets/Mob/Ornithomimus/Tail.h>
-                         , 0, 0);
+    renderer = &this->mob_ornithomimus_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ornithomimus_tail_draw(renderer);
 
-    rr_renderer_init(&this->mob_ornithomimus_wings[0]);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_wings[0], 144, 240);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_wings[0],
-#include <Client/Assets/Mob/Ornithomimus/Wing1.h>
-                         , 0, 0);
+    renderer = &this->mob_ornithomimus_wings[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_ornithomimus_wing1_draw(renderer);
 
-    rr_renderer_init(&this->mob_ornithomimus_wings[1]);
-    rr_renderer_set_dimensions(&this->mob_ornithomimus_wings[1], 144, 240);
-    rr_renderer_draw_svg(&this->mob_ornithomimus_wings[1],
-#include <Client/Assets/Mob/Ornithomimus/Wing2.h>
-                         , 0, 0);
+    renderer = &this->mob_ornithomimus_wings[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_ornithomimus_wing2_draw(renderer);
+}
+
+static void mob_ankylosaurus_init(struct rr_game *this)
+{
+    struct rr_renderer *renderer = &this->mob_ankylosaurus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 144);
+    rr_renderer_translate(renderer, 72, 72);
+    rr_ankylosaurus_head_draw(renderer);
+
+    renderer = &this->mob_ankylosaurus_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ankylosaurus_body_draw(renderer);
+
+    renderer = &this->mob_ankylosaurus_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_ankylosaurus_tail_draw(renderer);
 }
 
 static void tiles_init(struct rr_game *this)
@@ -404,6 +425,7 @@ void rr_assets_init(struct rr_game *this)
     mob_pteranodon_init(this);
     mob_t_rex_init(this);
     mob_t_rex_friendly_init(this);
+    mob_ankylosaurus_init(this);
     tiles_init(this);
 
     asset_web_init(this);

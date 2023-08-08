@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include <ws.h>
+#include <libwebsockets.h>
 
 #include <Server/Client.h>
 #include <Server/EntityAllocation.h>
@@ -857,20 +857,20 @@ void rr_server_tick(struct rr_server *this)
 void rr_server_run(struct rr_server *this)
 {
 
-    // struct lws_context_creation_info info;
-    // memset(&info, 0, sizeof(info));
+    struct lws_context_creation_info info;
+    memset(&info, 0, sizeof(info));
 
-    // struct lws_protocols protocols[2] = {
-    //     {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
-    // info.port = 1234;
-    // info.protocols = &protocols[0];
-    // info.gid = -1;
-    // info.uid = -1;
-    // info.user = this;
-    // info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+    struct lws_protocols protocols[2] = {
+        {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
+    info.port = 1234;
+    info.protocols = &protocols[0];
+    info.gid = -1;
+    info.uid = -1;
+    info.user = this;
+    info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
 
-    // this->server = lws_create_context(&info);
-    // assert(this->server);
+    this->server = lws_create_context(&info);
+    assert(this->server);
     this->ticks_until_simulation_create =
 #ifdef RIVET_BUILD
         125;

@@ -19,8 +19,8 @@ uint8_t get_rarity_from_wave(uint32_t wave)
         rarity_cap = rr_rarity_id_max;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.5,
-                pow(1.5, wave)) > rarity_seed)
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
+                pow(1.45, wave)) > rarity_seed)
             break;
     return rarity;
 }
@@ -45,13 +45,20 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
     else if (special_wave_id == 2)
         return rr_mob_id_triceratops;
     else if (special_wave_id == 3)
-        return rr_mob_id_trex;
-    else
+        return rr_mob_id_pteranodon;
+    else if (special_wave_id == 4)
     {
         if (rr_frand() > 0.5)
             return rr_mob_id_fern;
         else
-            return rr_mob_id_pteranodon;
+            return rr_mob_id_trex;
+    }
+    else
+    {
+        if (rr_frand() > 0.25)
+            return rr_mob_id_ankylosaurus;
+        else
+            return rr_mob_id_dakotaraptor;
     }
 }
 

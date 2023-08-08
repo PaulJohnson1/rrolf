@@ -17,7 +17,9 @@ enum
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(server_animation_tick, uint8)                                            \
     X(angle, float32)                                                          \
-    X(radius, float32)
+    X(radius, float32)                                                         \
+    X(x, float32)                                                              \
+    X(y, float32)
 
 void rr_component_physical_init(struct rr_component_physical *this,
                                 struct rr_simulation *simulation)
@@ -41,8 +43,8 @@ void rr_component_physical_write(struct rr_component_physical *this,
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "physical component state");
-    /* no-reorder */ RR_ENCODE_PUBLIC_FIELD(x, float32);
-    /* no-reorder */ RR_ENCODE_PUBLIC_FIELD(y, float32);
+    /* no-reorder */ //RR_ENCODE_PUBLIC_FIELD(x, float32);
+    /* no-reorder */ //RR_ENCODE_PUBLIC_FIELD(y, float32);
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
@@ -51,15 +53,7 @@ void rr_component_physical_write(struct rr_component_physical *this,
 RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
-// RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
-void rr_component_physical_set_radius(struct rr_component_physical *this,
-                                      float r)
-{
-    if (r > (1 << 8))
-        printf("radius cannot exceed %d\n", 1 << 8);
-    this->protocol_state |= (r == this->radius) * state_flags_radius;
-    this->radius = r;
-}
+RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
 RR_DEFINE_PUBLIC_FIELD(physical, uint8_t, server_animation_tick)
 #endif
 
@@ -69,6 +63,7 @@ void rr_component_physical_read(struct rr_component_physical *this,
 {
     uint64_t state =
         proto_bug_read_varuint(encoder, "physical component state");
+        /*
     if (state & state_flags_x)
     {
         float new_x = proto_bug_read_float32(encoder, "field x");
@@ -85,6 +80,7 @@ void rr_component_physical_read(struct rr_component_physical *this,
         this->velocity.y = this->y - new_y;
         this->y = new_y;
     }
+    */
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X

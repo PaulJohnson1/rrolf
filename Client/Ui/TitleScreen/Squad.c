@@ -119,8 +119,8 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_image(
-        renderer, &game->static_petals[data->prev_id][data->prev_rarity]);
+    rr_renderer_draw_clipped_image(
+        renderer, &game->static_petals, 25 + data->prev_id * 50, 25 + data->prev_rarity * 50, 50, 50, 0, 0);
 }
 
 static struct rr_ui_element *
@@ -305,7 +305,7 @@ struct rr_ui_element *rr_ui_squad_button_init()
 
 struct rr_ui_element *rr_ui_join_button_init()
 {
-    struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 36, 0);
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Enter Game", 36, 0);
     this->animate = ready_button_animate;
     this->on_event = join_button_on_event;
     return this;

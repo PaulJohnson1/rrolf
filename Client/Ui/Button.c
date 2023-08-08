@@ -62,7 +62,7 @@ struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
     data->text = text;
     this->data = data;
     this->abs_height = this->height = height;
-    this->abs_width = this->width = rr_renderer_get_text_size(text) * height;
+    this->abs_width = this->width = 10 + rr_renderer_get_text_size(text) * height / 2;
     this->on_render = labeled_button_on_render;
     this->on_event = button_on_event;
     this->fill = 0xff0000ff;

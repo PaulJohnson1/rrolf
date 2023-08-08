@@ -55,7 +55,7 @@ const parse_path = (path, x, y) => {
     return ret_str;
 }
 
-const parse_dom = str => {
+const parse_svg = str => {
     let doc = new DOMParser().parseFromString(str, 'text/xml');
     const [offset_x, offset_y] = doc.getElementsByTagName('svg')[0].attributes.viewBox.value.split(' ').map(x => parseFloat(x)).slice(2);
     doc = [...doc.getElementsByTagName('path')].map(x => x.attributes).filter(x => !x["clip-rule"] && !x["fill-opacity"]);

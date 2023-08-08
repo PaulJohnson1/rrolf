@@ -39,7 +39,7 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
     return flower_id;
 }
 
-EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id,
+EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y, uint8_t id,
                                     uint8_t rarity, EntityIdx owner)
 {
     struct rr_petal_data const *data = &RR_PETAL_DATA[id];
@@ -53,6 +53,8 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id,
         rr_simulation_add_health(this, petal_id);
     rr_component_physical_set_radius(physical, 10);
     rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
+    rr_component_physical_set_x(physical, x);
+    rr_component_physical_set_y(physical, y);
     physical->mass = 5;
     physical->friction = 0.75;
 
@@ -86,6 +88,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, uint8_t id,
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
+float x, float y,
                                   enum rr_mob_id mob_id,
                                   enum rr_rarity_id rarity_id,
                                   enum rr_simulation_team_id team_id)
@@ -115,6 +118,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     rr_component_physical_set_radius(physical,
                                      mob_data->radius * rarity_scale->radius);
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
+    rr_component_physical_set_x(physical, x);
+    rr_component_physical_set_y(physical, y);
     physical->friction = 0.8;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
     rr_component_health_set_max_health(health,
@@ -141,6 +146,9 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     case rr_mob_id_dakotaraptor:
         ai->ai_aggro_type = rr_ai_aggro_type_t_rex;
         break;
+    case rr_mob_id_ankylosaurus:
+        ai->ai_aggro_type = rr_ai_aggro_type_ankylosaurus;
+        break;
     case rr_mob_id_pachycephalosaurus:
         ai->ai_aggro_type = rr_ai_aggro_type_pachycephalosaurus;
         break;
@@ -150,7 +158,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     default:
         RR_UNREACHABLE("forgot to set ai aggro type");
     };
-
+    /*
     if (mob_id == 255 && 0)
     {
         // ai->ai_type = rr_ai_type_neutral;
@@ -175,6 +183,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
             entity = new_entity;
         }
     }
+    */
 
     return entity;
 }
