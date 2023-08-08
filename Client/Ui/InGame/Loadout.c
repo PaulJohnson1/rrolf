@@ -8,6 +8,7 @@
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/RenderFunctions.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 
 #include <Client/Ui/Engine.h>
@@ -90,7 +91,7 @@ static void title_screen_loadout_button_animate(struct rr_ui_element *this,
         return;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
-    rr_renderer_render_background(renderer, 255);
+    rr_renderer_draw_background(renderer, rr_rarity_id_max + 1, 1);
     uint8_t id = game->cache.loadout[data->pos].id;
     uint8_t rarity = game->cache.loadout[data->pos].rarity;
     data->secondary_animation =
@@ -128,7 +129,7 @@ static void loadout_button_animate(struct rr_ui_element *this,
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
-    rr_renderer_render_background(renderer, 255);
+    rr_renderer_draw_background(renderer, rr_rarity_id_max + 1, 1);
     struct rr_component_player_info_petal_slot *slot =
         data->pos < 10 ? &player_info->slots[data->pos]
                        : &player_info->secondary_slots[data->pos - 10];
@@ -155,8 +156,8 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+    rr_renderer_draw_background(renderer, data->prev_rarity, 1);
+    rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                              data->prev_rarity);
 }
 
@@ -166,14 +167,14 @@ static void loadout_button_on_render(struct rr_ui_element *this,
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     float pct = data->lerp_cd * data->lerp_cd * (3 - 2 * data->lerp_cd);
-    rr_renderer_render_background(renderer, data->prev_rarity);
+    rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     rr_renderer_set_fill(renderer, 0x40000000);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 0, 0);
     rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10,
                             -M_PI / 2 - pct * M_PI * 8, 0);
     rr_renderer_fill(renderer);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+    rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                              data->prev_rarity);
 }
 

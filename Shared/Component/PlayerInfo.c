@@ -67,7 +67,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    this->camera_fov = 0.9f;
+    this->camera_fov = 1.0f;
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
 }
 

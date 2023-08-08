@@ -40,6 +40,9 @@ set(SRCS
     Assets/Mob/Fern.c
     Assets/Mob/Stump.c
     Assets/Init.c
+    Assets/RenderPetals.c
+    Assets/RenderRarityBackground.c
+    Assets/RenderText.c
     Renderer/Common.c
     Renderer/RenderDrop.c
     Renderer/RenderFlower.c

@@ -11,9 +11,9 @@
 #endif
 
 #include <Client/Assets/Init.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/ComponentRender.h>
-#include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
@@ -343,9 +343,6 @@ void rr_game_init(struct rr_game *this)
                                         this->mob_tooltips[id][rarity]);
         }
     }
-    rr_renderer_init(&this->static_petals);
-    rr_renderer_set_dimensions(&this->static_petals, 50 * rr_petal_id_max,
-                                       50 * rr_rarity_id_max);
     for (uint32_t id = 0; id < rr_petal_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -355,8 +352,6 @@ void rr_game_init(struct rr_game *this)
             #else
             this->inventory[id][rarity] = 0;
             #endif
-            rr_renderer_set_transform(&this->static_petals, 1, 0, 25 + 50 * id, 0, 1, 25 + 50 * rarity);
-            rr_renderer_render_static_petal(&this->static_petals, id, rarity);
             this->petal_tooltips[id][rarity] =
                 rr_ui_petal_tooltip_init(id, rarity);
             rr_ui_container_add_element(this->window,
@@ -382,53 +377,6 @@ void rr_game_init(struct rr_game *this)
     // clang-format on
     this->tiles_size = 3;
     this->ticks_until_text_cache = 24;
-    for (uint32_t i = 0; i < rr_mob_id_max; ++i)
-    {
-        struct rr_renderer *renderer = &this->mob_name_cache[i];
-        float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-        rr_renderer_init(renderer);
-        rr_renderer_set_dimensions(renderer, length, 16);
-        rr_renderer_set_text_size(renderer, 12);
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_line_width(renderer, 0.12 * 12);
-        rr_renderer_set_text_align(renderer, 0);
-        rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
-        rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
-    }
-    for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
-    {
-        struct rr_renderer *renderer = &this->rarity_name_cache[i];
-        float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-        rr_renderer_init(renderer);
-        rr_renderer_set_dimensions(renderer, length, 18);
-        rr_renderer_set_text_size(renderer, 14);
-        rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_line_width(renderer, 0.12 * 14);
-        rr_renderer_set_text_align(renderer, 0);
-        rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-        rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-    }
-    for (uint32_t i = 0; i < rr_petal_id_max; ++i)
-    {
-        struct rr_renderer *renderer = &this->petal_name_cache[i];
-        rr_renderer_init(renderer);
-        float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
-        rr_renderer_set_dimensions(renderer, 54, 18);
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_text_align(renderer, 1);
-        rr_renderer_set_text_baseline(renderer, 1);
-        float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
-        rr_renderer_set_text_size(renderer, text_size);
-        rr_renderer_set_line_width(renderer, text_size * 0.12);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-        rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-    }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -784,52 +732,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 {
     if (this->ticks_until_text_cache == 0)
     {
-        // text caching
-        for (uint32_t i = 0; i < rr_mob_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->mob_name_cache[i];
-            float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-            rr_renderer_set_dimensions(renderer, length, 16);
-            rr_renderer_set_text_size(renderer, 12);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_line_width(renderer, 0.12 * 12);
-            rr_renderer_set_text_align(renderer, 0);
-            rr_renderer_set_text_baseline(renderer, 0);
-            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
-            rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
-        }
-        for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->rarity_name_cache[i];
-            float length =
-                4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-            rr_renderer_set_dimensions(renderer, length, 18);
-            rr_renderer_set_text_size(renderer, 14);
-            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_line_width(renderer, 0.12 * 14);
-            rr_renderer_set_text_align(renderer, 0);
-            rr_renderer_set_text_baseline(renderer, 0);
-            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-        }
-        for (uint32_t i = 0; i < rr_petal_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->petal_name_cache[i];
-            float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
-            rr_renderer_set_dimensions(renderer, 54, 18);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_text_align(renderer, 1);
-            rr_renderer_set_text_baseline(renderer, 1);
-            float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
-            rr_renderer_set_text_size(renderer, text_size);
-            rr_renderer_set_line_width(renderer, text_size * 0.12);
-            rr_renderer_begin_path(renderer);
-            rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-            rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-        }
+        rr_renderer_text_cache_init();
         this->ticks_until_text_cache = 255;
     }
     else if (this->ticks_until_text_cache < 25)

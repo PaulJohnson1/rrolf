@@ -10,7 +10,9 @@
 struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
 {
     char *cd = malloc((sizeof *cd) * 16);
-    if (RR_PETAL_DATA[id].secondary_cooldown > 1)
+    if (RR_PETAL_DATA[id].cooldown == 0)
+        cd[0] = 0;
+    else if (RR_PETAL_DATA[id].secondary_cooldown > 1)
         cd[sprintf(cd, "↻ %.1f + %.1fs",
                    (RR_PETAL_DATA[id].cooldown * 2 / 5) * 0.1,
                    (RR_PETAL_DATA[id].secondary_cooldown * 2 / 5) * 0.1)] = 0;
@@ -46,18 +48,25 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
             rr_ui_set_justify(
                 rr_ui_text_init(RR_PETAL_DESCRIPTIONS[id], 16, 0xffffffff), -1,
                 0),
-            rr_ui_set_justify(rr_ui_h_container_init(
+            NULL),
+        0x80000000);
+    if (RR_PETAL_DATA[id].health != 0)
+    {
+        rr_ui_container_add_element(
+            this, 
+        rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0,
                                   rr_ui_text_init("Health: ", 12, 0xff44ff44),
                                   rr_ui_text_init(hp, 12, 0xffffffff), NULL),
-                              -1, 0),
-            rr_ui_set_justify(rr_ui_h_container_init(
-                                  rr_ui_container_init(), 0, 0,
-                                  rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                  rr_ui_text_init(dmg, 12, 0xffffffff), NULL),
-                              -1, 0),
-            NULL),
-        0x80000000);
+                              -1, 0));
+        rr_ui_container_add_element(
+            this, 
+        rr_ui_set_justify(rr_ui_h_container_init(
+                                rr_ui_container_init(), 0, 0,
+                                rr_ui_text_init("Damage: ", 12, 0xffff4444),
+                                rr_ui_text_init(dmg, 12, 0xffffffff), NULL),
+                            -1, 0));
+    }
     if (id == rr_petal_id_missile)
     {
         char *extra = malloc((sizeof *extra) * 8);
@@ -134,7 +143,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
-    else if (id == rr_petal_id_speed)
+    else if (id == rr_petal_id_feather)
     {
         char *extra = malloc((sizeof *extra) * 16);
         extra[sprintf(extra, "%.1f%%", 5 + 3.5 * rarity)] = 0;
@@ -191,6 +200,19 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Web duration: ", 12, 0xff2596be),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+    }
+    else if (id == rr_petal_id_crest)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.0f%%",
+                      100 / (0.9 - 0.06 * rarity) - 100)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("FOV increase: ", 12, 0xff4266f5),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }

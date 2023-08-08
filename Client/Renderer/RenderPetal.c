@@ -4,7 +4,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 
-#include <Client/Renderer/RenderFunctions.h>
+#include <Client/Assets/RenderFunctions.h>
 
 void rr_component_petal_render(EntityIdx entity, struct rr_game *game)
 {
@@ -30,8 +30,11 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game)
         rr_renderer_scale(renderer,
                           RR_MOB_RARITY_SCALING[petal->rarity].radius);
     }
+    uint8_t use_cache =
+        physical->lerp_server_animation_tick < 0.5 ||
+        rr_simulation_get_health(simulation, entity)->health == 0;
     if (petal->id != rr_petal_id_peas || petal->detached == 1)
-        rr_renderer_render_petal(renderer, petal->id);
+        rr_renderer_draw_petal(renderer, petal->id, use_cache);
     else
-        rr_renderer_render_static_petal(renderer, petal->id, petal->rarity);
+        rr_renderer_draw_static_petal(renderer, petal->id, petal->rarity, use_cache);
 }

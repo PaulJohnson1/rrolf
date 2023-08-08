@@ -6,6 +6,7 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 
@@ -113,8 +114,8 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->id,
+    rr_renderer_draw_background(renderer, data->rarity, 1);
+    rr_renderer_draw_petal_with_name(renderer, data->id,
                                              data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)

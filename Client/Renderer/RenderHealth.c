@@ -1,5 +1,6 @@
 #include <Client/Renderer/ComponentRender.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
@@ -40,15 +41,13 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
             rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
         // mob rarity
-        rr_renderer_draw_translated_image(
-            renderer, &game->rarity_name_cache[mob->rarity],
-            length - game->rarity_name_cache[mob->rarity].width / 2 + 2,
-            14 - 2);
+        rr_renderer_translate(renderer, length, 7);
+        rr_renderer_draw_rarity_name(renderer, mob->rarity, 14, -1, 1);
 
         // mob name
-        rr_renderer_draw_translated_image(
-            renderer, &game->mob_name_cache[mob->id],
-            -length + game->mob_name_cache[mob->id].width / 2 - 2, -12 - 2);
+        rr_renderer_translate(renderer, -2 * length, -14);
+        rr_renderer_draw_mob_name(renderer, mob->id, 14, 1, -1);
+        rr_renderer_translate(renderer, length, 7);
     }
     else if (rr_simulation_has_flower(simulation, entity))
     {

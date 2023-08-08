@@ -332,6 +332,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    rr_component_player_info_set_camera_fov(player_info, 1.0f);
     health->damage_reduction = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
@@ -346,11 +347,16 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_light)
             player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
-        else if (data->id == rr_petal_id_speed)
+        else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
             if (speed > physical->acceleration_scale)
                 physical->acceleration_scale = speed;
+        }
+        else if (data->id == rr_petal_id_crest)
+        {
+            if (player_info->camera_fov > 1.0f * (0.9 - 0.05 * slot->rarity))
+                rr_component_player_info_set_camera_fov(player_info, 1.0f * (0.9 - 0.06 * slot->rarity));
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)

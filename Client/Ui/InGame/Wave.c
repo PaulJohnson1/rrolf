@@ -5,6 +5,7 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
@@ -63,7 +64,7 @@ static void mob_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
-    rr_renderer_render_background(renderer, data->rarity);
+    rr_renderer_draw_background(renderer, data->rarity, 1);
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;

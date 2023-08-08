@@ -17,13 +17,14 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 100, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 8.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 6.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_speed, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 63, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, 8.0f, 5.0f, 0.0f, 13, 13, {2, 2, 3, 3, 3, 3, 4}},
-    {rr_petal_id_club, rr_rarity_id_unusual, 3.0f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}}
+    {rr_petal_id_club, rr_rarity_id_unusual, 3.0f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -67,8 +68,8 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Pellet", "Rock",   "Spikes",  "Light", "Missile",
-    "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Speed", "Azalea",
-    "Bone",   "Web",   "Seed",   "Gravel", "Club"};
+    "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
+    "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -82,13 +83,16 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Stacks because why not",
     "Does low damage to mobs in a large range. Does 2.5x damage to yourself",
-    "Increases your movement speed. Does not stack",
-    "Lazy dev got off his couch and added a heal petal. Check it out",
+    "It's so light it increases your movement speed. Does not stack",
+    "It heals you.",
     "Gives the player armor. Stacks with itself",
     "Web",
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
-    "Heavy and sturdy"};
+    "Heavy and sturdy",
+    "Increases your FOV. Does not stack"
+};
+
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "T-Rex",
                                            "Fern",
@@ -109,7 +113,7 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 12.5, 18, 25, 150, 250, 50};
 static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    2, 3, 7.5, 15, 20, 25, 40};
+    2, 3, 7.5, 15, 20, 25, 50};
 
 static void init_game_coefficients()
 {
@@ -173,7 +177,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
                     rr_petal_id_rock, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1],
-                    rr_petal_id_speed, 0.1);
+                    rr_petal_id_leaf, 0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_bone,
                     0.25);
@@ -196,9 +200,9 @@ static void init_loot_tables()
                     rr_petal_id_missile, 0.25);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
-                    rr_petal_id_uranium, 0.005);
+                    rr_petal_id_feather, 0.15);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[1],
-                    rr_petal_id_magnet, 0.015);
+                    rr_petal_id_crest, 0.05);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[0],
                     rr_petal_id_light, 0.05);

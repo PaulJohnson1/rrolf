@@ -28,13 +28,14 @@ enum rr_petal_id
     rr_petal_id_egg,
     rr_petal_id_magnet,
     rr_petal_id_uranium,
-    rr_petal_id_speed,
+    rr_petal_id_feather,
     rr_petal_id_azalea,
     rr_petal_id_bone,
     rr_petal_id_web,
     rr_petal_id_seed,
     rr_petal_id_gravel,
     rr_petal_id_club,
+    rr_petal_id_crest,
     rr_petal_id_max
 };
 

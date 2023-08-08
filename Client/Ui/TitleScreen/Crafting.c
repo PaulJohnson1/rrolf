@@ -6,6 +6,7 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
@@ -185,7 +186,7 @@ static void crafting_ring_petal_animate(struct rr_ui_element *this,
         0.4);
 
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
-    rr_renderer_render_background(game->renderer, 254);
+    rr_renderer_draw_background(game->renderer, rr_rarity_id_max, 1);
     if (game->crafting_data.crafting_id != 0)
     {
         data->prev_id = game->crafting_data.crafting_id;
@@ -202,8 +203,8 @@ static void crafting_ring_petal_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+    rr_renderer_draw_background(renderer, data->prev_rarity, 1);
+    rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                              data->prev_rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
@@ -291,10 +292,10 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_render_background(renderer,
-                                  game->crafting_data.crafting_rarity + 1);
-    rr_renderer_render_petal_with_background(
-        renderer, game, game->crafting_data.crafting_id,
+    rr_renderer_draw_background(renderer,
+                                  game->crafting_data.crafting_rarity + 1, 1);
+    rr_renderer_draw_petal_with_name(
+        renderer, game->crafting_data.crafting_id,
         game->crafting_data.crafting_rarity + 1);
     rr_renderer_context_state_free(renderer, &state);
     if (game->crafting_data.success_count <= 1)
@@ -449,7 +450,7 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
     data->secondary_animation =
         rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
-    rr_renderer_render_background(game->renderer, 254);
+    rr_renderer_draw_background(game->renderer, rr_rarity_id_max, 1);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
@@ -503,8 +504,8 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->id,
+    rr_renderer_draw_background(renderer, data->rarity, 1);
+    rr_renderer_draw_petal_with_name(renderer, data->id,
                                              data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)

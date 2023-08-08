@@ -79,7 +79,8 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
             return 1;
         }
     }
-    else if (ai->target_entity != RR_NULL_ENTITY)
+    else if (!(ai->ai_state == rr_ai_state_idle ||
+            ai->ai_state == rr_ai_state_idle_moving) && ai->target_entity != RR_NULL_ENTITY)
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;

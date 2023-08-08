@@ -5,6 +5,7 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
@@ -118,9 +119,8 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
     struct squad_loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
-    rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_draw_clipped_image(
-        renderer, &game->static_petals, 25 + data->prev_id * 50, 25 + data->prev_rarity * 50, 50, 50, 0, 0);
+    rr_renderer_draw_background(renderer, data->prev_rarity, 1);
+    rr_renderer_draw_static_petal(renderer, data->prev_id, data->prev_rarity, 1);
 }
 
 static struct rr_ui_element *

@@ -461,9 +461,9 @@ void rr_renderer_execute_instructions()
     ++rollovers;
     EM_ASM(
         {
+            let instr = $0;
             for (let n = 0; n < $1; ++n)
             {
-                const instr = n * $2 + $0;
                 const ctx_id = Module.HEAPU16[instr + 2 >> 1];
                 const ctx_id_2 = Module.HEAPU16[instr + 4 >> 1];
                 const args =
@@ -600,6 +600,7 @@ void rr_renderer_execute_instructions()
                 default:
                     break;
                 }
+                instr += $2;
             }
         },
         &instruction_tape[0], instruction_size, sizeof(struct renderer_args));

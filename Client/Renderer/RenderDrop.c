@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include <Client/Game.h>
-#include <Client/Renderer/RenderFunctions.h>
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 
@@ -40,17 +40,8 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game)
                        physical->lerp_angle + physical->lerp_radius * 0.25);
     rr_renderer_scale(renderer, physical->lerp_radius * 0.04);
     rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.05);
-    rr_renderer_set_fill(renderer, RR_RARITY_COLORS[drop->rarity]);
-    renderer->state.filter.amount = 0.2;
-    rr_renderer_set_stroke(renderer, RR_RARITY_COLORS[drop->rarity]);
-    rr_renderer_set_line_width(renderer, 5);
-    rr_renderer_set_line_cap(renderer, 1);
-    rr_renderer_set_line_join(renderer, 1);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_fill_rect(renderer, -30, -30, 60, 60);
-    rr_renderer_stroke_rect(renderer, -30, -30, 60, 60);
-    renderer->state.filter.amount = 0;
-    rr_renderer_render_petal_with_background(renderer, game, drop->id,
+    rr_renderer_draw_background(renderer, drop->rarity, 1);
+    rr_renderer_draw_petal_with_name(renderer, drop->id,
                                              drop->rarity);
     // rr_renderer_render_static_petal(renderer, drop->id, drop->rarity);
 }
