@@ -221,6 +221,8 @@ void rr_rivet_identities_create_guest(void *captures)
                     }
                 }).then(x => x.json())
                 .then(x => {
+                    if (x.code == "ERROR")
+                        throw "error";
                     console.log("logged in");
                     on_account(x);
                 }).catch(function()
