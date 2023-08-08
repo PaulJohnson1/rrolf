@@ -16,8 +16,7 @@ struct squad_flower_metadata
     struct rr_game_squad_client *member;
 };
 
-void render_flower(struct rr_ui_element *element,
-                   struct rr_game *game)
+void render_flower(struct rr_ui_element *element, struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct squad_flower_metadata *data = element->data;
@@ -44,12 +43,10 @@ void render_flower(struct rr_ui_element *element,
     rr_renderer_clip(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, -7 + 3, -5 + 0,
-                    3);
+    rr_renderer_arc(renderer, -7 + 3, -5 + 0, 3);
     rr_renderer_fill(renderer);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, 7 + 3, -5 + 0,
-                    3);
+    rr_renderer_arc(renderer, 7 + 3, -5 + 0, 3);
     rr_renderer_fill(renderer);
     rr_renderer_context_state_free(renderer, &state);
     rr_renderer_set_stroke(renderer, 0xff222222);
@@ -74,15 +71,15 @@ static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
     return member->in_use;
 }
 
-static struct rr_ui_element *rr_ui_flower_init(struct rr_game_squad_client *member, float size)
+static struct rr_ui_element *
+rr_ui_flower_init(struct rr_game_squad_client *member, float size)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_flower_metadata *data = malloc(sizeof *data);
     data->mouth = 0;
     data->member = member;
     this->data = data;
-    this->width = this->abs_width = this->height =
-        this->abs_height = size;
+    this->width = this->abs_width = this->height = this->abs_height = size;
 
     this->on_render = render_flower;
     this->animate = flower_animate;
@@ -142,7 +139,8 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal)
     return this;
 }
 
-static void background_change_animate(struct rr_ui_element *this, struct rr_game *game)
+static void background_change_animate(struct rr_ui_element *this,
+                                      struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
     if (data->choose(this, game))
@@ -162,17 +160,18 @@ static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
     struct rr_ui_dynamic_text_metadata *data = this->data;
     struct rr_game_squad_client *client = data->data;
     data->text[sprintf(data->text, "Spawn on wave %d",
-                           client->requested_start_wave)] = 0;
+                       client->requested_start_wave)] = 0;
 }
 
-static struct rr_ui_element *rr_ui_wave_spawn_element_init(struct rr_game_squad_client *member)
+static struct rr_ui_element *
+rr_ui_wave_spawn_element_init(struct rr_game_squad_client *member)
 {
-    struct rr_ui_element *this = rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
+    struct rr_ui_element *this =
+        rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
     struct rr_ui_dynamic_text_metadata *data = this->data;
     data->data = member;
     return this;
 }
-
 
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
@@ -185,12 +184,9 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
             rr_ui_set_justify(squad_loadout_button_init(&member->loadout[i]),
                               -1, -1));
     struct rr_ui_element *top = rr_ui_v_container_init(
-        rr_ui_container_init(), 0, 10, 
-        rr_ui_flower_init(member, 50),
+        rr_ui_container_init(), 0, 10, rr_ui_flower_init(member, 50),
         rr_ui_wave_spawn_element_init(member),
-        rr_ui_text_init(&member->name[0], 14, 0xffffffff),
-        NULL
-    );
+        rr_ui_text_init(&member->name[0], 14, 0xffffffff), NULL);
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 20);
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     struct rr_ui_element *squad_container = rr_ui_container_init();
@@ -198,7 +194,8 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     squad_container->abs_height = squad_container->height = 200;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
-    struct rr_ui_element *this = rr_ui_choose_element_init(squad_container, b, choose);
+    struct rr_ui_element *this =
+        rr_ui_choose_element_init(squad_container, b, choose);
     rr_ui_choose_container_set(this);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
@@ -224,7 +221,8 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
     return rr_ui_dynamic_text_init(18, 0xffffffff, squad_countdown);
 }
 
-static void squad_find_button_animate(struct rr_ui_element *this, struct rr_game *game)
+static void squad_find_button_animate(struct rr_ui_element *this,
+                                      struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (game->rivet_lobby_pending)
@@ -251,7 +249,8 @@ static void squad_find_button_animate(struct rr_ui_element *this, struct rr_game
     }
 }
 
-static void ready_button_animate(struct rr_ui_element *this, struct rr_game *game)
+static void ready_button_animate(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     struct labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
@@ -264,7 +263,8 @@ static void ready_button_animate(struct rr_ui_element *this, struct rr_game *gam
     }
 }
 
-static void join_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void join_button_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {

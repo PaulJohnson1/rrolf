@@ -30,8 +30,7 @@ static void mob_button_on_event(struct rr_ui_element *this,
                                game);
 }
 
-static void mob_button_animate(struct rr_ui_element *this,
-                                struct rr_game *game)
+static void mob_button_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -43,7 +42,8 @@ static void mob_button_animate(struct rr_ui_element *this,
 #endif
     if (this->first_frame)
         data->secondary_animation = count == 0;
-    data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
+    data->secondary_animation =
+        rr_lerp(data->secondary_animation, count == 0, 0.2);
     this->completely_hidden = 0;
     rr_renderer_scale(renderer, 1 - data->secondary_animation);
 }
@@ -86,8 +86,8 @@ static void mob_button_on_render(struct rr_ui_element *this,
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
-    rr_renderer_scale(renderer, 0.65 * mob_radius /
-                                    RR_MOB_DATA[data->id].radius);
+    rr_renderer_scale(renderer,
+                      0.65 * mob_radius / RR_MOB_DATA[data->id].radius);
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
     rr_renderer_render_mob(renderer, game, data->id, 0, 0, 1);
@@ -137,8 +137,7 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     struct mob_button_metadata *data = calloc(1, sizeof *data);
     data->id = id;
     data->rarity = rarity;
-    this->abs_width = this->abs_height = this->width =
-        this->height = 50;
+    this->abs_width = this->abs_height = this->width = this->height = 50;
     this->on_render = mob_button_on_render;
     this->on_event = mob_button_on_event;
     this->animate = mob_button_animate;
@@ -175,8 +174,7 @@ struct rr_ui_element *rr_ui_mob_container_init()
                       rr_ui_v_container_init(
                           rr_ui_container_init(), 10, 10,
                           rr_ui_text_init("Mob Gallery", 24, 0xffffffff),
-                          rr_ui_scroll_container_init(this, 400),
-                          NULL),
+                          rr_ui_scroll_container_init(this, 400), NULL),
                       -1, 1),
                   20),
         0x40ffffff);

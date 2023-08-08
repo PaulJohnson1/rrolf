@@ -384,52 +384,52 @@ void rr_game_init(struct rr_game *this)
     this->tiles_size = 3;
     this->ticks_until_text_cache = 24;
     for (uint32_t i = 0; i < rr_mob_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->mob_name_cache[i];
-            float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
-            rr_renderer_init(renderer);
-            rr_renderer_set_dimensions(renderer, length, 16);
-            rr_renderer_set_text_size(renderer, 12);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_line_width(renderer, 0.12 * 12);
-            rr_renderer_set_text_align(renderer, 0);
-            rr_renderer_set_text_baseline(renderer, 0);
-            rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
-            rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
-        }
-        for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->rarity_name_cache[i];
-            float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
-            rr_renderer_init(renderer);
-            rr_renderer_set_dimensions(renderer, length, 18);
-            rr_renderer_set_text_size(renderer, 14);
-            rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_line_width(renderer, 0.12 * 14);
-            rr_renderer_set_text_align(renderer, 0);
-            rr_renderer_set_text_baseline(renderer, 0);
-            rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-            rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
-        }
-        for (uint32_t i = 0; i < rr_petal_id_max; ++i)
-        {
-            struct rr_renderer *renderer = &this->petal_name_cache[i];
-            rr_renderer_init(renderer);
-            float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
-            rr_renderer_set_dimensions(renderer, 54, 18);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_text_align(renderer, 1);
-            rr_renderer_set_text_baseline(renderer, 1);
-            float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
-            rr_renderer_set_text_size(renderer, text_size);
-            rr_renderer_set_line_width(renderer, text_size * 0.12);
-            rr_renderer_begin_path(renderer);
-            rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-            rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
-        }
+    {
+        struct rr_renderer *renderer = &this->mob_name_cache[i];
+        float length = 4 + 12 * rr_renderer_get_text_size(RR_MOB_NAMES[i]);
+        rr_renderer_init(renderer);
+        rr_renderer_set_dimensions(renderer, length, 16);
+        rr_renderer_set_text_size(renderer, 12);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_line_width(renderer, 0.12 * 12);
+        rr_renderer_set_text_align(renderer, 0);
+        rr_renderer_set_text_baseline(renderer, 0);
+        rr_renderer_stroke_text(renderer, RR_MOB_NAMES[i], 2, 2);
+        rr_renderer_fill_text(renderer, RR_MOB_NAMES[i], 2, 2);
+    }
+    for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
+    {
+        struct rr_renderer *renderer = &this->rarity_name_cache[i];
+        float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
+        rr_renderer_init(renderer);
+        rr_renderer_set_dimensions(renderer, length, 18);
+        rr_renderer_set_text_size(renderer, 14);
+        rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_line_width(renderer, 0.12 * 14);
+        rr_renderer_set_text_align(renderer, 0);
+        rr_renderer_set_text_baseline(renderer, 0);
+        rr_renderer_stroke_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+        rr_renderer_fill_text(renderer, RR_RARITY_NAMES[i], 2, 2);
+    }
+    for (uint32_t i = 0; i < rr_petal_id_max; ++i)
+    {
+        struct rr_renderer *renderer = &this->petal_name_cache[i];
+        rr_renderer_init(renderer);
+        float text_length = rr_renderer_get_text_size(RR_PETAL_NAMES[i]);
+        rr_renderer_set_dimensions(renderer, 54, 18);
+        rr_renderer_set_fill(renderer, 0xffffffff);
+        rr_renderer_set_stroke(renderer, 0xff222222);
+        rr_renderer_set_text_align(renderer, 1);
+        rr_renderer_set_text_baseline(renderer, 1);
+        float text_size = text_length > 50 / 14 ? 50 / text_length : 14;
+        rr_renderer_set_text_size(renderer, text_size);
+        rr_renderer_set_line_width(renderer, text_size * 0.12);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_stroke_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+        rr_renderer_fill_text(renderer, RR_PETAL_NAMES[i], 27, 9);
+    }
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -481,11 +481,13 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
-            proto_bug_write_string(&verify_encoder, this->socket.rivet_player_token,
-                                   token_size, "rivet token");
+            proto_bug_write_string(&verify_encoder,
+                                   this->socket.rivet_player_token, token_size,
+                                   "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
-            rr_websocket_send(&this->socket, verify_encoder.current - verify_encoder.start);
+            rr_websocket_send(&this->socket,
+                              verify_encoder.current - verify_encoder.start);
             rr_websocket_send_all(&this->socket);
             return;
         }
@@ -552,8 +554,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
                 this->squad_members[i].requested_start_wave =
-                    proto_bug_read_varuint(&encoder,
-                                           "requested start wave");
+                    proto_bug_read_varuint(&encoder, "requested start wave");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
                                       length, "nick");
@@ -570,11 +571,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            proto_bug_write_float32(&encoder2, this->cache.wave_start_percent * 0.75,
+            proto_bug_write_float32(&encoder2,
+                                    this->cache.wave_start_percent * 0.75,
                                     "requested wave");
             proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
                                   "loadout count");
-            for (uint32_t i = 0; i < this->cache.slots_unlocked ; ++i)
+            for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
             {
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
                                       "id");
@@ -582,8 +584,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                       "rarity");
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i + 10].id,
                                       "id");
-                proto_bug_write_uint8(&encoder2, this->cache.loadout[i + 10].rarity,
-                                      "rarity");
+                proto_bug_write_uint8(
+                    &encoder2, this->cache.loadout[i + 10].rarity, "rarity");
             }
             // write nickname
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
@@ -783,7 +785,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 {
     if (this->ticks_until_text_cache == 0)
     {
-        //text caching
+        // text caching
         for (uint32_t i = 0; i < rr_mob_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->mob_name_cache[i];
@@ -801,7 +803,8 @@ void rr_game_tick(struct rr_game *this, float delta)
         for (uint32_t i = 0; i < rr_rarity_id_max; ++i)
         {
             struct rr_renderer *renderer = &this->rarity_name_cache[i];
-            float length = 4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
+            float length =
+                4 + 14 * rr_renderer_get_text_size(RR_RARITY_NAMES[i]);
             rr_renderer_set_dimensions(renderer, length, 18);
             rr_renderer_set_text_size(renderer, 14);
             rr_renderer_set_fill(renderer, RR_RARITY_COLORS[i]);
@@ -1037,17 +1040,19 @@ void rr_game_tick(struct rr_game *this, float delta)
                                       '0' + n) ||
                     switch_all)
                 {
-                    proto_bug_write_uint8(&encoder, n,
-                                          "petal switch");
+                    proto_bug_write_uint8(&encoder, n, "petal switch");
                     should_write = 1;
                 }
-            if (this->cache.slots_unlocked == 10 && (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, '0') || switch_all))
-                proto_bug_write_uint8(&encoder, 10,
-                                          "petal switch");
+            if (this->cache.slots_unlocked == 10 &&
+                (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                                   '0') ||
+                 switch_all))
+                proto_bug_write_uint8(&encoder, 10, "petal switch");
             if (should_write)
             {
                 proto_bug_write_uint8(&encoder, 0, "petal switch");
-                rr_websocket_send(&this->socket, encoder.current - encoder.start);
+                rr_websocket_send(&this->socket,
+                                  encoder.current - encoder.start);
             }
         }
     }

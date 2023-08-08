@@ -101,7 +101,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 }
                 else
                     ai->target_entity = entity1;
- 
             }
         }
     }

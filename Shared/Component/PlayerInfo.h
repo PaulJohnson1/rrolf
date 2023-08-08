@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Shared/Rivet.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Common.h>
 #include <Shared/Entity.h>
+#include <Shared/Rivet.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
@@ -38,8 +38,6 @@ struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
 };
-
-
 
 struct rr_component_player_info
 {
@@ -79,7 +77,8 @@ RR_SERVER_ONLY(
                                              struct rr_simulation *, uint8_t);)
 
 RR_SERVER_ONLY(void rr_component_player_info_write(
-                   struct rr_component_player_info *, struct proto_bug *, int, struct rr_component_player_info *);)
+                   struct rr_component_player_info *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_player_info_read(
                    struct rr_component_player_info *, struct proto_bug *);)
 

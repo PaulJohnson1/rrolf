@@ -22,7 +22,8 @@ void rr_component_ai_free(struct rr_component_ai *this,
 
 #ifdef RR_SERVER
 void rr_component_ai_write(struct rr_component_ai *this,
-                           struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                           struct proto_bug *encoder, int is_creation,
+                           struct rr_component_player_info *client)
 {
 }
 

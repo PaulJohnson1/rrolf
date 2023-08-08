@@ -24,6 +24,7 @@ void rr_component_projectile_free(struct rr_component_projectile *,
                                   struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_projectile_write(
-                   struct rr_component_projectile *, struct proto_bug *, int, struct rr_component_player_info *);)
+                   struct rr_component_projectile *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_projectile_read(
                    struct rr_component_projectile *, struct proto_bug *);)

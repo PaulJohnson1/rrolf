@@ -116,35 +116,41 @@ void rr_rivet_lobbies_find(void *captures)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
-                headers : {
-                    Authorization :
-                        // clang-format off
-                        "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
-                    // clang-format on
-                },
-                method : "POST",
-                body : '{"game_modes":["default"]}'
-            })
-                .then(function(r) { return r.json(); })
-                .then(function(json) {
-                    const host = json.ports.default.hostname;
-                    const token = "Bearer " + json.player.token;
-                    const $host = _malloc(host.length + 1);
-                    const $token = _malloc(1 + token.length);
-                    for (let i = 0; i < host.length; i++)
-                        HEAPU8[$host + i] = host[i].charCodeAt();
-                    for (let i = 0; i < token.length; i++)
-                        HEAPU8[$token + i] = token[i].charCodeAt();
-                    HEAPU8[$host + host.length] = 0;
-                    HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find($host, $token,
-                                                   json.ports.default.port, $0);
+            function attempt(d)
+            {
+                fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
+                    headers : {
+                        Authorization :
+                            // clang-format off
+                            "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
+                        // clang-format on
+                    },
+                    method : "POST",
+                    body : '{"game_modes":["default"]}'
                 })
-                .catch(function(error) {
-                    Module._rr_rivet_lobby_on_find(0, 0,
-                                                   0, $0);
-                })
+                    .then(function(r) { return r.json(); })
+                    .then(function(json) {
+                        const host = json.ports.default.hostname;
+                        const token = "Bearer " + json.player.token;
+                        const $host = _malloc(host.length + 1);
+                        const $token = _malloc(1 + token.length);
+                        for (let i = 0; i < host.length; i++)
+                            HEAPU8[$host + i] = host[i].charCodeAt();
+                        for (let i = 0; i < token.length; i++)
+                            HEAPU8[$token + i] = token[i].charCodeAt();
+                        HEAPU8[$host + host.length] = 0;
+                        HEAPU8[$token + token.length] = 0;
+                        Module._rr_rivet_lobby_on_find(
+                            $host, $token, json.ports.default.port, $0);
+                    })
+                    .catch(function(error) {
+                        if (d == 3)
+                            location.reload();
+                        else
+                            attempt(d + 1);
+                    });
+            };
+            attempt(0);
         },
         captures);
 #endif
@@ -152,6 +158,7 @@ void rr_rivet_lobbies_find(void *captures)
 
 void rr_rivet_identities_create_guest(void *captures)
 {
+    puts("making guest or logging in");
 #ifdef EMSCRIPTEN
     // clang-format off
     EM_ASM({
@@ -181,42 +188,52 @@ void rr_rivet_identities_create_guest(void *captures)
             Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
         }
 
-        if (!localStorage.getItem("DO_NOT_SHARE_rivet_account_token"))
+        function attempt(x)
         {
-            console.log("signing up rivet guest account");
-            fetch("https://identity.api.rivet.gg/v1/identities", {
-                method: "POST",
-                body: "{}",
-                headers: {
-                    // is a dev token
-                    Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
-                }
-            }).then(x => x.json())
-              .then(x => {
-                  localStorage.setItem("DO_NOT_SHARE_rivet_account_token", x.identity_token);
-                  console.log("new rivet account created");
-                  on_account(x);
-              });
-        }
-        else
-        {
-            console.log("logging in");
-            fetch("https://identity.api.rivet.gg/v1/identities", {
-                method: "POST",
-                body: JSON.stringify({
-                    existing_identity_token: localStorage.getItem("DO_NOT_SHARE_rivet_account_token")
-                }),
-                headers: {
-                    // is a dev token
-                    Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
-                }
-            }).then(x => x.json())
-              .then(x => {
-                  console.log("logged in");
-                  on_account(x);
-              });
-        }
+            if (!localStorage.getItem(x))
+            {
+                console.log("signing up rivet guest account");
+                fetch("https://identity.api.rivet.gg/v1/identities", {
+                    method: "POST",
+                    body: "{}",
+                    headers: {
+                        // is a dev token
+                        Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                    }
+                }).then(x => x.json())
+                .then(x => {
+                    localStorage[x] = x.identity_token;
+                    console.log("new rivet account created");
+                    on_account(x);
+                });
+            }
+            else
+            {
+                console.log("logging in");
+                fetch("https://identity.api.rivet.gg/v1/identities", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        existing_identity_token: localStorage[x]
+                    }),
+                    headers: {
+                        // is a dev token
+                        Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                    }
+                }).then(x => x.json())
+                .then(x => {
+                    console.log("logged in");
+                    on_account(x);
+                }).catch(function()
+                {
+                    if (x == "DO_NOT_SHARE_rivet_account_token")
+                        attempt(x + "2");
+                    else
+                        location.reload()
+                });
+            };
+        };
+        attempt("DO_NOT_SHARE_rivet_account_token");
     }, captures);
-    // clang-format on
+// clang-format on
 #endif
 }

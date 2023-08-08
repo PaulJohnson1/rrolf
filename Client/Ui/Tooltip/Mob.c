@@ -23,7 +23,8 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->id, data->rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->id,
+                                             data->rarity);
 }
 
 static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)
@@ -60,40 +61,41 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0,
                                   rr_ui_text_init("Health: ", 12, 0xff44ff44),
-                                  rr_ui_text_init(hp, 12, 0xffffffff),
-                                  NULL),
+                                  rr_ui_text_init(hp, 12, 0xffffffff), NULL),
                               -1, 0),
             rr_ui_set_justify(rr_ui_h_container_init(
                                   rr_ui_container_init(), 0, 0,
                                   rr_ui_text_init("Damage: ", 12, 0xffff4444),
-                                  rr_ui_text_init(dmg, 12, 0xffffffff),
-                                  NULL),
+                                  rr_ui_text_init(dmg, 12, 0xffffffff), NULL),
                               -1, 0),
             NULL),
         0x80000000);
     if (id == rr_mob_id_pteranodon)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 0.4 * RR_MOB_DATA[id].health * RR_MOB_RARITY_SCALING[rarity].health)] = 0;
-        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0,
-                rr_ui_text_init("Missile health: ", 12, 0xff44ff44),
-                rr_ui_text_init(extra, 12, 0xffffffff),
-                NULL),
-            -1, 0)
-        );
+        extra[sprintf(extra, "%.1f",
+                      0.4 * RR_MOB_DATA[id].health *
+                          RR_MOB_RARITY_SCALING[rarity].health)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Missile health: ", 12, 0xff44ff44),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 0.2 * RR_MOB_DATA[id].damage * RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
-        rr_ui_container_add_element(this, rr_ui_set_justify(rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0,
-                rr_ui_text_init("Missile damage: ", 12, 0xffff4444),
-                rr_ui_text_init(extra, 12, 0xffffffff),
-                NULL),
-            -1, 0)
-        );
+        extra[sprintf(extra, "%.1f",
+                      0.2 * RR_MOB_DATA[id].damage *
+                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Missile damage: ", 12, 0xffff4444),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
     }
-    rr_ui_container_add_element(this, 
-            rr_ui_static_space_init(10));
+    rr_ui_container_add_element(this, rr_ui_static_space_init(10));
     for (uint8_t i = 0; i < 4; ++i)
     {
         if (RR_MOB_DATA[id].loot[i].id == 0)
@@ -116,11 +118,10 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             else if (pct > 0.001)
                 d[sprintf(d, "%.3f%%", pct)] = 0;
             rr_ui_container_add_element(
-                temp,
-                rr_ui_v_container_init(rr_ui_container_init(), 0, 5,
-                                       tooltip_petal_icon_init(data->id, r - 1),
-                                       rr_ui_text_init(d, 11, 0xffffffff),
-                                       NULL));
+                temp, rr_ui_v_container_init(
+                          rr_ui_container_init(), 0, 5,
+                          tooltip_petal_icon_init(data->id, r - 1),
+                          rr_ui_text_init(d, 11, 0xffffffff), NULL));
         }
         rr_ui_h_container_set(temp);
         temp->width = temp->abs_width;

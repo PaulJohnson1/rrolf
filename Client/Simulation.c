@@ -90,7 +90,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
     gettimeofday(&end, NULL);
     long elapsed_time =
         (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
-    //game->debug_info.message_sizes[game->debug_info.websocket_pos] = 
+    // game->debug_info.message_sizes[game->debug_info.websocket_pos] =
 }
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)

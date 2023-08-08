@@ -4,8 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Server/ThirdParty",
                 "${workspaceFolder}/",
+                "${workspaceFolder}/../wsServer",
                 "/usr/include/skia"
             ],
             "defines": [],

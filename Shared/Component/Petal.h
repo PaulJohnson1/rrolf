@@ -26,8 +26,9 @@ void rr_component_petal_init(struct rr_component_petal *,
 void rr_component_petal_free(struct rr_component_petal *,
                              struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_petal_write(struct rr_component_petal *,
-                                             struct proto_bug *, int, struct rr_component_player_info *);)
+RR_SERVER_ONLY(void rr_component_petal_write(
+                   struct rr_component_petal *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_petal_read(struct rr_component_petal *,
                                             struct proto_bug *);)
 

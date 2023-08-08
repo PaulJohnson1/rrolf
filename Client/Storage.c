@@ -82,7 +82,8 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
 #endif
 }
 
-void rr_local_storage_store_id_rarity(char *label, uint32_t *start, uint8_t id_count, uint8_t rarity_count)
+void rr_local_storage_store_id_rarity(char *label, uint32_t *start,
+                                      uint8_t id_count, uint8_t rarity_count)
 {
     uint32_t at = 0;
     for (uint8_t id = 0; id < id_count; ++id)
@@ -105,7 +106,8 @@ void rr_local_storage_store_id_rarity(char *label, uint32_t *start, uint8_t id_c
     rr_local_storage_store_bytes(label, &storage_result[0], at);
 }
 
-void rr_local_storage_get_id_rarity(char *label, uint32_t *start, uint8_t id_count, uint8_t rarity_count)
+void rr_local_storage_get_id_rarity(char *label, uint32_t *start,
+                                    uint8_t id_count, uint8_t rarity_count)
 {
     uint32_t size = rr_local_storage_get_bytes(label, &storage_result[0]);
     uint32_t at = 0;

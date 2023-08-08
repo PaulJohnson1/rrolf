@@ -136,7 +136,8 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
         element->h_justify = -1;
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 || element->height == 0)
+        if (element->completely_hidden || element->width == 0 ||
+            element->height == 0)
             continue;
 
         width += element->width + inner_spacing;
@@ -163,7 +164,8 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
         element->v_justify = -1;
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 || element->height == 0)
+        if (element->completely_hidden || element->width == 0 ||
+            element->height == 0)
             continue;
 
         height += element->height + inner_spacing;

@@ -5,9 +5,9 @@
 
 #ifdef RR_SERVER
 #include <pthread.h>
-#include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #include <Server/Client.h>
 #endif
@@ -122,7 +122,8 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
 }
 
 void rr_component_player_info_write(struct rr_component_player_info *this,
-                                    struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                                    struct proto_bug *encoder, int is_creation,
+                                    struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     if (this->parent_id != client->parent_id)

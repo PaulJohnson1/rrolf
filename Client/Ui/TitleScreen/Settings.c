@@ -46,7 +46,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 }
 
 static void settings_toggle_button_on_event(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                            struct rr_game *game)
 {
     if (game->pressed != this)
         return;
@@ -83,9 +83,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_h_slider_init(150, 20,
                                                     &game->cache.map_props, 1),
-                                rr_ui_text_init("map props", 12,
-                                                0xffffffff),
-                            NULL),
+                                rr_ui_text_init("map props", 12, 0xffffffff),
+                                NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
@@ -93,15 +92,15 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_toggle_box_init(&game->cache.use_mouse),
                                 rr_ui_text_init("Mouse movement", 15,
                                                 0xffffffff),
-                            NULL),
+                                NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(&game->cache.screen_shake),
-                                rr_ui_text_init("Screen shake", 15,
-                                                0xffffffff),
-                            NULL),
+                                rr_ui_toggle_box_init(
+                                    &game->cache.screen_shake),
+                                rr_ui_text_init("Screen shake", 15, 0xffffffff),
+                                NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
@@ -110,26 +109,27 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                     &game->cache.displaying_debug_information),
                                 rr_ui_text_init("Show debug info", 15,
                                                 0xffffffff),
-                            NULL),
+                                NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(&game->cache.show_ui_hitbox),
+                                rr_ui_toggle_box_init(
+                                    &game->cache.show_ui_hitbox),
                                 rr_ui_text_init("Show ui hitboxes", 15,
                                                 0xffffffff),
-                            NULL),
+                                NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(&game->cache.ourpetsnake_mode),
+                                rr_ui_toggle_box_init(
+                                    &game->cache.ourpetsnake_mode),
                                 rr_ui_text_init("Low performance mode", 15,
-                                                0xffffffff), 
-                            NULL),
+                                                0xffffffff),
+                                NULL),
                             -1, -1),
-                        NULL
-                        ),
+                        NULL),
                     -1, -1),
                 80),
             0x40ffffff),

@@ -40,7 +40,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_simulation_get_relations(simulation, this->parent_id);
     if (relations->team != rr_simulation_team_id_mobs)
         return;
-    //put it here please
+    // put it here please
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, this->parent_id);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, 1);
@@ -98,7 +98,8 @@ void rr_component_mob_free(struct rr_component_mob *this,
 
 #ifdef RR_SERVER
 void rr_component_mob_write(struct rr_component_mob *this,
-                            struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                            struct proto_bug *encoder, int is_creation,
+                            struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "mob component state");

@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include <libwebsockets.h>
+#include <ws.h>
 
 #include <Server/Client.h>
 #include <Server/EntityAllocation.h>
@@ -48,7 +48,8 @@ void rr_api_on_open_result(char *json, void *captures)
     cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
     cJSON *xp = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    cJSON *already_playing = cJSON_GetObjectItemCaseSensitive(parsed, "already_playing");
+    cJSON *already_playing =
+        cJSON_GetObjectItemCaseSensitive(parsed, "already_playing");
     cJSON *username = cJSON_GetObjectItemCaseSensitive(parsed, "username");
     cJSON *password = cJSON_GetObjectItemCaseSensitive(parsed, "password");
     for (cJSON *petal_key = petals->child; petal_key != NULL;
@@ -63,8 +64,7 @@ void rr_api_on_open_result(char *json, void *captures)
             int index1 = atoi(sub_key1);
             int index2 = atoi(sub_key2);
 
-            account->petals[index1][index2] =
-                petal_key->valueint;
+            account->petals[index1][index2] = petal_key->valueint;
         }
     }
     account->xp = xp->valuedouble;
@@ -117,8 +117,7 @@ void rr_api_on_get_petals(char *json, void *_client)
             int index1 = atoi(sub_key1);
             int index2 = atoi(sub_key2);
 
-            inventory[index1][index2] =
-                petal_key->valueint;
+            inventory[index1][index2] = petal_key->valueint;
         }
     }
 
@@ -288,11 +287,15 @@ void rr_server_client_tick(struct rr_server_client *this)
             if (curr_client == this)
                 pos = i;
             proto_bug_write_uint8(
-                &encoder, rr_bitset_get(&this->server->clients_in_use[0], i) && curr_client->verified,
+                &encoder,
+                rr_bitset_get(&this->server->clients_in_use[0], i) &&
+                    curr_client->verified,
                 "bitbit");
             proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
             proto_bug_write_varuint(&encoder,
-                                    curr_client->requested_start_wave_percent * curr_client->max_wave + 1,
+                                    curr_client->requested_start_wave_percent *
+                                            curr_client->max_wave +
+                                        1,
                                     "requested start wave");
             uint32_t nick_len = strlen(&curr_client->client_nickname[0]);
             proto_bug_write_varuint(&encoder, nick_len, "nick size");
@@ -543,8 +546,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                     y++;
                 if (movementFlags & 8)
                     x++;
-                if ((x != 0 || y != 0) && x == x && y == y && fabsf(x) < 10000 &&
-                                  fabsf(y) < 10000)
+                if ((x != 0 || y != 0) && x == x && y == y &&
+                    fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = 2.5 / sqrtf(x * x + y * y);
                     client->player_accel_x = x * mag_1;
@@ -564,8 +567,8 @@ int rr_server_lws_callback_function(struct lws *socket,
                 }
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
-                if ((x != 0 || y != 0) && x == x && y == y && fabsf(x) < 10000 &&
-                                  fabsf(y) < 10000)
+                if ((x != 0 || y != 0) && x == x && y == y &&
+                    fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
                     float scale = (mag_1 - 50) / 200;
@@ -600,7 +603,8 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
-            while (pos != 0 && pos <= 10 && encoder.current - encoder.start < size)
+            while (pos != 0 && pos <= 10 &&
+                   encoder.current - encoder.start < size)
             {
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
@@ -827,15 +831,15 @@ void rr_server_tick(struct rr_server *this)
                         client_count++;
 
                         start_wave_total +=
-                            this->clients[i].requested_start_wave_percent * this->clients[i].max_wave;
+                            this->clients[i].requested_start_wave_percent *
+                            this->clients[i].max_wave;
                     }
                 float start_wave_mean = start_wave_total / client_count;
 
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
-                rr_component_arena_set_wave(
-                    arena,
-                    (uint32_t)(start_wave_mean + 1));
+                rr_component_arena_set_wave(arena,
+                                            (uint32_t)(start_wave_mean + 1));
                 this->simulation.wave_points =
                     get_points_from_wave(arena->wave, client_count);
             }
@@ -852,20 +856,21 @@ void rr_server_tick(struct rr_server *this)
 
 void rr_server_run(struct rr_server *this)
 {
-    struct lws_context_creation_info info;
-    memset(&info, 0, sizeof(info));
 
-    struct lws_protocols protocols[2] = {
-        {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
-    info.port = 1234;
-    info.protocols = &protocols[0];
-    info.gid = -1;
-    info.uid = -1;
-    info.user = this;
-    info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+    // struct lws_context_creation_info info;
+    // memset(&info, 0, sizeof(info));
 
-    this->server = lws_create_context(&info);
-    assert(this->server);
+    // struct lws_protocols protocols[2] = {
+    //     {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
+    // info.port = 1234;
+    // info.protocols = &protocols[0];
+    // info.gid = -1;
+    // info.uid = -1;
+    // info.user = this;
+    // info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+
+    // this->server = lws_create_context(&info);
+    // assert(this->server);
     this->ticks_until_simulation_create =
 #ifdef RIVET_BUILD
         125;

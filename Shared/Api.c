@@ -74,9 +74,8 @@ void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
 #ifndef EMSCRIPTEN
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url),
-             BASE_API_URL "user_on_close/%s/%s/%s/%d/%s", RR_API_SECRET,
-             id, petals, wave, gallery);
+    snprintf(url, sizeof(url), BASE_API_URL "user_on_close/%s/%s/%s/%d/%s",
+             RR_API_SECRET, id, petals, wave, gallery);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     RR_RIVET_CURL_EPILOGUE
 #endif

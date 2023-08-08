@@ -17,7 +17,8 @@ struct scroll_container_metadata
     uint8_t scroll_focus;
 };
 
-static void scroll_container_poll_events(struct rr_ui_element *this, struct rr_game *game)
+static void scroll_container_poll_events(struct rr_ui_element *this,
+                                         struct rr_game *game)
 {
     if (this->completely_hidden)
         return;
@@ -28,7 +29,8 @@ static void scroll_container_poll_events(struct rr_ui_element *this, struct rr_g
     this->elements.start[0]->poll_events(this->elements.start[0], game);
 }
 
-static void scroll_container_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void scroll_container_on_render(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     struct scroll_container_metadata *data = this->data;
     if (rr_ui_mouse_over(this, game) && game->input_data->scroll_delta != 0)

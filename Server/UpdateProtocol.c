@@ -40,7 +40,7 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     uint32_t component_flags = 0;
 #define XX(COMPONENT, ID)                                                      \
     component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-        RR_FOR_EACH_COMPONENT;
+    RR_FOR_EACH_COMPONENT;
 #undef XX
 
     proto_bug_write_varuint(encoder, component_flags, "entity component flags");
@@ -64,8 +64,9 @@ struct rr_simulation_find_entities_in_view_for_each_function_captures
     struct rr_simulation *simulation;
 };
 
-static void rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
-                                                           void *data)
+static void
+rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
+                                                      void *data)
 {
     struct rr_simulation_find_entities_in_view_for_each_function_captures
         *captures = data;
@@ -118,7 +119,7 @@ static void rr_simulation_find_entities_in_view(
 }
 
 static void rr_simulation_write_entity_deletions_function(uint64_t _id,
-                                                   void *_captures)
+                                                          void *_captures)
 {
     EntityIdx id = _id;
     struct rr_protocol_for_each_function_captures *captures = _captures;
@@ -177,6 +178,6 @@ void rr_simulation_write_binary(struct rr_simulation *this,
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY,
                             "entity update id"); // null terminate update list
     proto_bug_write_varuint(encoder, player_info->parent_id,
-                            "pinfo id");         // send client's pinfo
+                            "pinfo id"); // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");
 }

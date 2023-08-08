@@ -18,12 +18,11 @@ struct rr_component_web
     RR_SERVER_ONLY(uint32_t protocol_state;)
 };
 
-void rr_component_web_init(struct rr_component_web *,
-                                  struct rr_simulation *);
-void rr_component_web_free(struct rr_component_web *,
-                                  struct rr_simulation *);
+void rr_component_web_init(struct rr_component_web *, struct rr_simulation *);
+void rr_component_web_free(struct rr_component_web *, struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_web_write(
-                   struct rr_component_web *, struct proto_bug *, int, struct rr_component_player_info *);)
-RR_CLIENT_ONLY(void rr_component_web_read(
-                   struct rr_component_web *, struct proto_bug *);)
+RR_SERVER_ONLY(void rr_component_web_write(struct rr_component_web *,
+                                           struct proto_bug *, int,
+                                           struct rr_component_player_info *);)
+RR_CLIENT_ONLY(void rr_component_web_read(struct rr_component_web *,
+                                          struct proto_bug *);)

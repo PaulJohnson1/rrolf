@@ -56,7 +56,7 @@ static void spawn_random_mob(struct rr_simulation *this)
         return;
     if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
         return;
-    this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id]; 
+    this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
     EntityIdx mob_id =
         rr_simulation_alloc_mob(this, id, rarity, rr_simulation_team_id_mobs);
     struct rr_component_physical *physical =
@@ -68,7 +68,9 @@ static void spawn_random_mob(struct rr_simulation *this)
 }
 
 #define RR_TIME_BLOCK(_, CODE)                                                 \
-    { CODE; };
+    {                                                                          \
+        CODE;                                                                  \
+    };
 
 static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
@@ -94,7 +96,8 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
             physical->ticked_animation = 1;
         }
         if (rr_simulation_has_health(simulation, id))
-            rr_component_health_set_health(rr_simulation_get_health(simulation, id), 0);
+            rr_component_health_set_health(
+                rr_simulation_get_health(simulation, id), 0);
     }
     else
     {
@@ -173,7 +176,8 @@ static void spawn_mob_cluster(struct rr_simulation *this)
 static void spawn_mob_swarm(struct rr_simulation *this)
 {
     uint32_t mob_attempts = 0;
-    while (mob_attempts < 100 && this->wave_points > 2) {
+    while (mob_attempts < 100 && this->wave_points > 2)
+    {
         ++mob_attempts;
         struct rr_vector position = find_position_away_from_players(this);
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
@@ -215,7 +219,7 @@ static void tick_wave(struct rr_simulation *this)
         for (uint64_t i = 0; i < 5; i++)
             if (arena->wave_tick + 1 == (wave_length * 25 * spawn_time) * i / 5)
                 spawn_mob_cluster(this);
-        
+
         if (arena->wave_tick == (wave_length * 25 * spawn_time))
             spawn_mob_swarm(this);
     }
@@ -225,9 +229,10 @@ static void tick_wave(struct rr_simulation *this)
     {
         rr_component_arena_set_wave(arena, arena->wave + 1);
         arena->wave_tick = 0;
-        this->wave_points = get_points_from_wave(arena->wave, this->player_info_count);
+        this->wave_points =
+            get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        if (rr_frand() > 1/3)
+        if (rr_frand() > 1 / 3)
             this->special_wave_id = 0;
         else
             this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);
@@ -238,7 +243,8 @@ static void tick_wave(struct rr_simulation *this)
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_create_component_vectors(this);
-    //printf("%d %d %d\n", this->physical_count, this->mob_count, this->health_count);
+    // printf("%d %d %d\n", this->physical_count, this->mob_count,
+    // this->health_count);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
@@ -252,9 +258,9 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-    
+
     if (!this->game_over)
-       tick_wave(this);
+        tick_wave(this);
     // delete pending deletions
     rr_bitset_for_each_bit(
         this->pending_deletions,

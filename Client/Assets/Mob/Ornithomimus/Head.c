@@ -2,6 +2,4 @@
 
 #include <Client/Renderer/Renderer.h>
 
-void rr_ornithomimus_head_draw(struct rr_renderer *renderer)
-{
-}
+void rr_ornithomimus_head_draw(struct rr_renderer *renderer) {}

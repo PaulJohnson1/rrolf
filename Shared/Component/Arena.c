@@ -37,7 +37,8 @@ void rr_component_arena_free(struct rr_component_arena *this,
 
 #ifdef RR_SERVER
 void rr_component_arena_write(struct rr_component_arena *this,
-                              struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                              struct proto_bug *encoder, int is_creation,
+                              struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "arena component state");
@@ -46,9 +47,7 @@ void rr_component_arena_write(struct rr_component_arena *this,
     // this
 
     for (uint64_t i = 0; i < rr_mob_id_max * rr_rarity_id_max; ++i)
-        proto_bug_write_varuint(
-            encoder, this->mob_counters[i],
-            "mob count");
+        proto_bug_write_varuint(encoder, this->mob_counters[i], "mob count");
 
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
@@ -67,8 +66,7 @@ void rr_component_arena_read(struct rr_component_arena *this,
     uint64_t state = proto_bug_read_varuint(encoder, "arena component state");
 
     for (uint64_t i = 0; i < rr_mob_id_max * rr_rarity_id_max; ++i)
-            this->mob_counters[i] =
-                proto_bug_read_varuint(encoder, "mob count");
+        this->mob_counters[i] = proto_bug_read_varuint(encoder, "mob count");
 
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD

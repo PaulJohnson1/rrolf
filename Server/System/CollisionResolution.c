@@ -10,7 +10,7 @@
 
 static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
                                        EntityIdx b)
-{                                                            
+{
 #define exclude(component_a, component_b)                                      \
     if (rr_simulation_has_##component_a(this, a) &&                            \
         rr_simulation_has_##component_b(this, b))                              \
@@ -42,9 +42,11 @@ struct colliding_with_captures
     struct rr_component_physical *physical;
 };
 
-static void web_logic(struct rr_simulation *this, EntityIdx entity1, EntityIdx entity2)
+static void web_logic(struct rr_simulation *this, EntityIdx entity1,
+                      EntityIdx entity2)
 {
-    if (rr_simulation_get_relations(this, entity2)->team == rr_simulation_team_id_players)
+    if (rr_simulation_get_relations(this, entity2)->team ==
+        rr_simulation_team_id_players)
         return;
     if (!rr_simulation_has_mob(this, entity2))
         return;
@@ -62,7 +64,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
 
     if (!should_entities_collide(this, entity1, entity2))
         return;
-    
+
     if (rr_simulation_has_web(this, entity1))
         return web_logic(this, entity1, entity2);
     else if (rr_simulation_has_web(this, entity2))
@@ -100,33 +102,32 @@ static void colliding_with_function(uint64_t i, void *_captures)
         physical2->acceleration.x += (1 - coeff) * -0.5 * delta.x;
         physical2->acceleration.y += (1 - coeff) * -0.5 * delta.y;
         /*
-        float v2_Coeff = 2.0f * physical1->mass / (physical1->mass + physical2->mass);
-        float v1_Coeff = 2.0f * physical2->mass / (physical1->mass + physical2->mass);
-        float v_SharedCoeff = (physical1->mass - physical2->mass) / (physical1->mass + physical2->mass);
+        float v2_Coeff = 2.0f * physical1->mass / (physical1->mass +
+        physical2->mass); float v1_Coeff = 2.0f * physical2->mass /
+        (physical1->mass + physical2->mass); float v_SharedCoeff =
+        (physical1->mass - physical2->mass) / (physical1->mass +
+        physical2->mass);
 
         rr_vector_normalize(&delta);
-        float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y * delta.y);
-        float scale2 = (physical2->velocity.x * delta.x + physical2->velocity.y * delta.y);
-        struct rr_vector parallel1 = {delta.x * scale1, delta.y * scale1};
-        struct rr_vector perp1 = {physical1->velocity.x - parallel1.x, physical1->velocity.y - parallel1.y};
-        struct rr_vector parallel2 = {delta.x * scale2, delta.y * scale2};
-        struct rr_vector perp2 = {physical2->velocity.x - parallel2.x, physical2->velocity.y - parallel2.y};
-        float restitution = 0.05f;
-        if (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
+        float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y
+        * delta.y); float scale2 = (physical2->velocity.x * delta.x +
+        physical2->velocity.y * delta.y); struct rr_vector parallel1 = {delta.x
+        * scale1, delta.y * scale1}; struct rr_vector perp1 =
+        {physical1->velocity.x - parallel1.x, physical1->velocity.y -
+        parallel1.y}; struct rr_vector parallel2 = {delta.x * scale2, delta.y *
+        scale2}; struct rr_vector perp2 = {physical2->velocity.x - parallel2.x,
+        physical2->velocity.y - parallel2.y}; float restitution = 0.05f; if
+        (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
         {
-            float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution + 0.5;
-            if (kb > 0.5)
-                kb = 0.5;
-            physical1->acceleration.x += kb * delta.x;
-            physical1->acceleration.y += kb * delta.y;
+            float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution
+        + 0.5; if (kb > 0.5) kb = 0.5; physical1->acceleration.x += kb *
+        delta.x; physical1->acceleration.y += kb * delta.y;
         }
         if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
         {
-            float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution - 0.5;
-            if (kb < -0.5)
-                kb = -0.5;
-            physical2->acceleration.x += kb * delta.x;
-            physical2->acceleration.y += kb * delta.y;
+            float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution
+        - 0.5; if (kb < -0.5) kb = -0.5; physical2->acceleration.x += kb *
+        delta.x; physical2->acceleration.y += kb * delta.y;
         }
         */
     }

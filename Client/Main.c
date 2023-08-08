@@ -45,7 +45,8 @@ static void *rr_create_game_thread(void *arg)
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
-void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which, uint32_t key)
+void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which,
+                  uint32_t key)
 {
     if (type == 1)
     {
@@ -100,13 +101,15 @@ void rr_main_loop(struct rr_game *this)
                 new Array(256).fill(0).map(function(_, i) { return i; });
             window.onkeydown = function(e)
             {
-                Module._rr_key_event($0, 1, e.which, (e.key.length === 1) * e.key.charCodeAt());
+                Module._rr_key_event(
+                    $0, 1, e.which, (e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey || e.ctrlKey)
                     e.preventDefault();
             };
             window.onkeyup = function(e)
             {
-                Module._rr_key_event($0, 0, e.which, (e.key.length === 1) * e.key.charCodeAt());
+                Module._rr_key_event(
+                    $0, 0, e.which, (e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey || e.ctrlKey)
                     e.preventDefault();
             };
@@ -155,8 +158,6 @@ void rr_main_loop(struct rr_game *this)
                 return new TextDecoder().decode(
                     Module.HEAPU8.subarray(start, ptr - 1));
             };
-
-
 
             function loop(time)
             {
@@ -215,11 +216,12 @@ int main()
 
 #ifndef EMSCRIPTEN
     // glfwSetErrorCallback([](int error, char const *description)
-    //                      { std::cerr << "code " << error << ' ' << description << '\n'; });
+    //                      { std::cerr << "code " << error << ' ' <<
+    //                      description << '\n'; });
 
     glfwInit();
-    GLFWwindow *window = glfwCreateWindow(800, 800, "rrolf native client", NULL, NULL);
-
+    GLFWwindow *window =
+        glfwCreateWindow(800, 800, "rrolf native client", NULL, NULL);
 
     // pthread_t socket_tid;
 

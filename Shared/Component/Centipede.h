@@ -25,6 +25,7 @@ void rr_component_centipede_free(struct rr_component_centipede *,
                                  struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_centipede_write(
-                   struct rr_component_centipede *, struct proto_bug *, int, struct rr_component_player_info *);)
+                   struct rr_component_centipede *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_centipede_read(struct rr_component_centipede *,
                                                 struct proto_bug *);)

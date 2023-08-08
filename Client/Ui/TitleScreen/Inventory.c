@@ -11,8 +11,8 @@
 
 #include <Client/Ui/Engine.h>
 
-#include <Shared/Utilities.h>
 #include <Shared/Api.h>
+#include <Shared/Utilities.h>
 
 struct inventory_button_metadata
 {
@@ -25,7 +25,8 @@ static void inventory_button_on_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        game->pressed == this)
     {
         if (data->count == 0)
             return;
@@ -81,8 +82,8 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
                 count = 0;
             }
         }
-        //else if (data->rarity == game->crafting_data.crafting_rarity + 1)
-           // count -= game->crafting_data.success_count;
+        // else if (data->rarity == game->crafting_data.crafting_rarity + 1)
+        //  count -= game->crafting_data.success_count;
     }
     data->count = count;
     return count;
@@ -113,7 +114,8 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_render_background(renderer, data->rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->id, data->rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->id,
+                                             data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;
@@ -161,9 +163,8 @@ struct rr_ui_element *rr_ui_inventory_container_init()
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
                                   rr_ui_container_init(), 10, 10,
-                                rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(this, 400),
-                                  NULL),
+                                  rr_ui_text_init("Inventory", 24, 0xffffffff),
+                                  rr_ui_scroll_container_init(this, 400), NULL),
                               -1, 1),
             20),
         0x40ffffff);
@@ -203,7 +204,8 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         else
         {
             game->bottom_ui_open = 1;
-            rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.token, game);
+            rr_api_get_petals(game->rivet_account.uuid,
+                              game->rivet_account.token, game);
         }
     }
 }

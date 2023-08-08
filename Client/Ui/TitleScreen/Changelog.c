@@ -12,13 +12,13 @@
 #include <Shared/Utilities.h>
 
 static uint8_t changelog_container_should_show(struct rr_ui_element *this,
-                                              struct rr_game *game)
+                                               struct rr_game *game)
 {
     return game->top_ui_open == 2 && !game->simulation_ready;
 }
 
 static void changelog_container_animate(struct rr_ui_element *this,
-                                       struct rr_game *game)
+                                        struct rr_game *game)
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
@@ -47,7 +47,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 }
 
 static void changelog_toggle_button_on_event(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                             struct rr_game *game)
 {
     if (game->pressed != this)
         return;
@@ -61,14 +61,16 @@ static void changelog_toggle_button_on_event(struct rr_ui_element *this,
 }
 
 static void changelog_divider_on_render(struct rr_ui_element *this,
-                                struct rr_game *game)
+                                        struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (this->container->resizeable)
     {
         struct rr_ui_container_metadata *data = this->container->data;
-        if (this->abs_width < this->container->abs_width - data->outer_spacing * 2)
-            this->abs_width = this->container->abs_width - data->outer_spacing * 2;
+        if (this->abs_width <
+            this->container->abs_width - data->outer_spacing * 2)
+            this->abs_width =
+                this->container->abs_width - data->outer_spacing * 2;
     }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, this->fill);
@@ -89,7 +91,8 @@ static struct rr_ui_element *changelog_divider_init()
     return this;
 }
 
-static uint8_t changelog_button_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t changelog_button_should_show(struct rr_ui_element *this,
+                                            struct rr_game *game)
 {
     return !game->simulation_ready;
 }
@@ -116,32 +119,50 @@ struct rr_ui_element *rr_ui_changelog_container_init()
                         rr_ui_text_init("Changelog", 36, 0xffffffff),
                         rr_ui_scroll_container_init(
                             rr_ui_justify_all(
-                                rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                                    rr_ui_text_init("7/29/2023", 24, 0xffffffff),
+                                rr_ui_v_container_init(
+                                    rr_ui_container_init(), 10, 10,
+                                    rr_ui_text_init("7/29/2023", 24,
+                                                    0xffffffff),
                                     rr_ui_static_space_init(10),
-                                    rr_ui_text_init("Petas now act as one entity before being shot", 16, 0xffffffff),
-                                    rr_ui_text_init("Buffed peas", 16, 0xffffffff),
+                                    rr_ui_text_init("Petas now act as one "
+                                                    "entity before being shot",
+                                                    16, 0xffffffff),
+                                    rr_ui_text_init("Buffed peas", 16,
+                                                    0xffffffff),
                                     changelog_divider_init(),
-                                    rr_ui_text_init("7/28/2023", 24, 0xffffffff),
+                                    rr_ui_text_init("7/28/2023", 24,
+                                                    0xffffffff),
                                     rr_ui_static_space_init(10),
-                                    rr_ui_text_init("Pteranodon now does not shoot while chasing", 16, 0xffffffff),
-                                    rr_ui_text_init("Death cameras now follows seed and other alive players", 16, 0xffffffff),
+                                    rr_ui_text_init("Pteranodon now does not "
+                                                    "shoot while chasing",
+                                                    16, 0xffffffff),
+                                    rr_ui_text_init(
+                                        "Death cameras now follows seed and "
+                                        "other alive players",
+                                        16, 0xffffffff),
                                     changelog_divider_init(),
-                                    rr_ui_text_init("7/27/2023", 24, 0xffffffff),
+                                    rr_ui_text_init("7/27/2023", 24,
+                                                    0xffffffff),
                                     rr_ui_static_space_init(10),
-                                    rr_ui_text_init("Create seed. drops from fern", 16, 0xffffffff),
-                                    rr_ui_text_init("Change drop rates", 16, 0xffffffff),
+                                    rr_ui_text_init(
+                                        "Create seed. drops from fern", 16,
+                                        0xffffffff),
+                                    rr_ui_text_init("Change drop rates", 16,
+                                                    0xffffffff),
                                     changelog_divider_init(),
-                                    rr_ui_text_init("2/13/2023", 24, 0xffffffff),
+                                    rr_ui_text_init("2/13/2023", 24,
+                                                    0xffffffff),
                                     rr_ui_static_space_init(10),
-                                    rr_ui_text_init("We have began working on a new game called rrolf.io", 16, 0xffffffff),
-                                    rr_ui_text_init("I heard it's about dinos", 16, 0xffffffff),
-                                    NULL
-                                ),
-                            -1)
-                        , 300),
-                        NULL
-                        ),
+                                    rr_ui_text_init(
+                                        "We have began working on a new game "
+                                        "called rrolf.io",
+                                        16, 0xffffffff),
+                                    rr_ui_text_init("I heard it's about dinos",
+                                                    16, 0xffffffff),
+                                    NULL),
+                                -1),
+                            300),
+                        NULL),
                     -1, -1),
                 80),
             0x40ffffff),

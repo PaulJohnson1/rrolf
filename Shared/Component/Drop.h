@@ -17,8 +17,7 @@ struct rr_component_drop
     uint8_t rarity;
     RR_CLIENT_ONLY(uint8_t hidden;)
     RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(8)];)
-    RR_SERVER_ONLY(
-        uint8_t picked_up_this_tick[RR_BITSET_ROUND(8)];)
+    RR_SERVER_ONLY(uint8_t picked_up_this_tick[RR_BITSET_ROUND(8)];)
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
 };
@@ -27,7 +26,8 @@ void rr_component_drop_init(struct rr_component_drop *, struct rr_simulation *);
 void rr_component_drop_free(struct rr_component_drop *, struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_drop_write(struct rr_component_drop *,
-                                            struct proto_bug *, int, struct rr_component_player_info *);)
+                                            struct proto_bug *, int,
+                                            struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_drop_read(struct rr_component_drop *,
                                            struct proto_bug *);)
 

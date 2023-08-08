@@ -43,8 +43,8 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
             rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
         physical->lerp_angle =
             rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
-        physical->turning_animation =
-            rr_angle_lerp(physical->turning_animation, physical->angle, 6 * delta);
+        physical->turning_animation = rr_angle_lerp(physical->turning_animation,
+                                                    physical->angle, 6 * delta);
 
         physical->animation +=
             (2 * (physical->parent_id % 2) - 1) * delta *

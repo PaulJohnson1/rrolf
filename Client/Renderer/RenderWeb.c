@@ -18,7 +18,7 @@ void rr_component_web_render(EntityIdx entity, struct rr_game *game)
     if (physical->lerp_server_animation_tick > 0.001)
     {
         rr_renderer_set_global_alpha(
-                renderer, (physical->lerp_server_animation_tick) * 0.1);
+            renderer, (physical->lerp_server_animation_tick) * 0.1);
         rr_renderer_scale(
             renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
     }

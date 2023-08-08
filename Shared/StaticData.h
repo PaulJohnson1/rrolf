@@ -67,12 +67,12 @@ struct rr_mob_data
 struct rr_petal_data
 {
     uint8_t id;
-    uint8_t min_rarity; //minimum rarity petal can spawn at
+    uint8_t min_rarity; // minimum rarity petal can spawn at
     float damage;
     float health;
     float clump_radius;
     uint32_t cooldown;
-    uint32_t secondary_cooldown; //for stuff like projectiles
+    uint32_t secondary_cooldown; // for stuff like projectiles
     uint8_t count[rr_rarity_id_max];
 };
 

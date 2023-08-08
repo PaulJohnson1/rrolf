@@ -19,7 +19,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
     {
         struct rr_component_relations *relations =
             rr_simulation_get_relations(simulation, entity);
-        
+
         if (relations->owner == game->player_info->parent_id)
             if (health->lerp_health / health->max_health > 0.99)
                 return;
@@ -40,23 +40,33 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
             rr_simulation_get_mob(simulation, entity);
         length += mob->rarity * 5;
         // mob rarity
-        rr_renderer_draw_translated_image(renderer, &game->rarity_name_cache[mob->rarity], length - game->rarity_name_cache[mob->rarity].width / 2 + 2, 14 - 2);
+        rr_renderer_draw_translated_image(
+            renderer, &game->rarity_name_cache[mob->rarity],
+            length - game->rarity_name_cache[mob->rarity].width / 2 + 2,
+            14 - 2);
 
         // mob name
-        rr_renderer_draw_translated_image(renderer, &game->mob_name_cache[mob->id], -length + game->mob_name_cache[mob->id].width / 2 - 2, -12 - 2);
+        rr_renderer_draw_translated_image(
+            renderer, &game->mob_name_cache[mob->id],
+            -length + game->mob_name_cache[mob->id].width / 2 - 2, -12 - 2);
     }
     else if (rr_simulation_has_flower(simulation, entity))
     {
-        struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, rr_simulation_get_relations(simulation, entity)->owner);
+        struct rr_component_player_info *player_info =
+            rr_simulation_get_player_info(
+                simulation,
+                rr_simulation_get_relations(simulation, entity)->owner);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_stroke(renderer, 0xff000000);
         rr_renderer_set_text_size(renderer, 12);
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_text_baseline(renderer, 0);
-        rr_renderer_stroke_text(renderer, &game->squad_members[player_info->client_id].name[0], -length,
-                                -18);
-        rr_renderer_fill_text(renderer, &game->squad_members[player_info->client_id].name[0], -length,
-                            -18);
+        rr_renderer_stroke_text(
+            renderer, &game->squad_members[player_info->client_id].name[0],
+            -length, -18);
+        rr_renderer_fill_text(
+            renderer, &game->squad_members[player_info->client_id].name[0],
+            -length, -18);
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);

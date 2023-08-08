@@ -43,7 +43,8 @@ static void grid_filter_candidates(struct rr_simulation *this,
         rr_simulation_get_physical(this, entity1);
     struct rr_component_physical *physical2 =
         rr_simulation_get_physical(this, entity2);
-    if (!(physical1->has_deletion_animation && physical2->has_deletion_animation))
+    if (!(physical1->has_deletion_animation &&
+          physical2->has_deletion_animation))
         return;
     struct rr_vector delta = {physical1->x - physical2->x,
                               physical1->y - physical2->y};
@@ -52,10 +53,10 @@ static void grid_filter_candidates(struct rr_simulation *this,
         collision_radius * collision_radius)
     {
         physical1->colliding_with[physical1->colliding_with_size++] = entity2;
-        #ifndef RIVET_BUILD
+#ifndef RIVET_BUILD
         if (physical1->colliding_with_size >= RR_MAX_COLLISION_COUNT)
             puts("entity cram limit exceeded");
-        #endif
+#endif
     }
 }
 

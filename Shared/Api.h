@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Shared/Utilities.h>
 #include <Shared/StaticData.h>
+#include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
 #define RR_API_SECRET                                                          \
@@ -25,7 +25,6 @@ void rr_api_on_craft_result(char *, void *);
 void rr_api_on_open_result(char *, void *);
 
 void rr_api_get_petals(char const *, char const *, void *);
-void rr_api_craft_petals(char const *, char const *, char const *,
-                         void *);
+void rr_api_craft_petals(char const *, char const *, char const *, void *);
 void rr_api_on_close(char const *, char const *, uint32_t, char const *);
 void rr_api_on_open(char const *uuid, void *captures);

@@ -27,13 +27,14 @@ void rr_component_health_init(struct rr_component_health *,
 void rr_component_health_free(struct rr_component_health *,
                               struct rr_simulation *);
 
-RR_SERVER_ONLY(void rr_component_health_write(struct rr_component_health *,
-                                              struct proto_bug *, int, struct rr_component_player_info *);)
+RR_SERVER_ONLY(void rr_component_health_write(
+                   struct rr_component_health *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_health_read(struct rr_component_health *,
                                              struct proto_bug *);)
-
 
 RR_DECLARE_PUBLIC_FIELD(health, float, health)
 RR_DECLARE_PUBLIC_FIELD(health, float, max_health)
 RR_DECLARE_PUBLIC_FIELD(health, uint8_t, hidden)
-RR_SERVER_ONLY(void rr_component_health_do_damage(struct rr_component_health *, float);)
+RR_SERVER_ONLY(void rr_component_health_do_damage(struct rr_component_health *,
+                                                  float);)

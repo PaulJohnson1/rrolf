@@ -44,16 +44,19 @@ static void wave_text_on_render(struct rr_ui_element *this,
     rr_renderer_context_state_free(renderer, &state);
 }
 
-static uint8_t mob_button_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t mob_button_should_show(struct rr_ui_element *this,
+                                      struct rr_game *game)
 {
     if (!game->simulation_ready)
         return 0;
     struct mob_button_metadata *data = this->data;
-    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(game->simulation, 1);
     return arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
 }
 
-static void mob_button_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void mob_button_on_render(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
@@ -72,8 +75,10 @@ static void mob_button_on_render(struct rr_ui_element *this, struct rr_game *gam
 
     rr_renderer_context_state_free(renderer, &state);
     rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
-    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, 1);
-    uint32_t count = arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(game->simulation, 1);
+    uint32_t count =
+        arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
     if (count <= 1)
         return;
     rr_renderer_translate(renderer, 25, -25);
@@ -183,8 +188,6 @@ struct rr_ui_element *rr_ui_wave_container_init()
         rr_ui_v_container_init(
             rr_ui_container_init(), 10, 10,
             rr_ui_dynamic_text_init(36, 0xffffffff, wave_text_function),
-            wave_bar_init(),
-            outer_container,
-            NULL),
+            wave_bar_init(), outer_container, NULL),
         0, -1);
 }

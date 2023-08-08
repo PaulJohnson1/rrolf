@@ -115,7 +115,7 @@ struct rr_game
     struct rr_renderer tiles[3];
     struct rr_renderer background_features[9];
 
-    //text cache
+    // text cache
     struct rr_renderer rarity_name_cache[rr_rarity_id_max];
     struct rr_renderer mob_name_cache[rr_mob_id_max];
     struct rr_renderer petal_name_cache[rr_petal_id_max];

@@ -29,7 +29,8 @@ static void loadout_button_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    if ((game->input_data->mouse_buttons_up_this_tick & 1) && game->pressed == this)
+    if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
+        game->pressed == this)
     {
         game->cache.loadout[data->pos].id = 0;
         game->cache.loadout[data->pos].rarity = 0;
@@ -47,7 +48,8 @@ static void petal_switch_button_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->pressed == this) // mouse_down
+    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+        game->pressed == this) // mouse_down
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
@@ -76,7 +78,8 @@ title_screen_loadout_button_should_show(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    return !game->simulation_ready && data->pos % 10 < game->cache.slots_unlocked;
+    return !game->simulation_ready &&
+           data->pos % 10 < game->cache.slots_unlocked;
 }
 
 static void title_screen_loadout_button_animate(struct rr_ui_element *this,
@@ -110,7 +113,8 @@ static uint8_t loadout_button_should_show(struct rr_ui_element *this,
     return player_info->slot_count > data->pos % 10;
 }
 
-static uint8_t secondary_loadout_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t secondary_loadout_should_show(struct rr_ui_element *this,
+                                             struct rr_game *game)
 {
     return this->elements.start[0]->should_show(this->elements.start[0], game);
 }
@@ -141,17 +145,19 @@ static void loadout_button_animate(struct rr_ui_element *this,
     if (data->lerp_cd < slot->client_cooldown)
         data->lerp_cd = slot->client_cooldown * (1.0f / 255);
     else
-        data->lerp_cd = rr_lerp(data->lerp_cd, slot->client_cooldown * (1.0f / 255), 0.2);
+        data->lerp_cd =
+            rr_lerp(data->lerp_cd, slot->client_cooldown * (1.0f / 255), 0.2);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
 static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                                  struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_render_background(renderer, data->prev_rarity);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id, data->prev_rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+                                             data->prev_rarity);
 }
 
 static void loadout_button_on_render(struct rr_ui_element *this,
@@ -164,9 +170,11 @@ static void loadout_button_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, 0x40000000);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 0, 0);
-    rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10, -M_PI / 2 - pct * M_PI * 8, 0);
+    rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10,
+                            -M_PI / 2 - pct * M_PI * 8, 0);
     rr_renderer_fill(renderer);
-    rr_renderer_render_petal_with_background(renderer, game, data->prev_id, data->prev_rarity);
+    rr_renderer_render_petal_with_background(renderer, game, data->prev_id,
+                                             data->prev_rarity);
 }
 
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)
@@ -209,16 +217,19 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos)
 struct rr_ui_element *rr_ui_secondary_loadout_button_init(uint8_t pos)
 {
     struct rr_ui_element *this = rr_ui_loadout_button_init(pos + 10);
-    char *text = pos == 0 ? "[1]" :
-    pos == 1 ? "[2]" : pos == 2 ? "[3]" : 
-    pos == 3 ? "[4]" : pos == 4 ? "[5]" :
-    pos == 5 ? "[6]" : pos == 6 ? "[7]" : 
-    pos == 7 ? "[8]" : pos == 8 ? "[9]" : "[0]";
-    struct rr_ui_element *c = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-        this,
-        rr_ui_text_init(text, 14, 0xffffffff),
-        NULL
-    );
+    char *text = pos == 0   ? "[1]"
+                 : pos == 1 ? "[2]"
+                 : pos == 2 ? "[3]"
+                 : pos == 3 ? "[4]"
+                 : pos == 4 ? "[5]"
+                 : pos == 5 ? "[6]"
+                 : pos == 6 ? "[7]"
+                 : pos == 7 ? "[8]"
+                 : pos == 8 ? "[9]"
+                            : "[0]";
+    struct rr_ui_element *c =
+        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, this,
+                               rr_ui_text_init(text, 14, 0xffffffff), NULL);
     c->should_show = secondary_loadout_should_show;
     return c;
 }

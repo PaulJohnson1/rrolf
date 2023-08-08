@@ -10,7 +10,8 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id,
                                                     void *simulation)
 {
     struct rr_simulation *this = simulation;
-    if (rr_simulation_has_projectile(this, id) || rr_simulation_has_web(this, id))
+    if (rr_simulation_has_projectile(this, id) ||
+        rr_simulation_has_web(this, id))
         return;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, id);

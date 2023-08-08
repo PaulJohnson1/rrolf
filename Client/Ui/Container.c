@@ -13,14 +13,18 @@ static void container_on_render(struct rr_ui_element *this,
     if (this->h_flex)
     {
         struct rr_ui_container_metadata *data = this->container->data;
-        if (this->abs_width < this->container->abs_width - data->outer_spacing * 2)
-            this->abs_width = this->container->abs_width - data->outer_spacing * 2;
+        if (this->abs_width <
+            this->container->abs_width - data->outer_spacing * 2)
+            this->abs_width =
+                this->container->abs_width - data->outer_spacing * 2;
     }
     if (this->v_flex)
     {
         struct rr_ui_container_metadata *data = this->container->data;
-        if (this->abs_height < this->container->abs_height - data->outer_spacing * 2)
-            this->abs_height = this->container->abs_height - data->outer_spacing * 2;
+        if (this->abs_height <
+            this->container->abs_height - data->outer_spacing * 2)
+            this->abs_height =
+                this->container->abs_height - data->outer_spacing * 2;
     }
     if (this->fill != 0x00000000 || game->cache.show_ui_hitbox)
     {
@@ -120,7 +124,9 @@ struct rr_ui_element *rr_ui_2d_container_init(uint8_t width, uint8_t height,
     return this;
 }
 
-struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left, struct rr_ui_element *right, float pad)
+struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left,
+                                                struct rr_ui_element *right,
+                                                float pad)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct rr_ui_container_metadata *data = malloc(sizeof *data);
@@ -130,7 +136,9 @@ struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left, stru
     left->h_justify = -1;
     right->h_justify = 1;
     this->abs_width = this->width = left->abs_width + pad + right->abs_width;
-    this->abs_height = this->height = left->abs_height > right->abs_height ? left->abs_height : right->abs_height;
+    this->abs_height = this->height = left->abs_height > right->abs_height
+                                          ? left->abs_height
+                                          : right->abs_height;
     this->h_flex = 1;
     this->on_render = container_on_render;
     this->poll_events = rr_ui_container_poll_events;

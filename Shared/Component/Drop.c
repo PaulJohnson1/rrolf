@@ -33,7 +33,8 @@ void rr_component_drop_free(struct rr_component_drop *this,
 
 #ifdef RR_SERVER
 void rr_component_drop_write(struct rr_component_drop *this,
-                             struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                             struct proto_bug *encoder, int is_creation,
+                             struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     if (rr_bitset_get(&this->picked_up_this_tick[0], client->client_id))
@@ -43,7 +44,10 @@ void rr_component_drop_write(struct rr_component_drop *this,
     FOR_EACH_PUBLIC_FIELD
     if (state & state_flags_hidden)
         proto_bug_write_uint8(
-            encoder, rr_bitset_get(&this->picked_up_by[0], client->client_id) + (is_creation != 0) * rr_bitset_get(&this->picked_up_by[0], client->client_id),
+            encoder,
+            rr_bitset_get(&this->picked_up_by[0], client->client_id) +
+                (is_creation != 0) *
+                    rr_bitset_get(&this->picked_up_by[0], client->client_id),
             "drop hidden");
 #undef X
 }

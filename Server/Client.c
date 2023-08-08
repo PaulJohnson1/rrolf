@@ -36,5 +36,6 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         return;
     }
     puts("creating flower");
-    rr_simulation_alloc_player(this->player_info->parent_id, &this->server->simulation);
+    rr_simulation_alloc_player(this->player_info->parent_id,
+                               &this->server->simulation);
 }

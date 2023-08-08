@@ -27,7 +27,8 @@ RR_SERVER_ONLY(void rr_component_relations_update_root_owner(
                    struct rr_simulation *, struct rr_component_relations *);)
 
 RR_SERVER_ONLY(void rr_component_relations_write(
-                   struct rr_component_relations *, struct proto_bug *, int, struct rr_component_player_info *);)
+                   struct rr_component_relations *, struct proto_bug *, int,
+                   struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_relations_read(struct rr_component_relations *,
                                                 struct proto_bug *);)
 

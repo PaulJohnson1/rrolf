@@ -42,13 +42,17 @@ void rr_component_petal_free(struct rr_component_petal *this,
     if (this->id != rr_petal_id_web || this->detached == 0)
         return;
     EntityIdx id = rr_simulation_alloc_entity(simulation);
-    struct rr_component_physical *physical = rr_simulation_add_physical(simulation, id);
-    struct rr_component_relations *relations = rr_simulation_add_relations(simulation, id);
+    struct rr_component_physical *physical =
+        rr_simulation_add_physical(simulation, id);
+    struct rr_component_relations *relations =
+        rr_simulation_add_relations(simulation, id);
     struct rr_component_web *web = rr_simulation_add_web(simulation, id);
-    struct rr_component_physical *petal_phys = rr_simulation_get_physical(simulation, this->parent_id);
+    struct rr_component_physical *petal_phys =
+        rr_simulation_get_physical(simulation, this->parent_id);
     rr_component_physical_set_x(physical, petal_phys->x);
     rr_component_physical_set_y(physical, petal_phys->y);
-    rr_component_physical_set_radius(physical, 40 + RR_PETAL_RARITY_SCALE[this->rarity].damage * 30);
+    rr_component_physical_set_radius(
+        physical, 40 + RR_PETAL_RARITY_SCALE[this->rarity].damage * 30);
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     physical->mass = 1;
     physical->friction = 0;
@@ -58,7 +62,8 @@ void rr_component_petal_free(struct rr_component_petal *this,
 
 #ifdef RR_SERVER
 void rr_component_petal_write(struct rr_component_petal *this,
-                              struct proto_bug *encoder, int is_creation, struct rr_component_player_info *client)
+                              struct proto_bug *encoder, int is_creation,
+                              struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "petal component state");
