@@ -51,7 +51,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
         rr_simulation_add_relations(this, petal_id);
     struct rr_component_health *health =
         rr_simulation_add_health(this, petal_id);
-    rr_component_physical_set_radius(physical, 10);
+    rr_component_physical_set_radius(physical, id == rr_petal_id_club ? 15 : 10);
     rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
     rr_component_physical_set_x(physical, x);
     rr_component_physical_set_y(physical, y);
