@@ -800,5 +800,41 @@
     },
     "failed_crafts": {},
     "mob_gallery": {}
+  },
+  "fa1a657c-261c-4bec-8628-3d1f14b88815": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CO-vqdDXMRDvz8bYnTEaEgoQzKKVkLO3R163LThgj3k-YyIWUhQKEgoQi8e5qnNaQA-lzedqmZ3JniIWChQKEgoQQ3yF0coYQMmANNe5zM6mJg.jVHNVPPdtZUSaTX8LtMUGL01UfEls9GAnpUu-GqPaT6Z6Q7w9UIEeLX4T6VCz8W_uFhrPKhKvOYixFkuGIGNCg",
+    "username": "fa1a657c-261c-4bec-8628-3d1f14b88815",
+    "maximum_wave": 1,
+    "xp": 0,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
+  },
+  "7460b213-bea4-4d4f-b74c-119c0be02cae": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CK77qdDXMRCum8fYnTEaEgoQbY4-c6EIRKmZOeG_bcNJfiIWUhQKEgoQDC_I9ew5QYu7qZkwWNAhXCIWChQKEgoQnoosOteSQaKpFCQivq3n-A.92Q86R01SbK-5alAw7inDjePwyLyPsyJBR-g4dP64f1-fF3gk51Cnuwup8CG3LocYskDhZvX7XkypGwXMyjDCA",
+    "username": "7460b213-bea4-4d4f-b74c-119c0be02cae",
+    "maximum_wave": 1,
+    "xp": 0,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
+  },
+  "ead2627e-6fc9-453a-89e8-037f5b039ae8": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CPCtstDXMRDwzc_YnTEaEgoQUkP6l5QGRWW-xw3WtPDx5yIWUhQKEgoQ1Jn9VUUlQ7Sxx7sscMN1wSIWChQKEgoQg9Xr9lRSQkGahsgo0eBvmA.ytKK4lo-fCI0_VRGPwzHHvOUlnC6ZPCiL5TUsXnvHEiOd66uALN6ca6FnKn8IxMVaQMn0ldP5XwGk3zBCKZgBg",
+    "username": "ead2627e-6fc9-453a-89e8-037f5b039ae8",
+    "maximum_wave": 1,
+    "xp": 0,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
   }
 }

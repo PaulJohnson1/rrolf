@@ -200,11 +200,11 @@ void rr_rivet_identities_create_guest(void *captures)
                         // is a dev token
                         Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
                     }
-                }).then(x => x.json())
-                .then(x => {
-                    localStorage[x] = x.identity_token;
+                }).then(r => r.json())
+                .then(r => {
+                    localStorage[x] = r.identity_token;
                     console.log("new rivet account created");
-                    on_account(x);
+                    on_account(r);
                 });
             }
             else
