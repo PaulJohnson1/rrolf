@@ -219,15 +219,16 @@ void rr_rivet_identities_create_guest(void *captures)
                         // is a dev token
                         Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
                     }
-                }).then(x => x.json())
-                .then(x => {
-                    if (x.code == "ERROR")
+                }).then(r => r.json())
+                .then(r => {
+                    if (r.code == "ERROR")
                         throw "error";
                     console.log("logged in");
-                    on_account(x);
+                    localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
+                    on_account(r);
                 }).catch(function()
                 {
-                    localStorage["DO_NOT_SHARE_rivet_account_token"] = '';
+                    localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
                     location.reload()
                 });
             };
