@@ -214,6 +214,8 @@ static void init_loot_tables()
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
                     rr_petal_id_pellet, 0.15);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[1],
+                    rr_petal_id_feather, 0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ankylosaurus].loot[0],
                     rr_petal_id_club, 0.1);

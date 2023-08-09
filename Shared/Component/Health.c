@@ -39,9 +39,19 @@ void rr_component_health_write(struct rr_component_health *this,
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "health component state");
+    float tmp_health = this->health;
+    float tmp_max = this->max_health;
+    if (this->hidden)
+    {
+        this->max_health = 0;
+        if (this->health != 0)
+            this->health = 0.25;
+    }
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
+    this->health = tmp_health;
+    this->max_health = tmp_max;
 }
 
 void rr_component_health_do_damage(struct rr_component_health *this, float v)

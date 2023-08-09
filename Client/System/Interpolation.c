@@ -53,7 +53,7 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         if (!has_drop)
             physical->animation +=
                 (2 * (physical->parent_id % 2) - 1) * delta *
-                (rr_vector_get_magnitude(&physical->lerp_velocity) * 0.5 + 1) * 2;
+                (fmin(rr_vector_get_magnitude(&physical->lerp_velocity), 20) * 0.5 + 1) * 2;
         else
             physical->animation += delta * 1.5;
         if (!has_drop ||

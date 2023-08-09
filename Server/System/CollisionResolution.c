@@ -95,41 +95,14 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
 
     {
+        #define KNOCKBACK_CONST 20.0f / 2
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
-        physical1->acceleration.x += coeff * 0.5 * delta.x;
-        physical1->acceleration.y += coeff * 0.5 * delta.y;
-        physical2->acceleration.x += (1 - coeff) * -0.5 * delta.x;
-        physical2->acceleration.y += (1 - coeff) * -0.5 * delta.y;
-        /*
-        float v2_Coeff = 2.0f * physical1->mass / (physical1->mass +
-        physical2->mass); float v1_Coeff = 2.0f * physical2->mass /
-        (physical1->mass + physical2->mass); float v_SharedCoeff =
-        (physical1->mass - physical2->mass) / (physical1->mass +
-        physical2->mass);
-
-        rr_vector_normalize(&delta);
-        float scale1 = (physical1->velocity.x * delta.x + physical1->velocity.y
-        * delta.y); float scale2 = (physical2->velocity.x * delta.x +
-        physical2->velocity.y * delta.y); struct rr_vector parallel1 = {delta.x
-        * scale1, delta.y * scale1}; struct rr_vector perp1 =
-        {physical1->velocity.x - parallel1.x, physical1->velocity.y -
-        parallel1.y}; struct rr_vector parallel2 = {delta.x * scale2, delta.y *
-        scale2}; struct rr_vector perp2 = {physical2->velocity.x - parallel2.x,
-        physical2->velocity.y - parallel2.y}; float restitution = 0.05f; if
-        (scale2 * v1_Coeff + scale1 * v_SharedCoeff > 0)
-        {
-            float kb = scale2 * v1_Coeff + scale1 * v_SharedCoeff * restitution
-        + 0.5; if (kb > 0.5) kb = 0.5; physical1->acceleration.x += kb *
-        delta.x; physical1->acceleration.y += kb * delta.y;
-        }
-        if (scale1 * v2_Coeff - scale2 * v_SharedCoeff < 0)
-        {
-            float kb = scale1 * v2_Coeff - scale2 * v_SharedCoeff * restitution
-        - 0.5; if (kb < -0.5) kb = -0.5; physical2->acceleration.x += kb *
-        delta.x; physical2->acceleration.y += kb * delta.y;
-        }
-        */
+        physical1->acceleration.x += coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
+        physical1->acceleration.y += coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
+        physical2->acceleration.x += (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
+        physical2->acceleration.y += (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
+        #undef KNOCKBACK_CONST
     }
 }
 

@@ -515,6 +515,10 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
 
     if (check_if_aggro(ai, simulation))
         ai->ai_state = rr_ai_state_chasing;
+    if (ai->ai_state == rr_ai_state_attacking)
+        physical->knockback_scale = 5.0f;
+    else
+        physical->knockback_scale = 1.0f;
 
     switch (ai->ai_state)
     {

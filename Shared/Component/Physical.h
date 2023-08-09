@@ -13,15 +13,6 @@
 struct rr_simulation;
 struct proto_bug;
 
-struct rr_component_physical_spatial_hash_bounds
-{
-    uint32_t sx;
-    uint32_t ex;
-    uint32_t sy;
-    uint32_t ey;
-    uint8_t inserted;
-};
-
 RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_physical
@@ -30,7 +21,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(float mass;)
-    RR_SERVER_ONLY(float restitution;)
+    RR_SERVER_ONLY(float knockback_scale;)
     RR_SERVER_ONLY(float friction;)
     RR_SERVER_ONLY(float acceleration_scale;)
     float angle;
@@ -44,7 +35,6 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float lerp_server_animation_tick;)
-    RR_SERVER_ONLY(uint32_t query_id);
     uint8_t server_animation_tick : 4;
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
     RR_SERVER_ONLY(uint8_t ticked_animation : 1;)

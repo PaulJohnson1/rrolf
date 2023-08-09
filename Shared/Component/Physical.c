@@ -28,6 +28,7 @@ void rr_component_physical_init(struct rr_component_physical *this,
     RR_SERVER_ONLY(this->mass = 1;)
     RR_SERVER_ONLY(this->has_deletion_animation = 1;)
     RR_SERVER_ONLY(this->acceleration_scale = 1;)
+    RR_SERVER_ONLY(this->knockback_scale = 1;)
 }
 
 void rr_component_physical_free(struct rr_component_physical *this,
@@ -43,8 +44,6 @@ void rr_component_physical_write(struct rr_component_physical *this,
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     proto_bug_write_varuint(encoder, state, "physical component state");
-    /* no-reorder */ //RR_ENCODE_PUBLIC_FIELD(x, float32);
-    /* no-reorder */ //RR_ENCODE_PUBLIC_FIELD(y, float32);
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
@@ -63,24 +62,6 @@ void rr_component_physical_read(struct rr_component_physical *this,
 {
     uint64_t state =
         proto_bug_read_varuint(encoder, "physical component state");
-        /*
-    if (state & state_flags_x)
-    {
-        float new_x = proto_bug_read_float32(encoder, "field x");
-        if (this->x == 0)
-            this->x = new_x;
-        this->velocity.x = this->x - new_x;
-        this->x = new_x;
-    }
-    if (state & state_flags_y)
-    {
-        float new_y = proto_bug_read_float32(encoder, "field y");
-        if (this->y == 0)
-            this->y = new_y;
-        this->velocity.y = this->y - new_y;
-        this->y = new_y;
-    }
-    */
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X

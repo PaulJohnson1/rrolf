@@ -168,12 +168,15 @@ static void loadout_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     float pct = data->lerp_cd * data->lerp_cd * (3 - 2 * data->lerp_cd);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
-    rr_renderer_set_fill(renderer, 0x40000000);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, 0, 0);
-    rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10,
-                            -M_PI / 2 - pct * M_PI * 8, 0);
-    rr_renderer_fill(renderer);
+    if (data->pos < 10)
+    {
+        rr_renderer_set_fill(renderer, 0x40000000);
+        rr_renderer_begin_path(renderer);
+        rr_renderer_move_to(renderer, 0, 0);
+        rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10,
+                                -M_PI / 2 - pct * M_PI * 8, 0);
+        rr_renderer_fill(renderer);
+    }
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                              data->prev_rarity);
 }
