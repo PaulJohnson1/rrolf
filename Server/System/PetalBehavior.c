@@ -356,7 +356,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_crest)
         {
             if (player_info->camera_fov > 1.0f * (0.9 - 0.05 * slot->rarity))
+            {
+                rr_component_flower_set_face_flags(flower, flower->face_flags | 4);
                 rr_component_player_info_set_camera_fov(player_info, 1.0f * (0.9 - 0.06 * slot->rarity));
+            }
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)

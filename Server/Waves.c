@@ -13,15 +13,16 @@ uint32_t get_points_from_wave(uint32_t wave, uint32_t player_count)
 
 uint8_t get_rarity_from_wave(uint32_t wave)
 {
-    float rarity_seed = rr_frand();
+    double rarity_seed = rr_frand();
     uint8_t rarity_cap = rr_rarity_id_rare + ((wave - 1) / 5);
     if (rarity_cap > rr_rarity_id_ultra)
-        rarity_cap = rr_rarity_id_max;
+        rarity_cap = rr_rarity_id_ultra;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
-        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                pow(1.45, wave)) > rarity_seed)
-            break;
+        if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.4,
+                pow(1.4, wave)) > rarity_seed)
+            return rarity;
+    printf("what the hell, %f\n", rarity_seed);
     return rarity;
 }
 

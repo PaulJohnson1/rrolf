@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Client/Renderer/Renderer.h>
+#include <Client/Particle.h>
 #include <Client/Socket.h>
 #include <Client/Ui/Ui.h>
 #include <Shared/Entity.h>
@@ -61,6 +62,7 @@ struct rr_game_cache
 
 struct rr_game
 {
+    struct rr_particle_manager particle_manager;
     struct rr_game_crafting_data crafting_data;
     struct rr_game_debug_info debug_info;
     struct rr_game_cache cache;

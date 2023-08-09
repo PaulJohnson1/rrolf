@@ -6,7 +6,7 @@
 // clang-format off
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
-    {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 10.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_basic, rr_rarity_id_common, 15.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 60.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 50.0f, 5.0f, 10.0f, 150, 0, {1, 1, 1, 1, 1, 3, 5}},
@@ -23,7 +23,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 63, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, 8.0f, 5.0f, 0.0f, 13, 13, {2, 2, 3, 3, 3, 3, 4}},
-    {rr_petal_id_club, rr_rarity_id_unusual, 3.0f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_club, rr_rarity_id_common, 3.0f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
 };    
 
@@ -108,12 +108,12 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5,  10, 1, 3, 6,
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
                                                        25, 45,  20, 25};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 8, 15, 40, 100, 1000};
+    0, 1, 5, 8, 15, 30, 75, 300};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 12.5, 18, 25, 150, 250, 50};
 static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    2, 3, 7.5, 15, 20, 25, 50};
+    3, 2, 7.5, 15, 20, 25, 50};
 
 static void init_game_coefficients()
 {
@@ -137,6 +137,7 @@ static void init_game_coefficients()
         RR_MOB_WAVE_RARITY_COEFFICIENTS[a] =
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
+        printf("wave r: %.9f\n", RR_MOB_WAVE_RARITY_COEFFICIENTS[a]);
     }
     RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
@@ -175,9 +176,9 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 static void init_loot_tables()
 {
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
-                    rr_petal_id_rock, 0.05);
+                    rr_petal_id_rock, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1],
-                    rr_petal_id_leaf, 0.1);
+                    rr_petal_id_leaf, 0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_bone,
                     0.25);
@@ -208,6 +209,8 @@ static void init_loot_tables()
                     rr_petal_id_light, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[1],
                     rr_petal_id_web, 0.1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_pachycephalosaurus].loot[2],
+                    rr_petal_id_pellet, 0.1);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_ornithomimus].loot[0],
                     rr_petal_id_pellet, 0.15);

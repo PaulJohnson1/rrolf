@@ -36,6 +36,19 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
         {
             mob->counted_as_killed = 1;
             ++game->cache.mob_kills[mob->id][mob->rarity];
+            /*
+            for (uint32_t i = 0; i < 128; ++i)
+            {
+                struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
+                float angle = rr_frand() * 2 * M_PI;
+                float dist = rr_frand() * 50;
+                rr_vector_from_polar(&particle->velocity, rr_frand() * 10 + 5, angle);
+                rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
+                particle->size = 4 + rr_frand() * 2;
+                particle->opacity = 0.8;
+                particle->color = 0xffab3423;
+            }
+            */
         }
     }
     if (physical->animation > 2 * M_PI)

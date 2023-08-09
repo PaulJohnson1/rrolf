@@ -46,7 +46,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
 
         // mob name
         rr_renderer_translate(renderer, -2 * length, -14);
-        rr_renderer_draw_mob_name(renderer, mob->id, 14, 1, -1);
+        rr_renderer_draw_mob_name(renderer, mob->id, 12, 1, -1);
         rr_renderer_translate(renderer, length, 7);
     }
     else if (rr_simulation_has_flower(simulation, entity))

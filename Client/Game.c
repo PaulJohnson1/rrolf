@@ -18,6 +18,7 @@
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
 #include <Client/Storage.h>
+#include <Client/System/ParticleRender.h>
 #include <Client/Ui/Engine.h>
 #include <Shared/Api.h>
 #include <Shared/Bitset.h>
@@ -835,6 +836,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             render_background(player_info, this, this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
+            rr_system_particle_render_tick(this, delta);
 
             rr_simulation_for_each_health(this->simulation, this,
                                           render_health_component);

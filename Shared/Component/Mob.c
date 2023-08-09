@@ -57,7 +57,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         float seed = rr_frand();
         float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t rarity = 0;
-        for (; rarity <= rr_rarity_id_ultra; ++rarity)
+        for (; rarity <= rr_rarity_id_mythic; ++rarity)
             if ((seed <= table[rarity]))
                 break;
         if (rarity == 0)

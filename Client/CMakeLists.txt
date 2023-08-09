@@ -43,6 +43,7 @@ set(SRCS
     Assets/RenderPetals.c
     Assets/RenderRarityBackground.c
     Assets/RenderText.c
+    Particle.c
     Renderer/Common.c
     Renderer/RenderDrop.c
     Renderer/RenderFlower.c
@@ -53,6 +54,7 @@ set(SRCS
     Renderer/RenderWeb.c
     Storage.c
     System/Interpolation.c
+    System/ParticleRender.c
     Ui/Button.c
     Ui/ChooseElement.c
     Ui/Container.c
