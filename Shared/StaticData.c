@@ -78,7 +78,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Ow that hurts",
     "Makes your petals lighter so you spin faster",
     "ICBM approved",
-    "",
+    "Splits in 4. Or maybe 5 if you're a pro",
     "Heals you gradually",
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Stacks because why not",
