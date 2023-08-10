@@ -388,7 +388,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     switch (type)
     {
     case rr_websocket_event_type_open:
-        printf("%d\n", this->socket.recieved_first_packet);
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
@@ -399,7 +398,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         break;
     case rr_websocket_event_type_data:
     {
-        puts("recv'ed message");
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
 

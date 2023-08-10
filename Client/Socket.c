@@ -71,7 +71,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
             let string = "";
             while (Module.HEAPU8[$1])
                 string += String.fromCharCode(Module.HEAPU8[$1++]);
-            if (Module.socket)
+            if (Module.socket && Module.socket.readyState >= 2)
                 Module.socket.close();
             setTimeout(function() {
                 let socket = Module.socket =
@@ -88,7 +88,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                     Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
                 };
                 socket.onerror = function(a, b) { console.log("error", a, b); };
-                socket.onmessage = async function(event)
+                socket.onmessage = function(event)
                 {
                     Module.HEAPU8.set(new Uint8Array(event.data), $3);
                     Module._rr_on_socket_event_emscripten(
