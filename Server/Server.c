@@ -502,7 +502,7 @@ int rr_server_lws_callback_function(struct lws *socket,
 
             printf("%u\n", account.already_playing);
 
-            if (account.already_playing)
+            if (0 && account.already_playing)
             {
                 fputs("already playing\n", stderr);
                 lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,

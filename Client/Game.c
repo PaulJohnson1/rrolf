@@ -647,7 +647,7 @@ static void render_background(struct rr_component_player_info *player_info,
 {
     if (this->cache.ourpetsnake_mode)
         return;
-    double scale = player_info->lerp_camera_fov * this->renderer->scale;
+    double scale = player_info->lerp_camera_fov / this->renderer->scale;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
     double rightX =
