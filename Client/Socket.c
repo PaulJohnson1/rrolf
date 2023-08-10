@@ -94,7 +94,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                     Module._rr_on_socket_event_emscripten(
                         $0, 2, $3, new Uint8Array(event.data).length);
                 };
-            }, 250);
+            }, 2500);
         },
         this, host, port, &incoming_data[0], secure);
 #else
