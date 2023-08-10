@@ -22,12 +22,6 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
         rr_renderer_scale(
             renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
     }
-    if (flower->face_flags & 4)
-    {
-        rr_renderer_translate(renderer, 0, -38);
-        rr_renderer_draw_petal(renderer, rr_petal_id_crest, 1);
-        rr_renderer_translate(renderer, 0, 38);
-    }
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
     rr_renderer_rotate(renderer, physical->lerp_angle);
@@ -78,6 +72,12 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game)
     rr_renderer_line_to(renderer, 0, 6);
     rr_renderer_line_to(renderer, -12, 0);
     rr_renderer_fill(renderer);
+    if (flower->face_flags & 4)
+    {
+        rr_renderer_translate(renderer, 0, -37);
+        rr_renderer_draw_petal(renderer, rr_petal_id_crest, 1);
+        rr_renderer_translate(renderer, 0, 37);
+    }
     rr_renderer_context_state_free(renderer, &state);
     rr_renderer_rotate(renderer, -physical->lerp_angle);
 }
