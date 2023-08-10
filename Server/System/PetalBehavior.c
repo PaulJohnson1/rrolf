@@ -346,7 +346,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                             0.05 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         else if (data->id == rr_petal_id_light)
-            player_info->global_rotation += (0.008 + 0.004 * slot->rarity);
+            player_info->global_rotation += (0.01 + 0.006 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
