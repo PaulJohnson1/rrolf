@@ -108,7 +108,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5,  10, 1, 3, 20,
                                                           12, 5,  2, 10, 1};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
-                                                       25, 45,  20, 25, 1};
+                                                       25, 45,  20, 25, 0.4};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 75, 300};
 
@@ -227,9 +227,9 @@ static void init_loot_tables()
                     rr_petal_id_gravel, 0.05);
     
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[0],
-                    rr_petal_id_magnet, 0.75);
+                    rr_petal_id_magnet, 1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
-                    rr_petal_id_uranium, 0.2);
+                    rr_petal_id_uranium, 0.5);
 }
 
 void rr_static_data_init()
