@@ -388,6 +388,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     switch (type)
     {
     case rr_websocket_event_type_open:
+        printf("%d\n", this->socket.recieved_first_packet);
         puts("websocket opened");
         break;
     case rr_websocket_event_type_close:
@@ -398,6 +399,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         break;
     case rr_websocket_event_type_data:
     {
+        puts("recv'ed message");
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
 
@@ -647,7 +649,7 @@ static void render_background(struct rr_component_player_info *player_info,
 {
     if (this->cache.ourpetsnake_mode)
         return;
-    double scale = player_info->lerp_camera_fov / this->renderer->scale;
+    double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
     double rightX =

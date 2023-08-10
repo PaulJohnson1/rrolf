@@ -937,5 +937,19 @@
     },
     "failed_crafts": {},
     "mob_gallery": {}
+  },
+  "38d91843-3f54-42eb-bebb-50cf75911133": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKrt5N_XMRCqjYLonTEaEgoQDtT_yGP2SymIkYR6EpfOwSIWUhQKEgoQuvxwH_CcQ7-GJmW9wiGsJiIWChQKEgoQldPa6D_XTEWpoXcxBDEsqg.EmC_UcnhyZipFokRoTESm6Bp7yIiogZzk3WpAoObNcnQOhinnQ-nzSjhE1cGhmRFR63zkR5jcYL_ZjVLJPMJDg",
+    "username": "38d91843-3f54-42eb-bebb-50cf75911133",
+    "maximum_wave": 2,
+    "xp": 0,
+    "already_playing": 1,
+    "petals": {
+      "1:0": 5,
+      "4:1": 1,
+      "14:0": 1
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
   }
 }
