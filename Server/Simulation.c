@@ -49,7 +49,6 @@ void rr_simulation_init(struct rr_simulation *this)
 
 #define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
-        puts(_);\
         CODE;                                                                  \
     };
 
