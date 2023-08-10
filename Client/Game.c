@@ -837,13 +837,12 @@ void rr_game_tick(struct rr_game *this, float delta)
 
             rr_renderer_context_state_free(this->renderer, &state2);
             rr_system_particle_render_tick(this, delta);
-
+            rr_simulation_for_each_web(this->simulation, this,
+                                       render_web_component);
             rr_simulation_for_each_health(this->simulation, this,
                                           render_health_component);
             rr_simulation_for_each_drop(this->simulation, this,
                                         render_drop_component);
-            rr_simulation_for_each_web(this->simulation, this,
-                                       render_web_component);
             rr_simulation_for_each_mob(this->simulation, this,
                                        render_mob_component);
             rr_simulation_for_each_petal(this->simulation, this,

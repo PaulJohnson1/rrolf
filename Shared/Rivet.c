@@ -225,6 +225,7 @@ void rr_rivet_identities_create_guest(void *captures)
                         throw r;
                     console.log("logged in");
                     localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
+                    localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     on_account(r);
                 }).catch(function(e)
                 {
