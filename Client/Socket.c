@@ -73,25 +73,28 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                 string += String.fromCharCode(Module.HEAPU8[$1++]);
             if (Module.socket)
                 Module.socket.close();
-            let socket = Module.socket =
-                new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);
-            socket.binaryType = "arraybuffer";
-            socket.onopen = function()
-            {
-                Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
-            };
-            socket.onclose = function(a, b)
-            {
-                console.log("close", a, b);
-                Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
-            };
-            socket.onerror = function(a, b) { console.log("error", a, b); };
-            socket.onmessage = async function(event)
-            {
-                Module.HEAPU8.set(new Uint8Array(event.data), $3);
-                Module._rr_on_socket_event_emscripten(
-                    $0, 2, $3, new Uint8Array(event.data).length);
-            };
+            setTimeout(function() {
+                let socket = Module.socket =
+                    new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);
+                console.log("attempt connect: ", ($4 ? "wss://" : "ws://") + string + ':' + $2);
+                socket.binaryType = "arraybuffer";
+                socket.onopen = function()
+                {
+                    Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
+                };
+                socket.onclose = function(a, b)
+                {
+                    console.log("close", a, b);
+                    Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
+                };
+                socket.onerror = function(a, b) { console.log("error", a, b); };
+                socket.onmessage = async function(event)
+                {
+                    Module.HEAPU8.set(new Uint8Array(event.data), $3);
+                    Module._rr_on_socket_event_emscripten(
+                        $0, 2, $3, new Uint8Array(event.data).length);
+                };
+            }, 250);
         },
         this, host, port, &incoming_data[0], secure);
 #else
