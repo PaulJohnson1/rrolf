@@ -490,6 +490,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
 
 static void system_petal_misc_logic(EntityIdx id, void *_simulation)
 {
+    puts("start");
     struct rr_simulation *simulation = _simulation;
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, id);
     struct rr_component_physical *physical =
@@ -548,6 +549,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             }
         }
     }
+    puts("end");
 }
 
 void rr_system_petal_behavior_tick(struct rr_simulation *simulation)
