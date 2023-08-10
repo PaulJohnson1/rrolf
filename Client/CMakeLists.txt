@@ -38,6 +38,7 @@ set(SRCS
     Assets/Mob/Triceratops/Leg2.c
     Assets/Mob/Triceratops/Tail.c
     Assets/Mob/Fern.c
+    Assets/Mob/Meteor.c
     Assets/Mob/Stump.c
     Assets/Init.c
     Assets/RenderPetals.c

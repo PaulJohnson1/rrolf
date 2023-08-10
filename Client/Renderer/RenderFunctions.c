@@ -313,14 +313,12 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
                 rr_ankylosaurus_head_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
         break;
-    case 255:
-        rr_renderer_set_stroke(renderer, 0xffcfcfcf);
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_line_width(renderer, 7.0f);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
-        rr_renderer_fill(renderer);
-        rr_renderer_stroke(renderer);
+    case rr_mob_id_meteor:
+        //rr_renderer_scale(renderer, 0.15f);
+        if (flags)
+            rr_renderer_draw_image(renderer, &game->mob_meteor);
+        else
+            rr_meteor_draw(renderer);
         break;
     default:
         break;

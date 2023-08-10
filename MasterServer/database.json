@@ -1002,5 +1002,29 @@
     },
     "failed_crafts": {},
     "mob_gallery": {}
+  },
+  "ace834fa-4cb7-41ed-a833-731ef8431ceb": {
+    "password": "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y",
+    "username": "ace834fa-4cb7-41ed-a833-731ef8431ceb",
+    "maximum_wave": 3,
+    "xp": 0,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
+  },
+  "dbbb743c-74d6-4786-a0ea-6216aabdc273": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COmJx4XYMRDpqeSNnjEaEgoQvqe665gVRXetwsqEiLaMeCIWUhQKEgoQYHuGU9nYStGFXvUTAu2hjCIWChQKEgoQt8_A5V4wTx2q5NlewjdzUA.o6_oXfGn6AbnNyJhP38DxSske3VZ_RPrluPodU5HKDbiPnMpUtXCmoqALWmp9poAMm6TF3J7AoT95OrAuCPKBw",
+    "username": "dbbb743c-74d6-4786-a0ea-6216aabdc273",
+    "maximum_wave": 2,
+    "xp": 0,
+    "already_playing": 6,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
   }
 }

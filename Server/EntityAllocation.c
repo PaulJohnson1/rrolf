@@ -160,6 +160,9 @@ float x, float y,
     case rr_mob_id_ornithomimus:
         ai->ai_aggro_type = rr_ai_aggro_type_default;
         break;
+    case rr_mob_id_meteor:
+        ai->ai_aggro_type = rr_ai_aggro_type_meteor;
+        break;
     default:
         RR_UNREACHABLE("forgot to set ai aggro type");
     };

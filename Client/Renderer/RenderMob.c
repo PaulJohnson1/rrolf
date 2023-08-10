@@ -51,6 +51,17 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
             */
         }
     }
+    if (mob->id == rr_mob_id_meteor)
+    {
+        struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
+        float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
+        float dist = rr_frand() * 50;
+        rr_vector_from_polar(&particle->velocity, rr_frand() * 10 + 5, angle);
+        rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
+        particle->size = 4 + rr_frand() * 2;
+        particle->opacity = 0.8;
+        particle->color = 0xffab3423;
+    }
     if (physical->animation > 2 * M_PI)
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sinf(physical->animation);

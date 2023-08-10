@@ -113,8 +113,8 @@ struct rr_game
     struct rr_renderer mob_ankylosaurus_tail;
 
     struct rr_renderer mob_stump;
-
     struct rr_renderer mob_fern;
+    struct rr_renderer mob_meteor;
 
     struct rr_renderer asset_web;
     // background

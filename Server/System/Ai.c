@@ -621,6 +621,40 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
     }
 }
 
+static void tick_ai_aggro_meteor(EntityIdx entity,
+                                       struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_idle:
+        ai->ai_state = rr_ai_state_idle_moving;
+        float angle = rr_frand() * 2 * M_PI;
+        rr_vector_from_polar(&physical->acceleration, 0.75, angle);
+        break;
+    case rr_ai_state_idle_moving:
+    {
+        float angle = rr_vector_theta(&physical->velocity);
+        struct rr_vector position = {physical->x, physical->y};
+        if (rr_vector_get_magnitude(&position) >= 1650.0f - physical->radius - 0.001)
+        {
+            float tangent = rr_vector_theta(&position);
+            angle = tangent - (M_PI - (tangent - angle));
+        }
+        rr_vector_from_polar(&physical->acceleration, 0.75, angle);
+        rr_vector_from_polar(&physical->velocity, 3, angle);
+        rr_component_physical_set_angle(physical, physical->angle + 0.1);
+        ai->ticks_until_next_action = 10;
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void system_for_each(EntityIdx entity, void *simulation)
 {
     struct rr_simulation *this = simulation;
@@ -693,6 +727,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_ai_aggro_type_ankylosaurus:
         tick_ai_aggro_ankylosaurus(entity, this);
+        break;
+    case rr_ai_aggro_type_meteor:
+        tick_ai_aggro_meteor(entity, this);
         break;
     default:
         RR_UNREACHABLE("invalid ai aggro type state");

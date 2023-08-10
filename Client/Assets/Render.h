@@ -26,6 +26,7 @@ void rr_dakotaraptor_tail_draw(struct rr_renderer *);
 
 void rr_fern_draw(struct rr_renderer *);
 void rr_stump_draw(struct rr_renderer *);
+void rr_meteor_draw(struct rr_renderer *);
 
 void rr_pachycephalosaurus_head_draw(struct rr_renderer *);
 void rr_pachycephalosaurus_body_draw(struct rr_renderer *);

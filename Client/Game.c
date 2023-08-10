@@ -1049,6 +1049,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #ifdef RR_WINDOWS
     rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
 #else
+    this->socket_pending = 1;
     // for testing
     // if (!this->socket.rivet_player_token)
     // {

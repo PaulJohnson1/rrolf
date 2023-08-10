@@ -50,6 +50,7 @@ enum rr_mob_id
     rr_mob_id_pachycephalosaurus,
     rr_mob_id_ornithomimus,
     rr_mob_id_ankylosaurus,
+    rr_mob_id_meteor,
     rr_mob_id_max
 };
 
