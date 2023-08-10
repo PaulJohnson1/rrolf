@@ -76,7 +76,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
             setTimeout(function() {
                 let socket = Module.socket =
                     new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);
-                console.log("attempt connect: ", ($4 ? "wss://" : "ws://") + string + ':' + $2);
+                console.log("attempt to connect: ", ($4 ? "wss://" : "ws://") + string + ':' + $2);
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function()
                 {
@@ -96,7 +96,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                     Module._rr_on_socket_event_emscripten(
                         $0, 2, $3, new Uint8Array(event.data).length);
                 };
-            }, 2500);
+            }, 1000);
         },
         this, host, port, &incoming_data[0], secure);
 #else
