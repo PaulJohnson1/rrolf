@@ -222,15 +222,21 @@ void rr_rivet_identities_create_guest(void *captures)
                 }).then(r => r.json())
                 .then(r => {
                     if (r.code == "ERROR")
-                        throw "error";
+                        throw r;
                     console.log("logged in");
                     localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
                     on_account(r);
-                }).catch(function()
+                }).catch(function(e)
                 {
+                    console.log(e);
                     //localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
-                    alert("Login failed: please reload");
+                    const r = confirm("Login failed: please reload. Optionally, click OK to reset your token.\nNOTE: YOUR ACCOUNT WILL BE LOST UNLESS YOU SAVE YOUR TOKEN.\nDO NOT SHARE IT WITH ANYONE ELSE: your token is " + localStorage["DO_NOT_SHARE_rivet_account_token"] + "\n");
                     //location.reload()
+                    if (r) {
+                        localStorage["DO_NOT_SHARE_rivet_account_token2_backup"] = localStorage["DO_NOT_SHARE_rivet_account_token"];
+                        localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
+                    }
+                    location.reload();
                 });
             };
         };
