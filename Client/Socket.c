@@ -86,7 +86,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                 {
                     console.log("close", a, b);
                     if (a.reason === 'invalid v\x00')
-                        location.reload();
+                        location.reload(true);
                     Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
                 };
                 socket.onerror = function(a, b) { 
