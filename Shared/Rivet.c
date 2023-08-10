@@ -203,6 +203,7 @@ void rr_rivet_identities_create_guest(void *captures)
                 }).then(r => r.json())
                 .then(r => {
                     localStorage[x] = r.identity_token;
+                    localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     console.log("new rivet account created");
                     on_account(r);
                 });
@@ -225,7 +226,8 @@ void rr_rivet_identities_create_guest(void *captures)
                         throw r;
                     console.log("logged in");
                     localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
-                    localStorage["rivet_account_uuid"] = r.identity.identity_id;
+                    if (!localStorage["rivet_account_uuid"])
+                        localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     on_account(r);
                 }).catch(function(e)
                 {
