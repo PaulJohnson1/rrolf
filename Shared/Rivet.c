@@ -228,7 +228,7 @@ void rr_rivet_identities_create_guest(void *captures)
                     on_account(r);
                 }).catch(function()
                 {
-                    localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
+                    //localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
                     location.reload()
                 });
             };
