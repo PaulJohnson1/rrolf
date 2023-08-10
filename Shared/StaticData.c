@@ -47,7 +47,7 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {3.5, 4.5},
     {5.6, 7.2},
     {8.0, 16.0},
-    {20.0, 30.0},
+    {15.0, 40.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
