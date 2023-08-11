@@ -1087,7 +1087,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     game->socket_pending = 1;
     // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
     char link[100];
-    link[sprintf("ws%s://%s:%u\n", port == 443 ? "s" : "", s,
+    link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s,
            port)] = 0;
     if (port == 443)
         rr_websocket_connect_to(&game->socket, &link[0]);
