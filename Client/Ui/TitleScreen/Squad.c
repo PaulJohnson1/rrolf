@@ -10,6 +10,8 @@
 #include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
+
+#include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
 
 struct squad_flower_metadata
@@ -299,9 +301,18 @@ static void join_code_on_event(struct rr_ui_element *this,
     {
         if (!game->socket_pending && !game->rivet_lobby_pending)
         {
-        rr_dom_retrieve_text("link", &game->connect_link[0], 100);
-
-        rr_websocket_connect_to(&game->socket, &game->connect_link[0]);
+            rr_dom_retrieve_text("link", &game->connect_link[0], 100);
+            if (game->socket_ready)
+                rr_websocket_disconnect(&game->socket, game);
+            #ifdef RIVET_BUILD
+            void *old_on_event = game->socket.on_event;
+            rr_websocket_init(&game->socket);
+            game->socket.user_data = this;
+            game->socket.on_event = old_on_event;
+            rr_rivet_lobbies_join(game, &game->connect_link[0]);
+            #else
+            rr_websocket_connect_to(&game->socket, "ws://127.0.0.1:1234");
+            #endif
         }
     }
 }
