@@ -473,12 +473,13 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         return;
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, rr_mob_id_trex,
-                                                petal->rarity,
+                                                petal->rarity - 1,
                                                 rr_simulation_team_id_players);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);
                     rr_component_relations_set_owner(relations,
                                                      player_info->flower_id);
+                    rr_simulation_get_mob(simulation, mob_id)->player_spawned = 1;
                 }
             }
         }
