@@ -66,6 +66,7 @@ struct rr_ui_element
     uint8_t (*should_show)(struct rr_ui_element *, struct rr_game *);
     void (*animate)(struct rr_ui_element *, struct rr_game *);
     void (*on_render)(struct rr_ui_element *, struct rr_game *);
+    void (*on_hide)(struct rr_ui_element *, struct rr_game *);
     void (*on_event)(struct rr_ui_element *, struct rr_game *);
     void (*poll_events)(struct rr_ui_element *, struct rr_game *);
     float x;

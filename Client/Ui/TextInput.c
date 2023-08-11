@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
@@ -10,7 +11,6 @@
 struct rr_ui_text_input_metadata
 {
     char *text;
-    uint8_t len;
     uint8_t max;
     uint8_t focused;
 };
@@ -21,6 +21,7 @@ static void text_input_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     struct rr_ui_text_input_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    /*
     data->len = strlen(data->text);
     if (data->focused)
     {
@@ -37,7 +38,11 @@ static void text_input_on_render(struct rr_ui_element *this,
             data->len > 0)
             data->text[--data->len] = 0;
     }
-
+    */
+    rr_dom_element_show("text");
+    rr_dom_element_update_position("text", this->abs_x, this->abs_y, this->abs_width * renderer->scale, this->abs_height * renderer->scale);
+    rr_dom_retrieve_text("text", data->text, data->max);
+    return;
     rr_renderer_scale(renderer, renderer->scale);
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         data->focused = rr_ui_mouse_over(this, game);
@@ -50,6 +55,7 @@ static void text_input_on_render(struct rr_ui_element *this,
                           this->width, this->height);
     rr_renderer_stroke_rect(renderer, -this->width / 2, -this->height / 2,
                             this->width, this->height);
+    return;
     rr_renderer_set_text_size(renderer, this->height * 0.8);
     rr_renderer_set_text_align(renderer, 0);
     rr_renderer_set_text_baseline(renderer, 1);
@@ -66,11 +72,11 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
     memset(data, 0, sizeof *data);
 
     data->max = max_length;
-    data->len = strlen(text);
     data->text = text;
     element->data = data;
     element->abs_width = element->width = w;
     element->abs_height = element->height = h;
     element->on_render = text_input_on_render;
+    rr_dom_create_text_element("text", 16);
     return element;
 }

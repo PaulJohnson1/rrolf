@@ -64,6 +64,12 @@ static void container_on_render(struct rr_ui_element *this,
         rr_ui_render_element(this->elements.start[i], game);
 }
 
+static void container_on_hide(struct rr_ui_element *this, struct rr_game *game)
+{
+    for (uint32_t i = 0; i < this->elements.size; ++i)
+        this->elements.start[i]->on_hide(this->elements.start[i], game);
+}
+
 void rr_ui_container_poll_events(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -75,7 +81,6 @@ void rr_ui_container_poll_events(struct rr_ui_element *this,
         game->focused = this;
     if (game->focused != this || this->stop_event_propagation)
         return;
-    struct rr_ui_container_metadata *data = this->data;
     for (uint32_t i = 0; i < this->elements.size; ++i)
         this->elements.start[i]->poll_events(this->elements.start[i], game);
 }

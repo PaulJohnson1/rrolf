@@ -69,11 +69,13 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     this->animation =
         rr_lerp(this->animation, this->should_show(this, game) == 0,
                 0.4 + 0.6 * this->first_frame);
-
+    uint8_t before_hidden = this->completely_hidden;
     this->completely_hidden = this->animation > 0.99;
     this->animate(this, game);
     if (this->completely_hidden == 0)
         this->on_render(this, game);
+    else if (before_hidden == 0)
+        this->on_hide(this, game);
     this->first_frame = 0;
     rr_renderer_context_state_free(game->renderer, &state);
 }
@@ -156,6 +158,7 @@ struct rr_ui_element *rr_ui_element_init()
     memset(this, 0, sizeof *this);
     this->first_frame = 1;
     this->on_render = default_function;
+    this->on_hide = default_function;
     this->on_event = default_on_event; // null on_event
     this->should_show = rr_ui_always_show;
     this->poll_events = rr_ui_element_check_if_focused;

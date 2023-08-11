@@ -105,8 +105,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Ankylosaurus",
                                            "Meteor"};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {5,  10, 1, 3, 20,
-                                                          12, 5,  2, 10, 1};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
+                                                          12, 9,  3, 10, 1};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
                                                        25, 45,  20, 25, 0.4};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {

@@ -44,6 +44,7 @@ set(SRCS
     Assets/RenderPetals.c
     Assets/RenderRarityBackground.c
     Assets/RenderText.c
+    DOM.c
     Particle.c
     Renderer/Common.c
     Renderer/RenderDrop.c
