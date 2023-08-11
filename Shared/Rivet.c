@@ -170,7 +170,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                     // clang-format on
                 },
                 method : "POST",
-                body : '{"lobby_id":"' + Module.ReadCstr($1) + '"]}'
+                body : '{"lobby_id":"' + Module.ReadCstr($1) + '"}'
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
