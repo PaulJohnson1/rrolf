@@ -300,8 +300,6 @@ static void join_code_on_event(struct rr_ui_element *this,
         if (!game->socket_pending && !game->rivet_lobby_pending)
         {
         rr_dom_retrieve_text("link", &game->connect_link[0], 100);
-        if (game->socket_ready)
-            rr_websocket_disconnect(&game->socket, game);
 
         rr_websocket_connect_to(&game->socket, &game->connect_link[0]);
         }
