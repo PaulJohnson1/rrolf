@@ -109,6 +109,7 @@ struct rr_ui_element *rr_ui_container_init()
     this->data = data;
     this->on_render = container_on_render;
     this->poll_events = rr_ui_container_poll_events;
+    this->on_hide = container_on_hide;
     return this;
 }
 

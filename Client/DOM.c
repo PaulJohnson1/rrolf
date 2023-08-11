@@ -9,6 +9,8 @@ void rr_dom_create_text_element(char const *name, uint32_t text_limit)
         const elem = document.createElement('input');
         elem.id = name;
         elem.type = "text";
+        elem.style.position = "absolute";
+        elem.style["font-family"] = "Ubuntu";
         document.body.appendChild(elem);
     }, name, text_limit);
 }

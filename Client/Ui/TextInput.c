@@ -15,6 +15,12 @@ struct rr_ui_text_input_metadata
     uint8_t focused;
 };
 
+static void text_input_on_hide(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    rr_dom_element_hide("text");
+}
+
 static void text_input_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -77,6 +83,7 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
     element->abs_width = element->width = w;
     element->abs_height = element->height = h;
     element->on_render = text_input_on_render;
+    element->on_hide = text_input_on_hide;
     rr_dom_create_text_element("text", 16);
     return element;
 }
