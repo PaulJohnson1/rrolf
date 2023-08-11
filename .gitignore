@@ -5,6 +5,7 @@ node_modules/
 rrolf-client
 rrolf-client.wasm
 database.json
+logs.txt
 
 ### Rivet ###
 .rivet/
