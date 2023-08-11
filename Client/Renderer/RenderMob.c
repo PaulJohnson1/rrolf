@@ -58,7 +58,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
         float dist = rr_frand() * 50;
         rr_vector_from_polar(&particle->velocity, rr_frand() * 10 + 5, angle);
         rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
-        particle->size = 4 + rr_frand() * 2;
+        particle->size = (4 + rr_frand() * 2) * RR_MOB_RARITY_SCALING[mob->rarity].radius;
         particle->opacity = 0.8;
         particle->color = 0xffab3423;
     }

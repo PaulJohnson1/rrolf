@@ -254,8 +254,8 @@ static void mob_stump_and_fern_and_meteor_init(struct rr_game *this)
 
     renderer = &this->mob_meteor;
     rr_renderer_init(renderer);
-    rr_renderer_set_dimensions(renderer, 672, 672);
-    rr_renderer_translate(renderer, 336, 336);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
     rr_meteor_draw(renderer);
 }
 
