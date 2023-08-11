@@ -53,7 +53,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
     for (uint64_t i = 0; i < 4; ++i)
     {
         if (RR_MOB_DATA[this->id].loot[i].id == 0)
-            continue;
+            break;
         float seed = rr_frand();
         float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t rarity = 0;
