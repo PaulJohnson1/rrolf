@@ -162,7 +162,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
+            fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
                 headers : {
                     Authorization :
                         // clang-format off
