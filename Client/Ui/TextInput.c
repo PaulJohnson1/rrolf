@@ -48,13 +48,13 @@ static void text_input_on_render(struct rr_ui_element *this,
     }
     */
     rr_dom_element_show(data->name);
-    rr_dom_element_update_position(data->name, this->abs_x, this->abs_y, this->abs_width * renderer->scale, this->abs_height * renderer->scale);
+    rr_dom_element_update_position(data->name, this->abs_x, this->abs_y, this->abs_width * renderer->scale * renderer->state.transform_matrix[0], this->abs_height * renderer->scale * renderer->state.transform_matrix[4]);
     rr_dom_retrieve_text(data->name, data->text, data->max);
-    return;
     rr_renderer_scale(renderer, renderer->scale);
+    /*
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         data->focused = rr_ui_mouse_over(this, game);
-
+    */
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, this->height * 0.12);

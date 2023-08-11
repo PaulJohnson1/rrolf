@@ -12,6 +12,11 @@ void rr_dom_create_text_element(char const *name, uint32_t text_limit)
         elem.style.position = "absolute";
         elem.style["font-family"] = "Ubuntu";
         elem.style.display = 'none';
+        elem.style["border-width"] = "0px";
+        elem.style.background = "transparent";
+        elem.style.border = "none";
+        elem.style.outline = "none";
+        elem.style["padding-left"] = "2px";
         document.body.appendChild(elem);
     }, name, text_limit);
 }
@@ -60,7 +65,7 @@ void rr_dom_retrieve_text(char const *name, char *out, uint32_t max_len)
     }, name, out, max_len);
 }
 
-void rr_copy_squad_code()
+void rr_copy_string(char const *str)
 {
     EM_ASM({
         let elem = document.createElement("textarea");
@@ -75,7 +80,7 @@ void rr_copy_squad_code()
         elem.style.outline = "none";
         elem.style.boxShadow = "none";
         elem.style.background = "transparent";
-        elem.value = Module.socket._url;
+        elem.value = Module.ReadCstr($0);
         document.body.appendChild(elem);
         elem.focus();
         elem.select();
@@ -83,5 +88,5 @@ void rr_copy_squad_code()
             document.execCommand("copy") || console.log("execCommand copy failed");
         } catch (e) {}
         document.body.removeChild(elem);
-    });
+    }, str);
 }

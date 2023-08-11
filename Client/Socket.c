@@ -75,7 +75,6 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
             setTimeout(function() {
                 let socket = Module.socket =
                     new WebSocket(string);
-                socket._url = string.replaceAll("wss://", "").split("-default")[0]; //fix
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function()
                 {
@@ -140,6 +139,7 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
 #else
 #endif
     free(this->rivet_player_token);
+    free(this->curr_link);
     game->socket_ready = 0;
     game->simulation_ready = 0;
 }

@@ -469,11 +469,11 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                    p_petal->simulation_id);
                     rr_simulation_request_entity_deletion(
                         simulation, p_petal->simulation_id);
-                    if (petal->rarity == 0)
-                        return;
+                    //if (petal->rarity == 0)
+                        //return;
                     EntityIdx mob_id = p_petal->simulation_id =
-                        rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, rr_mob_id_trex,
-                                                slot->rarity - 1,
+                        rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, petal->rarity ? rr_mob_id_trex : rr_mob_id_meteor,
+                                                petal->rarity ? petal->rarity - 1 : 0,
                                                 rr_simulation_team_id_players);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);

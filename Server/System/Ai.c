@@ -672,8 +672,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
         rr_simulation_get_physical(this, entity);
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
-    if (relations->team == rr_simulation_team_id_players ||
-        ai->ai_state == rr_ai_state_returning_to_owner)
+    if ((relations->team == rr_simulation_team_id_players ||
+        ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
         struct rr_component_physical *flower_physical =
             rr_simulation_get_physical(this, relations->owner);

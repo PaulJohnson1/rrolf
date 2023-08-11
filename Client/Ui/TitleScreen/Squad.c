@@ -289,7 +289,7 @@ static void copy_code_on_event(struct rr_ui_element *this,
     {
         if (game->socket_ready)
         {
-            rr_copy_squad_code();   
+            rr_copy_string(game->socket.curr_link);   
         }
     }
 }
