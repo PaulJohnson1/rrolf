@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Assets/RenderFunctions.h>
@@ -279,6 +280,34 @@ static void join_button_on_event(struct rr_ui_element *this,
     }
 }
 
+static void copy_code_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (game->socket_ready)
+        {
+            rr_copy_squad_code();   
+        }
+    }
+}
+
+static void join_code_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (!game->socket_pending && !game->rivet_lobby_pending)
+        {
+        rr_dom_retrieve_text("link", &game->connect_link[0], 100);
+        if (game->socket_ready)
+            rr_websocket_disconnect(&game->socket, game);
+
+        rr_websocket_connect_to(&game->socket, &game->connect_link[0]);
+        }
+    }
+}
+
 static void squad_join_button_on_event(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
@@ -308,5 +337,21 @@ struct rr_ui_element *rr_ui_join_button_init()
     struct rr_ui_element *this = rr_ui_labeled_button_init("Enter Game", 36, 0);
     this->animate = ready_button_animate;
     this->on_event = join_button_on_event;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_copy_squad_code_button_init()
+{
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Copy Code", 24, 0);
+    this->animate = ready_button_animate;
+    this->on_event = copy_code_on_event;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_join_squad_code_button_init()
+{
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
+    this->animate = ready_button_animate;
+    this->on_event = join_code_on_event;
     return this;
 }

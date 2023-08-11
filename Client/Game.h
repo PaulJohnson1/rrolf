@@ -147,6 +147,7 @@ struct rr_game
     uint8_t tiles_size;
     uint8_t block_ui_input;
     uint8_t ticks_until_text_cache;
+    char connect_link[100];
 };
 
 void rr_game_init(struct rr_game *);

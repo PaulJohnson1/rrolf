@@ -176,7 +176,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
-                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16),
+                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "name"),
                             rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
                             NULL
                         ),
@@ -201,6 +201,15 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_squad_player_container_init(&this->squad_members[2]),
                                             rr_ui_squad_player_container_init(&this->squad_members[3]),
                                             NULL
+                                        ),
+                                        rr_ui_flex_container_init(
+                                            rr_ui_copy_squad_code_button_init(),
+                                            rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                                                rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
+                                                rr_ui_join_squad_code_button_init(),
+                                                NULL
+                                            ),
+                                            10
                                         ),
                                         rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                         NULL
@@ -1046,9 +1055,6 @@ void rr_game_connect_socket(struct rr_game *this)
     this->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
-#ifdef RR_WINDOWS
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
-#else
     this->socket_pending = 1;
     // for testing
     // if (!this->socket.rivet_player_token)
@@ -1056,9 +1062,8 @@ void rr_game_connect_socket(struct rr_game *this)
     //     this->socket.rivet_player_token = calloc(10, 1);
     //     this->socket.uuid = calloc(10, 1);
     // }
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
+    rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
-#endif
 #endif
 }
 
@@ -1081,11 +1086,13 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     }
     game->socket_pending = 1;
     // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
-
+    char link[100];
+    link[sprintf("ws%s://%s:%u\n", port == 443 ? "s" : "", s,
+           port)] = 0;
     if (port == 443)
-        rr_websocket_connect_to(&game->socket, s, port, 1);
+        rr_websocket_connect_to(&game->socket, &link[0]);
     else
-        rr_websocket_connect_to(&game->socket, s, port, 0);
+        rr_websocket_connect_to(&game->socket, &link[0]);
     free(s);
     // captures->socket->rivet_player_token = strdup(token);
     // free(token);

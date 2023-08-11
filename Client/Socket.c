@@ -59,11 +59,10 @@ void rr_websocket_init(struct rr_websocket *this)
     memset(this, 0, sizeof *this);
 }
 
-void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
-                             uint16_t port, int secure)
+void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
-    printf("connecting to server ws%s://%s:%u\n", secure ? "s" : "", host,
-           port);
+    printf("connecting to server %s\n", link);
+    this->recieved_first_packet = 0;
 #ifdef EMSCRIPTEN
     static uint8_t incoming_data[1024 * 1024];
     EM_ASM(
@@ -71,12 +70,11 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
             let string = "";
             while (Module.HEAPU8[$1])
                 string += String.fromCharCode(Module.HEAPU8[$1++]);
-            if (Module.socket && Module.socket.readyState >= 2)
+            if (Module.socket && Module.socket.readyState < 2)
                 Module.socket.close();
             setTimeout(function() {
                 let socket = Module.socket =
-                    new WebSocket(($4 ? "wss://" : "ws://") + string + ':' + $2);
-                console.log("attempt to connect: ", ($4 ? "wss://" : "ws://") + string + ':' + $2);
+                    new WebSocket(string);
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function()
                 {
@@ -94,13 +92,13 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *host,
                 };
                 socket.onmessage = function(event)
                 {
-                    Module.HEAPU8.set(new Uint8Array(event.data), $3);
+                    Module.HEAPU8.set(new Uint8Array(event.data), $2);
                     Module._rr_on_socket_event_emscripten(
-                        $0, 2, $3, new Uint8Array(event.data).length);
+                        $0, 2, $2, new Uint8Array(event.data).length);
                 };
             }, 1000);
         },
-        this, host, port, &incoming_data[0], secure);
+        this, link, incoming_data);
 #else
     struct lws_context_creation_info info;
     struct lws_protocols protocols[2] = {{"g", rr_on_socket_event_lws, 0, 0},

@@ -92,9 +92,9 @@ void rr_main_loop(struct rr_game *this)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            document.oncontextmenu = function() { return false; };
             Module.canvas = document.createElement("canvas");
             Module.canvas.id = "canvas";
+            Module.canvas.oncontextmenu = function() { return false; };
             document.body.appendChild(Module.canvas);
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
@@ -103,14 +103,14 @@ void rr_main_loop(struct rr_game *this)
             {
                 Module._rr_key_event(
                     $0, 1, e.which, (e.key.length == 1) * e.key.charCodeAt());
-                if (e.metaKey || e.ctrlKey)
+                if (e.metaKey)
                     e.preventDefault();
             };
             window.onkeyup = function(e)
             {
                 Module._rr_key_event(
                     $0, 0, e.which, (e.key.length == 1) * e.key.charCodeAt());
-                if (e.metaKey || e.ctrlKey)
+                if (e.metaKey)
                     e.preventDefault();
             };
             window.onmousedown =

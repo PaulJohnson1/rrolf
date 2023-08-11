@@ -11,6 +11,7 @@ void rr_dom_create_text_element(char const *name, uint32_t text_limit)
         elem.type = "text";
         elem.style.position = "absolute";
         elem.style["font-family"] = "Ubuntu";
+        elem.style.display = 'none';
         document.body.appendChild(elem);
     }, name, text_limit);
 }
@@ -57,4 +58,30 @@ void rr_dom_retrieve_text(char const *name, char *out, uint32_t max_len)
         Module.HEAPU8.set(arr, $1);
         Module.HEAPU8[$1 + len] = 0;
     }, name, out, max_len);
+}
+
+void rr_copy_squad_code()
+{
+    EM_ASM({
+        let elem = document.createElement("textarea");
+        elem.style.position = "fixed";
+        elem.style.top = 0;
+        elem.style.left = 0;
+        elem.style.width = "2em";
+        elem.style.height = "2em";
+        elem.style.margin = 0;
+        elem.style.padding = 0;
+        elem.style.border = "none";
+        elem.style.outline = "none";
+        elem.style.boxShadow = "none";
+        elem.style.background = "transparent";
+        elem.value = Module.socket.url;
+        document.body.appendChild(elem);
+        elem.focus();
+        elem.select();
+        try {
+            document.execCommand("copy") || console.log("execCommand copy failed");
+        } catch (e) {}
+        document.body.removeChild(elem);
+    });
 }
