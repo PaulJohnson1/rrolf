@@ -38,7 +38,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
 #ifdef RR_SERVER
     struct rr_component_relations *relations =
         rr_simulation_get_relations(simulation, this->parent_id);
-    if (relations->team != rr_simulation_team_id_mobs)
+    if (relations->team != rr_simulation_team_id_mobs && mob->id != rr_mob_id_meteor)
         return;
     // put it here please
     struct rr_component_physical *physical =
