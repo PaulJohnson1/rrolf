@@ -75,7 +75,7 @@ void rr_copy_squad_code()
         elem.style.outline = "none";
         elem.style.boxShadow = "none";
         elem.style.background = "transparent";
-        elem.value = Module.socket.url;
+        elem.value = Module.socket._url;
         document.body.appendChild(elem);
         elem.focus();
         elem.select();

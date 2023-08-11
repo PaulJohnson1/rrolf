@@ -75,6 +75,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
             setTimeout(function() {
                 let socket = Module.socket =
                     new WebSocket(string);
+                socket._url = string;
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function()
                 {
