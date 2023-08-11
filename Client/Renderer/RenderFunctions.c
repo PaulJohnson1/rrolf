@@ -314,7 +314,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_meteor:
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.4f);
         if (flags)
             rr_renderer_draw_image(renderer, &game->mob_meteor);
         else
