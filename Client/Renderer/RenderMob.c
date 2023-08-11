@@ -30,8 +30,8 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
             renderer, (physical->lerp_server_animation_tick) * 0.2);
         rr_renderer_scale(
             renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
-        if (rr_simulation_get_relations(simulation, entity)->team ==
-                rr_simulation_team_id_mobs &&
+        if ((rr_simulation_get_relations(simulation, entity)->team ==
+                rr_simulation_team_id_mobs || mob->id == rr_mob_id_meteor) &&
             !mob->counted_as_killed)
         {
             mob->counted_as_killed = 1;
