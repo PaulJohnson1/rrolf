@@ -110,7 +110,7 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
                                                        25, 45,  20, 25, 0.5};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 8, 15, 30, 75, 300};
+    0, 1, 5, 8, 15, 30, 100, 300};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 13, 18, 25, 150, 250, 50};

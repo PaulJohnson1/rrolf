@@ -48,6 +48,7 @@ void rr_dom_element_update_position(char const *name, float x, float y, float w,
         elem.style.top = ($2 - $4 / 2) / devicePixelRatio + "px";
         elem.style.width = $3 / devicePixelRatio + "px";
         elem.style.height = $4 / devicePixelRatio + "px";
+        elem.style["font-size"] = $3 / devicePixelRatio * 0.8 + "px";
     }, name, x, y, w, h);
 }
 
