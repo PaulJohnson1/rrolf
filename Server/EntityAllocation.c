@@ -127,6 +127,8 @@ float x, float y,
     rr_component_physical_set_y(physical, y);
     physical->friction = 0.8;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
+    if (mob_id == rr_mob_id_meteor)
+        physical->mass *= 100;
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health,

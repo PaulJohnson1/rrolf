@@ -95,7 +95,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
 
     {
-        #define KNOCKBACK_CONST 20.0f / 2
+        #define KNOCKBACK_CONST 10.0f / 2
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
         physical1->acceleration.x += coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
