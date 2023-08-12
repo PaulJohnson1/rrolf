@@ -193,8 +193,8 @@ void rr_game_init(struct rr_game *this)
                                             NULL
                                         ),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("Private", 14, 0xffffffff),
-                                            rr_ui_create_squad_button_init(this),
+                                            //rr_ui_text_init("Private", 14, 0xffffffff),
+                                            //rr_ui_create_squad_button_init(this),
                                             NULL
                                         ),
                                         10
@@ -209,6 +209,7 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_squad_player_container_init(&this->squad_members[3]),
                                             NULL
                                         ),
+                                        /*
                                         rr_ui_flex_container_init(
                                             rr_ui_copy_squad_code_button_init(),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
@@ -218,6 +219,7 @@ void rr_game_init(struct rr_game *this)
                                             ),
                                             10
                                         ),
+                                        */
                                         rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                         NULL
                                     ),
