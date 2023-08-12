@@ -70,7 +70,7 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
         ai->target_entity =
             ai_get_nearest_target(ai->parent_id, simulation, 1550);
     if (ai->target_entity != RR_NULL_ENTITY &&
-        rr_simulation_has_entity(simulation, ai->target_entity))
+        rr_simulation_has_entity(simulation, ai->target_entity) && rr_simulation_get_physical(simulation, ai->target_entity)->has_deletion_animation)
     {
         if (ai->ai_state == rr_ai_state_idle ||
             ai->ai_state == rr_ai_state_idle_moving)
