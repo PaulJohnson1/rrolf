@@ -156,3 +156,7 @@ void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
+
+void rr_game_websocket_on_event_function(enum rr_websocket_event_type,
+                                         void *, void *,
+                                         uint64_t);
