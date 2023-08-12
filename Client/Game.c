@@ -417,6 +417,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->socket.found_error = 1;
         this->socket_pending = 0;
         this->socket_ready = 0;
+        this->rivet_lobby_pending = 0;
         puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
