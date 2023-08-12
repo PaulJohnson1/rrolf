@@ -252,10 +252,11 @@ void rr_server_client_write_message(struct rr_server_client *this,
     // msg->next = this->messages;
     // this->messages = msg;
 
-    struct __rr_client_message msg;
-    msg.data = calloc(1, size);
-    msg.size = size;
-    memcpy(msg.data, data, size);
+    struct __rr_client_message *msg = &this->messages[this->messages_size++];
+    uint8_t *malloced = malloc(size * (sizeof (char)) + LWS_PRE);
+    memcpy(malloced + LWS_PRE, data, size);
+    msg->data = malloced;
+    msg->size = size;
 
     if (this->messages_size > 90)
     {
@@ -263,7 +264,6 @@ void rr_server_client_write_message(struct rr_server_client *this,
         abort();
     }
 
-    this->messages[this->messages_size++] = msg;
 
     lws_callback_on_writable(this->socket_handle);
     // lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
@@ -539,33 +539,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
             {
                 struct rr_server_client *client = this->clients + i;
-                // struct __rr_client_message *msg = client->messages;
-                // while (msg)
-                // {
-                //     struct __rr_client_message *next_msg = msg->next;
-                //     printf("writing %p %p %lu\n", client->socket_handle,
-                //            msg->data, msg->size);
-                //     lws_write(client->socket_handle, msg->data, msg->size,
-                //               LWS_WRITE_BINARY);
-                //     puts("wrote");
-                //     free(msg->data);
-                //     free(msg);
-                //     msg = next_msg;
-                // }
-
-                // client->messages = 0;
-
                 for (uint64_t j = 0; j < client->messages_size; j++)
                 {
-                    struct __rr_client_message msg = client->messages[j];
-                    printf("writing %p %p %lu\n", client->socket_handle,
-                           msg.data, msg.size);
-                    lws_write(client->socket_handle, msg.data, msg.size,
+                    struct __rr_client_message *msg = &client->messages[j];
+                    int a = lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size,
                               LWS_WRITE_BINARY);
-                    free(msg.data);
-                    puts("wrote");
+                    free(msg->data);
                 }
-
                 client->messages_size = 0;
             }
         }
@@ -933,7 +913,7 @@ void *thread_func(void *arg)
     return 0;
 }
 
-static void lws_log(int level, char *log) { printf("%d %s", level, log); }
+static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
 void rr_server_run(struct rr_server *this)
 {
