@@ -10,6 +10,12 @@ struct rr_server_client_loadout_petal
     uint8_t rarity;
 };
 
+struct __rr_client_message
+{
+    uint64_t size;
+    uint8_t *data;
+};
+
 struct rr_server_client
 {
     struct rr_rivet_account rivet_account;
@@ -18,6 +24,8 @@ struct rr_server_client
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
     struct rr_server *server;
+    struct __rr_client_message messages[100];
+    uint64_t messages_size;
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
     float player_accel_x;
