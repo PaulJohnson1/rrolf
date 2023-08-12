@@ -1,6 +1,7 @@
 #include <Client/Ui/Ui.h>
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 #include <Client/DOM.h>
@@ -11,6 +12,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
+#include <Shared/Api.h>
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
 
@@ -262,7 +264,7 @@ static void ready_button_animate(struct rr_ui_element *this,
     }
     else
     {
-        this->fill = 0xff34da23;
+        this->fill = 0xffd4b30c;
     }
 }
 
@@ -294,6 +296,23 @@ static void copy_code_on_event(struct rr_ui_element *this,
     }
 }
 
+static void create_squad_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (game->socket_ready && game->squad_pos == 0)
+        {
+            *((uint8_t *)this->data) ^= 1;
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, 72, "header");
+            proto_bug_write_uint8(&encoder, *((uint8_t *)this->data), "private");
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        }
+    }
+}
+
 static void join_code_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -302,6 +321,8 @@ static void join_code_on_event(struct rr_ui_element *this,
         if (!game->socket_pending && !game->rivet_lobby_pending)
         {
             rr_dom_retrieve_text("link", &game->connect_link[0], 100);
+            if (strlen(&game->connect_link[0]) != 36)
+                return;
             if (game->socket_ready)
                 rr_websocket_disconnect(&game->socket, game);
             #ifdef RIVET_BUILD
@@ -362,5 +383,12 @@ struct rr_ui_element *rr_ui_join_squad_code_button_init()
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
     this->animate = ready_button_animate;
     this->on_event = join_code_on_event;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_create_squad_button_init(struct rr_game *game)
+{
+    struct rr_ui_element *this = rr_ui_toggle_box_init(&game->squad_private);
+    this->on_event = create_squad_on_event;
     return this;
 }

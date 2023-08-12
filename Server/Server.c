@@ -310,6 +310,7 @@ void rr_server_client_tick(struct rr_server_client *this)
             }
         }
         proto_bug_write_uint8(&encoder, pos, "sqpos");
+        proto_bug_write_uint8(&encoder, this->server->private, "private");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -718,6 +719,21 @@ int rr_server_lws_callback_function(struct lws *socket,
                 0; // don't forget the null terminator lol
             proto_bug_read_string(&encoder, this->clients[i].client_nickname,
                                   nickname_size, "nick");
+            break;
+        }
+        case 72:
+        {
+            if (i == 0 && !this->simulation_active)
+            {
+                this->private = proto_bug_read_uint8(&encoder, "private") == 1;
+            #ifdef RIVET_BUILD
+                // players cannot join in the middle of a game (simulation)
+                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
+                rr_rivet_lobbies_set_closed(lobby_token, this->private);
+            #else
+                printf("setting to %d\n", this->private);
+            #endif
+            }
             break;
         }
         }

@@ -155,6 +155,7 @@ struct rr_ui_element *rr_ui_squad_button_init();
 struct rr_ui_element *rr_ui_join_button_init();
 struct rr_ui_element *rr_ui_copy_squad_code_button_init();
 struct rr_ui_element *rr_ui_join_squad_code_button_init();
+struct rr_ui_element *rr_ui_create_squad_button_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_wave_container_init();
 

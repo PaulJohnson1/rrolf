@@ -186,33 +186,38 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_v_container_init(
                                     rr_ui_container_init(), 10, 20,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_h_container_init(
-                                        rr_ui_container_init(), 5, 10,
-                                        rr_ui_text_init("initial wave:", 14, -1),
-                                        rr_ui_h_slider_init(300, 20, &this->cache.wave_start_percent, 1),
-                                        NULL
+                                    rr_ui_flex_container_init(
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                            rr_ui_text_init("initial wave:", 14, 0xffffffff),
+                                            rr_ui_h_slider_init(100, 20, &this->cache.wave_start_percent, 1),
+                                            NULL
+                                        ),
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                            rr_ui_text_init("Private", 14, 0xffffffff),
+                                            rr_ui_create_squad_button_init(this),
+                                            NULL
+                                        ),
+                                        10
                                     ),
                                     rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
+                                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
                                         rr_ui_h_container_init(
-                                            rr_ui_container_init(), 10, 20,
+                                            rr_ui_container_init(), 0, 20,
                                             rr_ui_squad_player_container_init(&this->squad_members[0]),
                                             rr_ui_squad_player_container_init(&this->squad_members[1]),
                                             rr_ui_squad_player_container_init(&this->squad_members[2]),
                                             rr_ui_squad_player_container_init(&this->squad_members[3]),
                                             NULL
                                         ),
-                                        /*
                                         rr_ui_flex_container_init(
                                             rr_ui_copy_squad_code_button_init(),
-                                            rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                                 rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
                                                 rr_ui_join_squad_code_button_init(),
                                                 NULL
                                             ),
                                             10
                                         ),
-                                        */
                                         rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                         NULL
                                     ),
@@ -527,6 +532,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 }
             }
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
+            this->squad_private = proto_bug_read_uint8(&encoder, "private");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
@@ -1057,6 +1063,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
+    this->socket.curr_link = "hello";
     this->socket_pending = 1;
     // for testing
     // if (!this->socket.rivet_player_token)

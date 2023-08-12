@@ -21,6 +21,7 @@ struct rr_server
     struct rr_server_client clients[RR_MAX_CLIENT_COUNT];
     struct rr_simulation simulation;
     uint32_t countdown_ticks;
+    uint8_t private;
 };
 
 void rr_server_init(struct rr_server *);
