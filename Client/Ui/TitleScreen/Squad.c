@@ -327,7 +327,7 @@ static void join_code_on_event(struct rr_ui_element *this,
                 rr_websocket_disconnect(&game->socket, game);
             #ifdef RIVET_BUILD
             rr_websocket_init(&game->socket);
-            game->socket.user_data = this;
+            game->socket.user_data = game;
             game->socket.on_event = rr_game_websocket_on_event_function;
             rr_rivet_lobbies_join(game, &game->connect_link[0]);
             #else
