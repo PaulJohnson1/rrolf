@@ -380,7 +380,7 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
 
 struct rr_ui_element *rr_ui_join_squad_code_button_init()
 {
-    struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
+    struct rr_ui_element *this = rr_ui_labeled_button_init("Join (prob doesn't work)", 24, 0);
     this->animate = ready_button_animate;
     this->on_event = join_code_on_event;
     return this;
