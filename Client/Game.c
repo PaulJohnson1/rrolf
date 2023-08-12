@@ -424,7 +424,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
-
+        printf("abcdefg rand number, %d\n", this->socket.recieved_first_packet);
         if (!this->socket.recieved_first_packet)
         {
             this->socket.recieved_first_packet = 1;
