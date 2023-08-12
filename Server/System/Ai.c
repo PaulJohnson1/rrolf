@@ -516,7 +516,7 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
     if (check_if_aggro(ai, simulation))
         ai->ai_state = rr_ai_state_chasing;
     if (ai->ai_state == rr_ai_state_attacking)
-        physical->knockback_scale = 5.0f;
+        physical->knockback_scale = 3.0f;
     else
         physical->knockback_scale = 1.0f;
 
@@ -675,6 +675,11 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
+        if (!rr_simulation_has_entity(simulation, relations->owner) || rr_simulation_get_physical(simulation, relations->owner)->has_deletion_animation == 0)
+        {
+            rr_simulation_request_entity_deletion(simulation, entity);
+            return;
+        }
         struct rr_component_physical *flower_physical =
             rr_simulation_get_physical(this, relations->owner);
         float dx = flower_physical->x - physical->x;
@@ -684,7 +689,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
                  (250 + physical->radius) * (250 + physical->radius)))
         {
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 1.5);
+            rr_vector_set_magnitude(&accel, 2);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             return;
@@ -694,7 +699,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         {
             ai->ai_state = rr_ai_state_returning_to_owner;
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 1.5);
+            rr_vector_set_magnitude(&accel, 2);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             return;

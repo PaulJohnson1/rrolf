@@ -61,6 +61,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     {
         rr_component_physical_set_radius(physical, 15);
         physical->mass = 100;
+        physical->knockback_scale = 3.5;
     }
 
     rr_component_petal_set_id(petal, id);
