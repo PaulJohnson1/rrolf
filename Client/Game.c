@@ -1097,6 +1097,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     if (port == 0 || s == NULL || token == NULL)
     {
         // error;
+        game->socket.found_error = 1;
         game->socket_pending = 0;
         game->socket_ready = 0;
         return;

@@ -189,6 +189,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                         $host, $token, json.ports.default.port, $0);
                 })
                 .catch(function(error) {
+                    Module._rr_rivet_lobby_on_find(0, 0, 0, $0);
                 });
         },
         captures, lobby_id);
