@@ -425,7 +425,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
-        printf("abcdefg rand number, %d\n", this->socket.recieved_first_packet);
         if (!this->socket.recieved_first_packet)
         {
             this->socket.recieved_first_packet = 1;
@@ -443,7 +442,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "s encryption key");
 
             // respond
-            printf("DO NOT SHARE: joining with %s/%s\n", this->socket.rivet_player_token, this->rivet_account.uuid);
+            printf("DO NOT SHARE: joining with %s/%s\n", this->socket.rivet_player_token, &this->rivet_account.uuid[0]);
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
@@ -1118,5 +1117,6 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     // captures->socket->rivet_player_token = strdup(token);
     // free(token);
     game->socket.rivet_player_token = strdup(token);
+    free(token);
     // game->socket.uuid = game->rivet_account.uuid;
 }

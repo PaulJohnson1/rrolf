@@ -185,6 +185,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
+                    console.log($host, $token, " testing rivet 123123");
                     Module._rr_rivet_lobby_on_find(
                         $host, $token, json.ports.default.port, $0);
                 })
