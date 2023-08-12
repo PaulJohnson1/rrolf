@@ -32,7 +32,7 @@ struct rr_websocket
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
     char *curr_link;
-    char rivet_player_token[200];
+    char rivet_player_token[400];
 };
 
 void rr_websocket_init(struct rr_websocket *);
