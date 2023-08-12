@@ -238,9 +238,9 @@ static void system_flower_petal_movement_logic(
                     float angle =
                         player_info->global_rotation +
                         rotation_pos * 2 * M_PI / player_info->rotation_count;
-                    rr_vector_from_polar(&physical->acceleration, 10.0f,
+                    rr_vector_from_polar(&physical->acceleration, 7.5f,
                                          curr_angle);
-                    rr_vector_from_polar(&physical->velocity, 75.0f,
+                    rr_vector_from_polar(&physical->velocity, 50.0f,
                                          curr_angle);
                 }
                 projectile->ticks_until_death = 20;
