@@ -725,7 +725,7 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             if (i == 0 && !this->simulation_active)
             {
-                this->private = proto_bug_read_uint8(&encoder, "private") == 1;
+                this->private = proto_bug_read_uint8(&encoder, "private") != 0;
             #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");

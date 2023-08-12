@@ -304,6 +304,7 @@ static void create_squad_on_event(struct rr_ui_element *this,
         if (game->socket_ready && game->squad_pos == 0)
         {
             *((uint8_t *)this->data) ^= 1;
+            printf("setting to: %d\n", *((uint8_t *)this->data));
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 72, "header");
