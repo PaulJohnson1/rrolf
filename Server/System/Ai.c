@@ -358,7 +358,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         else
         {
             ai->ai_state = rr_ai_state_missile_shoot_delay;
-            ai->ticks_until_next_action = 38 + rr_frand() * 38;
+            ai->ticks_until_next_action = 50 + rr_frand() * 50;
         }
         break;
     }
