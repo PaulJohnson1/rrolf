@@ -14,6 +14,7 @@
 #include <Shared/Crypto.h>
 
 uint8_t *output_packet;
+static uint8_t incoming_data[1024 * 1024];
 static uint8_t output_buffer_pool[16 * 1024] = {0};
 static uint32_t packet_lengths[32] = {0};
 static uint32_t at = 0;
@@ -65,7 +66,6 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
     this->recieved_first_packet = 0;
     this->found_error = 0;
 #ifdef EMSCRIPTEN
-    static uint8_t incoming_data[1024 * 1024];
     EM_ASM(
         {
             let string = "";
