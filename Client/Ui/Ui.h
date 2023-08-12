@@ -124,6 +124,8 @@ struct rr_ui_element *rr_ui_labeled_button_init(char *, float, uint8_t *);
 struct rr_ui_element *rr_ui_choose_element_init(
     struct rr_ui_element *, struct rr_ui_element *,
     uint8_t (*)(struct rr_ui_element *, struct rr_game *));
+struct rr_ui_element *rr_ui_multi_choose_element_init(
+    uint8_t (*)(struct rr_ui_element *, struct rr_game *), ...);
 
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 

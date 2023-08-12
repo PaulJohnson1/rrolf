@@ -123,13 +123,15 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
 
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
+    if (game->socket.found_error)
+        return 2;
     return game->socket_ready;
 }
 
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return game->socket_pending || game->socket_ready;
+    return game->socket_pending || game->socket_ready || game->socket.found_error;
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -199,21 +201,24 @@ void rr_game_init(struct rr_game *this)
                                         ),
                                         10
                                     ),
-                                    rr_ui_choose_element_init(
+                                    rr_ui_multi_choose_element_init(
+                                        socket_ready,
+                                        rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
-                                        rr_ui_h_container_init(
-                                            rr_ui_container_init(), 0, 20,
-                                            rr_ui_squad_player_container_init(&this->squad_members[0]),
-                                            rr_ui_squad_player_container_init(&this->squad_members[1]),
-                                            rr_ui_squad_player_container_init(&this->squad_members[2]),
-                                            rr_ui_squad_player_container_init(&this->squad_members[3]),
+                                            rr_ui_h_container_init(
+                                                rr_ui_container_init(), 0, 20,
+                                                rr_ui_squad_player_container_init(&this->squad_members[0]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[1]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[2]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[3]),
+                                                NULL
+                                            ),
+                                            rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                             NULL
                                         ),
-                                        rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
+                                        rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
                                         NULL
                                     ),
-                                    rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
-                                    socket_ready),
                                     rr_ui_flex_container_init(
                                         rr_ui_copy_squad_code_button_init(),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
@@ -408,6 +413,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         break;
     case rr_websocket_event_type_close:
         // memset the clients
+        if (size == 1006)
+            this->socket.found_error = 1;
         this->socket_pending = 0;
         this->socket_ready = 0;
         puts("websocket closed");

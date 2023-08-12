@@ -40,7 +40,7 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
         this->on_event(rr_websocket_event_type_data, in, this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CLOSED:
-        this->on_event(rr_websocket_event_type_close, NULL, this->user_data, 0);
+        this->on_event(rr_websocket_event_type_close, NULL, this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
         fputs((char *)in, stderr);
@@ -63,6 +63,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
     printf("connecting to server %s\n", link);
     this->recieved_first_packet = 0;
+    this->found_error = 0;
 #ifdef EMSCRIPTEN
     static uint8_t incoming_data[1024 * 1024];
     EM_ASM(
@@ -72,7 +73,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 string += String.fromCharCode(Module.HEAPU8[$1++]);
             if (Module.socket && Module.socket.readyState < 2)
                 Module.socket.close();
-            setTimeout(function() {
+            (function() {
                 let socket = Module.socket =
                     new WebSocket(string);
                 socket.binaryType = "arraybuffer";
@@ -85,7 +86,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                     console.log("close", a, b);
                     if (a.reason === 'invalid v\x00')
                         location.reload(true);
-                    Module._rr_on_socket_event_emscripten($0, 1, 0, 0);
+                    Module._rr_on_socket_event_emscripten($0, 1, 0, a.code);
                 };
                 socket.onerror = function(a, b) { 
                     console.log("error", a, b); 
@@ -96,7 +97,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                     Module._rr_on_socket_event_emscripten(
                         $0, 2, $2, new Uint8Array(event.data).length);
                 };
-            }, 1000);
+            })();
         },
         this, link, incoming_data);
 #else

@@ -21,6 +21,7 @@ enum rr_websocket_event_type
 struct rr_websocket
 {
     uint8_t recieved_first_packet;
+    uint8_t found_error;
     void *user_data;
     char *rivet_player_token;
     // char *uuid;
