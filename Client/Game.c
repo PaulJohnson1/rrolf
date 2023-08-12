@@ -209,20 +209,20 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_squad_player_container_init(&this->squad_members[3]),
                                             NULL
                                         ),
-                                        rr_ui_flex_container_init(
-                                            rr_ui_copy_squad_code_button_init(),
-                                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                                rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
-                                                rr_ui_join_squad_code_button_init(),
-                                                NULL
-                                            ),
-                                            10
-                                        ),
                                         rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                         NULL
                                     ),
                                     rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                     socket_ready),
+                                    rr_ui_flex_container_init(
+                                        rr_ui_copy_squad_code_button_init(),
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
+                                            rr_ui_join_squad_code_button_init(),
+                                            NULL
+                                        ),
+                                        10
+                                    ),
                                     NULL
                                 ),
                             socket_pending_or_ready),

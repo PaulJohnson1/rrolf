@@ -318,7 +318,7 @@ static void join_code_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (!game->socket_pending && !game->rivet_lobby_pending)
+        if (1)
         {
             rr_dom_retrieve_text("link", &game->connect_link[0], 100);
             if (strlen(&game->connect_link[0]) != 36)
@@ -381,7 +381,7 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
 struct rr_ui_element *rr_ui_join_squad_code_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join (prob doesn't work)", 24, 0);
-    this->animate = ready_button_animate;
+    //this->animate = ready_button_animate;
     this->on_event = join_code_on_event;
     return this;
 }
