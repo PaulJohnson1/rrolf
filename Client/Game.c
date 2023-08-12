@@ -131,7 +131,7 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return game->socket_pending || game->socket_ready || game->socket.found_error;
+    return game->rivet_lobby_pending || game->socket_pending || game->socket_ready || game->socket.found_error;
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
