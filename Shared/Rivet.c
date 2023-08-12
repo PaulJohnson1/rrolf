@@ -174,6 +174,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
+                    console.log("join with: ", json);
                     const host = json.ports.default.hostname;
                     const token = "Bearer " + json.player.token;
                     const $host = _malloc(host.length + 1);
