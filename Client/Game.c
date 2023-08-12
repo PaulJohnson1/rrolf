@@ -442,7 +442,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "s encryption key");
 
             // respond
-            printf("DO NOT SHARE: joining with %s/%s\n", this->socket.rivet_player_token, &this->rivet_account.uuid[0]);
+            printf("DO NOT SHARE: joining with %p\n%s\n%s\n", this, this->socket.rivet_player_token, &this->rivet_account.uuid[0]);
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
