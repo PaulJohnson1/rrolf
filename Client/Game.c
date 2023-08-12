@@ -442,20 +442,19 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "s encryption key");
 
             // respond
-            printf("DO NOT SHARE: joining with %p\n%s\n%s\n", this, this->socket.rivet_player_token, &this->rivet_account.uuid[0]);
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            uint64_t token_size = strlen(this->socket.rivet_player_token);
+            uint64_t token_size = strlen(&this->socket.rivet_player_token[0]);
             uint64_t uuid_size = strlen(this->rivet_account.uuid);
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
             proto_bug_write_string(&verify_encoder,
-                                   this->socket.rivet_player_token, token_size,
+                                   &this->socket.rivet_player_token[0], token_size,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
@@ -1114,9 +1113,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         rr_websocket_connect_to(&game->socket, &link[0]);
     game->socket.curr_link = s;
     s[36] = 0;
-    // captures->socket->rivet_player_token = strdup(token);
-    // free(token);
-    game->socket.rivet_player_token = strdup(token);
+    memcpy(&game->socket.rivet_player_token[0], token, strlen(token) + 1);
     free(token);
     // game->socket.uuid = game->rivet_account.uuid;
 }

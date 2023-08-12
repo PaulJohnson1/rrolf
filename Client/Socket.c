@@ -139,7 +139,7 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     });
 #else
 #endif
-    free(this->rivet_player_token);
+    //free(this->rivet_player_token);
     free(this->curr_link);
     game->socket_ready = 0;
     game->simulation_ready = 0;
