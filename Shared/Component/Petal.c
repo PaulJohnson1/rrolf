@@ -52,11 +52,11 @@ void rr_component_petal_free(struct rr_component_petal *this,
     rr_component_physical_set_x(physical, petal_phys->x);
     rr_component_physical_set_y(physical, petal_phys->y);
     rr_component_physical_set_radius(
-        physical, 40 + RR_PETAL_RARITY_SCALE[this->rarity].damage * 10);
+        physical, 50 + RR_PETAL_RARITY_SCALE[this->rarity].health * 12);
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     physical->mass = 1;
     physical->friction = 0;
-    web->ticks_until_death = (5 + this->rarity) * 25;
+    web->ticks_until_death = (5 + 2 * this->rarity) * 25;
 #endif
 }
 
