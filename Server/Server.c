@@ -736,7 +736,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = (mag_1 - 50) / 200;
+                    float scale = (mag_1 - 25) / 50;
                     if (scale > 1)
                         scale = 1;
                     else if (scale < 0)
