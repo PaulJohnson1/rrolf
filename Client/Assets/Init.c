@@ -346,6 +346,33 @@ static void mob_ankylosaurus_init(struct rr_game *this)
     rr_ankylosaurus_tail_draw(renderer);
 }
 
+static void mob_quetzalcoatlus_init(struct rr_game *this)
+{
+    struct rr_renderer *renderer = &this->mob_quetzalcoatlus_wings[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_quetzalcoatlus_wing1_draw(renderer);
+
+    renderer = &this->mob_quetzalcoatlus_wings[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_quetzalcoatlus_wing2_draw(renderer);
+
+    renderer = &this->mob_quetzalcoatlus_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_quetzalcoatlus_body_draw(renderer);
+
+    renderer = &this->mob_quetzalcoatlus_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 240);
+    rr_renderer_translate(renderer, 72, 120);
+    rr_quetzalcoatlus_head_draw(renderer);
+}
+
 static void tiles_init(struct rr_game *this)
 {
     rr_renderer_init(&this->tiles[0]);
@@ -433,6 +460,7 @@ void rr_assets_init(struct rr_game *this)
     mob_t_rex_init(this);
     mob_t_rex_friendly_init(this);
     mob_ankylosaurus_init(this);
+    mob_quetzalcoatlus_init(this);
     tiles_init(this);
 
     rr_renderer_petal_cache_init();

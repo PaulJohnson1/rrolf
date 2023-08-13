@@ -27,6 +27,10 @@ set(SRCS
     Assets/Mob/Pteranodon/Body.c
     Assets/Mob/Pteranodon/Wing1.c
     Assets/Mob/Pteranodon/Wing2.c
+    Assets/Mob/Quetzalcoatlus/Body.c
+    Assets/Mob/Quetzalcoatlus/Head.c
+    Assets/Mob/Quetzalcoatlus/Wing1.c
+    Assets/Mob/Quetzalcoatlus/Wing2.c
     Assets/Mob/Rex/Body.c
     Assets/Mob/Rex/Head.c
     Assets/Mob/Rex/Leg1.c
