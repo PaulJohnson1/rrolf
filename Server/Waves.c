@@ -54,7 +54,7 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
     }
     else if (special_wave_id == 4)
     {
-        if (rr_frand() > 0.5)
+        if (rr_frand() > 0.8)
             return rr_mob_id_fern;
         else
             return rr_mob_id_trex;

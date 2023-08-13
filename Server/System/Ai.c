@@ -774,7 +774,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
                  (250 + physical->radius) * (250 + physical->radius)))
         {
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 2);
+            rr_vector_set_magnitude(&accel, 2.5);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             return;
@@ -784,7 +784,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         {
             ai->ai_state = rr_ai_state_returning_to_owner;
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 2);
+            rr_vector_set_magnitude(&accel, 2.5);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             return;

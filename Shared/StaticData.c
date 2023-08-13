@@ -26,7 +26,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_club, rr_rarity_id_common, 3.5f, 400.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 20.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 88, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 10.0f, 2.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
@@ -39,8 +39,8 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}},
     {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
     {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}},
-    {rr_mob_id_ankylosaurus, 75, 10, 30.0f, {}},
-    {rr_mob_id_meteor, 200, 10, 32.0f, {}},
+    {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
+    {rr_mob_id_meteor, 300, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, 100, 10, 32.0f, {}}
 };
 
