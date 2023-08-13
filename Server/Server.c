@@ -528,10 +528,34 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                          sizeof "to many active clients" - 1);
         return -1;
     }
+    case LWS_CALLBACK_CLOSED:
+    {
+        int file_descriptor = lws_get_socket_fd(ws);
+        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+            if (rr_bitset_get(this->clients_in_use, i))
+            {
+                if (this->clients[i].file_descriptor == file_descriptor)
+                {
+                    rr_bitset_unset(this->clients_in_use, i);
+#ifdef RIVET_BUILD
+                    rr_rivet_players_disconnected(
+                        getenv("RIVET_LOBBY_TOKEN"),
+                        this->clients[i].rivet_account.token);
+#endif
+                    rr_server_client_free(this->clients + i);
+                    char log[100] = {"ip: `"};
+                    strcat(log, this->clients[i].ip_address);
+                    strcat(log, "`");
+                    // rr_discord_webhook_log("player status", "client
+                    // disconnected", log, 0xff4444);
+                    return 0;
+                }
+            }
+        RR_UNREACHABLE("cloudn't remove client");
+        break;
+    }
     case LWS_CALLBACK_SERVER_WRITEABLE:
     {
-        puts("writable");
-
         uint64_t i = 0;
         for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
