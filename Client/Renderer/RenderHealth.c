@@ -43,7 +43,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_draw_mob_name(renderer, mob->id, 12, 1, -1);
         rr_renderer_translate(renderer, length, 7);
     }
-    else if (rr_simulation_has_flower(simulation, entity))
+    else if (rr_simulation_has_flower(simulation, entity) && physical->deletion_animation == 0)
     {
         struct rr_component_player_info *player_info =
             rr_simulation_get_player_info(
