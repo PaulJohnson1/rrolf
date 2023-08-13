@@ -32,6 +32,8 @@
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
+// static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 void rr_api_on_open_result(char *json, void *captures)
 {
     puts(json);
@@ -240,9 +242,31 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 }
 
 void rr_server_client_write_message(struct rr_server_client *this,
-                                    uint8_t *message_start, uint64_t size)
+                                    uint8_t *data, uint64_t size)
 {
-    lws_write(this->socket_handle, message_start, size, LWS_WRITE_BINARY);
+    // struct __rr_client_message *msg =
+    //     malloc(sizeof(struct __rr_client_message));
+    // msg->data = malloc(size);
+    // memcpy(msg->data, data, size);
+    // msg->size = size;
+    // msg->next = this->messages;
+    // this->messages = msg;
+
+    struct __rr_client_message *msg = &this->messages[this->messages_size++];
+    uint8_t *malloced = malloc(size * (sizeof (char)) + LWS_PRE);
+    memcpy(malloced + LWS_PRE, data, size);
+    msg->data = malloced;
+    msg->size = size;
+
+    if (this->messages_size > 90)
+    {
+        fputs("client message list > 90\n", stderr);
+        abort();
+    }
+
+
+    lws_callback_on_writable(this->socket_handle);
+    // lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
 void rr_server_client_broadcast_update(struct rr_server_client *this)
@@ -323,26 +347,155 @@ static void delete_entity_function(EntityIdx entity, void *_captures)
     rr_simulation_request_entity_deletion(_captures, entity);
 }
 
-int rr_server_lws_callback_function(struct lws *socket,
-                                    enum lws_callback_reasons reason,
-                                    void *context, void *packet, size_t size)
+void rr_server_init(struct rr_server *this)
 {
-    struct rr_server *this =
-        (struct rr_server *)lws_context_user(lws_get_context(socket));
+    printf("server size: %lu\n", sizeof *this);
+    memset(this, 0, sizeof *this);
+    this->countdown_ticks = 25 * 240;
+    rr_static_data_init();
+    rr_simulation_init(&this->simulation);
+}
+
+void rr_server_free(struct rr_server *this)
+{
+    lws_context_destroy(this->server);
+}
+
+static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
+                                                        void *captures)
+{
+    struct rr_simulation *this = captures;
+#define XX(COMPONENT, ID)                                                      \
+    if (rr_simulation_has_##COMPONENT(this, entity))                           \
+        rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
+    RR_FOR_EACH_COMPONENT
+#undef XX
+    if (rr_simulation_has_physical(this, entity))
+        rr_simulation_get_physical(this, entity)->ticked_animation = 0;
+    if (rr_simulation_has_drop(this, entity))
+        memset(
+            &rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0,
+            sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
+}
+
+void rr_server_tick(struct rr_server *this)
+{
+    if (this->simulation_active)
+        rr_simulation_tick(&this->simulation);
+
+    uint8_t client_count = 0;
+    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+        if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified)
+        {
+            rr_server_client_tick(this->clients + i);
+            ++client_count;
+        }
+
+    if (this->simulation_active)
+    {
+        if (!client_count)
+        {
+            this->simulation_active = 0;
+#ifdef RIVET_BUILD
+            exit(0);
+#endif
+            free(this->simulation.grid);
+            rr_simulation_init(&this->simulation);
+        }
+        else
+            rr_simulation_for_each_entity(
+                &this->simulation, &this->simulation,
+                rr_simulation_tick_entity_resetter_function);
+    }
+    else
+    {
+        uint8_t all_ready = 1;
+        uint8_t has_client = 0;
+        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+            if (rr_bitset_get(this->clients_in_use, i))
+            {
+                all_ready &= this->clients[i].ready;
+                has_client = 1;
+            }
+        if (!has_client)
+            this->countdown_ticks = 25 * 240;
+        if (this->countdown_ticks > 0)
+            --this->countdown_ticks;
+        else
+            all_ready = 1;
+
+        if (client_count && all_ready)
+        {
+            if (--this->ticks_until_simulation_create == 0)
+            {
+                this->simulation_active = 1;
+                rr_simulation_init(&this->simulation);
+#ifdef RIVET_BUILD
+                // players cannot join in the middle of a game (simulation)
+                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
+                rr_rivet_lobbies_set_closed(lobby_token, 1);
+#endif
+                float start_wave_total = 0;
+                uint64_t client_count = 0;
+
+                for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+                    if (rr_bitset_get(this->clients_in_use, i))
+                    {
+                        rr_api_get_petals(
+                            &this->clients[i].rivet_account.uuid[0],
+                            RR_API_SECRET, &this->clients[i]);
+                        rr_server_client_create_player_info(this->clients + i,
+                                                            i);
+                        rr_server_client_create_flower(this->clients + i);
+                        client_count++;
+
+                        start_wave_total +=
+                            this->clients[i].requested_start_wave_percent *
+                            this->clients[i].max_wave;
+                    }
+                float start_wave_mean = start_wave_total / client_count;
+
+                struct rr_component_arena *arena =
+                    rr_simulation_get_arena(&this->simulation, 1);
+                rr_component_arena_set_wave(arena,
+                                            (uint32_t)(start_wave_mean + 1));
+                this->simulation.wave_points =
+                    get_points_from_wave(arena->wave, client_count);
+            }
+        }
+        else
+            this->ticks_until_simulation_create =
+#ifdef RIVET_BUILD
+                125;
+#else
+                2;
+#endif
+    }
+}
+
+static int handle_lws_event(struct rr_server *this, struct lws *ws,
+                            enum lws_callback_reasons reason, uint8_t *packet,
+                            size_t size)
+{
     switch (reason)
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
         if (this->simulation_active)
-            return 0;
+        {
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                             (uint8_t *)"simulation active",
+                             sizeof "simulation active" - 1);
+            return -1;
+        }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
                 rr_bitset_set(this->clients_in_use, i);
                 rr_server_client_init(this->clients + i);
                 this->clients[i].server = this;
-                this->clients[i].file_descriptor = lws_get_socket_fd(socket);
-                this->clients[i].socket_handle = socket;
+                this->clients[i].file_descriptor = lws_get_socket_fd(ws);
+                this->clients[i].socket_handle = ws;
 
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
@@ -369,11 +522,15 @@ int rr_server_lws_callback_function(struct lws *socket,
                                                outgoing_message, 1024);
                 return 0;
             }
-        RR_UNREACHABLE("max clients reached");
+
+        lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                         (uint8_t *)"too many active clients",
+                         sizeof "to many active clients" - 1);
+        return -1;
     }
     case LWS_CALLBACK_CLOSED:
     {
-        int file_descriptor = lws_get_socket_fd(socket);
+        int file_descriptor = lws_get_socket_fd(ws);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (rr_bitset_get(this->clients_in_use, i))
             {
@@ -395,8 +552,29 @@ int rr_server_lws_callback_function(struct lws *socket,
                 }
             }
         RR_UNREACHABLE("cloudn't remove client");
+        break;
     }
-
+    case LWS_CALLBACK_SERVER_WRITEABLE:
+    {
+        uint64_t i = 0;
+        for (; i < RR_MAX_CLIENT_COUNT; i++)
+        {
+            if (!rr_bitset_get(this->clients_in_use, i))
+                continue;
+            if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
+            {
+                struct rr_server_client *client = this->clients + i;
+                for (uint64_t j = 0; j < client->messages_size; j++)
+                {
+                    struct __rr_client_message *msg = &client->messages[j];
+                    int a = lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size,
+                              LWS_WRITE_BINARY);
+                    free(msg->data);
+                }
+                client->messages_size = 0;
+            }
+        }
+    }
     case LWS_CALLBACK_RECEIVE:
     {
         if (size == 0)
@@ -407,7 +585,7 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             if (!rr_bitset_get(this->clients_in_use, i))
                 continue;
-            if (this->clients[i].file_descriptor == lws_get_socket_fd(socket))
+            if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
             {
                 client = &this->clients[i];
                 break;
@@ -432,7 +610,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (size < 16)
             {
                 fputs("invlid size\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"invalid size",
                                  sizeof "invalid size");
                 return -1;
@@ -444,24 +622,21 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (received_verification != client->requested_verification)
             {
                 fputs("invalid verification\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"invalid v", sizeof "invalid v");
                 return -1;
             }
 
-            // #ifdef RIVET_BUILD
             uint64_t encountered_size =
                 proto_bug_read_varuint(&encoder, "rivet token size");
-            // #endif
             uint64_t uuid_encountered_size =
                 proto_bug_read_varuint(&encoder, "uuid size");
-            // #ifdef RIVET_BUILD
             if (16 + encountered_size + uuid_encountered_size >= size)
             {
                 printf("%lu %lu\n", size,
                        encountered_size + uuid_encountered_size);
                 fputs("invalid size2\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"invalid size2",
                                  sizeof "invalid size2");
                 return -1;
@@ -470,16 +645,12 @@ int rr_server_lws_callback_function(struct lws *socket,
             memset(&this->clients[i].rivet_account, 0,
                    sizeof(struct rr_rivet_account));
             // Read rivet token
-            this->clients[i].rivet_account.token[encountered_size] =
-                0; // don't forget the null terminator lol
+            this->clients[i].rivet_account.token[encountered_size] = 0;
             proto_bug_read_string(&encoder,
                                   this->clients[i].rivet_account.token,
                                   encountered_size, "rivet token");
-            // #endif
-
             // Read uuid
-            this->clients[i].rivet_account.uuid[uuid_encountered_size] =
-                0; // null terminator for uuid
+            this->clients[i].rivet_account.uuid[uuid_encountered_size] = 0;
             proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
 
@@ -491,7 +662,7 @@ int rr_server_lws_callback_function(struct lws *socket,
                     this->clients[i].rivet_account.token))
             {
                 fputs("rivet error\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"rivet error",
                                  sizeof "rivet error");
                 return -1;
@@ -506,7 +677,7 @@ int rr_server_lws_callback_function(struct lws *socket,
             if (0 && account.already_playing)
             {
                 fputs("already playing\n", stderr);
-                lws_close_reason(socket, LWS_CLOSE_STATUS_GOINGAWAY,
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"already playing",
                                  sizeof "already playing");
                 return -1;
@@ -524,7 +695,7 @@ int rr_server_lws_callback_function(struct lws *socket,
         {
             if (size < 9)
             {
-                puts("unsafe input packet with length < 3");
+                puts("unsafe input packet with small length");
                 return 0;
             }
             if (client->player_info == NULL)
@@ -736,157 +907,81 @@ int rr_server_lws_callback_function(struct lws *socket,
             }
             break;
         }
+        default:
+            break;
         }
+        return 0;
     }
     default:
+        return 0;
+    }
+
+    return 0;
+}
+
+static int lws_callback(struct lws *ws, enum lws_callback_reasons reason,
+                        void *user, void *packet, size_t size)
+{
+    switch (reason)
+    {
+    case LWS_CALLBACK_ESTABLISHED:
+    case LWS_CALLBACK_SERVER_WRITEABLE:
+    case LWS_CALLBACK_RECEIVE:
+    case LWS_CALLBACK_CLOSED:
         break;
+    default:
+        return 0;
+    }
+    // assert(pthread_mutex_lock(&mutex) == 0);
+
+    struct rr_server *this =
+        (struct rr_server *)lws_context_user(lws_get_context(ws));
+    int close = handle_lws_event(this, ws, reason, packet, size);
+    if (close)
+        return close;
+    // assert(pthread_mutex_unlock(&mutex) == 0);
+    return 0;
+}
+
+void *thread_func(void *arg)
+{
+    struct rr_server *this = (struct rr_server *)arg;
+    while (1)
+    {
+        lws_service(this->server, 0);
     }
     return 0;
 }
 
-void rr_server_init(struct rr_server *this)
-{
-    printf("server size: %lu\n", sizeof *this);
-    memset(this, 0, sizeof *this);
-    this->countdown_ticks = 25 * 240;
-    rr_static_data_init();
-    rr_simulation_init(&this->simulation);
-}
-
-void rr_server_free(struct rr_server *this)
-{
-    lws_context_destroy(this->server);
-}
-
-static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
-                                                        void *captures)
-{
-    struct rr_simulation *this = captures;
-#define XX(COMPONENT, ID)                                                      \
-    if (rr_simulation_has_##COMPONENT(this, entity))                           \
-        rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
-    RR_FOR_EACH_COMPONENT
-#undef XX
-    if (rr_simulation_has_physical(this, entity))
-        rr_simulation_get_physical(this, entity)->ticked_animation = 0;
-    if (rr_simulation_has_drop(this, entity))
-        memset(
-            &rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0,
-            sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
-}
-
-void rr_server_tick(struct rr_server *this)
-{
-    if (this->simulation_active)
-        rr_simulation_tick(&this->simulation);
-
-    uint8_t client_count = 0;
-    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-        if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified)
-        {
-            rr_server_client_tick(this->clients + i);
-            ++client_count;
-        }
-
-    if (this->simulation_active)
-    {
-        if (!client_count)
-        {
-            this->simulation_active = 0;
-#ifdef RIVET_BUILD
-            exit(0);
-#endif
-            free(this->simulation.grid);
-            rr_simulation_init(&this->simulation);
-        }
-        else
-            rr_simulation_for_each_entity(
-                &this->simulation, &this->simulation,
-                rr_simulation_tick_entity_resetter_function);
-    }
-    else
-    {
-        uint8_t all_ready = 1;
-        uint8_t has_client = 0;
-        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (rr_bitset_get(this->clients_in_use, i))
-            {
-                all_ready &= this->clients[i].ready;
-                has_client = 1;
-            }
-        if (!has_client)
-            this->countdown_ticks = 25 * 240;
-        if (this->countdown_ticks > 0)
-            --this->countdown_ticks;
-        else
-            all_ready = 1;
-
-        if (client_count && all_ready)
-        {
-            if (--this->ticks_until_simulation_create == 0)
-            {
-                this->simulation_active = 1;
-                rr_simulation_init(&this->simulation);
-#ifdef RIVET_BUILD
-                // players cannot join in the middle of a game (simulation)
-                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
-                rr_rivet_lobbies_set_closed(lobby_token, 1);
-#endif
-                float start_wave_total = 0;
-                uint64_t client_count = 0;
-
-                for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-                    if (rr_bitset_get(this->clients_in_use, i))
-                    {
-                        rr_api_get_petals(
-                            &this->clients[i].rivet_account.uuid[0],
-                            RR_API_SECRET, &this->clients[i]);
-                        rr_server_client_create_player_info(this->clients + i,
-                                                            i);
-                        rr_server_client_create_flower(this->clients + i);
-                        client_count++;
-
-                        start_wave_total +=
-                            this->clients[i].requested_start_wave_percent *
-                            this->clients[i].max_wave;
-                    }
-                float start_wave_mean = start_wave_total / client_count;
-
-                struct rr_component_arena *arena =
-                    rr_simulation_get_arena(&this->simulation, 1);
-                rr_component_arena_set_wave(arena,
-                                            (uint32_t)(start_wave_mean + 1));
-                this->simulation.wave_points =
-                    get_points_from_wave(arena->wave, client_count);
-            }
-        }
-        else
-            this->ticks_until_simulation_create =
-#ifdef RIVET_BUILD
-                125;
-#else
-                2;
-#endif
-    }
-}
+static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
 void rr_server_run(struct rr_server *this)
 {
-
     struct lws_context_creation_info info;
     memset(&info, 0, sizeof(info));
 
-    struct lws_protocols protocols[2] = {
-        {"g", rr_server_lws_callback_function, 0, 0}, {NULL, NULL, 0, 0}};
+    info.protocols = (struct lws_protocols[]){
+        {"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
+        {0}};
+
     info.port = 1234;
-    info.protocols = &protocols[0];
-    info.gid = -1;
-    info.uid = -1;
     info.user = this;
     info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+    lws_set_log_level(-1, lws_log);
 
     this->server = lws_create_context(&info);
     assert(this->server);
+
+    // pthread_t service_thread;
+    // int ret = pthread_create(&service_thread, NULL, thread_func, this);
+    // if (ret != 0)
+    // {
+    //     perror("Error creating service thread");
+    //     return;
+    // }
+
+    // pthread_detach(service_thread);
+
     this->ticks_until_simulation_create =
 #ifdef RIVET_BUILD
         125;
