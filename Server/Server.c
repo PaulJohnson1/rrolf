@@ -353,7 +353,6 @@ void rr_server_init(struct rr_server *this)
     memset(this, 0, sizeof *this);
     this->countdown_ticks = 25 * 240;
     rr_static_data_init();
-    rr_simulation_init(&this->simulation);
 }
 
 void rr_server_free(struct rr_server *this)

@@ -28,9 +28,10 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100);
-    rr_component_health_set_health(health, 100);
+    rr_component_health_set_max_health(health, 200);
+    rr_component_health_set_health(health, 200);
     health->damage = 10;
+    health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, entity);
     rr_component_player_info_set_camera_x(player_info, physical->x);
