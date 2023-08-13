@@ -24,9 +24,6 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     {
         rr_component_health_set_health(health, health->health +
                                                    health->max_health * 0.0002);
-        if (physical->server_animation_tick > 0)
-            rr_component_physical_set_server_animation_tick(
-                physical, physical->server_animation_tick - 1);
         if (health->damage_paused > 0)
             health->damage_paused -= 1;
     }
@@ -63,7 +60,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_do_damage(health1, health2->damage);
         health1->damage_paused = 5;
-        rr_component_physical_set_server_animation_tick(physical1, 5);
 
         if (rr_simulation_has_ai(this, entity1))
         {
@@ -85,7 +81,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_do_damage(health2, health1->damage);
         health2->damage_paused = 5;
-        rr_component_physical_set_server_animation_tick(physical2, 5);
 
         if (rr_simulation_has_ai(this, entity2))
         {

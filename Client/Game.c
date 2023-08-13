@@ -582,76 +582,70 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     }
 }
 
-void render_drop_component(EntityIdx entity, void *_captures)
+void render_drop_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_drop_render(entity, this);
+    rr_component_drop_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_health_component(EntityIdx entity, void *_captures)
+void render_health_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x,
                           physical->lerp_y + physical->radius + 30);
-    rr_component_health_render(entity, this);
+    rr_component_health_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_mob_component(EntityIdx entity, void *_captures)
+void render_mob_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_mob_render(entity, this);
+    rr_component_mob_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_petal_component(EntityIdx entity, void *_captures)
+void render_petal_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_petal_render(entity, this);
+    rr_component_petal_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_flower_component(EntityIdx entity, void *_captures)
+void render_flower_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_flower_render(entity, this);
+    rr_component_flower_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_web_component(EntityIdx entity, void *_captures)
+void render_web_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_web_render(entity, this);
+    rr_component_web_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
@@ -802,6 +796,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->simulation_ready)
     {
         rr_simulation_tick(this->simulation, delta);
+        rr_deletion_simulation_tick(this->deletion_simulation, delta);
 
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
@@ -822,9 +817,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
             {
-                if (rr_simulation_get_physical(this->simulation,
-                                               player_info->flower_id)
-                        ->server_animation_tick != 0)
+                if (0)
                 {
                     float r = rr_frand() * 5;
                     float a = rr_frand() * 2 * M_PI;
@@ -862,19 +855,23 @@ void rr_game_tick(struct rr_game *this, float delta)
 
             rr_renderer_context_state_free(this->renderer, &state2);
             rr_system_particle_render_tick(this, delta);
-            rr_simulation_for_each_web(this->simulation, this,
-                                       render_web_component);
-            rr_simulation_for_each_health(this->simulation, this,
-                                          render_health_component);
-            rr_simulation_for_each_drop(this->simulation, this,
-                                        render_drop_component);
-            rr_simulation_for_each_mob(this->simulation, this,
-                                       render_mob_component);
-            rr_simulation_for_each_petal(this->simulation, this,
-                                         render_petal_component);
-            rr_simulation_for_each_flower(this->simulation, this,
-                                          render_flower_component);
+
+            #define render_component(COMPONENT) \
+                for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
+                    render_##COMPONENT##_component(this->simulation->COMPONENT##_vector[i], this, this->simulation); \
+                for (uint32_t i = 0; i < this->deletion_simulation->COMPONENT##_count; ++i) \
+                { printf("lol help %d\n", this->deletion_simulation->COMPONENT##_vector[i]);\
+                    render_##COMPONENT##_component(this->deletion_simulation->COMPONENT##_vector[i], this, this->deletion_simulation);\
+                }
+
+            render_component(web);
+            render_component(health);
+            render_component(drop);
+            render_component(mob);
+            render_component(petal);
+            render_component(flower);
             rr_renderer_context_state_free(this->renderer, &state1);
+            #undef render_component
         }
     }
     else

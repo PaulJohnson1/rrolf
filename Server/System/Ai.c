@@ -70,7 +70,7 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
         ai->target_entity =
             ai_get_nearest_target(ai->parent_id, simulation, 1550);
     if (ai->target_entity != RR_NULL_ENTITY &&
-        rr_simulation_has_entity(simulation, ai->target_entity) && rr_simulation_get_physical(simulation, ai->target_entity)->has_deletion_animation)
+        rr_simulation_has_entity(simulation, ai->target_entity))
     {
         if (ai->ai_state == rr_ai_state_idle ||
             ai->ai_state == rr_ai_state_idle_moving)
@@ -675,7 +675,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
-        if (!rr_simulation_has_entity(simulation, relations->owner) || rr_simulation_get_physical(simulation, relations->owner)->has_deletion_animation == 0)
+        if (!rr_simulation_has_entity(simulation, relations->owner))
         {
             rr_simulation_request_entity_deletion(simulation, entity);
             return;

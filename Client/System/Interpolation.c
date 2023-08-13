@@ -1,10 +1,8 @@
-#include <Server/System/MapBoundary.h>
-
-#include <Server/Simulation.h>
+#include <Client/System/Interpolation.h>
 
 #include <math.h>
 
-#include <Shared/Component/Physical.h>
+#include <Shared/SimulationCommon.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
@@ -56,25 +54,6 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
                 (fmin(rr_vector_get_magnitude(&physical->lerp_velocity), 20) * 0.5 + 1) * 2;
         else
             physical->animation += delta * 1.5;
-        if (!has_drop ||
-            rr_simulation_get_drop(this, entity)->hidden == 0)
-        {
-            if (physical->server_animation_tick == 5)
-            {
-                if (physical->animation_started == 0)
-                {
-                    physical->lerp_server_animation_tick = 5;
-                    physical->animation_started = 1;
-                }
-            }
-            else
-                physical->animation_started = 0;
-            physical->lerp_server_animation_tick =
-                rr_lerp(physical->lerp_server_animation_tick, 0, 10 * delta);
-        }
-        else
-            physical->lerp_server_animation_tick =
-                rr_lerp(physical->lerp_server_animation_tick, 5, 10 * delta);
     }
 
     if (rr_simulation_has_flower(this, entity))

@@ -127,6 +127,7 @@ struct rr_game
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
+    struct rr_simulation *deletion_simulation;
     struct rr_component_player_info *player_info;
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;

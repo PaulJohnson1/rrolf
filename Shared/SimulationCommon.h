@@ -57,7 +57,7 @@ void rr_simulation_init(struct rr_simulation *);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
 void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
 void rr_simulation_for_each_entity(struct rr_simulation *, void *,
-                                   void (*cb)(EntityIdx, void *));
+                                   void (*)(EntityIdx, void *));
 void rr_simulation_create_component_vectors(struct rr_simulation *);
 
 // internal use
@@ -71,6 +71,6 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t, void *);
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
         struct rr_simulation *, EntityIdx);                                    \
     void rr_simulation_for_each_##COMPONENT(struct rr_simulation *, void *,    \
-                                            void (*cb)(EntityIdx, void *));
+                                            void (*)(EntityIdx, void *));
 RR_FOR_EACH_COMPONENT
 #undef XX

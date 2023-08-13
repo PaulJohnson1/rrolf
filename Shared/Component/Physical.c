@@ -10,12 +10,10 @@ enum
     state_flags_radius = 0b00010,
     state_flags_y = 0b00100,
     state_flags_x = 0b01000,
-    state_flags_server_animation_tick = 0b10000,
     state_flags_all = 0b11111
 };
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
-    X(server_animation_tick, uint8)                                            \
     X(angle, float32)                                                          \
     X(radius, float32)                                                         \
     X(x, float32)                                                              \
@@ -26,7 +24,6 @@ void rr_component_physical_init(struct rr_component_physical *this,
 {
     memset(this, 0, sizeof *this);
     RR_SERVER_ONLY(this->mass = 1;)
-    RR_SERVER_ONLY(this->has_deletion_animation = 1;)
     RR_SERVER_ONLY(this->acceleration_scale = 1;)
     RR_SERVER_ONLY(this->knockback_scale = 1;)
 }
@@ -34,7 +31,6 @@ void rr_component_physical_init(struct rr_component_physical *this,
 void rr_component_physical_free(struct rr_component_physical *this,
                                 struct rr_simulation *simulation)
 {
-    RR_SERVER_ONLY(this->has_deletion_animation = 0;)
 }
 
 #ifdef RR_SERVER
@@ -53,7 +49,6 @@ RR_DEFINE_PUBLIC_FIELD(physical, float, x)
 RR_DEFINE_PUBLIC_FIELD(physical, float, y)
 RR_DEFINE_PUBLIC_FIELD(physical, float, angle)
 RR_DEFINE_PUBLIC_FIELD(physical, float, radius)
-RR_DEFINE_PUBLIC_FIELD(physical, uint8_t, server_animation_tick)
 #endif
 
 #ifdef RR_CLIENT

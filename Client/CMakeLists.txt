@@ -55,6 +55,7 @@ set(SRCS
     Renderer/RenderPetal.c
     Renderer/RenderWeb.c
     Storage.c
+    System/DeletionAnimation.c
     System/Interpolation.c
     System/ParticleRender.c
     Ui/Button.c

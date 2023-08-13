@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
@@ -201,17 +202,20 @@ int main()
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
-    static struct rr_simulation simulation;
+    struct rr_simulation *simulation = malloc(sizeof *simulation);
+    struct rr_simulation *deletion_simulation = malloc(sizeof *deletion_simulation);
     rr_main_loop(&game);
 
     rr_renderer_init(&renderer);
     rr_game_init(&game);
     rr_input_data_init(&input_data);
-    rr_simulation_init(&simulation);
+    rr_simulation_init(simulation);
+    rr_simulation_init(deletion_simulation);
 
     game.renderer = &renderer;
     game.input_data = &input_data;
-    game.simulation = &simulation;
+    game.simulation = simulation;
+    game.deletion_simulation = deletion_simulation;
     rr_game_tick(&game, 1);
 
 #ifndef EMSCRIPTEN

@@ -6,9 +6,8 @@
 #include <Client/Simulation.h>
 #include <Shared/StaticData.h>
 
-void rr_component_health_render(EntityIdx entity, struct rr_game *game)
+void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
 {
-    struct rr_simulation *simulation = game->simulation;
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
@@ -16,6 +15,8 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
         rr_simulation_get_health(simulation, entity);
     if (health->hidden || rr_simulation_has_petal(simulation, entity))
         return;
+    rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
+    rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     if (rr_simulation_has_flower(simulation, entity))
     {
         struct rr_component_relations *relations =
@@ -26,13 +27,6 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game)
                 return;
     }
 
-    if (health->health == 0)
-    {
-        rr_renderer_set_global_alpha(
-            renderer, (physical->lerp_server_animation_tick) * 0.2);
-        rr_renderer_scale(
-            renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
-    }
     float length = 40;
 
     if (rr_simulation_has_mob(simulation, entity))

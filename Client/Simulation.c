@@ -7,6 +7,7 @@
 #include <sys/time.h>
 
 #include <Client/Game.h>
+#include <Client/System/DeletionAnimation.h>
 #include <Client/System/Interpolation.h>
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
@@ -33,8 +34,23 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
             break;
         assert(id < RR_MAX_ENTITY_COUNT);
         assert(rr_bitset_get_bit(this->entity_tracker, id));
+        if (proto_bug_read_uint8(encoder, "deletion type"))
+        {
+            struct rr_simulation *del_s = game->deletion_simulation;
+            EntityIdx id_2 = rr_simulation_alloc_entity(del_s);
+            #define XX(COMPONENT, ID) \
+            if (rr_simulation_has_##COMPONENT(this, id)) \
+            { \
+                struct rr_component_##COMPONENT *o = rr_simulation_get_##COMPONENT(this, id); \
+                struct rr_component_##COMPONENT *c = rr_simulation_add_##COMPONENT(del_s, id_2); \
+                memcpy(c, o, sizeof (struct rr_component_##COMPONENT)); \
+            } 
+            RR_FOR_EACH_COMPONENT
+            #undef XX
+        }
         __rr_simulation_pending_deletion_free_components(id, this);
         __rr_simulation_pending_deletion_unset_entity(id, this);
+        //rr_bitset_set(this->pending_deletions, id);
     }
 
     // assuming that player info is written first (is it though)
@@ -77,6 +93,34 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
+    //rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_free_components);
+    //rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity);
+    //memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     rr_simulation_create_component_vectors(this);
     rr_system_interpolation_tick(this, 1 - powf(0.9f, delta * 10));
+}
+
+void rr_deletion_simulation_tick(struct rr_simulation *this, float delta)
+{
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity);
+    memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+    rr_simulation_create_component_vectors(this);
+    rr_system_deletion_animation_tick(this, 1 - powf(0.9f, delta * 10));
+}
+
+EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
+{
+    for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; i++)
+    {
+        if (!rr_simulation_has_entity(this, i))
+        {
+            rr_bitset_set(this->entity_tracker, i);
+#ifndef NDEBUG
+            printf("created with id %d\n", i);
+#endif
+            return i;
+        }
+    }
+    RR_UNREACHABLE("ran out of entity ids");
 }

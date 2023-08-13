@@ -34,11 +34,8 @@ struct rr_component_physical
     float radius;
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
-    RR_CLIENT_ONLY(float lerp_server_animation_tick;)
-    uint8_t server_animation_tick : 4;
+    RR_CLIENT_ONLY(float deletion_animation;)
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
-    RR_SERVER_ONLY(uint8_t ticked_animation : 1;)
-    RR_SERVER_ONLY(uint8_t has_deletion_animation : 1;)
     RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     EntityIdx parent_id;
@@ -61,4 +58,3 @@ RR_DECLARE_PUBLIC_FIELD(physical, float, x)
 RR_DECLARE_PUBLIC_FIELD(physical, float, y)
 RR_DECLARE_PUBLIC_FIELD(physical, float, angle)
 RR_DECLARE_PUBLIC_FIELD(physical, float, radius)
-RR_DECLARE_PUBLIC_FIELD(physical, uint8_t, server_animation_tick)
