@@ -216,6 +216,18 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
+    else if (id == rr_petal_id_beak)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.0fs", 1 + 0.5 * rarity)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Stun: ", 12, 0xff4266f5),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+    }
     rr_ui_link_toggle(rr_ui_set_justify(this, -1, -1), rr_ui_never_show);
     this->poll_events = rr_ui_no_focus;
     return this;

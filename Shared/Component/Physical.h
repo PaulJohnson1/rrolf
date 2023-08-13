@@ -39,6 +39,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
     RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
+    RR_SERVER_ONLY(uint8_t stun_ticks;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)

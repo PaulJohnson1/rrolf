@@ -328,8 +328,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    player_info->modifiers.rotation_direction = 1;
     rr_component_player_info_set_camera_fov(player_info, 1.0f);
     health->damage_reduction = 0;
+    float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot =
@@ -342,7 +344,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                             0.05 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         else if (data->id == rr_petal_id_light)
-            player_info->global_rotation += (0.012 + 0.008 * slot->rarity);
+            to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
@@ -356,6 +358,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 rr_component_flower_set_face_flags(flower, flower->face_flags | 4);
                 rr_component_player_info_set_camera_fov(player_info, 1.0f * (0.9 - 0.06 * slot->rarity));
             }
+        }
+        else if (data->id == rr_petal_id_droplet)
+        {
+            player_info->modifiers.rotation_direction *= -1;
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
@@ -372,6 +378,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                         2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
             }
     }
+    player_info->global_rotation += to_rotate * player_info->modifiers.rotation_direction;
 }
 
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
@@ -480,7 +487,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
     }
     player_info->rotation_count = rotation_pos;
-    player_info->global_rotation += 0.1;
 }
 
 static void system_petal_misc_logic(EntityIdx id, void *_simulation)

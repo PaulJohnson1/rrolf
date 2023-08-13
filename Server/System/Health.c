@@ -31,6 +31,18 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
         rr_simulation_request_entity_deletion(this, entity);
 }
 
+static void petal_effect(struct rr_simulation *simulation, EntityIdx target, EntityIdx petal_id)
+{
+    if (!rr_simulation_has_petal(simulation, petal_id))
+        return;
+    struct rr_component_petal *petal = rr_simulation_get_petal(simulation, petal_id);
+    if (petal->id == rr_petal_id_beak)
+    {
+        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+        physical->stun_ticks = 25 + 25 * petal->rarity / 2;
+    }
+}
+
 static void colliding_with_function(uint64_t i, void *_captures)
 {
     struct colliding_with_captures *captures = _captures;
@@ -60,6 +72,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_do_damage(health1, health2->damage);
         health1->damage_paused = 5;
+        petal_effect(this, entity1, entity2);
 
         if (rr_simulation_has_ai(this, entity1))
         {
@@ -81,6 +94,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_do_damage(health2, health1->damage);
         health2->damage_paused = 5;
+        petal_effect(this, entity2, entity1);
 
         if (rr_simulation_has_ai(this, entity2))
         {
