@@ -329,6 +329,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
     player_info->modifiers.rotation_direction = 1;
+    uint8_t rot_count = 0;
     rr_component_player_info_set_camera_fov(player_info, 1.0f);
     health->damage_reduction = 0;
     float to_rotate = 0.1;
@@ -361,7 +362,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_droplet)
         {
-            player_info->modifiers.rotation_direction *= -1;
+           ++rot_count;
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
@@ -378,7 +379,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                         2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
             }
     }
-    player_info->global_rotation += to_rotate * player_info->modifiers.rotation_direction;
+    player_info->global_rotation += to_rotate * ((rot_count % 3) ? (rot_count % 3 == 2) ? 0 : -1 : 1);
 }
 
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
