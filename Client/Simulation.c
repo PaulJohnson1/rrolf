@@ -34,7 +34,8 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
             break;
         assert(id < RR_MAX_ENTITY_COUNT);
         assert(rr_bitset_get_bit(this->entity_tracker, id));
-        if (proto_bug_read_uint8(encoder, "deletion type"))
+        uint8_t type = proto_bug_read_uint8(encoder, "deletion type");
+        if (type)
         {
             struct rr_simulation *del_s = game->deletion_simulation;
             EntityIdx id_2 = rr_simulation_alloc_entity(del_s);
@@ -47,6 +48,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
             } 
             RR_FOR_EACH_COMPONENT
             #undef XX
+            rr_simulation_get_physical(del_s, id_2)->deletion_type = type;
         }
         __rr_simulation_pending_deletion_free_components(id, this);
         __rr_simulation_pending_deletion_unset_entity(id, this);

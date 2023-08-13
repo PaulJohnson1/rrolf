@@ -369,10 +369,6 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
-    if (rr_simulation_has_drop(this, entity))
-        memset(
-            &rr_simulation_get_drop(this, entity)->picked_up_this_tick, 0,
-            sizeof rr_simulation_get_drop(this, entity)->picked_up_this_tick);
 }
 
 void rr_server_tick(struct rr_server *this)

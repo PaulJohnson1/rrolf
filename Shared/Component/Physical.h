@@ -35,6 +35,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float lerp_radius;)
     RR_CLIENT_ONLY(float animation;)
     RR_CLIENT_ONLY(float deletion_animation;)
+    RR_CLIENT_ONLY(uint8_t deletion_type;)
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
     RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)

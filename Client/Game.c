@@ -860,9 +860,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                 for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
                     render_##COMPONENT##_component(this->simulation->COMPONENT##_vector[i], this, this->simulation); \
                 for (uint32_t i = 0; i < this->deletion_simulation->COMPONENT##_count; ++i) \
-                { printf("lol help %d\n", this->deletion_simulation->COMPONENT##_vector[i]);\
-                    render_##COMPONENT##_component(this->deletion_simulation->COMPONENT##_vector[i], this, this->deletion_simulation);\
-                }
+                    render_##COMPONENT##_component(this->deletion_simulation->COMPONENT##_vector[i], this, this->deletion_simulation);
 
             render_component(web);
             render_component(health);

@@ -15,9 +15,7 @@ struct rr_component_drop
     EntityIdx parent_id;
     uint8_t id;
     uint8_t rarity;
-    RR_CLIENT_ONLY(uint8_t hidden;)
     RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(8)];)
-    RR_SERVER_ONLY(uint8_t picked_up_this_tick[RR_BITSET_ROUND(8)];)
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
 };
