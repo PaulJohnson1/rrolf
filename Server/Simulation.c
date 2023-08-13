@@ -193,6 +193,7 @@ static void tick_wave(struct rr_simulation *this)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
+    this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
     // printf("%d %d %d\n", this->physical_count, this->mob_count,
     // this->health_count);

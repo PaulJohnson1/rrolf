@@ -6,7 +6,7 @@
 
 struct rr_particle
 {
-    struct rr_vector position;
+    struct rr_vector position[32];
     struct rr_vector velocity;
     struct rr_vector acceleration;
     float size;
@@ -14,6 +14,7 @@ struct rr_particle
     uint32_t color;
     uint16_t pos;
     uint8_t type;
+    uint8_t length;
 };
 
 struct rr_particle_manager

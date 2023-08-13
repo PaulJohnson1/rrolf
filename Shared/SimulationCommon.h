@@ -17,7 +17,15 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
+#include <Shared/Vector.h>
 struct rr_spatial_hash;
+
+struct rr_simulation_animation
+{
+    uint8_t type;
+    uint8_t length;
+    struct rr_vector points[16];
+};
 #endif
 
 enum rr_simulation_team_id
@@ -49,6 +57,8 @@ struct rr_simulation
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
     RR_SERVER_ONLY(uint32_t wave_points;)
     RR_SERVER_ONLY(uint32_t special_wave_id;)
+    RR_SERVER_ONLY(struct rr_simulation_animation animations[64];)
+    RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)
     uint8_t game_over;
 };

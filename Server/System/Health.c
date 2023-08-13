@@ -41,6 +41,57 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
         physical->stun_ticks = 25 + 25 * petal->rarity / 2;
     }
+    else if (petal->id == rr_petal_id_lightning)
+    {
+        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+        struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal_id);
+        struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+        animation->type = 1;
+        EntityIdx chain[16] = {target};
+        animation->points[0].x = petal_physical->x;
+        animation->points[0].y = petal_physical->y;
+        animation->points[1].x = physical->x;
+        animation->points[1].y = physical->y;
+        uint32_t chain_size = 2;
+        uint32_t chain_amount = petal->rarity + 2;   
+        float damage = rr_simulation_get_health(simulation, petal_id)->damage * 0.5; 
+    
+        for (; chain_size < chain_amount + 2; ++chain_size)
+        {
+            float old_x = physical->x, old_y = physical->y;
+            target = RR_NULL_ENTITY;
+            float min_dist = 500 * 500;
+            for (uint16_t i = 0; i < simulation->mob_count; ++i)
+            {
+                EntityIdx mob_id = simulation->mob_vector[i];
+                uint8_t hit_before = 0;
+                for (uint32_t j = 0; j < chain_size; ++j)
+                    hit_before |= chain[j] == mob_id;
+                if (hit_before)
+                    continue;
+                if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
+                    continue;
+                physical = rr_simulation_get_physical(simulation, mob_id);
+                float x = physical->x, y = physical->y;
+                float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                if (dist > min_dist)
+                    continue;
+                target = mob_id;
+                min_dist = dist;
+            }
+            if (target == RR_NULL_ENTITY)
+                break;
+            struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+            rr_component_health_do_damage(health, damage);
+            health->damage_paused = 5;
+            chain[chain_size] = target;
+            physical = rr_simulation_get_physical(simulation, target);
+            animation->points[chain_size].x = physical->x;
+            animation->points[chain_size].y = physical->y;
+        }
+        animation->length = chain_size;
+        rr_simulation_request_entity_deletion(simulation, petal_id);
+    }
 }
 
 static void colliding_with_function(uint64_t i, void *_captures)
@@ -72,7 +123,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     {
         rr_component_health_do_damage(health1, health2->damage);
         health1->damage_paused = 5;
-        petal_effect(this, entity1, entity2);
 
         if (rr_simulation_has_ai(this, entity1))
         {
@@ -89,12 +139,12 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = entity2;
             }
         }
+        petal_effect(this, entity1, entity2);
     }
     if (health2->damage_paused == 0 || bypass)
     {
         rr_component_health_do_damage(health2, health1->damage);
         health2->damage_paused = 5;
-        petal_effect(this, entity2, entity1);
 
         if (rr_simulation_has_ai(this, entity2))
         {
@@ -112,6 +162,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = entity1;
             }
         }
+        petal_effect(this, entity2, entity1);
     }
 }
 

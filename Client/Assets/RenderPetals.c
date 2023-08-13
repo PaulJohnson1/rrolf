@@ -994,6 +994,15 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
             rr_renderer_bezier_curve_to(renderer, -7.074075199999996, 114.84044699999998, -68.5859312, 143.41734999999997, -76.4250252, 127.36446399999997);
             rr_renderer_fill(renderer);
             break;
+        case rr_petal_id_lightning:
+            rr_renderer_set_stroke(renderer, 0xff00cfcf);
+            rr_renderer_set_fill(renderer, 0xff00ffff);
+            rr_renderer_set_line_width(renderer, 3.0f);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_arc(renderer, 0.0f, 0.0f, 10.0f);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
         default:
             break;
         }
