@@ -155,6 +155,8 @@ float x, float y,
         ai->ai_aggro_type = rr_ai_aggro_type_none;
         break;
     case rr_mob_id_quetzalcoatlus:
+        ai->ai_aggro_type = rr_ai_aggro_type_quetzalcoatlus;
+        break;
     case rr_mob_id_trex:
     case rr_mob_id_dakotaraptor:
         ai->ai_aggro_type = rr_ai_aggro_type_t_rex;

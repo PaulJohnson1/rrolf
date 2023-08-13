@@ -655,6 +655,91 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
     }
 }
 
+static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
+                                       struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    if (check_if_aggro(ai, simulation))
+        ai->ai_state = rr_ai_state_waiting_to_attack;
+
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_recovering_after_charge:
+    case rr_ai_state_idle:
+        tick_idle(entity, simulation);
+        break;
+    case rr_ai_state_idle_moving:
+        tick_idle_moving(entity, simulation);
+        break;
+    case rr_ai_state_waiting_to_attack:
+    {
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_attacking;
+            ai->ticks_until_next_action = 2;
+            break;
+        }
+
+        if (ai->target_entity == RR_NULL_ENTITY)
+        {
+            ai->ai_state = rr_ai_state_idle_moving;
+            ai->ticks_until_next_action = 25;
+            break;
+        }
+
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction =
+            predict(delta, physical2->velocity, ai->has_prediction * 15);
+        rr_component_physical_set_angle(
+            physical, rr_vector_theta(&prediction));
+        break;
+    }
+    case rr_ai_state_attacking:
+    {
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_waiting_to_attack;
+            ai->ticks_until_next_action = rand() % 12 + 18;
+            break;
+        }
+
+        if (ai->target_entity == RR_NULL_ENTITY)
+        {
+            ai->ai_state = rr_ai_state_idle_moving;
+            ai->ticks_until_next_action = 25;
+            break;
+        }
+
+        struct rr_vector accel;
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        struct rr_vector prediction =
+            predict(delta, physical2->velocity, ai->has_prediction * 15);
+        float target_angle = rr_vector_theta(&prediction);
+
+        rr_component_physical_set_angle(physical, target_angle);
+
+        rr_vector_from_polar(&accel, 35, target_angle);
+        rr_vector_add(&physical->acceleration, &accel);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void system_for_each(EntityIdx entity, void *simulation)
 {
     struct rr_simulation *this = simulation;
@@ -735,6 +820,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_ai_aggro_type_meteor:
         tick_ai_aggro_meteor(entity, this);
+        break;
+    case rr_ai_aggro_type_quetzalcoatlus:
+        tick_ai_aggro_quetzalcoatlus(entity, this);
         break;
     default:
         RR_UNREACHABLE("invalid ai aggro type state");
