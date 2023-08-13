@@ -32,10 +32,10 @@ void rr_renderer_render_particle(struct rr_renderer *renderer, struct rr_particl
     switch(this->type)
     {
         case 0:
+            rr_renderer_set_fill(renderer, this->color);
             rr_renderer_begin_path(renderer);
             rr_renderer_arc(renderer, this->position[0].x, this->position[0].y, this->size);
             rr_renderer_fill(renderer);
-            rr_renderer_set_global_alpha(renderer, 1);
             break;
         case 1:
             rr_renderer_set_stroke(renderer, 0xffccccfc);
@@ -49,5 +49,5 @@ void rr_renderer_render_particle(struct rr_renderer *renderer, struct rr_particl
         default:
             break;
     }
-    rr_renderer_set_fill(renderer, this->color);
+    rr_renderer_set_global_alpha(renderer, 1);
 }
