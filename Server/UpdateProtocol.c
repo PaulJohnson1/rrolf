@@ -87,7 +87,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         physical->y - physical->radius >
             captures->view_y + captures->view_height)
         return;
-    if (rr_simulation_has_drop(simulation, entity) && rr_simulation_get_drop(simulation, entity)->picked_up_by[captures->player_info->client_id])
+    if (rr_simulation_has_drop(simulation, entity) && rr_bitset_get(rr_simulation_get_drop(captures->simulation, entity)->picked_up_by, captures->player_info->client_id))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
     return;
@@ -133,7 +133,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
         // deletion spotted!
         uint8_t out_of_view = rr_simulation_has_entity(captures->simulation, id) == 0;
         if (!out_of_view)
-            if (rr_simulation_has_drop(captures->simulation, id) && rr_simulation_get_drop(captures->simulation, id)->picked_up_by[player_info->client_id])
+            if (rr_simulation_has_drop(captures->simulation, id) && rr_bitset_get(rr_simulation_get_drop(captures->simulation, id)->picked_up_by, player_info->client_id))
                 out_of_view = 2;
         rr_bitset_unset(player_info->entities_in_view, id);
         proto_bug_write_varuint(encoder, id, "entity deletion id");
