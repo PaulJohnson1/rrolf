@@ -475,6 +475,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
+        if (this->simulation_active)
+        {
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                            (uint8_t *)"simulation active",
+                            sizeof "simulation active" - 1);
+            return -1;
+        }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
@@ -483,13 +490,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 this->clients[i].server = this;
                 this->clients[i].file_descriptor = lws_get_socket_fd(ws);
                 this->clients[i].socket_handle = ws;
-                if (this->simulation_active)
-                {
-                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                    (uint8_t *)"simulation active",
-                                    sizeof "simulation active" - 1);
-                    return -1;
-                }
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
@@ -544,7 +544,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     return 0;
                 }
             }
-        RR_UNREACHABLE("couldn't remove client");
+        puts("client joined but instakicked");
+        //RR_UNREACHABLE("couldn't remove client");
         break;
     }
     case LWS_CALLBACK_SERVER_WRITEABLE:
