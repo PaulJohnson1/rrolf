@@ -118,10 +118,39 @@ void rr_main_loop(struct rr_game *this)
                 function({clientX, clientY, button}){Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     1, +!!button)};
-            window.onmousemove =
-                function({clientX, clientY, button}){Module._rr_mouse_event(
+            window.onmousemove = function(e){
+                    e.preventDefault();
+                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                    Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     2, +!!button)};
+            window.ontouchstart = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    0, touch.force > 0.5);
+            };
+            window.ontouchmove = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    2, touch.force > 0.5);
+            };
+            window.ontouchend = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    1, touch.force > 0.5);
+            };
             window.onmouseup =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
