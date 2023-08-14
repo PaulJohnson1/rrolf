@@ -567,6 +567,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->messages_size = 0;
             }
         }
+        break;
     }
     case LWS_CALLBACK_RECEIVE:
     {
