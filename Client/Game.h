@@ -139,8 +139,10 @@ struct rr_game
     struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT * 2];
+    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
 
+    uint8_t is_mobile;
+    
     uint8_t squad_pos;
     uint8_t socket_ready;
     uint8_t socket_pending;

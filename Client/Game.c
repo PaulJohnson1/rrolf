@@ -12,7 +12,9 @@
 
 #include <Client/Assets/Init.h>
 #include <Client/Assets/RenderFunctions.h>
+#include <Client/DOM.h>
 #include <Client/InputData.h>
+#include <Client/Mobile.h>
 #include <Client/Renderer/ComponentRender.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
@@ -407,6 +409,7 @@ void rr_game_init(struct rr_game *this)
     // clang-format on
     this->tiles_size = 3;
     this->ticks_until_text_cache = 24;
+    this->is_mobile = rr_dom_test_mobile();
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -483,44 +486,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
-            struct proto_bug encoder2;
-            proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 0, "header");
-            proto_bug_write_uint8(&encoder2, 0, "movement type");
-            uint8_t movement_flags = 0;
-            movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
-                 rr_bitset_get(this->input_data->keys_pressed, 38))
-                << 0;
-            movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
-                 rr_bitset_get(this->input_data->keys_pressed, 37))
-                << 1;
-            movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
-                 rr_bitset_get(this->input_data->keys_pressed, 40))
-                << 2;
-            movement_flags |=
-                (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
-                 rr_bitset_get(this->input_data->keys_pressed, 39))
-                << 3;
-            movement_flags |= this->input_data->mouse_buttons << 4;
-            movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32)
-                              << 4;
-            movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
-                              << 5;
-            movement_flags |= this->cache.use_mouse << 6;
-            proto_bug_write_uint8(&encoder2, movement_flags,
-                                  "movement kb flags");
-            proto_bug_write_float32(&encoder2,
-                                    this->input_data->mouse_x -
-                                        this->renderer->width / 2,
-                                    "mouse x");
-            proto_bug_write_float32(&encoder2,
-                                    this->input_data->mouse_y -
-                                        this->renderer->height / 2,
-                                    "mouse y");
-            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         }
         case 69:
@@ -756,6 +721,73 @@ static void render_background(struct rr_component_player_info *player_info,
 #undef render_map_feature
 }
 
+static void write_serverbound_packet_desktop(struct rr_game *this)
+{
+    struct proto_bug encoder2;
+    proto_bug_init(&encoder2, output_packet);
+    proto_bug_write_uint8(&encoder2, 0, "header");
+    proto_bug_write_uint8(&encoder2, 0, "movement type");
+    uint8_t movement_flags = 0;
+    movement_flags |=
+        (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
+            rr_bitset_get(this->input_data->keys_pressed, 38))
+        << 0;
+    movement_flags |=
+        (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
+            rr_bitset_get(this->input_data->keys_pressed, 37))
+        << 1;
+    movement_flags |=
+        (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
+            rr_bitset_get(this->input_data->keys_pressed, 40))
+        << 2;
+    movement_flags |=
+        (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
+            rr_bitset_get(this->input_data->keys_pressed, 39))
+        << 3;
+    movement_flags |= this->input_data->mouse_buttons << 4;
+    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32)
+                        << 4;
+    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
+                        << 5;
+    movement_flags |= this->cache.use_mouse << 6;
+    proto_bug_write_uint8(&encoder2, movement_flags,
+                            "movement kb flags");
+    proto_bug_write_float32(&encoder2,
+                            this->input_data->mouse_x -
+                                this->renderer->width / 2,
+                            "mouse x");
+    proto_bug_write_float32(&encoder2,
+                            this->input_data->mouse_y -
+                                this->renderer->height / 2,
+                            "mouse y");
+    rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
+    struct proto_bug encoder;
+    proto_bug_init(&encoder, output_packet);
+    proto_bug_write_uint8(&encoder, 2, "header");
+    uint8_t should_write = 0;
+    uint8_t switch_all = rr_bitset_get_bit(
+        this->input_data->keys_pressed_this_tick, 'X');
+    for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                                '0' + n) ||
+            switch_all)
+        {
+            proto_bug_write_uint8(&encoder, n, "petal switch");
+            should_write = 1;
+        }
+    if (this->cache.slots_unlocked == 10 &&
+        (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                            '0') ||
+            switch_all))
+        proto_bug_write_uint8(&encoder, 10, "petal switch");
+    if (should_write)
+    {
+        proto_bug_write_uint8(&encoder, 0, "petal switch");
+        rr_websocket_send(&this->socket,
+                            encoder.current - encoder.start);
+    }
+}
+
 void rr_game_tick(struct rr_game *this, float delta)
 {
     if (this->ticks_until_text_cache == 0)
@@ -930,61 +962,36 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->socket_ready)
     {
 #ifndef RIVET_BUILD
+#define WRITE_CHEAT(X) \
+struct proto_bug encoder; \
+proto_bug_init(&encoder, output_packet); \
+proto_bug_write_uint8(&encoder, 3, "header"); \
+proto_bug_write_uint8(&encoder, X, "cheat type"); \
+rr_websocket_send(&this->socket, encoder.current - encoder.start);
+
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               75 /* k */))
         {
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, 3, "header");
-            proto_bug_write_uint8(&encoder, 2, "cheat type");
-            rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            WRITE_CHEAT(2)
         }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               76 /* l */))
         {
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, 3, "header");
-            proto_bug_write_uint8(&encoder, 1, "cheat type");
-            rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            WRITE_CHEAT(1)
         }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                               86 /* v */))
         {
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, 3, "header");
-            proto_bug_write_uint8(&encoder, 3, "cheat type");
-            rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            WRITE_CHEAT(3)
         }
+#undef WRITE_CHEAT
 #endif
         if (this->simulation_ready)
         {
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, 2, "header");
-            uint8_t should_write = 0;
-            uint8_t switch_all = rr_bitset_get_bit(
-                this->input_data->keys_pressed_this_tick, 'X');
-            for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
-                if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                                      '0' + n) ||
-                    switch_all)
-                {
-                    proto_bug_write_uint8(&encoder, n, "petal switch");
-                    should_write = 1;
-                }
-            if (this->cache.slots_unlocked == 10 &&
-                (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                                   '0') ||
-                 switch_all))
-                proto_bug_write_uint8(&encoder, 10, "petal switch");
-            if (should_write)
-            {
-                proto_bug_write_uint8(&encoder, 0, "petal switch");
-                rr_websocket_send(&this->socket,
-                                  encoder.current - encoder.start);
-            }
+            if (!this->is_mobile)
+                write_serverbound_packet_desktop(this);
+            else    
+                rr_write_serverbound_packet_mobile(this);
         }
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,

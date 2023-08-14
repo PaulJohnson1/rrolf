@@ -80,6 +80,17 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
     }
 }
 
+void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t identifier)
+{
+    if (identifier >= 16)
+        return;
+    struct rr_input_touch *touch = &this->input_data->touches[identifier];
+    touch->touch_x = x;
+    touch->touch_y = y;
+    touch->identifier = identifier;
+    touch->active = state;
+}
+
 void rr_wheel_event(struct rr_game *this, float delta)
 {
     this->input_data->scroll_delta = delta;
@@ -131,33 +142,39 @@ void rr_main_loop(struct rr_game *this)
                     Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     0, +!!button)};
-            window.ontouchstart = function(e){
-                e.stopPropagation();
+            window.addEventListener("touchstart", function(e){
+                e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
                 Module._rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     1, 0);
-            };
-            window.ontouchmove = function(e){
-                e.stopPropagation();
+                for (const t of e.changedTouches)
+                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
+            }, {passive: false});
+            window.addEventListener("touchmove", function(e){
+                e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
                 Module._rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     2, 0);
-            };
-            window.ontouchend = function(e){
-                e.stopPropagation();
+                for (const t of e.changedTouches)
+                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
+            }, {passive: false});
+            window.addEventListener("touchend", function(e){
+                e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
                 Module._rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     0, 0);
-            };
+                for (const t of e.changedTouches)
+                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 0, t.identifier);
+            }, {passive: false});
             window.onwheel =
                 function({deltaY}){Module._rr_wheel_event($0, deltaY)};
             Module.addCtx = function()
@@ -217,7 +234,7 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
     float a = height / 1080;
     float b = width / 1920;
 
-    float scale = (this->renderer->scale = b < a ? a : b);
+    float scale = (this->renderer->scale = b < a ? a : b) * device_pixel_ratio;
     this->renderer->width = this->window->width = this->window->abs_width =
         width;
     this->renderer->height = this->window->height = this->window->abs_height =
@@ -228,9 +245,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
 
 int main()
 {
-    printf("client init version %llu\n",
-           14533570799063715796ull /* no secrets revealed */ ^ RR_SECRET64 ^
-               2340498565434ull);
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
