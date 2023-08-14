@@ -166,6 +166,29 @@ void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
             this, game->squad_player_tooltips[data->width], game);
 }
 
+static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_dynamic_text_metadata *data = this->data;
+    uint32_t sum = 0;
+    uint32_t count = 0;
+    for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+    {
+        if (!game->squad_members[i].in_use)
+            continue;
+        sum += game->squad_members[i].requested_start_wave;
+        ++count;
+    }
+    data->text[sprintf(data->text, "Squad will spawn on wave %d",
+                       sum / count)] = 0;
+}
+
+struct rr_ui_element *rr_ui_wave_spawn_text_init()
+{
+    struct rr_ui_element *this =
+        rr_ui_dynamic_text_init(16, 0xffffffff, wave_spawn_at);
+    return this;
+}
+
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
 {
@@ -298,12 +321,12 @@ static void create_squad_on_event(struct rr_ui_element *this,
     {
         if (game->socket_ready && game->squad_pos == 0)
         {
-            *((uint8_t *)this->data) ^= 1;
+            //*((uint8_t *)this->data) ^= 1;
             printf("setting to: %d\n", *((uint8_t *)this->data));
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 72, "header");
-            proto_bug_write_uint8(&encoder, *((uint8_t *)this->data), "private");
+            proto_bug_write_uint8(&encoder, (*((uint8_t *)this->data) ^ 1), "private");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }

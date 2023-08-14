@@ -188,7 +188,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_set_background(
                             rr_ui_link_toggle(
                                 rr_ui_v_container_init(
-                                    rr_ui_container_init(), 10, 20,
+                                    rr_ui_container_init(), 10, 10,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
                                     rr_ui_flex_container_init(
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
@@ -207,6 +207,7 @@ void rr_game_init(struct rr_game *this)
                                         socket_ready,
                                         rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
+                                            rr_ui_wave_spawn_text_init(),
                                             rr_ui_h_container_init(
                                                 rr_ui_container_init(), 0, 10,
                                                 rr_ui_squad_player_container_init(this, 0),

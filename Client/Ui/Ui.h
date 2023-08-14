@@ -136,6 +136,7 @@ struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char 
 // custom
 struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game *, uint8_t);
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *, uint8_t);
+struct rr_ui_element *rr_ui_wave_spawn_text_init();
 struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_inventory_container_init();
