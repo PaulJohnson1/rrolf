@@ -1,15 +1,28 @@
-FROM alpine AS builder
-RUN apk update && apk add --no-cache llvm-dev make cmake clang libwebsockets-dev curl-dev musl-dev
+# FROM alpine AS builder
+# RUN apk update && apk add --no-cache llvm-dev make cmake clang libwebsockets-dev curl-dev musl-dev
+# WORKDIR /usr/src
+# COPY . .
+# RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
+# # RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
+
+# FROM alpine
+# RUN apk update && apk add --no-cache ca-certificates curl-dev libwebsockets && apk cache clean
+# WORKDIR /usr/src/app
+# COPY --from=builder /usr/src/rrolf-server .
+# CMD ./rrolf-server
+
+FROM ubuntu as builder
+RUN apt-get update && apt-get install make cmake clang libwebsockets-dev libcurl4-openssl-dev -y
 WORKDIR /usr/src
 COPY . .
 RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
-# RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
 
-FROM alpine
-RUN apk update && apk add --no-cache ca-certificates curl-dev libwebsockets && apk cache clean
-WORKDIR /usr/src/app
+FROM ubuntu
+CMD ./rrolf-server
+RUN apt-get update && apt-get install libwebsockets-dev libcurl4-openssl-dev -y
 COPY --from=builder /usr/src/rrolf-server .
 CMD ./rrolf-server
+
 
 # # small ssh server
 # FROM alpine
