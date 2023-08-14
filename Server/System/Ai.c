@@ -416,7 +416,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                             RR_MOB_RARITY_SCALING[mob->rarity].health * 0.4);
             health->damage = RR_MOB_DATA[mob->id].damage *
                              RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.2f;
-            rr_component_health_set_hidden(health, 1);
 
             projectile->ticks_until_death = 50;
 

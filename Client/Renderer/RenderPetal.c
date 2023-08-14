@@ -15,6 +15,8 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_petal *petal =
         rr_simulation_get_petal(simulation, entity);
+    struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
+    rr_renderer_add_color_filter(renderer, 0xffff0000, 0.5 * health->damage_animation);
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
@@ -36,7 +38,7 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
         particle->color = RR_RARITY_COLORS[petal->rarity];
     }
     */
-    uint8_t use_cache = 1;
+    uint8_t use_cache = health->damage_animation < 0.1;
     if (petal->id != rr_petal_id_peas || petal->detached == 1)
         rr_renderer_draw_petal(renderer, petal->id, use_cache);
     else

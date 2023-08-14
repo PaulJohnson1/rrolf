@@ -78,7 +78,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
 
     rr_component_health_set_max_health(health, scale_h * data->health);
     rr_component_health_set_health(health, scale_h * data->health);
-    rr_component_health_set_hidden(health, 1);
+    rr_component_health_set_flags(health, health->flags | 1);
     health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
 
     if (data->secondary_cooldown > 0)

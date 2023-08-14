@@ -8,14 +8,14 @@
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(health, float32)                                                         \
-    X(hidden, uint8)                                                           \
+    X(flags, uint8)                                                           \
     X(max_health, float32)
 
 enum
 {
     state_flags_max_health = 0b001,
     state_flags_health = 0b010,
-    state_flags_hidden = 0b100,
+    state_flags_flags = 0b100,
     state_flags_all = 0b111
 };
 
@@ -41,7 +41,7 @@ void rr_component_health_write(struct rr_component_health *this,
     proto_bug_write_varuint(encoder, state, "health component state");
     float tmp_health = this->health;
     float tmp_max = this->max_health;
-    if (this->hidden)
+    if (this->flags & 1)
     {
         this->max_health = 0;
         if (this->health != 0)
@@ -60,6 +60,7 @@ void rr_component_health_do_damage(struct rr_component_health *this, float v)
         return;
     if (v <= this->damage_reduction)
         return;
+    rr_component_health_set_flags(this, this->flags | 2);
     v = this->health - (v - this->damage_reduction);
     if (v < 0)
         v = 0;
@@ -75,12 +76,14 @@ void rr_component_health_set_health(struct rr_component_health *this, float v)
         v = this->max_health;
     else if (v < 0)
         v = 0;
+    if (v < this->health)
+        rr_component_health_set_flags(this, this->flags | 2);
     this->protocol_state |= (v != this->health) * state_flags_health;
     this->health = v;
 }
 
 RR_DEFINE_PUBLIC_FIELD(health, float, max_health)
-RR_DEFINE_PUBLIC_FIELD(health, uint8_t, hidden)
+RR_DEFINE_PUBLIC_FIELD(health, uint8_t, flags)
 
 #endif
 

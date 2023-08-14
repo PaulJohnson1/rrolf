@@ -13,7 +13,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_health *health =
         rr_simulation_get_health(simulation, entity);
-    if (health->hidden || rr_simulation_has_petal(simulation, entity))
+    if (health->flags & 1 || rr_simulation_has_petal(simulation, entity))
         return;
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);

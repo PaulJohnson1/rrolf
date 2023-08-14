@@ -116,20 +116,17 @@ void rr_main_loop(struct rr_game *this)
             };
             window.onmousedown =
                 function(e){
-                    e.preventDefault();
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
                     Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     1, +!!button)};
             window.onmousemove = function(e){
-                    e.preventDefault();
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
                     Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     2, +!!button)};
             window.onmouseup =
                 function(e){
-                    e.preventDefault();
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
                     Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
