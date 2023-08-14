@@ -246,14 +246,6 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {
-    // struct __rr_client_message *msg =
-    //     malloc(sizeof(struct __rr_client_message));
-    // msg->data = malloc(size);
-    // memcpy(msg->data, data, size);
-    // msg->size = size;
-    // msg->next = this->messages;
-    // this->messages = msg;
-
     struct __rr_client_message *msg = &this->messages[this->messages_size++];
     uint8_t *malloced = malloc(size * (sizeof(char)) + LWS_PRE);
     memcpy(malloced + LWS_PRE, data, size);

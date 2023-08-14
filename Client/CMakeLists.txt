@@ -85,6 +85,7 @@ set(SRCS
     Ui/ToggleBox.c
     Ui/Tooltip/Petal.c
     Ui/Tooltip/Mob.c
+    Ui/Tooltip/Squad.c
     Game.c
     InputData.c
     Main.c

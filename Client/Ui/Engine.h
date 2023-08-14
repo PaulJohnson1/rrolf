@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Client/Ui/Ui.h>
 #include <stdarg.h>
 #include <stdint.h>
+
+struct rr_ui_element;
+struct rr_game;
 
 struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *, int32_t,
                                              int32_t, ...);
@@ -21,4 +23,4 @@ void rr_ui_v_container_set(struct rr_ui_element *);
 void rr_ui_choose_container_set(struct rr_ui_element *);
 void rr_ui_grid_container_set(struct rr_ui_element *);
 
-void rr_ui_container_refactor(struct rr_ui_element *);
+void rr_ui_container_refactor(struct rr_ui_element *, struct rr_game *);

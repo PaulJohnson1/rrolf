@@ -10,7 +10,7 @@ extern "C"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define PROTO_BUG_WINDOWS
 #endif
-
+#define PROTO_BUG_NDEBUG 1
 #if defined(NDEBUG) && !defined(PROTO_BUG_NDEBUG)
 #define PROTO_BUG_NDEBUG
 #endif

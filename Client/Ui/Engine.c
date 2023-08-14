@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+#include <Client/Ui/Ui.h>
+#include <Shared/Utilities.h>
+
 struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
                                              int32_t outer_spacing,
                                              int32_t inner_spacing, ...)
@@ -246,16 +249,23 @@ static void rr_ui_scroll_container_set(struct rr_ui_element *c)
     c->abs_width = c->width = w + 10;
 }
 
-void rr_ui_container_refactor(struct rr_ui_element *c)
+void rr_ui_container_refactor(struct rr_ui_element *c, struct rr_game *game)
 {
     if (c->elements.size != 0)
     {
         for (uint64_t i = 0; i < c->elements.size; ++i)
         {
             struct rr_ui_element *element = c->elements.start[i];
+            element->animation =
+                rr_lerp(element->animation, element->should_show(element, game) == 0,
+                        0.4 + 0.6 * element->first_frame);
+            uint8_t before_hidden = element->completely_hidden;
+            element->completely_hidden = element->animation > 0.99;
+            if (element->completely_hidden && before_hidden == 0)
+                element->on_hide(element, game);
             if (element->completely_hidden)
                 continue;
-            rr_ui_container_refactor(element);
+            rr_ui_container_refactor(element, game);
         }
         if (c->resizeable)
         {

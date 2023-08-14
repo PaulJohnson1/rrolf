@@ -208,15 +208,19 @@ void rr_game_init(struct rr_game *this)
                                         rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
                                             rr_ui_h_container_init(
-                                                rr_ui_container_init(), 0, 20,
-                                                rr_ui_squad_player_container_init(&this->squad_members[0]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[1]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[2]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[3]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[4]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[5]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[6]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[7]),
+                                                rr_ui_container_init(), 0, 10,
+                                                rr_ui_squad_player_container_init(this, 0),
+                                                rr_ui_squad_player_container_init(this, 1),
+                                                rr_ui_squad_player_container_init(this, 2),
+                                                rr_ui_squad_player_container_init(this, 3),
+                                                NULL
+                                            ),
+                                            rr_ui_h_container_init(
+                                                rr_ui_container_init(), 0, 10,
+                                                rr_ui_squad_player_container_init(this, 4),
+                                                rr_ui_squad_player_container_init(this, 5),
+                                                rr_ui_squad_player_container_init(this, 6),
+                                                rr_ui_squad_player_container_init(this, 7),
                                                 NULL
                                             ),
                                             rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
@@ -366,6 +370,12 @@ void rr_game_init(struct rr_game *this)
         rr_ui_never_show)
     );
     this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
+    for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+    {
+        this->squad_player_tooltips[i] = rr_ui_squad_player_tooltip_init(this, i);
+        rr_ui_container_add_element(this->window, this->squad_player_tooltips[i]);
+
+    }
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -941,7 +951,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->crafting_data.animation < 0)
         this->crafting_data.animation = 0;
     this->prev_focused = this->focused;
-    rr_ui_container_refactor(this->window);
+    rr_ui_container_refactor(this->window, this);
     rr_ui_render_element(this->window, this);
     if (!this->block_ui_input)
     {
