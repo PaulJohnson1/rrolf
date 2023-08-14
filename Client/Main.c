@@ -143,7 +143,7 @@ void rr_main_loop(struct rr_game *this)
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     0, +!!button)};
             window.addEventListener("touchstart", function(e){
-                e.preventDefault();
+                //e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
@@ -165,7 +165,7 @@ void rr_main_loop(struct rr_game *this)
                     Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
             }, {passive: false});
             window.addEventListener("touchend", function(e){
-                e.preventDefault();
+                //e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];

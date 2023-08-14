@@ -47,11 +47,6 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-#define RR_TIME_BLOCK(_, CODE)                                                 \
-    {                                                                          \
-        CODE;                                                                  \
-    };
-
 static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
 {
@@ -148,6 +143,11 @@ static void spawn_mob_swarm(struct rr_simulation *this)
                                     rr_simulation_team_id_mobs);
     }
 }
+
+#define RR_TIME_BLOCK(_, CODE)                                                 \
+    {                                                                          \
+        CODE;                                                                  \
+    };
 
 #define SPECIAL_WAVE_COUNT 5
 

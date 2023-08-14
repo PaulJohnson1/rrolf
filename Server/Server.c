@@ -176,61 +176,63 @@ void rr_server_client_free(struct rr_server_client *this)
     char petals_string[50000] = {0}; // Ensure this is large enough
     char buffer[1000] = {0};         // Temporary buffer for each item
     uint32_t wave = 0;
-
-    if (this->server->simulation_active)
+    if (this->player_info != NULL)
     {
-        wave = rr_simulation_get_arena(&this->server->simulation, 1)->wave;
-        for (struct rr_drop_picked_up *i =
-                 this->player_info->collected_this_run;
-             i < this->player_info->collected_this_run_end; i++)
+        if (this->server->simulation_active)
         {
-            // Format each item into buffer
-            snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
-                     i->count);
-
-            // If not the first item, append a comma before the item
-            if (i != this->player_info->collected_this_run)
+            wave = rr_simulation_get_arena(&this->server->simulation, 1)->wave;
+            for (struct rr_drop_picked_up *i =
+                    this->player_info->collected_this_run;
+                i < this->player_info->collected_this_run_end; i++)
             {
-                strncat(petals_string, ",", 5000 - strlen(petals_string) - 1);
-            }
+                // Format each item into buffer
+                snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
+                        i->count);
 
-            // Append the item
-            strncat(petals_string, buffer, 5000 - strlen(petals_string) - 1);
+                // If not the first item, append a comma before the item
+                if (i != this->player_info->collected_this_run)
+                {
+                    strncat(petals_string, ",", 5000 - strlen(petals_string) - 1);
+                }
+
+                // Append the item
+                strncat(petals_string, buffer, 5000 - strlen(petals_string) - 1);
+            }
+        }
+        if (petals_string[0] == 0)
+            memcpy(petals_string, "1:0:0", sizeof "1:0:0");
+        puts(petals_string);
+        // if (1)
+        // {
+        rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "1:0:0");
+        // }
+        // else
+        // {
+        //     char *malloc_string = malloc(sizeof petals_string);
+        //     char *malloc_uuid = malloc(sizeof
+        //     this->client->rivet_account.uuid); memcpy(malloc_string,
+        //     &petals_string, sizeof petals_string); memcpy(malloc_uuid,
+        //     &this->client->rivet_account.uuid, sizeof
+        //     this->client->rivet_account.uuid); struct api_join_captures
+        //     *captures = malloc(sizeof *captures); captures->rivet_uuid =
+        //     malloc_uuid; captures->petals_string = malloc_string; pthread_t
+        //     thread_id; int result = pthread_create(&thread_id, NULL,
+        //     api_join, &captures); pthread_detach(thread_id);
+        // }
+        if (this->server->simulation_active)
+        {
+            if (this->player_info->flower_id != RR_NULL_ENTITY)
+                rr_simulation_request_entity_deletion(&this->server->simulation,
+                                                    this->player_info->flower_id);
+            __rr_simulation_pending_deletion_free_components(
+                this->player_info->parent_id, &this->server->simulation);
+            __rr_simulation_pending_deletion_unset_entity(
+                this->player_info->parent_id, &this->server->simulation);
+            // rr_simulation_request_entity_deletion(&this->server->simulation,
+            //                                       this->player_info->parent_id);
         }
     }
-    if (petals_string[0] == 0)
-        memcpy(petals_string, "1:0:0", sizeof "1:0:0");
-    puts(petals_string);
-    // if (1)
-    // {
-    rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "1:0:0");
-    // }
-    // else
-    // {
-    //     char *malloc_string = malloc(sizeof petals_string);
-    //     char *malloc_uuid = malloc(sizeof
-    //     this->client->rivet_account.uuid); memcpy(malloc_string,
-    //     &petals_string, sizeof petals_string); memcpy(malloc_uuid,
-    //     &this->client->rivet_account.uuid, sizeof
-    //     this->client->rivet_account.uuid); struct api_join_captures
-    //     *captures = malloc(sizeof *captures); captures->rivet_uuid =
-    //     malloc_uuid; captures->petals_string = malloc_string; pthread_t
-    //     thread_id; int result = pthread_create(&thread_id, NULL,
-    //     api_join, &captures); pthread_detach(thread_id);
-    // }
     puts("client disconnected");
-    if (this->server->simulation_active)
-    {
-        if (this->player_info->flower_id != RR_NULL_ENTITY)
-            rr_simulation_request_entity_deletion(&this->server->simulation,
-                                                  this->player_info->flower_id);
-        __rr_simulation_pending_deletion_free_components(
-            this->player_info->parent_id, &this->server->simulation);
-        __rr_simulation_pending_deletion_unset_entity(
-            this->player_info->parent_id, &this->server->simulation);
-        // rr_simulation_request_entity_deletion(&this->server->simulation,
-        //                                       this->player_info->parent_id);
-    }
 }
 
 void rr_server_client_encrypt_message(struct rr_server_client *this,
@@ -473,13 +475,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
-        if (this->simulation_active)
-        {
-            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                             (uint8_t *)"simulation active",
-                             sizeof "simulation active" - 1);
-            return -1;
-        }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
@@ -488,7 +483,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 this->clients[i].server = this;
                 this->clients[i].file_descriptor = lws_get_socket_fd(ws);
                 this->clients[i].socket_handle = ws;
-
+                if (this->simulation_active)
+                {
+                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                    (uint8_t *)"simulation active",
+                                    sizeof "simulation active" - 1);
+                    return -1;
+                }
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
@@ -543,7 +544,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     return 0;
                 }
             }
-        RR_UNREACHABLE("cloudn't remove client");
+        RR_UNREACHABLE("couldn't remove client");
         break;
     }
     case LWS_CALLBACK_SERVER_WRITEABLE:
