@@ -65,7 +65,7 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game, struct r
     rr_renderer_line_to(renderer, -12, 0);
     rr_renderer_fill(renderer);
     rr_renderer_context_state_free(renderer, &state);
-    if (flower->face_flags & 4)
+    if (flower->face_flags & 8)
     {
         rr_renderer_translate(renderer, 0, -36);
         rr_renderer_draw_petal(renderer, rr_petal_id_crest, 1);
