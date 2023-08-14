@@ -57,7 +57,7 @@ struct rr_simulation
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
     RR_SERVER_ONLY(uint32_t wave_points;)
     RR_SERVER_ONLY(uint32_t special_wave_id;)
-    RR_SERVER_ONLY(struct rr_simulation_animation animations[64];)
+    RR_SERVER_ONLY(struct rr_simulation_animation animations[512];)
     RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)
     uint8_t game_over;

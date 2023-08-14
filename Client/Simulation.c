@@ -39,25 +39,33 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         {
             struct rr_simulation *del_s = game->deletion_simulation;
             EntityIdx id_2 = rr_simulation_alloc_entity(del_s);
-            #define XX(COMPONENT, ID) \
-            if (rr_simulation_has_##COMPONENT(this, id)) \
-            { \
-                struct rr_component_##COMPONENT *o = rr_simulation_get_##COMPONENT(this, id); \
-                struct rr_component_##COMPONENT *c = rr_simulation_add_##COMPONENT(del_s, id_2); \
-                memcpy(c, o, sizeof (struct rr_component_##COMPONENT)); \
-            } 
+#define XX(COMPONENT, ID)                                                      \
+    if (rr_simulation_has_##COMPONENT(this, id))                               \
+    {                                                                          \
+        struct rr_component_##COMPONENT *o =                                   \
+            rr_simulation_get_##COMPONENT(this, id);                           \
+        struct rr_component_##COMPONENT *c =                                   \
+            rr_simulation_add_##COMPONENT(del_s, id_2);                        \
+        memcpy(c, o, sizeof(struct rr_component_##COMPONENT));                 \
+    }
             RR_FOR_EACH_COMPONENT
-            #undef XX
-            rr_simulation_get_physical(del_s, id_2)->deletion_type = type;
-            if (rr_simulation_has_mob(this, id) && (rr_simulation_get_relations(this, id)->team == rr_simulation_team_id_mobs || rr_simulation_get_mob(this, id)->id == rr_mob_id_meteor))
+#undef XX
+            if (rr_simulation_has_physical(del_s, id_2))
             {
-                struct rr_component_mob *mob = rr_simulation_get_mob(this, id);
-                game->cache.mob_kills[mob->id][mob->rarity]++;
+                rr_simulation_get_physical(del_s, id_2)->deletion_type = type;
+                if (rr_simulation_has_mob(this, id) &&
+                    (rr_simulation_get_relations(this, id)->team ==
+                         rr_simulation_team_id_mobs ||
+                     rr_simulation_get_mob(this, id)->id == rr_mob_id_meteor))
+                {
+                    struct rr_component_mob *mob =
+                        rr_simulation_get_mob(this, id);
+                    game->cache.mob_kills[mob->id][mob->rarity]++;
+                }
             }
         }
         __rr_simulation_pending_deletion_free_components(id, this);
         __rr_simulation_pending_deletion_unset_entity(id, this);
-        //rr_bitset_set(this->pending_deletions, id);
     }
 
     // assuming that player info is written first (is it though)
@@ -94,7 +102,8 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
     uint32_t len = proto_bug_read_varuint(encoder, "ani count");
     for (uint32_t i = 0; i < len; ++i)
     {
-        struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, proto_bug_read_uint8(encoder, "ani type"));
+        struct rr_particle *particle = rr_particle_alloc(
+            &game->particle_manager, proto_bug_read_uint8(encoder, "ani type"));
         particle->length = proto_bug_read_uint8(encoder, "ani length");
         for (uint32_t i = 0; i < particle->length; ++i)
         {
@@ -111,17 +120,20 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
-    //rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_free_components);
-    //rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity);
-    //memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     rr_simulation_create_component_vectors(this);
     rr_system_interpolation_tick(this, 1 - powf(0.9f, delta * 10));
 }
 
 void rr_deletion_simulation_tick(struct rr_simulation *this, float delta)
 {
-    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_free_components);
-    rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity);
+    rr_bitset_for_each_bit(
+        this->pending_deletions,
+        this->pending_deletions + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this,
+        __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->pending_deletions,
+                           this->pending_deletions +
+                               RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT),
+                           this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     rr_simulation_create_component_vectors(this);
     rr_system_deletion_animation_tick(this, 1 - powf(0.9f, delta * 10));

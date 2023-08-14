@@ -469,6 +469,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                    p_petal->simulation_id);
                     rr_simulation_request_entity_deletion(
                         simulation, p_petal->simulation_id);
+                    p_petal->simulation_id = RR_NULL_ENTITY;
                     if (petal->rarity == 0)
                         return;
                     EntityIdx mob_id = p_petal->simulation_id =

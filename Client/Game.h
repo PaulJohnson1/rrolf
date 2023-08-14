@@ -68,7 +68,7 @@ struct rr_game
     struct rr_game_cache cache;
 
     struct rr_rivet_account rivet_account;
-    struct rr_game_squad_client squad_members[4];
+    struct rr_game_squad_client squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
     // petal rendering cache
@@ -139,7 +139,7 @@ struct rr_game
     struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    EntityIdx player_infos[8];
+    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT * 2];
 
     uint8_t squad_pos;
     uint8_t socket_ready;
