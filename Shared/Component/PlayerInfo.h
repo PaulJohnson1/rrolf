@@ -37,6 +37,7 @@ struct rr_drop_picked_up
 struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
+    float rotation_direction;
 };
 
 struct rr_component_player_info

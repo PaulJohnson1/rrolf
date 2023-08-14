@@ -9,9 +9,8 @@
 
 #include <Client/Renderer/RenderFunctions.h>
 
-void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
+void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
 {
-    struct rr_simulation *simulation = game->simulation;
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
@@ -19,44 +18,16 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
     if (rr_simulation_get_relations(simulation, entity)->team ==
         rr_simulation_team_id_players)
         rr_renderer_add_color_filter(renderer, 0xffabab00, 0.5);
-    rr_renderer_add_color_filter(renderer, 0xffff0000,
-                                 physical->lerp_server_animation_tick * 0.08);
-
+    rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
+    rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[mob->rarity].radius);
-    if (rr_simulation_get_health(simulation, entity)->health == 0)
-    {
-        rr_renderer_set_global_alpha(
-            renderer, (physical->lerp_server_animation_tick) * 0.2);
-        rr_renderer_scale(
-            renderer, 1 + (6 - physical->lerp_server_animation_tick) * 0.15);
-        if (rr_simulation_get_relations(simulation, entity)->team ==
-                rr_simulation_team_id_mobs &&
-            !mob->counted_as_killed)
-        {
-            mob->counted_as_killed = 1;
-            ++game->cache.mob_kills[mob->id][mob->rarity];
-            /*
-            for (uint32_t i = 0; i < 128; ++i)
-            {
-                struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
-                float angle = rr_frand() * 2 * M_PI;
-                float dist = rr_frand() * 50;
-                rr_vector_from_polar(&particle->velocity, rr_frand() * 10 + 5, angle);
-                rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
-                particle->size = 4 + rr_frand() * 2;
-                particle->opacity = 0.8;
-                particle->color = 0xffab3423;
-            }
-            */
-        }
-    }
     if (mob->id == rr_mob_id_meteor)
     {
         struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
         float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
         float dist = rr_frand() * 50;
-        rr_vector_from_polar(&particle->velocity, rr_frand() * 10 + 5, angle);
+        rr_vector_from_polar(&particle->velocity, (rr_frand() * 5 + 5) * RR_MOB_RARITY_SCALING[mob->rarity].radius, angle);
         rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
         particle->size = (4 + rr_frand() * 2) * RR_MOB_RARITY_SCALING[mob->rarity].radius;
         particle->opacity = 0.8;
@@ -66,9 +37,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game)
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sinf(physical->animation);
 
-    uint8_t use_cache =
-        physical->lerp_server_animation_tick < 0.5 ||
-        rr_simulation_get_health(simulation, entity)->health == 0;
+    uint8_t use_cache = 1;
     uint8_t is_friendly =
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)

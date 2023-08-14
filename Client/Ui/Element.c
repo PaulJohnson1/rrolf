@@ -19,8 +19,10 @@ static void default_function(struct rr_ui_element *this, struct rr_game *game)
 
 static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
+    /*
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         game->top_ui_open = game->bottom_ui_open = 0;
+    */
     return; // does nothing
 }
 

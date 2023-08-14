@@ -36,7 +36,8 @@ enum rr_ai_aggro_type
     rr_ai_aggro_type_triceratops,
     rr_ai_aggro_type_pachycephalosaurus,
     rr_ai_aggro_type_meteor,
-    rr_ai_aggro_type_ankylosaurus
+    rr_ai_aggro_type_ankylosaurus,
+    rr_ai_aggro_type_quetzalcoatlus
 };
 
 struct rr_component_ai

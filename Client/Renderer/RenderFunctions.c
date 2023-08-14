@@ -320,6 +320,37 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         else
             rr_meteor_draw(renderer);
         break;
+    case rr_mob_id_quetzalcoatlus:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_rotate(renderer, animation_tick * 0.1f);
+            rr_renderer_translate(renderer, 150, 25);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[0]);
+            else
+                rr_quetzalcoatlus_wing1_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_rotate(renderer, animation_tick * -0.1f);
+            rr_renderer_translate(renderer, -150, 25);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[1]);
+            else
+                rr_quetzalcoatlus_wing2_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        if (flags)
+            rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_body);
+        else
+            rr_quetzalcoatlus_body_draw(renderer);
+        rr_renderer_translate(renderer, 0, -165);
+        if (flags)
+            rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_head);
+        else
+            rr_quetzalcoatlus_head_draw(renderer);
+        break;
     default:
         break;
     }

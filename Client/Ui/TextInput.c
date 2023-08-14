@@ -10,10 +10,18 @@
 
 struct rr_ui_text_input_metadata
 {
+    char *name;
     char *text;
     uint8_t max;
     uint8_t focused;
 };
+
+static void text_input_on_hide(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    struct rr_ui_text_input_metadata *data = this->data;
+    rr_dom_element_hide(data->name);
+}
 
 static void text_input_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
@@ -39,14 +47,14 @@ static void text_input_on_render(struct rr_ui_element *this,
             data->text[--data->len] = 0;
     }
     */
-    rr_dom_element_show("text");
-    rr_dom_element_update_position("text", this->abs_x, this->abs_y, this->abs_width * renderer->scale, this->abs_height * renderer->scale);
-    rr_dom_retrieve_text("text", data->text, data->max);
-    return;
+    rr_dom_element_show(data->name);
+    rr_dom_element_update_position(data->name, this->abs_x, this->abs_y, this->abs_width * renderer->scale * renderer->state.transform_matrix[0], this->abs_height * renderer->scale * renderer->state.transform_matrix[4]);
+    rr_dom_retrieve_text(data->name, data->text, data->max);
     rr_renderer_scale(renderer, renderer->scale);
+    /*
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         data->focused = rr_ui_mouse_over(this, game);
-
+    */
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_width(renderer, this->height * 0.12);
@@ -65,7 +73,7 @@ static void text_input_on_render(struct rr_ui_element *this,
 }
 
 struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
-                                            uint8_t max_length)
+                                            uint8_t max_length, char *name)
 {
     struct rr_ui_element *element = rr_ui_element_init();
     struct rr_ui_text_input_metadata *data = malloc(sizeof *data);
@@ -73,10 +81,12 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
 
     data->max = max_length;
     data->text = text;
+    data->name = name;
     element->data = data;
     element->abs_width = element->width = w;
     element->abs_height = element->height = h;
     element->on_render = text_input_on_render;
-    rr_dom_create_text_element("text", 16);
+    element->on_hide = text_input_on_hide;
+    rr_dom_create_text_element(data->name, 16);
     return element;
 }

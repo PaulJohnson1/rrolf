@@ -130,3 +130,27 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
         param_1, param_2, param_3, captures, BASE_API_URL);
 #endif
 }
+
+void rr_api_create_squad(char const *param_1, char const *param_2, void *captures)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            /*
+            fetch(UTF8ToString($3) + "user_craft_petals/" + UTF8ToString($0) +
+                  '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
+                .then(function(response){return response.text()})
+                .then(function(data) {
+                    const $a = _malloc(1 + data.length);
+                    for (let i = 0; i < data.length; i++)
+                        HEAPU8[$a + i] = data[i].charCodeAt();
+                    HEAPU8[$a + data.length] = 0;
+                    Module._rr_api_on_craft_result($a, $3);
+                });
+            */
+           console.log(UTF8ToString($3) + "user_create_squad/" + UTF8ToString($0) +
+                  '/' + UTF8ToString($1) + '/' + UTF8ToString($2));
+        },
+        param_1, param_2, captures, BASE_API_URL);
+#endif
+}

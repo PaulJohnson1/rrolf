@@ -156,6 +156,47 @@ void rr_rivet_lobbies_find(void *captures)
 #endif
 }
 
+void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
+{
+    puts("finding rivet lobby");
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
+                headers : {
+                    Authorization :
+                        // clang-format off
+                        "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
+                    // clang-format on
+                },
+                method : "POST",
+                body : '{"lobby_id":"' + Module.ReadCstr($1) + '"}'
+            })
+                .then(function(r) { return r.json(); })
+                .then(function(json) {
+                    console.log("join with: ", json);
+                    const host = json.ports.default.hostname;
+                    const token = "Bearer " + json.player.token;
+                    const $host = _malloc(host.length + 1);
+                    const $token = _malloc(1 + token.length);
+                    for (let i = 0; i < host.length; i++)
+                        HEAPU8[$host + i] = host[i].charCodeAt();
+                    for (let i = 0; i < token.length; i++)
+                        HEAPU8[$token + i] = token[i].charCodeAt();
+                    HEAPU8[$host + host.length] = 0;
+                    HEAPU8[$token + token.length] = 0;
+                    console.log($host, $token, " testing rivet 123123");
+                    Module._rr_rivet_lobby_on_find(
+                        $host, $token, json.ports.default.port, $0);
+                })
+                .catch(function(error) {
+                    Module._rr_rivet_lobby_on_find(0, 0, 0, $0);
+                });
+        },
+        captures, lobby_id);
+#endif
+}
+
 void rr_rivet_identities_create_guest(void *captures)
 {
     puts("making guest or logging in");
@@ -232,6 +273,7 @@ void rr_rivet_identities_create_guest(void *captures)
                 }).catch(function(e)
                 {
                     console.log(e);
+                    /*
                     //localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
                     const r = confirm("Login failed: please reload. Optionally, click OK to reset your token.\nNOTE: YOUR ACCOUNT WILL BE LOST UNLESS YOU SAVE YOUR TOKEN.\nDO NOT SHARE IT WITH ANYONE ELSE: your token is " + localStorage["DO_NOT_SHARE_rivet_account_token"] + "\n");
                     //location.reload()
@@ -239,6 +281,7 @@ void rr_rivet_identities_create_guest(void *captures)
                         localStorage["DO_NOT_SHARE_rivet_account_token2_backup"] = localStorage["DO_NOT_SHARE_rivet_account_token"];
                         localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
                     }
+                    */
                     location.reload();
                 });
             };

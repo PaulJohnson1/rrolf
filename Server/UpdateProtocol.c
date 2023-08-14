@@ -87,7 +87,11 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         physical->y - physical->radius >
             captures->view_y + captures->view_height)
         return;
-
+    if (rr_simulation_has_drop(simulation, entity) &&
+        rr_bitset_get(
+            rr_simulation_get_drop(captures->simulation, entity)->picked_up_by,
+            captures->player_info->client_id))
+        return;
     rr_bitset_set(captures->entities_in_view, entity);
     return;
 }
@@ -130,8 +134,31 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     if (!rr_bitset_get_bit(new_entities_in_view, id))
     {
         // deletion spotted!
+        uint8_t out_of_view =
+            rr_simulation_has_entity(captures->simulation, id) == 0;
+        if (!out_of_view)
+            if (rr_simulation_has_drop(captures->simulation, id) &&
+                     rr_bitset_get(
+                         rr_simulation_get_drop(captures->simulation, id)
+                             ->picked_up_by,
+                         player_info->client_id))
+                out_of_view = 2;
         rr_bitset_unset(player_info->entities_in_view, id);
         proto_bug_write_varuint(encoder, id, "entity deletion id");
+        proto_bug_write_uint8(encoder, out_of_view, "deletion type");
+    }
+}
+
+static void write_animation_function(struct rr_simulation *simulation,
+                                     struct proto_bug *encoder, uint32_t pos)
+{
+    struct rr_simulation_animation *animation = &simulation->animations[pos];
+    proto_bug_write_uint8(encoder, animation->type, "ani type");
+    proto_bug_write_uint8(encoder, animation->length, "ani length");
+    for (uint32_t i = 0; i < animation->length; ++i)
+    {
+        proto_bug_write_float32(encoder, animation->points[i].x, "ani x");
+        proto_bug_write_float32(encoder, animation->points[i].y, "ani y");
     }
 }
 
@@ -177,6 +204,9 @@ void rr_simulation_write_binary(struct rr_simulation *this,
                            &captures, rr_simulation_write_entity_function);
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY,
                             "entity update id"); // null terminate update list
+    proto_bug_write_varuint(encoder, this->animation_length, "ani count");
+    for (uint32_t i = 0; i < this->animation_length; ++i)
+        write_animation_function(this, encoder, i);
     proto_bug_write_varuint(encoder, player_info->parent_id,
                             "pinfo id"); // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");

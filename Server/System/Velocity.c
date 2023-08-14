@@ -11,7 +11,12 @@ static void system(EntityIdx id, void *simulation)
         rr_simulation_get_physical(simulation, id);
     rr_vector_scale(&physical->velocity, physical->friction);
     if (physical->webbed)
-        physical->acceleration_scale *= 0.25;
+        physical->acceleration_scale *= 0.2;
+    if (physical->stun_ticks > 0)
+    {
+        physical->acceleration_scale = 0;
+        --physical->stun_ticks;
+    }
     struct rr_vector accel = {
         physical->acceleration.x * physical->acceleration_scale,
         physical->acceleration.y * physical->acceleration_scale};

@@ -36,7 +36,6 @@ static void uranium_damage(EntityIdx mob, void *_captures)
         901 * 901)
     {
         rr_component_health_do_damage(health, captures->damage);
-        rr_component_physical_set_server_animation_tick(physical, 5);
         // health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
         if (ai->target_entity == RR_NULL_ENTITY)
@@ -57,15 +56,10 @@ static void uranium_petal_system(struct rr_simulation *simulation,
             rr_simulation_get_physical(simulation, petal->parent_id);
         if (!rr_simulation_has_entity(simulation, relations->owner))
             return;
-        struct rr_component_health *flower_health =
-            rr_simulation_get_health(simulation, relations->owner);
         struct rr_component_physical *flower_physical =
             rr_simulation_get_physical(simulation, relations->owner);
-        if (flower_physical->has_deletion_animation == 0)
-            return;
-        rr_component_health_set_health(flower_health, flower_health->health -
-                                                          health->damage * 2.5);
-        rr_component_physical_set_server_animation_tick(flower_physical, 5);
+        rr_component_health_set_health(health, health->health -
+                                                          health->damage * 1.5);
         petal->effect_delay = 25;
         struct uranium_captures captures = {simulation, relations->owner,
                                             physical->x, physical->y,
@@ -238,9 +232,9 @@ static void system_flower_petal_movement_logic(
                     float angle =
                         player_info->global_rotation +
                         rotation_pos * 2 * M_PI / player_info->rotation_count;
-                    rr_vector_from_polar(&physical->acceleration, 10.0f,
+                    rr_vector_from_polar(&physical->acceleration, 7.5f,
                                          curr_angle);
-                    rr_vector_from_polar(&physical->velocity, 75.0f,
+                    rr_vector_from_polar(&physical->velocity, 50.0f,
                                          curr_angle);
                 }
                 projectile->ticks_until_death = 20;
@@ -332,8 +326,11 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    player_info->modifiers.rotation_direction = 1;
+    uint8_t rot_count = 0;
     rr_component_player_info_set_camera_fov(player_info, 1.0f);
     health->damage_reduction = 0;
+    float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
         struct rr_component_player_info_petal_slot *slot =
@@ -346,7 +343,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                             0.05 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
         else if (data->id == rr_petal_id_light)
-            player_info->global_rotation += (0.012 + 0.008 * slot->rarity);
+            to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
@@ -355,11 +352,15 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_crest)
         {
+            rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
             if (player_info->camera_fov > 1.0f * (0.9 - 0.05 * slot->rarity))
-            {
-                rr_component_flower_set_face_flags(flower, flower->face_flags | 4);
+            {   
                 rr_component_player_info_set_camera_fov(player_info, 1.0f * (0.9 - 0.06 * slot->rarity));
             }
+        }
+        else if (data->id == rr_petal_id_droplet)
+        {
+           ++rot_count;
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
@@ -376,6 +377,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                         2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
             }
     }
+    player_info->global_rotation += to_rotate * ((rot_count % 3) ? (rot_count % 3 == 2) ? 0 : -1 : 1);
 }
 
 static void rr_system_petal_reload_foreach_function(EntityIdx id,
@@ -383,7 +385,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
 {
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(simulation, id);
-    if (player_info->flower_id == RR_NULL_ENTITY)
+    if (player_info->flower_id == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, player_info->flower_id))
     {
         for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
         {
@@ -421,10 +423,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
             if (p_petal->simulation_id != RR_NULL_ENTITY &&
-                (!rr_simulation_has_entity(simulation,
-                                           p_petal->simulation_id) ||
-                 !rr_simulation_get_physical(simulation, p_petal->simulation_id)
-                      ->has_deletion_animation))
+                !rr_simulation_has_entity(simulation,
+                                           p_petal->simulation_id))
             {
                 p_petal->simulation_id = RR_NULL_ENTITY;
                 p_petal->cooldown_ticks = data->cooldown;
@@ -469,23 +469,24 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                                                    p_petal->simulation_id);
                     rr_simulation_request_entity_deletion(
                         simulation, p_petal->simulation_id);
+                    p_petal->simulation_id = RR_NULL_ENTITY;
                     if (petal->rarity == 0)
                         return;
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, rr_mob_id_trex,
-                                                slot->rarity - 1,
+                                                petal->rarity - 1,
                                                 rr_simulation_team_id_players);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);
                     rr_component_relations_set_owner(relations,
                                                      player_info->flower_id);
+                    rr_simulation_get_mob(simulation, mob_id)->player_spawned = 1;
                 }
             }
         }
         rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
     }
     player_info->rotation_count = rotation_pos;
-    player_info->global_rotation += 0.1;
 }
 
 static void system_petal_misc_logic(EntityIdx id, void *_simulation)
@@ -500,8 +501,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     {
         if (petal->id == rr_petal_id_uranium)
             uranium_petal_system(simulation, petal);
-        if (!rr_simulation_has_entity(simulation, relations->owner) ||
-            rr_simulation_get_physical(simulation, relations->owner)->has_deletion_animation == 0)
+        if (!rr_simulation_has_entity(simulation, relations->owner))
         {
             rr_simulation_request_entity_deletion(simulation, id);
             return;
@@ -528,8 +528,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             0)
         {
             rr_simulation_request_entity_deletion(simulation, id);
-            if (petal->id == rr_petal_id_seed &&
-                physical->has_deletion_animation)
+            if (petal->id == rr_petal_id_seed)
             {
                 for (uint32_t i = 0; i < simulation->player_info_count; ++i)
                 {

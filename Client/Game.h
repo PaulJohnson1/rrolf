@@ -112,6 +112,10 @@ struct rr_game
     struct rr_renderer mob_ankylosaurus_head;
     struct rr_renderer mob_ankylosaurus_tail;
 
+    struct rr_renderer mob_quetzalcoatlus_body;
+    struct rr_renderer mob_quetzalcoatlus_head;
+    struct rr_renderer mob_quetzalcoatlus_wings[2];
+
     struct rr_renderer mob_stump;
     struct rr_renderer mob_fern;
     struct rr_renderer mob_meteor;
@@ -127,6 +131,7 @@ struct rr_game
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
+    struct rr_simulation *deletion_simulation;
     struct rr_component_player_info *player_info;
     struct rr_ui_element *window;
     struct rr_ui_element *prev_focused;
@@ -134,7 +139,7 @@ struct rr_game
     struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    EntityIdx player_infos[8];
+    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT * 2];
 
     uint8_t squad_pos;
     uint8_t socket_ready;
@@ -147,9 +152,16 @@ struct rr_game
     uint8_t tiles_size;
     uint8_t block_ui_input;
     uint8_t ticks_until_text_cache;
+
+    uint8_t squad_private;
+    char connect_link[100];
 };
 
 void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
+
+void rr_game_websocket_on_event_function(enum rr_websocket_event_type,
+                                         void *, void *,
+                                         uint64_t);

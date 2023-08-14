@@ -109,6 +109,7 @@ struct rr_ui_element *rr_ui_container_init()
     this->data = data;
     this->on_render = container_on_render;
     this->poll_events = rr_ui_container_poll_events;
+    this->on_hide = container_on_hide;
     return this;
 }
 
@@ -133,9 +134,8 @@ struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *left,
                                                 struct rr_ui_element *right,
                                                 float pad)
 {
-    struct rr_ui_element *this = rr_ui_element_init();
-    struct rr_ui_container_metadata *data = malloc(sizeof *data);
-    this->data = data;
+    struct rr_ui_element *this = rr_ui_container_init();
+    struct rr_ui_container_metadata *data = this->data;
     rr_ui_container_add_element(this, left);
     rr_ui_container_add_element(this, right);
     left->h_justify = -1;

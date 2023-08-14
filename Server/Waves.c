@@ -46,10 +46,15 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
     else if (special_wave_id == 2)
         return rr_mob_id_triceratops;
     else if (special_wave_id == 3)
-        return rr_mob_id_pteranodon;
+    {
+        if (rr_frand() > 0.04)
+            return rr_mob_id_pteranodon;
+        else
+            return rr_mob_id_meteor;
+    }
     else if (special_wave_id == 4)
     {
-        if (rr_frand() > 0.5)
+        if (rr_frand() > 0.8)
             return rr_mob_id_fern;
         else
             return rr_mob_id_trex;

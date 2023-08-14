@@ -37,18 +37,10 @@ void rr_component_drop_write(struct rr_component_drop *this,
                              struct rr_component_player_info *client)
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-    if (rr_bitset_get(&this->picked_up_this_tick[0], client->client_id))
-        state |= state_flags_hidden;
+
     proto_bug_write_varuint(encoder, state, "drop component state");
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
-    if (state & state_flags_hidden)
-        proto_bug_write_uint8(
-            encoder,
-            rr_bitset_get(&this->picked_up_by[0], client->client_id) +
-                (is_creation != 0) *
-                    rr_bitset_get(&this->picked_up_by[0], client->client_id),
-            "drop hidden");
 #undef X
 }
 
@@ -64,7 +56,5 @@ void rr_component_drop_read(struct rr_component_drop *this,
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
-    if (state & state_flags_hidden)
-        this->hidden = proto_bug_read_uint8(encoder, "drop hidden");
 }
 #endif

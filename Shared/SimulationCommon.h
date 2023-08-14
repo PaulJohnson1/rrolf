@@ -17,7 +17,15 @@
 #include <Shared/Utilities.h>
 
 #ifdef RR_SERVER
+#include <Shared/Vector.h>
 struct rr_spatial_hash;
+
+struct rr_simulation_animation
+{
+    uint8_t type;
+    uint8_t length;
+    struct rr_vector points[16];
+};
 #endif
 
 enum rr_simulation_team_id
@@ -49,6 +57,8 @@ struct rr_simulation
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
     RR_SERVER_ONLY(uint32_t wave_points;)
     RR_SERVER_ONLY(uint32_t special_wave_id;)
+    RR_SERVER_ONLY(struct rr_simulation_animation animations[512];)
+    RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)
     uint8_t game_over;
 };
@@ -57,7 +67,7 @@ void rr_simulation_init(struct rr_simulation *);
 int rr_simulation_has_entity(struct rr_simulation *, EntityIdx);
 void rr_simulation_request_entity_deletion(struct rr_simulation *, EntityIdx);
 void rr_simulation_for_each_entity(struct rr_simulation *, void *,
-                                   void (*cb)(EntityIdx, void *));
+                                   void (*)(EntityIdx, void *));
 void rr_simulation_create_component_vectors(struct rr_simulation *);
 
 // internal use
@@ -71,6 +81,6 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t, void *);
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
         struct rr_simulation *, EntityIdx);                                    \
     void rr_simulation_for_each_##COMPONENT(struct rr_simulation *, void *,    \
-                                            void (*cb)(EntityIdx, void *));
+                                            void (*)(EntityIdx, void *));
 RR_FOR_EACH_COMPONENT
 #undef XX

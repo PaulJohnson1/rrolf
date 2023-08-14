@@ -36,6 +36,9 @@ enum rr_petal_id
     rr_petal_id_gravel,
     rr_petal_id_club,
     rr_petal_id_crest,
+    rr_petal_id_droplet,
+    rr_petal_id_beak,
+    rr_petal_id_lightning,
     rr_petal_id_max
 };
 
@@ -51,6 +54,7 @@ enum rr_mob_id
     rr_mob_id_ornithomimus,
     rr_mob_id_ankylosaurus,
     rr_mob_id_meteor,
+    rr_mob_id_quetzalcoatlus,
     rr_mob_id_max
 };
 

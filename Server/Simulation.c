@@ -56,33 +56,7 @@ static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
 {
     struct rr_simulation *simulation = _simulation;
-    if (rr_simulation_has_physical(simulation, id))
-    {
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(simulation, id);
-        if (physical->has_deletion_animation)
-        {
-            __rr_simulation_pending_deletion_free_components(id, _simulation);
-            rr_bitset_unset(simulation->pending_deletions, id);
-            rr_component_physical_set_server_animation_tick(physical, 5);
-            physical->ticked_animation = 1;
-        }
-        else if (physical->server_animation_tick != 0 &&
-                 physical->ticked_animation == 0)
-        {
-            rr_bitset_unset(simulation->pending_deletions, id);
-            rr_component_physical_set_server_animation_tick(
-                physical, physical->server_animation_tick - 1);
-            physical->ticked_animation = 1;
-        }
-        if (rr_simulation_has_health(simulation, id))
-            rr_component_health_set_health(
-                rr_simulation_get_health(simulation, id), 0);
-    }
-    else
-    {
-        __rr_simulation_pending_deletion_free_components(id, _simulation);
-    }
+    __rr_simulation_pending_deletion_free_components(id, simulation);
 }
 
 static struct rr_vector
@@ -219,6 +193,7 @@ static void tick_wave(struct rr_simulation *this)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
+    this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
     // printf("%d %d %d\n", this->physical_count, this->mob_count,
     // this->health_count);

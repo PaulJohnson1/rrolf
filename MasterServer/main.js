@@ -323,6 +323,18 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
     })
 });
 
+app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) => {
+    const {username, password} = req.params;
+    log("user_get", [username]);
+    handle_error(res, async () => {
+        const user = await db_read_user(username, password);
+        delete user.failed_crafts;
+        delete user.password;
+        delete user.already_playing;
+        return JSON.stringify(user)
+    });
+});
+
 app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });

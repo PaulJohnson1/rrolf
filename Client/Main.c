@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
@@ -92,9 +93,9 @@ void rr_main_loop(struct rr_game *this)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            document.oncontextmenu = function() { return false; };
             Module.canvas = document.createElement("canvas");
             Module.canvas.id = "canvas";
+            Module.canvas.oncontextmenu = function() { return false; };
             document.body.appendChild(Module.canvas);
             Module.ctxs = [Module.canvas.getContext('2d')];
             Module.availableCtxs =
@@ -103,24 +104,53 @@ void rr_main_loop(struct rr_game *this)
             {
                 Module._rr_key_event(
                     $0, 1, e.which, (e.key.length == 1) * e.key.charCodeAt());
-                if (e.metaKey || e.ctrlKey)
+                if (e.metaKey)
                     e.preventDefault();
             };
             window.onkeyup = function(e)
             {
                 Module._rr_key_event(
                     $0, 0, e.which, (e.key.length == 1) * e.key.charCodeAt());
-                if (e.metaKey || e.ctrlKey)
+                if (e.metaKey)
                     e.preventDefault();
             };
             window.onmousedown =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     1, +!!button)};
-            window.onmousemove =
-                function({clientX, clientY, button}){Module._rr_mouse_event(
+            window.onmousemove = function(e){
+                    e.preventDefault();
+                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                    Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     2, +!!button)};
+            window.ontouchstart = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    0, touch.force > 0.5);
+            };
+            window.ontouchmove = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    2, touch.force > 0.5);
+            };
+            window.ontouchend = function(e){
+                //e.preventDefault();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    1, touch.force > 0.5);
+            };
             window.onmouseup =
                 function({clientX, clientY, button}){Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
@@ -201,17 +231,20 @@ int main()
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
-    static struct rr_simulation simulation;
+    struct rr_simulation *simulation = malloc(sizeof *simulation);
+    struct rr_simulation *deletion_simulation = malloc(sizeof *deletion_simulation);
     rr_main_loop(&game);
 
     rr_renderer_init(&renderer);
     rr_game_init(&game);
     rr_input_data_init(&input_data);
-    rr_simulation_init(&simulation);
+    rr_simulation_init(simulation);
+    rr_simulation_init(deletion_simulation);
 
     game.renderer = &renderer;
     game.input_data = &input_data;
-    game.simulation = &simulation;
+    game.simulation = simulation;
+    game.deletion_simulation = deletion_simulation;
     rr_game_tick(&game, 1);
 
 #ifndef EMSCRIPTEN

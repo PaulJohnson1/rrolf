@@ -7,37 +7,25 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 
-void rr_component_drop_render(EntityIdx entity, struct rr_game *game)
+void rr_component_drop_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
 {
-    struct rr_simulation *simulation = game->simulation;
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
-    float animation_tick = drop->hidden
-                               ? 0.2 * physical->lerp_server_animation_tick
-                           : physical->lerp_server_animation_tick == 0
-                               ? 0
-                               : 1 - 0.2 * physical->lerp_server_animation_tick;
-    if (animation_tick > 0.99 || drop->hidden == 2)
-        return;
-    if (physical->lerp_server_animation_tick > 0)
+    if (physical->deletion_type == 2)
     {
-        if (drop->hidden)
-        {
-            struct rr_component_player_info *player_info = game->player_info;
-            rr_renderer_translate(
-                renderer,
-                (player_info->lerp_camera_x - physical->lerp_x) *
-                    animation_tick,
-                (player_info->lerp_camera_y - physical->lerp_y) *
-                    animation_tick);
-        }
-        rr_renderer_scale(renderer, 1 - animation_tick);
-        rr_renderer_rotate(renderer, M_PI * 2 * animation_tick);
+        struct rr_component_player_info *player_info = game->player_info;
+        rr_renderer_translate(
+            renderer,
+            (player_info->lerp_camera_x - physical->lerp_x) *
+                physical->deletion_animation,
+            (player_info->lerp_camera_y - physical->lerp_y) *
+                physical->deletion_animation);
     }
     rr_renderer_rotate(renderer,
                        physical->lerp_angle + physical->lerp_radius * 0.25);
+    rr_renderer_scale(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, physical->lerp_radius * 0.04);
     rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.05);
     rr_renderer_draw_background(renderer, drop->rarity, 1);

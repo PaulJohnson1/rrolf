@@ -123,13 +123,15 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
 
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
+    if (game->socket.found_error)
+        return 2;
     return game->socket_ready;
 }
 
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return game->socket_pending || game->socket_ready;
+    return game->rivet_lobby_pending || game->socket_pending || game->socket_ready || game->socket.found_error;
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -176,7 +178,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
-                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16),
+                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "name"),
                             rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
                             NULL
                         ),
@@ -186,27 +188,46 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_v_container_init(
                                     rr_ui_container_init(), 10, 20,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_h_container_init(
-                                        rr_ui_container_init(), 5, 10,
-                                        rr_ui_text_init("initial wave:", 14, -1),
-                                        rr_ui_h_slider_init(300, 20, &this->cache.wave_start_percent, 1),
-                                        NULL
+                                    rr_ui_flex_container_init(
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                            rr_ui_text_init("initial wave:", 14, 0xffffffff),
+                                            rr_ui_h_slider_init(100, 20, &this->cache.wave_start_percent, 1),
+                                            NULL
+                                        ),
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                            rr_ui_text_init("Private", 14, 0xffffffff),
+                                            rr_ui_create_squad_button_init(this),
+                                            NULL
+                                        ),
+                                        10
                                     ),
-                                    rr_ui_choose_element_init(
-                                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-                                        rr_ui_h_container_init(
-                                            rr_ui_container_init(), 10, 20,
+                                    rr_ui_multi_choose_element_init(
+                                        socket_ready,
+                                        rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
+                                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
+                                            rr_ui_h_container_init(
+                                                rr_ui_container_init(), 0, 20,
 #define X(n) \
     rr_ui_squad_player_container_init(&this->squad_members[n]),
 RR_REPEAT(RR_SQUAD_MEMBER_COUNT, X)
 #undef X
+                                                NULL
+                                            ),
+                                            rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                             NULL
                                         ),
-                                        rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
+                                        rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
                                         NULL
                                     ),
-                                    rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
-                                    socket_ready),
+                                    rr_ui_flex_container_init(
+                                        rr_ui_copy_squad_code_button_init(),
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
+                                            rr_ui_join_squad_code_button_init(),
+                                            NULL
+                                        ),
+                                        10
+                                    ),
                                     NULL
                                 ),
                             socket_pending_or_ready),
@@ -392,15 +413,18 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         break;
     case rr_websocket_event_type_close:
         // memset the clients
+        if (size == 1006)
+            this->socket.found_error = 1;
         this->socket_pending = 0;
         this->socket_ready = 0;
+        this->rivet_lobby_pending = 0;
+        this->socket.recieved_first_packet = 0;
         puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
-
         if (!this->socket.recieved_first_packet)
         {
             this->socket.recieved_first_packet = 1;
@@ -424,13 +448,13 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            uint64_t token_size = strlen(this->socket.rivet_player_token);
+            uint64_t token_size = strlen(&this->socket.rivet_player_token[0]);
             uint64_t uuid_size = strlen(this->rivet_account.uuid);
             proto_bug_write_varuint(&verify_encoder, token_size,
                                     "rivet token size");
             proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
             proto_bug_write_string(&verify_encoder,
-                                   this->socket.rivet_player_token, token_size,
+                                   &this->socket.rivet_player_token[0], token_size,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
@@ -516,6 +540,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 }
             }
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
+            this->squad_private = proto_bug_read_uint8(&encoder, "private");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
@@ -557,76 +582,70 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     }
 }
 
-void render_drop_component(EntityIdx entity, void *_captures)
+void render_drop_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_drop_render(entity, this);
+    rr_component_drop_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_health_component(EntityIdx entity, void *_captures)
+void render_health_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x,
                           physical->lerp_y + physical->radius + 30);
-    rr_component_health_render(entity, this);
+    rr_component_health_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_mob_component(EntityIdx entity, void *_captures)
+void render_mob_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_mob_render(entity, this);
+    rr_component_mob_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_petal_component(EntityIdx entity, void *_captures)
+void render_petal_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_petal_render(entity, this);
+    rr_component_petal_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_flower_component(EntityIdx entity, void *_captures)
+void render_flower_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_flower_render(entity, this);
+    rr_component_flower_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_web_component(EntityIdx entity, void *_captures)
+void render_web_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
 {
-    struct rr_game *this = _captures;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
     struct rr_component_physical *physical =
-        rr_simulation_get_physical(this->simulation, entity);
+        rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-    rr_component_web_render(entity, this);
+    rr_component_web_render(entity, this, simulation);
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
@@ -777,6 +796,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->simulation_ready)
     {
         rr_simulation_tick(this->simulation, delta);
+        rr_deletion_simulation_tick(this->deletion_simulation, delta);
 
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
@@ -797,9 +817,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
             {
-                if (rr_simulation_get_physical(this->simulation,
-                                               player_info->flower_id)
-                        ->server_animation_tick != 0)
+                if (0)
                 {
                     float r = rr_frand() * 5;
                     float a = rr_frand() * 2 * M_PI;
@@ -837,19 +855,21 @@ void rr_game_tick(struct rr_game *this, float delta)
 
             rr_renderer_context_state_free(this->renderer, &state2);
             rr_system_particle_render_tick(this, delta);
-            rr_simulation_for_each_web(this->simulation, this,
-                                       render_web_component);
-            rr_simulation_for_each_health(this->simulation, this,
-                                          render_health_component);
-            rr_simulation_for_each_drop(this->simulation, this,
-                                        render_drop_component);
-            rr_simulation_for_each_mob(this->simulation, this,
-                                       render_mob_component);
-            rr_simulation_for_each_petal(this->simulation, this,
-                                         render_petal_component);
-            rr_simulation_for_each_flower(this->simulation, this,
-                                          render_flower_component);
+
+            #define render_component(COMPONENT) \
+                for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
+                    render_##COMPONENT##_component(this->simulation->COMPONENT##_vector[i], this, this->simulation); \
+                for (uint32_t i = 0; i < this->deletion_simulation->COMPONENT##_count; ++i) \
+                    render_##COMPONENT##_component(this->deletion_simulation->COMPONENT##_vector[i], this, this->deletion_simulation);
+
+            render_component(web);
+            render_component(health);
+            render_component(drop);
+            render_component(mob);
+            render_component(petal);
+            render_component(flower);
             rr_renderer_context_state_free(this->renderer, &state1);
+            #undef render_component
         }
     }
     else
@@ -1046,9 +1066,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
-#ifdef RR_WINDOWS
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
-#else
+    this->socket.curr_link = "hello";
     this->socket_pending = 1;
     // for testing
     // if (!this->socket.rivet_player_token)
@@ -1056,9 +1074,8 @@ void rr_game_connect_socket(struct rr_game *this)
     //     this->socket.rivet_player_token = calloc(10, 1);
     //     this->socket.uuid = calloc(10, 1);
     // }
-    rr_websocket_connect_to(&this->socket, "127.0.0.1", 1234, 0);
+    rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
-#endif
 #endif
 }
 
@@ -1075,20 +1092,23 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     if (port == 0 || s == NULL || token == NULL)
     {
         // error;
+        game->socket.found_error = 1;
         game->socket_pending = 0;
         game->socket_ready = 0;
         return;
     }
     game->socket_pending = 1;
     // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
-
+    char link[100];
+    link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s,
+           port)] = 0;
     if (port == 443)
-        rr_websocket_connect_to(&game->socket, s, port, 1);
+        rr_websocket_connect_to(&game->socket, &link[0]);
     else
-        rr_websocket_connect_to(&game->socket, s, port, 0);
-    free(s);
-    // captures->socket->rivet_player_token = strdup(token);
-    // free(token);
-    game->socket.rivet_player_token = strdup(token);
+        rr_websocket_connect_to(&game->socket, &link[0]);
+    game->socket.curr_link = s;
+    s[36] = 0;
+    memcpy(&game->socket.rivet_player_token[0], token, strlen(token) + 1);
+    free(token);
     // game->socket.uuid = game->rivet_account.uuid;
 }

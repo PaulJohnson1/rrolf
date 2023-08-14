@@ -28,9 +28,10 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100);
-    rr_component_health_set_health(health, 100);
+    rr_component_health_set_max_health(health, 200);
+    rr_component_health_set_health(health, 200);
     health->damage = 10;
+    health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, entity);
     rr_component_player_info_set_camera_x(player_info, physical->x);
@@ -61,6 +62,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     {
         rr_component_physical_set_radius(physical, 15);
         physical->mass = 100;
+        physical->knockback_scale = 3.5;
     }
 
     rr_component_petal_set_id(petal, id);
@@ -127,6 +129,11 @@ float x, float y,
     rr_component_physical_set_y(physical, y);
     physical->friction = 0.8;
     physical->mass = 100.0f * RR_MOB_RARITY_SCALING[rarity_id].damage;
+    if (mob_id == rr_mob_id_meteor)
+    {
+        physical->mass *= 100;
+        team_id = rr_simulation_team_id_players;
+    }
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health,
@@ -146,6 +153,9 @@ float x, float y,
     case rr_mob_id_fern:
     case rr_mob_id_stump:
         ai->ai_aggro_type = rr_ai_aggro_type_none;
+        break;
+    case rr_mob_id_quetzalcoatlus:
+        ai->ai_aggro_type = rr_ai_aggro_type_quetzalcoatlus;
         break;
     case rr_mob_id_trex:
     case rr_mob_id_dakotaraptor:
