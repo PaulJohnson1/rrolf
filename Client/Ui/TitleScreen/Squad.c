@@ -185,7 +185,7 @@ static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
 struct rr_ui_element *rr_ui_wave_spawn_text_init()
 {
     struct rr_ui_element *this =
-        rr_ui_dynamic_text_init(16, 0xffffffff, wave_spawn_at);
+        rr_ui_dynamic_text_init(15, 0xffffffff, wave_spawn_at);
     return this;
 }
 
@@ -209,7 +209,7 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     struct rr_ui_element *squad_container = rr_ui_container_init();
     squad_container->abs_width = squad_container->width = 120;
-    squad_container->abs_height = squad_container->height = 160;
+    squad_container->abs_height = squad_container->height = 120;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
     squad_container->on_event = squad_container_on_event;
