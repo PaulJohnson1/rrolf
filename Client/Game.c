@@ -211,10 +211,6 @@ void rr_game_init(struct rr_game *this)
                                                 rr_ui_squad_player_container_init(&this->squad_members[1]),
                                                 rr_ui_squad_player_container_init(&this->squad_members[2]),
                                                 rr_ui_squad_player_container_init(&this->squad_members[3]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[4]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[5]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[6]),
-                                                rr_ui_squad_player_container_init(&this->squad_members[7]),
                                                 NULL
                                             ),
                                             rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
@@ -283,10 +279,6 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_in_game_player_hud_init(1),
                     rr_ui_in_game_player_hud_init(2),
                     rr_ui_in_game_player_hud_init(3),
-                    rr_ui_in_game_player_hud_init(4),
-                    rr_ui_in_game_player_hud_init(5),
-                    rr_ui_in_game_player_hud_init(6),
-                    rr_ui_in_game_player_hud_init(7),
                     NULL
                 )
             , -1, -1)

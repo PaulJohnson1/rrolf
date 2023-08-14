@@ -12,7 +12,7 @@
 	# How many players can join a specific lobby.
 	#
 	# Read more about matchmaking: https://docs.rivet.gg/matchmaker/concepts/finding-lobby
-	max_players = 8
+	max_players = 4
 
 	# The hardware to provide for lobbies.
 	#

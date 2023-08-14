@@ -11,7 +11,7 @@ void rr_system_particle_render_tick(struct rr_game *game, float delta)
         particle->opacity *= 0.9;
         rr_vector_scale(&particle->velocity, 0.9);
         rr_vector_add(&particle->velocity, &particle->acceleration);
-        rr_vector_add(&particle->position, &particle->velocity);
+        rr_vector_add(&particle->position[0], &particle->velocity);
         //game->particle_manager.particles[i].size += (20 - game->particle_manager.particles[i].size) * 0.1;
     }
     for (uint16_t i = game->particle_manager.size; i > 0; --i)

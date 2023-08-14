@@ -98,11 +98,10 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
     {
         struct rr_component_health *health =
             rr_simulation_get_health(this, entity);
-        health->damage_animation = rr_lerp(health->damage_animation, 0, 10 * delta);
+        health->damage_animation = rr_lerp(health->damage_animation, 0, 5 * delta);
         if (health->flags & 2)
         {
-            puts("yes flicker");
-            if (health->damage_animation < 0.5)
+            if (health->damage_animation < 0.25)
                 health->damage_animation = 1;
         }
         if (health->lerp_health == 0)
