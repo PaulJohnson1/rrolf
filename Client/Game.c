@@ -207,10 +207,14 @@ void rr_game_init(struct rr_game *this)
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
                                             rr_ui_h_container_init(
                                                 rr_ui_container_init(), 0, 20,
-#define X(n) \
-    rr_ui_squad_player_container_init(&this->squad_members[n]),
-RR_REPEAT(RR_SQUAD_MEMBER_COUNT, X)
-#undef X
+                                                rr_ui_squad_player_container_init(&this->squad_members[0]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[1]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[2]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[3]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[4]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[5]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[6]),
+                                                rr_ui_squad_player_container_init(&this->squad_members[7]),
                                                 NULL
                                             ),
                                             rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
@@ -275,10 +279,14 @@ RR_REPEAT(RR_SQUAD_MEMBER_COUNT, X)
         rr_ui_v_pad(
             rr_ui_set_justify(
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
-#define X(n) \
-    rr_ui_in_game_player_hud_init(n),
-RR_REPEAT(RR_SQUAD_MEMBER_COUNT, X)
-#undef X
+                    rr_ui_in_game_player_hud_init(0),
+                    rr_ui_in_game_player_hud_init(1),
+                    rr_ui_in_game_player_hud_init(2),
+                    rr_ui_in_game_player_hud_init(3),
+                    rr_ui_in_game_player_hud_init(4),
+                    rr_ui_in_game_player_hud_init(5),
+                    rr_ui_in_game_player_hud_init(6),
+                    rr_ui_in_game_player_hud_init(7),
                     NULL
                 )
             , -1, -1)

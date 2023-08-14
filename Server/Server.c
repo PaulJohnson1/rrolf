@@ -29,6 +29,7 @@
 #else
 #define MESSAGE_BUFFER_SIZE (1024 * 1024)
 #endif
+
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 

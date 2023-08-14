@@ -7,6 +7,7 @@ typedef uint16_t EntityIdx;
 #define RR_MAX_ENTITY_COUNT (8192)
 #define RR_NULL_ENTITY (0)
 #define RR_MAX_COLLISION_COUNT (1024)
+#define RR_SQUAD_MEMBER_COUNT (8)
 
 #define RR_FOR_EACH_COMPONENT                                                  \
     XX(centipede, 6) \
