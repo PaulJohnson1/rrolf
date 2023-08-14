@@ -240,7 +240,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[0],
                     rr_petal_id_magnet, 1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
-                    rr_petal_id_uranium, 0.5);
+                    rr_petal_id_uranium, 0.3);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[2],
                     rr_petal_id_rock, 0.2);
     
