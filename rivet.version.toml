@@ -12,7 +12,7 @@
 	# How many players can join a specific lobby.
 	#
 	# Read more about matchmaking: https://docs.rivet.gg/matchmaker/concepts/finding-lobby
-	max_players = 4
+	max_players = 8
 
 	# The hardware to provide for lobbies.
 	#
@@ -24,6 +24,7 @@
 # Available regions: https://docs.rivet.gg/serverless-lobbies/concepts/available-regions
 [matchmaker.regions]
 	lnd-atl = {}
+	lnd-fra = {}
 
 # Runtime configuration for the lobby's Docker container.
 [matchmaker.docker]
