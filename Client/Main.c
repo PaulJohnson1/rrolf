@@ -115,7 +115,10 @@ void rr_main_loop(struct rr_game *this)
                     e.preventDefault();
             };
             window.onmousedown =
-                function({clientX, clientY, button}){Module._rr_mouse_event(
+                function(e){
+                    e.preventDefault();
+                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                    Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     1, +!!button)};
             window.onmousemove = function(e){
@@ -124,37 +127,40 @@ void rr_main_loop(struct rr_game *this)
                     Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     2, +!!button)};
-            window.ontouchstart = function(e){
-                //e.preventDefault();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    0, touch.force > 0.5);
-            };
-            window.ontouchmove = function(e){
-                //e.preventDefault();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    2, touch.force > 0.5);
-            };
-            window.ontouchend = function(e){
-                //e.preventDefault();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    1, touch.force > 0.5);
-            };
             window.onmouseup =
-                function({clientX, clientY, button}){Module._rr_mouse_event(
+                function(e){
+                    e.preventDefault();
+                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                    Module._rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     0, +!!button)};
+            window.ontouchstart = function(e){
+                e.stopPropagation();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    1, 0);
+            };
+            window.ontouchmove = function(e){
+                e.stopPropagation();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    2, 0);
+            };
+            window.ontouchend = function(e){
+                e.stopPropagation();
+                if (!e.changedTouches.length)
+                    return;
+                const touch = e.changedTouches[0];
+                Module._rr_mouse_event(
+                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
+                    0, 0);
+            };
             window.onwheel =
                 function({deltaY}){Module._rr_wheel_event($0, deltaY)};
             Module.addCtx = function()

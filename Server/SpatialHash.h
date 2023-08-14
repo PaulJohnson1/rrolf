@@ -1,5 +1,4 @@
 #pragma once
-#define RR_ARENA_RADIUS 1650
 
 #include <Shared/Entity.h>
 

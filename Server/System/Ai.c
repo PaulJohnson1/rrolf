@@ -639,7 +639,7 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
     {
         float angle = rr_vector_theta(&physical->velocity);
         struct rr_vector position = {physical->x, physical->y};
-        if (rr_vector_get_magnitude(&position) >= 1650.0f - physical->radius - 0.001)
+        if (rr_vector_get_magnitude(&position) >= RR_ARENA_RADIUS - physical->radius - 0.001)
         {
             float tangent = rr_vector_theta(&position);
             angle = tangent - (M_PI - (tangent - angle));

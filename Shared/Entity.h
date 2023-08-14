@@ -3,9 +3,10 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define RR_MAX_ENTITY_COUNT (2048)
+#define RR_ARENA_RADIUS (2250)
+#define RR_MAX_ENTITY_COUNT (8192)
 #define RR_NULL_ENTITY (0)
-#define RR_MAX_COLLISION_COUNT (128)
+#define RR_MAX_COLLISION_COUNT (1024)
 
 #define RR_FOR_EACH_COMPONENT                                                  \
     XX(centipede, 6) \

@@ -66,7 +66,7 @@ find_position_away_from_players(struct rr_simulation *this)
     uint8_t invalid = 1;
     while (invalid)
     {
-        float rad = sqrtf(rr_frand()) * 1650;
+        float rad = sqrtf(rr_frand()) * RR_ARENA_RADIUS;
         float angle = rr_frand() * 2 * M_PI;
         ret.x = rad * cosf(angle);
         ret.y = rad * sinf(angle);
