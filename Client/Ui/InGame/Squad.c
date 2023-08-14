@@ -58,6 +58,8 @@ static void player_hud_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
     struct player_hud_metadata *data = this->data;
+    if (data->pos >= game->simulation->player_info_count)
+        return;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     struct rr_component_player_info *player_info =

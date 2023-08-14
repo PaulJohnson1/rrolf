@@ -77,7 +77,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
             rr_simulation_add_relations(simulation, entity);
         rr_component_physical_set_x(drop_physical, physical->x);
         rr_component_physical_set_y(drop_physical, physical->y);
-        rr_component_physical_set_radius(drop_physical, 25);
+        rr_component_physical_set_radius(drop_physical, 20);
 
         rr_component_drop_set_id(drop, spawn_ids[i]);
         rr_component_drop_set_rarity(drop, spawn_rarities[i]);
