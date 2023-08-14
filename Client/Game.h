@@ -68,7 +68,7 @@ struct rr_game
     struct rr_game_cache cache;
 
     struct rr_rivet_account rivet_account;
-    struct rr_game_squad_client squad_members[4];
+    struct rr_game_squad_client squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
     // petal rendering cache

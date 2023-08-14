@@ -160,17 +160,12 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
             this->loadout[i].rarity;
         this->player_info->slots[i].id = id;
         this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
-        // if (arena->wave < rarity * 4)
-        // arena->wave = rarity * 4;
 
         id = this->loadout[i + 10].id;
         rarity = this->loadout[i + 10].rarity;
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity;
-        // if (arena->wave < rarity * 4)
-        // arena->wave = rarity * 4;
     }
-    // rr_server_client_create_flower(this);
 }
 
 void rr_server_client_free(struct rr_server_client *this)
@@ -281,7 +276,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         proto_bug_write_uint8(
             &encoder, this->server->ticks_until_simulation_create, "countdown");
         uint8_t pos = 0;
-        for (uint32_t i = 0; i < 4; ++i)
+        for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
         {
             struct rr_server_client *curr_client = &this->server->clients[i];
             if (curr_client == this)
