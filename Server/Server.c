@@ -223,8 +223,12 @@ void rr_server_client_free(struct rr_server_client *this)
         if (this->player_info->flower_id != RR_NULL_ENTITY)
             rr_simulation_request_entity_deletion(&this->server->simulation,
                                                   this->player_info->flower_id);
-        rr_simulation_request_entity_deletion(&this->server->simulation,
-                                              this->player_info->parent_id);
+        __rr_simulation_pending_deletion_free_components(
+            this->player_info->parent_id, &this->server->simulation);
+        __rr_simulation_pending_deletion_unset_entity(
+            this->player_info->parent_id, &this->server->simulation);
+        // rr_simulation_request_entity_deletion(&this->server->simulation,
+        //                                       this->player_info->parent_id);
     }
 }
 
@@ -248,7 +252,7 @@ void rr_server_client_write_message(struct rr_server_client *this,
     // this->messages = msg;
 
     struct __rr_client_message *msg = &this->messages[this->messages_size++];
-    uint8_t *malloced = malloc(size * (sizeof (char)) + LWS_PRE);
+    uint8_t *malloced = malloc(size * (sizeof(char)) + LWS_PRE);
     memcpy(malloced + LWS_PRE, data, size);
     msg->data = malloced;
     msg->size = size;
@@ -258,7 +262,6 @@ void rr_server_client_write_message(struct rr_server_client *this,
         fputs("client message list > 90\n", stderr);
         abort();
     }
-
 
     lws_callback_on_writable(this->socket_handle);
     // lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
@@ -555,8 +558,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 for (uint64_t j = 0; j < client->messages_size; j++)
                 {
                     struct __rr_client_message *msg = &client->messages[j];
-                    int a = lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size,
-                              LWS_WRITE_BINARY);
+                    int a =
+                        lws_write(client->socket_handle, msg->data + LWS_PRE,
+                                  msg->size, LWS_WRITE_BINARY);
                     free(msg->data);
                 }
                 client->messages_size = 0;
@@ -885,13 +889,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (i == 0 && !this->simulation_active)
             {
                 this->private = proto_bug_read_uint8(&encoder, "private") != 0;
-            #ifdef RIVET_BUILD
+#ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
                 rr_rivet_lobbies_set_closed(lobby_token, this->private);
-            #else
+#else
                 printf("setting to %d\n", this->private);
-            #endif
+#endif
             }
             break;
         }

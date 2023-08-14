@@ -66,7 +66,6 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         }
         __rr_simulation_pending_deletion_free_components(id, this);
         __rr_simulation_pending_deletion_unset_entity(id, this);
-        // rr_bitset_set(this->pending_deletions, id);
     }
 
     // assuming that player info is written first (is it though)
@@ -121,13 +120,6 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 
 void rr_simulation_tick(struct rr_simulation *this, float delta)
 {
-    // rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions +
-    // RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this,
-    // __rr_simulation_pending_deletion_free_components);
-    // rr_bitset_for_each_bit(this->pending_deletions, this->pending_deletions +
-    // RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this,
-    // __rr_simulation_pending_deletion_unset_entity);
-    // memset(this->pending_deletions, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     rr_simulation_create_component_vectors(this);
     rr_system_interpolation_tick(this, 1 - powf(0.9f, delta * 10));
 }
