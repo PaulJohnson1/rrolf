@@ -1,6 +1,7 @@
 #include <Server/System/Health.h>
 
 #include <stdio.h>
+#include <math.h>
 #include <string.h>
 
 #include <Server/Simulation.h>
@@ -60,7 +61,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         {
             float old_x = physical->x, old_y = physical->y;
             target = RR_NULL_ENTITY;
-            float min_dist = 500 * 500;
+            float min_dist = 100;
             for (uint16_t i = 0; i < simulation->mob_count; ++i)
             {
                 EntityIdx mob_id = simulation->mob_vector[i];
@@ -73,7 +74,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
                     continue;
                 physical = rr_simulation_get_physical(simulation, mob_id);
                 float x = physical->x, y = physical->y;
-                float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                float dist = sqrtf((x - old_x) * (x - old_x) + (y - old_y) * (y - old_y)) - physical->radius;
                 if (dist > min_dist)
                     continue;
                 target = mob_id;

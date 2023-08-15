@@ -542,12 +542,12 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 uint32_t chain_amount = petal->rarity + 2;   
                 float damage = rr_simulation_get_health(simulation, id)->damage * 0.5; 
                 EntityIdx target = RR_NULL_ENTITY;
-            
+                float min_dist = 300;
                 for (; chain_size < chain_amount + 1; ++chain_size)
                 {
                     float old_x = physical->x, old_y = physical->y;
                     target = RR_NULL_ENTITY;
-                    float min_dist = 500 * 500;
+                    
                     if (relations->team == rr_simulation_team_id_players)
                     {
                         for (uint16_t i = 0; i < simulation->mob_count; ++i)
@@ -562,7 +562,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                                 continue;
                             physical = rr_simulation_get_physical(simulation, mob_id);
                             float x = physical->x, y = physical->y;
-                            float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                            float dist = sqrtf((x - old_x) * (x - old_x) + (y - old_y) * (y - old_y)) - physical->radius;
                             if (dist > min_dist)
                                 continue;
                             target = mob_id;
@@ -583,7 +583,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                                 continue;
                             physical = rr_simulation_get_physical(simulation, mob_id);
                             float x = physical->x, y = physical->y;
-                            float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                            float dist = sqrtf((x - old_x) * (x - old_x) + (y - old_y) * (y - old_y)) - physical->radius;
                             if (dist > min_dist)
                                 continue;
                             target = mob_id;
@@ -599,6 +599,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     physical = rr_simulation_get_physical(simulation, target);
                     animation->points[chain_size].x = physical->x;
                     animation->points[chain_size].y = physical->y;
+                    min_dist = 100 + physical->radius;
                 }
                 animation->length = chain_size;
             }
