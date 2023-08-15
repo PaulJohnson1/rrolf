@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Ui/Engine.h>
@@ -9,7 +10,9 @@
 static void rivet_container_on_event(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
-    if (!(game->input_data->mouse_buttons & 1))
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        rr_copy_string(&game->rivet_account.uuid[0]);
+    else if (!(game->input_data->mouse_buttons & 1))
         rr_ui_render_tooltip_below(this, game->rivet_info_tooltip, game);
 }
 

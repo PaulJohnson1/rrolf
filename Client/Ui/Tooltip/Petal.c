@@ -83,7 +83,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_magnet)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "+%d", -25 + 25 * rarity)] = 0;
+        extra[sprintf(extra, "+%.0f", 50 + 20 * RR_PETAL_RARITY_SCALE[rarity].health)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(

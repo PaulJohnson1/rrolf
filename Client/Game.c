@@ -358,8 +358,9 @@ void rr_game_init(struct rr_game *this)
         rr_ui_link_toggle(
             rr_ui_set_justify(
                 rr_ui_set_background(
-                    rr_ui_h_container_init(rr_ui_container_init(), 10, 0,
+                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
                         rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
+                        rr_ui_text_init("click to copy", 16, 0xffffffff),
                         NULL
                     ),
                 0x80000000),
