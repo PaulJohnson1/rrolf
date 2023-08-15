@@ -592,6 +592,16 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     }
                     if (target == RR_NULL_ENTITY)
                         break;
+                    if (rr_simulation_has_ai(simulation, target))
+                    {
+                        struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
+                        if (ai->target_entity == RR_NULL_ENTITY)
+                        {
+                            struct rr_component_relations *relations =
+                                rr_simulation_get_relations(simulation, id);
+                            ai->target_entity = relations->owner;
+                        }
+                    }
                     struct rr_component_health *health = rr_simulation_get_health(simulation, target);
                     rr_component_health_do_damage(health, damage);
                     health->damage_paused = 5;

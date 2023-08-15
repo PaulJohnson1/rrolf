@@ -756,6 +756,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
         rr_simulation_get_physical(this, entity);
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
+    if (ai->target_entity != RR_NULL_ENTITY && !rr_simulation_has_entity(this, ai->target_entity))
+        ai->target_entity = RR_NULL_ENTITY;
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
