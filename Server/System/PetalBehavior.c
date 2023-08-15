@@ -515,24 +515,27 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         {
             float min_dist = 500;
             EntityIdx target = RR_NULL_ENTITY;
-            for (uint16_t i = 0; i < simulation->mob_count; ++i)
+            if (relations->team == rr_simulation_team_id_players)
             {
-                EntityIdx mob_id = simulation->mob_vector[i];
-                if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
-                    continue;
-                struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, mob_id);
-                float x = mob_physical->x, y = mob_physical->y;
-                float dist = sqrtf((x - physical->x) * (x - physical->x) + (y - physical->y) * (y - physical->y));
-                if (dist > min_dist)
-                    continue;
-                target = mob_id;
-                min_dist = dist;
-            }
-            if (target != RR_NULL_ENTITY)
-            {
-                struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
-                struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.005 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                for (uint16_t i = 0; i < simulation->mob_count; ++i)
+                {
+                    EntityIdx mob_id = simulation->mob_vector[i];
+                    if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
+                        continue;
+                    struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, mob_id);
+                    float x = mob_physical->x, y = mob_physical->y;
+                    float dist = sqrtf((x - physical->x) * (x - physical->x) + (y - physical->y) * (y - physical->y));
+                    if (dist > min_dist)
+                        continue;
+                    target = mob_id;
+                    min_dist = dist;
+                }
+                if (target != RR_NULL_ENTITY)
+                {
+                    struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
+                    struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
+                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.005 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                }
             }
             rr_vector_from_polar(&physical->acceleration, 15.0f,
                                  physical->angle);
