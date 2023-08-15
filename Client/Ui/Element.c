@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <Client/Game.h>
+#include <Client/Ui/Engine.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
 
@@ -68,16 +69,9 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
     this->abs_x = game->renderer->state.transform_matrix[2];
     this->abs_y = game->renderer->state.transform_matrix[5];
 
-    this->animation =
-        rr_lerp(this->animation, this->should_show(this, game) == 0,
-                0.4 + 0.6 * this->first_frame);
-    uint8_t before_hidden = this->completely_hidden;
-    this->completely_hidden = this->animation > 0.99;
     this->animate(this, game);
     if (this->completely_hidden == 0)
         this->on_render(this, game);
-    else if (before_hidden == 0)
-        this->on_hide(this, game);
     this->first_frame = 0;
     rr_renderer_context_state_free(game->renderer, &state);
 }
@@ -86,6 +80,7 @@ void rr_ui_render_tooltip_above(struct rr_ui_element *this,
                                 struct rr_ui_element *tooltip,
                                 struct rr_game *game)
 {
+    rr_ui_container_refactor(tooltip, game);
     tooltip->should_show = rr_ui_always_show;
     tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
     tooltip->y = (this->abs_y / game->renderer->scale -
@@ -104,6 +99,7 @@ void rr_ui_render_tooltip_below(struct rr_ui_element *this,
                                 struct rr_ui_element *tooltip,
                                 struct rr_game *game)
 {
+    rr_ui_container_refactor(tooltip, game);
     tooltip->should_show = rr_ui_always_show;
     tooltip->x = (this->abs_x / game->renderer->scale - tooltip->abs_width / 2);
     tooltip->y =

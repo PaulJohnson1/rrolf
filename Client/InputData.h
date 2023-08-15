@@ -8,8 +8,8 @@ struct rr_input_touch
 {
     float touch_x;
     float touch_y;
-    uint8_t state_this_tick;
     uint8_t identifier;
+    uint8_t active;
 };
 
 struct rr_input_data

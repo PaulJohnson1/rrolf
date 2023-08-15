@@ -50,11 +50,10 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct rr_ui_text_metadata *data = malloc(sizeof *data);
-    this->abs_height = this->height = size;
     this->abs_width = this->width =
-        rr_renderer_get_text_size(text) * this->height;
+        rr_renderer_get_text_size(text) * size;
     this->fill = fill;
-    this->height = data->size = size;
+    this->abs_height = this->height = data->size = size;
     data->text = text;
     this->data = data;
     this->on_render = text_on_render;

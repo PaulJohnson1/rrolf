@@ -47,11 +47,6 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-#define RR_TIME_BLOCK(_, CODE)                                                 \
-    {                                                                          \
-        CODE;                                                                  \
-    };
-
 static void rr_simulation_pending_deletion_free_components(uint64_t id,
                                                            void *_simulation)
 {
@@ -66,7 +61,7 @@ find_position_away_from_players(struct rr_simulation *this)
     uint8_t invalid = 1;
     while (invalid)
     {
-        float rad = sqrtf(rr_frand()) * 1650;
+        float rad = sqrtf(rr_frand()) * RR_ARENA_RADIUS;
         float angle = rr_frand() * 2 * M_PI;
         ret.x = rad * cosf(angle);
         ret.y = rad * sinf(angle);
@@ -148,6 +143,11 @@ static void spawn_mob_swarm(struct rr_simulation *this)
                                     rr_simulation_team_id_mobs);
     }
 }
+
+#define RR_TIME_BLOCK(_, CODE)                                                 \
+    {                                                                          \
+        CODE;                                                                  \
+    };
 
 #define SPECIAL_WAVE_COUNT 5
 

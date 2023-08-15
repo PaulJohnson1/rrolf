@@ -416,7 +416,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                             RR_MOB_RARITY_SCALING[mob->rarity].health * 0.4);
             health->damage = RR_MOB_DATA[mob->id].damage *
                              RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.2f;
-            rr_component_health_set_hidden(health, 1);
 
             projectile->ticks_until_death = 50;
 
@@ -639,7 +638,7 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
     {
         float angle = rr_vector_theta(&physical->velocity);
         struct rr_vector position = {physical->x, physical->y};
-        if (rr_vector_get_magnitude(&position) >= 1650.0f - physical->radius - 0.001)
+        if (rr_vector_get_magnitude(&position) >= RR_ARENA_RADIUS - physical->radius - 0.001)
         {
             float tangent = rr_vector_theta(&position);
             angle = tangent - (M_PI - (tangent - angle));

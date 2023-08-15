@@ -66,7 +66,7 @@ static void scroll_container_on_render(struct rr_ui_element *this,
         float x = renderer->state.transform_matrix[2];
         y = renderer->state.transform_matrix[5];
         if ((game->input_data->mouse_buttons & 1) &&
-            fabsf(x - game->input_data->mouse_x) < 2.5 &&
+            fabsf(x - game->input_data->mouse_x) < 7.5 &&
             game->input_data->mouse_y > y &&
             game->input_data->mouse_y < y + height * renderer->scale)
         {

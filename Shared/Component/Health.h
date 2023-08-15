@@ -11,15 +11,17 @@ RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_health
 {
-    RR_SERVER_ONLY(uint64_t protocol_state;)
     float health;
     RR_CLIENT_ONLY(float lerp_health;)
     float max_health;
+    RR_CLIENT_ONLY(float damage_animation;)
     RR_SERVER_ONLY(float damage;)
     RR_SERVER_ONLY(float damage_reduction;)
     EntityIdx parent_id;
-    uint8_t hidden : 1;
-    RR_SERVER_ONLY(uint8_t damage_paused : 7;)
+    uint8_t flags;
+    RR_SERVER_ONLY(uint8_t protocol_state;)
+    RR_CLIENT_ONLY(uint8_t prev_flags;)
+    RR_SERVER_ONLY(uint8_t damage_paused;)
 };
 
 void rr_component_health_init(struct rr_component_health *,
@@ -35,6 +37,6 @@ RR_CLIENT_ONLY(void rr_component_health_read(struct rr_component_health *,
 
 RR_DECLARE_PUBLIC_FIELD(health, float, health)
 RR_DECLARE_PUBLIC_FIELD(health, float, max_health)
-RR_DECLARE_PUBLIC_FIELD(health, uint8_t, hidden)
+RR_DECLARE_PUBLIC_FIELD(health, uint8_t, flags)
 RR_SERVER_ONLY(void rr_component_health_do_damage(struct rr_component_health *,
                                                   float);)

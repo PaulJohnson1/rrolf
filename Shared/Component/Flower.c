@@ -31,12 +31,30 @@ void rr_component_flower_free(struct rr_component_flower *this,
     if (rr_simulation_has_entity(
             simulation,
             rr_simulation_get_relations(simulation, this->parent_id)->owner))
-        rr_component_player_info_set_flower_id(
-            rr_simulation_get_player_info(
-                simulation,
-                rr_simulation_get_relations(simulation, this->parent_id)
-                    ->owner),
-            RR_NULL_ENTITY);
+    {
+        EntityIdx p_id = rr_simulation_get_relations(simulation, this->parent_id)->owner;
+        struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_id);
+        rr_component_player_info_set_flower_id(player_info, RR_NULL_ENTITY);
+        if (player_info->flower_id == RR_NULL_ENTITY || !rr_simulation_has_entity(simulation, player_info->flower_id))
+        {
+            for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
+            {
+                struct rr_component_player_info_petal_slot *slot =
+                    &player_info->slots[outer];
+                struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
+                for (uint64_t inner = 0; inner < slot->count; ++inner)
+                {
+                    if (slot->petals[inner].simulation_id != RR_NULL_ENTITY)
+                    {
+                        rr_simulation_request_entity_deletion(
+                            simulation, slot->petals[inner].simulation_id);
+                        slot->petals[inner].simulation_id = RR_NULL_ENTITY;
+                    }
+                    slot->petals[inner].cooldown_ticks = data->cooldown;
+                }
+            }
+        }
+    }
 #endif
 }
 

@@ -15,9 +15,11 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
+    struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
     if (rr_simulation_get_relations(simulation, entity)->team ==
         rr_simulation_team_id_players)
-        rr_renderer_add_color_filter(renderer, 0xffabab00, 0.5);
+        rr_renderer_add_color_filter(renderer, 0xffabff00, 0.5);
+    rr_renderer_add_color_filter(renderer, 0xffff0000, 0.5 * health->damage_animation);
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
@@ -28,7 +30,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
         float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
         float dist = rr_frand() * 50;
         rr_vector_from_polar(&particle->velocity, (rr_frand() * 5 + 5) * RR_MOB_RARITY_SCALING[mob->rarity].radius, angle);
-        rr_vector_set(&particle->position, physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
+        rr_vector_set(&particle->position[0], physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
         particle->size = (4 + rr_frand() * 2) * RR_MOB_RARITY_SCALING[mob->rarity].radius;
         particle->opacity = 0.8;
         particle->color = 0xffab3423;
@@ -37,7 +39,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sinf(physical->animation);
 
-    uint8_t use_cache = 1;
+    uint8_t use_cache = health->damage_animation < 0.1;
     uint8_t is_friendly =
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)

@@ -127,6 +127,7 @@ struct rr_game
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
+    struct rr_ui_element *squad_player_tooltips[RR_SQUAD_MEMBER_COUNT];
     struct rr_ui_element *rivet_info_tooltip;
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
@@ -139,8 +140,10 @@ struct rr_game
     struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT * 2];
+    EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
 
+    uint8_t is_mobile;
+    
     uint8_t squad_pos;
     uint8_t socket_ready;
     uint8_t socket_pending;

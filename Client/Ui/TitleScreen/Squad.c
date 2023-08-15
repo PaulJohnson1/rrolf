@@ -8,7 +8,6 @@
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Assets/RenderFunctions.h>
-#include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
@@ -136,8 +135,8 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal)
     data->petal = petal;
     data->prev_id = 0;
     this->data = data;
-    this->abs_width = this->width = 20;
-    this->abs_height = this->height = 20;
+    this->abs_width = this->width = 16;
+    this->abs_height = this->height = 16;
     this->on_render = squad_loadout_button_on_render;
     this->animate = squad_loadout_button_animate;
     this->should_show = squad_loadout_button_should_show;
@@ -160,27 +159,40 @@ static void background_change_animate(struct rr_ui_element *this,
         this->container->fill = 0x40000000;
 }
 
+void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_container_metadata *data = this->data;
+    rr_ui_render_tooltip_above(
+            this, game->squad_player_tooltips[data->width], game);
+}
+
 static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_dynamic_text_metadata *data = this->data;
-    struct rr_game_squad_client *client = data->data;
-    data->text[sprintf(data->text, "Spawn on wave %d",
-                       client->requested_start_wave)] = 0;
+    uint32_t sum = 0;
+    uint32_t count = 0;
+    for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+    {
+        if (!game->squad_members[i].in_use)
+            continue;
+        sum += game->squad_members[i].requested_start_wave;
+        ++count;
+    }
+    data->text[sprintf(data->text, "Squad will spawn on wave %d",
+                       sum / count)] = 0;
 }
 
-static struct rr_ui_element *
-rr_ui_wave_spawn_element_init(struct rr_game_squad_client *member)
+struct rr_ui_element *rr_ui_wave_spawn_text_init()
 {
     struct rr_ui_element *this =
-        rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
-    struct rr_ui_dynamic_text_metadata *data = this->data;
-    data->data = member;
+        rr_ui_dynamic_text_init(15, 0xffffffff, wave_spawn_at);
     return this;
 }
 
 struct rr_ui_element *
-rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
+rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
 {
+    struct rr_game_squad_client *member = &game->squad_members[pos];
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 5);
     for (uint8_t i = 0; i < 20; ++i)
@@ -190,15 +202,21 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
                               -1, -1));
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, rr_ui_flower_init(member, 50),
-        rr_ui_wave_spawn_element_init(member),
-        rr_ui_text_init(&member->name[0], 14, 0xffffffff), NULL);
-    rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 20);
+        rr_ui_text_init(&member->name[0], 14, 0xffffffff), 
+        NULL
+    );
+    rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 10);
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     struct rr_ui_element *squad_container = rr_ui_container_init();
     squad_container->abs_width = squad_container->width = 120;
-    squad_container->abs_height = squad_container->height = 200;
+    squad_container->abs_height = squad_container->height = 120;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
+    squad_container->on_event = squad_container_on_event;
+    squad_container->stop_event_propagation = 1;
+    squad_container->resizeable = 0;
+    struct rr_ui_container_metadata *d_data = squad_container->data;
+    d_data->width = pos;
     struct rr_ui_element *this =
         rr_ui_choose_element_init(squad_container, b, choose);
     rr_ui_choose_container_set(this);
@@ -207,7 +225,7 @@ rr_ui_squad_player_container_init(struct rr_game_squad_client *member)
     this->animate = background_change_animate;
 
     return rr_ui_set_background(
-        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, this, NULL),
+        rr_ui_v_container_init(rr_ui_container_init(), 0, 10, this, NULL),
         0x40ffffff);
 }
 
@@ -303,12 +321,12 @@ static void create_squad_on_event(struct rr_ui_element *this,
     {
         if (game->socket_ready && game->squad_pos == 0)
         {
-            *((uint8_t *)this->data) ^= 1;
+            //*((uint8_t *)this->data) ^= 1;
             printf("setting to: %d\n", *((uint8_t *)this->data));
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, 72, "header");
-            proto_bug_write_uint8(&encoder, *((uint8_t *)this->data), "private");
+            proto_bug_write_uint8(&encoder, (*((uint8_t *)this->data) ^ 1), "private");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
