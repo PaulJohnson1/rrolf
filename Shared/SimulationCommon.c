@@ -42,6 +42,9 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
     assert(rr_simulation_has_entity(this, i));
 
     RR_SERVER_ONLY(rr_bitset_set(this->recently_deleted, i);)
+#ifndef NDEBUG
+    RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
+#endif
 
 #define XX(COMPONENT, ID)                                                      \
     if (rr_simulation_has_##COMPONENT(this, i))                                \

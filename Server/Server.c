@@ -353,7 +353,8 @@ void rr_server_client_tick(struct rr_server_client *this)
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
 {
-    rr_simulation_request_entity_deletion(_captures, entity);
+    if (rr_simulation_has_entity(_captures, entity))
+        rr_simulation_request_entity_deletion(_captures, entity);
 }
 
 void rr_server_init(struct rr_server *this)
@@ -677,8 +678,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             proto_bug_read_string(&encoder, client->rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
             
-            uint8_t dev_flag = proto_bug_read_uint8(&encoder, "dev flag");
-            if (dev_flag == 69)
+            uint64_t dev_flag = proto_bug_read_varuint(&encoder, "dev flag");
+            if (dev_flag == 494538643243)
                 client->ready |= 2;
 
 #ifdef RIVET_BUILD

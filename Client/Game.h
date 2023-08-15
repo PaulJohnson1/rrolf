@@ -141,8 +141,7 @@ struct rr_game
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
-
-    uint8_t is_mobile;
+    uint64_t dev_flag;
     
     uint8_t squad_pos;
     uint8_t socket_ready;
@@ -156,9 +155,9 @@ struct rr_game
     uint8_t block_ui_input;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;
+    uint8_t is_mobile;
 
     uint8_t squad_private;
-    uint8_t dev_flag;
     char connect_link[100];
 };
 

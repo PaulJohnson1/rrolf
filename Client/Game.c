@@ -480,7 +480,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
-            proto_bug_write_uint8(&verify_encoder, this->dev_flag, "dev flag");
+            proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
             rr_websocket_send_all(&this->socket);
