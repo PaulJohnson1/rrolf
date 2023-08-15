@@ -11,7 +11,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 55.0f, 5.0f, 10.0f, 138, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 5.0f, 15.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 5.0f, 10.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 75, {1, 1, 1, 1, 1, 1, 1}},
@@ -119,7 +119,7 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
                                                        25, 45,  20, 25, 0.5, 25};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 8, 15, 30, 100, 350};
+    0, 1, 5, 8, 15, 30, 100, 300};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 13, 18, 25, 150, 250, 50};

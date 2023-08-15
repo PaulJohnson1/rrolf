@@ -57,6 +57,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         uint32_t chain_amount = petal->rarity + 2;   
         float damage = rr_simulation_get_health(simulation, petal_id)->damage * 0.5; 
         float min_dist = 100 + physical->radius;
+        physical->stun_ticks = 10;
         for (; chain_size < chain_amount + 2; ++chain_size)
         {
             float old_x = physical->x, old_y = physical->y;
@@ -94,6 +95,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
             struct rr_component_health *health = rr_simulation_get_health(simulation, target);
             rr_component_health_do_damage(health, damage);
             health->damage_paused = 5;
+            physical->stun_ticks = 10;
             chain[chain_size] = target;
             physical = rr_simulation_get_physical(simulation, target);
             animation->points[chain_size].x = physical->x;

@@ -754,6 +754,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
+    if (physical->stun_ticks > 0)
+        return;
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
     if (ai->target_entity != RR_NULL_ENTITY && !rr_simulation_has_entity(this, ai->target_entity))
