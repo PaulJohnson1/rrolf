@@ -176,7 +176,7 @@ void rr_game_init(struct rr_game *this)
         rr_ui_link_toggle(
             rr_ui_set_background(
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
-                    rr_ui_v_container_init(rr_ui_container_init(), 0, 20,
+                    rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
@@ -184,6 +184,14 @@ void rr_game_init(struct rr_game *this)
                             rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
                             NULL
                         ),
+                        /*
+                        rr_ui_text_init("Biome", 18, 0xffffffff),
+                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                            rr_ui_biome_button_init("Hell Creek", 0xffff0000, 0),
+                            rr_ui_biome_button_init("Your Mom's House", 0xffcdb423, 1),
+                            NULL
+                        ),
+                        */
                         rr_ui_set_justify(rr_ui_set_background(rr_ui_squad_button_init(), 0xff1dd129), 1, 0),
                         rr_ui_set_background(
                             rr_ui_link_toggle(
@@ -405,6 +413,7 @@ void rr_game_init(struct rr_game *this)
 
     rr_local_storage_get_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
+    rr_dom_set_text("name", &this->cache.nickname[0]);
     // clang-format on
     this->tiles_size = 3;
     this->ticks_until_text_cache = 24;

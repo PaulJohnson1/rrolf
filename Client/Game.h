@@ -155,6 +155,7 @@ struct rr_game
     uint8_t tiles_size;
     uint8_t block_ui_input;
     uint8_t ticks_until_text_cache;
+    uint8_t selected_biome;
 
     uint8_t squad_private;
     char connect_link[100];

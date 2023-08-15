@@ -56,12 +56,11 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         uint32_t chain_size = 2;
         uint32_t chain_amount = petal->rarity + 2;   
         float damage = rr_simulation_get_health(simulation, petal_id)->damage * 0.5; 
-    
+        float min_dist = 100 + physical->radius;
         for (; chain_size < chain_amount + 2; ++chain_size)
         {
             float old_x = physical->x, old_y = physical->y;
             target = RR_NULL_ENTITY;
-            float min_dist = 100;
             for (uint16_t i = 0; i < simulation->mob_count; ++i)
             {
                 EntityIdx mob_id = simulation->mob_vector[i];
@@ -89,6 +88,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
             physical = rr_simulation_get_physical(simulation, target);
             animation->points[chain_size].x = physical->x;
             animation->points[chain_size].y = physical->y;
+            min_dist = 100 + physical->radius;
         }
         animation->length = chain_size;
         rr_simulation_request_entity_deletion(simulation, petal_id);

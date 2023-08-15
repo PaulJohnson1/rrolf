@@ -10,21 +10,30 @@
 
 #include <Shared/pb.h>
 
-static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
+struct biome_button_metadata
 {
-    struct rr_ui_labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-        data->toggle != NULL)
-        (*(data->toggle)) ^= 1;
+    char *text;
+    uint8_t pos;
+};
+
+static void biome_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        struct biome_button_metadata *data = this->data;
+        game->selected_biome = data->pos;
+    }
 }
 
-static void labeled_button_on_render(struct rr_ui_element *this,
+static void biome_button_on_render(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
-    struct rr_ui_labeled_button_metadata *data = this->data;
+    struct biome_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
         renderer->state.filter.amount = 0.2;
+    if (game->selected_biome == data->pos)
+        renderer->state.filter.amount = 0.4;
 
     this->abs_width =
         10 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
@@ -53,18 +62,18 @@ static void labeled_button_on_render(struct rr_ui_element *this,
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
-                                                uint8_t *toggle)
+struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill, uint8_t pos)
 {
+    float height = 24;
     struct rr_ui_element *this = rr_ui_element_init();
-    struct rr_ui_labeled_button_metadata *data = malloc(sizeof *data);
-    data->toggle = toggle;
+    struct biome_button_metadata *data = malloc(sizeof *data);
+    data->pos = pos;
     data->text = text;
     this->data = data;
     this->abs_height = this->height = height;
     this->abs_width = this->width = 10 + rr_renderer_get_text_size(text) * height / 2;
-    this->on_render = labeled_button_on_render;
-    this->on_event = button_on_event;
-    this->fill = 0xff0000ff;
+    this->on_render = biome_button_on_render;
+    this->on_event = biome_button_on_event;
+    this->fill = fill;
     return this;
 }

@@ -247,7 +247,7 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
 static void squad_find_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    struct labeled_button_metadata *data = this->data;
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->rivet_lobby_pending)
     {
         this->fill = 0xff999999;
@@ -275,7 +275,7 @@ static void squad_find_button_animate(struct rr_ui_element *this,
 static void ready_button_animate(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
-    struct labeled_button_metadata *data = this->data;
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
     {
         this->fill = 0xff999999;
@@ -359,7 +359,7 @@ static void join_code_on_event(struct rr_ui_element *this,
 static void squad_join_button_on_event(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    struct labeled_button_metadata *data = this->data;
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (!game->socket_pending && !game->rivet_lobby_pending)

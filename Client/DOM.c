@@ -66,6 +66,15 @@ void rr_dom_retrieve_text(char const *name, char *out, uint32_t max_len)
     }, name, out, max_len);
 }
 
+void rr_dom_set_text(char const *name, char *text)
+{
+    EM_ASM({
+        const name = Module.ReadCstr($0);
+        const elem = document.getElementById(name);
+        elem.value = Module.ReadCstr($1);
+    }, name, text);
+}
+
 void rr_copy_string(char const *str)
 {
     EM_ASM({

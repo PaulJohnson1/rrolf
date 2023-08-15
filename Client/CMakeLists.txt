@@ -72,6 +72,7 @@ set(SRCS
     Ui/InGame/Squad.c
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c
+    Ui/TitleScreen/BiomeButton.c
     Ui/TitleScreen/Changelog.c
     Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/Inventory.c
