@@ -893,7 +893,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             render_background(player_info, this, this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
-            rr_system_particle_render_tick(this, delta);
 
             #define render_component(COMPONENT) \
                 for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
@@ -905,6 +904,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             render_component(health);
             render_component(drop);
             render_component(mob);
+            rr_system_particle_render_tick(this, delta);
             render_component(petal);
             render_component(flower);
             rr_renderer_context_state_free(this->renderer, &state1);

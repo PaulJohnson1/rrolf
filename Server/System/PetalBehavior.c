@@ -264,6 +264,21 @@ static void system_flower_petal_movement_logic(
                 physical->friction = 0.4;
                 break;
             }
+            case rr_petal_id_lightning:
+            {
+                if ((player_info->input & 1) == 0)
+                    break;
+                system_petal_detach(simulation, petal, player_info, outer_pos,
+                                    inner_pos, petal_data);
+                rr_vector_from_polar(&physical->acceleration, 15.0f,
+                                     physical->angle);
+                rr_vector_from_polar(&physical->velocity, 100.0f,
+                                     physical->angle);
+                projectile->ticks_until_death = 8;
+                rr_simulation_get_health(simulation, id)->damage =
+                    25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                break;
+            }
             default:
                 break;
             }
@@ -504,12 +519,89 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             rr_vector_from_polar(&physical->acceleration, 7.5f,
                                  physical->angle);
         else if (petal->id == rr_petal_id_seed)
+        {
             if (simulation->player_info_count <= simulation->flower_count)
                 rr_simulation_request_entity_deletion(simulation, id);
+        }
+        else if (petal->id == rr_petal_id_lightning)
+            rr_vector_from_polar(&physical->acceleration, 15.0f,
+                                 physical->angle);
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
             0)
         {
             rr_simulation_request_entity_deletion(simulation, id);
+            if (petal->id == rr_petal_id_lightning)
+            {
+                struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+                struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+                animation->type = 1;
+                EntityIdx chain[16] = {0};
+                animation->points[0].x = physical->x;
+                animation->points[0].y = physical->y;
+                uint32_t chain_size = 1;
+                uint32_t chain_amount = petal->rarity + 2;   
+                float damage = rr_simulation_get_health(simulation, id)->damage * 0.5; 
+                EntityIdx target = RR_NULL_ENTITY;
+            
+                for (; chain_size < chain_amount + 1; ++chain_size)
+                {
+                    float old_x = physical->x, old_y = physical->y;
+                    target = RR_NULL_ENTITY;
+                    float min_dist = 500 * 500;
+                    if (relations->team == rr_simulation_team_id_players)
+                    {
+                        for (uint16_t i = 0; i < simulation->mob_count; ++i)
+                        {
+                            EntityIdx mob_id = simulation->mob_vector[i];
+                            uint8_t hit_before = 0;
+                            for (uint32_t j = 0; j < chain_size; ++j)
+                                hit_before |= chain[j] == mob_id;
+                            if (hit_before)
+                                continue;
+                            if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
+                                continue;
+                            physical = rr_simulation_get_physical(simulation, mob_id);
+                            float x = physical->x, y = physical->y;
+                            float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                            if (dist > min_dist)
+                                continue;
+                            target = mob_id;
+                            min_dist = dist;
+                        }
+                    }
+                    else
+                    {
+                        for (uint16_t i = 0; i < simulation->flower_count; ++i)
+                        {
+                            EntityIdx mob_id = simulation->flower_vector[i];
+                            uint8_t hit_before = 0;
+                            for (uint32_t j = 0; j < chain_size; ++j)
+                                hit_before |= chain[j] == mob_id;
+                            if (hit_before)
+                                continue;
+                            if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_mobs)
+                                continue;
+                            physical = rr_simulation_get_physical(simulation, mob_id);
+                            float x = physical->x, y = physical->y;
+                            float dist = (x - old_x) * (x - old_x) + (y - old_y) * (y - old_y);
+                            if (dist > min_dist)
+                                continue;
+                            target = mob_id;
+                            min_dist = dist;
+                        }
+                    }
+                    if (target == RR_NULL_ENTITY)
+                        break;
+                    struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+                    rr_component_health_do_damage(health, damage);
+                    health->damage_paused = 5;
+                    chain[chain_size] = target;
+                    physical = rr_simulation_get_physical(simulation, target);
+                    animation->points[chain_size].x = physical->x;
+                    animation->points[chain_size].y = physical->y;
+                }
+                animation->length = chain_size;
+            }
             if (petal->id == rr_petal_id_seed)
             {
                 for (uint32_t i = 0; i < simulation->player_info_count; ++i)

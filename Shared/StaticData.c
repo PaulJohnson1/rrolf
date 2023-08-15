@@ -27,7 +27,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 20.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_lightning, rr_rarity_id_unusual, 10.0f, 2.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_lightning, rr_rarity_id_unusual, 15.0f, 2.0f, 0.0f, 75, 5, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -247,7 +247,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[0],
                     rr_petal_id_droplet, 0.15);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[1],
-                    rr_petal_id_feather, 0.05);
+                    rr_petal_id_lightning, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[2],
                     rr_petal_id_beak, 0.1);
 }
