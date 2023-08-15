@@ -248,12 +248,12 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {
-    struct __rr_client_message *msg = malloc(sizeof *msg);
-    msg->data = malloc(size + LWS_PRE);
-    memcpy(msg->data + LWS_PRE, data, size);
-    msg->size = size;
-    msg->next = this->messages;
-    this->messages = msg;
+//     struct __rr_client_message *msg = malloc(sizeof *msg);
+//     msg->data = malloc(size + LWS_PRE);
+//     memcpy(msg->data + LWS_PRE, data, size);
+//     msg->size = size;
+//     msg->next = this->messages;
+    // this->messages = msg;
 
     // struct __rr_client_message *msg = &this->messages[this->messages_size++];
     // uint8_t *malloced = malloc(size * (sizeof(char)) + LWS_PRE);
@@ -267,8 +267,8 @@ void rr_server_client_write_message(struct rr_server_client *this,
     //     abort();
     // }
 
-    lws_callback_on_writable(this->socket_handle);
-    // lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
+    // lws_callback_on_writable(this->socket_handle);
+    lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
 void rr_server_client_broadcast_update(struct rr_server_client *this)
@@ -558,7 +558,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 continue;
             if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
             {
-                struct rr_server_client *client = this->clients + i;
+                // struct rr_server_client *client = this->clients + i;
                 // for (uint64_t j = 0; j < client->messages_size; j++)
                 // {
                 //     struct __rr_client_message *msg = &client->messages[j];
@@ -568,15 +568,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 //     free(msg->data);
                 // }
                 // client->messages_size = 0;
-                struct __rr_client_message *msg = client->messages;
-                while (msg) {
-                    struct __rr_client_message *next_msg = msg->next;
-                    lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size, LWS_WRITE_BINARY);
-                    free(msg->data);
-                    free(msg);
-                    msg = next_msg;
-                }
-                client->messages = NULL;
+                // struct __rr_client_message *msg = client->messages;
+                // while (msg) {
+                //     struct __rr_client_message *next_msg = msg->next;
+                //     lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size, LWS_WRITE_BINARY);
+                //     free(msg->data);
+                //     free(msg);
+                //     msg = next_msg;
+                // }
+                // client->messages = NULL;
             }
         }
         break;
@@ -973,7 +973,7 @@ void rr_server_run(struct rr_server *this)
     info.port = 1234;
     info.user = this;
     info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
-    lws_set_log_level(-1, lws_log);
+    lws_set_log_level(0, lws_log);
 
     this->server = lws_create_context(&info);
     assert(this->server);
