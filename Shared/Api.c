@@ -43,7 +43,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), BASE_API_URL "user_get/%s/%s", param_1, param_2);
-    printf("url is %s\n", url);
+    //printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -89,7 +89,7 @@ void rr_api_on_open(char const *uuid, void *captures)
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
              uuid);
-    printf("url is %s\n", url);
+    //printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);

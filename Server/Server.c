@@ -37,7 +37,6 @@ static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
 void rr_api_on_open_result(char *json, void *captures)
 {
-    puts(json);
     struct rr_api_account *account = captures;
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
@@ -677,7 +676,23 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             client->rivet_account.uuid[uuid_encountered_size] = 0;
             proto_bug_read_string(&encoder, client->rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
-            
+            puts(client->rivet_account.uuid);
+
+            for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+            {
+                if (!rr_bitset_get(this->clients_in_use, j))
+                    continue;
+                if (&this->clients[j] == client)
+                    continue;
+                if (strcmp(client->rivet_account.uuid, this->clients[j].rivet_account.uuid) == 0)
+                {
+                    fputs("skid multibox\n", stderr);
+                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                        (uint8_t *)"skid multibox",
+                                        sizeof "skid multibox");
+                    return -1;
+                }
+            }
             uint64_t dev_flag = proto_bug_read_varuint(&encoder, "dev flag");
             if (dev_flag == 494538643243)
                 client->ready |= 2;
@@ -1030,8 +1045,8 @@ void rr_server_run(struct rr_server *this)
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 1000)
-            fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        //if (elapsed_time > 1000)
+            //fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);
