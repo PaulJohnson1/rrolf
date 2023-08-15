@@ -14,6 +14,7 @@ struct __rr_client_message
 {
     uint64_t size;
     uint8_t *data;
+    struct __rr_client_message *next;
 };
 
 struct rr_server_client
@@ -24,8 +25,7 @@ struct rr_server_client
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
     struct rr_server *server;
-    struct __rr_client_message messages[100];
-    uint64_t messages_size;
+    struct __rr_client_message *messages;
     struct lws *socket_handle;
     struct rr_component_player_info *player_info;
     float player_accel_x;
