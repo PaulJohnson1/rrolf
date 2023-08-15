@@ -182,21 +182,23 @@ void rr_server_client_free(struct rr_server_client *this)
         {
             wave = rr_simulation_get_arena(&this->server->simulation, 1)->wave;
             for (struct rr_drop_picked_up *i =
-                    this->player_info->collected_this_run;
-                i < this->player_info->collected_this_run_end; i++)
+                     this->player_info->collected_this_run;
+                 i < this->player_info->collected_this_run_end; i++)
             {
                 // Format each item into buffer
                 snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
-                        i->count);
+                         i->count);
 
                 // If not the first item, append a comma before the item
                 if (i != this->player_info->collected_this_run)
                 {
-                    strncat(petals_string, ",", 5000 - strlen(petals_string) - 1);
+                    strncat(petals_string, ",",
+                            5000 - strlen(petals_string) - 1);
                 }
 
                 // Append the item
-                strncat(petals_string, buffer, 5000 - strlen(petals_string) - 1);
+                strncat(petals_string, buffer,
+                        5000 - strlen(petals_string) - 1);
             }
         }
         if (petals_string[0] == 0)
@@ -222,8 +224,8 @@ void rr_server_client_free(struct rr_server_client *this)
         if (this->server->simulation_active)
         {
             if (this->player_info->flower_id != RR_NULL_ENTITY)
-                rr_simulation_request_entity_deletion(&this->server->simulation,
-                                                    this->player_info->flower_id);
+                rr_simulation_request_entity_deletion(
+                    &this->server->simulation, this->player_info->flower_id);
             __rr_simulation_pending_deletion_free_components(
                 this->player_info->parent_id, &this->server->simulation);
             __rr_simulation_pending_deletion_unset_entity(
@@ -246,20 +248,27 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {
-    struct __rr_client_message *msg = &this->messages[this->messages_size++];
-    uint8_t *malloced = malloc(size + LWS_PRE);
-    memcpy(malloced + LWS_PRE, data, size);
-    msg->data = malloced;
-    msg->size = size;
+//     struct __rr_client_message *msg = malloc(sizeof *msg);
+//     msg->data = malloc(size + LWS_PRE);
+//     memcpy(msg->data + LWS_PRE, data, size);
+//     msg->size = size;
+//     msg->next = this->messages;
+    // this->messages = msg;
 
-    if (this->messages_size > 90)
-    {
-        fputs("client message list > 90\n", stderr);
-        abort();
-    }
+    // struct __rr_client_message *msg = &this->messages[this->messages_size++];
+    // uint8_t *malloced = malloc(size * (sizeof(char)) + LWS_PRE);
+    // memcpy(malloced + LWS_PRE, data, size);
+    // msg->data = malloced;
+    // msg->size = size;
 
-    lws_callback_on_writable(this->socket_handle);
-    // lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
+    // if (this->messages_size > 90)
+    // {
+    //     fputs("client message list > 90\n", stderr);
+    //     abort();
+    // }
+
+    // lws_callback_on_writable(this->socket_handle);
+    lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
 void rr_server_client_broadcast_update(struct rr_server_client *this)
@@ -477,8 +486,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         if (this->simulation_active)
         {
             lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                            (uint8_t *)"simulation active",
-                            sizeof "simulation active" - 1);
+                             (uint8_t *)"simulation active",
+                             sizeof "simulation active" - 1);
             return -1;
         }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
@@ -544,7 +553,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
             }
         puts("client joined but instakicked");
-        //RR_UNREACHABLE("couldn't remove client");
+        // RR_UNREACHABLE("couldn't remove client");
         break;
     }
     case LWS_CALLBACK_SERVER_WRITEABLE:
@@ -556,16 +565,25 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 continue;
             if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
             {
-                struct rr_server_client *client = this->clients + i;
-                for (uint64_t j = 0; j < client->messages_size; j++)
-                {
-                    struct __rr_client_message *msg = &client->messages[j];
-                    int a =
-                        lws_write(client->socket_handle, msg->data + LWS_PRE,
-                                  msg->size, LWS_WRITE_BINARY);
-                    free(msg->data);
-                }
-                client->messages_size = 0;
+                // struct rr_server_client *client = this->clients + i;
+                // for (uint64_t j = 0; j < client->messages_size; j++)
+                // {
+                //     struct __rr_client_message *msg = &client->messages[j];
+                //     int a =
+                //         lws_write(client->socket_handle, msg->data + LWS_PRE,
+                //                   msg->size, LWS_WRITE_BINARY);
+                //     free(msg->data);
+                // }
+                // client->messages_size = 0;
+                // struct __rr_client_message *msg = client->messages;
+                // while (msg) {
+                //     struct __rr_client_message *next_msg = msg->next;
+                //     lws_write(client->socket_handle, msg->data + LWS_PRE, msg->size, LWS_WRITE_BINARY);
+                //     free(msg->data);
+                //     free(msg);
+                //     msg = next_msg;
+                // }
+                // client->messages = NULL;
             }
         }
         break;
@@ -661,15 +679,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
-                   this->clients[i].rivet_account.token);
+                    this->clients[i].rivet_account.token);
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
                     this->clients[i].rivet_account.token))
             {
                 fputs("rivet error\n", stderr);
                 lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"rivet error",
-                                 sizeof "rivet error");
+                                (uint8_t *)"rivet error",
+                                sizeof "rivet error");
                 return -1;
             }
 #endif
