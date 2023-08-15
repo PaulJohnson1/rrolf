@@ -82,13 +82,30 @@ wave_spawn_element_init(struct rr_game_squad_client *member)
     return this;
 }
 
+static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_ui_choose_element_metadata *data = this->data;
+    struct rr_game_squad_client *member = data->data;
+    if (member->ready & 2)
+        return 0;
+    return 1;
+}
+
+static struct rr_ui_element *dev_text_init(struct rr_game_squad_client *member)
+{
+    struct rr_ui_element *this = rr_ui_choose_element_init(rr_ui_text_init("Player", 20, 0xffffffff), rr_ui_text_init("Developer", 20, 0xffffffff), dev_text_choose);
+    struct rr_ui_choose_element_metadata *data = this->data;
+    data->data = member;
+    return this;
+}
+
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *game, uint8_t pos)
 {
     struct rr_game_squad_client *member = &game->squad_members[pos];
     struct rr_ui_element *this = rr_ui_set_justify(
         rr_ui_set_background(
             rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                rr_ui_text_init("Player", 20, 0xffffffff),
+                dev_text_init(member),
                 rr_ui_text_init(&member->name[0], 16, 0xffffffff),
                 wave_spawn_element_init(member),
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 

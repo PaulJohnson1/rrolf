@@ -412,6 +412,8 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
     rr_local_storage_get_bytes("nickname", &this->cache.nickname);
 
+    rr_local_storage_get_bytes("performance_mode", &this->dev_flag);
+
     rr_local_storage_get_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
     rr_dom_set_text("name", &this->cache.nickname[0]);
@@ -478,6 +480,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    uuid_size, "rivet uuid");
+            proto_bug_write_uint8(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
             rr_websocket_send_all(&this->socket);

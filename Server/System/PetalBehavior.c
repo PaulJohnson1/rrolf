@@ -384,8 +384,8 @@ static void petal_modifiers(struct rr_simulation *simulation,
                     continue;
                 if (data->id == rr_petal_id_magnet)
                 {
-                    if (player_info->modifiers.drop_pickup_radius < 50 + 20 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
-                        player_info->modifiers.drop_pickup_radius = 50 + 20 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
+                    if (player_info->modifiers.drop_pickup_radius < 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
+                        player_info->modifiers.drop_pickup_radius = 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
                 }
                 if (data->id == rr_petal_id_bone)
                     health->damage_reduction +=

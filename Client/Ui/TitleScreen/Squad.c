@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include <Client/DOM.h>
 #include <Client/Game.h>
@@ -25,6 +26,10 @@ void render_flower(struct rr_ui_element *element, struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct squad_flower_metadata *data = element->data;
+    if (data->member->ready & 2)
+    {
+        rr_renderer_rotate(renderer, -M_PI);
+    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
@@ -66,7 +71,7 @@ void render_flower(struct rr_ui_element *element, struct rr_game *game)
 static void flower_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct squad_flower_metadata *data = this->data;
-    data->mouth = rr_lerp(data->mouth, data->member->ready, 0.4);
+    data->mouth = rr_lerp(data->mouth, (data->member->ready & 1), 0.4);
 }
 
 static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
@@ -150,7 +155,7 @@ static void background_change_animate(struct rr_ui_element *this,
     if (data->choose(this, game))
     {
         struct rr_game_squad_client *member = data->data;
-        if (member->ready)
+        if (member->ready & 1)
             this->container->fill = 0x4023ff45;
         else
             this->container->fill = 0x40ff4523;

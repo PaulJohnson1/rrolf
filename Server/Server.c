@@ -416,7 +416,7 @@ void rr_server_tick(struct rr_server *this)
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (rr_bitset_get(this->clients_in_use, i))
             {
-                all_ready &= this->clients[i].ready;
+                all_ready &= (this->clients[i].ready & 1);
                 has_client = 1;
             }
         if (!has_client)
@@ -665,24 +665,28 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
 
-            memset(&this->clients[i].rivet_account, 0,
+            memset(&client->rivet_account, 0,
                    sizeof(struct rr_rivet_account));
             // Read rivet token
-            this->clients[i].rivet_account.token[encountered_size] = 0;
+            client->rivet_account.token[encountered_size] = 0;
             proto_bug_read_string(&encoder,
-                                  this->clients[i].rivet_account.token,
+                                  client->rivet_account.token,
                                   encountered_size, "rivet token");
             // Read uuid
-            this->clients[i].rivet_account.uuid[uuid_encountered_size] = 0;
-            proto_bug_read_string(&encoder, this->clients[i].rivet_account.uuid,
+            client->rivet_account.uuid[uuid_encountered_size] = 0;
+            proto_bug_read_string(&encoder, client->rivet_account.uuid,
                                   uuid_encountered_size, "rivet uuid");
+            
+            uint8_t dev_flag = proto_bug_read_uint8(&encoder, "dev flag");
+            if (dev_flag == 69)
+                client->ready |= 2;
 
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
-                    this->clients[i].rivet_account.token);
+                    client->rivet_account.token);
             if (!rr_rivet_players_connected(
                     getenv("RIVET_LOBBY_TOKEN"),
-                    this->clients[i].rivet_account.token))
+                    client->rivet_account.token))
             {
                 fputs("rivet error\n", stderr);
                 lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
@@ -693,7 +697,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #endif
 
             struct rr_api_account account = {0};
-            rr_api_on_open(this->clients[i].rivet_account.uuid, &account);
+            rr_api_on_open(client->rivet_account.uuid, &account);
 
             printf("%u\n", account.already_playing);
 
@@ -906,12 +910,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return 0;
             }
 
-            memset(&this->clients[i].client_nickname, 0,
-                   sizeof(this->clients[i].client_nickname));
+            memset(&client->client_nickname, 0,
+                   sizeof(client->client_nickname));
 
-            this->clients[i].client_nickname[nickname_size] =
+            client->client_nickname[nickname_size] =
                 0; // don't forget the null terminator lol
-            proto_bug_read_string(&encoder, this->clients[i].client_nickname,
+            proto_bug_read_string(&encoder, client->client_nickname,
                                   nickname_size, "nick");
             break;
         }

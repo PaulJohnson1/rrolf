@@ -119,7 +119,7 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
                                                        25, 45,  20, 25, 0.5, 25};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 8, 15, 30, 100, 300};
+    0, 1, 5, 8, 15, 30, 100, 350};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 13, 18, 25, 150, 250, 50};
@@ -148,7 +148,6 @@ static void init_game_coefficients()
         RR_MOB_WAVE_RARITY_COEFFICIENTS[a] =
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
-        printf("wave r: %.9f\n", RR_MOB_WAVE_RARITY_COEFFICIENTS[a]);
     }
     RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)

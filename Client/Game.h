@@ -158,6 +158,7 @@ struct rr_game
     uint8_t selected_biome;
 
     uint8_t squad_private;
+    uint8_t dev_flag;
     char connect_link[100];
 };
 
