@@ -247,7 +247,7 @@ void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {
     struct __rr_client_message *msg = &this->messages[this->messages_size++];
-    uint8_t *malloced = malloc(size * (sizeof(char)) + LWS_PRE);
+    uint8_t *malloced = malloc(size + LWS_PRE);
     memcpy(malloced + LWS_PRE, data, size);
     msg->data = malloced;
     msg->size = size;
@@ -278,6 +278,13 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
+    if (!this->received_first_packet)
+    {
+        if (this->response_time != 0)
+        {
+            --this->response_time;
+        }
+    }
     if (this->server->simulation_active)
     {
         if (rr_simulation_has_entity(&this->server->simulation,
@@ -619,6 +626,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 proto_bug_read_varuint(&encoder, "rivet token size");
             uint64_t uuid_encountered_size =
                 proto_bug_read_varuint(&encoder, "uuid size");
+            if (encountered_size > 250 || uuid_encountered_size > 95)
+            {
+                printf("%lu %lu\n", size,
+                       encountered_size + uuid_encountered_size);
+                fputs("invalid size3\n", stderr);
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"invalid size3",
+                                 sizeof "invalid size3");
+                return -1;
+            }
             if (16 + encountered_size + uuid_encountered_size >= size)
             {
                 printf("%lu %lu\n", size,

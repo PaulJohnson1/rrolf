@@ -18,6 +18,7 @@ void rr_server_client_init(struct rr_server_client *this)
     this->clientbound_encryption_key = rr_get_rand();
     this->serverbound_encryption_key = rr_get_rand();
     this->requested_verification = rr_get_rand();
+    this->response_time = 50;
     printf("client connected, using encryption data %lu %lu %lu\n",
            this->requested_verification, this->clientbound_encryption_key,
            this->serverbound_encryption_key);
