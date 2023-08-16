@@ -241,6 +241,8 @@ static void system_flower_petal_movement_logic(
             }
             case rr_petal_id_seed:
             {
+                if ((player_info->input & 3) == 0)
+                    break;
                 if (simulation->player_info_count > simulation->flower_count)
                 {
                     if (!petal->detached)

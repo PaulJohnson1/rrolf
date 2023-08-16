@@ -23,7 +23,7 @@ const CRAFT_CHANCES = [
     0
 ];
 
-const CRAFT_XP_GAINS = [1, 8, 50, 750, 25000, 1000000];
+const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
 let database = {};
 let changed = false;
