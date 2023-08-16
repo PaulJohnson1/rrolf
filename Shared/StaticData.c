@@ -33,15 +33,15 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 50, 15, 30.0f, {}},
     {rr_mob_id_trex, 30, 25, 32.0f, {}},
-    {rr_mob_id_fern, 10, 5, 28.0f, {}},
+    {rr_mob_id_fern, 10, 5, 24.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
-    {rr_mob_id_pteranodon, 35, 35, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}},
-    {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
-    {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}},
+    {rr_mob_id_pteranodon, 35, 20, 20.0f, {}},
+    {rr_mob_id_dakotaraptor, 35, 25, 25.0f, {}},
+    {rr_mob_id_pachycephalosaurus, 20, 15, 20.0f, {}},
+    {rr_mob_id_ornithomimus, 15, 10, 20.0f, {}},
     {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, 300, 8, 32.0f, {}},
-    {rr_mob_id_quetzalcoatlus, 100, 10, 32.0f, {}}
+    {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -51,8 +51,8 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {2.4, 3.0},
     {3.5, 4.5},
     {5.6, 7.2},
-    {12.0, 16.0},
-    {20.0, 50.0},
+    {12.0, 18.0},
+    {25.0, 54.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -61,8 +61,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {5.6, 1.6, 1.5}, 
     {15,  2.5, 1.8},
     {50,  4.0, 2.5},
-    {100, 6.6, 4.0},
-    {200, 15,  6.0},
+    {100, 7.0, 4.0},
+    {250, 15,  6.0},
 };
 // clang-format on
 
@@ -116,8 +116,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
-                                                       25, 45,  20, 25, 0.5, 25};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 5, 25,
+                                                       25, 20,  20, 25, 0.5, 75};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 

@@ -37,7 +37,7 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
     }
     else if (special_wave_id == 1)
     {
-        if (rr_frand() > 0.5)
+        if (rr_frand() > 0.25)
             return rr_mob_id_pachycephalosaurus;
         else
             return rr_mob_id_ornithomimus;
@@ -46,24 +46,24 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
         return rr_mob_id_triceratops;
     else if (special_wave_id == 3)
     {
-        if (rr_frand() > 0.04)
+        if (rr_frand() > 0.025)
             return rr_mob_id_pteranodon;
         else
             return rr_mob_id_meteor;
     }
     else if (special_wave_id == 4)
     {
-        if (rr_frand() > 0.8)
+        if (rr_frand() > 0.75)
             return rr_mob_id_fern;
         else
-            return rr_mob_id_trex;
+            return rr_mob_id_dakotaraptor;
     }
     else
     {
         if (rr_frand() > 0.25)
             return rr_mob_id_ankylosaurus;
         else
-            return rr_mob_id_dakotaraptor;
+            return rr_mob_id_quetzalcoatlus;
     }
 }
 
@@ -76,6 +76,8 @@ int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_triceratops && rarity < rr_rarity_id_unusual)
         return 0;
     if (id == rr_mob_id_meteor && rarity < rr_rarity_id_rare)
+        return 0;
+    if (id == rr_mob_id_quetzalcoatlus && rarity < rr_rarity_id_rare)
         return 0;
     return 1;
 }
