@@ -227,7 +227,7 @@ function craft_user_petals(user, petals)
         const {successes, attempts, fails: new_fails, count: new_count} = craft(count, user.failed_crafts[key] || 0, CRAFT_CHANCES[rarity]);
         user.failed_crafts[key] = new_fails;
         new_xp += attempts * CRAFT_XP_GAINS[rarity];
-        new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
+        //new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
         results.push({id, rarity: rarity + 1, count: successes});
         results.push({id, rarity, count: new_count - count});
     }

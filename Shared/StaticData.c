@@ -13,10 +13,10 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, 5.0f, 10.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 15.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, /*TEMPORARY*/0.1f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 5.0f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -51,8 +51,8 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {2.4, 3.0},
     {3.5, 4.5},
     {5.6, 7.2},
-    {8.0, 16.0},
-    {15.0, 40.0},
+    {12.0, 16.0},
+    {20.0, 50.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -61,8 +61,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {5.6, 1.6, 1.5}, 
     {15,  2.5, 1.8},
     {50,  4.0, 2.5},
-    {100, 6.2, 4.0},
-    {150, 12,  6.0},
+    {100, 6.6, 4.0},
+    {200, 15,  6.0},
 };
 // clang-format on
 
@@ -88,7 +88,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Heals you gradually",
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Does not stack",
-    "Does low damage to mobs in a large range. Slowly damages itself",
+    "Does low damage to mobs in a large range. Slowly damages yourself",
     "It's so light it increases your movement speed. Does not stack",
     "It heals you",
     "Gives the player armor. Stacks with itself",
