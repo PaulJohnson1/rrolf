@@ -47,6 +47,7 @@ struct rr_game_crafting_data
 // anything cross reload
 struct rr_game_cache
 {
+    double experience;
     uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
     float map_props;
     float wave_start_percent;

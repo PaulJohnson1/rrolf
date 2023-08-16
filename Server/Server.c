@@ -93,11 +93,27 @@ void rr_api_on_get_petals(char *json, void *_client)
             fprintf(stderr, "Error before: %s\n", error_ptr);
         return;
     }
+
     cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
     if (max_wave == NULL)
-        client->max_wave = 100000;
+        client->max_wave = 0;
     else
         client->max_wave = max_wave->valueint;
+
+    cJSON *experience = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
+    double xp = 0;
+    if (experience != NULL)
+        xp = experience->valuedouble;
+    
+    uint32_t next_level = 2;
+    while (xp >= xp_to_reach_level(next_level))
+    {
+        xp -= xp_to_reach_level(next_level);
+        ++next_level;
+    }
+
+    client->level = min(next_level - 1, 150);
+    printf("client is registered as level %d\n", next_level - 1);
 
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
     if (petals == NULL || !cJSON_IsObject(petals))
@@ -151,8 +167,9 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
         &this->server->simulation,
         rr_simulation_alloc_entity(&this->server->simulation));
     this->player_info->client = this;
+    this->player_info->level = this->level;
     rr_component_player_info_set_client_id(this->player_info, pos);
-    rr_component_player_info_set_slot_count(this->player_info, 8);
+    rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / 15));
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
@@ -819,7 +836,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return 0;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= 10 &&
-                   encoder.current - encoder.start < size)
+                   encoder.current - encoder.start <= size)
             {
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);

@@ -8,10 +8,10 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 15.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_rock, rr_rarity_id_common, 8.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 55.0f, 5.0f, 10.0f, 138, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 5.0f, 10.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 75, {1, 1, 1, 1, 1, 1, 1}},
@@ -255,4 +255,10 @@ void rr_static_data_init()
 {
     init_game_coefficients();
     init_loot_tables();
+}
+
+double xp_to_reach_level(uint32_t level)
+{
+    //xp it takes from level - 1 to level
+    return level * level * level;
 }

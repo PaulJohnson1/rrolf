@@ -90,6 +90,9 @@ static void title_screen_loadout_button_animate(struct rr_ui_element *this,
     if (this->completely_hidden)
         return;
     struct rr_renderer *renderer = game->renderer;
+    this->width = this->abs_width * (1 - this->animation);
+    this->height = this->abs_height * (1 - this->animation);
+    rr_renderer_scale(game->renderer, (1 - this->animation));
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, rr_rarity_id_max + 1, 1);
     uint8_t id = game->cache.loadout[data->pos].id;
@@ -128,6 +131,9 @@ static void loadout_button_animate(struct rr_ui_element *this,
     struct rr_component_player_info *player_info = game->player_info;
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    this->width = this->abs_width * (1 - this->animation);
+    this->height = this->abs_height * (1 - this->animation);
+    rr_renderer_scale(game->renderer, (1 - this->animation));
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, rr_rarity_id_max + 1, 1);
     struct rr_component_player_info_petal_slot *slot =

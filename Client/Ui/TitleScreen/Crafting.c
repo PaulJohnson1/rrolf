@@ -71,8 +71,8 @@ void rr_api_on_craft_result(char *data, void *_captures)
         float xp;
         if (sscanf(xp_token, "%f", &xp) != 1)
             puts("Error parsing XP");
-        // else
-        //     game->xp += xp; // Assuming game struct has an 'xp' field
+        else
+            game->cache.experience += xp; // Assuming game struct has an 'xp' field
     }
 
     char *token = strtok(NULL, ",");
