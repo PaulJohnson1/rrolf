@@ -61,7 +61,7 @@ static void uranium_petal_system(struct rr_simulation *simulation,
         struct rr_component_health *flower_health =
             rr_simulation_get_health(simulation, relations->owner);
         rr_component_health_set_health(flower_health, flower_health->health -
-                                                          health->damage * 1.5);
+                                                          health->damage);
         petal->effect_delay = 25;
         struct uranium_captures captures = {simulation, relations->owner,
                                             physical->x, physical->y,
