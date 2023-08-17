@@ -79,12 +79,12 @@ void rr_api_on_open_result(char *json, void *captures)
 }
 
 // loadout validation
-void rr_api_on_get_petals(char *bin, void *_client)
+void rr_api_on_get_petals(char *json, void *_client)
 {
+    /*
     puts("attempting petal validation");
     struct rr_server_client *client = _client;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max] = {0};
-    
     struct rr_binary_encoder decoder;
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     rr_binary_encoder_read_nt_string(&decoder, client->rivet_account.uuid);
@@ -99,7 +99,7 @@ void rr_api_on_get_petals(char *bin, void *_client)
     #define min(a,b) (((a) < (b)) ? (a) : (b))
     client->level = min(next_level - 1, 150);
     #undef min
-    client->max_wave = rr_binary_encoder_read_varuint(&decoder);
+    client->max_wave = (rr_binary_encoder_read_varuint(&decoder) & 255);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
     {
@@ -108,6 +108,84 @@ void rr_api_on_get_petals(char *bin, void *_client)
         inventory[id][rarity] = count;
         id = rr_binary_encoder_read_uint8(&decoder);
     }
+    for (uint8_t i = 0; i < 20; ++i)
+    {
+        uint8_t id = client->loadout[i].id;
+        if (id != 0)
+        {
+            uint8_t rarity = client->loadout[i].rarity;
+            if (inventory[id][rarity] > 0)
+                --inventory[id][rarity];
+            else
+            {
+                memset(&client->loadout[0], 0, sizeof client->loadout);
+                puts("petals are invalid");
+                return;
+            }
+        }
+    }
+    puts("petals are valid");
+    */
+   puts("attempting petal validation");
+    struct rr_server_client *client = _client;
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    memset(&inventory[0], 0, sizeof inventory);
+
+    cJSON *parsed = cJSON_Parse(json);
+    if (parsed == NULL)
+    {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL)
+            fprintf(stderr, "Error before: %s\n", error_ptr);
+        return;
+    }
+
+    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
+    if (max_wave == NULL)
+        client->max_wave = 0;
+    else
+        client->max_wave = max_wave->valueint;
+
+    cJSON *experience = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
+    double xp = 0;
+    if (experience != NULL)
+        xp = experience->valuedouble;
+    
+    uint32_t next_level = 2;
+    while (xp >= xp_to_reach_level(next_level))
+    {
+        xp -= xp_to_reach_level(next_level);
+        ++next_level;
+    }
+
+    client->level = min(next_level - 1, 150);
+    printf("client is registered as level %d\n", next_level - 1);
+
+    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
+    if (petals == NULL || !cJSON_IsObject(petals))
+    {
+        fprintf(stderr, "petals is missing or is not an object\n");
+        cJSON_Delete(parsed);
+        return;
+    }
+
+    for (cJSON *petal_key = petals->child; petal_key != NULL;
+         petal_key = petal_key->next)
+    {
+        char *key = petal_key->string;
+        char *sub_key1 = strtok(key, ":");
+        char *sub_key2 = strtok(NULL, ":");
+
+        if (sub_key1 && sub_key2)
+        {
+            int index1 = atoi(sub_key1);
+            int index2 = atoi(sub_key2);
+
+            inventory[index1][index2] = petal_key->valueint;
+        }
+    }
+
+    cJSON_Delete(parsed);
     for (uint8_t i = 0; i < 20; ++i)
     {
         uint8_t id = client->loadout[i].id;
