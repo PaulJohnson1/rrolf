@@ -48,6 +48,7 @@ set(SRCS
     ../Shared/Component/Relations.c
     ../Shared/Component/Web.c
     ../Shared/Api.c
+    ../Shared/Binary.c
     ../Shared/Bitset.c
     ../Shared/cJSON.c
     ../Shared/Crypto.c

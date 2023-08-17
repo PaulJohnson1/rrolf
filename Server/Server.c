@@ -15,6 +15,7 @@
 #include <Server/UpdateProtocol.h>
 #include <Server/Waves.h>
 #include <Shared/Api.h>
+#include <Shared/Binary.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Crypto.h>
@@ -78,68 +79,33 @@ void rr_api_on_open_result(char *json, void *captures)
 }
 
 // loadout validation
-void rr_api_on_get_petals(char *json, void *_client)
+void rr_api_on_get_petals(char *bin, void *_client)
 {
     puts("attempting petal validation");
     struct rr_server_client *client = _client;
-    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    memset(&inventory[0], 0, sizeof inventory);
-
-    cJSON *parsed = cJSON_Parse(json);
-    if (parsed == NULL)
-    {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-            fprintf(stderr, "Error before: %s\n", error_ptr);
-        return;
-    }
-
-    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
-    if (max_wave == NULL)
-        client->max_wave = 0;
-    else
-        client->max_wave = max_wave->valueint;
-
-    cJSON *experience = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
-    double xp = 0;
-    if (experience != NULL)
-        xp = experience->valuedouble;
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max] = {0};
     
+    struct rr_binary_encoder decoder;
+    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    rr_binary_encoder_read_nt_string(&decoder, client->rivet_account.uuid);
+    float xp = rr_binary_encoder_read_float64(&decoder);
     uint32_t next_level = 2;
     while (xp >= xp_to_reach_level(next_level))
     {
         xp -= xp_to_reach_level(next_level);
         ++next_level;
     }
-
+    printf("client is level %d\n", next_level - 1);
     client->level = min(next_level - 1, 150);
-    printf("client is registered as level %d\n", next_level - 1);
-
-    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    if (petals == NULL || !cJSON_IsObject(petals))
+    client->max_wave = rr_binary_encoder_read_varuint(&decoder);
+    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+    while (id)
     {
-        fprintf(stderr, "petals is missing or is not an object\n");
-        cJSON_Delete(parsed);
-        return;
+        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
+        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        inventory[id][rarity] = count;
+        id = rr_binary_encoder_read_uint8(&decoder);
     }
-
-    for (cJSON *petal_key = petals->child; petal_key != NULL;
-         petal_key = petal_key->next)
-    {
-        char *key = petal_key->string;
-        char *sub_key1 = strtok(key, ":");
-        char *sub_key2 = strtok(NULL, ":");
-
-        if (sub_key1 && sub_key2)
-        {
-            int index1 = atoi(sub_key1);
-            int index2 = atoi(sub_key2);
-
-            inventory[index1][index2] = petal_key->valueint;
-        }
-    }
-
-    cJSON_Delete(parsed);
     for (uint8_t i = 0; i < 20; ++i)
     {
         uint8_t id = client->loadout[i].id;
@@ -169,7 +135,7 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
     this->player_info->client = this;
     this->player_info->level = this->level;
     rr_component_player_info_set_client_id(this->player_info, pos);
-    rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / 15));
+    rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / RR_LEVELS_PER_EXTRA_SLOT));
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)

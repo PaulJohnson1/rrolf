@@ -56,7 +56,7 @@ void rr_api_on_get_petals(char *bin, void *a)
 {
     struct rr_game *game = a;
 
-   memset(game->inventory, 0, sizeof game->inventory);
+    memset(game->inventory, 0, sizeof game->inventory);
     
     struct rr_binary_encoder decoder;
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);

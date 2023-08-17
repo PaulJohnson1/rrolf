@@ -50,7 +50,7 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
         }
     }
     #define min(a,b) (((a) < (b)) ? (a) : (b))
-    game->cache.slots_unlocked = min(5 + data->level / 15,10);
+    game->cache.slots_unlocked = min(5 + data->level / RR_LEVELS_PER_EXTRA_SLOT,10);
     #undef min
     double ratio = data->lerp_xp / xp_to_reach_level(data->level + 1);
     rr_renderer_set_stroke(renderer, 0xff222222);

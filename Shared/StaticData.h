@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#define RR_LEVELS_PER_EXTRA_SLOT 20
+
 enum rr_rarity_id
 {
     rr_rarity_id_common,
