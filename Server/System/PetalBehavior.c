@@ -117,7 +117,7 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
-                    35 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    55 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
                 break;
             }
@@ -538,7 +538,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 {
                     struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
                     struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.005 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
                 }
             }
             rr_vector_from_polar(&physical->acceleration, 15.0f,
