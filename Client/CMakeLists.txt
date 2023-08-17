@@ -76,6 +76,7 @@ set(SRCS
     Ui/TitleScreen/Changelog.c
     Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/Inventory.c
+    Ui/TitleScreen/LevelBar.c
     Ui/TitleScreen/MobGallery.c
     Ui/TitleScreen/Rivet.c
     Ui/TitleScreen/Settings.c
@@ -95,6 +96,7 @@ set(SRCS
     Socket.c
     Storage.c
     ../Shared/Api.c
+    ../Shared/Binary.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Centipede.c

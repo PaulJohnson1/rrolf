@@ -3,6 +3,7 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
 const rng = require("./rng");
+const protocol = require("./protocol");
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -22,7 +23,8 @@ const CRAFT_CHANCES = [
     rng.get_magic_chance(0.01),
     0
 ];
-const CRAFT_XP_GAINS = [1, 10, 100, 1000, 10000, 100000, 1000000];
+
+const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
 //let database = {};
 //let changed = false;
@@ -226,7 +228,7 @@ function craft_user_petals(user, petals)
         const {successes, attempts, fails: new_fails, count: new_count} = craft(count, user.failed_crafts[key] || 0, CRAFT_CHANCES[rarity]);
         user.failed_crafts[key] = new_fails;
         new_xp += attempts * CRAFT_XP_GAINS[rarity];
-        new_xp += successes * CRAFT_XP_GAINS[rarity + 1];
+        //new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
         results.push({id, rarity: rarity + 1, count: successes});
         results.push({id, rarity, count: new_count - count});
     }
@@ -307,7 +309,24 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
         delete user.failed_crafts;
         delete user.password;
         delete user.already_playing;
-        return JSON.stringify(user)
+        const out = new protocol.BinaryWriter();
+        out.WriteStringNT(user.username);
+        out.WriteFloat64(user.xp);
+        out.WriteVarUint(user.maximum_wave);
+        let checksum = 5;
+        for (const petal of Object.keys(user.petals))
+        {
+            if (!(user.petals[petal] > 0))
+                continue;
+            const [id, rarity] = petal.split(":");
+            out.WriteUint8(id);
+            out.WriteVarUint(user.petals[petal]);
+            out.WriteUint8(rarity);
+            checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
+        }
+        out.WriteUint8(0);
+        out.WriteVarUint(checksum);
+        return out.data.subarray(0, out.at);
     });
 });
 

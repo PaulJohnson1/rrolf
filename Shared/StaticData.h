@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#define RR_LEVELS_PER_EXTRA_SLOT 20
+
 enum rr_rarity_id
 {
     rr_rarity_id_common,
@@ -115,3 +117,5 @@ extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
 void rr_static_data_init();
+
+double xp_to_reach_level(uint32_t);

@@ -28,8 +28,8 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 200);
-    rr_component_health_set_health(health, 200);
+    rr_component_health_set_max_health(health, 100 * pow(1.01557361544, player_info->level - 1));
+    rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
     health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
@@ -141,41 +141,6 @@ float x, float y,
     health->damage = mob_data->damage * rarity_scale->damage;
 
     rr_component_relations_set_team(relations, team_id);
-
-    switch (mob_id)
-    {
-    case rr_mob_id_pteranodon:
-        ai->ai_aggro_type = rr_ai_aggro_type_pteranodon;
-        break;
-    case rr_mob_id_triceratops:
-        ai->ai_aggro_type = rr_ai_aggro_type_triceratops;
-        break;
-    case rr_mob_id_fern:
-    case rr_mob_id_stump:
-        ai->ai_aggro_type = rr_ai_aggro_type_none;
-        break;
-    case rr_mob_id_quetzalcoatlus:
-        ai->ai_aggro_type = rr_ai_aggro_type_quetzalcoatlus;
-        break;
-    case rr_mob_id_trex:
-    case rr_mob_id_dakotaraptor:
-        ai->ai_aggro_type = rr_ai_aggro_type_t_rex;
-        break;
-    case rr_mob_id_ankylosaurus:
-        ai->ai_aggro_type = rr_ai_aggro_type_ankylosaurus;
-        break;
-    case rr_mob_id_pachycephalosaurus:
-        ai->ai_aggro_type = rr_ai_aggro_type_pachycephalosaurus;
-        break;
-    case rr_mob_id_ornithomimus:
-        ai->ai_aggro_type = rr_ai_aggro_type_default;
-        break;
-    case rr_mob_id_meteor:
-        ai->ai_aggro_type = rr_ai_aggro_type_meteor;
-        break;
-    default:
-        RR_UNREACHABLE("forgot to set ai aggro type");
-    };
     /*
     if (mob_id == 255 && 0)
     {

@@ -58,8 +58,10 @@ static void uranium_petal_system(struct rr_simulation *simulation,
             return;
         struct rr_component_physical *flower_physical =
             rr_simulation_get_physical(simulation, relations->owner);
-        rr_component_health_set_health(health, health->health -
-                                                          health->damage * 1.5);
+        struct rr_component_health *flower_health =
+            rr_simulation_get_health(simulation, relations->owner);
+        rr_component_health_set_health(flower_health, flower_health->health -
+                                                          health->damage);
         petal->effect_delay = 25;
         struct uranium_captures captures = {simulation, relations->owner,
                                             physical->x, physical->y,
@@ -115,7 +117,7 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
-                    20 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    35 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
                 break;
             }
@@ -241,6 +243,8 @@ static void system_flower_petal_movement_logic(
             }
             case rr_petal_id_seed:
             {
+                if ((player_info->input & 3) == 0)
+                    break;
                 if (simulation->player_info_count > simulation->flower_count)
                 {
                     if (!petal->detached)
@@ -534,7 +538,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 {
                     struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
                     struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.005 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
                 }
             }
             rr_vector_from_polar(&physical->acceleration, 15.0f,

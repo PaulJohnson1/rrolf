@@ -8,15 +8,15 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 15.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_rock, rr_rarity_id_common, 5.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_stinger, rr_rarity_id_common, 55.0f, 5.0f, 10.0f, 138, 0, {1, 1, 1, 1, 1, 3, 5}},
+    {rr_petal_id_rock, rr_rarity_id_common, 8.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_stinger, rr_rarity_id_common, 60.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, 5.0f, 10.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 75, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 15.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, /*TEMPORARY*/0.1f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 10.0f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -26,22 +26,22 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_club, rr_rarity_id_common, 3.0f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 20.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 13.5f, 2.0f, 0.0f, 75, 5, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 50, 15, 30.0f, {}},
     {rr_mob_id_trex, 30, 25, 32.0f, {}},
-    {rr_mob_id_fern, 10, 5, 28.0f, {}},
+    {rr_mob_id_fern, 10, 5, 24.0f, {}},
     {rr_mob_id_stump, 50, 5, 26.0f, {}},
-    {rr_mob_id_pteranodon, 35, 35, 26.0f, {}},
-    {rr_mob_id_dakotaraptor, 35, 25, 30.0f, {}},
-    {rr_mob_id_pachycephalosaurus, 20, 15, 25.0f, {}},
-    {rr_mob_id_ornithomimus, 15, 10, 25.0f, {}},
+    {rr_mob_id_pteranodon, 35, 20, 20.0f, {}},
+    {rr_mob_id_dakotaraptor, 35, 25, 25.0f, {}},
+    {rr_mob_id_pachycephalosaurus, 20, 15, 20.0f, {}},
+    {rr_mob_id_ornithomimus, 15, 10, 20.0f, {}},
     {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, 300, 8, 32.0f, {}},
-    {rr_mob_id_quetzalcoatlus, 100, 10, 32.0f, {}}
+    {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -51,8 +51,8 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {2.4, 3.0},
     {3.5, 4.5},
     {5.6, 7.2},
-    {8.0, 16.0},
-    {15.0, 40.0},
+    {12.0, 18.0},
+    {25.0, 54.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -61,8 +61,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {5.6, 1.6, 1.5}, 
     {15,  2.5, 1.8},
     {50,  4.0, 2.5},
-    {100, 6.2, 4.0},
-    {150, 12,  6.0},
+    {100, 7.0, 4.0},
+    {250, 15,  6.0},
 };
 // clang-format on
 
@@ -82,13 +82,13 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Low damage, but there's lots",
     "Dwayne",
     "Ow that hurts",
-    "Makes your petals lighter so you spin faster",
+    "Makes your petals lighter so they spin faster",
     "ICBM approved",
     "Splits in 4. Or maybe 5 if you're a pro",
     "Heals you gradually",
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Does not stack",
-    "Does low damage to mobs in a large range. Slowly damages itself",
+    "Does low damage to mobs in a large range. Slowly damages yourself",
     "It's so light it increases your movement speed. Does not stack",
     "It heals you",
     "Gives the player armor. Stacks with itself",
@@ -116,13 +116,13 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {30, 100, 15, 5, 30,
-                                                       25, 45,  20, 25, 0.5, 25};
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 5, 25,
+                                                       25, 20,  20, 25, 0.5, 75};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 13, 18, 25, 150, 250, 50};
+    0, 1, 12, 20, 25, 150, 250, 50};
 static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
     3, 2, 7.5, 16, 20, 25, 50};
 
@@ -191,18 +191,18 @@ static void init_loot_tables()
                     rr_petal_id_leaf, 0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_bone,
-                    0.25);
+                    0.2);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
-                    0.10);
+                    0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_egg,
-                    0.05);
+                    0.025);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[0], rr_petal_id_azalea,
-                    0.10);
+                    0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[1], rr_petal_id_leaf,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[2], rr_petal_id_seed,
-                    0.01);
+                    0.0075);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.1);
@@ -210,9 +210,9 @@ static void init_loot_tables()
                     0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
-                    rr_petal_id_missile, 0.25);
+                    rr_petal_id_missile, 0.005);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
-                    rr_petal_id_beak, 0.1);
+                    rr_petal_id_beak, 0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_dakotaraptor].loot[0],
                     rr_petal_id_feather, 0.1);
@@ -239,7 +239,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[0],
                     rr_petal_id_magnet, 1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
-                    rr_petal_id_uranium, 0.3);
+                    rr_petal_id_uranium, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[2],
                     rr_petal_id_rock, 0.2);
     
@@ -255,4 +255,10 @@ void rr_static_data_init()
 {
     init_game_coefficients();
     init_loot_tables();
+}
+
+double xp_to_reach_level(uint32_t level)
+{
+    //xp it takes from level - 1 to level
+    return level * level * level;
 }

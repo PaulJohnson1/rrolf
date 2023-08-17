@@ -76,7 +76,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_trex:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.22f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
@@ -116,7 +116,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_t_rex_head_draw(renderer);
     break;
     case rr_mob_id_fern:
-        rr_renderer_scale(renderer, 0.15f);
+        rr_renderer_scale(renderer, 0.12f);
         if (flags)
             rr_renderer_draw_image(renderer, &game->mob_fern);
         else
@@ -132,7 +132,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_pteranodon:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.15f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
@@ -158,7 +158,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_dakotaraptor:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.16f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, -65, 0);
@@ -203,7 +203,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_pachycephalosaurus:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.16f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
@@ -245,7 +245,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_ornithomimus:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.16f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, 70, 0);

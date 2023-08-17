@@ -26,27 +26,12 @@ enum rr_ai_state
     rr_ai_state_returning_to_owner
 };
 
-enum rr_ai_aggro_type
-{
-    rr_ai_aggro_type_none,
-    rr_ai_aggro_type_default,
-    rr_ai_aggro_type_static,
-    rr_ai_aggro_type_pteranodon,
-    rr_ai_aggro_type_t_rex,
-    rr_ai_aggro_type_triceratops,
-    rr_ai_aggro_type_pachycephalosaurus,
-    rr_ai_aggro_type_meteor,
-    rr_ai_aggro_type_ankylosaurus,
-    rr_ai_aggro_type_quetzalcoatlus
-};
-
 struct rr_component_ai
 {
     RR_SERVER_ONLY(uint32_t ticks_until_next_action;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(EntityIdx target_entity;)
     RR_SERVER_ONLY(enum rr_ai_state ai_state;)
-    RR_SERVER_ONLY(enum rr_ai_aggro_type ai_aggro_type;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(uint8_t has_prediction;)
 };

@@ -23,6 +23,7 @@
 #include <Client/System/ParticleRender.h>
 #include <Client/Ui/Engine.h>
 #include <Shared/Api.h>
+#include <Shared/Binary.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
@@ -51,14 +52,34 @@ void validate_loadout(struct rr_game *this)
     }
 }
 
-void rr_api_on_get_petals(char *json, void *a)
+void rr_api_on_get_petals(char *bin, void *a)
 {
     struct rr_game *game = a;
 
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            game->inventory[id][rarity] = 0;
+    memset(game->inventory, 0, sizeof game->inventory);
+    
+    struct rr_binary_encoder decoder;
+    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
+    game->cache.experience = rr_binary_encoder_read_float64(&decoder);
+    rr_binary_encoder_read_varuint(&decoder);
+    uint32_t checksum = 5;
+    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+    while (id)
+    {
+        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
+        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        game->inventory[id][rarity] = count;
+        checksum += id + ((rarity * count) & 1023);
+        id = rr_binary_encoder_read_uint8(&decoder);
+    }
+    if (rr_binary_encoder_read_varuint(&decoder) != checksum)
+    {
+        memset(game->inventory, 0, sizeof game->inventory);
+    }
+    free(bin);
 
+    /*
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -69,7 +90,14 @@ void rr_api_on_get_petals(char *json, void *a)
         }
         return;
     }
-
+    cJSON *exp = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
+    if (exp == NULL)
+    {
+        fprintf(stderr, "xp is missing\n");
+        cJSON_Delete(parsed);
+        return;
+    }
+    game->cache.experience = exp->valuedouble;
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
     if (petals == NULL || !cJSON_IsObject(petals))
     {
@@ -95,6 +123,7 @@ void rr_api_on_get_petals(char *json, void *a)
     }
 
     cJSON_Delete(parsed);
+    */
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
@@ -151,7 +180,7 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->cache.slots_unlocked = 8;
+    this->cache.slots_unlocked = 0;
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
 
@@ -245,6 +274,7 @@ void rr_game_init(struct rr_game *this)
                         0x40ffffff),
                         NULL
                     ),
+                    rr_ui_level_bar_init(400),
                     rr_ui_h_container_init(rr_ui_container_init(), 0, 15,
                         rr_ui_title_screen_loadout_button_init(0),
                         rr_ui_title_screen_loadout_button_init(1),
@@ -411,6 +441,8 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
     rr_local_storage_get_bytes("nickname", &this->cache.nickname);
+    rr_local_storage_get_bytes("xp", &this->cache.experience);
+    rr_local_storage_get_bytes("sloc", &this->cache.slots_unlocked);
 
     rr_local_storage_get_bytes("performance_mode", &this->dev_flag);
 
@@ -440,6 +472,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         this->socket_pending = 0;
         this->socket_ready = 0;
         this->rivet_lobby_pending = 0;
+        this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
         puts("websocket closed");
         break;
@@ -686,7 +719,7 @@ static void render_background(struct rr_component_player_info *player_info,
                   ((double)UINT32_MAX) * (M_PI * 2);                           \
     float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) /     \
                            ((double)UINT32_MAX)) *                             \
-                     1600.0;                                                   \
+                     RR_ARENA_RADIUS - 50;                                     \
     float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) /           \
                      ((double)UINT32_MAX) * (M_PI * 2);                        \
     float x = distance * sinf(theta);                                          \
@@ -779,7 +812,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');
-    for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
+    for (uint8_t n = 1; n < this->cache.slots_unlocked; ++n)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                                 '0' + n) ||
             switch_all)
@@ -791,7 +824,10 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
         (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                             '0') ||
             switch_all))
+    {
         proto_bug_write_uint8(&encoder, 10, "petal switch");
+        should_write = 1;
+    }
     if (should_write)
     {
         proto_bug_write_uint8(&encoder, 0, "petal switch");
@@ -833,6 +869,10 @@ void rr_game_tick(struct rr_game *this, float delta)
                                  sizeof this->cache.use_mouse);
     rr_local_storage_store_bytes("nickname", &this->cache.nickname,
                                  strlen(&this->cache.nickname[0]));
+    rr_local_storage_store_bytes("xp", &this->cache.experience,
+                                 sizeof this->cache.experience);
+    rr_local_storage_store_bytes("sloc", &this->cache.slots_unlocked,
+                                 sizeof this->cache.slots_unlocked);     
 
     rr_local_storage_store_id_rarity("inventory", &this->inventory[0][0],
                                      rr_petal_id_max, rr_rarity_id_max);

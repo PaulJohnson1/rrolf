@@ -35,6 +35,7 @@ struct rr_server_client
     int file_descriptor;
     char ip_address[100];
     char client_nickname[18];
+    uint32_t level;
     uint32_t response_time;
     uint8_t received_first_packet : 1;
     uint8_t verified : 1;

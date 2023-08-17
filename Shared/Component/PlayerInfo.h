@@ -48,6 +48,7 @@ struct rr_component_player_info
     struct rr_drop_picked_up *collected_this_run;
     struct rr_drop_picked_up *collected_this_run_end;
     RR_SERVER_ONLY(struct rr_server_client *client;)
+    RR_SERVER_ONLY(uint32_t level;)
     RR_SERVER_ONLY(float global_rotation;)
     float camera_x;
     RR_CLIENT_ONLY(float lerp_camera_x;)

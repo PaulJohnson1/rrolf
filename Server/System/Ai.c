@@ -143,7 +143,7 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
     rr_vector_add(&physical->acceleration, &accel);
 }
 
-static void tick_ai_aggro_default(EntityIdx entity,
+static void tick_ai_aggro_none(EntityIdx entity,
                                   struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
@@ -259,8 +259,8 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     }
 }
 
-static void tick_ai_aggro_t_rex(EntityIdx entity,
-                                struct rr_simulation *simulation)
+static void tick_ai_aggro_default(EntityIdx entity,
+                                struct rr_simulation *simulation, float speed)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -292,7 +292,7 @@ static void tick_ai_aggro_t_rex(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
-        rr_vector_from_polar(&accel, 1.9, physical->angle);
+        rr_vector_from_polar(&accel, speed, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         ai->ticks_until_next_action = 2;
         break;
@@ -799,32 +799,36 @@ static void system_for_each(EntityIdx entity, void *simulation)
         }
     }
 
-    switch (ai->ai_aggro_type)
+    switch (mob->id)
     {
-    case rr_ai_aggro_type_none:
+    case rr_mob_id_fern:
+    case rr_mob_id_stump:
         break;
-    case rr_ai_aggro_type_default:
-        tick_ai_aggro_default(entity, this);
+    case rr_mob_id_ornithomimus:
+        tick_ai_aggro_none(entity, this);
         break;
-    case rr_ai_aggro_type_triceratops:
+    case rr_mob_id_triceratops:
         tick_ai_aggro_triceratops(entity, this);
         break;
-    case rr_ai_aggro_type_pachycephalosaurus:
+    case rr_mob_id_pachycephalosaurus:
         tick_ai_aggro_pachycephalosaurus(entity, this);
         break;
-    case rr_ai_aggro_type_t_rex:
-        tick_ai_aggro_t_rex(entity, this);
+    case rr_mob_id_trex:
+        tick_ai_aggro_default(entity, this, 1.8);
         break;
-    case rr_ai_aggro_type_pteranodon:
+    case rr_mob_id_dakotaraptor:
+        tick_ai_aggro_default(entity, this, 2.5);
+        break;
+    case rr_mob_id_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);
         break;
-    case rr_ai_aggro_type_ankylosaurus:
+    case rr_mob_id_ankylosaurus:
         tick_ai_aggro_ankylosaurus(entity, this);
         break;
-    case rr_ai_aggro_type_meteor:
+    case rr_mob_id_meteor:
         tick_ai_aggro_meteor(entity, this);
         break;
-    case rr_ai_aggro_type_quetzalcoatlus:
+    case rr_mob_id_quetzalcoatlus:
         tick_ai_aggro_quetzalcoatlus(entity, this);
         break;
     default:
