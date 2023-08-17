@@ -210,7 +210,7 @@ static void init_loot_tables()
                     0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
-                    rr_petal_id_missile, 0.01);
+                    rr_petal_id_missile, 0.001);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
                     rr_petal_id_beak, 0.15);
 
