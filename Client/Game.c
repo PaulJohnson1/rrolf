@@ -696,7 +696,7 @@ static void render_background(struct rr_component_player_info *player_info,
                   ((double)UINT32_MAX) * (M_PI * 2);                           \
     float distance = sqrtf(((double)(uint32_t)(rr_get_hash(i + 300000))) /     \
                            ((double)UINT32_MAX)) *                             \
-                     1600.0;                                                   \
+                     RR_ARENA_RADIUS - 50;                                     \
     float rotation = ((double)(uint32_t)(rr_get_hash(i + 400000))) /           \
                      ((double)UINT32_MAX) * (M_PI * 2);                        \
     float x = distance * sinf(theta);                                          \

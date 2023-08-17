@@ -422,9 +422,11 @@ void rr_server_tick(struct rr_server *this)
             rr_simulation_init(&this->simulation);
         }
         else
+        {
             rr_simulation_for_each_entity(
                 &this->simulation, &this->simulation,
                 rr_simulation_tick_entity_resetter_function);
+        }
     }
     else
     {

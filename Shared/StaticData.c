@@ -82,7 +82,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Low damage, but there's lots",
     "Dwayne",
     "Ow that hurts",
-    "Makes your petals lighter so you spin faster",
+    "Makes your petals lighter so they spin faster",
     "ICBM approved",
     "Splits in 4. Or maybe 5 if you're a pro",
     "Heals you gradually",
