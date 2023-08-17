@@ -137,7 +137,9 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
     this->player_info->client = this;
     this->player_info->level = this->level;
     rr_component_player_info_set_client_id(this->player_info, pos);
+    #define min(a,b) (((a) < (b)) ? (a) : (b))
     rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / RR_LEVELS_PER_EXTRA_SLOT));
+    #undef min
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&this->server->simulation, 1);
     for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
