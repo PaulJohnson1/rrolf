@@ -9,12 +9,12 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_basic, rr_rarity_id_common, 15.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_rock, rr_rarity_id_common, 8.0f, 65.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_stinger, rr_rarity_id_common, 55.0f, 5.0f, 10.0f, 138, 0, {1, 1, 1, 1, 1, 3, 5}},
+    {rr_petal_id_stinger, rr_rarity_id_common, 60.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 15.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 75, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 1.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 10.0f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -26,7 +26,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_club, rr_rarity_id_common, 3.0f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 20.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 13.5f, 2.0f, 0.0f, 75, 5, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
