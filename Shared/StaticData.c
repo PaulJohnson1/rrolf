@@ -191,18 +191,18 @@ static void init_loot_tables()
                     rr_petal_id_leaf, 0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[0], rr_petal_id_bone,
-                    0.25);
+                    0.2);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[1], rr_petal_id_stinger,
-                    0.10);
+                    0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_trex].loot[2], rr_petal_id_egg,
-                    0.05);
+                    0.025);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[0], rr_petal_id_azalea,
-                    0.10);
+                    0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[1], rr_petal_id_leaf,
                     0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[2], rr_petal_id_seed,
-                    0.01);
+                    0.0075);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
                     0.1);
@@ -210,7 +210,7 @@ static void init_loot_tables()
                     0.15);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
-                    rr_petal_id_missile, 0.001);
+                    rr_petal_id_missile, 0.005);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[1],
                     rr_petal_id_beak, 0.15);
 
@@ -239,7 +239,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[0],
                     rr_petal_id_magnet, 1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
-                    rr_petal_id_uranium, 0.3);
+                    rr_petal_id_uranium, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[2],
                     rr_petal_id_rock, 0.2);
     
