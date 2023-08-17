@@ -117,7 +117,7 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
-                    55 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    35 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
                 break;
             }
