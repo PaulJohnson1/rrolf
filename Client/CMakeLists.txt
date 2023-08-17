@@ -96,6 +96,7 @@ set(SRCS
     Socket.c
     Storage.c
     ../Shared/Api.c
+    ../Shared/Binary.c
     ../Shared/Component/Ai.c
     ../Shared/Component/Arena.c
     ../Shared/Component/Centipede.c

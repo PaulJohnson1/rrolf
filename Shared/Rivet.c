@@ -282,7 +282,8 @@ void rr_rivet_identities_create_guest(void *captures)
                         localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
                     }
                     */
-                    location.reload();
+                   alert("Login failed: please reload");
+                    //location.reload();
                 });
             };
         };

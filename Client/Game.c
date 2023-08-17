@@ -23,6 +23,7 @@
 #include <Client/System/ParticleRender.h>
 #include <Client/Ui/Engine.h>
 #include <Shared/Api.h>
+#include <Shared/Binary.h>
 #include <Shared/Bitset.h>
 #include <Shared/Component/Arena.h>
 #include <Shared/Component/Flower.h>
@@ -51,14 +52,34 @@ void validate_loadout(struct rr_game *this)
     }
 }
 
-void rr_api_on_get_petals(char *json, void *a)
+void rr_api_on_get_petals(char *bin, void *a)
 {
     struct rr_game *game = a;
 
-    for (uint32_t id = 0; id < rr_petal_id_max; ++id)
-        for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            game->inventory[id][rarity] = 0;
+   memset(game->inventory, 0, sizeof game->inventory);
+    
+    struct rr_binary_encoder decoder;
+    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
+    game->cache.experience = rr_binary_encoder_read_float64(&decoder);
+    rr_binary_encoder_read_varuint(&decoder);
+    uint32_t checksum = 5;
+    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+    while (id)
+    {
+        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
+        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        game->inventory[id][rarity] = count;
+        checksum += id + ((rarity * count) & 1023);
+        id = rr_binary_encoder_read_uint8(&decoder);
+    }
+    if (rr_binary_encoder_read_varuint(&decoder) != checksum)
+    {
+        memset(game->inventory, 0, sizeof game->inventory);
+    }
+    free(bin);
 
+    /*
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -102,6 +123,7 @@ void rr_api_on_get_petals(char *json, void *a)
     }
 
     cJSON_Delete(parsed);
+    */
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
