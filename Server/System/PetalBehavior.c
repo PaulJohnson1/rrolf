@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include <Server/EntityAllocation.h>
+#include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 
 #include <Shared/Entity.h>
@@ -117,7 +118,7 @@ static void system_flower_petal_movement_logic(
                                      physical->angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
-                    35 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
                 break;
             }
@@ -489,6 +490,25 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->rotation_count = rotation_pos;
 }
 
+struct lightning_captures
+{
+    EntityIdx *chain;
+    uint32_t length;
+};
+
+static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    if (seeker == target)
+        return 0;
+    struct lightning_captures *chain = captures;
+    for (uint32_t i = 0; i < chain->length; ++i)
+    {
+        if (chain->chain[i] == target)
+            return 0;
+    }
+    return 1;
+}
+
 static void system_petal_misc_logic(EntityIdx id, void *_simulation)
 {
     struct rr_simulation *simulation = _simulation;
@@ -517,23 +537,9 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     {
         if (petal->id == rr_petal_id_missile)
         {
-            float min_dist = 500;
-            EntityIdx target = RR_NULL_ENTITY;
             if (relations->team == rr_simulation_team_id_players)
             {
-                for (uint16_t i = 0; i < simulation->mob_count; ++i)
-                {
-                    EntityIdx mob_id = simulation->mob_vector[i];
-                    if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
-                        continue;
-                    struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, mob_id);
-                    float x = mob_physical->x, y = mob_physical->y;
-                    float dist = sqrtf((x - physical->x) * (x - physical->x) + (y - physical->y) * (y - physical->y));
-                    if (dist > min_dist)
-                        continue;
-                    target = mob_id;
-                    min_dist = dist;
-                }
+                EntityIdx target = rr_simulation_find_nearest_enemy(simulation, id, 500, NULL, no_filter);
                 if (target != RR_NULL_ENTITY)
                 {
                     struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
@@ -561,87 +567,39 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             rr_simulation_request_entity_deletion(simulation, id);
             if (petal->id == rr_petal_id_lightning)
             {
-                struct rr_component_physical *physical = rr_simulation_get_physical(simulation, id);
+                struct rr_component_physical *petal_physical = physical;
                 struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
                 animation->type = 1;
                 EntityIdx chain[16] = {0};
-                animation->points[0].x = physical->x;
-                animation->points[0].y = physical->y;
-                uint32_t chain_size = 1;
+                animation->points[0].x = petal_physical->x;
+                animation->points[0].y = petal_physical->y;
                 uint32_t chain_amount = petal->rarity + 2;   
                 float damage = rr_simulation_get_health(simulation, id)->damage * 0.5; 
                 EntityIdx target = RR_NULL_ENTITY;
-                float min_dist = 300;
-                for (; chain_size < chain_amount + 1; ++chain_size)
+                struct lightning_captures captures = {chain, 1};
+                for (; captures.length < chain_amount + 1; ++captures.length)
                 {
-                    float old_x = physical->x, old_y = physical->y;
-                    target = RR_NULL_ENTITY;
-                    
-                    if (relations->team == rr_simulation_team_id_players)
-                    {
-                        for (uint16_t i = 0; i < simulation->mob_count; ++i)
-                        {
-                            EntityIdx mob_id = simulation->mob_vector[i];
-                            uint8_t hit_before = 0;
-                            for (uint32_t j = 0; j < chain_size; ++j)
-                                hit_before |= chain[j] == mob_id;
-                            if (hit_before)
-                                continue;
-                            if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_players)
-                                continue;
-                            physical = rr_simulation_get_physical(simulation, mob_id);
-                            float x = physical->x, y = physical->y;
-                            float dist = sqrtf((x - old_x) * (x - old_x) + (y - old_y) * (y - old_y)) - physical->radius;
-                            if (dist > min_dist)
-                                continue;
-                            target = mob_id;
-                            min_dist = dist;
-                        }
-                    }
-                    else
-                    {
-                        for (uint16_t i = 0; i < simulation->flower_count; ++i)
-                        {
-                            EntityIdx mob_id = simulation->flower_vector[i];
-                            uint8_t hit_before = 0;
-                            for (uint32_t j = 0; j < chain_size; ++j)
-                                hit_before |= chain[j] == mob_id;
-                            if (hit_before)
-                                continue;
-                            if (rr_simulation_get_relations(simulation, mob_id)->team == rr_simulation_team_id_mobs)
-                                continue;
-                            physical = rr_simulation_get_physical(simulation, mob_id);
-                            float x = physical->x, y = physical->y;
-                            float dist = sqrtf((x - old_x) * (x - old_x) + (y - old_y) * (y - old_y)) - physical->radius;
-                            if (dist > min_dist)
-                                continue;
-                            target = mob_id;
-                            min_dist = dist;
-                        }
-                    }
+                    target = rr_simulation_find_nearest_enemy(simulation, id, 250, &captures, lightning_filter);
                     if (target == RR_NULL_ENTITY)
                         break;
                     if (rr_simulation_has_ai(simulation, target))
                     {
                         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
                         if (ai->target_entity == RR_NULL_ENTITY)
-                        {
-                            struct rr_component_relations *relations =
-                                rr_simulation_get_relations(simulation, id);
                             ai->target_entity = relations->owner;
-                        }
                     }
+                    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
                     struct rr_component_health *health = rr_simulation_get_health(simulation, target);
                     rr_component_health_do_damage(health, damage);
                     health->damage_paused = 5;
                     physical->stun_ticks = 10;
-                    chain[chain_size] = target;
-                    physical = rr_simulation_get_physical(simulation, target);
-                    animation->points[chain_size].x = physical->x;
-                    animation->points[chain_size].y = physical->y;
-                    min_dist = 100 + physical->radius;
+                    chain[captures.length] = target;
+                    animation->points[captures.length].x = physical->x;
+                    animation->points[captures.length].y = physical->y;
+                    petal_physical->x = physical->x;
+                    petal_physical->y = physical->y;
                 }
-                animation->length = chain_size;
+                animation->length = captures.length;
             }
             if (petal->id == rr_petal_id_seed)
             {

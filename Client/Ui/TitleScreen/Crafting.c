@@ -12,6 +12,7 @@
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
 #include <Shared/Api.h>
+#include <Shared/Binary.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
@@ -53,7 +54,7 @@ struct craft_captures
     struct rr_game *game;
 };
 
-void rr_api_on_craft_result(char *data, void *_captures)
+void rr_api_on_craft_result(char *bin, void *_captures)
 {
     // parse format of type delta_xp|id:rarity:count,id:rarity:count
     // and if it's the same id:rarity as the petal that is being crafted, reset
@@ -65,38 +66,21 @@ void rr_api_on_craft_result(char *data, void *_captures)
 
     craft->animation = 0;
 
-    char *xp_token = strtok(data, "|");
-    if (xp_token)
+    struct rr_binary_encoder decoder;
+    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+    while (id)
     {
-        float xp;
-        if (sscanf(xp_token, "%f", &xp) != 1)
-            puts("Error parsing XP");
-        else
-            game->cache.experience += xp; // Assuming game struct has an 'xp' field
+        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        uint32_t fails = rr_binary_encoder_read_varuint(&decoder);
+        game->inventory[id][rarity] -= fails;
+        game->crafting_data.count -= fails;
+        uint32_t successes = rr_binary_encoder_read_varuint(&decoder);
+        game->inventory[id][rarity + 1] += successes;
+        game->crafting_data.success_count = successes;
+        id = rr_binary_encoder_read_uint8(&decoder);
     }
-
-    char *token = strtok(NULL, ",");
-
-    while (token)
-    {
-        struct server_response r;
-        if (sscanf(token, "%d:%d:%lld", &r.id, &r.rarity, &r.count) != 3)
-        {
-            puts("Error parsing token");
-        }
-        else
-        {
-            game->inventory[r.id][r.rarity] += r.count;
-            if (r.id == craft->crafting_id &&
-                r.rarity - 1 == craft->crafting_rarity)
-                craft->success_count += r.count;
-            else if (r.id == craft->crafting_id &&
-                     r.rarity == craft->crafting_rarity)
-                craft->count += r.count;
-        }
-
-        token = strtok(0, ",");
-    }
+    game->cache.experience += rr_binary_encoder_read_float64(&decoder);
 }
 
 static void craft_button_on_event(struct rr_ui_element *this,

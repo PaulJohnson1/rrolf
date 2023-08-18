@@ -36,9 +36,24 @@ static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
 // static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void rr_api_on_open_result(char *json, void *captures)
+void rr_api_on_open_result(char *bin, void *captures)
 {
     struct rr_api_account *account = captures;
+    struct rr_binary_encoder decoder;
+    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    account->username = malloc(50 * (sizeof (char)));
+    rr_binary_encoder_read_nt_string(&decoder, account->username);
+    account->xp = rr_binary_encoder_read_float64(&decoder);
+    account->maximum_wave = rr_binary_encoder_read_varuint(&decoder);
+    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+    while (id)
+    {
+        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
+        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        account->petals[id][rarity] = count;
+        id = rr_binary_encoder_read_uint8(&decoder);
+    }
+    /*
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -76,6 +91,7 @@ void rr_api_on_open_result(char *json, void *captures)
     account->password = strdup(password->valuestring);
     account->maximum_wave = max_wave->valueint;
     cJSON_Delete(parsed);
+    */
 }
 
 // loadout validation
@@ -95,17 +111,21 @@ void rr_api_on_get_petals(char *json, void *_client)
         xp -= xp_to_reach_level(next_level);
         ++next_level;
     }
-    printf("client is level %d\n", next_level - 1);
     #define min(a,b) (((a) < (b)) ? (a) : (b))
     client->level = min(next_level - 1, 150);
     #undef min
-    client->max_wave = (rr_binary_encoder_read_varuint(&decoder) & 255);
+    uint32_t max_wave = rr_binary_encoder_read_varuint(&decoder);
+    if (max_wave > 28)
+        max_wave = 28;
+    client->max_wave = max_wave;
+    printf("client is level %d %d\n",client->level, client->max_wave);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
     {
         uint32_t count = rr_binary_encoder_read_varuint(&decoder);
         uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
         inventory[id][rarity] = count;
+        //printf("%d %d %d\n", id, rarity, count);
         id = rr_binary_encoder_read_uint8(&decoder);
     }
     for (uint8_t i = 0; i < 20; ++i)
@@ -119,6 +139,8 @@ void rr_api_on_get_petals(char *json, void *_client)
             else
             {
                 memset(&client->loadout[0], 0, sizeof client->loadout);
+                client->level = 1;
+                client->max_wave = 0;
                 puts("petals are invalid");
                 return;
             }
@@ -779,7 +801,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
 #endif
-
             struct rr_api_account account = {0};
             rr_api_on_open(client->rivet_account.uuid, &account);
 

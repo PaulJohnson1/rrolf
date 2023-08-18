@@ -219,6 +219,7 @@ function craft_user_petals(user, petals)
         if (!(petals[i].count <= user.petals[format_id_rarity(petals[i])]))
             throw new Error("insufficient funds");
 
+    const writer = new protocol.BinaryWriter();
     let new_xp = 0;
     const results = [];
     for (let i = 0; i < petals.length; i++)
@@ -231,17 +232,19 @@ function craft_user_petals(user, petals)
         //new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
         results.push({id, rarity: rarity + 1, count: successes});
         results.push({id, rarity, count: new_count - count});
+        writer.WriteUint8(id);
+        writer.WriteUint8(rarity);
+        writer.WriteVarUint(count - new_count);
+        writer.WriteVarUint(successes);
     }
+    writer.WriteUint8(0);
+    writer.WriteFloat64(new_xp);
 
     user.xp += new_xp;
 
     user_merge_petals(user, results);
-
-    // format and return results
-    for (let i = 0; i < results.length; i++)
-        results[i] = format_id_rarity_count(results[i]);
     
-    return new_xp + "|" + results.join(",");
+    return writer.data.subarray(0, writer.at);
 }
 
 // example: 1:0:123,1:5:1236
@@ -277,10 +280,25 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
     handle_error(res, async () => {
         log("user_on_open", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
-        const resp = JSON.stringify(user);
-        user.already_playing++;
         await write_db_entry(username, user);
-        return resp;
+        const out = new protocol.BinaryWriter();
+        out.WriteStringNT(username);
+        out.WriteFloat64(user.xp);
+        out.WriteVarUint(user.maximum_wave);
+        let checksum = 5;
+        for (const petal of Object.keys(user.petals))
+        {
+            if (!(user.petals[petal] > 0))
+                continue;
+            const [id, rarity] = petal.split(":");
+            out.WriteUint8(id);
+            out.WriteVarUint(user.petals[petal]);
+            out.WriteUint8(rarity);
+            checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
+        }
+        out.WriteUint8(0);
+        out.WriteVarUint(checksum);
+        return out.data.subarray(0, out.at);
     });
 });
 
@@ -290,12 +308,10 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
     handle_error(res, async () => {
         log("user_on_close", [username, wave_end, petals_string]);
         const user = await db_read_user(username, SERVER_SECRET);
-        if (!user.already_playing)
-            throw new Error("Player was not online when close happened");
+
         user_merge_petals(user, parse_id_rarity_count(petals_string));
         if (user.maximum_wave < wave_end)
             user.maximum_wave = wave_end;
-        user.already_playing--;
         await write_db_entry(username, user);
         return "success";
     });
