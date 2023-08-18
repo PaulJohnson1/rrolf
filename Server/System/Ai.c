@@ -5,61 +5,18 @@
 #include <stdlib.h>
 
 #include <Server/EntityAllocation.h>
+#include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
-static EntityIdx ai_get_nearest_target(EntityIdx entity,
-                                       struct rr_simulation *simulation,
-                                       float range)
+
+static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
 {
-    uint8_t team_id = rr_simulation_get_relations(simulation, entity)->team;
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-    float closest_distance = range * range; // 1.5k is default range
-    EntityIdx closest_flower = RR_NULL_ENTITY;
-    if (team_id == rr_simulation_team_id_mobs)
-    {
-        for (uint64_t i = 0; i < simulation->flower_count; i++)
-        {
-            struct rr_component_physical *physical2 =
-                rr_simulation_get_physical(simulation,
-                                           simulation->flower_vector[i]);
-
-            struct rr_vector delta = {physical->x, physical->y};
-            struct rr_vector target_pos = {physical2->x, physical2->y};
-            rr_vector_sub(&delta, &target_pos);
-
-            float d = delta.x * delta.x + delta.y * delta.y;
-            if (d < closest_distance)
-            {
-                closest_distance = d;
-                closest_flower = physical2->parent_id;
-            }
-        }
-    }
-    for (uint64_t i = 0; i < simulation->mob_count; i++)
-    {
-        struct rr_component_relations *relations2 =
-            rr_simulation_get_relations(simulation, simulation->mob_vector[i]);
-        if (relations2->team == team_id)
-            continue;
-        struct rr_component_physical *physical2 =
-            rr_simulation_get_physical(simulation, simulation->mob_vector[i]);
-
-        struct rr_vector delta = {physical->x, physical->y};
-        struct rr_vector target_pos = {physical2->x, physical2->y};
-        rr_vector_sub(&delta, &target_pos);
-
-        float d = delta.x * delta.x + delta.y * delta.y;
-        if (d < closest_distance)
-        {
-            closest_distance = d;
-            closest_flower = physical2->parent_id;
-        }
-    }
-
-    return closest_flower;
+    struct rr_component_physical *parent_physical = captures;
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+    return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
+    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 500 * 500);
 }
 
 static uint8_t check_if_aggro(struct rr_component_ai *ai,
@@ -67,8 +24,15 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
 {
     if (ai->target_entity == RR_NULL_ENTITY ||
         !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity =
-            ai_get_nearest_target(ai->parent_id, simulation, 1550);
+    {
+        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
+        if (relations->team == rr_simulation_team_id_mobs)
+            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
+        else
+        {
+            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
+        }
+    }
     if (ai->target_entity != RR_NULL_ENTITY &&
         rr_simulation_has_entity(simulation, ai->target_entity))
     {
@@ -311,7 +275,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
 
     if (ai->target_entity == RR_NULL_ENTITY ||
         !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = ai_get_nearest_target(entity, simulation, 1550);
+        ai->target_entity = rr_simulation_find_nearest_enemy(simulation, entity, 1550, NULL, no_filter);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_missile_shoot_delay))

@@ -125,6 +125,7 @@ void rr_api_on_get_petals(char *bin, void *_client)
         uint32_t count = rr_binary_encoder_read_varuint(&decoder);
         uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
         inventory[id][rarity] = count;
+        //printf("%d %d %d\n", id, rarity, count);
         id = rr_binary_encoder_read_uint8(&decoder);
     }
     for (uint8_t i = 0; i < 20; ++i)
@@ -138,7 +139,7 @@ void rr_api_on_get_petals(char *bin, void *_client)
             else
             {
                 memset(&client->loadout[0], 0, sizeof client->loadout);
-                client->level = 0;
+                client->level = 1;
                 client->max_wave = 0;
                 puts("petals are invalid");
                 return;

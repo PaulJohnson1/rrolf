@@ -812,22 +812,14 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');
-    for (uint8_t n = 1; n < this->cache.slots_unlocked; ++n)
+    for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                                '0' + n) ||
+                                '0' + (n % 10)) ||
             switch_all)
         {
             proto_bug_write_uint8(&encoder, n, "petal switch");
             should_write = 1;
         }
-    if (this->cache.slots_unlocked == 10 &&
-        (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                            '0') ||
-            switch_all))
-    {
-        proto_bug_write_uint8(&encoder, 10, "petal switch");
-        should_write = 1;
-    }
     if (should_write)
     {
         proto_bug_write_uint8(&encoder, 0, "petal switch");

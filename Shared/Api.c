@@ -116,12 +116,11 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
         {
             fetch(UTF8ToString($4) + "user_craft_petals/" + UTF8ToString($0) +
                   '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
-                .then(function(response){return response.text()})
+                .then(function(response){return response.arrayBuffer()})
                 .then(function(data) {
-                    const $a = _malloc(1 + data.length);
-                    for (let i = 0; i < data.length; i++)
-                        HEAPU8[$a + i] = data[i].charCodeAt();
-                    HEAPU8[$a + data.length] = 0;
+                    data = new Uint8Array(data);
+                    const $a = _malloc(data.length);
+                    HEAPU8.set(data, $a);
                     Module._rr_api_on_craft_result($a, $3);
                 });
         },

@@ -27,6 +27,7 @@ set(SRCS
     System/Web.c
     Main.c
     EntityAllocation.c
+    EntityDetection.c
     Client.c
     Logs.c
     Server.c

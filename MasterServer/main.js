@@ -219,6 +219,7 @@ function craft_user_petals(user, petals)
         if (!(petals[i].count <= user.petals[format_id_rarity(petals[i])]))
             throw new Error("insufficient funds");
 
+    const writer = new protocol.BinaryWriter();
     let new_xp = 0;
     const results = [];
     for (let i = 0; i < petals.length; i++)
@@ -231,17 +232,19 @@ function craft_user_petals(user, petals)
         //new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
         results.push({id, rarity: rarity + 1, count: successes});
         results.push({id, rarity, count: new_count - count});
+        writer.WriteUint8(id);
+        writer.WriteUint8(rarity);
+        writer.WriteVarUint(count - new_count);
+        writer.WriteVarUint(successes);
     }
+    writer.WriteUint8(0);
+    writer.WriteFloat64(new_xp);
 
     user.xp += new_xp;
 
     user_merge_petals(user, results);
-
-    // format and return results
-    for (let i = 0; i < results.length; i++)
-        results[i] = format_id_rarity_count(results[i]);
     
-    return new_xp + "|" + results.join(",");
+    return writer.data.subarray(0, writer.at);
 }
 
 // example: 1:0:123,1:5:1236
