@@ -97,7 +97,6 @@ void rr_api_on_open_result(char *bin, void *captures)
 // loadout validation
 void rr_api_on_get_petals(char *json, void *_client)
 {
-    /*
     puts("attempting petal validation");
     struct rr_server_client *client = _client;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max] = {0};
@@ -147,7 +146,7 @@ void rr_api_on_get_petals(char *json, void *_client)
         }
     }
     puts("petals are valid");
-    */
+/*
    puts("attempting petal validation");
     struct rr_server_client *client = _client;
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
@@ -172,7 +171,7 @@ void rr_api_on_get_petals(char *json, void *_client)
     double xp = 0;
     if (experience != NULL)
         xp = experience->valuedouble;
-    
+
     uint32_t next_level = 2;
     while (xp >= xp_to_reach_level(next_level))
     {
@@ -227,6 +226,7 @@ void rr_api_on_get_petals(char *json, void *_client)
         }
     }
     puts("petals are valid");
+    */
 }
 
 static void rr_server_client_create_player_info(struct rr_server_client *this,
