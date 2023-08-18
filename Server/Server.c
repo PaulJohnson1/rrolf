@@ -95,7 +95,7 @@ void rr_api_on_open_result(char *bin, void *captures)
 }
 
 // loadout validation
-void rr_api_on_get_petals(char *json, void *_client)
+void rr_api_on_get_petals(char *bin, void *_client)
 {
     puts("attempting petal validation");
     struct rr_server_client *client = _client;

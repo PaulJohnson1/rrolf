@@ -57,7 +57,7 @@ void rr_api_on_get_petals(char *json, void *a)
     struct rr_game *game = a;
 
     memset(game->inventory, 0, sizeof game->inventory);
- /*   
+
     struct rr_binary_encoder decoder;
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
@@ -78,7 +78,7 @@ void rr_api_on_get_petals(char *json, void *a)
         memset(game->inventory, 0, sizeof game->inventory);
     }
     free(bin);
-*/
+/*
     cJSON *parsed = cJSON_Parse(json);
     if (parsed == NULL)
     {
@@ -122,6 +122,7 @@ void rr_api_on_get_petals(char *json, void *a)
     }
 
     cJSON_Delete(parsed);
+*/
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,

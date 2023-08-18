@@ -28,12 +28,12 @@
 
 enum
 {
-    state_flags_flower_id = 0b0000001,
-    state_flags_petals = 0b0000010,
-    state_flags_camera_fov = 0b0000100,
-    state_flags_camera_x = 0b0001000,
-    state_flags_camera_y = 0b0010000,
-    state_flags_slot_count = 0b0100000,
+    state_flags_camera_y = 0b0000001,
+    state_flags_camera_fov = 0b0000010,
+    state_flags_slot_count = 0b0000100,
+    state_flags_flower_id = 0b0001000,
+    state_flags_camera_x = 0b0010000,
+    state_flags_petals = 0b0100000,
     state_flags_client_id = 0b1000000,
     state_flags_all = 0b1111111
 };

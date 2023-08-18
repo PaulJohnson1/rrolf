@@ -10,16 +10,16 @@ typedef uint16_t EntityIdx;
 #define RR_SQUAD_MEMBER_COUNT (4)
 
 #define RR_FOR_EACH_COMPONENT                                                  \
-    XX(projectile, 7) \
-    XX(petal, 5) \
-    XX(physical, 8) \
-    XX(flower, 10) \
-    XX(health, 13) \
-    XX(web, 1) \
-    XX(relations, 9) \
-    XX(centipede, 2) \
-    XX(mob, 11) \
-    XX(drop, 3) \
-    XX(player_info, 4) \
-    XX(ai, 12) \
-    XX(arena, 6) 
+    XX(player_info, 3) \
+    XX(petal, 11) \
+    XX(web, 8) \
+    XX(physical, 2) \
+    XX(health, 9) \
+    XX(drop, 10) \
+    XX(centipede, 7) \
+    XX(projectile, 12) \
+    XX(arena, 6) \
+    XX(mob, 1) \
+    XX(ai, 13) \
+    XX(flower, 4) \
+    XX(relations, 5) 
