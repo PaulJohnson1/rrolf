@@ -88,7 +88,6 @@ void rr_api_on_open(char const *uuid, void *captures)
     RR_RIVET_CURL_PROLOGUE
     snprintf(url, sizeof(url), BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
              uuid);
-    //printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);

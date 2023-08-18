@@ -13,8 +13,8 @@
 struct rr_api_account
 {
     double xp;
-    char const *username;
-    char const *password;
+    char *username;
+    char *password;
     uint32_t maximum_wave;
     uint32_t petals[rr_petal_id_max][rr_rarity_id_max];
     uint8_t already_playing;
