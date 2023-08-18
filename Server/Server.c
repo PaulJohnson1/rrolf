@@ -157,8 +157,10 @@ void rr_api_on_get_petals(char *json, void *_client)
         xp -= xp_to_reach_level(next_level);
         ++next_level;
     }
+    #define min(a,b) (((a) < (b)) ? (a) : (b))
 
     client->level = min(next_level - 1, 150);
+    #undef min
     printf("client is registered as level %d\n", next_level - 1);
 
     cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
