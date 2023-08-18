@@ -50,7 +50,7 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1.5, 1.8},
     {2.4, 3.0},
     {3.5, 4.5},
-    {5.6, 7.2},
+    {6.0, 7.2},
     {12.0, 18.0},
     {25.0, 54.0},
 };
