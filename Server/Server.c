@@ -523,7 +523,6 @@ void rr_server_tick(struct rr_server *this)
                             this->clients[i].max_wave;
                     }
                 float start_wave_mean = start_wave_total / client_count;
-
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, 1);
                 rr_component_arena_set_wave(arena,
