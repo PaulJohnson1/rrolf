@@ -81,8 +81,8 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
     if (this->flower_id != RR_NULL_ENTITY)
         rr_component_health_set_health(
             rr_simulation_get_health(simulation, this->flower_id), 0);
-    free(this->collected_this_run);
 #endif
+    free(this->collected_this_run);
 }
 
 #ifdef RR_SERVER
