@@ -85,7 +85,8 @@ void rr_api_on_craft_result(char *bin, void *_captures)
         game->crafting_data.success_count = successes;
         id = rr_binary_encoder_read_uint8(&decoder);
     }
-    game->cache.experience += rr_binary_encoder_read_float64(&decoder);
+    printf("you gained %f xp\n", rr_binary_encoder_read_float64(&decoder));
+    //game->cache.experience += rr_binary_encoder_read_float64(&decoder);
     free(bin);
 }
 
