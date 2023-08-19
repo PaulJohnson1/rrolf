@@ -123,7 +123,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 8, 10};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 1, 25,
-                                                       25, 20,  20, 25, 0.5, 75, 25, 1453495732};
+                                                       25, 20,  20, 25, 0.5, 75, 25, 25};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 
