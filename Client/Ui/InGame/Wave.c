@@ -56,6 +56,13 @@ static uint8_t mob_button_should_show(struct rr_ui_element *this,
     return arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
 }
 
+static void mob_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct mob_button_metadata *data = this->data;
+    rr_ui_render_tooltip_below(this, game->mob_tooltips[data->id][data->rarity], game);
+}
+
+
 static void mob_button_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -143,6 +150,7 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
         element->height = 50;
     element->on_render = mob_button_on_render;
     element->should_show = mob_button_should_show;
+    element->on_event = mob_button_on_event;
     element->data = data;
     return element;
 }
@@ -171,7 +179,8 @@ struct rr_ui_element *rr_ui_wave_container_init()
     for (uint8_t i = 0; i < rr_mob_id_max; ++i)
     {
         struct rr_ui_element *inner_container =
-            rr_ui_v_container_init(rr_ui_container_init(), 0, -30, NULL);
+            rr_ui_v_container_init(rr_ui_container_init(), 0, 10, NULL);
+        inner_container->allow_overlap = 1;
         for (uint8_t j = 0; j < rr_rarity_id_max; ++j)
         {
             rr_ui_container_add_element(inner_container, mob_button_init(i, j));

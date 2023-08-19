@@ -1,5 +1,6 @@
 #include <Shared/Binary.h>
 
+#include <stdio.h>
 #include <string.h>
 
 void rr_binary_encoder_init(struct rr_binary_encoder *this, uint8_t *ptr)

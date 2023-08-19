@@ -47,7 +47,7 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         physical->turning_animation = rr_angle_lerp(physical->turning_animation,
                                                     physical->angle, 6 * delta);
 
-        uint8_t has_drop = rr_simulation_has_drop(this, entity);
+        uint8_t has_drop = rr_simulation_has_drop(this, entity) || rr_simulation_has_petal(this, entity);
         if (!has_drop)
             physical->animation +=
                 (2 * (physical->parent_id % 2) - 1) * delta *

@@ -27,13 +27,6 @@ struct rr_component_player_info_petal_slot
     RR_SERVER_ONLY(struct rr_component_player_info_petal petals[5];)
 };
 
-struct rr_drop_picked_up
-{
-    uint64_t count;
-    uint8_t id;
-    uint8_t rarity;
-};
-
 struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
@@ -45,8 +38,7 @@ struct rr_component_player_info
     struct rr_component_player_info_petal_slot slots[10];
     struct rr_component_player_info_petal_slot secondary_slots[10];
     RR_SERVER_ONLY(struct rr_player_info_modifiers modifiers;)
-    struct rr_drop_picked_up *collected_this_run;
-    struct rr_drop_picked_up *collected_this_run_end;
+    uint32_t *collected_this_run;
     RR_SERVER_ONLY(struct rr_server_client *client;)
     RR_SERVER_ONLY(uint32_t level;)
     RR_SERVER_ONLY(float global_rotation;)
@@ -74,6 +66,8 @@ void rr_component_player_info_free(struct rr_component_player_info *,
 
 RR_SERVER_ONLY(void rr_component_player_info_set_slot_cd(
                    struct rr_component_player_info *, uint8_t, uint8_t);)
+RR_SERVER_ONLY(void rr_component_player_info_set_update_loot(
+                   struct rr_component_player_info *);)
 RR_SERVER_ONLY(
     void rr_component_player_info_petal_swap(struct rr_component_player_info *,
                                              struct rr_simulation *, uint8_t);)

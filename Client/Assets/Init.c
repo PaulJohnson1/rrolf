@@ -238,13 +238,13 @@ static void mob_dakotaraptor_init(struct rr_game *this)
     rr_dakotaraptor_wing2_draw(renderer);
 }
 
-static void mob_stump_and_fern_and_meteor_init(struct rr_game *this)
+static void mob_tree_and_fern_and_meteor_init(struct rr_game *this)
 {
-    struct rr_renderer *renderer = &this->mob_stump;
+    struct rr_renderer *renderer = &this->mob_tree;
     rr_renderer_init(renderer);
-    rr_renderer_set_dimensions(renderer, 864, 864);
-    rr_renderer_translate(renderer, 432, 432);
-    rr_stump_draw(renderer);
+    rr_renderer_set_dimensions(renderer, 384, 384);
+    rr_renderer_translate(renderer, 192, 192);
+    rr_tree_draw(renderer);
     
     renderer = &this->mob_fern;
     rr_renderer_init(renderer);
@@ -453,7 +453,7 @@ void rr_assets_init(struct rr_game *this)
 {
     mob_ornithomimus_init(this);
     mob_pachycephalosaurus_init(this);
-    mob_stump_and_fern_and_meteor_init(this);
+    mob_tree_and_fern_and_meteor_init(this);
     mob_dakotaraptor_init(this);
     mob_triceratops_init(this);
     mob_pteranodon_init(this);

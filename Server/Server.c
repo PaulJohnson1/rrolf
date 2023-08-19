@@ -103,6 +103,7 @@ void rr_api_on_get_petals(char *bin, void *_client)
     struct rr_binary_encoder decoder;
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     rr_binary_encoder_read_nt_string(&decoder, client->rivet_account.uuid);
+    puts(client->rivet_account.uuid);
     float xp = rr_binary_encoder_read_float64(&decoder);
     uint32_t next_level = 2;
     while (xp >= xp_to_reach_level(next_level))
@@ -117,7 +118,7 @@ void rr_api_on_get_petals(char *bin, void *_client)
     if (max_wave > 28)
         max_wave = 28;
     client->max_wave = max_wave;
-    printf("client is level %d %d\n",client->level, client->max_wave);
+    printf("client is level %d %d\n", client->level, client->max_wave);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
     {
@@ -268,26 +269,28 @@ void rr_server_client_free(struct rr_server_client *this)
     {
         if (this->server->simulation_active)
         {
+            uint8_t first = 1;
             wave = rr_simulation_get_arena(&this->server->simulation, 1)->wave;
-            for (struct rr_drop_picked_up *i =
-                     this->player_info->collected_this_run;
-                 i < this->player_info->collected_this_run_end; i++)
-            {
-                // Format each item into buffer
-                snprintf(buffer, sizeof buffer, "%u:%u:%lu", i->id, i->rarity,
-                         i->count);
-
-                // If not the first item, append a comma before the item
-                if (i != this->player_info->collected_this_run)
+            for (uint8_t id = 1; id < rr_petal_id_max; ++id)
+                for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
                 {
-                    strncat(petals_string, ",",
+                    if (this->player_info->collected_this_run[id * rr_rarity_id_max + rarity] == 0)
+                        continue;
+                    // Format each item into buffer
+                    snprintf(buffer, sizeof buffer, "%u:%u:%lu", id, rarity, this->player_info->collected_this_run[id * rr_rarity_id_max + rarity]);
+
+                    // If not the first item, append a comma before the item
+                    if (!first)
+                    {
+                        strncat(petals_string, ",",
+                                5000 - strlen(petals_string) - 1);
+                    }
+                    first = 0;
+
+                    // Append the item
+                    strncat(petals_string, buffer,
                             5000 - strlen(petals_string) - 1);
                 }
-
-                // Append the item
-                strncat(petals_string, buffer,
-                        5000 - strlen(petals_string) - 1);
-            }
         }
         if (petals_string[0] == 0)
             memcpy(petals_string, "1:0:0", sizeof "1:0:0");

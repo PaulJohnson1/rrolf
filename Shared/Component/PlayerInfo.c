@@ -35,7 +35,8 @@ enum
     state_flags_camera_x = 0b0010000,
     state_flags_petals = 0b0100000,
     state_flags_client_id = 0b1000000,
-    state_flags_all = 0b1111111
+    state_flags_petals_collected = 0b10000000,
+    state_flags_all = 0b01111111
 };
 
 #ifdef RR_SERVER
@@ -69,6 +70,8 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
     memset(this, 0, sizeof *this);
     this->camera_fov = 1.0f;
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
+    this->collected_this_run = malloc(rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
+    memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
 }
 
 void rr_component_player_info_free(struct rr_component_player_info *this,
@@ -89,6 +92,12 @@ void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this,
     this->protocol_state |=
         (this->slots[pos].client_cooldown != cd) * state_flags_petals;
     this->slots[pos].client_cooldown = cd;
+}
+
+void rr_component_player_info_set_update_loot(
+                   struct rr_component_player_info *this)
+{
+    this->protocol_state |= state_flags_petals_collected;
 }
 
 void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
@@ -127,7 +136,7 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
 {
     uint64_t state = this->protocol_state | (state_flags_all * is_creation);
     if (this->parent_id != client->parent_id)
-        state &= ~state_flags_petals;
+        state &= ~(state_flags_petals | state_flags_petals_collected);
     proto_bug_write_varuint(encoder, state, "player_info component state");
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
@@ -145,6 +154,21 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
             proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity,
                                   "p_rar");
         }
+    }
+    if (state & state_flags_petals_collected)
+    {
+        for (uint32_t id = 1; id < rr_petal_id_max; ++id)
+        {
+            for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+            {
+                if (this->collected_this_run[id * rr_rarity_id_max + rarity] == 0)
+                    continue;
+                proto_bug_write_uint8(encoder, id, "dr_id");
+                proto_bug_write_uint8(encoder, rarity, "dr_rar");
+                proto_bug_write_varuint(encoder, this->collected_this_run[id * rr_rarity_id_max + rarity], "dr_cnt");
+            }
+        }
+        proto_bug_write_uint8(encoder, 0, "dr_id");
     }
 }
 
@@ -177,6 +201,16 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
             this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
             this->secondary_slots[i].rarity =
                 proto_bug_read_uint8(encoder, "p_rar");
+        }
+    }
+    if (state & state_flags_petals_collected)
+    {
+        uint8_t id = proto_bug_read_uint8(encoder, "dr_id");
+        while (id)
+        {
+            uint8_t rarity = proto_bug_read_uint8(encoder, "dr_rar");
+            this->collected_this_run[id * rr_rarity_id_max + rarity] = proto_bug_read_varuint(encoder, "dr_cnt");
+            id = proto_bug_read_uint8(encoder, "dr_id");
         }
     }
 }

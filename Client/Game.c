@@ -52,7 +52,7 @@ void validate_loadout(struct rr_game *this)
     }
 }
 
-void rr_api_on_get_petals(char *json, void *a)
+void rr_api_on_get_petals(char *bin, void *a)
 {
     struct rr_game *game = a;
 
@@ -311,6 +311,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
     rr_ui_container_add_element(this->window, rr_ui_waiting_respawn_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen());
+    rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
             rr_ui_set_justify(

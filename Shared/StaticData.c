@@ -28,13 +28,14 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, 10.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 12.0f, 2.0f, 0.0f, 67, 3, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_stick, rr_rarity_id_unusual, 12.0f, 2.0f, 0.0f, 67, 0, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, 50, 15, 30.0f, {}},
     {rr_mob_id_trex, 30, 25, 32.0f, {}},
     {rr_mob_id_fern, 10, 5, 24.0f, {}},
-    {rr_mob_id_stump, 50, 5, 26.0f, {}},
+    {rr_mob_id_tree, 50, 5, 50.0f, {}},
     {rr_mob_id_pteranodon, 35, 20, 20.0f, {}},
     {rr_mob_id_dakotaraptor, 35, 25, 25.0f, {}},
     {rr_mob_id_pachycephalosaurus, 20, 15, 20.0f, {}},
@@ -75,7 +76,7 @@ char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Pellet", "Rock",   "Spikes",  "Light", "Missile",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
-    "Beak", "Lightning"};
+    "Beak", "Lightning", "Stick"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -99,13 +100,14 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Increases your FOV. Does not stack",
     "This mysterious petal reverses your petal rotation",
     "Stuns mobs and prevents them from moving",
-    "Zappy zap"
+    "Zappy zap",
+    "Sticky stick"
 };
 
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "T-Rex",
                                            "Fern",
-                                           "Stump",
+                                           "Tree",
                                            "Pteranodon",
                                            "Dakotaraptor",
                                            "Pachycephalosaurus",
@@ -116,7 +118,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 5, 25,
+double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 1, 25,
                                                        25, 20,  20, 25, 0.5, 75};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
@@ -201,13 +203,15 @@ static void init_loot_tables()
                     0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[1], rr_petal_id_leaf,
                     0.25);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_fern].loot[2], rr_petal_id_seed,
-                    0.0075);
 
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[0], rr_petal_id_peas,
-                    0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_stump].loot[1], rr_petal_id_egg,
-                    0.15);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_tree].loot[0], rr_petal_id_peas,
+                    0.3);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_tree].loot[1], rr_petal_id_egg,
+                    0.2);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_tree].loot[2], rr_petal_id_leaf,
+                    0.5);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_tree].loot[3], rr_petal_id_seed,
+                    0.04);
 
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pteranodon].loot[0],
                     rr_petal_id_missile, 0.005);

@@ -325,7 +325,6 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
         delete user.failed_crafts;
         delete user.password;
         delete user.already_playing;
-        /*
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(user.username);
         out.WriteFloat64(user.xp);
@@ -342,10 +341,11 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
             checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
         }
         out.WriteUint8(0);
+        console.log("check", checksum);
         out.WriteVarUint(checksum);
+        console.log("len: ", out.at);
         return out.data.subarray(0, out.at);
-        */
-       return JSON.stringify(user);
+        //return JSON.stringify(user);
     });
 });
 

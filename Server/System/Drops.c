@@ -39,28 +39,8 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
         return;
     rr_bitset_set(drop->picked_up_by, player_info->client_id);
 
-    for (struct rr_drop_picked_up *i = player_info->collected_this_run;
-         i < player_info->collected_this_run_end; i++)
-    {
-        if (i->id == drop->id && i->rarity == drop->rarity)
-        {
-            ++i->count;
-            return;
-        }
-    }
-
-    // for loop didn't make the function return early so we must create the new
-    // entry
-    uint64_t size =
-        player_info->collected_this_run_end - player_info->collected_this_run;
-    player_info->collected_this_run =
-        realloc(player_info->collected_this_run,
-                (size + 1) * sizeof(struct rr_drop_picked_up));
-    player_info->collected_this_run_end =
-        player_info->collected_this_run + size + 1;
-    player_info->collected_this_run[size].count = 1;
-    player_info->collected_this_run[size].rarity = drop->rarity;
-    player_info->collected_this_run[size].id = drop->id;
+    ++player_info->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
+    rr_component_player_info_set_update_loot(player_info);
 }
 
 static void drop_despawn_tick(EntityIdx entity, void *_captures)

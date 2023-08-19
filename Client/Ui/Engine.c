@@ -24,7 +24,7 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
 
-        width += element->width + inner_spacing;
+        width += element->width * (1 - c->allow_overlap) + inner_spacing;
         if (element->height > height)
             height = element->height;
         rr_ui_container_add_element(c, element);
@@ -62,7 +62,7 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
 
-        height += element->height + inner_spacing;
+        height += element->height * (1 - c->allow_overlap) + inner_spacing;
         if (element->width > width)
             width = element->width;
         rr_ui_container_add_element(c, element);
@@ -133,6 +133,7 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
     float inner_spacing = data->inner_spacing;
     float height = 0;
     float width = outer_spacing;
+    float last_width = 0;
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
@@ -143,10 +144,12 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
             element->height == 0)
             continue;
 
-        width += element->width + inner_spacing;
+        width += element->width * (1 - c->allow_overlap) + inner_spacing;
+        last_width = element->width;
         if (element->height > height)
             height = element->height;
     }
+    width += last_width * c->allow_overlap;
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
 
@@ -161,6 +164,7 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
     float inner_spacing = data->inner_spacing;
     float width = 0;
     float height = outer_spacing;
+    float last_height = 0;
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
@@ -171,10 +175,12 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
             element->height == 0)
             continue;
 
-        height += element->height + inner_spacing;
+        height += element->height * (1 - c->allow_overlap) + inner_spacing;
+        last_height = element->height;
         if (element->width > width)
             width = element->width;
     }
+    height += last_height * c->allow_overlap;
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
 

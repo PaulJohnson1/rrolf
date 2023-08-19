@@ -117,7 +117,7 @@ struct rr_game
     struct rr_renderer mob_quetzalcoatlus_head;
     struct rr_renderer mob_quetzalcoatlus_wings[2];
 
-    struct rr_renderer mob_stump;
+    struct rr_renderer mob_tree;
     struct rr_renderer mob_fern;
     struct rr_renderer mob_meteor;
 

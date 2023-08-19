@@ -766,7 +766,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     switch (mob->id)
     {
     case rr_mob_id_fern:
-    case rr_mob_id_stump:
+    case rr_mob_id_tree:
         break;
     case rr_mob_id_ornithomimus:
         tick_ai_aggro_none(entity, this);

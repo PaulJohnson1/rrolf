@@ -41,6 +41,7 @@ enum rr_petal_id
     rr_petal_id_droplet,
     rr_petal_id_beak,
     rr_petal_id_lightning,
+    rr_petal_id_stick,
     rr_petal_id_max
 };
 
@@ -49,7 +50,7 @@ enum rr_mob_id
     rr_mob_id_triceratops,
     rr_mob_id_trex,
     rr_mob_id_fern,
-    rr_mob_id_stump,
+    rr_mob_id_tree,
     rr_mob_id_pteranodon,
     rr_mob_id_dakotaraptor,
     rr_mob_id_pachycephalosaurus,

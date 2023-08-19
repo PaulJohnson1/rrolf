@@ -85,6 +85,7 @@ struct rr_ui_element
     uint8_t completely_hidden;
     uint8_t first_frame;
     uint8_t stop_event_propagation;
+    uint8_t allow_overlap;
     uint8_t h_flex;
     uint8_t v_flex;
 };
@@ -182,3 +183,5 @@ struct rr_ui_element *rr_ui_changelog_container_init();
 struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
 
 struct rr_ui_element *rr_ui_level_bar_init(float);
+
+struct rr_ui_element *rr_ui_loot_container_init();

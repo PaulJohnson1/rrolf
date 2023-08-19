@@ -122,13 +122,13 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         else
             rr_fern_draw(renderer);
         break;
-    case rr_mob_id_stump:
+    case rr_mob_id_tree:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.12f);
+        rr_renderer_scale(renderer, 0.30f);
         if (flags)
-            rr_renderer_draw_image(renderer, &game->mob_stump);
+            rr_renderer_draw_image(renderer, &game->mob_tree);
         else
-            rr_stump_draw(renderer);
+            rr_tree_draw(renderer);
         break;
     case rr_mob_id_pteranodon:
         rr_renderer_rotate(renderer, M_PI / 2);

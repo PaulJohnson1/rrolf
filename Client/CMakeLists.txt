@@ -43,7 +43,7 @@ set(SRCS
     Assets/Mob/Triceratops/Tail.c
     Assets/Mob/Fern.c
     Assets/Mob/Meteor.c
-    Assets/Mob/Stump.c
+    Assets/Mob/Tree.c
     Assets/Init.c
     Assets/RenderPetals.c
     Assets/RenderRarityBackground.c
@@ -69,6 +69,7 @@ set(SRCS
     Ui/Engine.c
     Ui/InGame/Deathscreen.c
     Ui/InGame/Loadout.c
+    Ui/InGame/PetalsCollected.c
     Ui/InGame/Squad.c
     Ui/InGame/Wave.c
     Ui/ScrollContainer.c
