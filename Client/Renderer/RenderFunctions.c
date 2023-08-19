@@ -353,7 +353,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_pectinodon:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.16f);
+        rr_renderer_scale(renderer, 0.12f);
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_translate(renderer, -90, 25);

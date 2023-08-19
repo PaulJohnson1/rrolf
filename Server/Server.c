@@ -297,7 +297,7 @@ void rr_server_client_free(struct rr_server_client *this)
                     if (this->player_info->collected_this_run[id * rr_rarity_id_max + rarity] == 0)
                         continue;
                     // Format each item into buffer
-                    snprintf(buffer, sizeof buffer, "%u:%u:%lu", id, rarity, this->player_info->collected_this_run[id * rr_rarity_id_max + rarity]);
+                    snprintf(buffer, sizeof buffer, "%u:%u:%u", id, rarity, this->player_info->collected_this_run[id * rr_rarity_id_max + rarity]);
 
                     // If not the first item, append a comma before the item
                     if (!first)

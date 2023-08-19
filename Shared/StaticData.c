@@ -43,7 +43,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, 300, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}},
-    {rr_mob_id_pectinodon, 30, 10, 28.0f, {}}
+    {rr_mob_id_pectinodon, 30, 10, 24.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
