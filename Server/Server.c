@@ -104,6 +104,14 @@ void rr_api_on_get_petals(char *bin, void *_client)
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     rr_binary_encoder_read_nt_string(&decoder, client->rivet_account.uuid);
     puts(client->rivet_account.uuid);
+    if (strlen(client->rivet_account.uuid) < 30)
+    {
+        memset(&client->loadout[0], 0, sizeof client->loadout);
+        client->level = 1;
+        client->max_wave = 0;
+        puts("id is invalid");
+        return;
+    }
     float xp = rr_binary_encoder_read_float64(&decoder);
     uint32_t next_level = 2;
     while (xp >= xp_to_reach_level(next_level))
@@ -115,8 +123,8 @@ void rr_api_on_get_petals(char *bin, void *_client)
     client->level = min(next_level - 1, 150);
     #undef min
     uint32_t max_wave = rr_binary_encoder_read_varuint(&decoder);
-    if (max_wave > 28)
-        max_wave = 28;
+    if (max_wave > 30)
+        max_wave = 30;
     client->max_wave = max_wave;
     printf("client is level %d %d\n", client->level, client->max_wave);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
@@ -125,7 +133,6 @@ void rr_api_on_get_petals(char *bin, void *_client)
         uint32_t count = rr_binary_encoder_read_varuint(&decoder);
         uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
         inventory[id][rarity] = count;
-        //printf("%d %d %d\n", id, rarity, count);
         id = rr_binary_encoder_read_uint8(&decoder);
     }
     for (uint8_t i = 0; i < 20; ++i)
