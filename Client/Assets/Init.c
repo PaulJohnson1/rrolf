@@ -373,6 +373,39 @@ static void mob_quetzalcoatlus_init(struct rr_game *this)
     rr_quetzalcoatlus_head_draw(renderer);
 }
 
+static void mob_pectinodon_init(struct rr_game *this)
+{
+    struct rr_renderer *renderer = &this->mob_pectinodon_head;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 144);
+    rr_renderer_translate(renderer, 72, 72);
+    rr_pectinodon_head_draw(renderer);
+
+    renderer = &this->mob_pectinodon_body;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pectinodon_body_draw(renderer);
+    
+    renderer = &this->mob_pectinodon_tail;
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pectinodon_tail_draw(renderer);
+
+    renderer = &this->mob_pectinodon_wings[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pectinodon_wing1_draw(renderer);
+
+    renderer = &this->mob_pectinodon_wings[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 192, 336);
+    rr_renderer_translate(renderer, 96, 168);
+    rr_pectinodon_wing2_draw(renderer);
+}
+
 static void tiles_init(struct rr_game *this)
 {
     rr_renderer_init(&this->tiles[0]);
@@ -461,6 +494,7 @@ void rr_assets_init(struct rr_game *this)
     mob_t_rex_friendly_init(this);
     mob_ankylosaurus_init(this);
     mob_quetzalcoatlus_init(this);
+    mob_pectinodon_init(this);
     tiles_init(this);
 
     rr_renderer_petal_cache_init();

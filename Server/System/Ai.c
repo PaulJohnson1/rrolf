@@ -361,7 +361,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                 rr_simulation_get_health(simulation, petal_id);
             struct rr_component_projectile *projectile =
                 rr_simulation_get_projectile(simulation, petal_id);
-
             rr_component_physical_set_angle(physical2, physical->angle);
             rr_component_physical_set_radius(
                 physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
@@ -380,7 +379,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                             RR_MOB_RARITY_SCALING[mob->rarity].health * 0.4);
             health->damage = RR_MOB_DATA[mob->id].damage *
                              RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.2f;
-
             projectile->ticks_until_death = 50;
 
             struct rr_vector recoil;
@@ -784,6 +782,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_default(entity, this, 2.5);
         break;
     case rr_mob_id_pteranodon:
+    case rr_mob_id_pectinodon:
         tick_ai_aggro_pteranodon(entity, this);
         break;
     case rr_mob_id_ankylosaurus:

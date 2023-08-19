@@ -42,7 +42,8 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ornithomimus, 15, 10, 20.0f, {}},
     {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, 300, 8, 32.0f, {}},
-    {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}}
+    {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}},
+    {rr_mob_id_pectinodon, 100, 10, 28.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -114,12 +115,13 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Ornithomimus",
                                            "Ankylosaurus",
                                            "Meteor",
-                                           "Quetzalcoatlus"};
+                                           "Quetzalcoatlus",
+                                           "Pectinodon"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
-                                                          12, 9,  3, 10, 1, 8};
+                                                          12, 9,  3, 10, 1, 8, 8};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 1, 25,
-                                                       25, 20,  20, 25, 0.5, 75};
+                                                       25, 20,  20, 25, 0.5, 75, 0};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 

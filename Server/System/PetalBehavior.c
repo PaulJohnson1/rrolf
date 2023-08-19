@@ -530,6 +530,8 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         {
             return;
         }
+        if (--petal->effect_delay == 0)
+            rr_simulation_request_entity_deletion(simulation, id);
         // check if owner is a mob
         return; // no logic yet
     }

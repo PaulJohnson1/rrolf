@@ -1,0 +1,88 @@
+#include <Client/Assets/Render.h>
+
+#include <Client/Renderer/Renderer.h>
+
+void rr_pectinodon_wing1_draw(struct rr_renderer *renderer)
+{
+    rr_renderer_set_fill(renderer, 0xff372d27);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, -62.976837, 131.95260000000002);
+rr_renderer_line_to(renderer, -48.512558000000006, 163.47423700000002);
+rr_renderer_line_to(renderer, -28.666237000000006, 162.18721920000002);
+rr_renderer_line_to(renderer, -17.303696000000006, 152.9510132);
+rr_renderer_line_to(renderer, -9.421898000000006, 134.0273682);
+rr_renderer_line_to(renderer, -15.569198700000005, 122.2420902);
+rr_renderer_line_to(renderer, -2.447936700000005, 116.1874942);
+rr_renderer_line_to(renderer, 5.326629999999995, 88.91778020000001);
+rr_renderer_line_to(renderer, -3.256141000000004, 78.58275820000001);
+rr_renderer_line_to(renderer, 8.302162999999997, 72.64434270000001);
+rr_renderer_line_to(renderer, 20.337456999999997, 29.368922700000013);
+rr_renderer_line_to(renderer, 83.799531, 44.04832070000001);
+rr_renderer_line_to(renderer, -6.313789, -61.087489299999994);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff41362f);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, 43.536399999999986, 18.541259999999994);
+rr_renderer_line_to(renderer, 11.743476999999988, 11.416259999999994);
+rr_renderer_line_to(renderer, -2.9644470000000123, 66.326264);
+rr_renderer_line_to(renderer, -18.58960700000001, 77.574372);
+rr_renderer_line_to(renderer, -6.928154000000012, 92.55243);
+rr_renderer_line_to(renderer, -10.364364600000012, 107.929566);
+rr_renderer_line_to(renderer, -29.49964160000001, 116.54098599999999);
+rr_renderer_line_to(renderer, -19.70516260000001, 136.31399599999997);
+rr_renderer_line_to(renderer, -24.37070520000001, 146.11425799999998);
+rr_renderer_line_to(renderer, -33.57653820000001, 153.018433);
+rr_renderer_line_to(renderer, -41.887016200000005, 152.90435828999998);
+rr_renderer_line_to(renderer, -55.98560320000001, 124.32534828999998);
+rr_renderer_line_to(renderer, -18.092263200000005, -24.416521710000026);
+rr_renderer_line_to(renderer, 3.868498799999994, -33.15930471000003);
+rr_renderer_line_to(renderer, 39.40534079999999, -11.256945710000029);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff54453c);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, -60.283897, 139.8775);
+rr_renderer_bezier_curve_to(renderer, -50.981975000000006, 153.658872, -34.494251000000006, 8.952920000000006, -15.598762, -14.243549999999999);
+rr_renderer_bezier_curve_to(renderer, 3.2967309999999976, -37.440006999999994, 47.379028, 11.435817, 53.089048, 0.6987410000000018);
+rr_renderer_bezier_curve_to(renderer, 58.79907, -10.038349999999998, 39.411268, -62.39429199999999, 18.661381999999996, -78.666039);
+rr_renderer_bezier_curve_to(renderer, -2.088511000000004, -94.937783, -58.252738, -133.355656, -71.41028800000001, -96.931733);
+rr_renderer_bezier_curve_to(renderer, -84.567835, -60.507805999999995, -69.5858194, 126.096167, -60.28389800000001, 139.877497);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff54453c);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, 86.6764, -45.73641000000001);
+rr_renderer_bezier_curve_to(renderer, 96.678628, -57.616186000000006, 94.199044, -74.057394, 81.138085, -82.458876);
+rr_renderer_line_to(renderer, -28.193145, -152.786386);
+rr_renderer_bezier_curve_to(renderer, -34.465236000000004, -156.8209214, -42.388519, -158.423962, -50.219962, -157.2428574);
+rr_renderer_bezier_curve_to(renderer, -58.051402, -156.0617527, -65.149491, -152.193252, -69.952729, -146.48838239999998);
+rr_renderer_bezier_curve_to(renderer, -79.954953, -134.60860839999998, -77.4753597, -118.16739639999997, -64.414401, -109.76591639999998);
+rr_renderer_line_to(renderer, 44.916819000000004, -39.438401399999975);
+rr_renderer_bezier_curve_to(renderer, 57.977778, -31.036927399999975, 76.67418900000001, -33.856629399999974, 86.676402, -45.736413399999975);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff54453c);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, -34.055527, -96.762184);
+rr_renderer_bezier_curve_to(renderer, -31.7205813, -54.17562100000001, -55.573414, 131.094226, -62.678921, 125.56163600000001);
+rr_renderer_bezier_curve_to(renderer, -69.784428, 120.029043, -81.459141, -92.903724, -76.688574, -129.957714);
+rr_renderer_bezier_curve_to(renderer, -71.918009, -167.011684, -36.390471000000005, -139.348757, -34.055524000000005, -96.76220400000001);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff635248);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, 84.40689, -37.60955999999999);
+rr_renderer_bezier_curve_to(renderer, 91.712264, -46.28043599999999, 89.90620340000001, -58.28500599999999, 80.372924, -64.42252499999998);
+rr_renderer_line_to(renderer, -25.66228600000001, -132.68793499999998);
+rr_renderer_bezier_curve_to(renderer, -30.24033470000001, -135.63527699999997, -36.02448400000001, -136.8078004, -41.74229600000001, -135.94756329999998);
+rr_renderer_bezier_curve_to(renderer, -47.46011140000001, -135.08732619999998, -52.64320900000001, -132.2647973, -56.15137650000001, -128.10089889999998);
+rr_renderer_bezier_curve_to(renderer, -63.456758500000014, -119.43002689999997, -61.650686000000015, -107.42545289999998, -52.117406500000016, -101.28793689999998);
+rr_renderer_line_to(renderer, 53.91779349999999, -33.02251689999997);
+rr_renderer_bezier_curve_to(renderer, 63.45107249999999, -26.88500489999997, 77.10150949999999, -28.93868489999997, 84.40688349999999, -37.60955289999997);
+rr_renderer_fill(renderer);
+rr_renderer_set_fill(renderer, 0xff635248);
+rr_renderer_begin_path(renderer);
+rr_renderer_move_to(renderer, -61.06519, -118.77779000000001);
+rr_renderer_bezier_curve_to(renderer, -69.043511, -93.05171200000001, -64.2317664, 48.551829999999995, -57.138619, 62.66866999999999);
+rr_renderer_bezier_curve_to(renderer, -50.045475499999995, 76.785507, -38.23496299999999, -21.11575400000001, -18.506318999999998, -34.076740000000015);
+rr_renderer_bezier_curve_to(renderer, 1.2223260000000025, -47.037731000000015, 59.693631, -5.495410000000014, 61.233241, -15.097263000000016);
+rr_renderer_bezier_curve_to(renderer, 62.7728376, -24.699100000000016, 11.114381000000002, -74.40769500000002, -9.268689000000002, -91.68778300000001);
+rr_renderer_bezier_curve_to(renderer, -29.651761, -108.96787, -53.086869, -144.50386500000002, -61.065194000000005, -118.77779100000001);
+rr_renderer_fill(renderer);
+}

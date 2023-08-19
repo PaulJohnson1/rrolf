@@ -984,6 +984,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         render_background(&custom_player_info, this,
                           this->cache.map_props * 750);
         rr_renderer_context_state_free(this->renderer, &state);
+        rr_component_player_info_free(&custom_player_info, 0);
     }
     // ui
     this->crafting_data.animation -= delta;

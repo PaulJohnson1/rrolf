@@ -351,6 +351,52 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         else
             rr_quetzalcoatlus_head_draw(renderer);
         break;
+    case rr_mob_id_pectinodon:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.16f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, -90, 25);
+            rr_renderer_rotate(renderer, animation_tick * 0.1f);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_pectinodon_wings[0]);
+            else
+                rr_pectinodon_wing1_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 90, 25);
+            rr_renderer_rotate(renderer, animation_tick * -0.1f);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_pectinodon_wings[1]);
+            else
+                rr_pectinodon_wing2_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, 155);
+            rr_renderer_rotate(renderer, turning_value);
+            rr_renderer_translate(renderer,  0, 0);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_pectinodon_tail);
+            else
+                rr_pectinodon_tail_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, -75);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_pectinodon_body);
+            else
+                rr_pectinodon_body_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0, -200);
+            if (flags)
+                rr_renderer_draw_image(renderer, &game->mob_pectinodon_head);
+            else
+                rr_pectinodon_head_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        break;
     default:
         break;
     }

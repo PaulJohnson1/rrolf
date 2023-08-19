@@ -24,6 +24,11 @@ set(SRCS
     Assets/Mob/Pachycephalosaurus/Leg1.c
     Assets/Mob/Pachycephalosaurus/Leg2.c
     Assets/Mob/Pachycephalosaurus/Tail.c
+    Assets/Mob/Pectinodon/Body.c
+    Assets/Mob/Pectinodon/Head.c
+    Assets/Mob/Pectinodon/Tail.c
+    Assets/Mob/Pectinodon/Wing1.c
+    Assets/Mob/Pectinodon/Wing2.c
     Assets/Mob/Pteranodon/Body.c
     Assets/Mob/Pteranodon/Wing1.c
     Assets/Mob/Pteranodon/Wing2.c

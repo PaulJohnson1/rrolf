@@ -49,4 +49,10 @@ void rr_quetzalcoatlus_head_draw(struct rr_renderer *);
 void rr_quetzalcoatlus_wing1_draw(struct rr_renderer *);
 void rr_quetzalcoatlus_wing2_draw(struct rr_renderer *);
 
+void rr_pectinodon_body_draw(struct rr_renderer *);
+void rr_pectinodon_wing1_draw(struct rr_renderer *);
+void rr_pectinodon_wing2_draw(struct rr_renderer *);
+void rr_pectinodon_head_draw(struct rr_renderer *);
+void rr_pectinodon_tail_draw(struct rr_renderer *);
+
 void rr_map_prop_beech_tree_draw(struct rr_renderer *);
