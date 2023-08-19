@@ -326,7 +326,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
-            rr_renderer_translate(renderer, 150, 25);
+            rr_renderer_translate(renderer, 150, 75);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[0]);
             else
@@ -335,7 +335,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
-            rr_renderer_translate(renderer, -150, 25);
+            rr_renderer_translate(renderer, -150, 75);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[1]);
             else
@@ -356,7 +356,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_scale(renderer, 0.12f);
 
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, -90, 25);
+            rr_renderer_translate(renderer, -90, 50);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pectinodon_wings[0]);
@@ -365,7 +365,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_free(renderer, &state);
         
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 90, 25);
+            rr_renderer_translate(renderer, 90, 50);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pectinodon_wings[1]);
@@ -374,7 +374,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0, 155);
+            rr_renderer_translate(renderer, 0, 200);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, 0);
             if (flags)
@@ -382,20 +382,58 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
             else
                 rr_pectinodon_tail_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
+        if (flags)
+            rr_renderer_draw_image(renderer, &game->mob_pectinodon_body);
+        else
+            rr_pectinodon_body_draw(renderer);
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0, -75);
-            if (flags)
-                rr_renderer_draw_image(renderer, &game->mob_pectinodon_body);
-            else
-                rr_pectinodon_body_draw(renderer);
-        rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0, -200);
+            rr_renderer_translate(renderer, 0, -185);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pectinodon_head);
             else
                 rr_pectinodon_head_draw(renderer);
         rr_renderer_context_state_free(renderer, &state);
+        break;
+    case rr_mob_id_edmontosaurus:
+        rr_renderer_rotate(renderer, M_PI / 2);
+        rr_renderer_scale(renderer, 0.22f);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
+            if (flags & 1)
+                rr_renderer_draw_image(renderer, &game->mob_edmontosaurus_legs[0]);
+            else
+                rr_edmontosaurus_leg1_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
+            if (flags & 1)
+                rr_renderer_draw_image(renderer, &game->mob_edmontosaurus_legs[1]);
+            else
+                rr_edmontosaurus_leg2_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+            rr_renderer_translate(renderer,  0, 75);
+            rr_renderer_rotate(renderer, turning_value);
+            rr_renderer_translate(renderer,  0, -75 + 150);
+            if (flags & 1)
+                rr_renderer_draw_image(renderer, &game->mob_edmontosaurus_tail);
+            else
+                rr_edmontosaurus_tail_draw(renderer);
+        rr_renderer_context_state_free(renderer, &state);
+        
+        if (flags & 1)
+            rr_renderer_draw_image(renderer, &game->mob_edmontosaurus_body);
+        else
+            rr_edmontosaurus_body_draw(renderer);
+        
+        rr_renderer_translate(renderer, 0, -155);
+        if (flags & 1)
+            rr_renderer_draw_image(renderer, &game->mob_edmontosaurus_head);
+        else
+            rr_edmontosaurus_head_draw(renderer);
         break;
     default:
         break;

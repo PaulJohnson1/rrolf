@@ -59,6 +59,7 @@ enum rr_mob_id
     rr_mob_id_meteor,
     rr_mob_id_quetzalcoatlus,
     rr_mob_id_pectinodon,
+    rr_mob_id_edmontosaurus,
     rr_mob_id_max
 };
 

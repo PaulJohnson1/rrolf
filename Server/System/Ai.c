@@ -793,6 +793,66 @@ static void tick_ai_aggro_pectinodon(EntityIdx entity,
     }
 }
 
+static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
+                                      struct rr_simulation *simulation)
+{
+    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+
+    if (ai->ai_state == rr_ai_state_idle ||
+        ai->ai_state == rr_ai_state_idle_moving)
+    {
+        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        {
+            ai->ai_state = rr_ai_state_attacking;
+            ai->ticks_until_next_action = 25;
+        }
+    }
+    if (ai->target_entity != RR_NULL_ENTITY &&
+        !rr_simulation_has_entity(simulation, ai->target_entity))
+        ai->target_entity = RR_NULL_ENTITY;
+
+    switch (ai->ai_state)
+    {
+    case rr_ai_state_idle:
+        tick_idle(entity, simulation);
+        break;
+
+    case rr_ai_state_idle_moving:
+        tick_idle_moving(entity, simulation);
+        break;
+    case rr_ai_state_attacking:
+    {
+        ai->ticks_until_next_action = 25;
+        if (ai->target_entity == RR_NULL_ENTITY)
+        {
+            ai->ai_state = rr_ai_state_idle_moving;
+            break;
+        }
+    
+
+        struct rr_vector accel;
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+        float target_angle = rr_vector_theta(&delta);
+
+        rr_component_physical_set_angle(
+            physical, target_angle);
+
+        rr_vector_from_polar(&accel, 2.5, physical->angle);
+        rr_vector_add(&physical->acceleration, &accel);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 static void system_for_each(EntityIdx entity, void *simulation)
 {
     struct rr_simulation *this = simulation;
@@ -887,6 +947,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_mob_id_pectinodon:
         tick_ai_aggro_pectinodon(entity, this);
+        break;
+    case rr_mob_id_edmontosaurus:
+        tick_ai_aggro_edmontosaurus(entity, this);
         break;
     default:
         RR_UNREACHABLE("invalid ai aggro type state");

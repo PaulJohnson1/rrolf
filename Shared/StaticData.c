@@ -11,7 +11,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_rock, rr_rarity_id_common, 8.0f, 75.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 50.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 15.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 3.5f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 18.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
@@ -43,7 +43,8 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ankylosaurus, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, 300, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, 100, 10, 28.0f, {}},
-    {rr_mob_id_pectinodon, 30, 10, 24.0f, {}}
+    {rr_mob_id_pectinodon, 30, 10, 24.0f, {}},
+    {rr_mob_id_edmontosaurus, 60, 10, 30.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -116,12 +117,13 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Ankylosaurus",
                                            "Meteor",
                                            "Quetzalcoatlus",
-                                           "Pectinodon"};
+                                           "Pectinodon",
+                                           "Edmontosaurus"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
-                                                          12, 9,  3, 10, 1, 8, 8};
+                                                          12, 9,  3, 10, 1, 8, 8, 10};
 double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 15, 1, 25,
-                                                       25, 20,  20, 25, 0.5, 75, 25};
+                                                       25, 20,  20, 25, 0.5, 75, 25, 1453495732};
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 
@@ -258,6 +260,13 @@ static void init_loot_tables()
                     rr_petal_id_stick, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_pectinodon].loot[1],
                     rr_petal_id_feather, 0.05);
+    
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[0],
+                    rr_petal_id_leaf, 0.05);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[1],
+                    rr_petal_id_rock, 0.1);
+    init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[2],
+                    rr_petal_id_peas, 0.1);
 }
 
 void rr_static_data_init()

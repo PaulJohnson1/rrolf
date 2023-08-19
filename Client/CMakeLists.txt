@@ -14,6 +14,11 @@ set(SRCS
     Assets/Mob/Dakotaraptor/Tail.c
     Assets/Mob/Dakotaraptor/Wing1.c
     Assets/Mob/Dakotaraptor/Wing2.c
+    Assets/Mob/Edmontosaurus/Body.c
+    Assets/Mob/Edmontosaurus/Head.c
+    Assets/Mob/Edmontosaurus/Leg1.c
+    Assets/Mob/Edmontosaurus/Leg2.c
+    Assets/Mob/Edmontosaurus/Tail.c
     Assets/Mob/Ornithomimus/Body.c
     Assets/Mob/Ornithomimus/Head.c
     Assets/Mob/Ornithomimus/Tail.c
