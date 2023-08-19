@@ -22,6 +22,13 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
         rr_simulation_get_physical(this, entity);
 
     // heal 0.5% of max hp per second (0.0002 is 0.01 / 25)
+    if (health->burn_ticks > 0)
+    {
+        --health->burn_ticks;
+        rr_component_health_set_health(health, health->health - health->burn);
+    }
+    else
+        health->burn = 0;
     if (health->health > 0)
     {
         rr_component_health_set_health(health, health->health +
@@ -99,6 +106,12 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         }
         animation->length = captures.length;
         rr_simulation_request_entity_deletion(simulation, petal_id);
+    }
+    else if (petal->id == rr_petal_id_stick)
+    {
+        struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+        health->burn = 0.25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+        health->burn_ticks = 50;
     }
 }
 

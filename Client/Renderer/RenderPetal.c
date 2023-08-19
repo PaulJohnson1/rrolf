@@ -48,6 +48,9 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
         struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
         float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
         float dist = 10;
+        if (rr_simulation_get_relations(simulation, entity)->team ==
+        rr_simulation_team_id_mobs)
+            dist *= RR_MOB_RARITY_SCALING[petal->rarity].radius;
         rr_vector_from_polar(&particle->velocity, (rr_frand() * 5 + 5), angle);
         rr_vector_set(&particle->position[0], physical->lerp_x + sinf(physical->angle) * dist, physical->lerp_y - cosf(physical->angle) * dist);
         particle->size = (3 + rr_frand() * 2);

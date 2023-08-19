@@ -19,7 +19,7 @@ struct rr_particle
 
 struct rr_particle_manager
 {
-    struct rr_particle particles[1024];
+    struct rr_particle particles[2048];
     uint32_t size;
 };
 

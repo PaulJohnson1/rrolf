@@ -145,7 +145,7 @@ void rr_rivet_lobbies_find(void *captures)
                     })
                     .catch(function(error) {
                         if (d == 3)
-                            location.reload();
+                            location.reload(true);
                         else
                             attempt(d + 1);
                     });

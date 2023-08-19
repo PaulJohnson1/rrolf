@@ -17,6 +17,8 @@ struct rr_component_health
     RR_CLIENT_ONLY(float damage_animation;)
     RR_SERVER_ONLY(float damage;)
     RR_SERVER_ONLY(float damage_reduction;)
+    RR_SERVER_ONLY(float burn;)
+    RR_SERVER_ONLY(uint32_t burn_ticks;)
     EntityIdx parent_id;
     uint8_t flags;
     RR_SERVER_ONLY(uint8_t protocol_state;)
