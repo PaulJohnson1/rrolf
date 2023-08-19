@@ -302,6 +302,16 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
     });
 });
 
+app.get(`${namespace}/user_on_open_json/${SERVER_SECRET}/:username`, async (req, res) => {
+    const {username} = req.params;
+    handle_error(res, async () => {
+        log("user_on_open", [username]);
+        const user = await db_read_user(username, SERVER_SECRET);
+        await write_db_entry(username, user);
+        return JSON.stringify(user);
+    });
+});
+
 app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:wave_end_str/:gallery`, async (req, res) => {
     const {username, petals_string, wave_end_str, gallery} = req.params;
     const wave_end = parseInt(wave_end_str);

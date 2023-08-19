@@ -36,7 +36,7 @@ enum
     state_flags_petals = 0b0100000,
     state_flags_client_id = 0b1000000,
     state_flags_petals_collected = 0b10000000,
-    state_flags_all = 0b01111111
+    state_flags_all = 0b11111111
 };
 
 #ifdef RR_SERVER
