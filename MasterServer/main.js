@@ -341,11 +341,8 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
             checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
         }
         out.WriteUint8(0);
-        console.log("check", checksum);
         out.WriteVarUint(checksum);
-        console.log("len: ", out.at);
         return out.data.subarray(0, out.at);
-        //return JSON.stringify(user);
     });
 });
 
