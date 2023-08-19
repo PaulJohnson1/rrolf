@@ -7,7 +7,7 @@ class BinaryWriter
         this.conv_f64 = new Float64Array(buf);
         this.data = new Uint8Array(256 * 1024); //files can't be more than 256kb and binary is more memory efficient so this is a good cap
         this.at = 1;
-        this.data[0] = 1; //success byte
+        this.data[0] = 45; //success byte
     }
     WriteUint8(u8) {
         this.data[this.at++] = u8;
