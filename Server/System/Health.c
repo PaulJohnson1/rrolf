@@ -110,7 +110,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     else if (petal->id == rr_petal_id_stick)
     {
         struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-        health->burn = 0.4 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+        health->burn = 0.55 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
         health->burn_ticks = 50;
     }
 }
