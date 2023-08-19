@@ -82,6 +82,7 @@ void rr_api_on_craft_result(char *bin, void *_captures)
         id = rr_binary_encoder_read_uint8(&decoder);
     }
     game->cache.experience += rr_binary_encoder_read_float64(&decoder);
+    free(bin);
 }
 
 static void craft_button_on_event(struct rr_ui_element *this,

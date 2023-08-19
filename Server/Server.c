@@ -123,8 +123,8 @@ void rr_api_on_get_petals(char *bin, void *_client)
     client->level = min(next_level - 1, 150);
     #undef min
     uint32_t max_wave = rr_binary_encoder_read_varuint(&decoder);
-    if (max_wave > 30)
-        max_wave = 30;
+    if (max_wave > 40)
+        max_wave = 40;
     client->max_wave = max_wave;
     printf("client is level %d %d\n", client->level, client->max_wave);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
