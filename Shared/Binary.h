@@ -3,6 +3,8 @@
 #include <stdint.h>
 // a normal binary encoder
 
+#define RR_API_SUCCESS 45
+
 struct rr_binary_encoder
 {
     uint8_t *at;

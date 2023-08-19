@@ -68,6 +68,8 @@ void rr_api_on_craft_result(char *bin, void *_captures)
 
     struct rr_binary_encoder decoder;
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
+    if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
+        return;
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
     {

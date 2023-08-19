@@ -191,7 +191,7 @@ async function handle_error(res, cb)
     }
     catch (e)
     {
-        res.end(e.stack);
+        res.end("\x00" + "server_error:caught");
     }
 }
 
@@ -313,7 +313,7 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
         if (user.maximum_wave < wave_end)
             user.maximum_wave = wave_end;
         await write_db_entry(username, user);
-        return "success";
+        return "success\x00";
     });
 });
 
