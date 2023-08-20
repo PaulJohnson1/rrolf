@@ -31,7 +31,7 @@ static void link_rivet_account(struct rr_ui_element *this,
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         // TODO: make it display a loading status and disable the click
         // funcitonality
-        return; //rr_rivet_link_account(game->rivet_account.token, 0);
+        rr_rivet_link_account(game->rivet_account.token, 0);
     else if (!(game->input_data->mouse_buttons & 1))
         rr_ui_render_tooltip_below(this, game->link_account_tooltip, game);
 }
