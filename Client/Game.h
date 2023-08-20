@@ -72,10 +72,7 @@ struct rr_game
     struct rr_game_squad_client squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
-    // petal rendering cache
-    //struct rr_renderer static_petals;
-
-    // mob assets cache
+    // mob assets cache TODO: (remove)
     struct rr_renderer mob_pteranodon_body;
     struct rr_renderer mob_pteranodon_wings[2];
 
@@ -134,7 +131,7 @@ struct rr_game
     struct rr_renderer asset_web;
     // background
     struct rr_renderer tiles[3];
-    struct rr_renderer background_features[9];
+    struct rr_renderer background_features[2];
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];

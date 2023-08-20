@@ -460,18 +460,21 @@ static void tiles_init(struct rr_game *this)
                          , 0, 0);
 
     this->tiles_size = 3;
-    rr_renderer_init(&this->background_features[0]);
-    rr_renderer_set_dimensions(&this->background_features[0], 100, 100);
-    rr_renderer_draw_svg(&this->background_features[0],
-#include <Client/Assets/MapFeature/Moss.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->background_features[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 144);
+    rr_renderer_translate(renderer, 72, 72);
+    rr_renderer_scale(renderer, 0.16);
+    rr_prop_moss_draw(renderer);
 
-    rr_renderer_init(&this->background_features[1]);
-    rr_renderer_set_dimensions(&this->background_features[1], 200, 200);
-    rr_renderer_draw_svg(&this->background_features[1],
-#include <Client/Assets/MapFeature/WaterLettuce.h>
-                         , 0, 0);
+    renderer = &this->background_features[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 144, 144);
+    rr_renderer_translate(renderer, 72, 72);
+    rr_renderer_scale(renderer, 0.16);
+    rr_prop_water_lettuce_draw(renderer);
 
+ /*
     rr_renderer_init(&this->background_features[2]);
     rr_renderer_set_dimensions(&this->background_features[2], 200, 200);
     rr_renderer_draw_svg(&this->background_features[2],
@@ -513,6 +516,7 @@ static void tiles_init(struct rr_game *this)
     rr_renderer_draw_svg(&this->background_features[8],
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
+*/
 }
 
 void rr_assets_init(struct rr_game *this)

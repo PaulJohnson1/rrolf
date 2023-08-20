@@ -64,6 +64,10 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
         physical->mass = 100;
         physical->knockback_scale = 3.5;
     }
+    else if (id == rr_petal_id_stick)
+    {
+        health->secondary_damage = 0.45 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+    }
 
     rr_component_petal_set_id(petal, id);
     rr_component_petal_set_rarity(petal, rarity);

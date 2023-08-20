@@ -744,23 +744,10 @@ static void render_background(struct rr_component_player_info *player_info,
     rr_renderer_set_global_alpha(this->renderer, 0.75f);
 
     // draw background features
-    for (uint64_t i = 0; i < prop_amount;)
+    for (uint64_t i = 0; i < prop_amount; ++i)
     {
-        uint64_t selected_feature;
-        // any number between 0-8 and is not 1. 1 is water lettuce
-        // which is disabled for now
-        do
-        {
-            selected_feature = rr_get_hash(i) % 8;
-            i++;
-        } while (selected_feature == 1);
+        uint64_t selected_feature = rr_get_hash(i) % 2;
 
-        render_map_feature
-    }
-    // trees over everything
-    for (uint64_t i = 1000000; i < (1000000 + prop_amount / 50); i++)
-    {
-        uint64_t selected_feature = 8;
         render_map_feature
     }
 

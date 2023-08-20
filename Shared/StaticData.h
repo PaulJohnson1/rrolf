@@ -21,7 +21,7 @@ enum rr_petal_id
     rr_petal_id_no_petal,
     rr_petal_id_basic,
     rr_petal_id_pellet,
-    rr_petal_id_rock,
+    rr_petal_id_fossil,
     rr_petal_id_stinger,
     rr_petal_id_light,
     rr_petal_id_shell,

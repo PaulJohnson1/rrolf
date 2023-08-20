@@ -8,7 +8,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 12.0f, 5.0f, 0.0f, 13, 0, {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_rock, rr_rarity_id_common, 10.0f, 75.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_fossil, rr_rarity_id_common, 10.0f, 75.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 50.0f, 5.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_shell, rr_rarity_id_rare, 3.5f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
@@ -75,7 +75,7 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Basic", "Pellet", "Rock",   "Spikes",  "Light", "Shell",
+    "Secret", "Basic", "Pellet", "Fossil",   "Spikes",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
     "Beak", "Lightning", "Stick"};
@@ -83,7 +83,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
     "Low damage, but there's lots",
-    "Dwayne",
+    "It came from a dino",
     "Ow that hurts",
     "Makes your petals lighter so they spin faster",
     "ICBM approved",
@@ -97,7 +97,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Gives the player armor. Stacks with itself",
     "Web",
     "What does this one do",
-    "Tiny rocks that stay on the ground and trip dinos",
+    "Tiny fossils that stay on the ground and trip dinos",
     "Heavy and sturdy",
     "Increases your FOV. Does not stack",
     "This mysterious petal reverses your petal rotation",
@@ -192,7 +192,7 @@ static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)
 static void init_loot_tables()
 {
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[0],
-                    rr_petal_id_rock, 0.1);
+                    rr_petal_id_fossil, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_triceratops].loot[1],
                     rr_petal_id_leaf, 0.15);
 
@@ -247,7 +247,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
                     rr_petal_id_uranium, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[2],
-                    rr_petal_id_rock, 0.2);
+                    rr_petal_id_fossil, 0.2);
     
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[0],
                     rr_petal_id_droplet, 0.15);
@@ -264,7 +264,7 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[0],
                     rr_petal_id_leaf, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[1],
-                    rr_petal_id_rock, 0.1);
+                    rr_petal_id_fossil, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[2],
                     rr_petal_id_peas, 0.1);
 }

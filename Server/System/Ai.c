@@ -372,13 +372,11 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                 rr_simulation_get_petal(simulation, petal_id), 1);
 
             rr_component_health_set_max_health(
-                health, RR_MOB_DATA[mob->id].health *
-                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.4);
+                health, 10 *
+                            RR_MOB_RARITY_SCALING[mob->rarity].health);
             rr_component_health_set_health(
-                health, RR_MOB_DATA[mob->id].health *
-                            RR_MOB_RARITY_SCALING[mob->rarity].health * 0.4);
-            health->damage = RR_MOB_DATA[mob->id].damage *
-                             RR_MOB_RARITY_SCALING[mob->rarity].damage * 0.2f;
+                health, health->max_health);
+            health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             projectile->ticks_until_death = 50;
 
             struct rr_vector recoil;
@@ -781,9 +779,13 @@ static void tick_ai_aggro_pectinodon(EntityIdx entity,
             physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
         physical2->friction = 0.8f;
         physical2->mass = 1.0f;
+        rr_component_health_set_max_health(health, 3 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+        rr_component_health_set_health(health, health->max_health);
+        health->damage = 2 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
+        health->secondary_damage = 0.5 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
         rr_vector_from_polar(&physical2->acceleration, 60, physical->angle);
 
-        rr_simulation_get_petal(simulation, petal_id)->effect_delay = 38;
+        rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
         ai->ai_state = rr_ai_state_waiting_to_attack;
         ai->ticks_until_next_action = 50;
         break;
