@@ -35,7 +35,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
 
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
-            rr_ui_container_init(), 10, 5,
+            rr_ui_tooltip_container_init(), 10, 5,
             rr_ui_flex_container_init(
                 rr_ui_set_justify(
                     rr_ui_text_init(RR_PETAL_NAMES[id], 24, 0xffffffff), -1, 0),
@@ -67,7 +67,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                                 rr_ui_text_init(dmg, 12, 0xffffffff), NULL),
                             -1, 0));
     }
-    if (id == rr_petal_id_missile)
+    if (id == rr_petal_id_shell)
     {
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%.1f",
@@ -242,7 +242,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%d", 2 + rarity)] = 0;
+        extra[sprintf(extra, "%d", 1 + rarity)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -250,11 +250,19 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init("Bounces: ", 12, 0xfffc00cf),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
+        extra = "4s";
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Duration: ", 12, 0xfffccd34),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
     }
     else if (id == rr_petal_id_stick)
     {
         char *extra = malloc((sizeof *extra) * 16);
-        extra[sprintf(extra, "%.1f hp/s (3s)", 0.45 * 25 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
+        extra[sprintf(extra, "%.0f (3s)", 3 * 0.45 * 25 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -263,7 +271,6 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
-    rr_ui_link_toggle(rr_ui_set_justify(this, -1, -1), rr_ui_never_show);
-    this->poll_events = rr_ui_no_focus;
+    rr_ui_set_justify(this, -1, -1);
     return this;
 }

@@ -390,19 +390,24 @@ void rr_game_init(struct rr_game *this)
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
-        rr_ui_link_toggle(
-            rr_ui_set_justify(
-                rr_ui_set_background(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                        rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
-                        rr_ui_text_init("click to copy", 16, 0xffffffff),
-                        NULL
-                    ),
-                0x80000000),
-            -1, -1),
-        rr_ui_never_show)
+        rr_ui_set_background(
+            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+                rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
+                rr_ui_text_init("click to copy", 16, 0xffffffff),
+                NULL
+            ),
+        0x80000000)
     );
-    this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
+
+    this->link_account_tooltip = rr_ui_container_add_element(
+        this->window,
+        rr_ui_set_background(
+            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+                rr_ui_text_init("Link Account", 16, 0xffffffff),
+                NULL
+            ),
+        0x80000000)
+    );
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         this->squad_player_tooltips[i] = rr_ui_squad_player_tooltip_init(this, i);
@@ -689,6 +694,10 @@ static void render_background(struct rr_component_player_info *player_info,
 {
     if (this->cache.ourpetsnake_mode)
         return;
+    float a = this->renderer->height / 1080;
+    float b = this->renderer->width / 1920;
+
+    float s1 = (this->renderer->scale = b < a ? a : b);
     double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
@@ -702,6 +711,7 @@ static void render_background(struct rr_component_player_info *player_info,
 #define GRID_SIZE (256)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
+    //rr_renderer_scale(this->renderer, scale);
     for (; newLeftX < rightX; newLeftX += GRID_SIZE)
     {
         for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
@@ -747,23 +757,10 @@ static void render_background(struct rr_component_player_info *player_info,
     rr_renderer_set_global_alpha(this->renderer, 0.75f);
 
     // draw background features
-    for (uint64_t i = 0; i < prop_amount;)
+    for (uint64_t i = 0; i < prop_amount; ++i)
     {
-        uint64_t selected_feature;
-        // any number between 0-8 and is not 1. 1 is water lettuce
-        // which is disabled for now
-        do
-        {
-            selected_feature = rr_get_hash(i) % 8;
-            i++;
-        } while (selected_feature == 1);
+        uint64_t selected_feature = rr_get_hash(i) % 2;
 
-        render_map_feature
-    }
-    // trees over everything
-    for (uint64_t i = 1000000; i < (1000000 + prop_amount / 50); i++)
-    {
-        uint64_t selected_feature = 8;
         render_map_feature
     }
 
@@ -842,6 +839,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else if (this->ticks_until_text_cache < 25)
         --this->ticks_until_text_cache;
+    this->lerp_delta = 1 - powf(0.9f, delta * 10);
     struct timeval start;
     struct timeval end;
 
@@ -879,13 +877,14 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    rr_renderer_set_global_alpha(this->renderer, 1);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
 
     if (this->simulation_ready)
     {
-        rr_simulation_tick(this->simulation, delta);
-        rr_deletion_simulation_tick(this->deletion_simulation, delta);
+        rr_simulation_tick(this->simulation, this->lerp_delta);
+        rr_deletion_simulation_tick(this->deletion_simulation, this->lerp_delta);
 
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
@@ -939,7 +938,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_line_width(this->renderer, 1.0f);
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
-
             render_background(player_info, this, this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
@@ -979,8 +977,10 @@ void rr_game_tick(struct rr_game *this, float delta)
                               this->renderer->height);
         rr_renderer_context_state_free(this->renderer, &state);
         rr_renderer_context_state_init(this->renderer, &state);
+
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
+        rr_renderer_scale(this->renderer, this->renderer->scale);
         render_background(&custom_player_info, this,
                           this->cache.map_props * 750);
         rr_renderer_context_state_free(this->renderer, &state);

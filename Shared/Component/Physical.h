@@ -25,6 +25,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(float friction;)
     RR_SERVER_ONLY(float acceleration_scale;)
     float angle;
+    RR_SERVER_ONLY(float bearing_angle;)
     RR_CLIENT_ONLY(float lerp_angle;)
     RR_CLIENT_ONLY(float turning_animation;)
     float x;

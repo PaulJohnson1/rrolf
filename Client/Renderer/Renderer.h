@@ -34,6 +34,7 @@ extern "C"
     {
         float transform_matrix[6];
         struct rr_renderer_filter filter;
+        float global_alpha;
     };
 
     struct rr_renderer

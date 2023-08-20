@@ -52,7 +52,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                     RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
-            rr_ui_container_init(), 10, 5,
+            rr_ui_tooltip_container_init(), 10, 5,
             rr_ui_set_justify(rr_ui_text_init(RR_MOB_NAMES[id], 24, 0xffffffff),
                               -1, -1),
             rr_ui_set_justify(rr_ui_text_init(RR_RARITY_NAMES[rarity], 16,
@@ -74,25 +74,56 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_pteranodon)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f",
-                      0.4 * RR_MOB_DATA[id].health *
+        extra[sprintf(extra, "%.1f", 10 *
                           RR_MOB_RARITY_SCALING[rarity].health)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Missile health: ", 12, 0xff44ff44),
+                          rr_ui_text_init("Shell health: ", 12, 0xff44ff44),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f",
-                      0.2 * RR_MOB_DATA[id].damage *
+        extra[sprintf(extra, "%.1f", 10 *
                           RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Missile damage: ", 12, 0xffff4444),
+                          rr_ui_text_init("Shell damage: ", 12, 0xffff4444),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+    }
+    else if (id == rr_mob_id_pectinodon)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.1f", 3 *
+                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Projectile health: ", 12, 0xff44ff44),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+        extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.1f", 2 *
+                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Projectile damage: ", 12, 0xffff4444),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+        extra = malloc((sizeof *extra) * 16);
+        extra[sprintf(extra, "%.0f (3s)", 3 * 25 * 0.5 *
+                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Projectile burn: ", 12, 0xfffc3423),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
@@ -129,8 +160,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         temp->height = temp->abs_height;
         rr_ui_container_add_element(this, rr_ui_set_justify(temp, -1, -1));
     }
-    rr_ui_link_toggle(rr_ui_set_justify(this, -1, -1), rr_ui_never_show);
+    rr_ui_set_justify(this, -1, -1);
     rr_ui_v_container_set(this);
-    this->poll_events = rr_ui_no_focus;
     return this;
 }

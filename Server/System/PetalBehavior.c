@@ -108,18 +108,19 @@ static void system_flower_petal_movement_logic(
         {
             switch (petal->id)
             {
-            case rr_petal_id_missile:
+            case rr_petal_id_shell:
             {
                 if ((player_info->input & 1) == 0)
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
                 rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                     physical->angle);
+                                     curr_angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
                     25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
+                physical->bearing_angle = curr_angle;
                 break;
             }
             case rr_petal_id_peas:
@@ -274,13 +275,10 @@ static void system_flower_petal_movement_logic(
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
-                rr_vector_from_polar(&physical->acceleration, 15.0f,
+                rr_vector_from_polar(&physical->acceleration, 40.0f,
                                      physical->angle);
-                rr_vector_from_polar(&physical->velocity, 100.0f,
-                                     physical->angle);
-                projectile->ticks_until_death = 8;
-                rr_simulation_get_health(simulation, id)->damage =
-                    25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                projectile->ticks_until_death = 100;
+                petal->effect_delay = 13;
                 break;
             }
             default:
@@ -322,7 +320,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    if (!is_projectile || petal->id == rr_petal_id_seed ||
+    if (!is_projectile || petal->id == rr_petal_id_shell || petal->id == rr_petal_id_seed ||
         petal->id == rr_petal_id_web || petal->id == rr_petal_id_peas)
         rr_component_physical_set_angle(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
@@ -494,6 +492,8 @@ struct lightning_captures
 {
     EntityIdx *chain;
     uint32_t length;
+    float curr_x;
+    float curr_y;
 };
 
 static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
@@ -537,7 +537,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     }
     else
     {
-        if (petal->id == rr_petal_id_missile)
+        if (petal->id == rr_petal_id_shell)
         {
             if (relations->team == rr_simulation_team_id_players)
             {
@@ -546,11 +546,13 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 {
                     struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
                     struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                    physical->bearing_angle = rr_angle_lerp(physical->bearing_angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
                 }
             }
+            rr_component_physical_set_angle(
+                physical, physical->angle + 0.08f * (float)petal->spin_ccw);
             rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                 physical->angle);
+                                 physical->bearing_angle);
         }
         else if (petal->id == rr_petal_id_peas)
             rr_vector_from_polar(&physical->acceleration, 7.5f,
@@ -561,13 +563,10 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 rr_simulation_request_entity_deletion(simulation, id);
         }
         else if (petal->id == rr_petal_id_lightning)
-            rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                 physical->angle);
-        if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
-            0)
         {
-            rr_simulation_request_entity_deletion(simulation, id);
-            if (petal->id == rr_petal_id_lightning)
+            rr_vector_from_polar(&physical->acceleration, 2.5f,
+                                 physical->angle);
+            if (--petal->effect_delay == 0)
             {
                 struct rr_component_physical *petal_physical = physical;
                 struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
@@ -575,13 +574,13 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 EntityIdx chain[16] = {0};
                 animation->points[0].x = petal_physical->x;
                 animation->points[0].y = petal_physical->y;
-                uint32_t chain_amount = petal->rarity + 2;   
+                uint32_t chain_amount = petal->rarity + 1;   
                 float damage = rr_simulation_get_health(simulation, id)->damage * 0.5; 
                 EntityIdx target = RR_NULL_ENTITY;
-                struct lightning_captures captures = {chain, 1};
+                struct lightning_captures captures = {chain, 1, petal_physical->x, petal_physical->y};
                 for (; captures.length < chain_amount + 1; ++captures.length)
                 {
-                    target = rr_simulation_find_nearest_enemy(simulation, id, 250, &captures, lightning_filter);
+                    target = rr_simulation_find_nearest_enemy_custom_pos(simulation, id, captures.curr_x, captures.curr_y, 250, &captures, lightning_filter);
                     if (target == RR_NULL_ENTITY)
                         break;
                     if (rr_simulation_has_ai(simulation, target))
@@ -594,15 +593,21 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     struct rr_component_health *health = rr_simulation_get_health(simulation, target);
                     rr_component_health_do_damage(health, damage);
                     health->damage_paused = 5;
-                    physical->stun_ticks = 10;
+                    physical->stun_ticks = 5;
                     chain[captures.length] = target;
                     animation->points[captures.length].x = physical->x;
                     animation->points[captures.length].y = physical->y;
-                    petal_physical->x = physical->x;
-                    petal_physical->y = physical->y;
+                    captures.curr_x = physical->x;
+                    captures.curr_y = physical->y;
                 }
                 animation->length = captures.length;
+                petal->effect_delay = 13;
             }
+        }
+        if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
+            0)
+        {
+            rr_simulation_request_entity_deletion(simulation, id);
             if (petal->id == rr_petal_id_seed)
             {
                 for (uint32_t i = 0; i < simulation->player_info_count; ++i)

@@ -441,37 +441,40 @@ static void mob_edmontosaurus_init(struct rr_game *this)
 
 static void tiles_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->tiles[0]);
-    rr_renderer_set_dimensions(&this->tiles[0], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[0],
-#include <Client/Assets/Tile/1.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->tiles[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_1_draw(renderer);
 
-    rr_renderer_init(&this->tiles[1]);
-    rr_renderer_set_dimensions(&this->tiles[1], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[1],
-#include <Client/Assets/Tile/2.h>
-                         , 0, 0);
+    renderer = &this->tiles[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_2_draw(renderer);
 
-    rr_renderer_init(&this->tiles[2]);
-    rr_renderer_set_dimensions(&this->tiles[2], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[2],
-#include <Client/Assets/Tile/3.h>
-                         , 0, 0);
+    renderer = &this->tiles[2];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_3_draw(renderer);
 
     this->tiles_size = 3;
-    rr_renderer_init(&this->background_features[0]);
-    rr_renderer_set_dimensions(&this->background_features[0], 100, 100);
-    rr_renderer_draw_svg(&this->background_features[0],
-#include <Client/Assets/MapFeature/Moss.h>
-                         , 0, 0);
+    renderer = &this->background_features[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_renderer_scale(renderer, 0.3);
+    rr_prop_fern_draw(renderer);
 
-    rr_renderer_init(&this->background_features[1]);
-    rr_renderer_set_dimensions(&this->background_features[1], 200, 200);
-    rr_renderer_draw_svg(&this->background_features[1],
-#include <Client/Assets/MapFeature/WaterLettuce.h>
-                         , 0, 0);
+    renderer = &this->background_features[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_renderer_scale(renderer, 0.3);
+    rr_prop_moss_draw(renderer);
 
+ /*
     rr_renderer_init(&this->background_features[2]);
     rr_renderer_set_dimensions(&this->background_features[2], 200, 200);
     rr_renderer_draw_svg(&this->background_features[2],
@@ -513,6 +516,7 @@ static void tiles_init(struct rr_game *this)
     rr_renderer_draw_svg(&this->background_features[8],
 #include <Client/Assets/MapFeature/BeechTree.h>
                          , 0, 0);
+*/
 }
 
 void rr_assets_init(struct rr_game *this)

@@ -16,6 +16,7 @@ struct rr_component_health
     float max_health;
     RR_CLIENT_ONLY(float damage_animation;)
     RR_SERVER_ONLY(float damage;)
+    RR_SERVER_ONLY(float secondary_damage;)
     RR_SERVER_ONLY(float damage_reduction;)
     RR_SERVER_ONLY(float burn;)
     RR_SERVER_ONLY(uint32_t burn_ticks;)
