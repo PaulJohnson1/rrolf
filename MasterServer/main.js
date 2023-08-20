@@ -191,7 +191,7 @@ async function handle_error(res, cb)
     }
     catch (e)
     {
-        res.end("\x00" + "server_error:caught");
+        res.end("\x00" + e.stack);
     }
 }
 
@@ -353,6 +353,19 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
         out.WriteUint8(0);
         out.WriteVarUint(checksum);
         return out.data.subarray(0, out.at);
+    });
+});
+app.get(`${namespace}/account_link/:old_username/:old_password/:username/:password`, async (req, res) => {
+    const {old_username, old_password, username, password} = req.params;
+    log("account_link", [old_username, username]);
+    handle_error(res, async () => {
+        const a = await db_read_user(old_username, old_password);
+        await db_read_user(username, password); // to create or verify that the new account has valid password
+        a.password = password;
+        a.username = username;
+        await write_db_entry(username, a);
+
+        return "success";
     });
 });
 

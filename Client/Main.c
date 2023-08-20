@@ -245,7 +245,6 @@ void rr_renderer_main_loop(struct rr_game *this, float delta, float width,
 
 int main()
 {
-    puts("bro just uncache already");
     static struct rr_game game;
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
