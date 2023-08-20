@@ -107,12 +107,22 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
     rr_vector_add(&physical->acceleration, &accel);
 }
 
-static void tick_ai_aggro_none(EntityIdx entity,
+static void tick_ai_aggro_ornithomimus(EntityIdx entity,
                                   struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
+    if (ai->ai_state == rr_ai_state_idle ||
+        ai->ai_state == rr_ai_state_idle_moving)
+    {
+        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        {
+            ai->ai_state = rr_ai_state_chasing;
+            ai->ticks_until_next_action = 84;
+        }
+    }
+    
     switch (ai->ai_state)
     {
     case rr_ai_state_idle:
@@ -121,6 +131,31 @@ static void tick_ai_aggro_none(EntityIdx entity,
     case rr_ai_state_idle_moving:
         tick_idle_moving(entity, simulation);
         break;
+    case rr_ai_state_chasing:
+    {
+        struct rr_component_physical *physical2 =
+            rr_simulation_get_physical(simulation, ai->target_entity);
+
+        struct rr_vector delta = {physical2->x, physical2->y};
+        struct rr_vector target_pos = {physical->x, physical->y};
+        rr_vector_sub(&delta, &target_pos);
+
+        rr_component_physical_set_angle(
+            physical, M_PI + rr_vector_theta(&delta) +
+                          sinf(ai->ticks_until_next_action * 0.3) * 0.5);
+        rr_vector_from_polar(&physical->acceleration, 2.0, physical->angle);
+        if (rr_vector_get_magnitude(&delta) > 1000)
+        {
+            ai->target_entity = RR_NULL_ENTITY;
+            ai->ticks_until_next_action = 0;
+        }
+        if (ai->ticks_until_next_action == 0)
+        {
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = 84;
+        }
+        break;
+    }
     default:
         RR_UNREACHABLE("tick_ai_aggro_default reached invalid state");
         break;
@@ -143,9 +178,6 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
             ai->ticks_until_next_action = 25;
         }
     }
-    if (ai->target_entity != RR_NULL_ENTITY &&
-        !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = RR_NULL_ENTITY;
 
     switch (ai->ai_state)
     {
@@ -166,13 +198,6 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
             break;
         }
 
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
-            break;
-        }
-
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
@@ -190,13 +215,6 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         {
             ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = rand() % 25 + 25;
-            break;
-        }
-
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
             break;
         }
 
@@ -276,13 +294,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     if (ai->target_entity == RR_NULL_ENTITY ||
         !rr_simulation_has_entity(simulation, ai->target_entity))
         ai->target_entity = rr_simulation_find_nearest_enemy(simulation, entity, 1550, NULL, no_filter);
-    if (rr_simulation_has_entity(simulation, ai->target_entity) &&
-        (ai->ai_state != rr_ai_state_attacking &&
-         ai->ai_state != rr_ai_state_shell_shoot_delay))
-    {
-        ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 50;
-    }
 
     switch (ai->ai_state)
     {
@@ -473,8 +484,16 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    if (check_if_aggro(ai, simulation))
-        ai->ai_state = rr_ai_state_chasing;
+    if (ai->ai_state == rr_ai_state_idle ||
+        ai->ai_state == rr_ai_state_idle_moving)
+    {
+        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        {
+            ai->ai_state = rr_ai_state_chasing;
+            ai->ticks_until_next_action = 25;
+        }
+    }
+
     if (ai->ai_state == rr_ai_state_attacking)
         physical->knockback_scale = 3.0f;
     else
@@ -523,13 +542,6 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
             break;
         }
 
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
-            break;
-        }
-
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
@@ -549,13 +561,6 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
         {
             ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = rand() % 25 + 25;
-            break;
-        }
-
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
             break;
         }
 
@@ -716,9 +721,6 @@ static void tick_ai_aggro_pectinodon(EntityIdx entity,
             ai->ticks_until_next_action = 25;
         }
     }
-    if (ai->target_entity != RR_NULL_ENTITY &&
-        !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = RR_NULL_ENTITY;
 
     switch (ai->ai_state)
     {
@@ -759,7 +761,8 @@ static void tick_ai_aggro_pectinodon(EntityIdx entity,
         }
         else if (dist < 200)
         {
-            rr_vector_from_polar(&physical->acceleration, 1.6, M_PI + physical->angle);
+            rr_vector_from_polar(&physical->acceleration, 1.8, M_PI + physical->angle);
+            ++ai->ticks_until_next_action;
         }
         break;
     }
@@ -875,8 +878,13 @@ static void system_for_each(EntityIdx entity, void *simulation)
         return;
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
-    if (ai->target_entity != RR_NULL_ENTITY && !rr_simulation_has_entity(this, ai->target_entity))
+    if (ai->target_entity != RR_NULL_ENTITY &&
+        !rr_simulation_has_entity(simulation, ai->target_entity))
+    {
         ai->target_entity = RR_NULL_ENTITY;
+        ai->ai_state = rr_ai_state_idle;
+        ai->ticks_until_next_action = 25;
+    }
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
@@ -922,7 +930,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_tree:
         break;
     case rr_mob_id_ornithomimus:
-        tick_ai_aggro_none(entity, this);
+        tick_ai_aggro_ornithomimus(entity, this);
         break;
     case rr_mob_id_triceratops:
         tick_ai_aggro_triceratops(entity, this);

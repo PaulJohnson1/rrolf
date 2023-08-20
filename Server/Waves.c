@@ -69,17 +69,7 @@ uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
 
 int should_spawn_at(uint32_t wave, uint8_t id, uint8_t rarity)
 {
-    if (id == rr_mob_id_trex && rarity < rr_rarity_id_unusual)
-        return 0;
-    if (id == rr_mob_id_dakotaraptor && rarity < rr_rarity_id_epic)
-        return 0;
-    if (id == rr_mob_id_triceratops && rarity < rr_rarity_id_unusual)
-        return 0;
-    if (id == rr_mob_id_meteor && rarity < rr_rarity_id_rare)
-        return 0;
-    if (id == rr_mob_id_quetzalcoatlus && rarity < rr_rarity_id_rare)
-        return 0;
-    if (id == rr_mob_id_edmontosaurus && rarity < rr_rarity_id_rare)
+    if (RR_MOB_DATA[id].min_rarity > rarity)
         return 0;
     return 1;
 }

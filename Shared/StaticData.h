@@ -72,6 +72,7 @@ struct rr_loot_data
 struct rr_mob_data
 {
     uint8_t id;
+    uint8_t min_rarity;
     float health;
     float damage;
     float radius;
