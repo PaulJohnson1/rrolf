@@ -6,6 +6,7 @@ project(rrolf-client)
 include_directories(..)
 
 set(SRCS
+    Assets/MapFeature/Fern3.c
     Assets/MapFeature/Moss.c
     Assets/MapFeature/WaterLettuce.c
     Assets/Mob/Ankylosaurus/Body.c

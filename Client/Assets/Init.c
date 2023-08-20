@@ -465,14 +465,14 @@ static void tiles_init(struct rr_game *this)
     rr_renderer_set_dimensions(renderer, 144, 144);
     rr_renderer_translate(renderer, 72, 72);
     rr_renderer_scale(renderer, 0.16);
-    rr_prop_moss_draw(renderer);
+    rr_prop_fern_draw(renderer);
 
     renderer = &this->background_features[1];
     rr_renderer_init(renderer);
     rr_renderer_set_dimensions(renderer, 144, 144);
     rr_renderer_translate(renderer, 72, 72);
     rr_renderer_scale(renderer, 0.16);
-    rr_prop_water_lettuce_draw(renderer);
+    rr_prop_moss_draw(renderer);
 
  /*
     rr_renderer_init(&this->background_features[2]);

@@ -686,7 +686,11 @@ static void render_background(struct rr_component_player_info *player_info,
 {
     if (this->cache.ourpetsnake_mode)
         return;
-    double scale = player_info->lerp_camera_fov;
+    float a = this->renderer->height / 1080;
+    float b = this->renderer->width / 1920;
+
+    float s1 = (this->renderer->scale = b < a ? a : b);
+    double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
     double rightX =
@@ -699,7 +703,7 @@ static void render_background(struct rr_component_player_info *player_info,
 #define GRID_SIZE (256)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
-    rr_renderer_scale(this->renderer, this->renderer->scale);
+    //rr_renderer_scale(this->renderer, scale);
     for (; newLeftX < rightX; newLeftX += GRID_SIZE)
     {
         for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
@@ -926,7 +930,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_renderer_set_line_width(this->renderer, 1.0f);
             rr_renderer_set_stroke(this->renderer, alpha);
             rr_renderer_set_global_alpha(this->renderer, 1);
-
             render_background(player_info, this, this->cache.map_props * 750);
 
             rr_renderer_context_state_free(this->renderer, &state2);
