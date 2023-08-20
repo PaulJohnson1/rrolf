@@ -118,6 +118,7 @@ struct rr_ui_element *rr_ui_tooltip_container_init()
     struct rr_ui_element *this = rr_ui_container_init();
     this->poll_events = rr_ui_no_focus;
     this->should_show = rr_ui_never_show;
+    this->h_justify = this->v_justify = -1;
     return this;
 }
 

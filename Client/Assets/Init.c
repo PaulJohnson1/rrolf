@@ -462,16 +462,16 @@ static void tiles_init(struct rr_game *this)
     this->tiles_size = 3;
     renderer = &this->background_features[0];
     rr_renderer_init(renderer);
-    rr_renderer_set_dimensions(renderer, 144, 144);
-    rr_renderer_translate(renderer, 72, 72);
-    rr_renderer_scale(renderer, 0.16);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_renderer_scale(renderer, 0.3);
     rr_prop_fern_draw(renderer);
 
     renderer = &this->background_features[1];
     rr_renderer_init(renderer);
-    rr_renderer_set_dimensions(renderer, 144, 144);
-    rr_renderer_translate(renderer, 72, 72);
-    rr_renderer_scale(renderer, 0.16);
+    rr_renderer_set_dimensions(renderer, 240, 240);
+    rr_renderer_translate(renderer, 120, 120);
+    rr_renderer_scale(renderer, 0.3);
     rr_prop_moss_draw(renderer);
 
  /*

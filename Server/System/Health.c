@@ -69,44 +69,6 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
         physical->stun_ticks = 25 + 25 * petal->rarity / 2;
     }
-    else if (petal->id == rr_petal_id_lightning)
-    {
-        struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal_id);
-        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal_id);
-        struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
-        animation->type = 1;
-        EntityIdx chain[16] = {0};
-        animation->points[0].x = petal_physical->x;
-        animation->points[0].y = petal_physical->y;
-        uint32_t chain_amount = petal->rarity + 2;   
-        float damage = rr_simulation_get_health(simulation, petal_id)->damage * 0.5; 
-        EntityIdx target = RR_NULL_ENTITY;
-        struct lightning_captures captures = {chain, 1};
-        for (; captures.length < chain_amount + 1; ++captures.length)
-        {
-            target = rr_simulation_find_nearest_enemy(simulation, petal_id, 250, &captures, lightning_filter);
-            if (target == RR_NULL_ENTITY)
-                break;
-            if (rr_simulation_has_ai(simulation, target))
-            {
-                struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
-                if (ai->target_entity == RR_NULL_ENTITY)
-                    ai->target_entity = relations->owner;
-            }
-            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-            struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-            rr_component_health_do_damage(health, damage);
-            health->damage_paused = 5;
-            physical->stun_ticks = 10;
-            chain[captures.length] = target;
-            animation->points[captures.length].x = physical->x;
-            animation->points[captures.length].y = physical->y;
-            petal_physical->x = physical->x;
-            petal_physical->y = physical->y;
-        }
-        animation->length = captures.length;
-        rr_simulation_request_entity_deletion(simulation, petal_id);
-    }
     else if (petal->id == rr_petal_id_stick)
     {
         struct rr_component_health *health = rr_simulation_get_health(simulation, target);

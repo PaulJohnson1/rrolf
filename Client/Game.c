@@ -390,15 +390,23 @@ void rr_game_init(struct rr_game *this)
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
-        rr_ui_set_justify(
-            rr_ui_set_background(
-                rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
-                    rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
-                    rr_ui_text_init("click to copy", 16, 0xffffffff),
-                    NULL
-                ),
-            0x80000000),
-        -1, -1)
+        rr_ui_set_background(
+            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+                rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
+                rr_ui_text_init("click to copy", 16, 0xffffffff),
+                NULL
+            ),
+        0x80000000)
+    );
+
+    this->link_account_tooltip = rr_ui_container_add_element(
+        this->window,
+        rr_ui_set_background(
+            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+                rr_ui_text_init("Link Account", 16, 0xffffffff),
+                NULL
+            ),
+        0x80000000)
     );
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
