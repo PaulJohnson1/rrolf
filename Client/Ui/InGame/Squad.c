@@ -13,7 +13,6 @@
 static void render_dead_flower(struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
-    //rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
     rr_renderer_set_line_width(renderer, 3);

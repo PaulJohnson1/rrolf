@@ -278,7 +278,7 @@ static void system_flower_petal_movement_logic(
                 rr_vector_from_polar(&physical->acceleration, 40.0f,
                                      physical->angle);
                 projectile->ticks_until_death = 100;
-                petal->effect_delay = 25;
+                petal->effect_delay = 13;
                 break;
             }
             default:
@@ -564,6 +564,8 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         }
         else if (petal->id == rr_petal_id_lightning)
         {
+            rr_vector_from_polar(&physical->acceleration, 2.5f,
+                                 physical->angle);
             if (--petal->effect_delay == 0)
             {
                 struct rr_component_physical *petal_physical = physical;
@@ -599,7 +601,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                     captures.curr_y = physical->y;
                 }
                 animation->length = captures.length;
-                petal->effect_delay = 25;
+                petal->effect_delay = 13;
             }
         }
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=

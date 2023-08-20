@@ -977,8 +977,10 @@ void rr_game_tick(struct rr_game *this, float delta)
                               this->renderer->height);
         rr_renderer_context_state_free(this->renderer, &state);
         rr_renderer_context_state_init(this->renderer, &state);
+
         rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
                               this->renderer->height * 0.5f);
+        rr_renderer_scale(this->renderer, this->renderer->scale);
         render_background(&custom_player_info, this,
                           this->cache.map_props * 750);
         rr_renderer_context_state_free(this->renderer, &state);

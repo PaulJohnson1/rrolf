@@ -18,6 +18,7 @@ static void rivet_container_on_event(struct rr_ui_element *this,
 
 static void render_link(struct rr_ui_element *this, struct rr_game *game)
 {
+    rr_renderer_scale(game->renderer, game->renderer->scale);
     rr_renderer_set_fill(game->renderer, 0x80ffffff);
     rr_renderer_begin_path(game->renderer);
     rr_renderer_round_rect(game->renderer, -this->abs_width / 2, -this->abs_height / 2, this->abs_width, this->abs_height, 6);
