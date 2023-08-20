@@ -133,6 +133,8 @@ static void lightning_petal_system(struct rr_simulation *simulation,
         animation->length = captures.length;
         if (captures.length > 1)
             rr_simulation_request_entity_deletion(simulation, petal->parent_id);
+        else
+            --simulation->animation_length;
     }
     else
         --petal->effect_delay;
