@@ -247,12 +247,12 @@ static void init_loot_tables()
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[1],
                     rr_petal_id_uranium, 0.25);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_meteor].loot[2],
-                    rr_petal_id_fossil, 0.2);
+                    rr_petal_id_lightning, 0.2);
     
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[0],
                     rr_petal_id_droplet, 0.15);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[1],
-                    rr_petal_id_lightning, 0.05);
+                    rr_petal_id_fossil, 0.05);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_quetzalcoatlus].loot[2],
                     rr_petal_id_beak, 0.1);
     
