@@ -296,7 +296,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         ai->target_entity = rr_simulation_find_nearest_enemy(simulation, entity, 1550, NULL, no_filter);
     if (rr_simulation_has_entity(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
-         ai->ai_state != rr_ai_state_missile_shoot_delay))
+         ai->ai_state != rr_ai_state_shell_shoot_delay))
     {
         ai->ai_state = rr_ai_state_attacking;
         ai->ticks_until_next_action = 50;
