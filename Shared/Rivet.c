@@ -13,6 +13,12 @@
 
 #include <Shared/cJSON.h>
 
+#ifdef RIVET_BUILD
+#define BASE_API_URL "https://rrolf.io/api/"
+#else
+#define BASE_API_URL "http://localhost:55554/api/"
+#endif
+
 #define RR_RIVET_CURL_PROLOGUE                                                 \
     struct curl_slist *list = 0;                                               \
     int err = 0;                                                               \
@@ -186,14 +192,73 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
                     console.log($host, $token, " testing rivet 123123");
-                    Module._rr_rivet_lobby_on_find(
-                        $host, $token, json.ports.default.port, $0);
+                    Module._rr_rivet_lobby_on_find($host, $token,
+                                                   json.ports.default.port, $0);
                 })
                 .catch(function(error) {
                     Module._rr_rivet_lobby_on_find(0, 0, 0, $0);
                 });
         },
         captures, lobby_id);
+#endif
+}
+
+void rr_rivet_link_account(char *game_user, void *captures)
+{
+    puts("account linking initiated");
+#ifdef EMSCRIPTEN
+    // clang-format off
+    EM_ASM(
+        {
+            let token = UTF8ToString($0);
+            let api = UTF8ToString($1);
+            let w;
+            fetch("https://identity.api.rivet.gg/v1/game-links", {
+                method: "POST",
+                body: "{}",
+                headers: {
+                    // is a dev token
+                    Authorization: "Bearer " + token
+                }
+            }).then(r => r.json())
+            .then(r => {
+                function handle(h)
+                {
+                    h.then(h => h.json()).then(newer => {
+                        if (newer.status == "incomplete")
+                        {
+                            console.log("not linked yet, checking again");
+                            let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r.identity_link_token + "&watch_index=" + newer.watch.index);
+                            handle(h);
+                        }
+                        if (newer.status == "cancelled")
+                            console.log("cancelled linking");
+                        if (newer.status == "complete")
+                        {
+                            console.log(newer);
+                            fetch(api + "account_link/" +
+                                newer.current_identity.identity_id + "/" +
+                                localStorage.DO_NOT_SHARE_rivet_account_token + "/" +
+                                newer.new_identity.identity.identity_id + "/" +
+                                newer.new_identity.identity_token
+                            ).then(x => {
+                                w.close();
+                                localStorage.old_account_uuid = newer.current_identity.identity_id;
+                                localStorage.DO_NOT_SHARE_old_rivet_account_token = localStorage.DO_NOT_SHARE_rivet_account_token;
+                                localStorage.DO_NOT_SHARE_rivet_account_token = newer.new_identity.identity_token;
+                                console.log("completed linking stage");
+                                location.reload(false);
+                            });
+                        }
+                    })
+                }
+                w = open(r.identity_link_url, "", "width=600,height=600");
+                let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r.identity_link_token);
+                handle(h);
+            })
+
+        }, game_user, BASE_API_URL);
+    // clang-format on
 #endif
 }
 
