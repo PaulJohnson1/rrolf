@@ -278,5 +278,5 @@ void rr_static_data_init()
 double xp_to_reach_level(uint32_t level)
 {
     //xp it takes from level - 1 to level
-    return level * level * pow(1.1, level);
+    return level * pow(1.18, level);
 }
