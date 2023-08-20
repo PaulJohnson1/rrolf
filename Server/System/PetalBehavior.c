@@ -71,6 +71,73 @@ static void uranium_petal_system(struct rr_simulation *simulation,
     }
 }
 
+struct lightning_captures
+{
+    EntityIdx *chain;
+    uint32_t length;
+    float curr_x;
+    float curr_y;
+};
+
+static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    if (seeker == target)
+        return 0;
+    struct lightning_captures *chain = captures;
+    for (uint32_t i = 0; i < chain->length; ++i)
+    {
+        if (chain->chain[i] == target)
+            return 0;
+    }
+    return 1;
+}
+
+static void lightning_petal_system(struct rr_simulation *simulation,
+                                 struct rr_component_petal *petal)
+{
+    if (petal->effect_delay == 0)
+    {
+        struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal->parent_id);
+        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
+        struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+        animation->type = 1;
+        EntityIdx chain[16] = {0};
+        animation->points[0].x = petal_physical->x;
+        animation->points[0].y = petal_physical->y;
+        uint32_t chain_amount = petal->rarity + 1;   
+        float damage = rr_simulation_get_health(simulation, petal->parent_id)->damage * 0.5; 
+        EntityIdx target = RR_NULL_ENTITY;
+        struct lightning_captures captures = {chain, 1, petal_physical->x, petal_physical->y};
+        for (; captures.length < chain_amount + 1; ++captures.length)
+        {
+            target = rr_simulation_find_nearest_enemy_custom_pos(simulation, petal->parent_id, captures.curr_x, captures.curr_y, 250, &captures, lightning_filter);
+            if (target == RR_NULL_ENTITY)
+                break;
+            if (rr_simulation_has_ai(simulation, target))
+            {
+                struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
+                if (ai->target_entity == RR_NULL_ENTITY)
+                    ai->target_entity = relations->owner;
+            }
+            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+            struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+            rr_component_health_do_damage(health, damage);
+            health->damage_paused = 5;
+            physical->stun_ticks = 10;
+            chain[captures.length] = target;
+            animation->points[captures.length].x = physical->x;
+            animation->points[captures.length].y = physical->y;
+            captures.curr_x = physical->x;
+            captures.curr_y = physical->y;
+        }
+        animation->length = captures.length;
+        if (captures.length > 1)
+            rr_simulation_request_entity_deletion(simulation, petal->parent_id);
+    }
+    else
+        --petal->effect_delay;
+}
+
 static void system_petal_detach(struct rr_simulation *simulation,
                                 struct rr_component_petal *petal,
                                 struct rr_component_player_info *player_info,
@@ -264,19 +331,6 @@ static void system_flower_petal_movement_logic(
                                     inner_pos, petal_data);
                 projectile->ticks_until_death = 125;
                 physical->friction = 0.4;
-                break;
-            }
-            case rr_petal_id_lightning:
-            {
-                if ((player_info->input & 1) == 0)
-                    break;
-                system_petal_detach(simulation, petal, player_info, outer_pos,
-                                    inner_pos, petal_data);
-                physical->bearing_angle = curr_angle;
-                rr_vector_from_polar(&physical->acceleration, 40.0f,
-                                     curr_angle);
-                projectile->ticks_until_death = 100;
-                petal->effect_delay = 13;
                 break;
             }
             default:
@@ -485,27 +539,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
     player_info->rotation_count = rotation_pos;
 }
 
-struct lightning_captures
-{
-    EntityIdx *chain;
-    uint32_t length;
-    float curr_x;
-    float curr_y;
-};
-
-static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
-{
-    if (seeker == target)
-        return 0;
-    struct lightning_captures *chain = captures;
-    for (uint32_t i = 0; i < chain->length; ++i)
-    {
-        if (chain->chain[i] == target)
-            return 0;
-    }
-    return 1;
-}
-
 static void system_petal_misc_logic(EntityIdx id, void *_simulation)
 {
     struct rr_simulation *simulation = _simulation;
@@ -518,6 +551,8 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     {
         if (petal->id == rr_petal_id_uranium)
             uranium_petal_system(simulation, petal);
+        else if (petal->id == rr_petal_id_lightning)
+            lightning_petal_system(simulation, petal);
         if (!rr_simulation_has_entity(simulation, relations->owner))
         {
             rr_simulation_request_entity_deletion(simulation, id);
@@ -558,50 +593,6 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         {
             if (simulation->player_info_count <= simulation->flower_count)
                 rr_simulation_request_entity_deletion(simulation, id);
-        }
-        else if (petal->id == rr_petal_id_lightning)
-        {
-            rr_vector_from_polar(&physical->acceleration, 2.5f,
-                                 physical->bearing_angle);
-            rr_component_physical_set_angle(
-                physical, physical->angle + 0.08f * (float)petal->spin_ccw);
-            if (--petal->effect_delay == 0)
-            {
-                struct rr_component_physical *petal_physical = physical;
-                struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
-                animation->type = 1;
-                EntityIdx chain[16] = {0};
-                animation->points[0].x = petal_physical->x;
-                animation->points[0].y = petal_physical->y;
-                uint32_t chain_amount = petal->rarity + 1;   
-                float damage = rr_simulation_get_health(simulation, id)->damage * 0.5; 
-                EntityIdx target = RR_NULL_ENTITY;
-                struct lightning_captures captures = {chain, 1, petal_physical->x, petal_physical->y};
-                for (; captures.length < chain_amount + 1; ++captures.length)
-                {
-                    target = rr_simulation_find_nearest_enemy_custom_pos(simulation, id, captures.curr_x, captures.curr_y, 250, &captures, lightning_filter);
-                    if (target == RR_NULL_ENTITY)
-                        break;
-                    if (rr_simulation_has_ai(simulation, target))
-                    {
-                        struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
-                        if (ai->target_entity == RR_NULL_ENTITY)
-                            ai->target_entity = relations->owner;
-                    }
-                    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-                    struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-                    rr_component_health_do_damage(health, damage);
-                    health->damage_paused = 5;
-                    physical->stun_ticks = 5;
-                    chain[captures.length] = target;
-                    animation->points[captures.length].x = physical->x;
-                    animation->points[captures.length].y = physical->y;
-                    captures.curr_x = physical->x;
-                    captures.curr_y = physical->y;
-                }
-                animation->length = captures.length;
-                petal->effect_delay = 13;
-            }
         }
         if (--rr_simulation_get_projectile(simulation, id)->ticks_until_death <=
             0)
