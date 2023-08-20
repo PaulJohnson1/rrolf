@@ -232,9 +232,6 @@ static void system_flower_petal_movement_logic(
                                     inner_pos, petal_data);
                 if (player_info->input & 1)
                 {
-                    float angle =
-                        player_info->global_rotation +
-                        rotation_pos * 2 * M_PI / player_info->rotation_count;
                     rr_vector_from_polar(&physical->acceleration, 7.5f,
                                          curr_angle);
                     rr_vector_from_polar(&physical->velocity, 50.0f,
@@ -275,8 +272,9 @@ static void system_flower_petal_movement_logic(
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
+                physical->bearing_angle = curr_angle;
                 rr_vector_from_polar(&physical->acceleration, 40.0f,
-                                     physical->angle);
+                                     curr_angle);
                 projectile->ticks_until_death = 100;
                 petal->effect_delay = 13;
                 break;
@@ -320,8 +318,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    if (!is_projectile || petal->id == rr_petal_id_shell || petal->id == rr_petal_id_seed ||
-        petal->id == rr_petal_id_web || petal->id == rr_petal_id_peas)
+    if (1)
         rr_component_physical_set_angle(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
     else
@@ -550,7 +547,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 }
             }
             rr_component_physical_set_angle(
-                physical, physical->angle + 0.08f * (float)petal->spin_ccw);
+                physical, physical->angle + 0.12f * (float)petal->spin_ccw);
             rr_vector_from_polar(&physical->acceleration, 15.0f,
                                  physical->bearing_angle);
         }
@@ -565,7 +562,9 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         else if (petal->id == rr_petal_id_lightning)
         {
             rr_vector_from_polar(&physical->acceleration, 2.5f,
-                                 physical->angle);
+                                 physical->bearing_angle);
+            rr_component_physical_set_angle(
+                physical, physical->angle + 0.08f * (float)petal->spin_ccw);
             if (--petal->effect_delay == 0)
             {
                 struct rr_component_physical *petal_physical = physical;

@@ -124,7 +124,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         break;
     case rr_mob_id_tree:
         rr_renderer_rotate(renderer, M_PI / 2);
-        rr_renderer_scale(renderer, 0.30f);
+        rr_renderer_scale(renderer, 0.35f);
         if (flags)
             rr_renderer_draw_image(renderer, &game->mob_tree);
         else
@@ -206,7 +206,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_scale(renderer, 0.16f);
 
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
+            rr_renderer_translate(renderer, 0.0f, 25 + animation_tick * 10.0f);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[0]);
             else
@@ -214,7 +214,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
+            rr_renderer_translate(renderer, 0.0f, -25 + animation_tick * -10.0f);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_pachycephalosaurus_legs[1]);
             else
