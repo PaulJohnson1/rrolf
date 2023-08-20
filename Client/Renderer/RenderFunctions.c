@@ -326,7 +326,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * 0.1f);
-            rr_renderer_translate(renderer, 150, 75);
+            rr_renderer_translate(renderer, 125, 75);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[0]);
             else
@@ -335,7 +335,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
 
         rr_renderer_context_state_init(renderer, &state);
             rr_renderer_rotate(renderer, animation_tick * -0.1f);
-            rr_renderer_translate(renderer, -150, 75);
+            rr_renderer_translate(renderer, -125, 75);
             if (flags)
                 rr_renderer_draw_image(renderer, &game->mob_quetzalcoatlus_wings[1]);
             else
@@ -374,7 +374,7 @@ void rr_renderer_render_mob(struct rr_renderer *renderer, struct rr_game *game,
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-            rr_renderer_translate(renderer, 0, 220);
+            rr_renderer_translate(renderer, 0, 240);
             rr_renderer_rotate(renderer, turning_value);
             rr_renderer_translate(renderer,  0, 0);
             if (flags)

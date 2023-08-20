@@ -686,7 +686,7 @@ static void render_background(struct rr_component_player_info *player_info,
 {
     if (this->cache.ourpetsnake_mode)
         return;
-    double scale = player_info->lerp_camera_fov * this->renderer->scale;
+    double scale = player_info->lerp_camera_fov;
     double leftX =
         player_info->lerp_camera_x - this->renderer->width / (2 * scale);
     double rightX =
@@ -699,6 +699,7 @@ static void render_background(struct rr_component_player_info *player_info,
 #define GRID_SIZE (256)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
+    rr_renderer_scale(this->renderer, this->renderer->scale);
     for (; newLeftX < rightX; newLeftX += GRID_SIZE)
     {
         for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)

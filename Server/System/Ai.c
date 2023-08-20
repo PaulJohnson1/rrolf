@@ -367,7 +367,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             physical2->friction = 0.5f;
             physical2->mass = 1.0f;
             physical2->bearing_angle = physical->angle;
-            rr_vector_from_polar(&physical2->acceleration, 80, physical->angle);
+            rr_vector_from_polar(&physical2->acceleration, 5, physical->angle);
 
             rr_component_petal_set_detached(
                 rr_simulation_get_petal(simulation, petal_id), 1);

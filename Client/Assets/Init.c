@@ -441,26 +441,26 @@ static void mob_edmontosaurus_init(struct rr_game *this)
 
 static void tiles_init(struct rr_game *this)
 {
-    rr_renderer_init(&this->tiles[0]);
-    rr_renderer_set_dimensions(&this->tiles[0], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[0],
-#include <Client/Assets/Tile/1.h>
-                         , 0, 0);
+    struct rr_renderer *renderer = &this->tiles[0];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_1_draw(renderer);
 
-    rr_renderer_init(&this->tiles[1]);
-    rr_renderer_set_dimensions(&this->tiles[1], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[1],
-#include <Client/Assets/Tile/2.h>
-                         , 0, 0);
+    renderer = &this->tiles[1];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_2_draw(renderer);
 
-    rr_renderer_init(&this->tiles[2]);
-    rr_renderer_set_dimensions(&this->tiles[2], 256, 256);
-    rr_renderer_draw_svg(&this->tiles[2],
-#include <Client/Assets/Tile/3.h>
-                         , 0, 0);
+    renderer = &this->tiles[2];
+    rr_renderer_init(renderer);
+    rr_renderer_set_dimensions(renderer, 256, 256);
+    rr_renderer_translate(renderer, 128, 128);
+    rr_tile_3_draw(renderer);
 
     this->tiles_size = 3;
-    struct rr_renderer *renderer = &this->background_features[0];
+    renderer = &this->background_features[0];
     rr_renderer_init(renderer);
     rr_renderer_set_dimensions(renderer, 144, 144);
     rr_renderer_translate(renderer, 72, 72);

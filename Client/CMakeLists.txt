@@ -56,6 +56,9 @@ set(SRCS
     Assets/Mob/Fern.c
     Assets/Mob/Meteor.c
     Assets/Mob/Tree.c
+    Assets/Tile/1.c
+    Assets/Tile/2.c
+    Assets/Tile/3.c
     Assets/Init.c
     Assets/RenderPetals.c
     Assets/RenderRarityBackground.c
