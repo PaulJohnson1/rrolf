@@ -390,19 +390,16 @@ void rr_game_init(struct rr_game *this)
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
-        rr_ui_link_toggle(
-            rr_ui_set_justify(
-                rr_ui_set_background(
-                    rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                        rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
-                        rr_ui_text_init("click to copy", 16, 0xffffffff),
-                        NULL
-                    ),
-                0x80000000),
-            -1, -1),
-        rr_ui_never_show)
+        rr_ui_set_justify(
+            rr_ui_set_background(
+                rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+                    rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
+                    rr_ui_text_init("click to copy", 16, 0xffffffff),
+                    NULL
+                ),
+            0x80000000),
+        -1, -1)
     );
-    this->rivet_info_tooltip->poll_events = rr_ui_no_focus;
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         this->squad_player_tooltips[i] = rr_ui_squad_player_tooltip_init(this, i);
@@ -842,6 +839,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else if (this->ticks_until_text_cache < 25)
         --this->ticks_until_text_cache;
+    this->lerp_delta = 1 - powf(0.9f, delta * 10);
     struct timeval start;
     struct timeval end;
 
@@ -879,13 +877,14 @@ void rr_game_tick(struct rr_game *this, float delta)
 
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
+    rr_renderer_set_global_alpha(this->renderer, 1);
     struct rr_renderer_context_state grand_state;
     rr_renderer_context_state_init(this->renderer, &grand_state);
 
     if (this->simulation_ready)
     {
-        rr_simulation_tick(this->simulation, delta);
-        rr_deletion_simulation_tick(this->deletion_simulation, delta);
+        rr_simulation_tick(this->simulation, this->lerp_delta);
+        rr_deletion_simulation_tick(this->deletion_simulation, this->lerp_delta);
 
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;

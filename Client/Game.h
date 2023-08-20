@@ -153,6 +153,7 @@ struct rr_game
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
     uint64_t dev_flag;
+    float lerp_delta;
     
     uint8_t squad_pos;
     uint8_t socket_ready;

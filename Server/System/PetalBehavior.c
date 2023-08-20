@@ -108,18 +108,19 @@ static void system_flower_petal_movement_logic(
         {
             switch (petal->id)
             {
-            case rr_petal_id_missile:
+            case rr_petal_id_shell:
             {
                 if ((player_info->input & 1) == 0)
                     break;
                 system_petal_detach(simulation, petal, player_info, outer_pos,
                                     inner_pos, petal_data);
                 rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                     physical->angle);
+                                     curr_angle);
                 projectile->ticks_until_death = 75;
                 rr_simulation_get_health(simulation, id)->damage =
                     25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 physical->friction = 0.5;
+                physical->bearing_angle = curr_angle;
                 break;
             }
             case rr_petal_id_peas:
@@ -322,7 +323,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    if (!is_projectile || petal->id == rr_petal_id_seed ||
+    if (!is_projectile || petal->id == rr_petal_id_shell || petal->id == rr_petal_id_seed ||
         petal->id == rr_petal_id_web || petal->id == rr_petal_id_peas)
         rr_component_physical_set_angle(
             physical, physical->angle + 0.04f * (float)petal->spin_ccw);
@@ -537,7 +538,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     }
     else
     {
-        if (petal->id == rr_petal_id_missile)
+        if (petal->id == rr_petal_id_shell)
         {
             if (relations->team == rr_simulation_team_id_players)
             {
@@ -546,11 +547,13 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                 {
                     struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
                     struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                    rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage));
+                    physical->bearing_angle = rr_angle_lerp(physical->bearing_angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
                 }
             }
+            rr_component_physical_set_angle(
+                physical, physical->angle + 0.08f * (float)petal->spin_ccw);
             rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                 physical->angle);
+                                 physical->bearing_angle);
         }
         else if (petal->id == rr_petal_id_peas)
             rr_vector_from_polar(&physical->acceleration, 7.5f,

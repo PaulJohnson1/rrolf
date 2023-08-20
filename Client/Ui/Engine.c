@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#include <Client/Game.h>
 #include <Client/Ui/Ui.h>
 #include <Shared/Utilities.h>
 
@@ -264,7 +265,7 @@ void rr_ui_container_refactor(struct rr_ui_element *c, struct rr_game *game)
             struct rr_ui_element *element = c->elements.start[i];
             element->animation =
                 rr_lerp(element->animation, element->should_show(element, game) == 0,
-                        0.4 + 0.6 * element->first_frame);
+                        20 * game->lerp_delta + (1 - 20 * game->lerp_delta) * element->first_frame);
             uint8_t before_hidden = element->completely_hidden;
             element->completely_hidden = element->animation > 0.99;
             if (element->completely_hidden && before_hidden == 0)

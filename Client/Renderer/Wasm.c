@@ -129,6 +129,7 @@ void rr_renderer_set_global_alpha(struct rr_renderer *this, float a)
     instruction_tape[instruction_size].type = 4;
     instruction_tape[instruction_size].context_id = this->context_id;
     instruction_tape[instruction_size].args[0] = a;
+    this->state.global_alpha = a;
     if (++instruction_size == INSTRUCTION_QUEUE_MAX_SIZE)
         rr_renderer_execute_instructions();
 }

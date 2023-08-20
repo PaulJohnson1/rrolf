@@ -29,9 +29,14 @@ static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
 
 static void default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
+    /*
     this->width = this->abs_width * (1 - this->animation);
     this->height = this->abs_height * (1 - this->animation);
     rr_renderer_scale(game->renderer, (1 - this->animation));
+    */
+    this->width = this->abs_width * (1 - this->completely_hidden);
+    this->height = this->abs_height * (1 - this->completely_hidden);
+    rr_renderer_set_global_alpha(game->renderer, game->renderer->state.global_alpha * (1 - this->animation));
 }
 
 void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)

@@ -15,7 +15,6 @@ void rr_renderer_context_state_free(struct rr_renderer *this,
                                     struct rr_renderer_context_state *state)
 {
     memcpy(&this->state, state, sizeof *state);
-    rr_renderer_set_global_alpha(this, 1);
     rr_renderer_restore(this);
 }
 

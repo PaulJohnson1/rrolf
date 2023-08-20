@@ -112,6 +112,7 @@ struct rr_ui_element *rr_ui_container_init();
 struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *,
                                                 struct rr_ui_element *, float);
 struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float, float);
+struct rr_ui_element *rr_ui_tooltip_container_init();
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
                                                   struct rr_ui_element *);
 

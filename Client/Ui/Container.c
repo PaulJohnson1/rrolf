@@ -113,6 +113,14 @@ struct rr_ui_element *rr_ui_container_init()
     return this;
 }
 
+struct rr_ui_element *rr_ui_tooltip_container_init()
+{
+    struct rr_ui_element *this = rr_ui_container_init();
+    this->poll_events = rr_ui_no_focus;
+    this->should_show = rr_ui_never_show;
+    return this;
+}
+
 struct rr_ui_element *rr_ui_2d_container_init(uint8_t width, uint8_t height,
                                               float outer_spacing,
                                               float inner_spacing)
