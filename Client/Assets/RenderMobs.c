@@ -100,7 +100,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, 155);
+        rr_renderer_translate(renderer, 0, 195);
         rr_renderer_rotate(renderer, turning_value);
         render_sprite(renderer, id, 4, flags);
         rr_renderer_context_state_free(renderer, &state);
@@ -165,8 +165,9 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, 240);
+        rr_renderer_translate(renderer, 0, 190);
         rr_renderer_rotate(renderer, turning_value);
+        rr_renderer_translate(renderer, 0, 50);
         render_sprite(renderer, id, 4, flags);
 
         rr_renderer_context_state_free(renderer, &state);
