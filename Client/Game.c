@@ -188,10 +188,9 @@ void rr_game_init(struct rr_game *this)
                             NULL
                         ),
                         /*
-                        rr_ui_text_init("Biome", 18, 0xffffffff),
                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                             rr_ui_biome_button_init("Hell Creek", 0xffff0000, 0),
-                            rr_ui_biome_button_init("Your Mom's House", 0xffcdb423, 1),
+                            rr_ui_biome_button_init("Ocean", 0xffcdb423, 1),
                             NULL
                         ),
                         */

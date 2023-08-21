@@ -25,13 +25,14 @@ uint8_t get_rarity_from_wave(uint32_t wave)
     return rarity;
 }
 
-uint8_t get_id_from_wave(uint32_t wave, uint8_t special_wave_id)
+uint8_t get_id_from_wave(uint8_t biome, uint32_t wave, uint8_t special_wave_id)
 {
+    double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS;
     double seed = rr_frand();
     if (special_wave_id == 0)
     {
         for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
-            if (seed < RR_MOB_ID_RARITY_COEFFICIENTS[id])
+            if (seed < table[id])
                 return id;
         return rr_mob_id_max - 1;
     }

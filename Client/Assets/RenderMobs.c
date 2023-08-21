@@ -176,6 +176,38 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_translate(renderer, 0, -185);
         render_sprite(renderer, id, 0, flags);
         break;
+    case rr_mob_id_king_mackarel:
+        rr_renderer_scale(renderer, 0.2f);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer,  0, 100);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer,  0, -100 + 180);
+        render_sprite(renderer, id, 4, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        render_sprite(renderer, id, 1, flags);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer, -30, -100);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer, -30, 30);
+        render_sprite(renderer, id, 2, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer, 30, -100);
+        rr_renderer_rotate(renderer, animation_tick * -0.1f);
+        rr_renderer_translate(renderer, 30, 30);
+        render_sprite(renderer, id, 3, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer,  0, -75);
+        rr_renderer_translate(renderer,  0, 75 - 145);
+        render_sprite(renderer, id, 0, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        break;
     }
     rr_renderer_context_state_free(renderer, &original_state);
 }
@@ -234,4 +266,8 @@ void rr_renderer_mob_cache_init()
     rr_renderer_spritesheet_init(&mob_sprites[12], NULL, 144, 240, rr_edmontosaurus_head_draw, 
     192, 336, rr_edmontosaurus_body_draw, 240, 240, rr_edmontosaurus_leg1_draw, 240, 240, 
     rr_edmontosaurus_leg2_draw, 192, 336, rr_edmontosaurus_tail_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[13], NULL, 144, 240, rr_king_mackarel_head_draw, 
+    192, 336, rr_king_mackarel_body_draw, 144, 144, rr_king_mackarel_fin1_draw, 144, 144, 
+    rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
 }

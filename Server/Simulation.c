@@ -29,12 +29,13 @@
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
+    //this->biome = 1;
     this->grid = malloc(sizeof *this->grid);
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;
-    rr_simulation_alloc_entity(this);
+    EntityIdx id = rr_simulation_alloc_entity(this);
     struct rr_component_arena *arena_component =
-        rr_simulation_add_arena(this, 1);
+        rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
     rr_component_arena_set_wave(arena_component, 1);
 
@@ -84,7 +85,7 @@ find_position_away_from_players(struct rr_simulation *this)
 static void spawn_random_mob(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
+    uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
     uint8_t rarity = get_rarity_from_wave(arena->wave);
     if (!should_spawn_at(arena->wave, id, rarity))
         return;
@@ -103,7 +104,7 @@ static void spawn_mob_cluster(struct rr_simulation *this)
     struct rr_vector central_position = find_position_away_from_players(this);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-    uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
+    uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
     for (uint64_t i = 0; i < mob_count; ++i)
     {
         uint8_t rarity = get_rarity_from_wave(arena->wave);
@@ -131,7 +132,7 @@ static void spawn_mob_swarm(struct rr_simulation *this)
         struct rr_vector position = find_position_away_from_players(this);
         struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-        uint8_t id = get_id_from_wave(arena->wave, this->special_wave_id);
+        uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
         uint8_t rarity = get_rarity_from_wave(arena->wave);
         if (!should_spawn_at(arena->wave, id, rarity))
             continue;

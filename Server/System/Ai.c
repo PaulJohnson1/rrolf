@@ -936,6 +936,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_fern:
     case rr_mob_id_tree:
         break;
+    case rr_mob_id_king_mackarel:
     case rr_mob_id_ornithomimus:
         tick_ai_aggro_ornithomimus(entity, this);
         break;

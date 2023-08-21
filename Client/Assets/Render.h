@@ -61,6 +61,12 @@ void rr_edmontosaurus_leg2_draw(struct rr_renderer *);
 void rr_edmontosaurus_head_draw(struct rr_renderer *);
 void rr_edmontosaurus_tail_draw(struct rr_renderer *);
 
+void rr_king_mackarel_body_draw(struct rr_renderer *);
+void rr_king_mackarel_fin1_draw(struct rr_renderer *);
+void rr_king_mackarel_fin2_draw(struct rr_renderer *);
+void rr_king_mackarel_head_draw(struct rr_renderer *);
+void rr_king_mackarel_tail_draw(struct rr_renderer *);
+
 void rr_tile_1_draw(struct rr_renderer *);
 void rr_tile_2_draw(struct rr_renderer *);
 void rr_tile_3_draw(struct rr_renderer *);

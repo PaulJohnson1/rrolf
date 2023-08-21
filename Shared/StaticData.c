@@ -44,7 +44,9 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_meteor, rr_rarity_id_rare, 300, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 100, 10, 28.0f, {}},
     {rr_mob_id_pectinodon, rr_rarity_id_rare, 30, 10, 24.0f, {}},
-    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 60, 10, 30.0f, {}}
+    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 60, 10, 30.0f, {}},
+
+    {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -118,12 +120,16 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Meteor",
                                            "Quetzalcoatlus",
                                            "Pectinodon",
-                                           "Edmontosaurus"};
+                                           "Edmontosaurus",
+                                           "King Mackarel"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
-                                                          12, 9,  3, 10, 1, 8, 8, 10};
-double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
-                                                       25, 20, 25, 25, 0.5, 75, 2222225, 25};
+                                                          12, 9,  3, 10, 1, 8, 8, 10, 9};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
+                                                       25, 20, 25, 25, 0.5, 75, 25, 25};
+
+double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+                                            
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};
 
@@ -157,11 +163,19 @@ static void init_game_coefficients()
     }
     RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
-        RR_MOB_ID_RARITY_COEFFICIENTS[mob] +=
-            RR_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
+    {
+        RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] +=
+            RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
+        RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob] +=
+            RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
+    }
     for (uint64_t mob = 0; mob < rr_mob_id_max; ++mob)
-        RR_MOB_ID_RARITY_COEFFICIENTS[mob] /=
-            RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
+    {
+        RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] /=
+            RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
+        RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob] /=
+            RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
+    }
 }
 
 static void init_loot_table(struct rr_loot_data *data, uint8_t id, float seed)

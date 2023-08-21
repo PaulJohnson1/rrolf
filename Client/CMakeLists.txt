@@ -22,6 +22,11 @@ set(SRCS
     Assets/Mob/Edmontosaurus/Leg1.c
     Assets/Mob/Edmontosaurus/Leg2.c
     Assets/Mob/Edmontosaurus/Tail.c
+    Assets/Mob/KingMackarel/Body.c
+    Assets/Mob/KingMackarel/Head.c
+    Assets/Mob/KingMackarel/Fin1.c
+    Assets/Mob/KingMackarel/Fin2.c
+    Assets/Mob/KingMackarel/Tail.c
     Assets/Mob/Ornithomimus/Body.c
     Assets/Mob/Ornithomimus/Head.c
     Assets/Mob/Ornithomimus/Tail.c

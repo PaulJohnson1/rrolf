@@ -64,7 +64,7 @@ static void biome_button_on_render(struct rr_ui_element *this,
 
 struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill, uint8_t pos)
 {
-    float height = 24;
+    float height = 36;
     struct rr_ui_element *this = rr_ui_element_init();
     struct biome_button_metadata *data = malloc(sizeof *data);
     data->pos = pos;

@@ -150,6 +150,7 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
     element->on_render = mob_button_on_render;
     element->should_show = mob_button_should_show;
     element->on_event = mob_button_on_event;
+    element->animate = scale_animate;
     element->data = data;
     return element;
 }

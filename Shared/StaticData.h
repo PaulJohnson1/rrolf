@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #define RR_LEVELS_PER_EXTRA_SLOT 20
+#define RR_BIOME_COUNT 2
 
 enum rr_rarity_id
 {
@@ -60,6 +61,8 @@ enum rr_mob_id
     rr_mob_id_quetzalcoatlus,
     rr_mob_id_pectinodon,
     rr_mob_id_edmontosaurus,
+    
+    rr_mob_id_king_mackarel,
     rr_mob_id_max
 };
 
@@ -115,7 +118,8 @@ extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
-extern double RR_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
+extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
+extern double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];

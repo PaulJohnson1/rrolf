@@ -14,7 +14,8 @@ static void system(EntityIdx id, void *simulation)
         physical->acceleration_scale *= 0.2;
     if (physical->stun_ticks > 0)
     {
-        physical->acceleration_scale = 0;
+        if (!rr_simulation_has_petal(simulation, id))
+            physical->acceleration_scale = 0;
         --physical->stun_ticks;
     }
     struct rr_vector accel = {

@@ -73,7 +73,7 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
         {
             EntityIdx potential = simulation->flower_vector[i];
             struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
-            struct rr_vector delta = {physical->x - t_physical->x, physical->y - t_physical->y};
+            struct rr_vector delta = {x - t_physical->x, y - t_physical->y};
             float dist = rr_vector_get_magnitude(&delta) - t_physical->radius - physical->radius;
             if (dist > search_range)
                 continue;
@@ -88,7 +88,7 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
             if (rr_simulation_get_relations(simulation, potential)->team == rr_simulation_team_id_mobs)
                 continue;
             struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
-            struct rr_vector delta = {physical->x - t_physical->x, physical->y - t_physical->y};
+            struct rr_vector delta = {x - t_physical->x, y - t_physical->y};
             float dist = rr_vector_get_magnitude(&delta) - t_physical->radius - physical->radius;
             if (dist > search_range)
                 continue;
@@ -106,7 +106,7 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
             if (rr_simulation_get_relations(simulation, potential)->team == rr_simulation_team_id_players)
                 continue;
             struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
-            struct rr_vector delta = {physical->x - t_physical->x, physical->y - t_physical->y};
+            struct rr_vector delta = {x - t_physical->x, y - t_physical->y};
             float dist = rr_vector_get_magnitude(&delta) - t_physical->radius - physical->radius;
             if (dist > search_range)
                 continue;
