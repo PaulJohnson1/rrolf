@@ -109,7 +109,8 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, -125);
+        rr_renderer_translate(renderer, 0, id == rr_mob_id_ornithomimus ? -175 : -125);
+        
         render_sprite(renderer, id, 0, flags);
         rr_renderer_context_state_free(renderer, &state);
         break;
@@ -180,7 +181,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
 static void friendly_mask(struct rr_renderer *renderer)
 {
-    rr_renderer_add_color_filter(renderer, 0xff9323d3, 0.5);
+    rr_renderer_add_color_filter(renderer, 0xffffff45, 0.3);
 }
 
 void rr_renderer_mob_cache_init()

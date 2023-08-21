@@ -133,6 +133,12 @@ static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
     return game->rivet_lobby_pending || game->socket_pending || game->socket_ready || game->socket.found_error;
 }
 
+static uint8_t player_alive(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    return game->simulation_ready && game->player_info->flower_id != RR_NULL_ENTITY;
+}
+
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -345,7 +351,7 @@ void rr_game_init(struct rr_game *this)
                     NULL
                 ),
             0, 1),
-        simulation_ready)
+        player_alive)
     );
     rr_ui_container_add_element(this->window,
                                 rr_ui_settings_container_init(this));
