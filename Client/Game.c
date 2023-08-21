@@ -1040,8 +1040,10 @@ rr_websocket_send(&this->socket, encoder.current - encoder.start);
         rr_renderer_set_text_baseline(this->renderer, 2);
         rr_renderer_set_fill(this->renderer, 0xffffffff);
         rr_renderer_set_text_align(this->renderer, 2);
-        rr_renderer_translate(this->renderer, this->renderer->width - 5,
-                              this->renderer->height - 5);
+        rr_renderer_translate(this->renderer, this->renderer->width,
+                              this->renderer->height);
+        rr_renderer_scale(this->renderer, this->renderer->scale);
+        rr_renderer_translate(this->renderer, -5, -5);
         static char debug_mspt[100];
         long tick_sum = 0;
         long tick_max = 0;
@@ -1068,8 +1070,20 @@ rr_websocket_send(&this->socket, encoder.current - encoder.start);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
         debug_mspt[sprintf(debug_mspt, "ctx calls: %d",
                            rr_renderer_get_op_size())] = 0;
-        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, -15);
-        rr_renderer_fill_text(this->renderer, debug_mspt, 0, -15);
+        rr_renderer_translate(this->renderer, 0, -15);
+        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
+        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
+        for (uint32_t i = 0; i < 16; ++i)
+        {
+            struct rr_input_touch *touch = &this->input_data->touches[i];
+            if (!touch->active)
+                continue;
+            debug_mspt[sprintf(debug_mspt, "touch info: %d %f %f %d",
+                           touch->identifier, touch->touch_x, touch->touch_y, touch->active)] = 0;
+            rr_renderer_translate(this->renderer, 0, -15);
+            rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
+            rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
+        }
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
