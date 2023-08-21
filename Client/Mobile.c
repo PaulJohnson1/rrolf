@@ -26,7 +26,6 @@ static void draw_mobile_joystick(struct rr_game *this, struct proto_bug *encoder
     if (joystick_press != 255 && this->input_data->touches[joystick_press].active)
     {
         struct rr_input_touch *touch = &this->input_data->touches[joystick_press];
-        printf("active: %d %f %f\n", joystick_press, touch->touch_x, touch->touch_y);
         struct rr_vector delta = {touch->touch_x - cx, touch->touch_y - cy};
         if (rr_vector_get_magnitude(&delta) > 100 * renderer->scale)
             rr_vector_set_magnitude(&delta, 100 * renderer->scale);
