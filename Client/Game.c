@@ -36,7 +36,7 @@
 #include <Shared/cJSON.h>
 #include <Shared/pb.h>
 
-void validate_loadout(struct rr_game *this)
+static void validate_loadout(struct rr_game *this)
 {
     uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
     memcpy(&temp_inv, &this->inventory,
@@ -83,51 +83,6 @@ void rr_api_on_get_petals(char *bin, void *a)
         memset(game->inventory, 0, sizeof game->inventory);
     }
     free(bin);
-/*
-    cJSON *parsed = cJSON_Parse(json);
-    if (parsed == NULL)
-    {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-        {
-            fprintf(stderr, "Error before: %s\n", error_ptr);
-        }
-        return;
-    }
-    cJSON *exp = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
-    if (exp == NULL)
-    {
-        fprintf(stderr, "xp is missing\n");
-        cJSON_Delete(parsed);
-        return;
-    }
-    game->cache.experience = exp->valuedouble;
-    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    if (petals == NULL || !cJSON_IsObject(petals))
-    {
-        fprintf(stderr, "petals is missing or is not an object\n");
-        cJSON_Delete(parsed);
-        return;
-    }
-    for (cJSON *petal_key = petals->child; petal_key != NULL;
-         petal_key = petal_key->next)
-    {
-        char *key = petal_key->string;
-        char *sub_key1 = strtok(key, ":");
-        char *sub_key2 = strtok(NULL, ":");
-
-        if (sub_key1 && sub_key2)
-        {
-            int index1 = atoi(sub_key1);
-            int index2 = atoi(sub_key2);
-
-            game->inventory[index1][index2] =
-                petal_key->valueint; // Assuming the value is a double.
-        }
-    }
-
-    cJSON_Delete(parsed);
-*/
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
@@ -144,6 +99,15 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
                       this);
 }
 
+static struct rr_ui_element *make_label_tooltip(char const *text)
+{
+    return rr_ui_set_background(
+        rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
+            rr_ui_text_init(text, 16, 0xffffffff),
+            NULL
+        ),
+    0x80000000);
+}
 static uint8_t simulation_not_ready(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
@@ -401,13 +365,29 @@ void rr_game_init(struct rr_game *this)
 
     this->link_account_tooltip = rr_ui_container_add_element(
         this->window,
-        rr_ui_set_background(
-            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
-                rr_ui_text_init("Link Account", 16, 0xffffffff),
-                NULL
-            ),
-        0x80000000)
+        make_label_tooltip("Link Account")
     );
+
+    this->inventory_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Inventory")
+    );
+
+    this->gallery_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Mob Gallery")
+    );
+
+    this->craft_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Crafting")
+    );
+
+    this->settings_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Settings")
+    );
+
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         this->squad_player_tooltips[i] = rr_ui_squad_player_tooltip_init(this, i);
@@ -691,7 +671,7 @@ void player_info_finder(struct rr_game *this)
 static void render_background(struct rr_component_player_info *player_info,
                               struct rr_game *this, uint32_t prop_amount)
 {
-    if (this->cache.ourpetsnake_mode)
+    if (this->cache.low_performance_mode)
         return;
     float a = this->renderer->height / 1080;
     float b = this->renderer->width / 1920;

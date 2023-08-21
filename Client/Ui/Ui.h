@@ -54,8 +54,8 @@ struct rr_ui_container_metadata
 struct rr_ui_element_vector
 {
     struct rr_ui_element **start;
-    uint32_t size;
-    uint32_t capacity;
+    uint16_t size;
+    uint16_t capacity;
 };
 
 struct rr_ui_element
@@ -90,16 +90,20 @@ struct rr_ui_element
     uint8_t v_flex;
 };
 
+//render funcs
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
 void rr_ui_render_tooltip_above(struct rr_ui_element *, struct rr_ui_element *,
                                 struct rr_game *);
 void rr_ui_render_tooltip_below(struct rr_ui_element *, struct rr_ui_element *,
+                                struct rr_game *);
+void rr_ui_render_tooltip_right(struct rr_ui_element *, struct rr_ui_element *,
                                 struct rr_game *);
 uint8_t rr_ui_mouse_over(struct rr_ui_element *, struct rr_game *);
 void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
+void scale_animate(struct rr_ui_element *, struct rr_game *);
 struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *,
                                         uint8_t (*)(struct rr_ui_element *,
                                                     struct rr_game *));

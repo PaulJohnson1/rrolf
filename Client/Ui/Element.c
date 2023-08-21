@@ -29,14 +29,16 @@ static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
 
 static void default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    /*
-    this->width = this->abs_width * (1 - this->animation);
-    this->height = this->abs_height * (1 - this->animation);
-    rr_renderer_scale(game->renderer, (1 - this->animation));
-    */
     this->width = this->abs_width * (1 - this->completely_hidden);
     this->height = this->abs_height * (1 - this->completely_hidden);
     rr_renderer_set_global_alpha(game->renderer, game->renderer->state.global_alpha * (1 - this->animation));
+}
+
+void scale_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    this->width = this->abs_width * (1 - this->animation);
+    this->height = this->abs_height * (1 - this->animation);
+    rr_renderer_scale(game->renderer, (1 - this->animation));
 }
 
 void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
@@ -117,6 +119,16 @@ void rr_ui_render_tooltip_below(struct rr_ui_element *this,
                      tooltip->abs_width;
     if (tooltip->y > game->renderer->height - tooltip->abs_height - 10)
         tooltip->y = game->renderer->height - tooltip->abs_height - 10;
+}
+
+void rr_ui_render_tooltip_right(struct rr_ui_element *this,
+                                struct rr_ui_element *tooltip,
+                                struct rr_game *game)
+{
+    rr_ui_container_refactor(tooltip, game);
+    tooltip->should_show = rr_ui_always_show;
+    tooltip->x = (this->abs_x / game->renderer->scale + this->width / 2 + 10);
+    tooltip->y = (this->abs_y / game->renderer->scale - tooltip->abs_height / 2);
 }
 
 uint8_t rr_ui_mouse_over(struct rr_ui_element *this, struct rr_game *game)

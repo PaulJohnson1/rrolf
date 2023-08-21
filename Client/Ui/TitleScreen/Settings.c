@@ -47,15 +47,17 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 static void settings_toggle_button_on_event(struct rr_ui_element *this,
                                             struct rr_game *game)
 {
-    if (game->pressed != this)
-        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
+        if (game->pressed != this)
+            return;
         if (game->top_ui_open == 1)
             game->top_ui_open = 0;
         else
             game->top_ui_open = 1;
     }
+    else
+        rr_ui_render_tooltip_below(this, game->settings_tooltip, game);
 }
 
 struct rr_ui_element *rr_ui_settings_toggle_button_init()
@@ -123,7 +125,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(
-                                    &game->cache.ourpetsnake_mode),
+                                    &game->cache.low_performance_mode),
                                 rr_ui_text_init("Low performance mode", 15,
                                                 0xffffffff),
                                 NULL),

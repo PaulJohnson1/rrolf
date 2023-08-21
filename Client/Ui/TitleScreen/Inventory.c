@@ -146,6 +146,7 @@ static struct rr_ui_element *inventory_button_init(uint8_t id, uint8_t rarity)
     this->on_render = inventory_button_on_render;
     this->should_show = inventory_button_should_show;
     this->on_event = inventory_button_on_event;
+    this->animate = scale_animate;
     return this;
 }
 
@@ -189,15 +190,66 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2,
                            this->width, this->height, 6);
     rr_renderer_fill(renderer);
+    rr_renderer_scale(renderer, 0.8);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, 23.33446, -2.6127010000000013);
+    rr_renderer_bezier_curve_to(renderer, 24.2073886, 7.090080999999998, 18.967551, 16.315945, 10.187094, 20.536078999999997);
+    rr_renderer_bezier_curve_to(renderer, 1.4066340000000004, 24.756217499999998, -9.070863000000001, 23.0845447, -16.102187999999998, 16.341662999999997);
+    rr_renderer_bezier_curve_to(renderer, -23.133512399999997, 9.598777399999996, -25.242334999999997, -0.7995510000000046, -21.393474499999996, -9.748982000000002);
+    rr_renderer_bezier_curve_to(renderer, -17.544613299999995, -18.698411500000002, -8.546193999999996, -24.319875000000003, 1.1846275000000048, -23.8539005);
+    rr_renderer_line_to(renderer, 0.8613395400000048, -17.102770900000003);
+    rr_renderer_bezier_curve_to(renderer, -6.054159159999995, -17.433930000000004, -12.449156459999996, -13.438868100000004, -15.184465459999997, -7.078686900000003);
+    rr_renderer_bezier_curve_to(renderer, -17.919774059999998, -0.7185069000000031, -16.421075859999995, 6.6713780999999965, -11.424054159999997, 11.463412099999998);
+    rr_renderer_bezier_curve_to(renderer, -6.427032459999997, 16.2554424, 1.019115840000003, 17.443465099999997, 7.2592118400000025, 14.444300499999997);
+    rr_renderer_bezier_curve_to(renderer, 13.499308840000001, 11.445132099999997, 17.22315534, 4.888497499999998, 16.602782840000003, -2.007077500000001);
+    rr_renderer_fill(renderer);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, -3.2152230000000017, -17.1968503);
+    rr_renderer_line_to(renderer, 5.144357999999999, -16.939632420000002);
+    rr_renderer_line_to(renderer, 7.9553797999999984, -16.750656130000003);
+    rr_renderer_line_to(renderer, 10.519684199999999, -16.438320160000004);
+    rr_renderer_line_to(renderer, 13.832020199999999, -15.939632420000004);
+    rr_renderer_line_to(renderer, 14.393700039999999, -13.750656120000004);
+    rr_renderer_line_to(renderer, 15.204723739999999, -11.002624520000005);
+    rr_renderer_line_to(renderer, 15.832020189999998, -7.627296520000005);
+    rr_renderer_line_to(renderer, 16.643043889999998, -1.2519685200000055);
+    rr_renderer_line_to(renderer, 23.346458889999997, -2.2598420200000056);
+    rr_renderer_line_to(renderer, 22.955379939999997, -5.750656220000005);
+    rr_renderer_line_to(renderer, 21.018372039999996, -16.501312220000003);
+    rr_renderer_line_to(renderer, 20.393700099999997, -18.501312220000003);
+    rr_renderer_line_to(renderer, 19.393700099999997, -20.188976220000004);
+    rr_renderer_line_to(renderer, 18.018371999999996, -21.627296620000003);
+    rr_renderer_line_to(renderer, 16.393700099999997, -22.564304290000003);
+    rr_renderer_line_to(renderer, 14.097115099999996, -23.070866050000003);
+    rr_renderer_line_to(renderer, 0.45669409999999644, -23.87664038);
+    rr_renderer_fill(renderer);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, -14.692233, 15.376137);
+    rr_renderer_bezier_curve_to(renderer, -16.0932187, 3.514208, -8.009691, -7.385411999999999, 3.7481050000000007, -9.488343);
+    rr_renderer_line_to(renderer, 5.0527315, -2.1939876000000007);
+    rr_renderer_bezier_curve_to(renderer, -2.8447465000000003, -0.7814910000000006, -8.2742895, 6.5395654, -7.333275499999999, 14.5069874);
+    rr_renderer_fill(renderer);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, 1.8865219999999994, -8.334557);
+    rr_renderer_bezier_curve_to(renderer, 3.2485195999999994, -9.8537497, 5.5841844, -9.9811806, 7.103377999999999, -8.619183);
+    rr_renderer_bezier_curve_to(renderer, 7.832919799999999, -7.96512836, 8.272758199999998, -7.0480522, 8.3261334, -6.069702599999999);
+    rr_renderer_bezier_curve_to(renderer, 8.379512459999999, -5.0913528999999995, 8.0420567, -4.1318687999999995, 7.38800016, -3.402326999999999);
+    rr_renderer_bezier_curve_to(renderer, 6.026004459999999, -1.8831352999999993, 3.69033776, -1.7557052999999991, 2.17114616, -3.1177028999999994);
+    rr_renderer_bezier_curve_to(renderer, 0.6519544600000002, -4.4797005, 0.5245244600000001, -6.8153653, 1.8865220600000001, -8.334556899999999);
+    rr_renderer_fill(renderer);
 }
 
 void inventory_toggle_button_on_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    if (game->pressed != this)
-        return;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
+        if (game->pressed != this)
+            return;
         if (game->bottom_ui_open == 1)
             game->bottom_ui_open = 0;
         else
@@ -207,6 +259,8 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
                               game->rivet_account.token, game);
         }
     }
+    else
+        rr_ui_render_tooltip_right(this, game->inventory_tooltip, game);
 }
 
 struct rr_ui_element *rr_ui_inventory_toggle_button_init()

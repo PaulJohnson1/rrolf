@@ -39,7 +39,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
         physical->animation = fmod(physical->animation, 2 * M_PI);
     float sinusoid_animation = sinf(physical->animation);
 
-    uint8_t use_cache = health->damage_animation < 0.1;
+    uint8_t use_cache = ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
     uint8_t is_friendly =
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)

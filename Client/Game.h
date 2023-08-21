@@ -57,7 +57,7 @@ struct rr_game_cache
     uint8_t show_ui_hitbox;
     uint8_t screen_shake;
     uint8_t slots_unlocked;
-    uint8_t ourpetsnake_mode;
+    uint8_t low_performance_mode;
     char nickname[17];
 };
 
@@ -77,6 +77,10 @@ struct rr_game
     struct rr_ui_element *squad_player_tooltips[RR_SQUAD_MEMBER_COUNT];
     struct rr_ui_element *rivet_info_tooltip;
     struct rr_ui_element *link_account_tooltip;
+    struct rr_ui_element *inventory_tooltip;
+    struct rr_ui_element *gallery_tooltip;
+    struct rr_ui_element *craft_tooltip;
+    struct rr_ui_element *settings_tooltip;
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
