@@ -14,7 +14,7 @@ struct rr_renderer_spritesheet friendly_trex_spritesheet;
 void render_sprite(struct rr_renderer *renderer, uint8_t id, uint32_t pos, uint8_t flags)
 {
     if (flags & 1)
-        render_sprite_from_cache(renderer, flags & 2 ? &friendly_trex_spritesheet : &mob_sprites[id], pos);
+        render_sprite_from_cache(renderer, (flags & 2) && id == rr_mob_id_trex ? &friendly_trex_spritesheet : &mob_sprites[id], pos);
     else
         mob_sprites[id].sprites[pos].render(renderer);
 }
