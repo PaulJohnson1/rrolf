@@ -1073,6 +1073,11 @@ rr_websocket_send(&this->socket, encoder.current - encoder.start);
         rr_renderer_translate(this->renderer, 0, -15);
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
+        debug_mspt[sprintf(debug_mspt, "mouse info: %f %f %d",
+                        this->input_data->mouse_x, this->input_data->mouse_y, this->input_data->mouse_buttons)] = 0;
+        rr_renderer_translate(this->renderer, 0, -15);
+        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
+        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
         for (uint32_t i = 0; i < 16; ++i)
         {
             struct rr_input_touch *touch = &this->input_data->touches[i];

@@ -114,14 +114,14 @@ void rr_main_loop(struct rr_game *this)
             window.onkeydown = function(e)
             {
                 Module._rr_key_event(
-                    $0, 1, e.which, (e.key.length == 1) * e.key.charCodeAt());
+                    $0, 1, e.which, (e.key && e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey)
                     e.preventDefault();
             };
             window.onkeyup = function(e)
             {
                 Module._rr_key_event(
-                    $0, 0, e.which, (e.key.length == 1) * e.key.charCodeAt());
+                    $0, 0, e.which, (e.key && e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey)
                     e.preventDefault();
             };
@@ -143,7 +143,7 @@ void rr_main_loop(struct rr_game *this)
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     0, +!!button)};
             window.addEventListener("touchstart", function(e){
-                //e.preventDefault();
+                e.preventDefault();
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
