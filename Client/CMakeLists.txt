@@ -61,6 +61,8 @@ set(SRCS
     Assets/Tile/2.c
     Assets/Tile/3.c
     Assets/Init.c
+    Assets/RenderMisc.c
+    Assets/RenderMobs.c
     Assets/RenderPetals.c
     Assets/RenderRarityBackground.c
     Assets/RenderText.c
@@ -69,7 +71,6 @@ set(SRCS
     Renderer/Common.c
     Renderer/RenderDrop.c
     Renderer/RenderFlower.c
-    Renderer/RenderFunctions.c
     Renderer/RenderHealth.c
     Renderer/RenderMob.c
     Renderer/RenderPetal.c

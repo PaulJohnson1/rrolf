@@ -460,7 +460,6 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
     rr_dom_set_text("name", &this->cache.nickname[0]);
     // clang-format on
-    this->tiles_size = 3;
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
 }
@@ -717,13 +716,12 @@ static void render_background(struct rr_component_player_info *player_info,
         for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
         {
             uint32_t tile_index = (uint32_t)((newLeftX / GRID_SIZE + 1) *
-                                             (currY / GRID_SIZE + 2)) %
-                                  this->tiles_size;
+                                             (currY / GRID_SIZE + 2)) % 3;
             struct rr_renderer_context_state state;
             rr_renderer_context_state_init(this->renderer, &state);
             rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
                                   currY + GRID_SIZE / 2);
-            rr_renderer_draw_image(this->renderer, this->tiles + tile_index);
+            rr_renderer_draw_tile(this->renderer, tile_index);
             rr_renderer_context_state_free(this->renderer, &state);
         }
     }
@@ -750,8 +748,8 @@ static void render_background(struct rr_component_player_info *player_info,
     rr_renderer_context_state_init(this->renderer, &state);                    \
     rr_renderer_translate(this->renderer, x, y);                               \
     rr_renderer_rotate(this->renderer, rotation);                              \
-    rr_renderer_draw_image(this->renderer,                                     \
-                           &this->background_features[selected_feature]);      \
+    rr_renderer_scale(this->renderer, 0.3);                                    \
+    rr_renderer_draw_prop(this->renderer, selected_feature);                   \
     rr_renderer_context_state_free(this->renderer, &state);
 
     rr_renderer_set_global_alpha(this->renderer, 0.75f);

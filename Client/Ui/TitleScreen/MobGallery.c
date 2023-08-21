@@ -6,7 +6,6 @@
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Assets/RenderFunctions.h>
-#include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
@@ -91,7 +90,7 @@ static void mob_button_on_render(struct rr_ui_element *this,
                                     RR_MOB_DATA[data->id].radius);
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
-    rr_renderer_render_mob(renderer, game, data->id, 0, 0, 1);
+    rr_renderer_draw_mob(renderer, data->id, 0, 0, 1);
 
     rr_renderer_context_state_free(renderer, &state);
 }

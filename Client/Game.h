@@ -72,67 +72,6 @@ struct rr_game
     struct rr_game_squad_client squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
-    // mob assets cache TODO: (remove)
-    struct rr_renderer mob_pteranodon_body;
-    struct rr_renderer mob_pteranodon_wings[2];
-
-    struct rr_renderer mob_trex_head;
-    struct rr_renderer mob_trex_body;
-    struct rr_renderer mob_trex_tail;
-    struct rr_renderer mob_trex_legs[2];
-
-    struct rr_renderer mob_trex_friendly_head;
-    struct rr_renderer mob_trex_friendly_body;
-    struct rr_renderer mob_trex_friendly_tail;
-    struct rr_renderer mob_trex_friendly_legs[2];
-
-    struct rr_renderer mob_triceratops_head;
-    struct rr_renderer mob_triceratops_body;
-    struct rr_renderer mob_triceratops_tail;
-    struct rr_renderer mob_triceratops_legs[2];
-
-    struct rr_renderer mob_dakotaraptor_body;
-    struct rr_renderer mob_dakotaraptor_head;
-    struct rr_renderer mob_dakotaraptor_tail;
-    struct rr_renderer mob_dakotaraptor_wings[2];
-
-    struct rr_renderer mob_pachycephalosaurus_body;
-    struct rr_renderer mob_pachycephalosaurus_head;
-    struct rr_renderer mob_pachycephalosaurus_legs[2];
-    struct rr_renderer mob_pachycephalosaurus_tail;
-
-    struct rr_renderer mob_ornithomimus_body;
-    struct rr_renderer mob_ornithomimus_head;
-    struct rr_renderer mob_ornithomimus_tail;
-    struct rr_renderer mob_ornithomimus_wings[2];
-
-    struct rr_renderer mob_ankylosaurus_body;
-    struct rr_renderer mob_ankylosaurus_head;
-    struct rr_renderer mob_ankylosaurus_tail;
-
-    struct rr_renderer mob_quetzalcoatlus_body;
-    struct rr_renderer mob_quetzalcoatlus_head;
-    struct rr_renderer mob_quetzalcoatlus_wings[2];
-
-    struct rr_renderer mob_pectinodon_body;
-    struct rr_renderer mob_pectinodon_head;
-    struct rr_renderer mob_pectinodon_tail;
-    struct rr_renderer mob_pectinodon_wings[2];
-
-    struct rr_renderer mob_edmontosaurus_head;
-    struct rr_renderer mob_edmontosaurus_body;
-    struct rr_renderer mob_edmontosaurus_tail;
-    struct rr_renderer mob_edmontosaurus_legs[2];
-
-    struct rr_renderer mob_tree;
-    struct rr_renderer mob_fern;
-    struct rr_renderer mob_meteor;
-
-    struct rr_renderer asset_web;
-    // background
-    struct rr_renderer tiles[3];
-    struct rr_renderer background_features[2];
-
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
     struct rr_ui_element *squad_player_tooltips[RR_SQUAD_MEMBER_COUNT];
@@ -161,7 +100,6 @@ struct rr_game
     int8_t ticks_until_game_start;
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
     uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
-    uint8_t tiles_size;
     uint8_t block_ui_input;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;

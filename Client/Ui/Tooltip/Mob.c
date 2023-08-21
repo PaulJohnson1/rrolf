@@ -5,7 +5,6 @@
 
 #include <Client/Game.h>
 #include <Client/Assets/RenderFunctions.h>
-#include <Client/Renderer/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 

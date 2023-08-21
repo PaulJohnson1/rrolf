@@ -7,7 +7,7 @@
 #include <Client/Simulation.h>
 #include <Shared/StaticData.h>
 
-#include <Client/Renderer/RenderFunctions.h>
+#include <Client/Assets/RenderFunctions.h>
 
 void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
 {
@@ -44,7 +44,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)
         << 1;
-    rr_renderer_render_mob(renderer, game, mob->id, sinusoid_animation,
+    rr_renderer_draw_mob(renderer, mob->id, sinusoid_animation,
                            physical->turning_animation - physical->lerp_angle,
                            use_cache | is_friendly);
 }

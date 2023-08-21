@@ -52,8 +52,26 @@ extern "C"
         uint8_t matrix_moddified;
     };
 
+    struct rr_sprite_bounds
+    {
+        float x;
+        float y;
+        float w;
+        float h;
+        void (*render)(struct rr_renderer *);
+    };
+
+    struct rr_renderer_spritesheet
+    {
+        struct rr_renderer renderer;
+        struct rr_sprite_bounds sprites[16];
+    };
+
     void rr_renderer_init(struct rr_renderer *);
     void rr_renderer_set_dimensions(struct rr_renderer *, float, float);
+
+    void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *, ...);
+    void render_sprite_from_cache(struct rr_renderer *, struct rr_renderer_spritesheet *, uint32_t);
 
     void rr_renderer_context_state_init(struct rr_renderer *,
                                         struct rr_renderer_context_state *);

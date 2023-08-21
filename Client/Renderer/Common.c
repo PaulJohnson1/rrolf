@@ -1,8 +1,50 @@
 #include <Client/Renderer/Renderer.h>
 
-#include <Shared/Utilities.h>
 #include <math.h>
+#include <stdarg.h>
 #include <string.h>
+
+#include <Shared/Utilities.h>
+
+void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, ...)
+{
+    struct rr_renderer *renderer = &spritesheet->renderer;
+    rr_renderer_init(renderer);
+    va_list args;
+    va_start(args, spritesheet);
+    float curr_x = 0;
+    float curr_y = 0;
+    uint32_t size = 0;
+    while (1)
+    {
+        float width = va_arg(args, int);
+        if (width == 0)
+            break;
+        float height = va_arg(args, int);
+        struct rr_sprite_bounds *bounds = &spritesheet->sprites[size++];
+        bounds->x = curr_x + width / 2;
+        bounds->y = 0 + height / 2;
+        bounds->w = width;
+        bounds->h = height;
+        curr_x += width;
+        bounds->render = va_arg(args, void *);
+        if (curr_y < height)
+            curr_y = height;
+    }
+    rr_renderer_set_dimensions(renderer, curr_x, curr_y);
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        struct rr_sprite_bounds *bounds = &spritesheet->sprites[i];
+        rr_renderer_set_transform(renderer, 1, 0, bounds->x, 0, 1, bounds->y);
+        bounds->render(renderer);
+    }
+}
+
+void render_sprite_from_cache(struct rr_renderer *renderer, struct rr_renderer_spritesheet *spritesheet, uint32_t pos)
+{
+    struct rr_sprite_bounds *bounds = &spritesheet->sprites[pos];
+    rr_renderer_draw_clipped_image(renderer, &spritesheet->renderer, bounds->x, bounds->y, bounds->w, bounds->h, 0, 0);
+}
 
 void rr_renderer_context_state_init(struct rr_renderer *this,
                                     struct rr_renderer_context_state *state)
