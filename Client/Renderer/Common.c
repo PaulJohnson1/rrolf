@@ -6,12 +6,14 @@
 
 #include <Shared/Utilities.h>
 
-void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, ...)
+void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, void (*setup)(struct rr_renderer *), ...)
 {
     struct rr_renderer *renderer = &spritesheet->renderer;
     rr_renderer_init(renderer);
+    if (setup != NULL)
+        setup(renderer);
     va_list args;
-    va_start(args, spritesheet);
+    va_start(args, setup);
     float curr_x = 0;
     float curr_y = 0;
     uint32_t size = 0;

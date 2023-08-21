@@ -18,7 +18,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
     struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
     if (rr_simulation_get_relations(simulation, entity)->team ==
         rr_simulation_team_id_players)
-        rr_renderer_add_color_filter(renderer, 0xffabff00, 0.5);
+        rr_renderer_add_color_filter(renderer, 0xff9323d3, 0.5);
     rr_renderer_add_color_filter(renderer, 0xffff0000, 0.5 * health->damage_animation);
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);

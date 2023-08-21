@@ -39,10 +39,9 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_set_stroke(renderer, this->fill);
     rr_renderer_set_line_width(renderer, 6);
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2,
-                           this->width, this->height, 6);
+    rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2,
+                           this->abs_width, this->abs_height, 6);
     rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
 }
 
 static void settings_toggle_button_on_event(struct rr_ui_element *this,
@@ -62,7 +61,7 @@ static void settings_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_settings_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0xff888888;
+    this->fill = 0x80888888;
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = settings_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;

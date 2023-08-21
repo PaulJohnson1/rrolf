@@ -595,7 +595,19 @@ static void crafting_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_round_rect(renderer, -this->width / 2, -this->height / 2,
                            this->width, this->height, 6);
     rr_renderer_fill(renderer);
+    rr_renderer_set_fill(renderer, 0xc0ffffff);
+    rr_renderer_set_stroke(renderer, 0xc0ffffff);
+    rr_renderer_set_line_width(renderer, 4);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, 0, 0, this->width / 4);
     rr_renderer_stroke(renderer);
+    for (uint32_t i = 0; i < 5; ++i)
+    {
+        rr_renderer_begin_path(renderer);
+        rr_renderer_rotate(renderer, M_PI * 2 * 0.2);
+        rr_renderer_arc(renderer, this->width / 4, 0, this->width / 10);
+        rr_renderer_fill(renderer);
+    }
 }
 
 void crafting_toggle_button_on_event(struct rr_ui_element *this,
@@ -615,7 +627,7 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_crafting_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0xffe34545;
+    this->fill = 0x80888888;
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = crafting_toggle_button_on_event;
     this->on_render = crafting_toggle_on_render;
