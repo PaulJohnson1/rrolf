@@ -83,7 +83,7 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
 void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t identifier)
 {
     if (identifier >= 16)
-        return;
+        identifier = identifier % 16;
     struct rr_input_touch *touch = &this->input_data->touches[identifier];
     touch->touch_x = x;
     touch->touch_y = y;
