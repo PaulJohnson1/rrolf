@@ -113,6 +113,13 @@ struct rr_ui_element *rr_ui_container_init()
     return this;
 }
 
+struct rr_ui_element *rr_ui_popup_container_init()
+{
+    struct rr_ui_element *this = rr_ui_container_init();
+    this->animate = scale_animate;
+    return this;
+}
+
 struct rr_ui_element *rr_ui_tooltip_container_init()
 {
     struct rr_ui_element *this = rr_ui_container_init();

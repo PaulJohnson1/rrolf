@@ -199,7 +199,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_set_background(
                             rr_ui_link_toggle(
                                 rr_ui_v_container_init(
-                                    rr_ui_container_init(), 10, 10,
+                                    rr_ui_popup_container_init(), 10, 10,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
                                     rr_ui_flex_container_init(
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
