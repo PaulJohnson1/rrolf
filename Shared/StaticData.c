@@ -13,17 +13,17 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_shell, rr_rarity_id_rare, 3.5f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 20.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 18.0f, 8.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, 6.0f, 45.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 5.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 100, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, 18.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
-    {rr_petal_id_club, rr_rarity_id_common, 3.0f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_club, rr_rarity_id_common, 3.5f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, 12.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -32,19 +32,19 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, rr_rarity_id_rare, 50, 15, 30.0f, {}},
+    {rr_mob_id_triceratops, rr_rarity_id_rare, 40, 15, 30.0f, {}},
     {rr_mob_id_trex, rr_rarity_id_epic, 30, 25, 32.0f, {}},
     {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {}},
     {rr_mob_id_tree, rr_rarity_id_rare, 50, 5, 60.0f, {}},
-    {rr_mob_id_pteranodon, rr_rarity_id_common, 35, 20, 20.0f, {}},
-    {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 40, 10, 25.0f, {}},
+    {rr_mob_id_pteranodon, rr_rarity_id_common, 30, 20, 20.0f, {}},
+    {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 35, 10, 25.0f, {}},
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {}},
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 15, 10, 20.0f, {}},
-    {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 50, 10, 30.0f, {}},
-    {rr_mob_id_meteor, rr_rarity_id_rare, 300, 8, 32.0f, {}},
+    {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 40, 10, 30.0f, {}},
+    {rr_mob_id_meteor, rr_rarity_id_rare, 200, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {}},
     {rr_mob_id_pectinodon, rr_rarity_id_rare, 30, 10, 24.0f, {}},
-    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 60, 10, 30.0f, {}},
+    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {}},
 
     {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}},
     {rr_mob_id_sea_snail, rr_rarity_id_common, 30, 10, 30.0f, {}}
@@ -138,7 +138,7 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 12, 20, 25, 150, 250, 50};
 static double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    3, 2, 7.5, 16, 20, 25, 50};
+    3, 3, 5, 16, 20, 25, 50};
 
 static void init_game_coefficients()
 {

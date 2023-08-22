@@ -181,7 +181,7 @@ void rr_main_loop(struct rr_game *this)
             }, {passive: false});
             window.onwheel =
                 function({deltaY}){Module._rr_wheel_event($0, deltaY)};
-            document.onpaste = function(e) {
+            document.body.onpaste = function(e) {
                 const buf = new TextEncoder().encode(e.clipboardData.getData("text/plain"));
                 const $a = _malloc(buf.length + 1);
                 HEAPU8.set(buf, $a);
