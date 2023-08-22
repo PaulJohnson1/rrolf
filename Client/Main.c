@@ -125,8 +125,6 @@ void rr_main_loop(struct rr_game *this)
             {
                 Module._rr_key_event(
                     $0, 0, e.which, (!e.ctrlKey && !e.metaKey && e.key && e.key.length == 1) * e.key.charCodeAt());
-                if (e.metaKey)
-                    e.preventDefault();
             };
             window.onmousedown =
                 function(e){
