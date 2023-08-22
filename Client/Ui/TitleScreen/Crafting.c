@@ -131,7 +131,7 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
         return;
     struct crafting_ring_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-        game->pressed == this)
+        game->pressed == this && game->crafting_data.animation == 0)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
         game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
