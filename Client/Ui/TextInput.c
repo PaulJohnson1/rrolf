@@ -114,7 +114,7 @@ static void text_input_on_render(struct rr_ui_element *this,
             //data->caret_pos -= len;
             //replacing lol
         }
-        if (ctrl_v && input->clipboard != NULL)
+        if (input->clipboard != NULL)
         {
             rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
             uint32_t clipboard_len = 0;
