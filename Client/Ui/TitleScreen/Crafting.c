@@ -127,6 +127,8 @@ static uint8_t crafting_ring_should_show(struct rr_ui_element *this,
 static void crafting_ring_petal_on_event(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
+    if (game->crafting_data.crafting_id == 0)
+        return;
     struct crafting_ring_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
         game->pressed == this)
@@ -272,7 +274,7 @@ static uint8_t crafting_result_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
     return game->crafting_data.success_count &&
-           game->crafting_data.animation == 0;
+           game->crafting_data.animation == 0 && game->crafting_data.crafting_id != 0;
 }
 
 static void crafting_result_container_on_render(struct rr_ui_element *this,

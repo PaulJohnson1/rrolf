@@ -61,7 +61,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     if (id == rr_petal_id_club)
     {
         rr_component_physical_set_radius(physical, 15);
-        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.5);
+        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.75);
         physical->knockback_scale = 3.5;
     }
     else if (id == rr_petal_id_stick)

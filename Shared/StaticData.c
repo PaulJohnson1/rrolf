@@ -89,7 +89,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "It came from a dino",
     "Ow that hurts",
     "Makes your petals lighter so they spin faster",
-    "ICBM approved",
+    "Poor snail",
     "Splits in 4. Or maybe 5 if you're a pro",
     "Heals you gradually",
     "Spawns a pet dinosaur to protect you",
@@ -133,7 +133,7 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1
 double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
                                             
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 8, 15, 30, 100, 300};
+    0, 1, 5, 8, 15, 30, 100, 500};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 12, 20, 25, 150, 250, 50};
