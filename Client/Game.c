@@ -183,7 +183,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
-                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "name"),
+                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16),
                             rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
                             NULL
                         ),
@@ -235,7 +235,7 @@ void rr_game_init(struct rr_game *this)
                                     rr_ui_flex_container_init(
                                         rr_ui_copy_squad_code_button_init(),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "link"),
+                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100),
                                             rr_ui_join_squad_code_button_init(),
                                             NULL
                                         ),
@@ -443,7 +443,7 @@ void rr_game_init(struct rr_game *this)
 
     rr_local_storage_get_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
     rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
-    rr_dom_set_text("name", &this->cache.nickname[0]);
+    //rr_dom_set_text("name", &this->cache.nickname[0]);
     // clang-format on
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
@@ -1070,25 +1070,6 @@ rr_websocket_send(&this->socket, encoder.current - encoder.start);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
         debug_mspt[sprintf(debug_mspt, "ctx calls: %d",
                            rr_renderer_get_op_size())] = 0;
-        rr_renderer_translate(this->renderer, 0, -15);
-        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
-        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        debug_mspt[sprintf(debug_mspt, "mouse info: %f %f %d",
-                        this->input_data->mouse_x, this->input_data->mouse_y, this->input_data->mouse_buttons)] = 0;
-        rr_renderer_translate(this->renderer, 0, -15);
-        rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
-        rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        for (uint32_t i = 0; i < 16; ++i)
-        {
-            struct rr_input_touch *touch = &this->input_data->touches[i];
-            if (!touch->active)
-                continue;
-            debug_mspt[sprintf(debug_mspt, "touch info: %d %f %f %d",
-                           touch->identifier, touch->touch_x, touch->touch_y, touch->active)] = 0;
-            rr_renderer_translate(this->renderer, 0, -15);
-            rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
-            rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        }
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
@@ -1116,6 +1097,8 @@ rr_websocket_send(&this->socket, encoder.current - encoder.start);
     this->input_data->mouse_buttons_up_this_tick = 0;
     this->input_data->mouse_buttons_down_this_tick = 0;
     this->input_data->mouse_state_this_tick = 0;
+    this->input_data->keycodes_length = 0;
+    this->input_data->clipboard = NULL;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
 }

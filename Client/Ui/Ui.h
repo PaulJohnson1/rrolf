@@ -139,7 +139,7 @@ struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 struct rr_ui_element *rr_ui_h_slider_init(float, float, float *, uint8_t);
 struct rr_ui_element *rr_ui_v_slider_init(float, float, float *);
 
-struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char *);
+struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint32_t);
 // custom
 struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game *, uint8_t);
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *, uint8_t);

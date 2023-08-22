@@ -34,7 +34,7 @@ struct rr_server_client
     uint32_t max_wave;
     int file_descriptor;
     char ip_address[100];
-    char client_nickname[18];
+    char client_nickname[18 * 4];
     uint32_t level;
     uint32_t response_time;
     uint8_t received_first_packet : 1;

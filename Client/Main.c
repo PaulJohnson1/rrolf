@@ -53,7 +53,8 @@ void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which,
     {
         rr_bitset_set(this->input_data->keys_pressed, which);
         rr_bitset_set(this->input_data->keys_pressed_this_tick, which);
-        rr_bitset_set(this->input_data->keycodes_pressed_this_tick, key);
+        if (this->input_data->keycodes_length < 16 && key != 0)
+            this->input_data->keycodes_pressed_this_tick[this->input_data->keycodes_length++] = key;
     }
     else
     {
@@ -82,10 +83,6 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
 
 void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t identifier)
 {
-    if (identifier >= 16)
-    {    
-        uint8_t a = 0;//identifier = identifier % 16;
-    }
     struct rr_input_touch *touch = &this->input_data->touches[identifier % 16];
     touch->touch_x = x;
     touch->touch_y = y;
@@ -97,6 +94,12 @@ void rr_wheel_event(struct rr_game *this, float delta)
 {
     this->input_data->scroll_delta = delta;
 }
+
+void rr_paste_event(struct rr_game *this, char *buf)
+{
+    this->input_data->clipboard = buf;
+}
+
 #else
 #endif
 
@@ -116,14 +119,14 @@ void rr_main_loop(struct rr_game *this)
             window.onkeydown = function(e)
             {
                 Module._rr_key_event(
-                    $0, 1, e.which, (e.key && e.key.length == 1) * e.key.charCodeAt());
+                    $0, 1, e.which, (!e.ctrlKey && !e.metaKey && e.key && e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey)
                     e.preventDefault();
             };
             window.onkeyup = function(e)
             {
                 Module._rr_key_event(
-                    $0, 0, e.which, (e.key && e.key.length == 1) * e.key.charCodeAt());
+                    $0, 0, e.which, (!e.ctrlKey && !e.metaKey && e.key && e.key.length == 1) * e.key.charCodeAt());
                 if (e.metaKey)
                     e.preventDefault();
             };
@@ -182,6 +185,13 @@ void rr_main_loop(struct rr_game *this)
             }, {passive: false});
             window.onwheel =
                 function({deltaY}){Module._rr_wheel_event($0, deltaY)};
+            document.onpaste = function(e) {
+                const buf = new TextEncoder().encode(e.clipboardData.getData("text/plain"));
+                const $a = _malloc(buf.length + 1);
+                HEAPU8.set(buf, $a);
+                HEAPU8[$a + buf.length] = 0;
+                Module._rr_paste_event($0, $a);
+            };
             Module.addCtx = function()
             {
                 if (Module.availableCtxs.length)

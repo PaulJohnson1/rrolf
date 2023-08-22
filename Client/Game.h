@@ -58,7 +58,7 @@ struct rr_game_cache
     uint8_t screen_shake;
     uint8_t slots_unlocked;
     uint8_t low_performance_mode;
-    char nickname[17];
+    char nickname[128];
 };
 
 struct rr_game

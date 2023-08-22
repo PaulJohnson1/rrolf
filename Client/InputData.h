@@ -14,12 +14,14 @@ struct rr_input_touch
 
 struct rr_input_data
 {
+    char *clipboard;
     uint8_t keys_pressed[RR_BITSET_ROUND(256)];
     // c version of addeventlistener("keydown")
     uint8_t keys_pressed_this_tick[RR_BITSET_ROUND(256)];
     uint8_t keys_released_this_tick[RR_BITSET_ROUND(256)];
 
-    uint8_t keycodes_pressed_this_tick[RR_BITSET_ROUND(256)];
+    uint32_t keycodes_pressed_this_tick[16];
+    uint32_t keycodes_length;
     struct rr_input_touch touches[16];
     uint8_t touch_length;
     uint8_t mouse_buttons;
