@@ -451,7 +451,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
 {
     struct crafting_inventory_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-        game->pressed == this)
+        game->pressed == this && game->crafting_data.animation == 0)
     {
         if (game->inventory[data->id][data->rarity] < PETALS_PER_CRAFT ||
             game->crafting_data.success_count > 0 ||
