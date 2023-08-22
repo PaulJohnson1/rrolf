@@ -400,13 +400,10 @@ void rr_server_client_tick(struct rr_server_client *this)
 {
     if (this->kicked)
         return;
-    if (!this->received_first_packet)
-    {
-        if (this->response_time != 0)
-        {
-            --this->response_time;
-        }
-    }
+    if (this->response_time != 0)
+        --this->response_time;
+    else
+        this->kicked = 1;
     if (this->server->simulation_active)
     {
         if (rr_simulation_has_entity(&this->server->simulation,
@@ -733,6 +730,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                  sizeof "kicked");
                 return -1;
         }
+        client->response_time = 10 * 25;
 
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
