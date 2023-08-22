@@ -344,7 +344,6 @@ static void join_code_on_event(struct rr_ui_element *this,
     {
         if (1)
         {
-            rr_dom_retrieve_text("link", &game->connect_link[0], 100);
             if (strlen(&game->connect_link[0]) != 36)
                 return;
             if (game->socket_ready)

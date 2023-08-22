@@ -117,16 +117,17 @@ static void text_input_on_render(struct rr_ui_element *this,
             while(rr_binary_encoder_read_utf8(&encoder))
                 ++clipboard_len;
             uint32_t start = data->length + clipboard_len >= data->max_length ? data->max_length : data->length + clipboard_len;
-            for (uint32_t j = start; j > data->caret_pos; --j)
-                data->buffer[j] = data->buffer[j - clipboard_len];
+            for (uint32_t j = start; j > data->caret_pos + clipboard_len; --j)
+                data->buffer[j - 1] = data->buffer[j - clipboard_len - 1];
+            
             rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
-            while(data->length < data->max_length)
+            data->length = start;
+            while(data->caret_pos < data->length)
             {
                 uint32_t character = rr_binary_encoder_read_utf8(&encoder);
                 if (character == 0)
                     break;
                 data->buffer[data->caret_pos++] = character;
-                data->length++;
             }
         }
         else
