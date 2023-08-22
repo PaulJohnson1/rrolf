@@ -398,6 +398,8 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
+    if (this->kicked)
+        return;
     if (!this->received_first_packet)
     {
         if (this->response_time != 0)
@@ -703,10 +705,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     }
     case LWS_CALLBACK_RECEIVE:
     {
-        if (size == 0)
-            break;
         struct rr_server_client *client = NULL;
         uint64_t i = 0;
+        uint32_t first = 1;
         for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
             if (!rr_bitset_get(this->clients_in_use, i))
@@ -716,11 +717,21 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client = &this->clients[i];
                 break;
             }
+            first = 0;
         }
         if (client == NULL)
         {
             puts("null client????");
             return 0;
+        }
+        if (size == 0)
+            break;
+        if (client->kicked)
+        {
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"kicked",
+                                 sizeof "kicked");
+                return -1;
         }
 
         rr_decrypt(packet, size, client->serverbound_encryption_key);
@@ -1049,7 +1060,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 72:
         {
-            if (i == 0 && !this->simulation_active)
+            if (first && !this->simulation_active)
             {
                 this->private = proto_bug_read_uint8(&encoder, "private") != 0;
 #ifdef RIVET_BUILD
@@ -1060,6 +1071,20 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 printf("setting to %d\n", this->private);
 #endif
             }
+            break;
+        }
+        case 73:
+        {
+            if (this->simulation_active)
+                break;
+            if (!first)
+                break;
+            uint8_t kick_pos = proto_bug_read_uint8(&encoder, "kick");
+            if (kick_pos > RR_SQUAD_MEMBER_COUNT)
+                break;
+            if (kick_pos == i)
+                break;
+            this->clients[kick_pos].kicked = 1;
             break;
         }
         default:

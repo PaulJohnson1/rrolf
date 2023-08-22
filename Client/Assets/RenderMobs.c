@@ -208,6 +208,14 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         render_sprite(renderer, id, 0, flags);
         rr_renderer_context_state_free(renderer, &state);
         break;
+    case rr_mob_id_sea_snail:
+        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_translate(renderer,  0, -125 + animation_tick * 30);
+        render_sprite(renderer, id, 0, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        render_sprite(renderer, id, 1, flags);
+        break;
     }
     rr_renderer_context_state_free(renderer, &original_state);
 }
@@ -270,4 +278,6 @@ void rr_renderer_mob_cache_init()
     rr_renderer_spritesheet_init(&mob_sprites[13], NULL, 144, 240, rr_king_mackarel_head_draw, 
     192, 336, rr_king_mackarel_body_draw, 144, 144, rr_king_mackarel_fin1_draw, 144, 144, 
     rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[14], NULL, 240, 240, rr_sea_snail_head_draw, 240, 240, rr_sea_snail_body_draw, 0);
 }

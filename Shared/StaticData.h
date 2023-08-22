@@ -63,6 +63,7 @@ enum rr_mob_id
     rr_mob_id_edmontosaurus,
     
     rr_mob_id_king_mackarel,
+    rr_mob_id_sea_snail,
     rr_mob_id_max
 };
 

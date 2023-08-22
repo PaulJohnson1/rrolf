@@ -54,6 +54,8 @@ set(SRCS
     Assets/Mob/Rex/Leg1.c
     Assets/Mob/Rex/Leg2.c
     Assets/Mob/Rex/Tail.c
+    Assets/Mob/SeaSnail/Body.c
+    Assets/Mob/SeaSnail/Head.c
     Assets/Mob/Triceratops/Body.c
     Assets/Mob/Triceratops/Head.c
     Assets/Mob/Triceratops/Leg1.c

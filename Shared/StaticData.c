@@ -42,11 +42,12 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 15, 10, 20.0f, {}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 50, 10, 30.0f, {}},
     {rr_mob_id_meteor, rr_rarity_id_rare, 300, 8, 32.0f, {}},
-    {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 100, 10, 28.0f, {}},
+    {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {}},
     {rr_mob_id_pectinodon, rr_rarity_id_rare, 30, 10, 24.0f, {}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 60, 10, 30.0f, {}},
 
-    {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}}
+    {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}},
+    {rr_mob_id_sea_snail, rr_rarity_id_common, 30, 10, 30.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -121,14 +122,15 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Quetzalcoatlus",
                                            "Pectinodon",
                                            "Edmontosaurus",
-                                           "King Mackarel"};
+                                           "King Mackarel",
+                                           "Sea Snail"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 8, 10, 9};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25, 25};
 
-double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
                                             
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 300};

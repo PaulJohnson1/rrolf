@@ -13,6 +13,7 @@
 #include <Client/Ui/Engine.h>
 
 #include <Shared/Api.h>
+#include <Shared/pb.h>
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
 
@@ -169,6 +170,24 @@ void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
     struct rr_ui_container_metadata *data = this->data;
     rr_ui_render_tooltip_above(
             this, game->squad_player_tooltips[data->width], game);
+    if (game->input_data->mouse_buttons_up_this_tick & 2)
+    {
+        if (game->squad_private == 0)
+            return;
+        uint8_t first_pos = 0;
+        for (; first_pos < RR_SQUAD_MEMBER_COUNT; ++first_pos)
+            if (game->squad_members[first_pos].in_use)
+                break;
+        if (first_pos != game->squad_pos)
+            return;
+        if (first_pos == data->width)
+            return;
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, output_packet);
+        proto_bug_write_uint8(&encoder, 73, "header");
+        proto_bug_write_uint8(&encoder, data->width, "kick");
+        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+    }
 }
 
 static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)

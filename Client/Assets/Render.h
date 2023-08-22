@@ -67,6 +67,9 @@ void rr_king_mackarel_fin2_draw(struct rr_renderer *);
 void rr_king_mackarel_head_draw(struct rr_renderer *);
 void rr_king_mackarel_tail_draw(struct rr_renderer *);
 
+void rr_sea_snail_body_draw(struct rr_renderer *);
+void rr_sea_snail_head_draw(struct rr_renderer *);
+
 void rr_tile_1_draw(struct rr_renderer *);
 void rr_tile_2_draw(struct rr_renderer *);
 void rr_tile_3_draw(struct rr_renderer *);

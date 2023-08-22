@@ -84,8 +84,12 @@ static void text_input_on_render(struct rr_ui_element *this,
             if (diff < 0)
                 break;
         }
-        if (data->drag_pos != data->caret_pos)
-            data->dragging = 1;
+        data->dragging = 1;
+        if (data->drag_pos == data->caret_pos)
+        {
+            data->drag_pos = 0;
+            data->caret_pos = data->length;
+        }
     }
     if (data->focused)
     {

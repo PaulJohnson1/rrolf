@@ -42,6 +42,7 @@ struct rr_server_client
     uint8_t ready : 4;
     uint8_t loadout_validated : 1;
     uint8_t loadout_pending_validation : 1;
+    uint8_t kicked : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);
