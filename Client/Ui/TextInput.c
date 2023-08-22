@@ -51,11 +51,11 @@ static void text_input_on_render(struct rr_ui_element *this,
     struct rr_binary_encoder encoder;
     if (input->mouse_buttons_down_this_tick & 1)
     {
+        data->dragging = 0;
         if (!rr_ui_mouse_over(this, game))
             data->focused = 0;
         else if (data->focused)
         {
-            data->dragging = 0;
             float left_x  = this->abs_x - this->abs_width * 0.48 * renderer->scale;
             float diff = input->mouse_x - left_x;
             char buf[5];
@@ -85,11 +85,6 @@ static void text_input_on_render(struct rr_ui_element *this,
                 break;
         }
         data->dragging = 1;
-        if (data->drag_pos == data->caret_pos)
-        {
-            data->drag_pos = 0;
-            data->caret_pos = data->length;
-        }
     }
     if (data->focused)
     {
@@ -106,13 +101,10 @@ static void text_input_on_render(struct rr_ui_element *this,
             data->dragging = 0;
             uint32_t min = data->caret_pos < data->drag_pos ? data->caret_pos : data->drag_pos;
             uint32_t len = data->caret_pos + data->drag_pos - 2 * min;
-            printf("remove %d %d %d\n", min, len, data->length);
             for (uint32_t j = min + len; j < data->length; ++j)
                 data->buffer[j - len] = data->buffer[j];
             data->length -= len;
             data->caret_pos = min;
-            //data->caret_pos -= len;
-            //replacing lol
         }
         if (input->clipboard != NULL)
         {
