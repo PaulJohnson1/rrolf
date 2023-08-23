@@ -1,5 +1,6 @@
 #include <Client/Ui/Ui.h>
 
+#include <emscripten.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -49,106 +50,125 @@ static void text_input_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     struct rr_input_data *input = game->input_data;
     struct rr_binary_encoder encoder;
-    if (input->mouse_buttons_down_this_tick & 1)
+    if (game->is_mobile)
     {
-        data->dragging = 0;
-        if (!rr_ui_mouse_over(this, game))
-            data->focused = 0;
-        else if (data->focused)
+        if (data->focused)
+        {
+            data->length = EM_ASM_INT({
+                let text = prompt();
+                if (!text)
+                    return 0;
+                text = text.slice(0, $1);
+                for (let i = 0; i < text.length; ++i)
+                    HEAP32[($0 + i * 4) >> 2] = text.charCodeAt(i);
+                return text.length;
+            }, data->buffer, data->max_length);
+        }
+        data->focused = 0;
+    }
+    else
+    {
+        if (input->mouse_buttons_down_this_tick & 1)
+        {
+            data->dragging = 0;
+            if (!rr_ui_mouse_over(this, game))
+                data->focused = 0;
+            else if (data->focused)
+            {
+                float left_x  = this->abs_x - this->abs_width * 0.48 * renderer->scale;
+                float diff = input->mouse_x - left_x;
+                char buf[5];
+                for (data->caret_pos = 0; data->caret_pos < data->length; ++data->caret_pos)
+                {
+                    rr_binary_encoder_init(&encoder, (uint8_t *) buf);
+                    rr_binary_encoder_write_utf8(&encoder, data->buffer[data->caret_pos]);
+                    rr_binary_encoder_write_utf8(&encoder, 0);
+                    diff -= rr_renderer_get_text_size(buf) * this->abs_height * 0.8 * renderer->scale;
+                    if (diff < 0)
+                        break;
+                }
+            }
+        }
+        else if (input->mouse_buttons & 1 && data->focused)
         {
             float left_x  = this->abs_x - this->abs_width * 0.48 * renderer->scale;
             float diff = input->mouse_x - left_x;
             char buf[5];
-            for (data->caret_pos = 0; data->caret_pos < data->length; ++data->caret_pos)
+            for (data->drag_pos = 0; data->drag_pos < data->length; ++data->drag_pos)
             {
                 rr_binary_encoder_init(&encoder, (uint8_t *) buf);
-                rr_binary_encoder_write_utf8(&encoder, data->buffer[data->caret_pos]);
+                rr_binary_encoder_write_utf8(&encoder, data->buffer[data->drag_pos]);
                 rr_binary_encoder_write_utf8(&encoder, 0);
                 diff -= rr_renderer_get_text_size(buf) * this->abs_height * 0.8 * renderer->scale;
                 if (diff < 0)
                     break;
             }
+            data->dragging = 1;
         }
-    }
-    else if (input->mouse_buttons & 1 && data->focused)
-    {
-        float left_x  = this->abs_x - this->abs_width * 0.48 * renderer->scale;
-        float diff = input->mouse_x - left_x;
-        char buf[5];
-        for (data->drag_pos = 0; data->drag_pos < data->length; ++data->drag_pos)
+        if (data->focused)
         {
-            rr_binary_encoder_init(&encoder, (uint8_t *) buf);
-            rr_binary_encoder_write_utf8(&encoder, data->buffer[data->drag_pos]);
-            rr_binary_encoder_write_utf8(&encoder, 0);
-            diff -= rr_renderer_get_text_size(buf) * this->abs_height * 0.8 * renderer->scale;
-            if (diff < 0)
-                break;
+            if (rr_bitset_get(input->keys_pressed_this_tick, 8) && data->caret_pos > 0 && !data->dragging)
+            {
+                for (uint32_t j = data->caret_pos; j < data->length; ++j)
+                    data->buffer[j - 1] = data->buffer[j];
+                --data->caret_pos;
+                --data->length;
+            }
+            uint8_t ctrl_v = rr_bitset_get(input->keys_pressed, 17) && rr_bitset_get(input->keys_pressed_this_tick, 'V');
+            if (data->dragging && (input->keycodes_length || rr_bitset_get(input->keys_pressed_this_tick, 8) || ctrl_v))
+            {
+                data->dragging = 0;
+                uint32_t min = data->caret_pos < data->drag_pos ? data->caret_pos : data->drag_pos;
+                uint32_t len = data->caret_pos + data->drag_pos - 2 * min;
+                for (uint32_t j = min + len; j < data->length; ++j)
+                    data->buffer[j - len] = data->buffer[j];
+                data->length -= len;
+                data->caret_pos = min;
+            }
+            if (input->clipboard != NULL)
+            {
+                rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
+                uint32_t clipboard_len = 0;
+                while(rr_binary_encoder_read_utf8(&encoder))
+                    ++clipboard_len;
+                uint32_t start = data->length + clipboard_len >= data->max_length ? data->max_length : data->length + clipboard_len;
+                for (uint32_t j = start; j > data->caret_pos + clipboard_len; --j)
+                    data->buffer[j - 1] = data->buffer[j - clipboard_len - 1];
+                
+                rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
+                data->length = start;
+                while(data->caret_pos < data->length)
+                {
+                    uint32_t character = rr_binary_encoder_read_utf8(&encoder);
+                    if (character == 0)
+                        break;
+                    data->buffer[data->caret_pos++] = character;
+                }
+            }
+            else
+                for (uint32_t i = 0; i < input->keycodes_length; ++i)
+                {
+                    if (data->length >= data->max_length)
+                        break;
+                    for (uint32_t j = data->length; j > data->caret_pos; --j)
+                        data->buffer[j] = data->buffer[j - 1];
+                    data->buffer[data->caret_pos++] = input->keycodes_pressed_this_tick[i];
+                    //printf("key pressed: %d\n", input->keycodes_pressed_this_tick[i]);
+                    ++data->length;
+                }
         }
-        data->dragging = 1;
-    }
-    if (data->focused)
-    {
-        if (rr_bitset_get(input->keys_pressed_this_tick, 8) && data->caret_pos > 0 && !data->dragging)
+        if (data->dragging && rr_bitset_get(input->keys_pressed, 17) && rr_bitset_get(input->keys_pressed_this_tick, 'C'))
         {
-            for (uint32_t j = data->caret_pos; j < data->length; ++j)
-                data->buffer[j - 1] = data->buffer[j];
-            --data->caret_pos;
-            --data->length;
-        }
-        uint8_t ctrl_v = rr_bitset_get(input->keys_pressed, 17) && rr_bitset_get(input->keys_pressed_this_tick, 'V');
-        if (data->dragging && (input->keycodes_length || rr_bitset_get(input->keys_pressed_this_tick, 8) || ctrl_v))
-        {
-            data->dragging = 0;
+            //ctrl c
+            char out[100];
             uint32_t min = data->caret_pos < data->drag_pos ? data->caret_pos : data->drag_pos;
             uint32_t len = data->caret_pos + data->drag_pos - 2 * min;
-            for (uint32_t j = min + len; j < data->length; ++j)
-                data->buffer[j - len] = data->buffer[j];
-            data->length -= len;
-            data->caret_pos = min;
+            rr_binary_encoder_init(&encoder, (uint8_t *) out);
+            for (uint32_t i = min; i < min + len; ++i)
+                rr_binary_encoder_write_utf8(&encoder, data->buffer[i]);
+            rr_binary_encoder_write_utf8(&encoder, 0);
+            rr_copy_string(out);
         }
-        if (input->clipboard != NULL)
-        {
-            rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
-            uint32_t clipboard_len = 0;
-            while(rr_binary_encoder_read_utf8(&encoder))
-                ++clipboard_len;
-            uint32_t start = data->length + clipboard_len >= data->max_length ? data->max_length : data->length + clipboard_len;
-            for (uint32_t j = start; j > data->caret_pos + clipboard_len; --j)
-                data->buffer[j - 1] = data->buffer[j - clipboard_len - 1];
-            
-            rr_binary_encoder_init(&encoder, (uint8_t *) input->clipboard);
-            data->length = start;
-            while(data->caret_pos < data->length)
-            {
-                uint32_t character = rr_binary_encoder_read_utf8(&encoder);
-                if (character == 0)
-                    break;
-                data->buffer[data->caret_pos++] = character;
-            }
-        }
-        else
-            for (uint32_t i = 0; i < input->keycodes_length; ++i)
-            {
-                if (data->length >= data->max_length)
-                    break;
-                for (uint32_t j = data->length; j > data->caret_pos; --j)
-                    data->buffer[j] = data->buffer[j - 1];
-                data->buffer[data->caret_pos++] = input->keycodes_pressed_this_tick[i];
-                //printf("key pressed: %d\n", input->keycodes_pressed_this_tick[i]);
-                ++data->length;
-            }
-    }
-    if (data->dragging && rr_bitset_get(input->keys_pressed, 17) && rr_bitset_get(input->keys_pressed_this_tick, 'C'))
-    {
-        //ctrl c
-        char out[100];
-        uint32_t min = data->caret_pos < data->drag_pos ? data->caret_pos : data->drag_pos;
-        uint32_t len = data->caret_pos + data->drag_pos - 2 * min;
-        rr_binary_encoder_init(&encoder, (uint8_t *) out);
-        for (uint32_t i = min; i < min + len; ++i)
-            rr_binary_encoder_write_utf8(&encoder, data->buffer[i]);
-        rr_binary_encoder_write_utf8(&encoder, 0);
-        rr_copy_string(out);
     }
     //printf("text box length is %d %d\n", data->length, data->max_length);
     rr_renderer_scale(renderer, renderer->scale);
