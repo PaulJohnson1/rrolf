@@ -29,7 +29,9 @@
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
-    //this->biome = 1;
+#ifndef RIVET_BUILD
+    this->biome = 1;
+#endif
     this->grid = malloc(sizeof *this->grid);
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;

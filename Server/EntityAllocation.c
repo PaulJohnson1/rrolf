@@ -66,7 +66,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     }
     else if (id == rr_petal_id_stick)
     {
-        health->secondary_damage = 0.45 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+        health->secondary_damage = 0.45 * RR_PETAL_RARITY_SCALE[rarity].damage;
     }
 
     rr_component_petal_set_id(petal, id);
