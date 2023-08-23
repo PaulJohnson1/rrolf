@@ -382,7 +382,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             rr_component_physical_set_angle(physical2, physical->angle);
             rr_component_physical_set_radius(
                 physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-            physical2->friction = 0.4f;
+            physical2->friction = 0.3f;
             physical2->mass = 5.0f;
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->acceleration, 5, physical->angle);
@@ -395,7 +395,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                             RR_MOB_RARITY_SCALING[mob->rarity].health);
             rr_component_health_set_health(
                 health, health->max_health);
-            health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
+            health->damage = 15 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             projectile->ticks_until_death = 50;
 
             struct rr_vector recoil;
