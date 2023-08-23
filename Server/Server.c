@@ -633,6 +633,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         if (!protocol_expect_bytes(&checker, bytes)) \
             { \
                 fputs("invalid protocol\n", stderr); \
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"bad protocol", sizeof "bad protocol"); \
+                return -1; \
             }
         if (!client->received_first_packet)
         {

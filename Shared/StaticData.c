@@ -32,18 +32,18 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, rr_rarity_id_rare, 40, 15, 30.0f, {}},
+    {rr_mob_id_triceratops, rr_rarity_id_rare, 45, 15, 30.0f, {}},
     {rr_mob_id_trex, rr_rarity_id_epic, 30, 25, 32.0f, {}},
     {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {}},
     {rr_mob_id_tree, rr_rarity_id_rare, 50, 5, 60.0f, {}},
     {rr_mob_id_pteranodon, rr_rarity_id_common, 30, 20, 20.0f, {}},
     {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 35, 10, 25.0f, {}},
-    {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {}},
-    {rr_mob_id_ornithomimus, rr_rarity_id_common, 15, 10, 20.0f, {}},
+    {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 30, 15, 20.0f, {}},
+    {rr_mob_id_ornithomimus, rr_rarity_id_common, 20, 10, 20.0f, {}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 40, 10, 30.0f, {}},
     {rr_mob_id_meteor, rr_rarity_id_rare, 200, 8, 32.0f, {}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {}},
-    {rr_mob_id_pectinodon, rr_rarity_id_rare, 30, 10, 24.0f, {}},
+    {rr_mob_id_pectinodon, rr_rarity_id_rare, 35, 10, 24.0f, {}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {}},
 
     {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}},
