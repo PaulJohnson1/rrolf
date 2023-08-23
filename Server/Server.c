@@ -620,7 +620,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                  sizeof "kicked");
                 return -1;
         }
-        client->response_time = 10 * 25;
+        client->response_time = 120 * 25;
 
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
