@@ -35,16 +35,24 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
         particle->opacity = 0.8;
         particle->color = 0xffab3423;
     }
-    if (physical->animation > 2 * M_PI)
-        physical->animation = fmod(physical->animation, 2 * M_PI);
-    float sinusoid_animation = sinf(physical->animation);
+    if (physical->animation_timer > 2 * M_PI)
+        physical->animation_timer = fmod(physical->animation_timer, 2 * M_PI);
+    if (mob->flags == 0)
+        physical->animation = rr_lerp(physical->animation, sinf(physical->animation_timer), 30 * game->lerp_delta);
+    else
+    {
+        if (mob->flags & 1)
+        {
+            physical->animation = rr_lerp(physical->animation, 2.5, 30 * game->lerp_delta);
+        }
+    }
 
     uint8_t use_cache = ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
     uint8_t is_friendly =
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)
         << 1;
-    rr_renderer_draw_mob(renderer, mob->id, sinusoid_animation,
+    rr_renderer_draw_mob(renderer, mob->id, physical->animation,
                            physical->turning_animation - physical->lerp_angle,
                            use_cache | is_friendly);
 }

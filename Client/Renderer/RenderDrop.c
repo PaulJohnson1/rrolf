@@ -27,7 +27,7 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game, struct rr_
                        physical->lerp_angle + physical->lerp_radius * 0.3125);
     rr_renderer_scale(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, physical->lerp_radius * 0.04);
-    rr_renderer_scale(renderer, 1 + sinf(physical->animation * 3) * 0.05);
+    rr_renderer_scale(renderer, 1 + sinf(physical->animation_timer * 0.1) * 0.05);
     rr_renderer_draw_background(renderer, drop->rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, drop->id,
                                              drop->rarity);

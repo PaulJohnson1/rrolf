@@ -37,23 +37,29 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
             rr_lerp(physical->lerp_velocity.y, physical->velocity.y, 5 * delta);
         if (physical->lerp_angle == 0)
             physical->lerp_angle = physical->angle;
-        if (physical->turning_animation == 0)
-            physical->turning_animation = physical->angle;
 
         physical->lerp_radius =
             rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
         physical->lerp_angle =
             rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
-        physical->turning_animation = rr_angle_lerp(physical->turning_animation,
-                                                    physical->angle, 6 * delta);
+        if (rr_simulation_has_mob(this, entity))
+        {
+            if (physical->turning_animation == 0)
+                physical->turning_animation = physical->angle;
 
-        uint8_t has_drop = rr_simulation_has_drop(this, entity) || rr_simulation_has_petal(this, entity);
-        if (!has_drop)
-            physical->animation +=
+            physical->lerp_radius =
+                rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
+            physical->lerp_angle =
+                rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
+            physical->turning_animation = rr_angle_lerp(physical->turning_animation,
+                                                        physical->angle, 6 * delta);
+
+            physical->animation_timer +=
                 (2 * (physical->parent_id % 2) - 1) * delta *
                 (fmin(rr_vector_get_magnitude(&physical->lerp_velocity), 20) * 0.5 + 1) * 2;
+        }
         else
-            physical->animation += delta * 1.5;
+            physical->animation_timer += 0.5;
     }
 
     if (rr_simulation_has_flower(this, entity))

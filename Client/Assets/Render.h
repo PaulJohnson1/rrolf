@@ -70,6 +70,10 @@ void rr_king_mackarel_tail_draw(struct rr_renderer *);
 void rr_sea_snail_body_draw(struct rr_renderer *);
 void rr_sea_snail_head_draw(struct rr_renderer *);
 
+void rr_seagull_wing1_draw(struct rr_renderer *);
+void rr_seagull_wing2_draw(struct rr_renderer *);
+void rr_seagull_body_draw(struct rr_renderer *);
+
 void rr_tile_1_draw(struct rr_renderer *);
 void rr_tile_2_draw(struct rr_renderer *);
 void rr_tile_3_draw(struct rr_renderer *);

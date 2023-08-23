@@ -72,13 +72,13 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, 175, 0);
+        rr_renderer_translate(renderer, 160, 0);
         render_sprite(renderer, id, 1, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, -175, 0);
+        rr_renderer_translate(renderer, -160, 0);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
         render_sprite(renderer, id, 0, flags);
@@ -216,6 +216,22 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_context_state_free(renderer, &state);
         render_sprite(renderer, id, 1, flags);
         break;
+    case rr_mob_id_seagull:
+        rr_renderer_scale(renderer, 0.15f);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_rotate(renderer, animation_tick * 0.1f);
+        rr_renderer_translate(renderer, 125, 15);
+        render_sprite(renderer, id, 1, flags);
+        rr_renderer_context_state_free(renderer, &state);
+
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_rotate(renderer, animation_tick * -0.1f);
+        rr_renderer_translate(renderer, -125, 15);
+        render_sprite(renderer, id, 2, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        render_sprite(renderer, id, 0, flags);
+        break;
     }
     rr_renderer_context_state_free(renderer, &original_state);
 }
@@ -280,4 +296,7 @@ void rr_renderer_mob_cache_init()
     rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
 
     rr_renderer_spritesheet_init(&mob_sprites[14], NULL, 240, 240, rr_sea_snail_head_draw, 240, 240, rr_sea_snail_body_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[15], NULL, 192, 336, rr_seagull_body_draw, 
+    432, 288, rr_seagull_wing2_draw, 432, 288, rr_seagull_wing1_draw, 0);
 }

@@ -9,64 +9,23 @@ set(SRCS
     Assets/MapFeature/Fern3.c
     Assets/MapFeature/Moss.c
     Assets/MapFeature/WaterLettuce.c
-    Assets/Mob/Ankylosaurus/Body.c
-    Assets/Mob/Ankylosaurus/Head.c
-    Assets/Mob/Ankylosaurus/Tail.c
-    Assets/Mob/Dakotaraptor/Body.c
-    Assets/Mob/Dakotaraptor/Head.c
-    Assets/Mob/Dakotaraptor/Tail.c
-    Assets/Mob/Dakotaraptor/Wing1.c
-    Assets/Mob/Dakotaraptor/Wing2.c
-    Assets/Mob/Edmontosaurus/Body.c
-    Assets/Mob/Edmontosaurus/Head.c
-    Assets/Mob/Edmontosaurus/Leg1.c
-    Assets/Mob/Edmontosaurus/Leg2.c
-    Assets/Mob/Edmontosaurus/Tail.c
-    Assets/Mob/KingMackarel/Body.c
-    Assets/Mob/KingMackarel/Head.c
-    Assets/Mob/KingMackarel/Fin1.c
-    Assets/Mob/KingMackarel/Fin2.c
-    Assets/Mob/KingMackarel/Tail.c
-    Assets/Mob/Ornithomimus/Body.c
-    Assets/Mob/Ornithomimus/Head.c
-    Assets/Mob/Ornithomimus/Tail.c
-    Assets/Mob/Ornithomimus/Wing1.c
-    Assets/Mob/Ornithomimus/Wing2.c
-    Assets/Mob/Pachycephalosaurus/Body.c
-    Assets/Mob/Pachycephalosaurus/Head.c
-    Assets/Mob/Pachycephalosaurus/Leg1.c
-    Assets/Mob/Pachycephalosaurus/Leg2.c
-    Assets/Mob/Pachycephalosaurus/Tail.c
-    Assets/Mob/Pectinodon/Body.c
-    Assets/Mob/Pectinodon/Head.c
-    Assets/Mob/Pectinodon/Tail.c
-    Assets/Mob/Pectinodon/Wing1.c
-    Assets/Mob/Pectinodon/Wing2.c
-    Assets/Mob/Pteranodon/Body.c
-    Assets/Mob/Pteranodon/Wing1.c
-    Assets/Mob/Pteranodon/Wing2.c
-    Assets/Mob/Quetzalcoatlus/Body.c
-    Assets/Mob/Quetzalcoatlus/Head.c
-    Assets/Mob/Quetzalcoatlus/Wing1.c
-    Assets/Mob/Quetzalcoatlus/Wing2.c
-    Assets/Mob/Rex/Body.c
-    Assets/Mob/Rex/Head.c
-    Assets/Mob/Rex/Leg1.c
-    Assets/Mob/Rex/Leg2.c
-    Assets/Mob/Rex/Tail.c
-    Assets/Mob/SeaSnail/Body.c
-    Assets/Mob/SeaSnail/Head.c
-    Assets/Mob/Triceratops/Body.c
-    Assets/Mob/Triceratops/Head.c
-    Assets/Mob/Triceratops/Leg1.c
-    Assets/Mob/Triceratops/Leg2.c
-    Assets/Mob/Triceratops/Tail.c
+    Assets/Mob/Ankylosaurus.c
+    Assets/Mob/Dakotaraptor.c
+    Assets/Mob/Edmontosaurus.c
+    Assets/Mob/KingMackarel.c
+    Assets/Mob/Ornithomimus.c
+    Assets/Mob/Pachycephalosaurus.c
+    Assets/Mob/Pectinodon.c
+    Assets/Mob/Pteranodon.c
+    Assets/Mob/Quetzalcoatlus.c
+    Assets/Mob/Rex.c
+    Assets/Mob/SeaSnail.c
+    Assets/Mob/Triceratops.c
+    Assets/Mob/Seagull.c
     Assets/Mob/Fern.c
     Assets/Mob/Meteor.c
     Assets/Mob/Tree.c
-    Assets/Tile/1.c
-    Assets/Tile/2.c
-    Assets/Tile/3.c
+    Assets/Tile/HellCreek.c
     Assets/Init.c
     Assets/RenderMisc.c
     Assets/RenderMobs.c
