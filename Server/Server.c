@@ -60,45 +60,6 @@ void rr_api_on_open_result(char *bin, void *captures)
         account->petals[id][rarity] = count;
         id = rr_binary_encoder_read_uint8(&decoder);
     }
-    /*
-    cJSON *parsed = cJSON_Parse(json);
-    if (parsed == NULL)
-    {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-            fprintf(stderr, "Error before: %s\n", error_ptr);
-        return;
-    }
-
-    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
-    cJSON *xp = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
-    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    cJSON *already_playing =
-        cJSON_GetObjectItemCaseSensitive(parsed, "already_playing");
-    cJSON *username = cJSON_GetObjectItemCaseSensitive(parsed, "username");
-    cJSON *password = cJSON_GetObjectItemCaseSensitive(parsed, "password");
-    for (cJSON *petal_key = petals->child; petal_key != NULL;
-         petal_key = petal_key->next)
-    {
-        char *key = petal_key->string;
-        char *sub_key1 = strtok(key, ":");
-        char *sub_key2 = strtok(NULL, ":");
-
-        if (sub_key1 && sub_key2)
-        {
-            int index1 = atoi(sub_key1);
-            int index2 = atoi(sub_key2);
-
-            account->petals[index1][index2] = petal_key->valueint;
-        }
-    }
-    account->xp = xp->valuedouble;
-    account->already_playing = already_playing->valueint;
-    account->username = strdup(username->valuestring);
-    account->password = strdup(password->valuestring);
-    account->maximum_wave = max_wave->valueint;
-    cJSON_Delete(parsed);
-    */
 }
 
 // loadout validation
@@ -167,87 +128,6 @@ void rr_api_on_get_petals(char *bin, void *_client)
         }
     }
     puts("petals are valid");
-/*
-   puts("attempting petal validation");
-    struct rr_server_client *client = _client;
-    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
-    memset(&inventory[0], 0, sizeof inventory);
-
-    cJSON *parsed = cJSON_Parse(json);
-    if (parsed == NULL)
-    {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-            fprintf(stderr, "Error before: %s\n", error_ptr);
-        return;
-    }
-
-    cJSON *max_wave = cJSON_GetObjectItemCaseSensitive(parsed, "maximum_wave");
-    if (max_wave == NULL)
-        client->max_wave = 0;
-    else
-        client->max_wave = max_wave->valueint;
-
-    cJSON *experience = cJSON_GetObjectItemCaseSensitive(parsed, "xp");
-    double xp = 0;
-    if (experience != NULL)
-        xp = experience->valuedouble;
-
-    uint32_t next_level = 2;
-    while (xp >= xp_to_reach_level(next_level))
-    {
-        xp -= xp_to_reach_level(next_level);
-        ++next_level;
-    }
-    #define min(a,b) (((a) < (b)) ? (a) : (b))
-
-    client->level = min(next_level - 1, 150);
-    #undef min
-    printf("client is registered as level %d\n", next_level - 1);
-
-    cJSON *petals = cJSON_GetObjectItemCaseSensitive(parsed, "petals");
-    if (petals == NULL || !cJSON_IsObject(petals))
-    {
-        fprintf(stderr, "petals is missing or is not an object\n");
-        cJSON_Delete(parsed);
-        return;
-    }
-
-    for (cJSON *petal_key = petals->child; petal_key != NULL;
-         petal_key = petal_key->next)
-    {
-        char *key = petal_key->string;
-        char *sub_key1 = strtok(key, ":");
-        char *sub_key2 = strtok(NULL, ":");
-
-        if (sub_key1 && sub_key2)
-        {
-            int index1 = atoi(sub_key1);
-            int index2 = atoi(sub_key2);
-
-            inventory[index1][index2] = petal_key->valueint;
-        }
-    }
-
-    cJSON_Delete(parsed);
-    for (uint8_t i = 0; i < 20; ++i)
-    {
-        uint8_t id = client->loadout[i].id;
-        if (id != 0)
-        {
-            uint8_t rarity = client->loadout[i].rarity;
-            if (inventory[id][rarity] > 0)
-                --inventory[id][rarity];
-            else
-            {
-                memset(&client->loadout[0], 0, sizeof client->loadout);
-                puts("petals are invalid");
-                return;
-            }
-        }
-    }
-    puts("petals are valid");
-    */
 }
 
 static void rr_server_client_create_player_info(struct rr_server_client *this,
@@ -278,6 +158,16 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
         this->player_info->secondary_slots[i].id = id;
         this->player_info->secondary_slots[i].rarity = rarity;
     }
+}
+
+struct protocol_bound_checker {
+    struct proto_bug *encoder;
+    uint64_t len;
+};
+
+static uint8_t protocol_expect_bytes(struct protocol_bound_checker *checker, uint64_t bytes)
+{
+    return (checker->len >= bytes) && checker->encoder->current - checker->encoder->start + bytes <= checker->len;
 }
 
 void rr_server_client_free(struct rr_server_client *this)
@@ -738,22 +628,22 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
-
+        struct protocol_bound_checker checker = {&encoder, size};
+        #define expect(bytes) \
+        if (!protocol_expect_bytes(&checker, bytes)) \
+            { \
+                fputs("invalid protocol\n", stderr); \
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"bad protocol", sizeof "bad protocol"); \
+                return -1; \
+            }
         if (!client->received_first_packet)
         {
             client->received_first_packet = 1;
-            if (size < 16)
-            {
-                fputs("invlid size\n", stderr);
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"invalid size",
-                                 sizeof "invalid size");
-                return -1;
-            }
+            expect(16);
 
             proto_bug_read_uint64(&encoder, "useless bytes");
             uint64_t received_verification =
-                proto_bug_read_uint64(&encoder, "verification");
+            proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
                 fputs("invalid verification\n", stderr);
@@ -776,16 +666,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                  sizeof "invalid size3");
                 return -1;
             }
-            if (16 + encountered_size + uuid_encountered_size >= size)
-            {
-                printf("%lu %lu\n", size,
-                       encountered_size + uuid_encountered_size);
-                fputs("invalid size2\n", stderr);
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"invalid size2",
-                                 sizeof "invalid size2");
-                return -1;
-            }
+            expect(encountered_size);
+            expect(uuid_encountered_size);
 
             memset(&client->rivet_account, 0,
                    sizeof(struct rr_rivet_account));
@@ -815,6 +697,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     return -1;
                 }
             }
+            expect(1);
             uint64_t dev_flag = proto_bug_read_varuint(&encoder, "dev flag");
             if (dev_flag == 494538643243)
                 client->ready |= 2;
@@ -853,21 +736,18 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             return 0;
         }
+        expect(1);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
         {
-            if (size < 9)
-            {
-                puts("unsafe input packet with small length");
-                return 0;
-            }
             if (client->player_info == NULL)
                 break;
             if (client->player_info->flower_id == 0)
                 break;
+            expect(2);
             proto_bug_read_uint8(&encoder, "movement type");
-            uint64_t movementFlags =
+            uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
             float y = 0;
@@ -897,10 +777,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             else
             {
-                if (size < 9)
-                {
-                    return 0;
-                }
+                expect(8);
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
                 if ((x != 0 || y != 0) && x == x && y == y &&
@@ -926,24 +803,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 2:
         {
-            if (size < 2)
-            {
-                puts("someone sent a petal switch packet with size < 2");
-                return 0;
-            }
-            else if (size > 70)
-            {
-                puts("someone sent a petal switch packet with size > 70");
-                return 0;
-            }
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
+            expect(1);
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= 10 &&
                    encoder.current - encoder.start <= size)
             {
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
+                expect(1);
                 pos = proto_bug_read_uint8(&encoder, "petal switch");
             }
             break;
@@ -951,8 +820,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case 3:
         {
 #ifndef RIVET_BUILD
-            if (size < 2)
-                return 0;
+            if (!this->simulation_active)
+                break;
+            expect(1);
             puts("cheat used");
             uint8_t cheat_type = proto_bug_read_uint8(&encoder, "cheat type");
             if (cheat_type == 1)
@@ -1002,12 +872,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 70:
         {
+            expect(4);
             float requested_start_wave =
                 proto_bug_read_float32(&encoder, "requested wave");
             if (!(requested_start_wave <= 0.75 && requested_start_wave >= 0))
                 break;
             client->requested_start_wave_percent = requested_start_wave;
-
+            expect(1);
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 
@@ -1016,6 +887,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             for (uint8_t i = 0; i < loadout_count; i++)
             {
+                expect(4);
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
                 uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
                 if (id >= rr_petal_id_max)
@@ -1038,6 +910,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 71:
         {
+            expect(1);
             uint64_t nickname_size =
                 proto_bug_read_varuint(&encoder, "nick length");
 
@@ -1046,7 +919,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 puts("nick too long");
                 return 0;
             }
-
+            expect(nickname_size);
             memset(&client->client_nickname, 0,
                    sizeof(client->client_nickname));
 
@@ -1060,6 +933,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (first && !this->simulation_active)
             {
+                expect(1);
                 this->private = proto_bug_read_uint8(&encoder, "private") != 0;
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
@@ -1077,6 +951,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (!first)
                 break;
+            expect(1);
             uint8_t kick_pos = proto_bug_read_uint8(&encoder, "kick");
             if (kick_pos > RR_SQUAD_MEMBER_COUNT)
                 break;
