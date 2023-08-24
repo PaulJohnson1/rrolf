@@ -57,7 +57,9 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
 
 void rr_websocket_init(struct rr_websocket *this)
 {
+    void *event = this->on_event;
     memset(this, 0, sizeof *this);
+    this->on_event = event; //cursed
 }
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
