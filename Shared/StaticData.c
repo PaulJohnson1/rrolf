@@ -3,17 +3,19 @@
 #include <math.h>
 #include <stdio.h>
 
+#include <Shared/Utilities.h>
+
 // clang-format off
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_no_petal, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_basic, rr_rarity_id_common, 10.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, 13.0f, 5.0f, 0.0f, 15, 0, {1, 2, 2, 3, 3, 5, 5}},
-    {rr_petal_id_fossil, rr_rarity_id_common, 10.0f, 75.0f, 0.0f, 125, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_fossil, rr_rarity_id_common, 10.0f, 75.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 75.0f, 3.0f, 10.0f, 188, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_shell, rr_rarity_id_rare, 3.5f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 18.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 5.0f, 10.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -296,5 +298,12 @@ void rr_static_data_init()
 double xp_to_reach_level(uint32_t level)
 {
     //xp it takes from level - 1 to level
-    return level * pow(1.18, level);
+    double base = level * pow(1.18, level);
+    if (level < 60)
+        return base;
+    for (uint32_t i = 60; i < level; ++i)
+    {
+        base *= rr_fclamp(1.18 - 0.01 * (i - 60), 1.1, 1.18);
+    }
+    return base;
 }

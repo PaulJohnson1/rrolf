@@ -292,7 +292,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         return;
     if (this->response_time != 0)
         --this->response_time;
-    else
+    else if (!this->received_first_packet)
         this->kicked = 1;
     if (this->server->simulation_active)
     {

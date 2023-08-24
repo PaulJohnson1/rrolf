@@ -12,20 +12,14 @@ void rr_log_hex(uint8_t *start, uint8_t *end)
 
 float rr_lerp(float start, float end, float t)
 {
-    if (t < 0)
-        t = 0;
-    else if (t > 1)
-        t = 1;
+    t = rr_fclamp(t, 0, 1);
 
     return (end - start) * t + start;
 }
 
 float rr_angle_lerp(float start, float end, float t)
 {
-    if (t < 0)
-        t = 0;
-    else if (t > 1)
-        t = 1;
+    t = rr_fclamp(t, 0, 1);
 
     start = fmod(start, 2 * M_PI);
     end = fmod(end, 2 * M_PI);
