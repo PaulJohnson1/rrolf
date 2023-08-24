@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const WSS = require("ws");
+const http = require("http")
 const rng = require("./rng");
 const protocol = require("./protocol");
 const app = express();
@@ -429,6 +431,27 @@ app.use((req, res) => {
 
 //setInterval(saveDatabaseToFile, 60000);
 
-app.listen(port, () => {
+
+
+const server = http.createServer(app);
+
+server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+});
+
+const wss = new WSS.Server({server});
+const game_servers = {};
+
+
+wss.on("connection", (ws, req) => {
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+
+    if (req.url !== `/api/${SERVER_SECRET}`)
+        return ws.close();
+    ws.on('message', (message) => {
+        console.log(`Received: ${message}`);
+    });
+    console.log("connect");
 });

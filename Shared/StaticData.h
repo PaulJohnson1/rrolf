@@ -43,6 +43,9 @@ enum rr_petal_id
     rr_petal_id_beak,
     rr_petal_id_lightning,
     rr_petal_id_stick,
+    rr_petal_id_kelp,
+    rr_petal_id_fish_egg,
+    rr_petal_id_scales,
     rr_petal_id_max
 };
 
@@ -65,6 +68,7 @@ enum rr_mob_id
     rr_mob_id_king_mackarel,
     rr_mob_id_sea_snail,
     rr_mob_id_seagull,
+    rr_mob_id_kelp,
     rr_mob_id_max
 };
 

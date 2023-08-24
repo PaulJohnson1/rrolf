@@ -2,7 +2,7 @@
 
 #include <Client/Renderer/Renderer.h>
 
-void rr_tile_1_draw(struct rr_renderer *renderer)
+void rr_hc_tile_1_draw(struct rr_renderer *renderer)
 {
     rr_renderer_set_fill(renderer, 0xff45230a);
 rr_renderer_begin_path(renderer);
@@ -10,7 +10,9 @@ rr_renderer_move_to(renderer, -128, -128);
 rr_renderer_line_to(renderer, 128, -128);
 rr_renderer_line_to(renderer, 128, 128);
 rr_renderer_line_to(renderer, -128, 128);
+rr_renderer_line_to(renderer, -128, -128);
 rr_renderer_fill(renderer);
+rr_renderer_clip(renderer);
 rr_renderer_set_fill(renderer, 0xff321a07);
 rr_renderer_begin_path(renderer);
 rr_renderer_move_to(renderer, 89.4393, -146.927248);
@@ -180,7 +182,7 @@ rr_renderer_bezier_curve_to(renderer, 101.269272, -59.125854208, 98.181091520000
 rr_renderer_bezier_curve_to(renderer, 85.08280970000001, -46.133811608, 77.55273500000001, -49.236091348, 74.81305, -55.793929608000006);
 rr_renderer_fill(renderer);
 }
-void rr_tile_2_draw(struct rr_renderer *renderer)
+void rr_hc_tile_2_draw(struct rr_renderer *renderer)
 {
 rr_renderer_set_fill(renderer, 0xff45230a);
 rr_renderer_begin_path(renderer);
@@ -188,7 +190,9 @@ rr_renderer_move_to(renderer, -128, -128);
 rr_renderer_line_to(renderer, 128, -128);
 rr_renderer_line_to(renderer, 128, 128);
 rr_renderer_line_to(renderer, -128, 128);
+rr_renderer_line_to(renderer, -128, -128);
 rr_renderer_fill(renderer);
+rr_renderer_clip(renderer);
 rr_renderer_set_fill(renderer, 0xff321a07);
 rr_renderer_begin_path(renderer);
 rr_renderer_move_to(renderer, 89.4393, -146.927248);
@@ -358,7 +362,7 @@ rr_renderer_bezier_curve_to(renderer, 116.83619199999998, -11.141604021999997, 1
 rr_renderer_bezier_curve_to(renderer, 100.6497294, 1.8504460780000032, 93.119654, -1.2518411619999967, 90.37996899999999, -7.809679421999997);
 rr_renderer_fill(renderer);
 }
-void rr_tile_3_draw(struct rr_renderer *renderer)
+void rr_hc_tile_3_draw(struct rr_renderer *renderer)
 {
 rr_renderer_set_fill(renderer, 0xff45230a);
 rr_renderer_begin_path(renderer);
@@ -366,7 +370,9 @@ rr_renderer_move_to(renderer, -128, -128);
 rr_renderer_line_to(renderer, 128, -128);
 rr_renderer_line_to(renderer, 128, 128);
 rr_renderer_line_to(renderer, -128, 128);
+rr_renderer_line_to(renderer, -128, -128);
 rr_renderer_fill(renderer);
+rr_renderer_clip(renderer);
 rr_renderer_set_fill(renderer, 0xff321a07);
 rr_renderer_begin_path(renderer);
 rr_renderer_move_to(renderer, 89.4393, -146.927248);

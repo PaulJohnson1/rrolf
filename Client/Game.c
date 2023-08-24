@@ -553,6 +553,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             }
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
+            this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
@@ -700,13 +701,16 @@ static void render_background(struct rr_component_player_info *player_info,
     {
         for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
         {
-            uint32_t tile_index = (uint32_t)((newLeftX / GRID_SIZE + 1) *
-                                             (currY / GRID_SIZE + 2)) % 3;
+            uint32_t tile_index = rr_get_hash((uint32_t)(((newLeftX + 8192) / GRID_SIZE + 1) *
+                                             ((currY + 8192) / GRID_SIZE + 2))) % 3;
             struct rr_renderer_context_state state;
             rr_renderer_context_state_init(this->renderer, &state);
             rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
                                   currY + GRID_SIZE / 2);
-            rr_renderer_draw_tile(this->renderer, tile_index);
+            if (this->selected_biome == 0)
+                rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
+            else
+                rr_renderer_draw_tile_ocean(this->renderer, tile_index);
             rr_renderer_context_state_free(this->renderer, &state);
         }
     }

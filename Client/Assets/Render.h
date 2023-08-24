@@ -74,9 +74,15 @@ void rr_seagull_wing1_draw(struct rr_renderer *);
 void rr_seagull_wing2_draw(struct rr_renderer *);
 void rr_seagull_body_draw(struct rr_renderer *);
 
-void rr_tile_1_draw(struct rr_renderer *);
-void rr_tile_2_draw(struct rr_renderer *);
-void rr_tile_3_draw(struct rr_renderer *);
+void rr_kelp_draw(struct rr_renderer *);
+
+void rr_hc_tile_1_draw(struct rr_renderer *);
+void rr_hc_tile_2_draw(struct rr_renderer *);
+void rr_hc_tile_3_draw(struct rr_renderer *);
+
+void rr_oc_tile_1_draw(struct rr_renderer *);
+void rr_oc_tile_2_draw(struct rr_renderer *);
+void rr_oc_tile_3_draw(struct rr_renderer *);
 
 void rr_prop_fern_draw(struct rr_renderer *);
 void rr_prop_moss_draw(struct rr_renderer *);

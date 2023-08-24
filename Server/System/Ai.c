@@ -1011,6 +1011,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
             rr_vector_set_magnitude(&accel, 2.5);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
+            ai->target_entity = RR_NULL_ENTITY;
             return;
         }
         else if (dx * dx + dy * dy >
@@ -1034,6 +1035,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     {
     case rr_mob_id_fern:
     case rr_mob_id_tree:
+    case rr_mob_id_kelp:
         break;
     case rr_mob_id_seagull:
     case rr_mob_id_ornithomimus:

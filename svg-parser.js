@@ -58,12 +58,17 @@ const parse_path = (path, x, y) => {
 const parse_svg = str => {
     let doc = new DOMParser().parseFromString(str, 'text/xml');
     const [offset_x, offset_y] = doc.getElementsByTagName('svg')[0].attributes.viewBox.value.split(' ').map(x => parseFloat(x)).slice(2);
-    doc = [...doc.getElementsByTagName('path')].map(x => x.attributes).filter(x => !x["clip-rule"] && !x["fill-opacity"]);
+    doc = [...doc.getElementsByTagName('path')].map(x => x.attributes).filter(x => !x["clip-rule"] && (!x["fill-opacity"] || parseFloat(x["fill-opacity"].nodeValue) !== 0));
     let ret = "";
     for (let x of doc)
     {
         if (x["fill"])
-            ret += `rr_renderer_set_fill(renderer, 0xff${x["fill"].nodeValue.slice(1)});\n`;
+        {
+            if (x["fill-opacity"])
+                ret += `rr_renderer_set_fill(renderer, 0x${((x["fill-opacity"].nodeValue * 255) | 0).toString(16).padStart(2, '0')}${x["fill"].nodeValue.slice(1)});\n`;
+            else
+                ret += `rr_renderer_set_fill(renderer, 0xff${x["fill"].nodeValue.slice(1)});\n`;
+        }
         ret += parse_path(x["d"].nodeValue, -offset_x / 2, -offset_y / 2);
         if (x["fill"])
             ret += `rr_renderer_fill(renderer);\n`;

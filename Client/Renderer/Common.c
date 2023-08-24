@@ -34,11 +34,14 @@ void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, v
             curr_y = height;
     }
     rr_renderer_set_dimensions(renderer, curr_x, curr_y);
+    struct rr_renderer_context_state state;
     for (uint32_t i = 0; i < size; ++i)
     {
         struct rr_sprite_bounds *bounds = &spritesheet->sprites[i];
         rr_renderer_set_transform(renderer, 1, 0, bounds->x, 0, 1, bounds->y);
+        rr_renderer_context_state_init(renderer, &state);
         bounds->render(renderer);
+        rr_renderer_context_state_free(renderer, &state);
     }
 }
 

@@ -61,7 +61,9 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_fern:
-        rr_renderer_scale(renderer, 0.3f);
+        rr_renderer_scale(renderer, 0.6f);
+    case rr_mob_id_kelp:
+        rr_renderer_scale(renderer, 0.5f);
     case rr_mob_id_tree:
     case rr_mob_id_meteor:
         rr_renderer_scale(renderer, 0.4f);
@@ -300,4 +302,6 @@ void rr_renderer_mob_cache_init()
 
     rr_renderer_spritesheet_init(&mob_sprites[15], NULL, 192, 336, rr_seagull_body_draw, 
     432, 288, rr_seagull_wing2_draw, 432, 288, rr_seagull_wing1_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[16], NULL, 384, 384, rr_kelp_draw, 0);
 }

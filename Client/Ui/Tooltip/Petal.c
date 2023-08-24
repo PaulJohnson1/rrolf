@@ -25,7 +25,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
             0;
     char *hp = malloc((sizeof *hp) * 16);
     hp[sprintf(hp, "%.1f",
-               RR_PETAL_DATA[id].health *
+               id == rr_petal_id_scales ? 5 + rarity : RR_PETAL_DATA[id].health *
                    RR_PETAL_RARITY_SCALE[rarity].health)] = 0;
     char *dmg = malloc((sizeof *dmg) * 16);
     dmg[sprintf(dmg, "%.1f",
@@ -261,6 +261,32 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Burn: ", 12, 0xffcf3232),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+    }
+    else if (id == rr_petal_id_kelp)
+    {
+        char *extra = malloc((sizeof *extra) * 8);
+        extra[sprintf(extra, "%.1f",
+                      20 * RR_PETAL_RARITY_SCALE[rarity].damage)] = 0;
+        rr_ui_container_add_element(
+            this,
+            rr_ui_set_justify(rr_ui_h_container_init(
+                                  rr_ui_container_init(), 0, 0,
+                                  rr_ui_text_init("Mob heal: ", 12, 0xffffff44),
+                                  rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                              -1, 0));
+    }
+    else if (id == rr_petal_id_fish_egg)
+    {
+        uint8_t spawn_rar = rarity < 2 ? 0 : rarity - 2;
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Spawns: ", 12, 0xffe07422),
+                          rr_ui_text_init(RR_RARITY_NAMES[spawn_rar], 12,
+                                          RR_RARITY_COLORS[spawn_rar]),
+                          rr_ui_text_init(" Red Snapper", 12, 0xffffffff), NULL),
                       -1, 0));
     }
     rr_ui_set_justify(this, -1, -1);

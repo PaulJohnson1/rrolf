@@ -12,6 +12,7 @@ set(SRCS
     Assets/Mob/Ankylosaurus.c
     Assets/Mob/Dakotaraptor.c
     Assets/Mob/Edmontosaurus.c
+    Assets/Mob/Kelp.c
     Assets/Mob/KingMackarel.c
     Assets/Mob/Ornithomimus.c
     Assets/Mob/Pachycephalosaurus.c
@@ -26,6 +27,7 @@ set(SRCS
     Assets/Mob/Meteor.c
     Assets/Mob/Tree.c
     Assets/Tile/HellCreek.c
+    Assets/Tile/Ocean.c
     Assets/Init.c
     Assets/RenderMisc.c
     Assets/RenderMobs.c

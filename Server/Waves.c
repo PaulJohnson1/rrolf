@@ -29,42 +29,52 @@ uint8_t get_id_from_wave(uint8_t biome, uint32_t wave, uint8_t special_wave_id)
 {
     double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS;
     double seed = rr_frand();
-    if (special_wave_id == 0)
+    if (biome == 0)
     {
-        for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
-            if (seed < table[id])
-                return id;
-        return rr_mob_id_max - 1;
-    }
-    else if (special_wave_id == 1)
-    {
-        if (rr_frand() > 0.25)
-            return rr_mob_id_pachycephalosaurus;
+        if (special_wave_id == 0)
+        {
+            for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
+                if (seed < table[id])
+                    return id;
+            return rr_mob_id_max - 1;
+        }
+        else if (special_wave_id == 1)
+        {
+            if (rr_frand() > 0.25)
+                return rr_mob_id_pachycephalosaurus;
+            else
+                return rr_mob_id_ornithomimus;
+        }
+        else if (special_wave_id == 2)
+            return rr_mob_id_triceratops;
+        else if (special_wave_id == 3)
+        {
+            if (rr_frand() > 0.025)
+                return rr_mob_id_pteranodon;
+            else
+                return rr_mob_id_meteor;
+        }
+        else if (special_wave_id == 4)
+        {
+            if (rr_frand() > 0.75)
+                return rr_mob_id_fern;
+            else
+                return rr_mob_id_dakotaraptor;
+        }
         else
-            return rr_mob_id_ornithomimus;
-    }
-    else if (special_wave_id == 2)
-        return rr_mob_id_triceratops;
-    else if (special_wave_id == 3)
-    {
-        if (rr_frand() > 0.025)
-            return rr_mob_id_pteranodon;
-        else
-            return rr_mob_id_meteor;
-    }
-    else if (special_wave_id == 4)
-    {
-        if (rr_frand() > 0.75)
-            return rr_mob_id_fern;
-        else
-            return rr_mob_id_dakotaraptor;
+        {
+            if (rr_frand() > 0.25)
+                return rr_mob_id_ankylosaurus;
+            else
+                return rr_mob_id_quetzalcoatlus;
+        }
     }
     else
     {
-        if (rr_frand() > 0.25)
-            return rr_mob_id_ankylosaurus;
-        else
-            return rr_mob_id_quetzalcoatlus;
+        for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
+                if (seed < table[id])
+                    return id;
+        return rr_mob_id_max - 1;
     }
 }
 

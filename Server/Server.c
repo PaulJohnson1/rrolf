@@ -344,6 +344,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         }
         proto_bug_write_uint8(&encoder, pos, "sqpos");
         proto_bug_write_uint8(&encoder, this->server->private, "private");
+        proto_bug_write_uint8(&encoder, this->server->biome, "biome");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -362,6 +363,9 @@ void rr_server_init(struct rr_server *this)
     printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
     this->countdown_ticks = 25 * 300;
+#ifndef RIVET_BUILD
+    this->biome = 1; 
+#endif
     rr_static_data_init();
 }
 
@@ -383,6 +387,7 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
 
 void rr_server_tick(struct rr_server *this)
 {
+    //rr_api_websocket_tick(this);
     if (this->simulation_active)
         rr_simulation_tick(&this->simulation);
 
@@ -438,6 +443,9 @@ void rr_server_tick(struct rr_server *this)
             {
                 this->simulation_active = 1;
                 rr_simulation_init(&this->simulation);
+                #ifndef RIVET_BUILD
+                    this->simulation.biome = this->biome;
+                #endif
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
                 char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
@@ -475,7 +483,7 @@ void rr_server_tick(struct rr_server *this)
 #ifdef RIVET_BUILD
                 125;
 #else
-                2;
+                25;
 #endif
     }
 }
@@ -1011,6 +1019,33 @@ void *thread_func(void *arg)
 
 static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
+static int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
+                           void *user, void *in, size_t size)
+{
+    struct rr_websocket *this = lws_context_user(lws_get_context(wsi));
+
+    switch (reason)
+    {
+    case LWS_CALLBACK_CLIENT_ESTABLISHED:
+        //this->on_event(rr_websocket_event_type_open, NULL, this->user_data, 0);
+        break;
+    case LWS_CALLBACK_CLIENT_RECEIVE:
+        //this->on_event(rr_websocket_event_type_data, in, this->user_data, size);
+        break;
+    case LWS_CALLBACK_CLIENT_CLOSED:
+        //this->on_event(rr_websocket_event_type_close, NULL, this->user_data, size);
+        break;
+    case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
+        fputs((char *)in, stderr);
+        fputs("\n", stderr);
+        abort();
+        break;
+    default:
+        break;
+    }
+    return 0;
+}
+
 void rr_server_run(struct rr_server *this)
 {
     struct lws_context_creation_info info;
@@ -1028,6 +1063,36 @@ void rr_server_run(struct rr_server *this)
     this->server = lws_create_context(&info);
     assert(this->server);
 
+    //api ws
+    struct lws_context_creation_info info2;
+    struct lws_protocols protocols[2] = {{"g", rr_on_socket_event_lws, 0, 0},
+                                         {NULL, NULL, 0, 0}};
+    memset(&info2, 0, sizeof info2);
+    protocols[0].callback = rr_on_socket_event_lws;
+    protocols[0].name = "g";
+
+    info2.port = CONTEXT_PORT_NO_LISTEN;
+    info2.protocols = protocols;
+    info2.gid = -1;
+    info2.uid = -1;
+    info2.user = this;
+    info2.pt_serv_buf_size = 1024 * 1024;
+
+    /*
+    this->api_socket.socket_context = lws_create_context(&info);
+
+    struct lws_client_connect_info connection_info;
+    memset(&connection_info, 0, sizeof connection_info);
+    connection_info.context = this->api_socket.socket_context;
+    connection_info.address = "localhost";
+    connection_info.port = 55554;
+    connection_info.host = lws_canonical_hostname(this->api_socket.socket_context);
+    connection_info.path = "/api/" RR_API_SECRET;
+    connection_info.origin = "ggez";
+    connection_info.protocol = "g";
+    this->api_socket.socket = lws_client_connect_via_info(&connection_info);
+    */
+
     // pthread_t service_thread;
     // int ret = pthread_create(&service_thread, NULL, thread_func, this);
     // if (ret != 0)
@@ -1042,7 +1107,7 @@ void rr_server_run(struct rr_server *this)
 #ifdef RIVET_BUILD
         125;
 #else
-        24;
+        25;
 #endif
     while (1)
     {
@@ -1052,7 +1117,9 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&start,
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
+        //lws_service(this->api_socket.socket_context, -1);
         lws_service(this->server, -1);
+        
         rr_server_tick(this);
         gettimeofday(&end, NULL);
 
