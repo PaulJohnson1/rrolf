@@ -28,6 +28,7 @@
 
 static void set_zone(struct rr_spawn_zone *zone, float x, float y, float w, float h, float d)
 {
+    zone->mob_count = 0;
     zone->x = x;
     zone->y = y;
     zone->w = w;
@@ -46,8 +47,8 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
     rr_component_arena_set_wave(arena_component, 1);
-    set_zone(&this->zones[0], 512, 256, 256, 256, 0);
-    set_zone(&this->zones[1], 1024, 1024, 256, 256, 0);
+    set_zone(&this->zones[0], 512, 512, 512, 256, 0);
+    set_zone(&this->zones[1], 1024, 512, 256, 512, 0);
     printf("simulation size: %lu\n", sizeof *this);
 
 #define XX(COMPONENT, ID)                                                      \
@@ -102,6 +103,8 @@ static void spawn_random_mob(struct rr_simulation *this, struct rr_spawn_zone *z
     struct rr_vector pos = {zone->x + rr_frand() * zone->w, zone->y + rr_frand() * zone->h};
     EntityIdx mob_id = rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity,
                                                rr_simulation_team_id_mobs);
+    rr_simulation_get_mob(this, mob_id)->zone = zone;
+    ++zone->mob_count;
 }
 
 // spawn 4-8 of some mob type in around the same position, avoid players
@@ -164,6 +167,8 @@ static void tick_wave(struct rr_simulation *this)
     for (uint32_t i = 0; i < 2; ++i)
     {
         struct rr_spawn_zone *zone = &this->zones[i];
+        if (zone->mob_count >= 5)
+            continue;
         if (rand() % 100 == 0)
         {
             spawn_random_mob(this, zone);

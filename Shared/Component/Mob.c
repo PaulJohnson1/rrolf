@@ -42,6 +42,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_simulation_get_relations(simulation, this->parent_id);
     if (this->player_spawned)
         return;
+    --this->zone->mob_count;
     // put it here please
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, this->parent_id);

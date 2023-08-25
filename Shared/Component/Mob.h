@@ -8,9 +8,11 @@ struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 RR_SERVER_ONLY(struct rr_component_player_info;)
+RR_SERVER_ONLY(struct rr_spawn_znne;)
 
 struct rr_component_mob
 {
+    RR_SERVER_ONLY(struct rr_spawn_zone *zone;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(uint8_t protocol_state;)
     uint8_t id;

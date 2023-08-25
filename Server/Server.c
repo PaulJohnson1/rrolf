@@ -293,6 +293,8 @@ void rr_server_client_tick(struct rr_server_client *this)
         --this->response_time;
     else if (!this->received_first_packet)
         this->kicked = 1;
+    if (this->squad == 0)
+        return;
     if (this->player_info != NULL)
     {
         if (rr_simulation_has_entity(&this->server->simulation,
@@ -622,23 +624,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             client->verified = 1;
 
             //put in a squad
-            for (uint32_t i = 0; i < 16; ++i)
-            {
-                if (this->squads[i].members_in_use != (1 << RR_SQUAD_MEMBER_COUNT) - 1)
-                {
-                    for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
-                    {
-                        if (((this->squads[i].members_in_use >> j) & 1) == 0)
-                        {
-                            client->squad = i + 1;
-                            this->squads[i].members_in_use |= 1 << j;
-                            this->squads[i].clients[j] = client;
-                            return 0;
-                        }
-                    }
-                }
-            }
-
             return 0;
         }
         expect(1);
@@ -764,6 +749,39 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #endif
             break;
         }
+        case 68:
+        {
+            puts("find squad");
+            if (client->squad != 0)
+            {
+                struct rr_squad *squad = &this->squads[client->squad - 1];
+                for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+                {
+                    if (squad->clients[i] == client)
+                    {
+                        squad->members_in_use &= ~(1 << i);
+                        break;
+                    }
+                }
+            }
+            for (uint32_t i = 0; i < 16; ++i)
+            {
+                if (this->squads[i].members_in_use != (1 << RR_SQUAD_MEMBER_COUNT) - 1)
+                {
+                    for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+                    {
+                        if (((this->squads[i].members_in_use >> j) & 1) == 0)
+                        {
+                            client->squad = i + 1;
+                            this->squads[i].members_in_use |= 1 << j;
+                            this->squads[i].clients[j] = client;
+                            return 0;
+                        }
+                    }
+                }
+            }
+            break;
+        }
         case 69:
         {
             client->ready |= 1;
@@ -855,12 +873,14 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (!first)
                 break;
             expect(1);
+            /*
             uint8_t kick_pos = proto_bug_read_uint8(&encoder, "kick");
             if (kick_pos > RR_SQUAD_MEMBER_COUNT)
                 break;
             if (kick_pos == i)
                 break;
             this->clients[kick_pos].kicked = 1;
+            */
             break;
         }
         default:

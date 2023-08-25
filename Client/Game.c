@@ -97,6 +97,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
 
     rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token,
                       this);
+    rr_game_connect_socket(this);
 }
 
 static struct rr_ui_element *make_label_tooltip(char const *text)
@@ -130,7 +131,7 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return game->rivet_lobby_pending || game->socket_pending || game->socket_ready || game->socket.found_error;
+    return game->joined_squad || game->socket.found_error;
 }
 
 static uint8_t player_alive(struct rr_ui_element *this,
@@ -524,11 +525,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
-            rr_websocket_send_all(&this->socket);
+            this->socket_ready = 1;
+            this->socket_pending = 0;
             return;
         }
-        this->socket_pending = 0;
-        this->socket_ready = 1;
 
         this->socket.clientbound_encryption_key =
             rr_get_hash(this->socket.clientbound_encryption_key);
@@ -543,6 +543,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case 69:
         {
+            this->joined_squad = 1;
             this->ticks_until_game_start =
                 proto_bug_read_uint8(&encoder, "countdown");
             for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)

@@ -272,27 +272,13 @@ static void squad_find_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
-    if (game->rivet_lobby_pending)
+    if (!game->socket_ready)
     {
         this->fill = 0xff999999;
-        data->text = "Finding...";
-    }
-    else if (game->socket_pending)
-    {
-        this->fill = 0xff999999;
-        data->text = "Joining...";
     }
     else
     {
-        rr_ui_element_check_if_focused(this, game);
         this->fill = 0xffd4b30c;
-        if (game->socket_ready)
-            data->text = "Find Squad";
-        else
-        {
-            data->text = "Find Squad";
-            this->fill = 0xffd4b30c;
-        }
     }
 }
 
@@ -361,6 +347,7 @@ static void join_code_on_event(struct rr_ui_element *this,
     {
         if (1)
         {
+            /*
             if (strlen(&game->connect_link[0]) != 36)
                 return;
             if (game->socket_ready)
@@ -373,6 +360,7 @@ static void join_code_on_event(struct rr_ui_element *this,
             #else
             rr_websocket_connect_to(&game->socket, "ws://127.0.0.1:1234");
             #endif
+            */
         }
     }
 }
@@ -383,11 +371,13 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (!game->socket_pending && !game->rivet_lobby_pending)
+        if (game->socket_ready)
         {
-            if (game->socket_ready)
-                rr_websocket_disconnect(&game->socket, game);
-            rr_game_connect_socket(game);
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, output_packet);
+            proto_bug_write_uint8(&encoder2, 68, "header");
+            
+            rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
     }
 }

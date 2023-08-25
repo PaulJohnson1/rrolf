@@ -100,6 +100,7 @@ struct rr_game
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t rivet_lobby_pending;
+    uint8_t joined_squad;
     uint8_t simulation_ready;
     int8_t ticks_until_game_start;
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting

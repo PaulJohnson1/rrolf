@@ -29,6 +29,7 @@ struct rr_simulation_animation
 
 struct rr_spawn_zone
 {
+    uint32_t mob_count;
     float x;
     float y;
     float w;
