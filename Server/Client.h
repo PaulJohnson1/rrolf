@@ -37,12 +37,14 @@ struct rr_server_client
     char client_nickname[18 * 4];
     uint32_t level;
     uint32_t response_time;
+    uint8_t squad;
     uint8_t received_first_packet : 1;
     uint8_t verified : 1;
     uint8_t ready : 4;
     uint8_t loadout_validated : 1;
     uint8_t loadout_pending_validation : 1;
     uint8_t kicked : 1;
+    uint8_t playing : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);

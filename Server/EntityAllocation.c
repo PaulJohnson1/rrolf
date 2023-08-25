@@ -17,11 +17,8 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_simulation_add_health(this, flower_id);
     struct rr_component_relations *relations =
         rr_simulation_add_relations(this, flower_id);
-    float distance = sqrt((float)rand() / (float)RAND_MAX) *
-                     rr_simulation_get_arena(this, 1)->radius;
-    float angle = (float)rand() / (float)RAND_MAX * M_PI * 2.0f;
-    rr_component_physical_set_x(physical, cos(angle) * distance);
-    rr_component_physical_set_y(physical, sin(angle) * distance);
+    rr_component_physical_set_x(physical, rr_frand() * RR_ARENA_LENGTH);
+    rr_component_physical_set_y(physical, rr_frand() * RR_ARENA_LENGTH);
     rr_component_physical_set_radius(physical, 25.0f);
     physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)
@@ -108,11 +105,6 @@ float x, float y,
     EntityIdx entity = rr_simulation_alloc_entity(this);
 
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (team_id == rr_simulation_team_id_mobs)
-    {
-        arena->mob_count++;
-        arena->mob_counters[mob_id * rr_rarity_id_max + rarity_id]++;
-    }
 
     struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
     struct rr_component_physical *physical =

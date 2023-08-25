@@ -192,3 +192,5 @@ struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
 struct rr_ui_element *rr_ui_level_bar_init(float);
 
 struct rr_ui_element *rr_ui_loot_container_init();
+
+struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);

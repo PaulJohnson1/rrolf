@@ -26,6 +26,15 @@ struct rr_simulation_animation
     uint8_t length;
     struct rr_vector points[16];
 };
+
+struct rr_spawn_zone
+{
+    float x;
+    float y;
+    float w;
+    float h;
+    float difficulty;
+};
 #endif
 
 enum rr_simulation_team_id
@@ -53,7 +62,7 @@ struct rr_simulation
     EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
 #undef XX
-
+    RR_SERVER_ONLY(struct rr_spawn_zone zones[2];)
     RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
     RR_SERVER_ONLY(uint32_t wave_points;)
     RR_SERVER_ONLY(uint32_t special_wave_id;)

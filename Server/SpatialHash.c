@@ -16,14 +16,13 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this->simulation, entity);
 
-    if (fabsf(physical->x) > RR_ARENA_RADIUS ||
-        fabsf(physical->y) > RR_ARENA_RADIUS)
+    if (physical->x < physical->radius || physical->y < physical->radius) //add other checks
         return;
     // force positions unsigned for a significantly better hash function
     uint32_t x =
-        (uint32_t)(physical->x + RR_ARENA_RADIUS) >> SPATIAL_HASH_GRID_SIZE;
+        (uint32_t)(physical->x) >> SPATIAL_HASH_GRID_SIZE;
     uint32_t y =
-        (uint32_t)(physical->y + RR_ARENA_RADIUS) >> SPATIAL_HASH_GRID_SIZE;
+        (uint32_t)(physical->y) >> SPATIAL_HASH_GRID_SIZE;
     struct rr_spatial_hash_cell *cell = &this->cells[x][y];
     cell->entities[cell->entities_in_use++] = entity;
 }
@@ -34,8 +33,8 @@ void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy,
                            float fw, float fh, void *user_captures,
                            void (*cb)(EntityIdx, void *))
 {
-    float x = fmaxf(fx + RR_ARENA_RADIUS - fw, 0);
-    float y = fmaxf(fy + RR_ARENA_RADIUS - fh, 0);
+    float x = fmaxf(fx - fw, 0);
+    float y = fmaxf(fy - fh, 0);
     // should not take in an entity id like insert does. the reason is so stuff
     // like ai can query a large radius without a viewing entity
     uint32_t s_x = (((uint32_t)(x)) >> SPATIAL_HASH_GRID_SIZE);

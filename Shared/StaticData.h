@@ -2,8 +2,12 @@
 
 #include <stdint.h>
 
+#include <Shared/Entity.h>
+
 #define RR_LEVELS_PER_EXTRA_SLOT 20
 #define RR_BIOME_COUNT 2
+#define RR_MAZE_DIM 16
+#define RR_MAZE_GRID_SIZE (RR_ARENA_LENGTH / RR_MAZE_DIM)
 
 enum rr_rarity_id
 {
@@ -129,6 +133,9 @@ extern double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
+
+extern uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2];
+extern uint8_t RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
 
 void rr_static_data_init();
 

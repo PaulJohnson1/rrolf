@@ -313,10 +313,152 @@ static void init_loot_tables()
                     rr_petal_id_kelp, 0.1);
 }
 
+static void init_maze()
+{
+    #define offset(a,b) \
+    ((x + a < 0 || y + b < 0 || x + a >= RR_MAZE_DIM/2 || y + b >= RR_MAZE_DIM/2) ? 0 : RR_MAZE_TEMPLATE_HELL_CREEK[x+a][y+b])
+
+    for (int32_t x = 0; x < RR_MAZE_DIM/2; ++x)
+    {
+        for (int32_t y = 0; y < RR_MAZE_DIM/2; ++y)
+        {
+            //top left
+            uint8_t this_tile = RR_MAZE_TEMPLATE_HELL_CREEK[x][y];
+            uint8_t top = offset(0,-1);
+            uint8_t bottom = offset(0,1);
+            if (this_tile)
+            {
+                if (top == 0)
+                {
+                    if (offset(-1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = 7;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    if (offset(1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = 5;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                else
+                {
+                    RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                if (bottom == 0)
+                {
+                    if (offset(-1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = 6;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    if (offset(1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = 4;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+                else
+                {
+                    RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+            }
+            else
+            {
+                if (top)
+                {
+                    if (offset(-1,0) && offset(-1,-1))
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = 15;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    if (offset(1,0) && offset(1,-1))
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = 13;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                else
+                {
+                    RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                if (bottom)
+                {
+                    if (offset(-1,0) && offset(-1,1))
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = 14;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    if (offset(1,0) && offset(1,1))
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = 12;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+                else
+                {
+                    RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+            }
+            /*
+            if (this_tile)
+            {
+                if (top)
+                {
+                    if (offset(-1,0))
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = 4;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    if (offset(1, 0))
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = 6;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                uint8_t bottom = offset(0,1);
+                if (bottom)
+                {
+                    if (offset(-1,0))
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = 5;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    if (offset(1, 0))
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = 7;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+            }
+            else
+            {
+                if (top == 0) 
+                {
+                    if (offset(-1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = 12;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2] = this_tile;
+                    if (offset(1, 0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = 14;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2] = this_tile;
+                }
+                uint8_t bottom = offset(0,1);
+                if (bottom == 0)
+                {
+                    if (offset(-1,0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = 13;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2][y*2+1] = this_tile;
+                    if (offset(1, 0) == 0)
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = 15;
+                    else
+                        RR_MAZE_HELL_CREEK[x*2+1][y*2+1] = this_tile;
+                }
+            }
+            */
+        }
+    }
+}
+
 void rr_static_data_init()
 {
     init_game_coefficients();
     init_loot_tables();
+    init_maze();
 }
 
 double xp_to_reach_level(uint32_t level)
@@ -331,3 +473,16 @@ double xp_to_reach_level(uint32_t level)
     }
     return base;
 }
+
+uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
+    {0, 0, 1, 1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 0, 1, 1, 1},
+    {0, 1, 0, 1, 1, 1, 1, 0},
+    {0, 1, 1, 0, 1, 1, 0, 1},
+    {0, 0, 1, 1, 0, 0, 0, 1},
+    {1, 1, 1, 1, 0, 1, 1, 1},
+    {0, 1, 0, 1, 1, 1, 1, 0},
+    {0, 1, 1, 0, 1, 1, 0, 1},
+};
+
+uint8_t RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM] = {0};

@@ -37,6 +37,7 @@ set(SRCS
     DOM.c
     Particle.c
     Renderer/Common.c
+    Renderer/RenderArena.c
     Renderer/RenderDrop.c
     Renderer/RenderFlower.c
     Renderer/RenderHealth.c
@@ -54,6 +55,7 @@ set(SRCS
     Ui/Engine.c
     Ui/InGame/Deathscreen.c
     Ui/InGame/Loadout.c
+    Ui/InGame/Minimap.c
     Ui/InGame/PetalsCollected.c
     Ui/InGame/Squad.c
     Ui/InGame/Wave.c

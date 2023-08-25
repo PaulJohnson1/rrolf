@@ -176,6 +176,8 @@ void rr_simulation_write_binary(struct rr_simulation *this,
     for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
         if (rr_bitset_get_bit(this->player_info_tracker, i))
         {
+            if (rr_simulation_get_player_info(this, i)->squad != player_info->squad)
+                continue;
             rr_bitset_set(new_entities_in_view, i);
             struct rr_component_player_info *p_info =
                 rr_simulation_get_player_info(this, i);

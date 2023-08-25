@@ -52,7 +52,7 @@ static uint8_t mob_button_should_show(struct rr_ui_element *this,
     struct mob_button_metadata *data = this->data;
     struct rr_component_arena *arena =
         rr_simulation_get_arena(game->simulation, 1);
-    return arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
+    return 0;
 }
 
 static void mob_button_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -85,7 +85,7 @@ static void mob_button_on_render(struct rr_ui_element *this,
     struct rr_component_arena *arena =
         rr_simulation_get_arena(game->simulation, 1);
     uint32_t count =
-        arena->mob_counters[data->id * rr_rarity_id_max + data->rarity];
+        0;
     if (count <= 1)
         return;
     rr_renderer_translate(renderer, 25, -25);

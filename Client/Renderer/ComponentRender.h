@@ -5,6 +5,7 @@
 struct rr_game;
 struct rr_simulation;
 
+void rr_component_arena_render(EntityIdx, struct rr_game *, struct rr_simulation *);
 void rr_component_drop_render(EntityIdx, struct rr_game *, struct rr_simulation *);
 void rr_component_flower_render(EntityIdx, struct rr_game *, struct rr_simulation *);
 void rr_component_health_render(EntityIdx, struct rr_game *, struct rr_simulation *);

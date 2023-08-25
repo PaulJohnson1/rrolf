@@ -26,6 +26,15 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
+static void set_zone(struct rr_spawn_zone *zone, float x, float y, float w, float h, float d)
+{
+    zone->x = x;
+    zone->y = y;
+    zone->w = w;
+    zone->h = h;
+    zone->difficulty = d;
+}
+
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -35,9 +44,10 @@ void rr_simulation_init(struct rr_simulation *this)
     EntityIdx id = rr_simulation_alloc_entity(this);
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, id);
-    rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
+    rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
     rr_component_arena_set_wave(arena_component, 1);
-
+    set_zone(&this->zones[0], 512, 256, 256, 256, 0);
+    set_zone(&this->zones[1], 1024, 1024, 256, 256, 0);
     printf("simulation size: %lu\n", sizeof *this);
 
 #define XX(COMPONENT, ID)                                                      \
@@ -61,10 +71,10 @@ find_position_away_from_players(struct rr_simulation *this)
     uint8_t invalid = 1;
     while (invalid)
     {
-        float rad = sqrtf(rr_frand()) * RR_ARENA_RADIUS;
-        float angle = rr_frand() * 2 * M_PI;
-        ret.x = rad * cosf(angle);
-        ret.y = rad * sinf(angle);
+        //float rad = sqrtf(rr_frand()) * RR_ARENA_LENGTH;
+        //float angle = rr_frand() * 2 * M_PI;
+        ret.x = rr_frand() * RR_ARENA_LENGTH;//rad * cosf(angle);
+        ret.y = rr_frand() * RR_ARENA_LENGTH;//rad * sinf(angle);
         invalid = 0;
         for (uint16_t i = 0; i < this->flower_count; ++i)
         {
@@ -81,17 +91,15 @@ find_position_away_from_players(struct rr_simulation *this)
     return ret;
 }
 
-static void spawn_random_mob(struct rr_simulation *this)
+static void spawn_random_mob(struct rr_simulation *this, struct rr_spawn_zone *zone)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
     uint8_t rarity = get_rarity_from_wave(arena->wave);
     if (!should_spawn_at(arena->wave, id, rarity))
         return;
-    if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
-        return;
     this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-    struct rr_vector pos = find_position_away_from_players(this);
+    struct rr_vector pos = {zone->x + rr_frand() * zone->w, zone->y + rr_frand() * zone->h};
     EntityIdx mob_id = rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity,
                                                rr_simulation_team_id_mobs);
 }
@@ -153,6 +161,15 @@ static void spawn_mob_swarm(struct rr_simulation *this)
 
 static void tick_wave(struct rr_simulation *this)
 {
+    for (uint32_t i = 0; i < 2; ++i)
+    {
+        struct rr_spawn_zone *zone = &this->zones[i];
+        if (rand() % 100 == 0)
+        {
+            spawn_random_mob(this, zone);
+        }
+    }
+    /*
     if (this->flower_count == 0)
         this->game_over = 1;
 
@@ -189,6 +206,7 @@ static void tick_wave(struct rr_simulation *this)
             this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
+    */
 }
 
 void rr_simulation_tick(struct rr_simulation *this)
@@ -211,8 +229,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
 
-    if (!this->game_over)
-        tick_wave(this);
+    tick_wave(this);
     // delete pending deletions
     rr_bitset_for_each_bit(
         this->pending_deletions,

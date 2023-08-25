@@ -18,25 +18,21 @@ enum rr_websocket_event_type
     rr_websocket_event_type_data
 };
 
-struct rr_api_websocket
+struct rr_squad
 {
-    void *user_data;
-    void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
-    struct lws_context *socket_context;
-    struct lws *socket;
+    struct rr_server_client *clients[RR_SQUAD_MEMBER_COUNT];
+    uint32_t countdown_ticks;
+    uint8_t members_in_use;
+    uint8_t private;
 };
 
 struct rr_server
 {
     uint8_t clients_in_use[RR_BITSET_ROUND(RR_MAX_CLIENT_COUNT)];
     struct lws_context *server;
-    //struct rr_api_websocket api_socket;
     struct rr_server_client clients[RR_MAX_CLIENT_COUNT];
+    struct rr_squad squads[16];
     struct rr_simulation simulation;
-    uint32_t countdown_ticks;
-    uint8_t private;
-    uint8_t simulation_active;
-    int8_t ticks_until_simulation_create;
     uint8_t pos;
     uint8_t biome;
 };
