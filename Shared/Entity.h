@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define RR_ARENA_LENGTH (4096)
+#define RR_ARENA_LENGTH (24576)
 #define RR_MAX_ENTITY_COUNT (2048)
 #define RR_NULL_ENTITY (0)
 #define RR_MAX_COLLISION_COUNT (128)

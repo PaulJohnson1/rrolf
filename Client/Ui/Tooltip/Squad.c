@@ -64,24 +64,6 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal, uint8_t top)
     return this;
 }
 
-static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
-{
-    struct rr_ui_dynamic_text_metadata *data = this->data;
-    struct rr_game_squad_client *client = data->data;
-    data->text[sprintf(data->text, "Spawn on wave %d",
-                       client->requested_start_wave)] = 0;
-}
-
-static struct rr_ui_element *
-wave_spawn_element_init(struct rr_game_squad_client *member)
-{
-    struct rr_ui_element *this =
-        rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
-    struct rr_ui_dynamic_text_metadata *data = this->data;
-    data->data = member;
-    return this;
-}
-
 static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
@@ -109,7 +91,6 @@ struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *game, uint
             rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
                 dev_text_init(member),
                 rr_ui_text_init(&member->name[0], 16, 0xffffffff),
-                wave_spawn_element_init(member),
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 
                     squad_loadout_button_init(&member->loadout[0], 1),
                     squad_loadout_button_init(&member->loadout[1], 1),

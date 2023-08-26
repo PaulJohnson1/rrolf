@@ -33,6 +33,7 @@ set(SRCS
     Server.c
     Simulation.c
     SpatialHash.c
+    Squad.c
     UpdateProtocol.c
     Waves.c
     ../Shared/Component/Ai.c

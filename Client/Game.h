@@ -29,7 +29,6 @@ struct rr_game_loadout_petal
 struct rr_game_squad_client
 {
     struct rr_game_loadout_petal loadout[20];
-    uint32_t requested_start_wave;
     char name[18];
     uint8_t in_use;
     uint8_t ready;
@@ -102,7 +101,6 @@ struct rr_game
     uint8_t rivet_lobby_pending;
     uint8_t joined_squad;
     uint8_t simulation_ready;
-    int8_t ticks_until_game_start;
     uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
     uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
     uint8_t block_ui_input;
@@ -111,7 +109,8 @@ struct rr_game
     uint8_t is_mobile;
 
     uint8_t squad_private;
-    char connect_link[100];
+    char squad_code[7];
+    char connect_code[7];
 };
 
 void rr_game_init(struct rr_game *);

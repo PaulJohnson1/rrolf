@@ -58,7 +58,6 @@ set(SRCS
     Ui/InGame/Minimap.c
     Ui/InGame/PetalsCollected.c
     Ui/InGame/Squad.c
-    Ui/InGame/Wave.c
     Ui/ScrollContainer.c
     Ui/TitleScreen/BiomeButton.c
     Ui/TitleScreen/Changelog.c

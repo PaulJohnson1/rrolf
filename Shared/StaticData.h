@@ -6,7 +6,7 @@
 
 #define RR_LEVELS_PER_EXTRA_SLOT 20
 #define RR_BIOME_COUNT 2
-#define RR_MAZE_DIM 16
+#define RR_MAZE_DIM 48
 #define RR_MAZE_GRID_SIZE (RR_ARENA_LENGTH / RR_MAZE_DIM)
 
 enum rr_rarity_id

@@ -48,31 +48,6 @@ static void mob_button_animate(struct rr_ui_element *this,
     rr_renderer_scale(renderer, 1 - data->secondary_animation);
 }
 
-static void wave_text_on_render(struct rr_ui_element *this,
-                                struct rr_game *game)
-{
-    struct rr_component_arena *arena =
-        rr_simulation_get_arena(game->simulation, 1);
-    struct rr_renderer *renderer = game->renderer;
-    struct text_metadata *data = this->data;
-    char out[12];
-    out[sprintf(out, "Wave %d", arena->wave)] = 0;
-    this->width = rr_renderer_get_text_size((char const *)&out);
-
-    struct rr_renderer_context_state state;
-    rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_scale(renderer, renderer->scale);
-    rr_renderer_set_fill(renderer, 0xffffffff);
-    rr_renderer_set_stroke(renderer, 0xff000000);
-    rr_renderer_set_text_size(renderer, this->abs_height);
-    rr_renderer_set_line_width(renderer, this->abs_height * 0.12);
-    rr_renderer_set_text_align(renderer, 1);
-    rr_renderer_set_text_baseline(renderer, 1);
-    rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
-    rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
-    rr_renderer_context_state_free(renderer, &state);
-}
-
 static void mob_button_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -95,41 +70,6 @@ static void mob_button_on_render(struct rr_ui_element *this,
     rr_renderer_context_state_free(renderer, &state);
 }
 
-static void wave_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
-{
-    struct rr_component_arena *arena =
-        rr_simulation_get_arena(game->simulation, 1);
-    struct rr_renderer_context_state state;
-    struct rr_renderer *renderer = game->renderer;
-    float capac = 15 * 25;
-    rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_set_stroke(renderer, 0xff222222);
-    rr_renderer_set_line_width(renderer, 15);
-    rr_renderer_set_line_cap(renderer, 1);
-    rr_renderer_scale(renderer, renderer->scale);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, -100, 0);
-    rr_renderer_line_to(renderer, 100, 0);
-    rr_renderer_stroke(renderer);
-    rr_renderer_set_stroke(renderer, 0xff75dd34);
-    rr_renderer_set_line_width(renderer, 12);
-    rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, -100, 0);
-    float pct = (arena->wave_tick / capac) > 1 ? 1 : arena->wave_tick / capac;
-    rr_renderer_line_to(renderer, -100 + 200 * (pct), 0);
-    rr_renderer_stroke(renderer);
-    if (arena->wave_tick > capac)
-    {
-        pct = (arena->wave_tick * 0.5 / capac - 0.5);
-        rr_renderer_set_stroke(renderer, 0xffbfeb2f);
-        rr_renderer_set_line_width(renderer, 9);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, -100, 0);
-        rr_renderer_line_to(renderer, -100 + 200 * (pct), 0);
-        rr_renderer_stroke(renderer);
-    }
-    rr_renderer_context_state_free(renderer, &state);
-}
 
 static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
 {

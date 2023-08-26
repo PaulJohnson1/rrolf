@@ -144,8 +144,6 @@ struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char 
 // custom
 struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game *, uint8_t);
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *, uint8_t);
-struct rr_ui_element *rr_ui_wave_spawn_text_init();
-struct rr_ui_element *rr_ui_countdown_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_inventory_container_init();
 
@@ -163,12 +161,11 @@ struct rr_ui_element *rr_ui_settings_toggle_button_init();
 
 struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 struct rr_ui_element *rr_ui_squad_button_init();
+struct rr_ui_element *rr_ui_create_squad_button_init();
 struct rr_ui_element *rr_ui_join_button_init();
 struct rr_ui_element *rr_ui_copy_squad_code_button_init();
 struct rr_ui_element *rr_ui_join_squad_code_button_init();
-struct rr_ui_element *rr_ui_create_squad_button_init(struct rr_game *);
-
-struct rr_ui_element *rr_ui_wave_container_init();
+struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t, uint8_t);
 struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t, uint8_t);
@@ -179,8 +176,7 @@ struct rr_ui_element *rr_ui_mob_container_init();
 struct rr_ui_element *rr_ui_crafting_container_init();
 struct rr_ui_element *rr_ui_crafting_toggle_button_init();
 
-struct rr_ui_element *rr_ui_waiting_respawn_screen_init();
-struct rr_ui_element *rr_ui_finished_game_screen();
+struct rr_ui_element *rr_ui_finished_game_screen_init();
 
 struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);
 

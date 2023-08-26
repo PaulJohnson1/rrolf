@@ -12,9 +12,7 @@ RR_SERVER_ONLY(struct rr_component_player_info;)
 struct rr_component_arena
 {
     EntityIdx parent_id;
-    uint16_t wave_tick;
     RR_SERVER_ONLY(uint16_t protocol_state;)
-    uint16_t wave;
     float radius;
 };
 
@@ -30,5 +28,3 @@ RR_CLIENT_ONLY(void rr_component_arena_read(struct rr_component_arena *,
                                             struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(arena, float, radius)
-RR_DECLARE_PUBLIC_FIELD(arena, uint16_t, wave_tick)
-RR_DECLARE_PUBLIC_FIELD(arena, uint16_t, wave)

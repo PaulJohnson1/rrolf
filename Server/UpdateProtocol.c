@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include <Server/Simulation.h>
+#include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
@@ -118,8 +119,9 @@ static void rr_simulation_find_entities_in_view(
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
     rr_bitset_set(captures.entities_in_view, 1);
-    rr_simulation_for_each_physical(
-        this, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    rr_spatial_hash_query(this->grid, captures.view_x, captures.view_y, captures.view_width, captures.view_height, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    //rr_simulation_for_each_physical(
+        //this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 static void rr_simulation_write_entity_deletions_function(uint64_t _id,
@@ -166,10 +168,7 @@ void rr_simulation_write_binary(struct rr_simulation *this,
                                 struct proto_bug *encoder,
                                 struct rr_component_player_info *player_info)
 {
-    uint8_t new_entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    memset(new_entities_in_view, 0,
-           (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)) *
-               (sizeof *new_entities_in_view));
+    uint8_t new_entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)] = {0};
 
     rr_simulation_find_entities_in_view(this, player_info,
                                         &new_entities_in_view[0]);

@@ -456,6 +456,8 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
+            if (slot->rarity == rr_rarity_id_ultra)
+                speed = 10;
             if (speed > physical->acceleration_scale)
                 physical->acceleration_scale = speed;
         }

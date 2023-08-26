@@ -9,9 +9,7 @@
 #include <Shared/pb.h>
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
-    X(radius, float32)                                                         \
-    X(wave_tick, varuint)                                                      \
-    X(wave, varuint)
+    X(radius, float32) 
 
 enum
 {
@@ -46,8 +44,6 @@ void rr_component_arena_write(struct rr_component_arena *this,
 }
 
 RR_DEFINE_PUBLIC_FIELD(arena, float, radius)
-RR_DEFINE_PUBLIC_FIELD(arena, uint16_t, wave_tick)
-RR_DEFINE_PUBLIC_FIELD(arena, uint16_t, wave)
 #endif
 
 #ifdef RR_CLIENT

@@ -124,7 +124,7 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->socket.found_error)
-        return 2;
+        return 1 + game->socket.found_error;
     return game->socket_ready;
 }
 
@@ -199,7 +199,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 10, 20,
                             rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "0x4346"),
-                            rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
+                            rr_ui_join_button_init(),
                             NULL
                         ),
                         /*
@@ -209,30 +209,26 @@ void rr_game_init(struct rr_game *this)
                             NULL
                         ),
                         */
-                        rr_ui_set_justify(rr_ui_set_background(rr_ui_squad_button_init(), 0xff1dd129), 1, 0),
+                        rr_ui_set_justify(
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                            rr_ui_create_squad_button_init(),
+                            rr_ui_squad_button_init(),
+                            NULL
+                        ), 1, -1),
                         rr_ui_set_background(
                             rr_ui_link_toggle(
                                 rr_ui_v_container_init(
                                     rr_ui_popup_container_init(), 10, 10,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_flex_container_init(
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("initial wave:", 14, 0xffffffff),
-                                            rr_ui_h_slider_init(100, 20, &this->cache.wave_start_percent, 1),
-                                            NULL
-                                        ),
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("Private", 14, 0xffffffff),
-                                            rr_ui_create_squad_button_init(this),
-                                            NULL
-                                        ),
-                                        10
+                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                        rr_ui_text_init("Private", 14, 0xffffffff),
+                                        rr_ui_toggle_private_button_init(this),
+                                        NULL
                                     ),
                                     rr_ui_multi_choose_element_init(
                                         socket_ready,
                                         rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
-                                            rr_ui_wave_spawn_text_init(),
                                             rr_ui_h_container_init(
                                                 rr_ui_container_init(), 0, 10,
                                                 rr_ui_squad_player_container_init(this, 0),
@@ -241,16 +237,17 @@ void rr_game_init(struct rr_game *this)
                                                 rr_ui_squad_player_container_init(this, 3),
                                                 NULL
                                             ),
-                                            rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                             NULL
                                         ),
                                         rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
+                                        rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
+                                        rr_ui_text_init("Squad is full", 24, 0xffff2222),
                                         NULL
                                     ),
                                     rr_ui_flex_container_init(
                                         rr_ui_copy_squad_code_button_init(),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "_0x4347"),
+                                            rr_ui_text_input_init(100, 18, this->connect_code, 7, "_0x4347"),
                                             rr_ui_join_squad_code_button_init(),
                                             NULL
                                         ),
@@ -298,8 +295,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
     rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
     rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
-    rr_ui_container_add_element(this->window, rr_ui_waiting_respawn_screen_init());
-    rr_ui_container_add_element(this->window, rr_ui_finished_game_screen());
+    rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
@@ -541,11 +537,16 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_simulation_read_binary(this, &encoder);
             break;
         }
+        case 68:
+        {
+            this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
+            break;
+        }
         case 69:
         {
+            this->socket.found_error = 0;
             this->joined_squad = 1;
-            this->ticks_until_game_start =
-                proto_bug_read_uint8(&encoder, "countdown");
+            this->simulation_ready = 0;
             for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             {
                 this->squad_members[i].in_use =
@@ -554,8 +555,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     continue;
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
-                this->squad_members[i].requested_start_wave =
-                    proto_bug_read_varuint(&encoder, "requested start wave");
                 uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
                 proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
                                       length, "nick");
@@ -571,12 +570,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
+            proto_bug_read_string(&encoder, this->squad_code, 6, "squad code");
+            this->squad_code[6] = 0;
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 70, "header");
-            proto_bug_write_float32(&encoder2,
-                                    this->cache.wave_start_percent * 0.75,
-                                    "requested wave");
             proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
                                   "loadout count");
             for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
@@ -879,6 +877,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         rr_renderer_scale(this->renderer, this->renderer->scale);
         rr_renderer_context_state_free(this->renderer, &state);
         rr_component_player_info_free(&custom_player_info, 0);
+        this->player_info = NULL;
     }
     // ui
     this->crafting_data.animation -= delta;

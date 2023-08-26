@@ -26,14 +26,15 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-static void set_zone(struct rr_spawn_zone *zone, float x, float y, float w, float h, float d)
+static void set_zone(struct rr_spawn_zone *zone, float x, float y, float w, float h, float d, uint32_t c)
 {
     zone->mob_count = 0;
-    zone->x = x;
-    zone->y = y;
-    zone->w = w;
-    zone->h = h;
+    zone->x = x * RR_MAZE_GRID_SIZE;
+    zone->y = y * RR_MAZE_GRID_SIZE;
+    zone->w = w * RR_MAZE_GRID_SIZE;
+    zone->h = h * RR_MAZE_GRID_SIZE;
     zone->difficulty = d;
+    zone->mob_cap = c;
 }
 
 void rr_simulation_init(struct rr_simulation *this)
@@ -46,9 +47,17 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    rr_component_arena_set_wave(arena_component, 1);
-    set_zone(&this->zones[0], 512, 512, 512, 256, 0);
-    set_zone(&this->zones[1], 1024, 512, 256, 512, 0);
+    set_zone(&this->zones[0], 38, 24, 2, 4, 0.2, 30);
+    set_zone(&this->zones[1], 31, 26, 11, 2, 1.2, 40);
+    set_zone(&this->zones[2], 31, 26, 11, 2, 2.5, 40);
+    set_zone(&this->zones[3], 0, 5, 2, 11, 50, 100);
+    set_zone(&this->zones[4], 2, 12, 10, 2, 35, 80);
+    set_zone(&this->zones[5], 13, 2, 13, 2, 30, 125);
+    set_zone(&this->zones[6], 26, 1, 4, 9, 25, 40);
+    set_zone(&this->zones[7], 6, 14, 2, 6, 10.2, 40);
+    set_zone(&this->zones[8], 6, 25, 2, 2, 8.5, 20);
+    set_zone(&this->zones[9], 37, 16, 6, 5, 6.0, 40);
+    set_zone(&this->respawn_zone, 38, 14, 3, 7, 0, 0);
     printf("simulation size: %lu\n", sizeof *this);
 
 #define XX(COMPONENT, ID)                                                      \
@@ -95,11 +104,10 @@ find_position_away_from_players(struct rr_simulation *this)
 static void spawn_random_mob(struct rr_simulation *this, struct rr_spawn_zone *zone)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
-    uint8_t rarity = get_rarity_from_wave(arena->wave);
-    if (!should_spawn_at(arena->wave, id, rarity))
+    uint8_t id = get_spawn_id(this->biome, zone);
+    uint8_t rarity = get_spawn_rarity(zone->difficulty);
+    if (!should_spawn_at(id, rarity))
         return;
-    this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
     struct rr_vector pos = {zone->x + rr_frand() * zone->w, zone->y + rr_frand() * zone->h};
     EntityIdx mob_id = rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity,
                                                rr_simulation_team_id_mobs);
@@ -107,69 +115,22 @@ static void spawn_random_mob(struct rr_simulation *this, struct rr_spawn_zone *z
     ++zone->mob_count;
 }
 
-// spawn 4-8 of some mob type in around the same position, avoid players
-static void spawn_mob_cluster(struct rr_simulation *this)
-{
-    uint32_t mob_count = rand() % 3 + 2; // random for some variety
-    struct rr_vector central_position = find_position_away_from_players(this);
-    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
-    uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
-    for (uint64_t i = 0; i < mob_count; ++i)
-    {
-        uint8_t rarity = get_rarity_from_wave(arena->wave);
-        if (!should_spawn_at(arena->wave, id, rarity))
-            continue;
-        if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
-            return;
-        this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-        struct rr_vector delta = {rand() % 200 - 100, rand() % 200 - 100};
-        // mob position = delta + central_postiion;
-
-        EntityIdx mob_id = rr_simulation_alloc_mob(
-            this, central_position.x + delta.x, central_position.y + delta.y,
-            id, rarity, rr_simulation_team_id_mobs);
-    }
-}
-
-// spawn maybe like 50 mobs UNIFORM DIST, NOT CLUSTERED or spawn 12 clusters
-static void spawn_mob_swarm(struct rr_simulation *this)
-{
-    uint32_t mob_attempts = 0;
-    while (mob_attempts < 200 && this->wave_points > 2)
-    {
-        ++mob_attempts;
-        struct rr_vector position = find_position_away_from_players(this);
-        struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-
-        uint8_t id = get_id_from_wave(this->biome, arena->wave, this->special_wave_id);
-        uint8_t rarity = get_rarity_from_wave(arena->wave);
-        if (!should_spawn_at(arena->wave, id, rarity))
-            continue;
-        if (RR_MOB_DIFFICULTY_COEFFICIENTS[id] > this->wave_points)
-            return;
-        this->wave_points -= RR_MOB_DIFFICULTY_COEFFICIENTS[id];
-        EntityIdx mob_id =
-            rr_simulation_alloc_mob(this, position.x, position.y, id, rarity,
-                                    rr_simulation_team_id_mobs);
-    }
-}
 
 #define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
         CODE;                                                                  \
     };
 
-#define SPECIAL_WAVE_COUNT 5
 
 static void tick_wave(struct rr_simulation *this)
 {
-    for (uint32_t i = 0; i < 2; ++i)
+    for (uint32_t i = 0; i < 10; ++i)
     {
         struct rr_spawn_zone *zone = &this->zones[i];
-        if (zone->mob_count >= 5)
+        if (zone->mob_count >= zone->mob_cap)
             continue;
-        if (rand() % 100 == 0)
+        if (rand() % 5 == 0)
         {
             spawn_random_mob(this, zone);
         }

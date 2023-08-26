@@ -17,8 +17,9 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_simulation_add_health(this, flower_id);
     struct rr_component_relations *relations =
         rr_simulation_add_relations(this, flower_id);
-    rr_component_physical_set_x(physical, rr_frand() * RR_ARENA_LENGTH);
-    rr_component_physical_set_y(physical, rr_frand() * RR_ARENA_LENGTH);
+    struct rr_spawn_zone *respawn_zone = &this->respawn_zone;
+    rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
+    rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
     rr_component_physical_set_radius(physical, 25.0f);
     physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)

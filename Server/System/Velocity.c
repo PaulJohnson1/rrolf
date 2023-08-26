@@ -1,9 +1,11 @@
 #include <Server/System/Velocity.h>
 
-#include <Server/Simulation.h>
+#include <math.h>
 
+#include <Server/Simulation.h>
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
+#include <Shared/StaticData.h>
 
 static void system(EntityIdx id, void *simulation)
 {
@@ -24,8 +26,12 @@ static void system(EntityIdx id, void *simulation)
     rr_vector_add(&physical->velocity, &accel);
     physical->acceleration_scale = 1;
     physical->webbed = 0;
-    rr_component_physical_set_x(physical, physical->x + physical->velocity.x);
-    rr_component_physical_set_y(physical, physical->y + physical->velocity.y);
+    {
+    }
+    {
+        rr_component_physical_set_x(physical, physical->x + physical->velocity.x);
+        rr_component_physical_set_y(physical, physical->y + physical->velocity.y);
+    }
     if (rr_simulation_has_flower(simulation, id))
     {
         if (physical->acceleration.x != 0.0f ||
