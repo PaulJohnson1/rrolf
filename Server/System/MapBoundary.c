@@ -9,6 +9,7 @@
 static void rr_system_map_boundary_foreach_function(EntityIdx id,
                                                     void *simulation)
 {
+    return;
     struct rr_simulation *this = simulation;
     if (rr_simulation_has_projectile(this, id) ||
         rr_simulation_has_web(this, id) || rr_simulation_has_petal(this, id))
@@ -39,8 +40,9 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id,
                 struct rr_vector vel = {physical->x - ((x + 0.5) * RR_MAZE_GRID_SIZE), physical->y - ((y + 0.5) * RR_MAZE_GRID_SIZE)};
                 struct rr_vector proj = {vel.x, vel.y};
                 rr_vector_normalize(&vel);
-                //physical->velocity.x += 10 * vel.x;
-                //physical->velocity.y += 10 * vel.y;
+                physical->velocity.x += 10 * vel.x;
+                physical->velocity.y += 10 * vel.y;
+                /*
                 uint8_t horizontal = fabs(proj.x) > fabs(proj.y);
                 if (!horizontal && proj.y > 0 && offset(0, 1) != 1)
                     horizontal = 1;
@@ -65,6 +67,7 @@ static void rr_system_map_boundary_foreach_function(EntityIdx id,
                         rr_component_physical_set_y(physical, (y) * RR_MAZE_GRID_SIZE - physical->radius);
                 }
                 printf("going %d\n", horizontal);
+                */
             }
             else
             {
