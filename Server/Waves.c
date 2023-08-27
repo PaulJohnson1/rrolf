@@ -10,10 +10,13 @@
 uint32_t get_spawn_rarity(float seed)
 {
     double rarity_seed = rr_frand();
+    uint32_t rarity_cap = rr_rarity_id_rare + seed / 5;
+    if (rarity_cap > rr_rarity_id_ultra)
+        rarity_cap = rr_rarity_id_ultra;
     uint8_t rarity = 0;
-    for (; rarity < rr_rarity_id_ultra; ++rarity)
+    for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                seed) >= rarity_seed)
+                pow(1.4, seed)) >= rarity_seed)
             return rarity;
     return rarity;
 }

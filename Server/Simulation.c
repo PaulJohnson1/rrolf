@@ -47,17 +47,17 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    set_zone(&this->zones[0], 38, 24, 2, 4, 0.2, 30);
-    set_zone(&this->zones[1], 31, 26, 11, 2, 1.2, 40);
-    set_zone(&this->zones[2], 31, 26, 11, 2, 2.5, 40);
-    set_zone(&this->zones[3], 0, 5, 2, 11, 50, 100);
-    set_zone(&this->zones[4], 2, 12, 10, 2, 35, 80);
-    set_zone(&this->zones[5], 13, 2, 13, 2, 30, 125);
+    set_zone(&this->zones[0], 38, 24, 2, 4, 1, 30);
+    set_zone(&this->zones[1], 31, 26, 11, 2, 2, 40);
+    set_zone(&this->zones[2], 31, 26, 11, 2, 0, 0);
+    set_zone(&this->zones[3], 0, 5, 2, 11, 40, 50);
+    set_zone(&this->zones[4], 2, 12, 10, 2, 30, 40);
+    set_zone(&this->zones[5], 13, 2, 13, 2, 32, 75);
     set_zone(&this->zones[6], 26, 1, 4, 9, 25, 40);
-    set_zone(&this->zones[7], 6, 14, 2, 6, 10.2, 40);
-    set_zone(&this->zones[8], 6, 25, 2, 2, 8.5, 20);
-    set_zone(&this->zones[9], 37, 16, 6, 5, 6.0, 40);
-    set_zone(&this->respawn_zone, 38, 14, 3, 7, 0, 0);
+    set_zone(&this->zones[7], 6, 14, 2, 6, 22, 40);
+    set_zone(&this->zones[8], 6, 25, 2, 2, 17, 20);
+    set_zone(&this->zones[9], 37, 16, 6, 5, 14, 40);
+    set_zone(&this->respawn_zone, 38, 14, 3, 5, 0, 0);
     printf("simulation size: %lu\n", sizeof *this);
 
 #define XX(COMPONENT, ID)                                                      \

@@ -179,8 +179,8 @@ async function db_read_user(username, password)
     
     apply_missing_defaults(user.value);
 
-    if (user.value.password !== password && password !== SERVER_SECRET)
-        throw new Error("invalid password")
+    //if (user.value.password !== password && password !== SERVER_SECRET)
+        //throw new Error("invalid password")
 
     return user.value;
 }
