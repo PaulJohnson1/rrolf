@@ -331,34 +331,34 @@ static void init_maze()
                 if (top == 0)
                 {
                     if (offset(-1,0) == 0)
-                        RR_MAZE_HELL_CREEK[y*2][x*2] = 7;
+                        RR_MAZE_HELL_CREEK[y*2][x*2].value = 7;
                     else
-                        RR_MAZE_HELL_CREEK[y*2][x*2] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2][x*2].value = this_tile;
                     if (offset(1,0) == 0)
-                        RR_MAZE_HELL_CREEK[y*2][x*2+1] = 5;
+                        RR_MAZE_HELL_CREEK[y*2][x*2+1].value = 5;
                     else
-                        RR_MAZE_HELL_CREEK[y*2][x*2+1] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2][x*2+1].value = this_tile;
                 }
                 else
                 {
-                    RR_MAZE_HELL_CREEK[y*2][x*2] = this_tile;
-                    RR_MAZE_HELL_CREEK[y*2][x*2+1] = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2][x*2].value = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2][x*2+1].value = this_tile;
                 }
                 if (bottom == 0)
                 {
                     if (offset(-1,0) == 0)
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2] = 6;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2].value = 6;
                     else
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2].value = this_tile;
                     if (offset(1,0) == 0)
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = 4;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = 4;
                     else
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = this_tile;
                 }
                 else
                 {
-                    RR_MAZE_HELL_CREEK[y*2+1][x*2] = this_tile;
-                    RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2+1][x*2].value = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = this_tile;
                 }
             }
             else
@@ -366,34 +366,34 @@ static void init_maze()
                 if (top)
                 {
                     if (offset(-1,0) && offset(-1,-1))
-                        RR_MAZE_HELL_CREEK[y*2][x*2] = 15;
+                        RR_MAZE_HELL_CREEK[y*2][x*2].value = 15;
                     else
-                        RR_MAZE_HELL_CREEK[y*2][x*2] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2][x*2].value = this_tile;
                     if (offset(1,0) && offset(1,-1))
-                        RR_MAZE_HELL_CREEK[y*2][x*2+1] = 13;
+                        RR_MAZE_HELL_CREEK[y*2][x*2+1].value = 13;
                     else
-                        RR_MAZE_HELL_CREEK[y*2][x*2+1] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2][x*2+1].value = this_tile;
                 }
                 else
                 {
-                    RR_MAZE_HELL_CREEK[y*2][x*2] = this_tile;
-                    RR_MAZE_HELL_CREEK[y*2][x*2] = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2][x*2].value = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2][x*2].value = this_tile;
                 }
                 if (bottom)
                 {
                     if (offset(-1,0) && offset(-1,1))
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2] = 14;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2].value = 14;
                     else
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2].value = this_tile;
                     if (offset(1,0) && offset(1,1))
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = 12;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = 12;
                     else
-                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = this_tile;
+                        RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = this_tile;
                 }
                 else
                 {
-                    RR_MAZE_HELL_CREEK[y*2+1][x*2] = this_tile;
-                    RR_MAZE_HELL_CREEK[y*2+1][x*2+1] = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2+1][x*2].value = this_tile;
+                    RR_MAZE_HELL_CREEK[y*2+1][x*2+1].value = this_tile;
                 }
             }
         }
@@ -447,4 +447,4 @@ uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
     {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0}
 };
 
-uint8_t RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM] = {0};
+struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM] = {0};

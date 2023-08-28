@@ -20,7 +20,6 @@ set(SRCS
     System/CollisionResolution.c
     System/Drops.c
     System/Health.c
-    System/MapBoundary.c
     System/PetalBehavior.c
     System/Respawn.c
     System/Velocity.c

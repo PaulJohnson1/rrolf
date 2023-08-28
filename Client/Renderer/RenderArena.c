@@ -96,7 +96,7 @@ static void render_background(struct rr_component_player_info *player_info,
         {
             if (nx < 0 || currY < 0 || nx >= RR_MAZE_DIM || currY >= RR_MAZE_DIM)
                 continue;
-            uint8_t tile = RR_MAZE_HELL_CREEK[currY][nx];
+            uint8_t tile = RR_MAZE_HELL_CREEK[currY][nx].value;
             if (tile != 1)
             {
                 if (tile == 0)

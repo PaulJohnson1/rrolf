@@ -135,7 +135,17 @@ extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
 extern uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2];
-extern uint8_t RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
+
+struct rr_maze_grid
+{
+    uint32_t mob_count;
+    uint8_t difficulty;
+    uint8_t is_special;
+    uint8_t special_id;
+    uint8_t value;
+};
+
+extern struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
 
 void rr_static_data_init();
 

@@ -21,7 +21,7 @@ uint32_t get_spawn_rarity(float seed)
     return rarity;
 }
 
-uint8_t get_spawn_id(uint8_t biome, struct rr_spawn_zone *zone)
+uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 {
     double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS;
     double seed = rr_frand();

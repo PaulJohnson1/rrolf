@@ -56,10 +56,10 @@ static void system(EntityIdx id, void *simulation)
         int32_t y = physical->y / RR_MAZE_GRID_SIZE;
         //add a check for in-wall
         #define offset(a,b) \
-        ((x + a < 0 || y + b < 0 || x + a >= RR_MAZE_DIM || y + b >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[y+b][x+a])
-        if (RR_MAZE_HELL_CREEK[y][x] != 1)
+        ((x + a < 0 || y + b < 0 || x + a >= RR_MAZE_DIM || y + b >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[y+b][x+a].value)
+        if (offset(0,0) != 1)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[y][x];
+            uint8_t tile = offset(0,0);
             if (tile == 0)
             {
                 struct rr_vector vel = {physical->x - ((x + 0.5) * RR_MAZE_GRID_SIZE), physical->y - ((y + 0.5) * RR_MAZE_GRID_SIZE)};
@@ -93,9 +93,9 @@ static void system(EntityIdx id, void *simulation)
                 }
             }
         }
-        if (x > 0 && RR_MAZE_HELL_CREEK[y][x-1] != 1 && physical->x - x * RR_MAZE_GRID_SIZE < physical->radius)
+        if (offset(-1,0) != 1 && physical->x - x * RR_MAZE_GRID_SIZE < physical->radius)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[y][x-1];
+            uint8_t tile = offset(-1,0);
             if (tile == 0)
             {
                 rr_component_physical_set_x(physical, x * RR_MAZE_GRID_SIZE + physical->radius);
@@ -125,9 +125,9 @@ static void system(EntityIdx id, void *simulation)
                 }
             }
         }
-        if (y > 0 && RR_MAZE_HELL_CREEK[y-1][x] != 1 && physical->y - y * RR_MAZE_GRID_SIZE < physical->radius)
+        if (offset(0,-1) != 1 && physical->y - y * RR_MAZE_GRID_SIZE < physical->radius)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[y-1][x];
+            uint8_t tile = offset(0,-1);
             if (tile == 0)
             {
                 rr_component_physical_set_y(physical, y * RR_MAZE_GRID_SIZE + physical->radius);
@@ -157,13 +157,12 @@ static void system(EntityIdx id, void *simulation)
                 }
             }
         }
-        if (x + 1 < RR_MAZE_DIM && RR_MAZE_HELL_CREEK[y][x+1] != 1 && (x + 1) * RR_MAZE_GRID_SIZE - physical->x < physical->radius)
+        if (offset(1,0) != 1 && (x + 1) * RR_MAZE_GRID_SIZE - physical->x < physical->radius)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[y][x+1];
+            uint8_t tile = offset(1,0);
             if (tile == 0)
             {
                 rr_component_physical_set_x(physical, (x + 1) * RR_MAZE_GRID_SIZE - physical->radius);
-                
             }
             else
             {
@@ -189,9 +188,9 @@ static void system(EntityIdx id, void *simulation)
                 }
             }
         }
-        if (y + 1 < RR_MAZE_DIM && RR_MAZE_HELL_CREEK[y+1][x] != 1 && (y + 1) * RR_MAZE_GRID_SIZE - physical->y < physical->radius)
+        if (offset(0,1) != 1 && (y + 1) * RR_MAZE_GRID_SIZE - physical->y < physical->radius)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[y+1][x];
+            uint8_t tile = offset(0,1);
             if (tile == 0)
             {
                 rr_component_physical_set_y(physical, (y + 1) * RR_MAZE_GRID_SIZE - physical->radius);
