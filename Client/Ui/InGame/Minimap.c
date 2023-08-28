@@ -48,14 +48,14 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
         for (uint32_t y = 0; y < RR_MAZE_DIM; ++y)
         {
             //rr_renderer_set_fill(&minimap, 0xffffffff);
-            if (RR_MAZE_HELL_CREEK[x][y] == 1)
+            if (RR_MAZE_HELL_CREEK[y][x] == 1)
             {
                 rr_renderer_begin_path(&minimap);
                 rr_renderer_fill_rect(&minimap, x * s, y * s, s, s);
             }
-            else if (RR_MAZE_HELL_CREEK[x][y] != 0)
+            else if (RR_MAZE_HELL_CREEK[y][x] != 0)
             {
-                uint8_t at = RR_MAZE_HELL_CREEK[x][y];
+                uint8_t at = RR_MAZE_HELL_CREEK[y][x];
                 uint8_t left = (at >> 1) & 1;
                 uint8_t top = at & 1;
                 uint8_t inverse = (at >> 3) & 1;
