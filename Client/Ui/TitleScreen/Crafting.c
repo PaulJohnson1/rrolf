@@ -112,7 +112,7 @@ static void craft_button_on_event(struct rr_ui_element *this,
             c.game = game;
             memcpy(&c.craft, &game->crafting_data, sizeof c.craft);
             rr_api_craft_petals(game->rivet_account.uuid,
-                                game->rivet_account.token, petal_data, &c);
+                                game->rivet_account.api_password, petal_data, &c);
         }
     }
 }

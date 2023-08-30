@@ -8,11 +8,12 @@
 
 struct rr_rivet_account
 {
-    char account_number[6];
-    char token[300];
-    char uuid[100];
-    char name[100];
-    char avatar_url[200];
+    char account_number[10];
+    char token[500];
+    char api_password[500];
+    char uuid[500];
+    char name[500];
+    char avatar_url[500];
 };
 
 // user must define this function.

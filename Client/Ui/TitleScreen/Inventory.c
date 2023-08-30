@@ -256,7 +256,7 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         {
             game->bottom_ui_open = 1;
             rr_api_get_petals(game->rivet_account.uuid,
-                              game->rivet_account.token, game);
+                              game->rivet_account.api_password, game);
         }
     }
     else

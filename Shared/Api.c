@@ -96,6 +96,23 @@ void rr_api_on_open(char const *uuid, void *captures)
 #endif
 }
 
+void rr_api_get_password(char const *token, void *captures)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            fetch(UTF8ToString($0) + "user_get_password/" + UTF8ToString($1)).then(x => x.text()).then(pw => {
+                    const $pw = _malloc(pw.length + 1);
+                    for (let i = 0; i < pw.length; i++)
+                        HEAPU8[$pw + i] = pw[i].charCodeAt();
+                    HEAPU8[$pw + pw.length] = 0;
+                    Module._rr_api_on_get_password($pw, $2);         
+                });
+        }, BASE_API_URL, token, captures
+    );
+#endif
+}
+
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                          char const *param_3, void *captures)
 {
