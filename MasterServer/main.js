@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const WSS = require("ws");
 const http = require("http")
+const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
 const app = express();
@@ -11,10 +12,13 @@ const port = 55554;
 const namespace = "/api";
 
 const DIRECTORY_SECRET = "a92pd3nf29d38tny9pr34dn3d908ntgb";
+const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad37q2aioymkznsxhmytcaoeyadou37wty3ou7qjoaud37tyadou37j4ywdou7wjytaousrt7jy3t";
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const PETALS_TO_UPGRADE = 5;
+
+const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 
 const CRAFT_CHANCES = [
     rng.get_magic_chance(0.5),
@@ -28,14 +32,14 @@ const CRAFT_CHANCES = [
 
 const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
-//let database = {};
-//let changed = false;
-//const databaseFilePath = path.join(__dirname, "database.json");
-//if (fs.existsSync(databaseFilePath))
-//{
-//    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-//    database = JSON.parse(databaseData);
-//}
+let database = {};
+let changed = false;
+const databaseFilePath = path.join(__dirname, "database.json");
+if (fs.existsSync(databaseFilePath))
+{
+   const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+   database = JSON.parse(databaseData);
+}
 
 app.use(cors());
 
@@ -159,15 +163,15 @@ function craft(count, initial_fails, chance)
 
 async function write_db_entry(username, data)
 {
-    //changed = true;
-    //database[username] = structuredClone(data);
-    await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    changed = true;
+    database[username] = structuredClone(data);
+    // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
-    //const user = structuredClone({value: database[username]});
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    const user = structuredClone({value: database[username]});
+    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         const user = apply_missing_defaults({});
@@ -179,8 +183,8 @@ async function db_read_user(username, password)
     
     apply_missing_defaults(user.value);
 
-    //if (user.value.password !== password && password !== SERVER_SECRET)
-        //throw new Error("invalid password")
+    if (user.value.password !== password && password !== SERVER_SECRET)
+        throw new Error("invalid password")
 
     return user.value;
 }
@@ -396,62 +400,80 @@ app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) =
     });
 });
 
+app.get(`${namespace}/user_get_password/:password`, async (req, res) => {
+    const {password} = req.params;
+    handle_error(res, async () => {
+        const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
+            headers: {
+                Authorization: "Bearer " + password
+            }
+        });
+        if (d.status != 200)
+            throw new Error(JSON.stringify(await d.text()));
+        const j = await d.json();
+        return hash(j.identity.identity_id + PASSWORD_SALT);
+    });
+});
+
 app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });
 
-//const saveDatabaseToFile = () => {
-//    if (changed)
-//    {
-//        changed = false;
-//        console.log("saving database to file:", databaseFilePath);
-//        const databaseData = JSON.stringify(database, null, 2);
-//        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-//    }
-//    else
-//        console.log("tried save, was not changed");
-//};
+const saveDatabaseToFile = () => {
+   if (changed)
+   {
+       changed = false;
+       console.log("saving database to file:", databaseFilePath);
+       const databaseData = JSON.stringify(database, null, 2);
+       fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+   }
+   else
+       console.log("tried save, was not changed");
+};
 
-//let quit = false;
-//const try_save_exit = () =>
-//{
-//    if (!quit)
-//    {
-//        quit = true;
-//        saveDatabaseToFile();
-//    }
-//    process.exit();
-//}
+let quit = false;
+const try_save_exit = () =>
+{
+   if (!quit)
+   {
+       quit = true;
+       saveDatabaseToFile();
+   }
+   process.exit();
+}
 
-//process.on("beforeExit", try_save_exit);
-//process.on("exit", try_save_exit)
-//process.on("SIGTERM", try_save_exit);
-//process.on("SIGINT", try_save_exit);
-//process.on("uncaughtException", try_save_exit);
+process.on("beforeExit", try_save_exit);
+process.on("exit", try_save_exit)
+process.on("SIGTERM", try_save_exit);
+process.on("SIGINT", try_save_exit);
+process.on("uncaughtException", try_save_exit);
 
-//setInterval(saveDatabaseToFile, 60000);
+setInterval(saveDatabaseToFile, 60000);
 
 
-
-const server = http.createServer(app);
-
-server.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-const wss = new WSS.WebSocketServer({server});
-const game_servers = {};
+// const server = http.createServer(app);
+
+// // server.listen(port, () => {
+// //     console.log(`Server running at http://localhost:${port}`);
+// // });
+
+// const wss = new WSS.WebSocketServer({server});
+// const game_servers = {};
 
 
-wss.on("connection", (ws, req) => {
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
+// wss.on("connection", (ws, req) => {
+//     ws.on('close', () => {
+//         console.log('Client disconnected');
+//     });
 
-    if (req.url !== `/api/${SERVER_SECRET}`)
-        return ws.close();
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
-    });
-    console.log("connect");
-});
+//     if (req.url !== `/api/${SERVER_SECRET}`)
+//         return ws.close();
+//     ws.on('message', (message) => {
+//         console.log(`Received: ${message}`);
+//     });
+//     console.log("connect");
+// });

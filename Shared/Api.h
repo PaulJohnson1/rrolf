@@ -20,13 +20,15 @@ struct rr_api_account
     uint8_t already_playing;
 };
 
-void rr_api_on_get_petals(char *, void *);
-void rr_api_on_craft_result(char *, void *);
-void rr_api_on_open_result(char *, void *);
+extern void rr_api_on_get_petals(char *, void *);
+extern void rr_api_on_craft_result(char *, void *);
+extern void rr_api_on_open_result(char *, void *);
+extern void rr_api_on_get_password(char *, void *);
 
-void rr_api_get_petals(char const *, char const *, void *);
-void rr_api_craft_petals(char const *, char const *, char const *, void *);
-void rr_api_on_close(char const *, char const *, uint32_t, char const *);
-void rr_api_on_open(char const *, void *);
+extern void rr_api_get_petals(char const *, char const *, void *);
+extern void rr_api_craft_petals(char const *, char const *, char const *, void *);
+extern void rr_api_on_close(char const *, char const *, uint32_t, char const *);
+extern void rr_api_on_open(char const *, void *);
+extern void rr_api_get_password(char const *, void *);
 
-void rr_api_create_squad(char const *, char const *, void *);
+extern void rr_api_create_squad(char const *, char const *, void *);

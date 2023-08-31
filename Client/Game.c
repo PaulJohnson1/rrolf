@@ -85,6 +85,16 @@ void rr_api_on_get_petals(char *bin, void *a)
     free(bin);
 }
 
+void rr_api_on_get_password(char *s, void *captures)
+{
+    struct rr_game *this = captures;
+    strcpy(this->rivet_account.api_password, s);
+
+    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.api_password,
+                      this);
+    rr_game_connect_socket(this);
+}
+
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
                         char *account_number, char *uuid, void *captures)
 {
@@ -95,9 +105,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.account_number, account_number);
     strcpy(this->rivet_account.uuid, uuid);
 
-    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token,
-                      this);
-    rr_game_connect_socket(this);
+    rr_api_get_password(this->rivet_account.token, this);
 }
 
 static struct rr_ui_element *make_label_tooltip(char const *text)
