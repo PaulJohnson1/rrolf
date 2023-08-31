@@ -161,16 +161,6 @@ static void rr_server_client_create_player_info(struct rr_server_client *this,
     }
 }
 
-struct protocol_bound_checker {
-    struct proto_bug *encoder;
-    uint64_t len;
-};
-
-static uint8_t protocol_expect_bytes(struct protocol_bound_checker *checker, uint64_t bytes)
-{
-    return (checker->len >= bytes) && checker->encoder->current - checker->encoder->start + bytes <= checker->len;
-}
-
 void rr_server_client_free(struct rr_server_client *this)
 {
     if (this->squad != 0)
@@ -324,10 +314,8 @@ void rr_server_client_tick(struct rr_server_client *this)
                 1,
                 "bitbit");
             proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
-            uint32_t nick_len = strlen(&curr_client->client_nickname[0]);
-            proto_bug_write_varuint(&encoder, nick_len, "nick size");
-            proto_bug_write_string(&encoder, &curr_client->client_nickname[0],
-                                   nick_len, "nick");
+            proto_bug_write_string(&encoder, curr_client->client_nickname,
+                                   16 + 1, "nick");
             for (uint8_t j = 0; j < 20; ++j)
             {
                 proto_bug_write_uint8(&encoder, curr_client->loadout[j].id,
@@ -339,7 +327,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         proto_bug_write_uint8(&encoder, this->squad_pos, "sqpos");
         proto_bug_write_uint8(&encoder, squad->private, "private");
         proto_bug_write_uint8(&encoder, this->server->biome, "biome");
-        proto_bug_write_string(&encoder, squad->squad_code, 6, "squad code");
+        proto_bug_write_string(&encoder, squad->squad_code, 7, "squad code");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -513,18 +501,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
-        struct protocol_bound_checker checker = {&encoder, size};
-        #define expect(bytes) \
-        if (!protocol_expect_bytes(&checker, bytes)) \
-            { \
-                fputs("invalid protocol\n", stderr); \
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"bad protocol", sizeof "bad protocol"); \
-                return -1; \
-            }
+        proto_bug_set_bound(&encoder, packet + size);
+
         if (!client->received_first_packet)
         {
             client->received_first_packet = 1;
-            expect(16);
 
             proto_bug_read_uint64(&encoder, "useless bytes");
             uint64_t received_verification =
@@ -537,34 +518,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
 
-            uint64_t encountered_size =
-                proto_bug_read_varuint(&encoder, "rivet token size");
-            uint64_t uuid_encountered_size =
-                proto_bug_read_varuint(&encoder, "uuid size");
-            if (encountered_size > 250 || uuid_encountered_size > 95)
-            {
-                printf("%lu %lu\n", size,
-                       encountered_size + uuid_encountered_size);
-                fputs("invalid size3\n", stderr);
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"invalid size3",
-                                 sizeof "invalid size3");
-                return -1;
-            }
-            expect(encountered_size);
-            expect(uuid_encountered_size);
-
             memset(&client->rivet_account, 0,
                    sizeof(struct rr_rivet_account));
             // Read rivet token
-            client->rivet_account.token[encountered_size] = 0;
             proto_bug_read_string(&encoder,
                                   client->rivet_account.token,
-                                  encountered_size, "rivet token");
+                                  300, "rivet token");
             // Read uuid
-            client->rivet_account.uuid[uuid_encountered_size] = 0;
             proto_bug_read_string(&encoder, client->rivet_account.uuid,
-                                  uuid_encountered_size, "rivet uuid");
+                                  100, "rivet uuid");
             puts(client->rivet_account.uuid);
 #ifdef RIVET_BUILD
             for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
@@ -583,7 +545,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
             }
 #endif
-            expect(1);
             uint64_t dev_flag = proto_bug_read_varuint(&encoder, "dev flag");
             if (dev_flag == 494538643243)
                 client->ready |= 2;
@@ -613,7 +574,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             //put in a squad
             return 0;
         }
-        expect(1);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case 0:
@@ -622,7 +582,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (client->player_info->flower_id == 0)
                 break;
-            expect(2);
             proto_bug_read_uint8(&encoder, "movement type");
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
@@ -654,7 +613,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             else
             {
-                expect(8);
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
                 if ((x != 0 || y != 0) && x == x && y == y &&
@@ -682,14 +640,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
-            expect(1);
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= 10 &&
                    encoder.current - encoder.start <= size)
             {
                 rr_component_player_info_petal_swap(client->player_info,
                                                     &this->simulation, pos - 1);
-                expect(1);
                 pos = proto_bug_read_uint8(&encoder, "petal switch");
             }
             break;
@@ -697,7 +653,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case 3:
         {
 #ifndef RIVET_BUILD
-            expect(1);
             puts("cheat used");
             uint8_t cheat_type = proto_bug_read_uint8(&encoder, "cheat type");
             if (cheat_type == 1)
@@ -730,7 +685,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 68:
         {
-            expect(1);
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
             if (type > 2)
                 break;
@@ -763,9 +717,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             else if (type == 1)
             {
-                expect(6);
-                char link[6];
-                proto_bug_read_string(&encoder, link, 6, "connect link");
+                char link[7];
+                proto_bug_read_string(&encoder, link, 7, "connect link");
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
                 proto_bug_write_uint8(&failure, 68, "header");
@@ -858,7 +811,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 70:
         {
-            expect(1);
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 
@@ -867,7 +819,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             for (uint8_t i = 0; i < loadout_count; i++)
             {
-                expect(4);
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
                 uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
                 if (id >= rr_petal_id_max)
@@ -890,30 +841,17 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case 71:
         {
-            expect(1);
-            uint64_t nickname_size =
-                proto_bug_read_varuint(&encoder, "nick length");
-
-            if (nickname_size > 16)
-            {
-                puts("nick too long");
-                return 0;
-            }
-            expect(nickname_size);
             memset(&client->client_nickname, 0,
                    sizeof(client->client_nickname));
 
-            client->client_nickname[nickname_size] =
-                0; // don't forget the null terminator lol
             proto_bug_read_string(&encoder, client->client_nickname,
-                                  nickname_size, "nick");
+                                  16 + 1, "nick");
             break;
         }
         case 72:
         {
             if (client->squad_pos == 0)
             {
-                expect(1);
                 this->squads[client->squad - 1].private = 0;
 #ifdef RIVET_BUILD
                 // players cannot join in the middle of a game (simulation)
@@ -929,7 +867,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (!first)
                 break;
-            expect(1);
             /*
             uint8_t kick_pos = proto_bug_read_uint8(&encoder, "kick");
             if (kick_pos > RR_SQUAD_MEMBER_COUNT)

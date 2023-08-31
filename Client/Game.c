@@ -508,16 +508,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            uint64_t token_size = strlen(&this->socket.rivet_player_token[0]);
-            uint64_t uuid_size = strlen(this->rivet_account.uuid);
-            proto_bug_write_varuint(&verify_encoder, token_size,
-                                    "rivet token size");
-            proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
             proto_bug_write_string(&verify_encoder,
-                                   &this->socket.rivet_player_token[0], token_size,
+                                   &this->socket.rivet_player_token[0], 300,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
-                                   uuid_size, "rivet uuid");
+                                   100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
@@ -555,10 +550,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     continue;
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
-                uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
-                proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
-                                      length, "nick");
-                this->squad_members[i].name[length] = 0;
+                proto_bug_read_string(&encoder, this->squad_members[i].name,
+                                      16 + 1, "nick");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =
@@ -593,9 +586,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, 71, "header");
-            uint32_t len = strlen(&this->cache.nickname[0]);
-            proto_bug_write_varuint(&encoder2, len, "nick length");
-            proto_bug_write_string(&encoder2, &this->cache.nickname[0], len,
+            proto_bug_write_string(&encoder2, this->cache.nickname, 16 + 1,
                                    "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;

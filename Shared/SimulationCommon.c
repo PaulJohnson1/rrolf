@@ -17,7 +17,7 @@ void rr_simulation_request_entity_deletion(struct rr_simulation *this,
                                            EntityIdx entity)
 {
 #ifndef NDEBUG
-    printf("request deletion of entity %u\n", entity);
+    //printf("request deletion of entity %u\n", entity);
 #endif
     assert(rr_simulation_has_entity(this, entity));
     rr_bitset_set(this->pending_deletions, entity);
@@ -43,7 +43,7 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
 
     RR_SERVER_ONLY(rr_bitset_set(this->recently_deleted, i);)
 #ifndef NDEBUG
-    RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
+    //RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
 #endif
 
 #define XX(COMPONENT, ID)                                                      \

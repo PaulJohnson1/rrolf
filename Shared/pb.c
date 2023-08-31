@@ -55,6 +55,12 @@ extern "C"
     {
         self->start = data;
         self->current = data;
+        self->end = NULL;
+    }
+
+    void proto_bug_set_bound(struct proto_bug *self, uint8_t *end)
+    {
+        self->end = end;
     }
 
     void proto_bug_reset(struct proto_bug *self)
@@ -126,14 +132,20 @@ extern "C"
         proto_bug_write_uint8_internal(self, data << 1);
     }
     void proto_bug_write_string_internal(struct proto_bug *self,
-                                         char const *string, uint64_t size)
+                                         char const *string, uint64_t max_size)
     {
-        for (uint64_t i = 0; i < size; i++)
+        for (uint64_t i = 0; i < max_size; ++i)
+        {
             proto_bug_write_uint8_internal(self, string[i]);
+            if (string[i] == 0)
+                break;
+        }
     }
 
     uint8_t proto_bug_read_uint8_internal(struct proto_bug *self)
     {
+        if (self->current == self->end)
+            return 0;
         return RR_SECRET8 ^ 0 ^ *self->current++;
     }
     uint16_t proto_bug_read_uint16_internal(struct proto_bug *self)
@@ -177,6 +189,8 @@ extern "C"
     }
     float proto_bug_read_float32_internal(struct proto_bug *self)
     {
+        if (self->end && self->current + (sizeof (float)) >= self->end)
+            return 0;
         float data;
         memcpy(&data, self->current, sizeof data);
         self->current += sizeof data;
@@ -184,6 +198,8 @@ extern "C"
     }
     double proto_bug_read_float64_internal(struct proto_bug *self)
     {
+        if (self->end && self->current + (sizeof (double)) >= self->end)
+            return 0;
         double data;
         memcpy(&data, self->current, sizeof data);
         self->current += sizeof data;
@@ -205,10 +221,13 @@ extern "C"
         return data;
     }
     void proto_bug_read_string_internal(struct proto_bug *self, char *string,
-                                        uint64_t size)
+                                        uint64_t max_size)
     {
-        for (uint64_t i = 0; i < size; i++)
-            string[i] = proto_bug_read_uint8_internal(self);
+        for (uint64_t size = 0; size < max_size; ++size)
+        {
+            if ((string[size] = proto_bug_read_uint8_internal(self)) == 0)
+                break;
+        }
     }
 
 #ifndef PROTO_BUG_NDEBUG
@@ -234,14 +253,11 @@ extern "C"
         // explicit casting because of c++
         enum encoding_type received_encoding_type =
             (enum encoding_type)proto_bug_read_uint8_internal(self);
-        uint64_t name_size = proto_bug_read_varuint_internal(self);
-        uint64_t file_size = proto_bug_read_varuint_internal(self);
-        char *received_name = (char *)PROTO_BUG_ALLOCA(name_size + 1);
-        char *received_file = (char *)PROTO_BUG_ALLOCA(file_size + 1);
-        memset(received_name, 0, name_size + 1);
-        memset(received_file, 0, file_size + 1);
-        proto_bug_read_string_internal(self, received_name, name_size);
-        proto_bug_read_string_internal(self, received_file, file_size);
+        char received_name[2048] = {0};
+        char received_file[2048] = {0};
+
+        proto_bug_read_string_internal(self, received_name, 2048);
+        proto_bug_read_string_internal(self, received_file, 2048);
         uint32_t received_line = proto_bug_read_varuint_internal(self);
         if ((received_encoding_type != expected_encoding_type) ||
             ((name_size != strlen(name) || (strcmp(received_name, name)))))
@@ -270,10 +286,8 @@ extern "C"
         proto_bug_write_uint8_internal(self, encoding_type);
         uint64_t name_size = strlen(name);
         uint64_t file_size = strlen(file);
-        proto_bug_write_varuint_internal(self, name_size);
-        proto_bug_write_varuint_internal(self, file_size);
-        proto_bug_write_string_internal(self, name, name_size);
-        proto_bug_write_string_internal(self, file, file_size);
+        proto_bug_write_string_internal(self, name, name_size + 1);
+        proto_bug_write_string_internal(self, file, file_size + 1);
         proto_bug_write_varuint_internal(self, line);
     }
 

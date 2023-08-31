@@ -179,7 +179,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
                 continue;
             rr_bitset_set(this->entity_tracker, i);
 #ifndef NDEBUG
-            printf("created with id %d\n", i);
+            //printf("created with id %d\n", i);
 #endif
             return i;
         }

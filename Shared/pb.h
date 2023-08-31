@@ -10,7 +10,7 @@ extern "C"
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #define PROTO_BUG_WINDOWS
 #endif
-#define PROTO_BUG_NDEBUG 1
+#define PROTO_BUG_NDEBUG 0
 #if defined(NDEBUG) && !defined(PROTO_BUG_NDEBUG)
 #define PROTO_BUG_NDEBUG
 #endif
@@ -23,9 +23,11 @@ extern "C"
     {
         uint8_t *start;
         uint8_t *current;
+        uint8_t *end;
     };
 
     void proto_bug_init(struct proto_bug *, uint8_t *);
+    void proto_bug_set_bound(struct proto_bug *, uint8_t *);
     void proto_bug_reset(struct proto_bug *); // go back to the beginning
     uint64_t proto_bug_get_size(struct proto_bug *);
 
@@ -37,7 +39,7 @@ extern "C"
     void proto_bug_write_float32_internal(struct proto_bug *, float);
     void proto_bug_write_float64_internal(struct proto_bug *, double);
     void proto_bug_write_string_internal(struct proto_bug *, char const *,
-                                         uint64_t size);
+                                         uint64_t);
 
     uint8_t proto_bug_read_uint8_internal(struct proto_bug *);
     uint16_t proto_bug_read_uint16_internal(struct proto_bug *);
@@ -47,7 +49,7 @@ extern "C"
     float proto_bug_read_float32_internal(struct proto_bug *);
     double proto_bug_read_float64_internal(struct proto_bug *);
     void proto_bug_read_string_internal(struct proto_bug *, char *,
-                                        uint64_t size);
+                                        uint64_t);
 
 #ifndef PROTO_BUG_NDEBUG
     void proto_bug_write_uint8_debug(struct proto_bug *, uint8_t,

@@ -10,7 +10,7 @@
 
 static void abandon_game_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->joined_squad && game->player_info->flower_id == RR_NULL_ENTITY)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && game->joined_squad)
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
