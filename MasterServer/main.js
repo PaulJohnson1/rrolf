@@ -105,7 +105,6 @@ function apply_missing_defaults(account)
     const defaults = {
         password: "",
         username: "",
-        maximum_wave: 1,
         xp: 0,
         already_playing: 0,
         petals: {"1:0": 5},
@@ -128,8 +127,6 @@ function apply_missing_defaults(account)
             delete account[prop];
         }
     }
-
-    account.maximum_wave = parseInt(account.maximum_wave);
 
     return account;
 }
@@ -290,7 +287,6 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(username);
         out.WriteFloat64(user.xp);
-        out.WriteVarUint(user.maximum_wave);
         let checksum = 5;
         for (const petal of Object.keys(user.petals))
         {
@@ -326,8 +322,6 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
         const user = await db_read_user(username, SERVER_SECRET);
 
         user_merge_petals(user, parse_id_rarity_count(petals_string));
-        if (user.maximum_wave < wave_end)
-            user.maximum_wave = wave_end;
         await write_db_entry(username, user);
         return "success\x00";
     });
@@ -344,7 +338,6 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(user.username);
         out.WriteFloat64(user.xp);
-        out.WriteVarUint(user.maximum_wave);
         let checksum = 5;
         for (const petal of Object.keys(user.petals))
         {

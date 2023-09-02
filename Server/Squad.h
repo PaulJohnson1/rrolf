@@ -4,13 +4,17 @@
 
 #include <Server/Simulation.h>
 
+#include <Shared/Squad.h>
+
+#define RR_ERROR_CODE_INVALID_SQUAD 255
+#define RR_ERROR_CODE_FULL_SQUAD 254
+
 struct rr_server_client;
 
 struct rr_squad
 {
-    struct rr_server_client *clients[RR_SQUAD_MEMBER_COUNT];
-    uint8_t in_use;
-    uint8_t members_in_use;
+    struct rr_squad_member members[RR_SQUAD_MEMBER_COUNT];
+    uint8_t member_count;
     uint8_t private;
     char squad_code[6];
 };

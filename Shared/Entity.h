@@ -3,13 +3,18 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define RR_ARENA_LENGTH (24576)
 #define RR_MAX_ENTITY_COUNT (2048)
 #define RR_NULL_ENTITY (0)
 #define RR_MAX_COLLISION_COUNT (128)
 #define RR_SQUAD_MEMBER_COUNT (4)
 
-#define RR_FOR_EACH_COMPONENT                                                  \
+struct rr_id_rarity_pair
+{
+    uint8_t id;
+    uint8_t rarity;
+};
+
+#define RR_FOR_EACH_COMPONENT \
     XX(player_info, 3) \
     XX(petal, 11) \
     XX(web, 8) \

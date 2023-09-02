@@ -13,6 +13,7 @@
 struct lws_context;
 struct lws;
 struct rr_server;
+struct rr_squad_member;
 
 enum rr_websocket_event_type
 {
@@ -34,6 +35,12 @@ struct rr_server
 void rr_server_init(struct rr_server *);
 void rr_server_free(struct rr_server *);
 
-// Blocking function. The only time this function will never end unless the
-// server crashes some how (impossible because we write god tier c)
+uint8_t rr_client_create_squad(struct rr_server *, struct rr_server_client *);
+uint8_t rr_client_find_squad(struct rr_server *, struct rr_server_client *);
+uint8_t rr_client_join_squad_with_code(struct rr_server *, char *);
+uint8_t rr_client_join_squad(struct rr_server *, struct rr_server_client *, uint8_t);
+void rr_client_leave_squad(struct rr_server *, struct rr_server_client *);
+struct rr_squad_member *rr_squad_get_client_slot(struct rr_server *, struct rr_server_client *);
+
+// Blocking function. The only time this function will never end unless the server crashes
 void rr_server_run(struct rr_server *);

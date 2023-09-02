@@ -62,7 +62,9 @@ void rr_api_on_open_result(char *bin, void *captures)
     }
 }
 
+void rr_api_on_get_petals(char *bin, void *_client) {}
 // loadout validation
+/*
 void rr_api_on_get_petals(char *bin, void *_client)
 {
     puts("attempting petal validation");
@@ -80,8 +82,6 @@ void rr_api_on_get_petals(char *bin, void *_client)
     if (strlen(client->rivet_account.uuid) < 30)
     {
         memset(&client->loadout[0], 0, sizeof client->loadout);
-        client->level = 1;
-        client->max_wave = 0;
         puts("id is invalid");
         return;
     }
@@ -95,11 +95,6 @@ void rr_api_on_get_petals(char *bin, void *_client)
     #define min(a,b) (((a) < (b)) ? (a) : (b))
     client->level = min(next_level - 1, 150);
     #undef min
-    uint32_t max_wave = rr_binary_encoder_read_varuint(&decoder);
-    if (max_wave > 40)
-        max_wave = 40;
-    client->max_wave = max_wave;
-    printf("client is level %d %d\n", client->level, client->max_wave);
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
     {
@@ -120,8 +115,6 @@ void rr_api_on_get_petals(char *bin, void *_client)
             else
             {
                 memset(&client->loadout[0], 0, sizeof client->loadout);
-                client->level = 1;
-                client->max_wave = 0;
                 puts("petals are invalid");
                 return;
             }
@@ -129,35 +122,36 @@ void rr_api_on_get_petals(char *bin, void *_client)
     }
     puts("petals are valid");
 }
+*/
 
-static void rr_server_client_create_player_info(struct rr_server_client *this,
-                                                uint8_t pos)
+static void rr_server_client_create_player_info(struct rr_server *server, struct rr_server_client *client)
 {
     puts("creating player info");
-    this->player_info = rr_simulation_add_player_info(
-        &this->server->simulation,
-        rr_simulation_alloc_entity(&this->server->simulation));
-    this->player_info->client = this;
-    this->player_info->level = this->level;
-    this->player_info->squad = this->squad;
-    rr_component_player_info_set_client_id(this->player_info, pos);
+    struct rr_component_player_info *player_info = client->player_info = rr_simulation_add_player_info(
+        &server->simulation,
+        rr_simulation_alloc_entity(&server->simulation));
+    player_info->squad = client->squad;
+    rr_component_player_info_set_client_id(player_info, client->squad_pos);
+    rr_component_player_info_set_slot_count(player_info, 10);
+    player_info->level = 1;
     #define min(a,b) (((a) < (b)) ? (a) : (b))
-    rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / RR_LEVELS_PER_EXTRA_SLOT));
+    //rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / RR_LEVELS_PER_EXTRA_SLOT));
     #undef min
     struct rr_component_arena *arena =
-        rr_simulation_get_arena(&this->server->simulation, 1);
-    for (uint64_t i = 0; i < this->player_info->slot_count; ++i)
+        rr_simulation_get_arena(&server->simulation, 1);
+    struct rr_squad_member *member = rr_squad_get_client_slot(server, client);
+    for (uint64_t i = 0; i < player_info->slot_count; ++i)
     {
-        uint8_t id = this->loadout[i].id;
-        uint8_t rarity = this->player_info->slots[i].rarity =
-            this->loadout[i].rarity;
-        this->player_info->slots[i].id = id;
-        this->player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
+        uint8_t id = member->loadout[i].id;
+        uint8_t rarity = member->loadout[i].rarity;
+        player_info->slots[i].id = id;
+        player_info->slots[i].rarity = rarity;
+        player_info->slots[i].count = RR_PETAL_DATA[id].count[rarity];
 
-        id = this->loadout[i + 10].id;
-        rarity = this->loadout[i + 10].rarity;
-        this->player_info->secondary_slots[i].id = id;
-        this->player_info->secondary_slots[i].rarity = rarity;
+        id = member->loadout[i + 10].id;
+        rarity = member->loadout[i + 10].rarity;
+        player_info->secondary_slots[i].id = id;
+        player_info->secondary_slots[i].rarity = rarity;
     }
 }
 
@@ -165,9 +159,7 @@ void rr_server_client_free(struct rr_server_client *this)
 {
     if (this->squad != 0)
     {
-        struct rr_squad *squad = &this->server->squads[this->squad - 1];
-        rr_squad_remove_client(squad, this);
-        this->squad = 0;
+        rr_client_leave_squad(this->server, this);
     }
     char petals_string[50000] = {0}; // Ensure this is large enough
     char buffer[1000] = {0};         // Temporary buffer for each item
@@ -271,12 +263,6 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 
 void rr_server_client_tick(struct rr_server_client *this)
 {
-    if (this->kicked)
-        return;
-    if (this->response_time != 0)
-        --this->response_time;
-    else if (!this->received_first_packet)
-        this->kicked = 1;
     if (this->squad == 0)
         return;
     if (this->player_info != NULL)
@@ -300,7 +286,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         struct rr_squad *squad = &this->server->squads[this->squad - 1];
         for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
         {
-            if (((squad->members_in_use >> i) & 1) == 0)
+            if (squad->members[i].in_use == 0)
             {
                 proto_bug_write_uint8(
                 &encoder,
@@ -308,19 +294,19 @@ void rr_server_client_tick(struct rr_server_client *this)
                 "bitbit");
                 continue;
             }
-            struct rr_server_client *curr_client = squad->clients[i];
+            struct rr_squad_member *member = &squad->members[i];
             proto_bug_write_uint8(
                 &encoder,
                 1,
                 "bitbit");
-            proto_bug_write_uint8(&encoder, curr_client->ready, "ready");
-            proto_bug_write_string(&encoder, curr_client->client_nickname,
+            proto_bug_write_uint8(&encoder, member->playing, "ready");
+            proto_bug_write_string(&encoder, member->nickname,
                                    16 + 1, "nick");
             for (uint8_t j = 0; j < 20; ++j)
             {
-                proto_bug_write_uint8(&encoder, curr_client->loadout[j].id,
+                proto_bug_write_uint8(&encoder, member->loadout[j].id,
                                       "id");
-                proto_bug_write_uint8(&encoder, curr_client->loadout[j].rarity,
+                proto_bug_write_uint8(&encoder, member->loadout[j].rarity,
                                       "rar");
             }
         }
@@ -480,21 +466,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             first = 0;
         }
-        if (client == NULL)
-        {
-            puts("null client????");
-            return 0;
-        }
-        if (size == 0)
+        if (client == NULL || size == 0)
             break;
-        if (client->kicked)
-        {
-            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"kicked",
-                                 sizeof "kicked");
-                return -1;
-        }
-
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
@@ -545,9 +518,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
             }
 #endif
-            uint64_t dev_flag = proto_bug_read_varuint(&encoder, "dev flag");
-            if (dev_flag == 494538643243)
-                client->ready |= 2;
+            if (proto_bug_read_varuint(&encoder, "dev flag") == 494538643243)
+                client->dev = 1;
 
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
@@ -563,15 +535,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
 #endif
-            struct rr_api_account account = {0};
-            rr_api_on_open(client->rivet_account.uuid, &account);
+            //struct rr_api_account account = {0};
+            //rr_api_on_open(client->rivet_account.uuid, &account);
 
-            client->max_wave = account.maximum_wave;
+            //client->max_wave = account.maximum_wave;
 
             puts("socket verified");
             client->verified = 1;
-
-            //put in a squad
             return 0;
         }
         switch (proto_bug_read_uint8(&encoder, "header"))
@@ -580,9 +550,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (client->player_info == NULL)
                 break;
-            if (client->player_info->flower_id == 0)
+            if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            proto_bug_read_uint8(&encoder, "movement type");
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
@@ -590,49 +559,34 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             if ((movementFlags & 64) == 0)
             {
-                if (movementFlags & 1)
-                    y--;
-                if (movementFlags & 2)
-                    x--;
-                if (movementFlags & 4)
-                    y++;
-                if (movementFlags & 8)
-                    x++;
-                if ((x != 0 || y != 0) && x == x && y == y &&
-                    fabsf(x) < 10000 && fabsf(y) < 10000)
-                {
-                    float mag_1 = 2.5 / sqrtf(x * x + y * y);
-                    client->player_accel_x = x * mag_1;
-                    client->player_accel_y = y * mag_1;
-                }
-                else
-                {
-                    client->player_accel_x = 0;
-                    client->player_accel_y = 0;
-                }
+                y -= (movementFlags & 1) >> 0;
+                x -= (movementFlags & 2) >> 1;
+                y += (movementFlags & 4) >> 2;
+                x += (movementFlags & 8) >> 3;
+                float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                x *= mag_1;
+                y *= mag_1;
             }
             else
             {
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
-                if ((x != 0 || y != 0) && x == x && y == y &&
-                    fabsf(x) < 10000 && fabsf(y) < 10000)
-                {
-                    float mag_1 = sqrtf(x * x + y * y);
-                    float scale = (mag_1 - 25) / 50;
-                    if (scale > 1)
-                        scale = 1;
-                    else if (scale < 0)
-                        scale = 0;
-                    client->player_accel_x = x / mag_1 * scale * 2.5;
-                    client->player_accel_y = y / mag_1 * scale * 2.5;
-                }
-                else
-                {
-                    client->player_accel_x = 0;
-                    client->player_accel_y = 0;
-                }
+                float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                float scale = rr_fclamp((mag_1 - 25) / 50, 0, 1);
+                x *= mag_1 * scale;
+                y *= mag_1 * scale;
             }
+            if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
+            {
+                client->player_accel_x = x;
+                client->player_accel_y = y;
+            }
+            else
+            {
+                client->player_accel_x = 0;
+                client->player_accel_y = 0;
+            }
+
             client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
@@ -650,152 +604,52 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case 3:
-        {
-#ifndef RIVET_BUILD
-            puts("cheat used");
-            uint8_t cheat_type = proto_bug_read_uint8(&encoder, "cheat type");
-            if (cheat_type == 1)
-            {
-                rr_simulation_for_each_mob(&this->simulation, &this->simulation,
-                                           delete_entity_function);
-                rr_simulation_for_each_drop(&this->simulation,
-                                            &this->simulation,
-                                            delete_entity_function);
-                rr_simulation_for_each_petal(&this->simulation,
-                                             &this->simulation,
-                                             delete_entity_function);
-            }
-            if (cheat_type == 2)
-            {
-                rr_simulation_for_each_mob(&this->simulation, &this->simulation,
-                                           delete_entity_function);
-                rr_simulation_for_each_drop(&this->simulation,
-                                            &this->simulation,
-                                            delete_entity_function);
-                rr_simulation_for_each_petal(&this->simulation,
-                                             &this->simulation,
-                                             delete_entity_function);
-            }
-            if (cheat_type == 3)
-            {
-            }
-#endif
-            break;
-        }
         case 68:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
             if (type > 2)
                 break;
-            if (client->squad != 0)
-            {
-                struct rr_squad *squad = &this->squads[client->squad - 1];
-                rr_squad_remove_client(squad, client);
-                printf("left squad %d\n", client->squad);
-            }
+            rr_client_leave_squad(this, client);
+            uint8_t squad = RR_ERROR_CODE_INVALID_SQUAD;
             if (type == 2)
-            {
-                for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
-                {
-                    if (this->squads[i].in_use)
-                        continue;
-                    rr_squad_add_client(&this->squads[i], client);
-                    client->squad = i + 1;
-                    this->squads[i].private = 1;
-                    return 0;
-                }
-                struct proto_bug failure;
-                proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, 68, "header");
-                proto_bug_write_uint8(&failure, 0, "fail type");
-                rr_server_client_encrypt_message(client, failure.start,
-                                failure.current - failure.start);
-                rr_server_client_write_message(client, failure.start,
-                            failure.current - failure.start);
-                client->squad = 0;
-            }
+                squad = rr_client_create_squad(this, client);
             else if (type == 1)
             {
                 char link[7];
                 proto_bug_read_string(&encoder, link, 7, "connect link");
+                squad = rr_client_join_squad_with_code(this, link);
+            }
+            else if (type == 0)
+                squad = rr_client_find_squad(this, client);
+            if (squad == RR_ERROR_CODE_INVALID_SQUAD || squad == RR_ERROR_CODE_FULL_SQUAD)
+            {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
                 proto_bug_write_uint8(&failure, 68, "header");
-                for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
-                {
-                    if (!this->squads[s].in_use)
-                        continue;
-                    if (memcmp(link, this->squads[s].squad_code, 6) == 0)
-                    {
-                        if (!rr_squad_has_space(&this->squads[s]))
-                        {
-                            proto_bug_write_uint8(&failure, 1, "fail type");
-                            rr_server_client_encrypt_message(client, failure.start,
-                                         failure.current - failure.start);
-                            rr_server_client_write_message(client, failure.start,
-                                       failure.current - failure.start);
-                            client->squad = 0;
-                        }
-                        else
-                        {
-                            printf("force join squad %d\n", s + 1);
-                            rr_squad_add_client(&this->squads[s], client);
-                            client->squad = s + 1;
-                        }
-                        return 0;
-                    }
-                }
                 proto_bug_write_uint8(&failure, 0, "fail type");
                 rr_server_client_encrypt_message(client, failure.start,
                                 failure.current - failure.start);
                 rr_server_client_write_message(client, failure.start,
                             failure.current - failure.start);
                 client->squad = 0;
+                break;
             }
-            else if (type == 0)
-            {
-                for (uint32_t i = client->squad; i < RR_SQUAD_COUNT + client->squad; ++i)
-                {
-                    uint32_t pos = i % RR_SQUAD_COUNT;
-                    if (this->squads[pos].private)
-                        continue;
-                    if (!rr_squad_has_space(&this->squads[pos]))
-                        continue;
-                    rr_squad_add_client(&this->squads[pos], client);
-                    client->squad = pos + 1;
-                    break;
-                }
-            }
+            rr_client_join_squad(this, client, squad);
             break;
         }
         case 69:
         {
-            if (client->squad == 0)
-            {
-                for (uint32_t pos = 0; pos < RR_SQUAD_COUNT; ++pos)
-                {
-                    if (this->squads[pos].private)
-                        continue;
-                    if (!rr_squad_has_space(&this->squads[pos]))
-                        continue;
-                    rr_squad_add_client(&this->squads[pos], client);
-                    client->squad = pos + 1;
-                    break;
-                }
-            }
             if (client->squad != 0)
             {
                 if (client->player_info == NULL)
                 {
-                    client->ready |= 1;
-                    rr_server_client_create_player_info(client, i);
+                    rr_squad_get_client_slot(this, client)->playing = 1;
+                    rr_server_client_create_player_info(this, client);
                     rr_server_client_create_flower(client);
-                    client->playing = 1;
                 }
                 else
                 {
-                    client->ready &= ~1;
+                    rr_squad_get_client_slot(this, client)->playing = 0;
                     if (client->player_info != NULL)
                     {
                         if (client->player_info->flower_id != RR_NULL_ENTITY)
@@ -816,7 +670,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             if (loadout_count > 10)
                 break;
-
+            struct rr_squad_member *member = rr_squad_get_client_slot(this, client);
             for (uint8_t i = 0; i < loadout_count; i++)
             {
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
@@ -825,16 +679,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     break;
                 if (rarity >= rr_rarity_id_max)
                     break;
-                client->loadout[i].rarity = rarity;
-                client->loadout[i].id = id;
+                member->loadout[i].rarity = rarity;
+                member->loadout[i].id = id;
                 id = proto_bug_read_uint8(&encoder, "id");
                 rarity = proto_bug_read_uint8(&encoder, "rarity");
                 if (id >= rr_petal_id_max)
                     break;
                 if (rarity >= rr_rarity_id_max)
                     break;
-                client->loadout[i + 10].rarity = rarity;
-                client->loadout[i + 10].id = id;
+                member->loadout[i + 10].rarity = rarity;
+                member->loadout[i + 10].id = id;
             }
 
             break;
@@ -848,33 +702,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                   16 + 1, "nick");
             break;
         }
-        case 72:
+        case 72
         {
-            if (client->squad_pos == 0)
-            {
+            if (client->squad_pos != 0 && first)
                 this->squads[client->squad - 1].private = 0;
-#ifdef RIVET_BUILD
-                // players cannot join in the middle of a game (simulation)
-                char *lobby_token = getenv("RIVET_LOBBY_TOKEN");
-                //rr_rivet_lobbies_set_closed(lobby_token, this->private);
-#else
-                //printf("setting to %d\n", this->private);
-#endif
-            }
-            break;
-        }
-        case 73:
-        {
-            if (!first)
-                break;
-            /*
-            uint8_t kick_pos = proto_bug_read_uint8(&encoder, "kick");
-            if (kick_pos > RR_SQUAD_MEMBER_COUNT)
-                break;
-            if (kick_pos == i)
-                break;
-            this->clients[kick_pos].kicked = 1;
-            */
             break;
         }
         default:

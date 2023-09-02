@@ -55,10 +55,10 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_text_baseline(renderer, 0);
         rr_renderer_stroke_text(
-            renderer, &game->squad_members[player_info->client_id].name[0],
+            renderer, game->squad_members[player_info->client_id].nickname,
             -length, -18);
         rr_renderer_fill_text(
-            renderer, &game->squad_members[player_info->client_id].name[0],
+            renderer, game->squad_members[player_info->client_id].nickname,
             -length, -18);
     }
     // the health bar

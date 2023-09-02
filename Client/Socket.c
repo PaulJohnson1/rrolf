@@ -86,16 +86,16 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 socket.onclose = function(a, b)
                 {
                     console.log("close", a, b);
-                    if (a.reason === 'invalid v\x00')
-                        location.reload(true);
-                    Module._rr_on_socket_event_emscripten($0, 1, 0, a.code);
+                    const buf = new TextEncoder().encode(a.reason);
+                    HEAPU8.set(buf, $2);
+                    Module._rr_on_socket_event_emscripten($0, 1, $2, a.code);
                 };
                 socket.onerror = function(a, b) { 
                     console.log("error", a, b); 
                 };
                 socket.onmessage = function(event)
                 {
-                    Module.HEAPU8.set(new Uint8Array(event.data), $2);
+                    HEAPU8.set(new Uint8Array(event.data), $2);
                     Module._rr_on_socket_event_emscripten(
                         $0, 2, $2, new Uint8Array(event.data).length);
                 };

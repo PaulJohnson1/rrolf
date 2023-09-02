@@ -67,7 +67,6 @@ void rr_api_on_get_petals(char *bin, void *a)
     }
     rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
     game->cache.experience = rr_binary_encoder_read_float64(&decoder);
-    rr_binary_encoder_read_varuint(&decoder);
     uint32_t checksum = 5;
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
@@ -487,7 +486,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         this->rivet_lobby_pending = 0;
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
-        puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
     {
@@ -556,9 +554,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "bitbit");
                 if (this->squad_members[i].in_use == 0)
                     continue;
-                this->squad_members[i].ready =
+                this->squad_members[i].playing =
                     proto_bug_read_uint8(&encoder, "ready");
-                proto_bug_read_string(&encoder, this->squad_members[i].name,
+                proto_bug_read_string(&encoder, this->squad_members[i].nickname,
                                       16 + 1, "nick");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
@@ -693,7 +691,6 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     struct proto_bug encoder2;
     proto_bug_init(&encoder2, output_packet);
     proto_bug_write_uint8(&encoder2, 0, "header");
-    proto_bug_write_uint8(&encoder2, 0, "movement type");
     uint8_t movement_flags = 0;
     movement_flags |=
         (rr_bitset_get(this->input_data->keys_pressed, 'W') ||

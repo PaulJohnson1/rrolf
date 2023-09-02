@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Shared/Entity.h>
+#include <Shared/StaticData.h>
 
 #define SPATIAL_HASH_GRID_SIZE 9
 #define RR_SPATIAL_HASH_GRID_LENGTH                                            \

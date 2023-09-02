@@ -17,18 +17,19 @@
 #include <Shared/pb.h>
 #include <Shared/Rivet.h>
 #include <Shared/Utilities.h>
+#include <Shared/Squad.h>
 
 struct squad_flower_metadata
 {
     float mouth;
-    struct rr_game_squad_client *member;
+    struct rr_squad_member *member;
 };
 
 void render_flower(struct rr_ui_element *element, struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct squad_flower_metadata *data = element->data;
-    if (data->member->ready & 2)
+    if (data->member->dev)
     {
         rr_renderer_rotate(renderer, -M_PI);
     }
@@ -73,18 +74,18 @@ void render_flower(struct rr_ui_element *element, struct rr_game *game)
 static void flower_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     struct squad_flower_metadata *data = this->data;
-    data->mouth = rr_lerp(data->mouth, (data->member->ready & 1), 0.4);
+    data->mouth = rr_lerp(data->mouth, (data->member->playing), 0.4);
 }
 
 static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
-    struct rr_game_squad_client *member = data->data;
+    struct rr_squad_member *member = data->data;
     return member->in_use;
 }
 
 static struct rr_ui_element *
-rr_ui_flower_init(struct rr_game_squad_client *member, float size)
+rr_ui_flower_init(struct rr_squad_member *member, float size)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_flower_metadata *data = malloc(sizeof *data);
@@ -100,7 +101,7 @@ rr_ui_flower_init(struct rr_game_squad_client *member, float size)
 
 struct squad_loadout_button_metadata
 {
-    struct rr_game_loadout_petal *petal;
+    struct rr_id_rarity_pair *petal;
     uint8_t prev_id;
     uint8_t prev_rarity;
 };
@@ -135,7 +136,7 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
 }
 
 static struct rr_ui_element *
-squad_loadout_button_init(struct rr_game_loadout_petal *petal)
+squad_loadout_button_init(struct rr_id_rarity_pair *petal)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_loadout_button_metadata *data = malloc(sizeof *data);
@@ -156,8 +157,8 @@ static void background_change_animate(struct rr_ui_element *this,
     struct rr_ui_choose_element_metadata *data = this->data;
     if (data->choose(this, game))
     {
-        struct rr_game_squad_client *member = data->data;
-        if (member->ready & 1)
+        struct rr_squad_member *member = data->data;
+        if (member->playing)
             this->container->fill = 0x4023ff45;
         else
             this->container->fill = 0x40ff4523;
@@ -194,7 +195,7 @@ void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
 struct rr_ui_element *
 rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
 {
-    struct rr_game_squad_client *member = &game->squad_members[pos];
+    struct rr_squad_member *member = &game->squad_members[pos];
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 5);
     for (uint8_t i = 0; i < 20; ++i)
@@ -204,7 +205,7 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
                               -1, -1));
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, rr_ui_flower_init(member, 50),
-        rr_ui_text_init(&member->name[0], 14, 0xffffffff), 
+        rr_ui_text_init(member->nickname, 14, 0xffffffff), 
         NULL
     );
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 10);
