@@ -9,6 +9,7 @@
 #define RR_MAZE_DIM (48)
 #define RR_MAZE_GRID_SIZE (768)
 #define RR_ARENA_LENGTH (RR_MAZE_GRID_SIZE * RR_MAZE_DIM)
+#define RR_PLAYER_SPEED 4
 
 enum rr_rarity_id
 {
