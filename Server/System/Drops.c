@@ -24,7 +24,9 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, flower_relations->owner);
-    if (rr_bitset_get(drop->picked_up_by, player_info->client_id))
+    if (!rr_bitset_get(drop->can_be_picked_up_by, player_info->squad))
+        return;
+    if (rr_bitset_get(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos))
         return;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, drop_id);
@@ -37,7 +39,7 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
     if (rr_vector_get_magnitude(&delta) >
         physical->radius + player_info->modifiers.drop_pickup_radius)
         return;
-    rr_bitset_set(drop->picked_up_by, player_info->client_id);
+    rr_bitset_set(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos);
 
     ++player_info->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
     rr_component_player_info_set_update_loot(player_info);

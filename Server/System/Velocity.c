@@ -28,13 +28,13 @@ static void system(EntityIdx id, void *simulation)
     physical->webbed = 0;
     struct rr_vector vel = {physical->velocity.x, physical->velocity.y};
     struct rr_vector add = {vel.x, vel.y};
-    rr_vector_set_magnitude(&add, physical->radius);
+    rr_vector_set_magnitude(&add, physical->radius * 0.95);
     float mag = rr_vector_get_magnitude(&vel);
     while (1)
     {
-        if (mag >= physical->radius)
+        if (mag >= physical->radius * 0.95)
         {
-            mag -= physical->radius;
+            mag -= physical->radius * 0.95;
             rr_component_physical_set_x(physical, physical->x + add.x);
             rr_component_physical_set_y(physical, physical->y + add.y);
             rr_vector_sub(&vel, &add);

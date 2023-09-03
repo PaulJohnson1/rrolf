@@ -12,17 +12,13 @@ set(SRCS
     Assets/Mob/Ankylosaurus.c
     Assets/Mob/Dakotaraptor.c
     Assets/Mob/Edmontosaurus.c
-    Assets/Mob/Kelp.c
-    Assets/Mob/KingMackarel.c
     Assets/Mob/Ornithomimus.c
     Assets/Mob/Pachycephalosaurus.c
     Assets/Mob/Pectinodon.c
     Assets/Mob/Pteranodon.c
     Assets/Mob/Quetzalcoatlus.c
     Assets/Mob/Rex.c
-    Assets/Mob/SeaSnail.c
     Assets/Mob/Triceratops.c
-    Assets/Mob/Seagull.c
     Assets/Mob/Fern.c
     Assets/Mob/Meteor.c
     Assets/Mob/Tree.c
@@ -125,7 +121,7 @@ endif()
 
 if (WASM_BUILD)
     set(CMAKE_C_COMPILER "emcc")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_free,_rr_rivet_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_on_socket_event_emscripten,_rr_api_on_get_petals,_rr_api_on_craft_result,_rr_api_on_get_password")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWASM_BUILD -s INITIAL_MEMORY=33554432 -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=_malloc,_free,_rr_rivet_on_log_in,_rr_rivet_lobby_on_find,_rr_renderer_main_loop,_main,_rr_key_event,_rr_mouse_event,_rr_touch_event,_rr_wheel_event,_rr_paste_event,_rr_on_socket_event_emscripten,_rr_api_on_get_petals,_rr_api_on_craft_result,_rr_api_on_get_password")
     set(SRCS ${SRCS} Renderer/Wasm.c)
 else()
     set(SRCS ${SRCS} Renderer/Native.cc)

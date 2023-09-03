@@ -45,6 +45,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
     }
     else if (rr_simulation_has_flower(simulation, entity) && physical->deletion_animation == 0)
     {
+        /*
         struct rr_component_player_info *player_info =
             rr_simulation_get_player_info(
                 simulation,
@@ -55,11 +56,12 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_text_baseline(renderer, 0);
         rr_renderer_stroke_text(
-            renderer, game->squad_members[player_info->client_id].nickname,
+            renderer, game->squad_members[player_info->squad_pos].nickname,
             -length, -18);
         rr_renderer_fill_text(
-            renderer, game->squad_members[player_info->client_id].nickname,
+            renderer, game->squad_members[player_info->squad_pos].nickname,
             -length, -18);
+        */
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);

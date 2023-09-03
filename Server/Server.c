@@ -131,7 +131,7 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
         &server->simulation,
         rr_simulation_alloc_entity(&server->simulation));
     player_info->squad = client->squad;
-    rr_component_player_info_set_client_id(player_info, client->squad_pos);
+    rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
     rr_component_player_info_set_slot_count(player_info, 10);
     player_info->level = 1;
     #define min(a,b) (((a) < (b)) ? (a) : (b))
@@ -702,7 +702,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                   16 + 1, "nick");
             break;
         }
-        case 72
+        case 72:
         {
             if (client->squad_pos != 0 && first)
                 this->squads[client->squad - 1].private = 0;

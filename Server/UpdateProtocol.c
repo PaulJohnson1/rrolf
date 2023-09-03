@@ -89,9 +89,11 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
             captures->view_y + captures->view_height)
         return;
     if (rr_simulation_has_drop(simulation, entity) &&
-        rr_bitset_get(
+        (!rr_bitset_get(
+            rr_simulation_get_drop(captures->simulation, entity)->can_be_picked_up_by,
+            captures->player_info->squad) || rr_bitset_get(
             rr_simulation_get_drop(captures->simulation, entity)->picked_up_by,
-            captures->player_info->client_id))
+            captures->player_info->squad * RR_SQUAD_MEMBER_COUNT + captures->player_info->squad_pos)))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
     return;
@@ -139,12 +141,17 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
         uint8_t out_of_view =
             rr_simulation_has_entity(captures->simulation, id) == 0;
         if (!out_of_view)
-            if (rr_simulation_has_drop(captures->simulation, id) &&
-                     rr_bitset_get(
-                         rr_simulation_get_drop(captures->simulation, id)
-                             ->picked_up_by,
-                         player_info->client_id))
-                out_of_view = 2;
+        {
+            if (rr_simulation_has_drop(captures->simulation, id))
+            {
+                struct rr_component_drop *drop = rr_simulation_get_drop(captures->simulation, id);
+                if (!rr_bitset_get(drop->can_be_picked_up_by, player_info->squad))
+                    out_of_view = 1;
+                else if (rr_bitset_get(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos))
+                //1 = in-place deletion, 2 = suck to player
+                    out_of_view = 2;
+            }
+        }
         rr_bitset_unset(player_info->entities_in_view, id);
         proto_bug_write_varuint(encoder, id, "entity deletion id");
         proto_bug_write_uint8(encoder, out_of_view, "deletion type");
@@ -172,17 +179,17 @@ void rr_simulation_write_binary(struct rr_simulation *this,
 
     rr_simulation_find_entities_in_view(this, player_info,
                                         &new_entities_in_view[0]);
-    for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
-        if (rr_bitset_get_bit(this->player_info_tracker, i))
-        {
-            if (rr_simulation_get_player_info(this, i)->squad != player_info->squad)
-                continue;
-            rr_bitset_set(new_entities_in_view, i);
-            struct rr_component_player_info *p_info =
-                rr_simulation_get_player_info(this, i);
-            if (p_info->flower_id != RR_NULL_ENTITY)
-                rr_bitset_set(new_entities_in_view, p_info->flower_id);
-        }
+    for (uint64_t i = 0; i < this->player_info_count; i++)
+    {
+        EntityIdx p_id = this->player_info_vector[i];
+        struct rr_component_player_info *p_info =
+            rr_simulation_get_player_info(this, p_id);
+        if (p_info->squad != player_info->squad)
+            continue;
+        rr_bitset_set(new_entities_in_view, p_id);
+        if (p_info->flower_id != RR_NULL_ENTITY)
+            rr_bitset_set(new_entities_in_view, p_info->flower_id);
+    }
 
     struct rr_protocol_for_each_function_captures captures;
     captures.simulation = this;

@@ -75,11 +75,6 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         health->burn_ticks = 75;
         health->burn = rr_simulation_get_health(simulation, petal_id)->secondary_damage;
     }
-    else if (petal->id == rr_petal_id_scales)
-    {
-        struct rr_component_health *health = rr_simulation_get_health(simulation, petal_id);
-        rr_component_health_do_damage(health, health->damage_reduction + 1);
-    }
 }
 
 static void colliding_with_function(uint64_t i, void *_captures)

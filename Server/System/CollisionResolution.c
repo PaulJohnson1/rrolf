@@ -81,6 +81,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (distance == 0)
         return;
     {
+        /*
         float overlap = (distance - physical1->radius - physical2->radius);
         float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
         float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
@@ -92,6 +93,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
             physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
         rr_component_physical_set_y(
             physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
+        */
     }
 
     {

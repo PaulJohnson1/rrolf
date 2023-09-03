@@ -25,7 +25,21 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
     struct rr_renderer_context_state state;
 
     rr_renderer_context_state_init(renderer, &original_state);
-    rr_renderer_rotate(renderer, M_PI / 2);
+    //rr_renderer_rotate(renderer, M_PI / 2);
+    /*
+    function change(line) {
+    const split = line.split("renderer,");
+    if (split.length === 1)
+        return line;
+    let part = split[1].split(',').map(x => parseFloat(x));
+    let final = [];
+    for (let n = 0; n < part.length; n += 2)
+        final.push(-part[n+1],part[n]);
+    return split[0] + "renderer," + final.map(x=>x.toFixed(2)).join(',') + ");";
+    }
+    function convert(file) {
+    console.log(file.split(";\n").map(x => change(x)).join(";\n").replaceAll(";;",";"))}
+    */
     switch (id)
     {
     case rr_mob_id_pachycephalosaurus:
@@ -36,34 +50,31 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_scale(renderer, 0.2f);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0.0f, animation_tick * 10.0f);
+        rr_renderer_translate(renderer, animation_tick * 10.0f, 0);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0.0f, animation_tick * -10.0f);
+        rr_renderer_translate(renderer, animation_tick * -10.0f, 0);
         render_sprite(renderer, id, 3, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer,  0, 75);
+        rr_renderer_translate(renderer, -75, 0);
         rr_renderer_rotate(renderer, turning_value);
-        rr_renderer_translate(renderer,  0, -75 + 155);
+        rr_renderer_translate(renderer, -80, 0);
         render_sprite(renderer, id, 4, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         render_sprite(renderer, id, 1, flags);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer,  0, -75);
-        rr_renderer_translate(renderer,  0, 75 - 145);
+        rr_renderer_translate(renderer, 145, 0);
         render_sprite(renderer, id, 0, flags);
         rr_renderer_context_state_free(renderer, &state);
         break;
     case rr_mob_id_fern:
-        rr_renderer_scale(renderer, 0.6f);
-    case rr_mob_id_kelp:
-        rr_renderer_scale(renderer, 0.5f);
+        rr_renderer_scale(renderer, 0.3f);
     case rr_mob_id_tree:
     case rr_mob_id_meteor:
         rr_renderer_scale(renderer, 0.4f);
@@ -74,13 +85,13 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, 160, 0);
+        rr_renderer_translate(renderer, 0, 160);
         render_sprite(renderer, id, 1, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, -160, 0);
+        rr_renderer_translate(renderer, 0, -160);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
         render_sprite(renderer, id, 0, flags);
@@ -90,21 +101,21 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_scale(renderer, 0.16f);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -65, 0);
+        rr_renderer_translate(renderer, 0, -65);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
         
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 65, 0);
+        rr_renderer_translate(renderer, 0, 65);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
         render_sprite(renderer, id, 3, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, 180);
+        rr_renderer_translate(renderer, -120, 0);
         rr_renderer_rotate(renderer, turning_value);
-        rr_renderer_translate(renderer, 0, 15);
+        rr_renderer_translate(renderer, -75, 0);
         render_sprite(renderer, id, 4, flags);
         rr_renderer_context_state_free(renderer, &state);
 
@@ -112,7 +123,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, id == rr_mob_id_ornithomimus ? -175 : -125);
+        rr_renderer_translate(renderer, id == rr_mob_id_ornithomimus ? 175 : 125, 0);
         
         render_sprite(renderer, id, 0, flags);
         rr_renderer_context_state_free(renderer, &state);
@@ -121,7 +132,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_scale(renderer, 0.2f);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, 155);
+        rr_renderer_translate(renderer, -155, 0);
         rr_renderer_rotate(renderer, turning_value);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
@@ -129,7 +140,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         render_sprite(renderer, id, 1, flags);
         
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, -145);
+        rr_renderer_translate(renderer, 145, 0);
         render_sprite(renderer, id, 0, flags);
         rr_renderer_context_state_free(renderer, &state);
         break;
@@ -138,101 +149,45 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, 125, 75);
+        rr_renderer_translate(renderer, -75, 125);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, -125, 75);
+        rr_renderer_translate(renderer, -75, -125);
         render_sprite(renderer, id, 3, flags);
         rr_renderer_context_state_free(renderer, &state);
         render_sprite(renderer, id, 1, flags);
 
-        rr_renderer_translate(renderer, 0, -165);
+        rr_renderer_translate(renderer, 165, 0);
         render_sprite(renderer, id, 0, flags);
         break;
     case rr_mob_id_pectinodon:
         rr_renderer_scale(renderer, 0.12f);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -90, 50);
+        rr_renderer_translate(renderer, -50, -90);
         rr_renderer_rotate(renderer, animation_tick * 0.1f);
         render_sprite(renderer, id, 2, flags);
         rr_renderer_context_state_free(renderer, &state);
         
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 90, 50);
+        rr_renderer_translate(renderer, -50, 90);
         rr_renderer_rotate(renderer, animation_tick * -0.1f);
         render_sprite(renderer, id, 3, flags);
         rr_renderer_context_state_free(renderer, &state);
 
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 0, 290);
+        rr_renderer_translate(renderer, -290, 0);
         rr_renderer_rotate(renderer, turning_value);
-        rr_renderer_translate(renderer, 0, -50);
+        rr_renderer_translate(renderer, 50, 0);
         render_sprite(renderer, id, 4, flags);
 
         rr_renderer_context_state_free(renderer, &state);
         render_sprite(renderer, id, 1, flags);
 
-        rr_renderer_translate(renderer, 0, -185);
-        render_sprite(renderer, id, 0, flags);
-        break;
-    case rr_mob_id_king_mackarel:
-        rr_renderer_scale(renderer, 0.2f);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer,  0, 100);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer,  0, -100 + 180);
-        render_sprite(renderer, id, 4, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        render_sprite(renderer, id, 1, flags);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -30, -100);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, -30, 30);
-        render_sprite(renderer, id, 2, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, 30, -100);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, 30, 30);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer,  0, -75);
-        rr_renderer_translate(renderer,  0, 75 - 145);
-        render_sprite(renderer, id, 0, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        break;
-    case rr_mob_id_sea_snail:
-        rr_renderer_scale(renderer, 0.2f);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer,  0, -125 + animation_tick * 30);
-        render_sprite(renderer, id, 0, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        render_sprite(renderer, id, 1, flags);
-        break;
-    case rr_mob_id_seagull:
-        rr_renderer_scale(renderer, 0.15f);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        rr_renderer_translate(renderer, 125, 15);
-        render_sprite(renderer, id, 1, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, -125, 15);
-        render_sprite(renderer, id, 2, flags);
-        rr_renderer_context_state_free(renderer, &state);
+        rr_renderer_translate(renderer, 190, 0);
         render_sprite(renderer, id, 0, flags);
         break;
     }
@@ -246,62 +201,51 @@ static void friendly_mask(struct rr_renderer *renderer)
 
 void rr_renderer_mob_cache_init()
 {
-    rr_renderer_spritesheet_init(&mob_sprites[0], NULL, 192, 336, rr_triceratops_head_draw,
-    192, 336, rr_triceratops_body_draw, 240, 240, rr_triceratops_leg1_draw, 
-    240, 240, rr_triceratops_leg2_draw, 192, 336, rr_triceratops_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[0], NULL, 336, 192, rr_triceratops_head_draw,
+    336, 192, rr_triceratops_body_draw, 240, 240, rr_triceratops_leg1_draw, 
+    240, 240, rr_triceratops_leg2_draw, 336, 192, rr_triceratops_tail_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[1], NULL, 144, 240, rr_t_rex_head_draw,
-    192, 336, rr_t_rex_body_draw, 240, 240, rr_t_rex_leg1_draw, 
-    240, 240, rr_t_rex_leg2_draw, 192, 336, rr_t_rex_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[1], NULL, 240, 144, rr_t_rex_head_draw,
+    336, 192, rr_t_rex_body_draw, 240, 240, rr_t_rex_leg1_draw, 
+    240, 240, rr_t_rex_leg2_draw, 336, 192, rr_t_rex_tail_draw, 0);
 
-    rr_renderer_spritesheet_init(&friendly_trex_spritesheet, friendly_mask, 144, 240, rr_t_rex_head_draw,
-    192, 336, rr_t_rex_body_draw, 240, 240, rr_t_rex_leg1_draw, 
-    240, 240, rr_t_rex_leg2_draw, 192, 336, rr_t_rex_tail_draw, 0);
+    rr_renderer_spritesheet_init(&friendly_trex_spritesheet, friendly_mask, 240, 144, rr_t_rex_head_draw,
+    336, 192, rr_t_rex_body_draw, 240, 240, rr_t_rex_leg1_draw, 
+    240, 240, rr_t_rex_leg2_draw, 336, 192, rr_t_rex_tail_draw, 0);
 
     rr_renderer_spritesheet_init(&mob_sprites[2], NULL, 672, 672, rr_fern_draw, 0);
 
     rr_renderer_spritesheet_init(&mob_sprites[3], NULL, 384, 384, rr_tree_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[4], NULL, 192, 336, rr_pteranodon_body_draw, 
-    432, 288, rr_pteranodon_wing1_draw, 432, 288, rr_pteranodon_wing2_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[4], NULL, 336, 192, rr_pteranodon_body_draw, 
+    288, 432, rr_pteranodon_wing1_draw, 288, 432, rr_pteranodon_wing2_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[5], NULL, 144, 240, rr_dakotaraptor_head_draw, 
-    192, 336, rr_dakotaraptor_body_draw, 144, 240, rr_dakotaraptor_wing1_draw, 144, 240, 
-    rr_dakotaraptor_wing2_draw, 192, 336, rr_dakotaraptor_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[5], NULL, 240, 144, rr_dakotaraptor_head_draw, 
+    336, 192, rr_dakotaraptor_body_draw, 240, 144, rr_dakotaraptor_wing1_draw, 240, 144, 
+    rr_dakotaraptor_wing2_draw, 336, 192, rr_dakotaraptor_tail_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[6], NULL, 144, 240, rr_pachycephalosaurus_head_draw,
-    192, 336, rr_pachycephalosaurus_body_draw, 240, 240, rr_pachycephalosaurus_leg1_draw, 
-    240, 240, rr_pachycephalosaurus_leg2_draw, 192, 336, rr_pachycephalosaurus_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[6], NULL, 240, 144, rr_pachycephalosaurus_head_draw,
+    336, 192, rr_pachycephalosaurus_body_draw, 240, 240, rr_pachycephalosaurus_leg1_draw, 
+    240, 240, rr_pachycephalosaurus_leg2_draw, 336, 192, rr_pachycephalosaurus_tail_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[7], NULL, 144, 240, rr_ornithomimus_head_draw, 
-    192, 336, rr_ornithomimus_body_draw, 144, 240, rr_ornithomimus_wing1_draw, 144, 240, 
-    rr_ornithomimus_wing2_draw, 192, 336, rr_ornithomimus_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[7], NULL, 240, 144, rr_ornithomimus_head_draw, 
+    336, 192, rr_ornithomimus_body_draw, 240, 144, rr_ornithomimus_wing1_draw, 240, 144, 
+    rr_ornithomimus_wing2_draw, 336, 192, rr_ornithomimus_tail_draw, 0);
 
     rr_renderer_spritesheet_init(&mob_sprites[8], NULL, 144, 144, rr_ankylosaurus_head_draw, 
-    192, 336, rr_ankylosaurus_body_draw, 192, 336, rr_ankylosaurus_tail_draw, 0);
+    336, 192, rr_ankylosaurus_body_draw, 336, 192, rr_ankylosaurus_tail_draw, 0);
     
-    rr_renderer_spritesheet_init(&mob_sprites[9], NULL, 144, 240, rr_meteor_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[9], NULL, 240, 144, rr_meteor_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[10], NULL, 192, 336, rr_quetzalcoatlus_head_draw, 
-    192, 336, rr_quetzalcoatlus_body_draw, 192, 336, rr_quetzalcoatlus_wing1_draw, 192, 336, 
+    rr_renderer_spritesheet_init(&mob_sprites[10], NULL, 336, 192, rr_quetzalcoatlus_head_draw, 
+    336, 192, rr_quetzalcoatlus_body_draw, 336, 192, rr_quetzalcoatlus_wing1_draw, 336, 192, 
     rr_quetzalcoatlus_wing2_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[11], NULL, 192, 336, rr_pectinodon_head_draw, 
-    192, 336, rr_pectinodon_body_draw, 144, 240, rr_pectinodon_wing1_draw, 144, 240, 
-    rr_pectinodon_wing2_draw, 192, 336, rr_pectinodon_tail_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[11], NULL, 336, 192, rr_pectinodon_head_draw, 
+    336, 192, rr_pectinodon_body_draw, 240, 144, rr_pectinodon_wing1_draw, 240, 144, 
+    rr_pectinodon_wing2_draw, 336, 192, rr_pectinodon_tail_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[12], NULL, 144, 240, rr_edmontosaurus_head_draw, 
-    192, 336, rr_edmontosaurus_body_draw, 240, 240, rr_edmontosaurus_leg1_draw, 240, 240, 
-    rr_edmontosaurus_leg2_draw, 192, 336, rr_edmontosaurus_tail_draw, 0);
-
-    rr_renderer_spritesheet_init(&mob_sprites[13], NULL, 144, 240, rr_king_mackarel_head_draw, 
-    192, 336, rr_king_mackarel_body_draw, 144, 144, rr_king_mackarel_fin1_draw, 144, 144, 
-    rr_king_mackarel_fin2_draw, 240, 240, rr_king_mackarel_tail_draw, 0);
-
-    rr_renderer_spritesheet_init(&mob_sprites[14], NULL, 240, 240, rr_sea_snail_head_draw, 240, 240, rr_sea_snail_body_draw, 0);
-
-    rr_renderer_spritesheet_init(&mob_sprites[15], NULL, 192, 336, rr_seagull_body_draw, 
-    432, 288, rr_seagull_wing2_draw, 432, 288, rr_seagull_wing1_draw, 0);
-
-    rr_renderer_spritesheet_init(&mob_sprites[16], NULL, 384, 384, rr_kelp_draw, 0);
+    rr_renderer_spritesheet_init(&mob_sprites[12], NULL, 240, 144, rr_edmontosaurus_head_draw, 
+    339, 192, rr_edmontosaurus_body_draw, 240, 240, rr_edmontosaurus_leg1_draw, 240, 240, 
+    rr_edmontosaurus_leg2_draw, 336, 192, rr_edmontosaurus_tail_draw, 0);
 }

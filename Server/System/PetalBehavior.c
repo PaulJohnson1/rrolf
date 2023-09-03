@@ -335,45 +335,6 @@ static void system_flower_petal_movement_logic(
                 physical->friction = 0.4;
                 break;
             }
-            case rr_petal_id_kelp:
-            {
-                for (uint32_t i = 0; i < simulation->mob_count; ++i)
-                {
-                    EntityIdx potential = simulation->mob_vector[i];
-                    if (rr_simulation_get_relations(simulation, potential)->team != rr_simulation_team_id_players)
-                        continue;
-                    struct rr_component_physical *target_physical =
-                        rr_simulation_get_physical(simulation, potential);
-                    struct rr_vector delta = {
-                        (target_physical->x - position_vector.x),
-                        (target_physical->y - position_vector.y)};
-                    if (rr_vector_get_magnitude(&delta) > 200 + target_physical->radius)
-                        continue;
-                    struct rr_component_health *mob_health =
-                        rr_simulation_get_health(simulation, potential);
-                    if (mob_health->health == mob_health->max_health)
-                        continue;
-                    if (rr_vector_get_magnitude(&delta) < physical->radius)
-                    {
-                        // heal
-                        rr_component_health_set_health(
-                            mob_health,
-                            mob_health->health +
-                                20 * RR_PETAL_RARITY_SCALE[petal->rarity]
-                                            .damage);
-                        rr_simulation_request_entity_deletion(simulation,
-                                                                id);
-                        return;
-                    }
-                    else
-                    {
-                        rr_vector_scale(&delta, 0.5);
-                        rr_vector_add(&physical->acceleration, &delta);
-                        return;
-                    }
-                }
-                break;
-            }
             default:
                 break;
             }
@@ -550,7 +511,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 system_flower_petal_movement_logic(
                     simulation, p_petal->simulation_id, player_info,
                     rotation_pos - 1, outer, inner, data);
-                if (data->id == rr_petal_id_egg || data->id == rr_petal_id_fish_egg)
+                if (data->id == rr_petal_id_egg)
                 {
                     struct rr_component_petal *petal = rr_simulation_get_petal(
                         simulation, p_petal->simulation_id);
@@ -570,11 +531,6 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     {
                         m_id = rr_mob_id_trex;
                         m_rar = petal->rarity ? petal->rarity - 1 : 0;
-                    }
-                    else
-                    {
-                        m_id = rr_mob_id_king_mackarel;
-                        m_rar = petal->rarity < 2 ? 0 : petal->rarity - 2;
                     }
                     EntityIdx mob_id = p_petal->simulation_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, m_id, m_rar,

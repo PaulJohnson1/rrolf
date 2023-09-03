@@ -86,7 +86,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_component_relations_set_team(relations,
                                         rr_simulation_team_id_players);
         drop->ticks_until_despawn = 25 * 10 * (spawn_rarities[i] + 1);
-
+        drop->can_be_picked_up_by[0] = 2;
         if (count != 1)
         {
             float angle = M_PI * 2 * i / count;

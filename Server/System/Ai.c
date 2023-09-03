@@ -1035,9 +1035,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     {
     case rr_mob_id_fern:
     case rr_mob_id_tree:
-    case rr_mob_id_kelp:
         break;
-    case rr_mob_id_seagull:
     case rr_mob_id_ornithomimus:
         tick_ai_aggro_ornithomimus(entity, this);
         break;
@@ -1071,11 +1069,6 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_edmontosaurus:
         tick_ai_aggro_edmontosaurus(entity, this);
         break;
-    case rr_mob_id_king_mackarel:
-        tick_ai_aggro_king_mackarel(entity, this);
-        break;
-    case rr_mob_id_sea_snail:
-        tick_ai_aggro_sea_snail(entity, this);
         break;
     default:
         RR_UNREACHABLE("invalid ai aggro type state");

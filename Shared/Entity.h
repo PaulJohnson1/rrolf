@@ -3,10 +3,15 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
-#define RR_MAX_ENTITY_COUNT (2048)
+#define RR_MAX_ENTITY_COUNT (16384)
 #define RR_NULL_ENTITY (0)
-#define RR_MAX_COLLISION_COUNT (128)
 #define RR_SQUAD_MEMBER_COUNT (4)
+#ifdef RR_SERVER
+#define RR_MAX_CLIENT_COUNT (64)
+#define RR_SQUAD_COUNT (RR_MAX_CLIENT_COUNT / RR_SQUAD_MEMBER_COUNT)
+#define RR_LOOT_SHARE_COUNT (4)
+#define RR_MAX_COLLISION_COUNT (128)
+#endif
 
 struct rr_id_rarity_pair
 {

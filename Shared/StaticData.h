@@ -7,7 +7,7 @@
 #define RR_LEVELS_PER_EXTRA_SLOT (20)
 #define RR_BIOME_COUNT (2)
 #define RR_MAZE_DIM (48)
-#define RR_MAZE_GRID_SIZE (512)
+#define RR_MAZE_GRID_SIZE (768)
 #define RR_ARENA_LENGTH (RR_MAZE_GRID_SIZE * RR_MAZE_DIM)
 
 enum rr_rarity_id
@@ -27,15 +27,15 @@ enum rr_petal_id
     rr_petal_id_no_petal,
     rr_petal_id_basic,
     rr_petal_id_pellet,
-    rr_petal_id_fossil,
+    rr_petal_id_fossil, //remove + replace
     rr_petal_id_stinger,
     rr_petal_id_light,
     rr_petal_id_shell,
-    rr_petal_id_peas,
+    rr_petal_id_peas, //remove + replace
     rr_petal_id_leaf,
     rr_petal_id_egg,
     rr_petal_id_magnet,
-    rr_petal_id_uranium,
+    rr_petal_id_uranium, //remove
     rr_petal_id_feather,
     rr_petal_id_azalea,
     rr_petal_id_bone,
@@ -44,13 +44,15 @@ enum rr_petal_id
     rr_petal_id_gravel,
     rr_petal_id_club,
     rr_petal_id_crest,
-    rr_petal_id_droplet,
+    rr_petal_id_droplet, //remove + replace
     rr_petal_id_beak,
     rr_petal_id_lightning,
     rr_petal_id_stick,
+    /*
     rr_petal_id_kelp,
     rr_petal_id_fish_egg,
     rr_petal_id_scales,
+    */
     rr_petal_id_max
 };
 
@@ -69,11 +71,12 @@ enum rr_mob_id
     rr_mob_id_quetzalcoatlus,
     rr_mob_id_pectinodon,
     rr_mob_id_edmontosaurus,
-    
+    /*
     rr_mob_id_king_mackarel,
     rr_mob_id_sea_snail,
     rr_mob_id_seagull,
     rr_mob_id_kelp,
+    */
     rr_mob_id_max
 };
 
@@ -130,7 +133,6 @@ extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
-extern double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
@@ -139,10 +141,12 @@ extern uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2];
 
 struct rr_maze_grid
 {
+#ifdef RR_SERVER
     uint32_t mob_count;
     uint8_t difficulty;
     uint8_t is_special;
     uint8_t special_id;
+#endif
     uint8_t value;
 };
 

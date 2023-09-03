@@ -16,14 +16,14 @@ uint32_t get_spawn_rarity(float seed)
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                pow(1.4, seed)) >= rarity_seed)
+                pow(1.45, seed)) >= rarity_seed)
             return rarity;
     return rarity;
 }
 
 uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 {
-    double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS;
+    double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS;
     double seed = rr_frand();
     for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
             if (seed <= table[id])

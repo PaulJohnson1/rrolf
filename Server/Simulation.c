@@ -25,14 +25,27 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-static void set_zone(struct rr_spawn_zone *zone, float x, float y, float w, float h)
+static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
     zone->x = x * RR_MAZE_GRID_SIZE;
     zone->y = y * RR_MAZE_GRID_SIZE;
     zone->w = w * RR_MAZE_GRID_SIZE;
     zone->h = h * RR_MAZE_GRID_SIZE;
 }
-
+static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+{
+    struct rr_maze_grid *grid = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
+    for (uint32_t Y = 0; Y < h; ++Y)
+        for (uint32_t X = 0; X < h; ++X)
+        {
+            grid[(Y+y) * RR_MAZE_DIM + X+x].is_special = 1;
+            grid[(Y+y) * RR_MAZE_DIM + X+x].special_id = id;
+        }
+}
+#define SPAWN_ZONE_X 14
+#define SPAWN_ZONE_Y 38
+#define SPAWN_ZONE_W 5
+#define SPAWN_ZONE_H 3
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -43,7 +56,8 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena_component =
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    set_zone(&this->respawn_zone, 14, 38, 5, 3);
+    set_respawn_zone(&this->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
+    set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
     printf("simulation size: %lu\n", sizeof *this);
 
 #define XX(COMPONENT, ID)                                                      \
@@ -87,11 +101,15 @@ find_position_away_from_players(struct rr_simulation *this)
     return ret;
 }
 
-static void spawn_random_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid_y)
+static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid_y)
 {
     struct rr_maze_grid *grid = &RR_MAZE_HELL_CREEK[grid_y][grid_x];
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    uint8_t id = get_spawn_id(this->biome, grid);
+    uint8_t id;
+    if (grid->is_special)
+        id = grid->special_id;
+    else
+        id = get_spawn_id(this->biome, grid);
     uint8_t rarity = get_spawn_rarity(grid->difficulty);
     if (!should_spawn_at(id, rarity))
         return;
@@ -115,14 +133,18 @@ static void tick_wave(struct rr_simulation *this)
 {
     for (uint32_t grid_x = 0; grid_x < RR_MAZE_DIM; ++grid_x)
     {
+        if (grid_x == SPAWN_ZONE_X)
+            grid_x += SPAWN_ZONE_W;
         for (uint32_t grid_y = 0; grid_y < RR_MAZE_DIM; ++grid_y)
         {
+            if (grid_y == SPAWN_ZONE_Y)
+                grid_y += SPAWN_ZONE_H;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value != 1)
                 continue;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT)
                 continue;
             if (rand() % 25 == 0)
-                spawn_random_mob(this, grid_x, grid_y);
+                spawn_mob(this, grid_x, grid_y);
         }
     }
 }

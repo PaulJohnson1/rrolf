@@ -26,7 +26,7 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100 * pow(1.01557361544, player_info->level - 1));
+    rr_component_health_set_max_health(health, 1000000 * pow(1.01557361544, player_info->level - 1));
     rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
     health->damage_paused = 25;
@@ -78,12 +78,10 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
     float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
 
-    rr_component_health_set_max_health(health, id == rr_petal_id_scales ? 5 + rarity : scale_h * data->health);
+    rr_component_health_set_max_health(health, scale_h * data->health);
     rr_component_health_set_health(health, health->max_health);
     rr_component_health_set_flags(health, health->flags | 1);
     health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
-    if (id == rr_petal_id_scales)
-        health->damage_reduction = 16384;
     if (data->secondary_cooldown > 0)
     {
         struct rr_component_projectile *projectile =

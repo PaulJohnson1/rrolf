@@ -30,10 +30,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, 12.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 16.0f, 4.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_stick, rr_rarity_id_rare, 4.0f, 8.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_kelp, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_fish_egg, rr_rarity_id_unusual, 1.0f, 2.0f, 0.0f, 25, 25, {1, 1, 3, 3, 3, 3, 3}},
-    {rr_petal_id_scales, rr_rarity_id_common, 6.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_stick, rr_rarity_id_rare, 4.0f, 8.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}}
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -50,11 +47,6 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {}},
     {rr_mob_id_pectinodon, rr_rarity_id_rare, 35, 10, 24.0f, {}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {}},
-
-    {rr_mob_id_king_mackarel, rr_rarity_id_common, 30, 10, 30.0f, {}},
-    {rr_mob_id_sea_snail, rr_rarity_id_common, 30, 10, 23.0f, {}},
-    {rr_mob_id_seagull, rr_rarity_id_common, 30, 10, 25.0f, {}},
-    {rr_mob_id_kelp, rr_rarity_id_common, 30, 10, 25.0f, {}}
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -87,8 +79,8 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Pellet", "Fossil",   "Spikes",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
-    "Bone",   "Slime",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
-    "Beak", "Lightning", "Stick", "Kelp", "Egg", "Scales"};
+    "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
+    "Beak", "Lightning", "Stick"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -113,10 +105,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "This mysterious petal reverses your petal rotation",
     "Stuns mobs and prevents them from moving",
     "A stunning display",
-    "It burns",
-    "Pets love to eat this",
-    "Koi there",
-    "An interesting petal. Only takes 1 damage per hit"
+    "It burns"
 };
 
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
@@ -131,18 +120,14 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Meteor",
                                            "Quetzalcoatlus",
                                            "Pectinodon",
-                                           "Edmontosaurus",
-                                           "King Mackarel",
-                                           "Sea Snail",
-                                           "Seagull",
-                                           "Kelp"};
+                                           "Edmontosaurus"
+                                           };
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
-                                                          12, 9,  3, 10, 1, 8, 8, 10, 9};
+                                                          12, 9,  3, 10, 1, 8, 8, 10};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25, 25};
 
-double RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 5};
                                             
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 500};
@@ -180,15 +165,11 @@ static void init_game_coefficients()
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] +=
             RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
-        RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob] +=
-            RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob - 1];
     }
     for (uint64_t mob = 0; mob < rr_mob_id_max; ++mob)
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] /=
             RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
-        RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[mob] /=
-            RR_OCEAN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max - 1];
     }
 }
 
@@ -293,24 +274,6 @@ static void init_loot_tables()
                     rr_petal_id_fossil, 0.1);
     init_loot_table(&RR_MOB_DATA[rr_mob_id_edmontosaurus].loot[2],
                     rr_petal_id_peas, 0.1);
-    
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_king_mackarel].loot[0],
-                    rr_petal_id_fish_egg, 0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_king_mackarel].loot[1],
-                    rr_petal_id_scales, 1);
-
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_sea_snail].loot[0],
-                    rr_petal_id_shell, 0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_sea_snail].loot[1],
-                    rr_petal_id_web, 0.1);
-
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_seagull].loot[0],
-                    rr_petal_id_feather, 0.1);
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_seagull].loot[1],
-                    rr_petal_id_beak, 0.1);
-
-    init_loot_table(&RR_MOB_DATA[rr_mob_id_kelp].loot[0],
-                    rr_petal_id_kelp, 0.1);
 }
 
 static void init_maze()
@@ -322,8 +285,15 @@ static void init_maze()
     {
         for (int32_t x = 0; x < RR_MAZE_DIM/2; ++x)
         {
-            //top left
             uint8_t this_tile = RR_MAZE_TEMPLATE_HELL_CREEK[y][x];
+            #ifdef RR_SERVER
+            RR_MAZE_HELL_CREEK[y*2][x*2].difficulty = this_tile;
+            RR_MAZE_HELL_CREEK[y*2][x*2+1].difficulty = this_tile;
+            RR_MAZE_HELL_CREEK[y*2+1][x*2].difficulty = this_tile;
+            RR_MAZE_HELL_CREEK[y*2+1][x*2+1].difficulty = this_tile;
+            #endif
+            this_tile = this_tile != 0;
+            //top left
             uint8_t top = offset(0,-1);
             uint8_t bottom = offset(0,1);
             if (this_tile)
@@ -421,30 +391,30 @@ double xp_to_reach_level(uint32_t level)
 }
 
 uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
-    {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1},
-    {0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-    {0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1},
-    {0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0},
-    {0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0},
-    {0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0},
-    {0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-    {0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0},
-    {0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1},
-    {0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1},
-    {0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1},
-    {0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1},
-    {0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1},
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1},
-    {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-    {0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0},
-    {0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0},
-    {1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0},
-    {1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1},
-    {1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0},
-    {1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0},
-    {1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    {0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1},
-    {0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0}
+    {00, 0,30,31,32,33,32,31,32, 0, 0,35,35,36,35, 0, 0, 0, 0,48,49,50,51,54},
+    {00,28,29, 0, 0, 0,29,30, 0, 0,33,34, 0, 0,35,36,37, 0,45,45,47,48,48,50},
+    {00,27, 0, 0, 0, 0,28, 0, 0,32,32,33, 0,38, 0,37,37, 0,44,43,43,43,44,46},
+    {00,26, 0, 0, 0,27,28,29,30,31, 0, 0,36,37, 0, 0,38, 0, 0,42,42,43,44, 0},
+    {00,26,25, 0, 0,27,27, 0, 0,32,33,34,35, 0,40,39,38, 0,41,41, 0, 0, 0, 0},
+    {00, 0,25,24,25,26,26,27,27, 0, 0, 0, 0,41,40, 0,38,39,40, 0, 0, 0, 0, 0},
+    {00,21,22,23, 0, 0, 0,28, 0, 0,44,43,42,41, 0, 0, 0,40,40,39, 0, 0, 0, 0},
+    {00,21,22, 0, 0,30,29,28,29, 0,44,43,43,42, 0, 0, 0,39,39,38,37, 0, 0, 0},
+    {00,20, 0, 0, 0,30,29,29,30, 0, 0,43,43, 0, 0, 0, 0,38,38,37,36,35,34,33},
+    {00,19, 0, 0, 0, 0, 0,31,31,32, 0, 0, 0, 0, 0,40, 0,37,37,36,36,35,34,32},
+    {00,18, 0, 0, 0,15, 0, 0,32,33, 0, 0, 0, 0, 0,40, 0, 0,36,36,35,34,33,32},
+    {00,18, 0, 0, 0,14,13, 0,34,35, 0, 0, 0, 0, 0,39, 0, 0, 0, 0, 0,33,32,31},
+    {00,17, 0, 0, 0, 0,12, 0, 0, 0, 0, 0, 0, 0, 0,38,37,36, 0, 0, 0, 0, 0,30},
+    {17,16,15,14,13,12,11,10, 9, 0, 0, 0, 0, 0, 0, 0, 0,35,33,32,30,29,27,28},
+    {17,16,15,14,14, 0, 0,10, 9, 9, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,26, 0},
+    {00, 0,18, 0,15,16, 0, 0, 8, 8, 8, 7, 7, 6, 0, 0, 0,20,21,22,23,24,24, 0},
+    {00, 0, 0, 0, 0,16,16, 0, 0, 0, 0, 0, 6, 5, 0, 0,18,18,19, 0,20,18, 0, 0},
+    {21,20,19,19,18,17, 0, 0, 0, 0, 0, 0, 0, 4, 0,16,17,17, 0, 0,17,16,16, 0},
+    {22,21, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 4, 0,16,16,15, 0,13,14,15,15,15},
+    {22, 0, 0,31,32, 0, 1, 1, 1, 1, 1, 1, 2, 3, 0, 0, 0,14,13,12, 0, 0, 0, 0},
+    {23, 0,27,30,30, 0, 1, 1, 1, 1, 1, 1, 2, 3, 4, 5, 0, 0, 0,11, 0,16,17, 0},
+    {23,24,25,28,29, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5, 6, 7, 8, 9,12,13,14,17},
+    {00,24,26,27,28, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0,12,15,15,16},
+    {00, 0,27,28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,18,18, 0}
 };
 
 struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM] = {0};
