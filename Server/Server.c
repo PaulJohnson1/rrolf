@@ -565,7 +565,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 x += (movementFlags & 8) >> 3;
                 if (x || y)
                 {
-                    float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                    float mag_1 = RR_PLAYER_SPEED / sqrtf(x * x + y * y);
                     x *= mag_1;
                     y *= mag_1;
                 }
@@ -574,7 +574,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
-                float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                float mag_1 = RR_PLAYER_SPEED / sqrtf(x * x + y * y);
                 float scale = rr_fclamp((mag_1 - 25) / 50, 0, 1);
                 x *= mag_1 * scale;
                 y *= mag_1 * scale;

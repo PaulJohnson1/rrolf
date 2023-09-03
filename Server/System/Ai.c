@@ -87,7 +87,7 @@ static void tick_idle_move(EntityIdx entity, struct rr_simulation *simulation)
         rr_simulation_get_physical(simulation, entity);
 
     struct rr_vector accel;
-    rr_vector_from_polar(&accel, 0.5f, physical->angle);
+    rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 0.15, physical->angle);
     rr_vector_add(&physical->acceleration, &accel);
 }
 
@@ -103,7 +103,7 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
         ai->ai_state = rr_ai_state_idle;
     }
     struct rr_vector accel;
-    rr_vector_from_polar(&accel, 1.0f, physical->angle);
+    rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 0.3, physical->angle);
     rr_vector_add(&physical->acceleration, &accel);
 }
 
@@ -143,7 +143,7 @@ static void tick_ai_aggro_ornithomimus(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, M_PI + rr_vector_theta(&delta) +
                           sinf(ai->ticks_until_next_action * 0.3) * 0.5);
-        rr_vector_from_polar(&physical->acceleration, 2.0, physical->angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED, physical->angle);
         if (rr_vector_get_magnitude(&delta) > 1000)
         {
             ai->target_entity = RR_NULL_ENTITY;
@@ -232,7 +232,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.05));
 
-        rr_vector_from_polar(&accel, 3.25, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.65, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -333,7 +333,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         if (distance > 500)
         {
             struct rr_vector accel;
-            rr_vector_from_polar(&accel, 2.0f, physical->angle);
+            rr_vector_from_polar(&accel, RR_PLAYER_SPEED, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
             ai->ticks_until_next_action = 2;
         }
@@ -385,7 +385,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             physical2->friction = 0.3f;
             physical2->mass = 5.0f;
             physical2->bearing_angle = physical->angle;
-            rr_vector_from_polar(&physical2->acceleration, 5, physical->angle);
+            rr_vector_from_polar(&physical2->acceleration, RR_PLAYER_SPEED * 2, physical->angle);
 
             rr_component_petal_set_detached(
                 rr_simulation_get_petal(simulation, petal_id), 1);
@@ -400,7 +400,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
 
             struct rr_vector recoil;
 
-            rr_vector_from_polar(&recoil, -2,
+            rr_vector_from_polar(&recoil, -RR_PLAYER_SPEED * 0.5,
                                  physical->angle); // recoil
             rr_vector_add(&physical->acceleration, &recoil);
         }
@@ -475,7 +475,7 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
 
         struct rr_vector accel;
 
-        rr_vector_from_polar(&accel, 3.25, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.65, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -530,7 +530,7 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
-        rr_vector_from_polar(&accel, 1.9, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 0.85, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         ai->ticks_until_next_action = 2;
         if (rr_vector_get_magnitude(&delta) < 450)
@@ -584,7 +584,7 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
 
         rr_component_physical_set_angle(physical, M_PI + target_angle);
 
-        rr_vector_from_polar(&accel, 3.25, target_angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.65, target_angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -605,7 +605,7 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
     case rr_ai_state_idle:
         ai->ai_state = rr_ai_state_idle_moving;
         float angle = rr_frand() * 2 * M_PI;
-        rr_vector_from_polar(&physical->acceleration, 0.75, angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2, angle);
         break;
     case rr_ai_state_idle_moving:
     {
@@ -616,7 +616,7 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
             float tangent = rr_vector_theta(&position);
             angle = tangent - (M_PI - (tangent - angle));
         }
-        rr_vector_from_polar(&physical->acceleration, 0.75, angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2, angle);
         rr_vector_from_polar(&physical->velocity, 3, angle);
         rr_component_physical_set_angle(physical, physical->angle + 0.1);
         ai->ticks_until_next_action = 10;
@@ -703,7 +703,7 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
 
         rr_component_physical_set_angle(physical, target_angle);
 
-        rr_vector_from_polar(&accel, 35, target_angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 20, target_angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -763,7 +763,7 @@ static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, target_angle);
 
-        rr_vector_from_polar(&accel, 2.5, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.25, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }
@@ -852,7 +852,7 @@ static void tick_ai_aggro_king_mackarel(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, rr_vector_theta(&delta) +
                           sinf(ai->ticks_until_next_action * 0.3) * 0.2);
-        rr_vector_from_polar(&physical->acceleration, 2.0, physical->angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED, physical->angle);
         if (rr_vector_get_magnitude(&delta) > 1000)
         {
             ai->target_entity = RR_NULL_ENTITY;
@@ -952,10 +952,10 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_pachycephalosaurus(entity, this);
         break;
     case rr_mob_id_trex:
-        tick_ai_aggro_default(entity, this, 1.8);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.85);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this, 2.5);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.25);
         break;
     case rr_mob_id_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);
