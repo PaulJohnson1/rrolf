@@ -563,9 +563,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 x -= (movementFlags & 2) >> 1;
                 y += (movementFlags & 4) >> 2;
                 x += (movementFlags & 8) >> 3;
-                float mag_1 = 2.5 / sqrtf(x * x + y * y);
-                x *= mag_1;
-                y *= mag_1;
+                if (x || y)
+                {
+                    float mag_1 = 2.5 / sqrtf(x * x + y * y);
+                    x *= mag_1;
+                    y *= mag_1;
+                }
             }
             else
             {
@@ -830,7 +833,7 @@ void rr_server_run(struct rr_server *this)
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-        fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        //fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);

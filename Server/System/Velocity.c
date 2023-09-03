@@ -28,13 +28,14 @@ static void system(EntityIdx id, void *simulation)
     physical->webbed = 0;
     struct rr_vector vel = {physical->velocity.x, physical->velocity.y};
     struct rr_vector add = {vel.x, vel.y};
-    rr_vector_set_magnitude(&add, physical->radius * 0.95);
     float mag = rr_vector_get_magnitude(&vel);
+    float adj_radius = physical->radius < 5 ? 5 : physical->radius;
+    rr_vector_set_magnitude(&add, adj_radius * 0.95);
     while (1)
     {
-        if (mag >= physical->radius * 0.95)
+        if (mag > adj_radius * 0.95)
         {
-            mag -= physical->radius * 0.95;
+            mag -= adj_radius * 0.95;
             rr_component_physical_set_x(physical, physical->x + add.x);
             rr_component_physical_set_y(physical, physical->y + add.y);
             rr_vector_sub(&vel, &add);
@@ -43,6 +44,7 @@ static void system(EntityIdx id, void *simulation)
         {
             rr_component_physical_set_x(physical, physical->x + vel.x);
             rr_component_physical_set_y(physical, physical->y + vel.y);
+            mag = 0;
         }
         if (physical->x < physical->radius)
             rr_component_physical_set_x(physical, physical->radius);
@@ -131,7 +133,6 @@ static void system(EntityIdx id, void *simulation)
             if (tile == 0)
             {
                 rr_component_physical_set_y(physical, y * RR_MAZE_GRID_SIZE + physical->radius);
-                
             }
             else
             {
@@ -220,7 +221,7 @@ static void system(EntityIdx id, void *simulation)
                 }
             }
         }
-        if (mag < physical->radius)
+        if (mag <= adj_radius * 0.95)
             break;
     }
     if (rr_simulation_has_flower(simulation, id))

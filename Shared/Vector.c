@@ -38,6 +38,8 @@ void rr_vector_normalize(struct rr_vector *this)
 
 void rr_vector_set_magnitude(struct rr_vector *this, float mag)
 {
+    if (this->x == 0 && this->y == 0)  
+        return;
     rr_vector_scale(this, mag / sqrtf(this->x * this->x + this->y * this->y));
 }
 
