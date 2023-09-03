@@ -1,5 +1,6 @@
 #include <Client/Ui/Ui.h>
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,16 +11,10 @@
 
 #include <Shared/StaticData.h>
 
-struct tooltip_petal_icon_metadata
-{
-    uint8_t id;
-    uint8_t rarity;
-};
-
 static void inventory_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    struct tooltip_petal_icon_metadata *data = this->data;
+    struct rr_id_rarity_pair *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, data->rarity, 1);
@@ -30,7 +25,7 @@ static void inventory_button_on_render(struct rr_ui_element *this,
 static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    struct tooltip_petal_icon_metadata *data = malloc(sizeof *data);
+    struct rr_id_rarity_pair *data = malloc(sizeof *data);
     data->id = id;
     data->rarity = rarity;
     this->data = data;
@@ -93,55 +88,36 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
-    else if (id == rr_mob_id_pectinodon)
-    {
-        char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 3 *
-                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Projectile health: ", 12, 0xff44ff44),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 2 *
-                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Projectile damage: ", 12, 0xffff4444),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-        extra = malloc((sizeof *extra) * 16);
-        extra[sprintf(extra, "%.0f (3s)", 3 * 25 * 0.5 *
-                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
-        rr_ui_container_add_element(
-            this, rr_ui_set_justify(
-                      rr_ui_h_container_init(
-                          rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Projectile burn: ", 12, 0xfffc3423),
-                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
-                      -1, 0));
-    }
     rr_ui_container_add_element(this, rr_ui_static_space_init(10));
     for (uint8_t i = 0; i < 4; ++i)
     {
         if (RR_MOB_DATA[id].loot[i].id == 0)
             break;
-        struct rr_loot_data *data = &RR_MOB_DATA[id].loot[i];
+        uint8_t p_id = RR_MOB_DATA[id].loot[i].id;
+        float seed = RR_MOB_DATA[id].loot[i].seed;
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
-        for (uint8_t r = 1; r <= rr_rarity_id_ultra + 1; ++r)
+        uint64_t cap = rarity;
+        if (rarity < rr_rarity_id_mythic)
+            cap = rarity;
+        else
+            cap = rarity - 1;
+        uint8_t min_rar = RR_PETAL_DATA[p_id].min_rarity;
+        for (uint8_t r = min_rar + 1; r <= cap + 1; ++r)
         {
-            if (data->loot_table[rarity][r] - data->loot_table[rarity][r - 1] <
+            
+            double end =
+                r == cap + 1 ? 1 : RR_DROP_RARITY_COEFFICIENTS[r];
+            double start = RR_DROP_RARITY_COEFFICIENTS[r - 1];
+            if (cap < min_rar)
+                end = 1;
+            float chance =
+                pow(1 - (1 - end) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]) - pow(1 - (1 - start) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]);
+            if (chance <
                 0.00001)
                 continue;
             char *d = malloc((sizeof *d) * 12);
-            float pct = 100 * (data->loot_table[rarity][r] -
-                               data->loot_table[rarity][r - 1]);
+            float pct = 100 * chance;
             if (pct > 0.1)
                 d[sprintf(d, "%.1f%%", pct)] = 0;
             else if (pct > 0.01)
@@ -151,7 +127,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             rr_ui_container_add_element(
                 temp, rr_ui_v_container_init(
                           rr_ui_container_init(), 0, 5,
-                          tooltip_petal_icon_init(data->id, r - 1),
+                          tooltip_petal_icon_init(p_id, r - 1),
                           rr_ui_text_init(d, 11, 0xffffffff), NULL));
         }
         rr_ui_h_container_set(temp);

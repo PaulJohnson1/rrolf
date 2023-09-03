@@ -18,8 +18,8 @@ struct rr_component_health
     RR_SERVER_ONLY(float damage;)
     RR_SERVER_ONLY(float secondary_damage;)
     RR_SERVER_ONLY(float damage_reduction;)
-    RR_SERVER_ONLY(float burn;)
-    RR_SERVER_ONLY(uint32_t burn_ticks;)
+    RR_SERVER_ONLY(float poison;)
+    RR_SERVER_ONLY(uint32_t poison_ticks;)
     EntityIdx parent_id;
     uint8_t flags;
     RR_SERVER_ONLY(uint8_t protocol_state;)

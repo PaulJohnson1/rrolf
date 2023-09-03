@@ -15,25 +15,39 @@ struct rr_renderer minimap;
 static void minimap_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
+    struct rr_renderer *renderer = game->renderer;
     struct rr_component_player_info *player_info = game->player_info;
-    rr_renderer_scale(game->renderer, game->renderer->scale);
-    rr_renderer_draw_image(game->renderer, &minimap);
-    rr_renderer_set_fill(game->renderer, 0xff0000ff);
-    rr_renderer_set_global_alpha(game->renderer, 0.8);
-    rr_renderer_begin_path(game->renderer);
-    rr_renderer_arc(game->renderer, this->abs_width * (player_info->camera_x / RR_ARENA_LENGTH
-     - 0.5), this->abs_height * (player_info->camera_y / RR_ARENA_LENGTH - 0.5), 3);
-    rr_renderer_fill(game->renderer);
-    rr_renderer_set_fill(game->renderer, 0xffff00ff);
+    float a = renderer->height / 1080;
+    float b = renderer->width / 1920;
+
+    float s1 = (renderer->scale = b < a ? a : b);
+    double scale = player_info->lerp_camera_fov * renderer->scale;
+    double midX =
+        (player_info->lerp_camera_x / RR_ARENA_LENGTH - 0.5) * this->abs_width;
+    double midY =
+        (player_info->lerp_camera_y / RR_ARENA_LENGTH - 0.5) * this->abs_height;
+    double W = renderer->width / scale / RR_ARENA_LENGTH * this->abs_width;
+    double H = renderer->height / scale / RR_ARENA_LENGTH * this->abs_height;
+    rr_renderer_begin_path(renderer);
+    rr_renderer_rect(renderer, midX - W / 2, midY - H / 2, W, H);
+    rr_renderer_clip(renderer);
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_draw_image(renderer, &minimap);
+    rr_renderer_set_fill(renderer, 0xff0000ff);
+    rr_renderer_set_global_alpha(renderer, 0.8);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_arc(renderer, midX, midY, 3);
+    rr_renderer_fill(renderer);
+    rr_renderer_set_fill(renderer, 0xffff00ff);
     for (uint32_t i = 1; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         if (game->player_infos[i] == RR_NULL_ENTITY)
             break;
         player_info = rr_simulation_get_player_info(game->simulation, game->player_infos[i]);
-        rr_renderer_begin_path(game->renderer);
-        rr_renderer_arc(game->renderer, this->abs_width * (player_info->camera_x / RR_ARENA_LENGTH
+        rr_renderer_begin_path(renderer);
+        rr_renderer_arc(renderer, this->abs_width * (player_info->camera_x / RR_ARENA_LENGTH
         - 0.5), this->abs_height * (player_info->camera_y / RR_ARENA_LENGTH - 0.5), 3);
-        rr_renderer_fill(game->renderer);
+        rr_renderer_fill(renderer);
     }
 }
 

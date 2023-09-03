@@ -68,7 +68,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    this->camera_fov = 1.0f;
+    this->camera_fov = RR_BASE_FOV;
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
     this->collected_this_run = malloc(rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
     memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));

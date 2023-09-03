@@ -34,12 +34,12 @@ static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y,
 }
 static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    struct rr_maze_grid *grid = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
+    struct rr_maze_grid (*grid)[48] = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
     for (uint32_t Y = 0; Y < h; ++Y)
         for (uint32_t X = 0; X < h; ++X)
         {
-            grid[(Y+y) * RR_MAZE_DIM + X+x].is_special = 1;
-            grid[(Y+y) * RR_MAZE_DIM + X+x].special_id = id;
+            grid[Y+y][X+x].is_special = 1;
+            grid[Y+y][X+x].special_id = id;
         }
 }
 #define SPAWN_ZONE_X 14
@@ -103,7 +103,7 @@ find_position_away_from_players(struct rr_simulation *this)
 
 static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid_y)
 {
-    struct rr_maze_grid *grid = &RR_MAZE_HELL_CREEK[grid_y][grid_x];
+    struct rr_maze_grid *grid = &(RR_MAZE_HELL_CREEK[grid_y][grid_x]);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     uint8_t id;
     if (grid->is_special)
@@ -127,7 +127,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         CODE;                                                                  \
     };
 
-#define GRID_MOB_LIMIT 1
+#define GRID_MOB_LIMIT 2
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -143,7 +143,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT)
                 continue;
-            if (rand() % 25 == 0)
+            if (rand() % 75 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }

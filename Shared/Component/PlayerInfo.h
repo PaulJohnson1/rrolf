@@ -8,6 +8,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
+#define RR_BASE_FOV (0.6f)
 struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)

@@ -47,7 +47,6 @@ enum rr_petal_id
     rr_petal_id_droplet, //remove + replace
     rr_petal_id_beak,
     rr_petal_id_lightning,
-    rr_petal_id_stick,
     /*
     rr_petal_id_kelp,
     rr_petal_id_fish_egg,
@@ -69,7 +68,6 @@ enum rr_mob_id
     rr_mob_id_ankylosaurus,
     rr_mob_id_meteor,
     rr_mob_id_quetzalcoatlus,
-    rr_mob_id_pectinodon,
     rr_mob_id_edmontosaurus,
     /*
     rr_mob_id_king_mackarel,
@@ -82,8 +80,8 @@ enum rr_mob_id
 
 struct rr_loot_data
 {
-    enum rr_petal_id id;
-    float loot_table[rr_rarity_id_max][rr_rarity_id_max + 1];
+    uint8_t id;
+    float seed;
 };
 
 struct rr_mob_data
@@ -129,6 +127,7 @@ extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
+extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];

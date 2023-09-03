@@ -27,7 +27,7 @@ static void render_background(struct rr_component_player_info *player_info,
     double bottomY =
         player_info->lerp_camera_y + this->renderer->height / (2 * scale);
 
-#define GRID_SIZE (256)
+#define GRID_SIZE (768)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
     //rr_renderer_scale(this->renderer, scale);
@@ -41,6 +41,7 @@ static void render_background(struct rr_component_player_info *player_info,
             rr_renderer_context_state_init(this->renderer, &state);
             rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
                                   currY + GRID_SIZE / 2);
+            rr_renderer_scale(this->renderer, GRID_SIZE / 256);
             if (this->selected_biome == 0)
                 rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
             else
@@ -89,14 +90,12 @@ static void render_background(struct rr_component_player_info *player_info,
 #undef render_map_feature
     rr_renderer_set_fill(this->renderer, 0xff000000);
     rr_renderer_set_global_alpha(this->renderer, 0.5f);
-    int32_t nx = leftX / RR_MAZE_GRID_SIZE;
-    int32_t ny = topY / RR_MAZE_GRID_SIZE;
+    int32_t nx = floorf(leftX / RR_MAZE_GRID_SIZE);
+    int32_t ny = floorf(topY / RR_MAZE_GRID_SIZE);
     for (; nx < rightX / RR_MAZE_GRID_SIZE; ++nx)
         for (int32_t currY = ny; currY < bottomY / RR_MAZE_GRID_SIZE; ++currY)
         {
-            if (nx < 0 || currY < 0 || nx >= RR_MAZE_DIM || currY >= RR_MAZE_DIM)
-                continue;
-            uint8_t tile = RR_MAZE_HELL_CREEK[currY][nx].value;
+            uint8_t tile = (nx < 0 || currY < 0 || nx >= RR_MAZE_DIM || currY >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[currY][nx].value;
             if (tile != 1)
             {
                 if (tile == 0)
@@ -151,7 +150,7 @@ void rr_component_arena_render(EntityIdx entity, struct rr_game *this, struct rr
     rr_renderer_rect(this->renderer, 0, 0, arena->radius, arena->radius);
     rr_renderer_set_fill(this->renderer, 0xff45230a);
     rr_renderer_fill(this->renderer);
-    rr_renderer_clip(this->renderer);
+    //rr_renderer_clip(this->renderer);
 
     rr_renderer_set_line_width(this->renderer, 1.0f);
     rr_renderer_set_stroke(this->renderer, alpha);

@@ -712,100 +712,6 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
     }
 }
 
-static void tick_ai_aggro_pectinodon(EntityIdx entity,
-                                      struct rr_simulation *simulation)
-{
-    struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
-    struct rr_component_physical *physical =
-        rr_simulation_get_physical(simulation, entity);
-
-    if (ai->ai_state == rr_ai_state_idle ||
-        ai->ai_state == rr_ai_state_idle_moving)
-    {
-        if (rr_simulation_has_entity(simulation, ai->target_entity))
-        {
-            ai->ai_state = rr_ai_state_waiting_to_attack;
-            ai->ticks_until_next_action = 25;
-        }
-    }
-
-    switch (ai->ai_state)
-    {
-    case rr_ai_state_idle:
-        tick_idle(entity, simulation);
-        break;
-
-    case rr_ai_state_idle_moving:
-        tick_idle_moving(entity, simulation);
-        break;
-    case rr_ai_state_waiting_to_attack:
-    {
-        if (ai->ticks_until_next_action == 0)
-        {
-            ai->ai_state = rr_ai_state_attacking;
-            ai->ticks_until_next_action = 2;
-        }
-
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
-            break;
-        }
-
-        struct rr_vector accel;
-        struct rr_component_physical *physical2 =
-            rr_simulation_get_physical(simulation, ai->target_entity);
-
-        struct rr_vector delta = {physical2->x, physical2->y};
-        struct rr_vector target_pos = {physical->x, physical->y};
-        rr_vector_sub(&delta, &target_pos);
-        float dist = rr_vector_get_magnitude(&delta) - physical->radius - physical2->radius;
-        rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
-        if (dist > 300)
-        {
-            rr_vector_from_polar(&physical->acceleration, 1.6, physical->angle);
-        }
-        else if (dist < 200)
-        {
-            rr_vector_from_polar(&physical->acceleration, 1.8, M_PI + physical->angle);
-            ++ai->ticks_until_next_action;
-        }
-        break;
-    }
-    case rr_ai_state_attacking:
-    {
-        struct rr_component_mob *mob =
-            rr_simulation_get_mob(simulation, entity);
-        // spawn a shell
-        EntityIdx petal_id = rr_simulation_alloc_petal(
-            simulation, physical->x, physical->y, rr_petal_id_stick,
-            mob->rarity, mob->parent_id);
-        struct rr_component_physical *physical2 =
-            rr_simulation_get_physical(simulation, petal_id);
-        struct rr_component_health *health =
-            rr_simulation_get_health(simulation, petal_id);
-        rr_component_physical_set_angle(physical2, rr_frand() * 2 * M_PI);
-        rr_component_physical_set_radius(
-            physical2, 10 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-        physical2->friction = 0.8f;
-        physical2->mass = 1.0f;
-        rr_component_health_set_max_health(health, 3 * RR_MOB_RARITY_SCALING[mob->rarity].health);
-        rr_component_health_set_health(health, health->max_health);
-        health->damage = 2 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
-        health->secondary_damage = 0.5 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
-        rr_vector_from_polar(&physical2->acceleration, 75, physical->angle);
-
-        rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
-        ai->ai_state = rr_ai_state_waiting_to_attack;
-        ai->ticks_until_next_action = 50;
-        break;
-    }
-    default:
-        break;
-    }
-}
-
 static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
                                       struct rr_simulation *simulation)
 {
@@ -1062,9 +968,6 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_mob_id_quetzalcoatlus:
         tick_ai_aggro_quetzalcoatlus(entity, this);
-        break;
-    case rr_mob_id_pectinodon:
-        tick_ai_aggro_pectinodon(entity, this);
         break;
     case rr_mob_id_edmontosaurus:
         tick_ai_aggro_edmontosaurus(entity, this);

@@ -398,7 +398,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     player_info->modifiers.drop_pickup_radius = 25;
     player_info->modifiers.rotation_direction = 1;
     uint8_t rot_count = 0;
-    rr_component_player_info_set_camera_fov(player_info, 1.0f);
+    rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
     health->damage_reduction = 0;
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -425,9 +425,9 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_crest)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
-            if (player_info->camera_fov > 1.0f * (0.9 - 0.05 * slot->rarity))
+            if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.05 * slot->rarity))
             {   
-                rr_component_player_info_set_camera_fov(player_info, 1.0f * (0.9 - 0.06 * slot->rarity));
+                rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.06 * slot->rarity));
             }
         }
         else if (data->id == rr_petal_id_droplet)

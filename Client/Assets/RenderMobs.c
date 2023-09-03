@@ -163,33 +163,6 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_translate(renderer, 165, 0);
         render_sprite(renderer, id, 0, flags);
         break;
-    case rr_mob_id_pectinodon:
-        rr_renderer_scale(renderer, 0.12f);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -50, -90);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f);
-        render_sprite(renderer, id, 2, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -50, 90);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_translate(renderer, -290, 0);
-        rr_renderer_rotate(renderer, turning_value);
-        rr_renderer_translate(renderer, 50, 0);
-        render_sprite(renderer, id, 4, flags);
-
-        rr_renderer_context_state_free(renderer, &state);
-        render_sprite(renderer, id, 1, flags);
-
-        rr_renderer_translate(renderer, 190, 0);
-        render_sprite(renderer, id, 0, flags);
-        break;
     }
     rr_renderer_context_state_free(renderer, &original_state);
 }
@@ -241,11 +214,7 @@ void rr_renderer_mob_cache_init()
     336, 192, rr_quetzalcoatlus_body_draw, 336, 192, rr_quetzalcoatlus_wing1_draw, 336, 192, 
     rr_quetzalcoatlus_wing2_draw, 0);
 
-    rr_renderer_spritesheet_init(&mob_sprites[11], NULL, 336, 192, rr_pectinodon_head_draw, 
-    336, 192, rr_pectinodon_body_draw, 240, 144, rr_pectinodon_wing1_draw, 240, 144, 
-    rr_pectinodon_wing2_draw, 336, 192, rr_pectinodon_tail_draw, 0);
-
-    rr_renderer_spritesheet_init(&mob_sprites[12], NULL, 240, 144, rr_edmontosaurus_head_draw, 
+    rr_renderer_spritesheet_init(&mob_sprites[11], NULL, 240, 144, rr_edmontosaurus_head_draw, 
     339, 192, rr_edmontosaurus_body_draw, 240, 240, rr_edmontosaurus_leg1_draw, 240, 240, 
     rr_edmontosaurus_leg2_draw, 336, 192, rr_edmontosaurus_tail_draw, 0);
 }
