@@ -10,8 +10,10 @@ set(SRCS
     Assets/MapFeature/Moss.c
     Assets/MapFeature/WaterLettuce.c
     Assets/Mob/Ankylosaurus.c
+    Assets/Mob/Ant.c
     Assets/Mob/Dakotaraptor.c
     Assets/Mob/Edmontosaurus.c
+    Assets/Mob/Hornet.c
     Assets/Mob/Ornithomimus.c
     Assets/Mob/Pachycephalosaurus.c
     Assets/Mob/Pteranodon.c

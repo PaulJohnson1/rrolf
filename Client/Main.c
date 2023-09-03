@@ -119,12 +119,12 @@ void rr_main_loop(struct rr_game *this)
             window.onkeydown = function(e)
             {
                 Module._rr_key_event(
-                    $0, 1, e.which, (!e.ctrlKey && !e.metaKey && e.key && e.key.length == 1) * e.key.charCodeAt());
+                    $0, 1, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
             };
             window.onkeyup = function(e)
             {
                 Module._rr_key_event(
-                    $0, 0, e.which, (!e.ctrlKey && !e.metaKey && e.key && e.key.length == 1) * e.key.charCodeAt());
+                    $0, 0, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
             };
             window.onmousedown =
                 function(e){

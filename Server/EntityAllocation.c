@@ -20,14 +20,13 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
     struct rr_spawn_zone *respawn_zone = &this->respawn_zone;
     rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
     rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
-    printf("spawned on %f %f\n", physical->x, physical->y);
     rr_component_physical_set_radius(physical, 25.0f);
     physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 1000000 * pow(1.01557361544, player_info->level - 1));
+    rr_component_health_set_max_health(health, 100 * pow(1.01557361544, player_info->level - 1));
     rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
     health->damage_paused = 25;
@@ -120,7 +119,7 @@ float x, float y,
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     rr_component_physical_set_x(physical, x);
     rr_component_physical_set_y(physical, y);
-    physical->friction = 0.8;
+    physical->friction = 0.75;
     physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
     if (mob_id == rr_mob_id_meteor)
     {
