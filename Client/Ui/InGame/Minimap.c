@@ -21,11 +21,11 @@ static void minimap_on_render(struct rr_ui_element *this,
     float b = renderer->width / 1920;
 
     float s1 = (renderer->scale = b < a ? a : b);
-    double scale = player_info->lerp_camera_fov * renderer->scale;
+    double scale = player_info->lerp_camera_fov * renderer->scale * 0.25;
     double midX =
-        (player_info->lerp_camera_x / RR_ARENA_LENGTH - 0.5) * this->abs_width;
+        (player_info->lerp_camera_x / RR_ARENA_LENGTH - 0.5) * this->abs_width * 2;
     double midY =
-        (player_info->lerp_camera_y / RR_ARENA_LENGTH - 0.5) * this->abs_height;
+        (player_info->lerp_camera_y / RR_ARENA_LENGTH - 0.5) * this->abs_height * 2;
     double W = renderer->width / scale / RR_ARENA_LENGTH * this->abs_width;
     double H = renderer->height / scale / RR_ARENA_LENGTH * this->abs_height;
     rr_renderer_begin_path(renderer);
