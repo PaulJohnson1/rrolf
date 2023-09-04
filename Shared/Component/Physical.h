@@ -19,11 +19,13 @@ struct rr_component_physical
 {
     struct rr_vector velocity;
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
+    RR_SERVER_ONLY(struct rr_vector collision_velocity;) //used for collision resolution calcs. bypasses all speed modifie
     RR_SERVER_ONLY(struct rr_vector acceleration;)
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float knockback_scale;)
     RR_SERVER_ONLY(float friction;)
     RR_SERVER_ONLY(float acceleration_scale;)
+    RR_SERVER_ONLY(float aggro_range_multiplier;)
     float angle;
     RR_SERVER_ONLY(float bearing_angle;)
     RR_CLIENT_ONLY(float lerp_angle;)

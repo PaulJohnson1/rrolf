@@ -27,6 +27,7 @@ static void system(EntityIdx id, void *simulation)
     physical->acceleration_scale = 1;
     physical->webbed = 0;
     struct rr_vector vel = {physical->velocity.x, physical->velocity.y};
+    rr_vector_add(&vel, &physical->collision_velocity);
     struct rr_vector add = {vel.x, vel.y};
     float mag = rr_vector_get_magnitude(&vel);
     float adj_radius = physical->radius < 5 ? 5 : physical->radius;
@@ -235,6 +236,7 @@ static void system(EntityIdx id, void *simulation)
         }
     }
     rr_vector_set(&physical->acceleration, 0, 0);
+    rr_vector_set(&physical->collision_velocity, 0, 0);
 }
 
 void rr_system_velocity_tick(struct rr_simulation *simulation)

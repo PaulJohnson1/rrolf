@@ -24,7 +24,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_gravel, rr_rarity_id_unusual, 18.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
+    {rr_petal_id_gravel, rr_rarity_id_unusual, 15.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
     {rr_petal_id_club, rr_rarity_id_common, 3.5f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -46,7 +46,8 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15}}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1}}},
-    {rr_mob_id_hornet, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.1}}},
+    {rr_mob_id_hornet, rr_rarity_id_common, 30, 30, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.1}}},
+    {rr_mob_id_dragonfly, rr_rarity_id_common, 15, 10, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.1}}},
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -101,12 +102,13 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
     "Heavy and sturdy",
-    "Increases your FOV. Does not stack",
+    "Decreases mob aggro range. Does not stack",
     "This mysterious petal reverses your petal rotation",
     "Stuns mobs and prevents them from moving",
     "A stunning display"
 };
 
+// CHANGE WHEN ADD MOB
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "T-Rex",
                                            "Fern",
@@ -120,14 +122,15 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Quetzalcoatlus",
                                            "Edmontosaurus",
                                            "Ant",
-                                           "Hornet"};
+                                           "Hornet",
+                                           "Dragonfly"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 10, 8, 12};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25};
-double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1};
-                                            
+double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1};
+//END                                            
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 8, 15, 30, 100, 500};
 

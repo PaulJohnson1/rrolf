@@ -12,6 +12,7 @@ set(SRCS
     Assets/Mob/Ankylosaurus.c
     Assets/Mob/Ant.c
     Assets/Mob/Dakotaraptor.c
+    Assets/Mob/Dragonfly.c
     Assets/Mob/Edmontosaurus.c
     Assets/Mob/Hornet.c
     Assets/Mob/Ornithomimus.c
@@ -117,7 +118,7 @@ elseif(CALLGRIND_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ffast-math -DNDEBUG")
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 if (WASM_BUILD)

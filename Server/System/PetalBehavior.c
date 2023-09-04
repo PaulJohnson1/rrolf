@@ -397,9 +397,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
     player_info->modifiers.rotation_direction = 1;
+    physical->aggro_range_multiplier = 1;
+    health->damage_reduction = 0;
     uint8_t rot_count = 0;
     rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
-    health->damage_reduction = 0;
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
@@ -417,18 +418,20 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_feather)
         {
             float speed = 1 + 0.05 + 0.035 * slot->rarity;
-            if (slot->rarity == rr_rarity_id_ultra)
-                speed = 10;
             if (speed > physical->acceleration_scale)
                 physical->acceleration_scale = speed;
         }
         else if (data->id == rr_petal_id_crest)
         {
-            rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
+            //rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
+            /*
             if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.05 * slot->rarity))
             {   
                 rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.06 * slot->rarity));
             }
+            */
+            if (physical->aggro_range_multiplier < 1.1 + (0.15 * slot->rarity))
+                physical->aggro_range_multiplier = 1.1 + (0.15 * slot->rarity);
         }
         else if (data->id == rr_petal_id_droplet)
         {

@@ -18,6 +18,8 @@ static void rivet_container_on_event(struct rr_ui_element *this,
 
 static void render_link(struct rr_ui_element *this, struct rr_game *game)
 {
+    if (rr_ui_mouse_over(this, game))
+        rr_renderer_add_color_filter(game->renderer, 0xff000000, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale);
     rr_renderer_set_fill(game->renderer, 0x80ffffff);
     rr_renderer_begin_path(game->renderer);
@@ -69,10 +71,13 @@ struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *game)
             rr_ui_h_container_init(
                 rr_ui_container_init(), 5, 0,
                 rr_ui_text_init("discord.gg/kKWAUEbk9T", 15, 0xffffffff), NULL),
-            0x40ffffff),
-        rr_ui_set_background(rr_ui_h_container_init(rr_ui_container_init(), 5,
-                                                    0, rr_ui_rivet_init(game),
-                                                    NULL),
-                             0x40ffffff),
-        rr_ui_link_init(game), NULL);
+        0x40ffffff),
+        rr_ui_set_background(
+            rr_ui_h_container_init(rr_ui_container_init(), 5,
+                0, rr_ui_rivet_init(game),
+                NULL),
+        0x40ffffff),
+        rr_ui_link_init(game), 
+        rr_ui_abandon_game_button_init(30),
+    NULL);
 }

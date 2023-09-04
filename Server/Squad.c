@@ -37,6 +37,7 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
 {    
     this->member_count -= 1;
     this->members[client->squad_pos].in_use = 0;
+    this->members[client->squad_pos].playing = 0;
     client->squad_pos = 0;
 }
 

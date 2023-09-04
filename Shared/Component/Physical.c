@@ -26,6 +26,7 @@ void rr_component_physical_init(struct rr_component_physical *this,
     RR_SERVER_ONLY(this->mass = 1;)
     RR_SERVER_ONLY(this->acceleration_scale = 1;)
     RR_SERVER_ONLY(this->knockback_scale = 1;)
+    RR_SERVER_ONLY(this->aggro_range_multiplier = 1;)
 }
 
 void rr_component_physical_free(struct rr_component_physical *this,

@@ -4,13 +4,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(rrolf-server)
 include_directories(..)
-if (WINDOWS)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_WINDOWS")
-    include_directories(/c/libwebsockets)
-    include_directories(/c/libwebsockets/include)
-    include_directories(/c/openssl/include)
-    include_directories(/c/libwebsockets/win32port/win32helpers)
-endif()
 
 set(SRCS
     System/Ai.c
@@ -60,8 +53,8 @@ set(SRCS
     ../Shared/Vector.c
 )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1")
 set(CMAKE_C_COMPILER "clang")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1")
 
 # release by default
 if(DEBUG_BUILD)
@@ -78,7 +71,7 @@ else()
     # link time optimiations
     if(WINDOWS)
     else()
-        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+        # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
     endif()
 endif()
 
@@ -89,9 +82,9 @@ endif()
 
 add_executable(rrolf-server ${SRCS})
 
-if(WINDOWS)
+if (true)
     target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
-    target_link_libraries(rrolf-server ws2_32 wsock32 curl)
+    target_link_libraries(rrolf-server ws2_32 wsock32)
 endif()
 target_link_libraries(rrolf-server pthread websockets m)
 

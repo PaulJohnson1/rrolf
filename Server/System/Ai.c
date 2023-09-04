@@ -808,10 +808,8 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        struct rr_vector prediction =
-            predict(delta, physical2->velocity, ai->has_prediction * 10);
         rr_component_physical_set_angle(
-            physical, rr_vector_theta(&prediction));
+            physical, rr_vector_theta(&delta));
         rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED, physical->angle);
         if (rr_vector_get_magnitude(&delta) < physical->radius + 250)
         {
@@ -932,6 +930,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
         break;
     case rr_mob_id_dakotaraptor:
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.25);
+        break;
+    case rr_mob_id_dragonfly:
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.85);
         break;
     case rr_mob_id_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);

@@ -206,12 +206,12 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         char *extra = malloc((sizeof *extra) * 8);
         extra[sprintf(extra, "%.0f%%",
-                      100 / (0.9 - 0.06 * rarity) - 100)] = 0;
+                      100 - 100 / (1.1 + 0.15 * rarity))] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("FOV increase: ", 12, 0xff4266f5),
+                          rr_ui_text_init("Aggro decrease: ", 12, 0xff4266f5),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }

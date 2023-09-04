@@ -104,8 +104,8 @@ void rr_renderer_rotate(struct rr_renderer *this, float a)
 void rr_renderer_scale2(struct rr_renderer *this, float x, float y)
 {
     this->state.transform_matrix[0] *= x;
-    this->state.transform_matrix[1] *= y;
-    this->state.transform_matrix[3] *= x;
+    this->state.transform_matrix[1] *= x;
+    this->state.transform_matrix[3] *= y;
     this->state.transform_matrix[4] *= y;
     rr_renderer_update_transform(this);
 }
@@ -146,7 +146,7 @@ void rr_renderer_add_color_filter(struct rr_renderer *this, uint32_t color,
     if (this->state.filter.amount == 0 || (this->state.filter.color << 8) == 0)
     {
         this->state.filter.color = color;
-        this->state.filter.amount = amount;
+        this->state.filter.amount = 1 - (1 - this->state.filter.amount) * (1 - amount);
         return;
     }
     float alpha = this->state.filter.amount;

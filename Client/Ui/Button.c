@@ -23,16 +23,16 @@ static void labeled_button_on_render(struct rr_ui_element *this,
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    if (game->focused == this)
-        renderer->state.filter.amount = 0.2;
+    if (rr_ui_mouse_over(this, game))
+        rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
 
     this->abs_width =
-        10 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
+        15 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;
     if (this->abs_width < this->abs_height)
         this->abs_width = this->abs_height;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
-    renderer->state.filter.amount += 0.2;
+    rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
     rr_renderer_set_stroke(renderer, this->fill);
     rr_renderer_set_line_width(renderer, this->abs_height / 8);
     rr_renderer_begin_path(renderer);
@@ -62,7 +62,7 @@ struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
     data->text = text;
     this->data = data;
     this->abs_height = this->height = height;
-    this->abs_width = this->width = 10 + rr_renderer_get_text_size(text) * height / 2;
+    this->abs_width = this->width = 15 + rr_renderer_get_text_size(text) * height / 2;
     this->on_render = labeled_button_on_render;
     this->on_event = button_on_event;
     this->fill = 0xff0000ff;

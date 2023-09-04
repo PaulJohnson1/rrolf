@@ -67,6 +67,7 @@ struct rr_game
     struct rr_ui_element *gallery_tooltip;
     struct rr_ui_element *craft_tooltip;
     struct rr_ui_element *settings_tooltip;
+    struct rr_ui_element *abandon_game_tooltip;
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;

@@ -254,14 +254,34 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animat
         rr_renderer_translate(renderer, 90, 0);
         render_sprite(renderer, id, 1, flags);
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f + 2 * M_PI / 3);
+        rr_renderer_rotate(renderer, animation_tick * 0.2f + 2 * M_PI / 3);
         rr_renderer_translate(renderer, 100, 0);
         render_sprite(renderer, id, 4, flags);
         rr_renderer_context_state_free(renderer, &state);
         rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f - 2 * M_PI / 3);
+        rr_renderer_rotate(renderer, animation_tick * -0.2f - 2 * M_PI / 3);
         rr_renderer_translate(renderer, 100, 0);
         render_sprite(renderer, id, 4, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        rr_renderer_translate(renderer, 90, 0);
+        render_sprite(renderer, id, 0, flags);
+        break;
+    case rr_mob_id_dragonfly:
+        rr_renderer_scale(renderer, 0.2);
+        rr_renderer_translate(renderer, -90, 0);
+        render_sprite(renderer, id, 2, flags);
+        rr_renderer_translate(renderer, 90, 0);
+        render_sprite(renderer, id, 1, flags);
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_rotate(renderer, animation_tick * 0.2f);
+        rr_renderer_translate(renderer, 0, -100);
+        render_sprite(renderer, id, 3, flags);
+        rr_renderer_context_state_free(renderer, &state);
+        rr_renderer_context_state_init(renderer, &state);
+        rr_renderer_scale2(renderer, 1, -1);
+        rr_renderer_rotate(renderer, animation_tick * -0.2f);
+        rr_renderer_translate(renderer, 0, -100);
+        render_sprite(renderer, id, 3, flags);
         rr_renderer_context_state_free(renderer, &state);
         rr_renderer_translate(renderer, 90, 0);
         render_sprite(renderer, id, 0, flags);
@@ -327,4 +347,7 @@ void rr_renderer_mob_cache_init()
     rr_renderer_spritesheet_init(&mob_sprites[13], NULL, 192, 192, rr_hornet_head_draw, 
     192, 192, rr_hornet_thorax_draw, 192, 192, rr_hornet_abdomen_draw, 192, 192, rr_hornet_leg_draw,
     192, 192, rr_hornet_wing_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[14], NULL, 192, 192, rr_dragonfly_head_draw, 
+    192, 192, rr_dragonfly_thorax_draw, 192, 192, rr_dragonfly_abdomen_draw, 192, 192, rr_dragonfly_wing_draw, 0);
 }

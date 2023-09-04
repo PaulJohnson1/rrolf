@@ -81,29 +81,23 @@ static void colliding_with_function(uint64_t i, void *_captures)
     if (distance == 0)
         return;
     {
-        /*
         float overlap = (distance - physical1->radius - physical2->radius);
         float v2_Coeff = physical1->mass / (physical1->mass + physical2->mass);
         float v1_Coeff = physical2->mass / (physical1->mass + physical2->mass);
-        rr_component_physical_set_x(
-            physical1, physical1->x - overlap * delta.x / distance * v1_Coeff);
-        rr_component_physical_set_y(
-            physical1, physical1->y - overlap * delta.y / distance * v1_Coeff);
-        rr_component_physical_set_x(
-            physical2, physical2->x + overlap * delta.x / distance * v2_Coeff);
-        rr_component_physical_set_y(
-            physical2, physical2->y + overlap * delta.y / distance * v2_Coeff);
-        */
+        physical1->collision_velocity.x -= overlap * delta.x / distance * v1_Coeff;
+        physical1->collision_velocity.y -= overlap * delta.y / distance * v1_Coeff;
+        physical2->collision_velocity.x += overlap * delta.x / distance * v2_Coeff;
+        physical2->collision_velocity.y += overlap * delta.y / distance * v2_Coeff;
     }
 
     {
         #define KNOCKBACK_CONST 25.0f / 2
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
-        physical1->acceleration.x += coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale / physical1->acceleration_scale;
-        physical1->acceleration.y += coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale / physical1->acceleration_scale;
-        physical2->acceleration.x += (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale / physical2->acceleration_scale;
-        physical2->acceleration.y += (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale / physical2->acceleration_scale;
+        physical1->collision_velocity.x += coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
+        physical1->collision_velocity.y += coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
+        physical2->collision_velocity.x += (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
+        physical2->collision_velocity.y += (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
         #undef KNOCKBACK_CONST
     }
 }
