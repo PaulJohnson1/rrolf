@@ -27,7 +27,7 @@ static void render_background(struct rr_component_player_info *player_info,
     double bottomY =
         player_info->lerp_camera_y + this->renderer->height / (2 * scale);
 
-#define GRID_SIZE (768)
+#define GRID_SIZE (1024)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
     //rr_renderer_scale(this->renderer, scale);
@@ -41,7 +41,7 @@ static void render_background(struct rr_component_player_info *player_info,
             rr_renderer_context_state_init(this->renderer, &state);
             rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
                                   currY + GRID_SIZE / 2);
-            rr_renderer_scale(this->renderer, GRID_SIZE / 256);
+            rr_renderer_scale(this->renderer, (GRID_SIZE) / 256);
             if (this->selected_biome == 0)
                 rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
             else
