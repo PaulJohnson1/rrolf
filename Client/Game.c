@@ -1021,7 +1021,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->simulation_ready = 0;
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    this->socket.on_event = rr_game_websocket_on_event_function;
+    //this->socket.on_event = rr_game_websocket_on_event_function;
 
 #ifdef RIVET_BUILD
     this->rivet_lobby_pending = 1;

@@ -24,7 +24,8 @@ void rr_on_socket_event_emscripten(struct rr_websocket *this,
                                    enum rr_websocket_event_type type,
                                    void *data, uint64_t data_size)
 {
-    this->on_event(type, data, this->user_data, data_size);
+    rr_game_websocket_on_event_function(type, data, this->user_data, data_size);
+    //this->on_event(type, data, this->user_data, data_size);
 }
 #else
 int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
@@ -57,9 +58,9 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
 
 void rr_websocket_init(struct rr_websocket *this)
 {
-    void *event = this->on_event;
+    //void *event = this->on_event;
     memset(this, 0, sizeof *this);
-    this->on_event = event; //cursed
+    //this->on_event = event; //cursed
 }
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
@@ -91,7 +92,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                     Module._rr_on_socket_event_emscripten($0, 1, $2, a.code);
                 };
                 socket.onerror = function(a, b) { 
-                    console.log("error", a, b); 
+                       console.log("error", a, b); 
                 };
                 socket.onmessage = function(event)
                 {

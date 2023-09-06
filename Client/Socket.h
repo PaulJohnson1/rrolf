@@ -24,7 +24,7 @@ struct rr_websocket
     uint8_t found_error;
     void *user_data;
     // char *uuid;
-    void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
+    // void (*on_event)(enum rr_websocket_event_type, void *, void *, uint64_t);
 #ifndef EMSCRIPTEN
     struct lws_context *socket_context;
     struct lws *socket;

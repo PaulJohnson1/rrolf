@@ -19,9 +19,10 @@ void render_sprite(struct rr_renderer *renderer, uint8_t id, uint32_t pos, uint8
         mob_sprites[id].sprites[pos].render(renderer);
 }
 
-void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float animation_tick, float turning_value, uint8_t flags)
+void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_animation_tick, float turning_value, uint8_t flags)
 {
-     struct rr_renderer_context_state original_state;
+    float animation_tick = sinf(raw_animation_tick);
+    struct rr_renderer_context_state original_state;
     struct rr_renderer_context_state state;
 
     rr_renderer_context_state_init(renderer, &original_state);
