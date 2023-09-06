@@ -278,7 +278,7 @@ static void system(EntityIdx id, void *simulation)
             {
                 now_x = rr_fclamp(now_x, before_grid_x * RR_MAZE_GRID_SIZE, (before_grid_x+1) * RR_MAZE_GRID_SIZE);
                 now_y = rr_fclamp(now_y, before_grid_y * RR_MAZE_GRID_SIZE, (before_grid_y+1) * RR_MAZE_GRID_SIZE);
-                perform_internal_bound_check(now_x, now_y, physical);
+                perform_internal_bound_check_custom_grid(now_x, now_y, before_grid_x, before_grid_y, physical);
             }
             else
             {
