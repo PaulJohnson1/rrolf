@@ -82,7 +82,7 @@ endif()
 
 add_executable(rrolf-server ${SRCS})
 
-if (true)
+if (WINDOWS)
     target_link_directories(rrolf-server PRIVATE /c/libwebsockets/unix-build/bin)
     target_link_libraries(rrolf-server ws2_32 wsock32)
 endif()
