@@ -71,9 +71,19 @@ void rr_dragonfly_head_draw(struct rr_renderer *);
 void rr_dragonfly_thorax_draw(struct rr_renderer *);
 void rr_dragonfly_wing_draw(struct rr_renderer *);
 
+void rr_honeybee_abdomen_draw(struct rr_renderer *);
+void rr_honeybee_thorax_draw(struct rr_renderer *);
+void rr_honeybee_head_draw(struct rr_renderer *);
+void rr_honeybee_leg_draw(struct rr_renderer *);
+void rr_honeybee_wing_draw(struct rr_renderer *);
+
 void rr_hc_tile_1_draw(struct rr_renderer *);
 void rr_hc_tile_2_draw(struct rr_renderer *);
 void rr_hc_tile_3_draw(struct rr_renderer *);
+
+void rr_ga_tile_1_draw(struct rr_renderer *);
+void rr_ga_tile_2_draw(struct rr_renderer *);
+void rr_ga_tile_3_draw(struct rr_renderer *);
 
 void rr_oc_tile_1_draw(struct rr_renderer *);
 void rr_oc_tile_2_draw(struct rr_renderer *);

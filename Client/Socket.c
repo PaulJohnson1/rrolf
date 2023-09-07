@@ -108,7 +108,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
     struct lws_protocols protocols[2] = {{"g", rr_on_socket_event_lws, 0, 0},
                                          {NULL, NULL, 0, 0}};
     memset(&info, 0, sizeof info);
-    protocols[0].callback = rr_on_socket_event_lws;
+    //protocols[0].callback = rr_on_socket_event_lws;
     protocols[0].name = "g";
 
     info.port = CONTEXT_PORT_NO_LISTEN;

@@ -29,14 +29,14 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     }
     else
         health->poison = 0;
-    if (health->health > 0)
-    {
-        rr_component_health_set_health(health, health->health +
-                                                   health->max_health * 0.0002);
-        if (health->damage_paused > 0)
-            health->damage_paused -= 1;
-    }
-    else
+    //if (health->health > 0)
+    //{
+        //rr_component_health_set_health(health, health->health +
+       //                                            health->max_health * 0.0002);
+    if (health->damage_paused > 0)
+        health->damage_paused -= 1;
+    //}
+    if (health->health == 0)
         rr_simulation_request_entity_deletion(this, entity);
 }
 
@@ -69,6 +69,12 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
         physical->stun_ticks = 25 + 25 * petal->rarity / 2;
     }
+    else if (petal->id == rr_petal_id_mandible)
+    {
+        struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+        if (health->health > 0 && health->health * 2 < health->max_health)
+            rr_component_health_do_damage(simulation, health, petal_id, 50 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
+    }
 }
 
 static void colliding_with_function(uint64_t i, void *_captures)
@@ -98,7 +104,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
                      rr_simulation_has_petal(this, entity2);
     if (health1->damage_paused == 0 || bypass)
     {
-        rr_component_health_do_damage(health1, health2->damage);
+        petal_effect(this, entity1, entity2);
+        rr_component_health_do_damage(this, health1, entity2, health2->damage);
         health1->damage_paused = 5;
 
         if (rr_simulation_has_ai(this, entity1))
@@ -116,11 +123,11 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = entity2;
             }
         }
-        petal_effect(this, entity1, entity2);
     }
     if (health2->damage_paused == 0 || bypass)
     {
-        rr_component_health_do_damage(health2, health1->damage);
+        petal_effect(this, entity2, entity1);
+        rr_component_health_do_damage(this, health2, entity1, health1->damage);
         health2->damage_paused = 5;
 
         if (rr_simulation_has_ai(this, entity2))
@@ -139,7 +146,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = entity1;
             }
         }
-        petal_effect(this, entity2, entity1);
     }
 }
 

@@ -16,7 +16,7 @@ void rr_renderer_draw_mob_name(struct rr_renderer *, uint8_t, float, int8_t, int
 void rr_renderer_draw_rarity_name(struct rr_renderer *, uint8_t, float, int8_t, int8_t);
 
 void rr_renderer_draw_tile_hell_creek(struct rr_renderer *, uint8_t);
-void rr_renderer_draw_tile_ocean(struct rr_renderer *, uint8_t);
+void rr_renderer_draw_tile_garden(struct rr_renderer *, uint8_t);
 void rr_renderer_draw_prop(struct rr_renderer *, uint8_t);
 void rr_renderer_draw_web(struct rr_renderer *);
 

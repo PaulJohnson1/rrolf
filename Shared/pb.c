@@ -55,7 +55,7 @@ extern "C"
     {
         self->start = data;
         self->current = data;
-        self->end = NULL;
+        self->end = (uint8_t *)-1;
     }
 
     void proto_bug_set_bound(struct proto_bug *self, uint8_t *end)
@@ -144,7 +144,7 @@ extern "C"
 
     uint8_t proto_bug_read_uint8_internal(struct proto_bug *self)
     {
-        if (self->current == self->end)
+        if (self->current > self->end)
             return 0;
         return RR_SECRET8 ^ 0 ^ *self->current++;
     }
@@ -189,7 +189,7 @@ extern "C"
     }
     float proto_bug_read_float32_internal(struct proto_bug *self)
     {
-        if (self->end && self->current + (sizeof (float)) >= self->end)
+        if (self->end && self->current + (sizeof (float)) > self->end)
             return 0;
         float data;
         memcpy(&data, self->current, sizeof data);
@@ -198,7 +198,7 @@ extern "C"
     }
     double proto_bug_read_float64_internal(struct proto_bug *self)
     {
-        if (self->end && self->current + (sizeof (double)) >= self->end)
+        if (self->end && self->current + (sizeof (double)) > self->end)
             return 0;
         double data;
         memcpy(&data, self->current, sizeof data);
@@ -259,8 +259,7 @@ extern "C"
         proto_bug_read_string_internal(self, received_name, 2048);
         proto_bug_read_string_internal(self, received_file, 2048);
         uint32_t received_line = proto_bug_read_varuint_internal(self);
-        if ((received_encoding_type != expected_encoding_type) ||
-            ((name_size != strlen(name) || (strcmp(received_name, name)))))
+        if ((received_encoding_type != expected_encoding_type) || (strcmp(received_name, name)))
         {
             assertion_fail_message[sprintf(
                 assertion_fail_message,

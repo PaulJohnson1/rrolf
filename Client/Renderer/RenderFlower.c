@@ -73,5 +73,13 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_draw_petal(renderer, rr_petal_id_crest, 1);
         rr_renderer_translate(renderer, 0, 36);
     }
+    if (flower->face_flags & 16)
+    {
+        rr_renderer_translate(renderer, 0, -15);
+        rr_renderer_scale(renderer, 0.625);
+        rr_renderer_draw_petal(renderer, rr_petal_id_third_eye, 1);
+        rr_renderer_scale(renderer, 1.6);
+        rr_renderer_translate(renderer, 0, 15);
+    }
     rr_renderer_rotate(renderer, -physical->lerp_angle);
 }

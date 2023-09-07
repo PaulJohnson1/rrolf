@@ -204,7 +204,7 @@ void rr_game_init(struct rr_game *this)
                     rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
-                            rr_ui_container_init(), 10, 20,
+                            rr_ui_container_init(), 0, 20,
                             rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "0x4346"),
                             rr_ui_join_button_init(),
                             NULL
@@ -721,14 +721,17 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     movement_flags |= this->cache.use_mouse << 6;
     proto_bug_write_uint8(&encoder2, movement_flags,
                             "movement kb flags");
-    proto_bug_write_float32(&encoder2,
-                            this->input_data->mouse_x -
-                                this->renderer->width / 2,
-                            "mouse x");
-    proto_bug_write_float32(&encoder2,
-                            this->input_data->mouse_y -
-                                this->renderer->height / 2,
-                            "mouse y");
+    if (this->cache.use_mouse)
+    {
+        proto_bug_write_float32(&encoder2,
+                                this->input_data->mouse_x -
+                                    this->renderer->width / 2,
+                                "mouse x");
+        proto_bug_write_float32(&encoder2,
+                                this->input_data->mouse_y -
+                                    this->renderer->height / 2,
+                                "mouse y");
+    }
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
     struct proto_bug encoder;
     proto_bug_init(&encoder, output_packet);

@@ -48,6 +48,8 @@ enum rr_petal_id
     rr_petal_id_droplet, //remove + replace
     rr_petal_id_beak,
     rr_petal_id_lightning,
+    rr_petal_id_third_eye,
+    rr_petal_id_mandible,
     /*
     rr_petal_id_kelp,
     rr_petal_id_fish_egg,
@@ -79,6 +81,7 @@ enum rr_mob_id
     rr_mob_id_ant,
     rr_mob_id_hornet,
     rr_mob_id_dragonfly,
+    rr_mob_id_honeybee,
     rr_mob_id_max
 };
 

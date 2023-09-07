@@ -27,7 +27,7 @@ static void render_background(struct rr_component_player_info *player_info,
     double bottomY =
         player_info->lerp_camera_y + this->renderer->height / (2 * scale);
 
-#define GRID_SIZE (1024)
+#define GRID_SIZE (512.0f)
     double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
     double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
     //rr_renderer_scale(this->renderer, scale);
@@ -45,7 +45,7 @@ static void render_background(struct rr_component_player_info *player_info,
             if (this->selected_biome == 0)
                 rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
             else
-                rr_renderer_draw_tile_ocean(this->renderer, tile_index);
+                rr_renderer_draw_tile_garden(this->renderer, tile_index);
             rr_renderer_context_state_free(this->renderer, &state);
         }
     }

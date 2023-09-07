@@ -36,7 +36,7 @@ static void uranium_damage(EntityIdx mob, void *_captures)
             (physical->y - captures->y) * (physical->y - captures->y) <
         901 * 901)
     {
-        rr_component_health_do_damage(health, captures->damage);
+        rr_component_health_do_damage(simulation, health, captures->flower_id, captures->damage);
         // health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
         if (ai->target_entity == RR_NULL_ENTITY)
@@ -121,7 +121,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
             }
             struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
             struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-            rr_component_health_do_damage(health, damage);
+            rr_component_health_do_damage(simulation, health, petal->parent_id, damage);
             health->damage_paused = 5;
             physical->stun_ticks = 10;
             chain[captures.length] = target;
@@ -425,7 +425,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_crest)
         {
-            //rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
+            rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
             /*
             if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.05 * slot->rarity))
             {   
@@ -438,6 +438,14 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_droplet)
         {
            ++rot_count;
+        }
+        else if (data->id == rr_petal_id_third_eye)
+        {
+            rr_component_flower_set_face_flags(flower, flower->face_flags | 16);
+            if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.05 * slot->rarity))
+            {   
+                rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.07 * slot->rarity));
+            }
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)

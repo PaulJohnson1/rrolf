@@ -235,6 +235,7 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
 static void squad_find_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
+    default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
     {
@@ -249,6 +250,7 @@ static void squad_find_button_animate(struct rr_ui_element *this,
 static void ready_button_animate(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
+    default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
     {
@@ -361,7 +363,6 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
-    this->fill = 0xff1dd129;
     this->animate = squad_find_button_animate;
     this->on_event = squad_join_button_on_event;
     return this;
@@ -370,7 +371,6 @@ struct rr_ui_element *rr_ui_squad_button_init()
 struct rr_ui_element *rr_ui_create_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Create Squad", 36, 0);
-    this->fill = 0xff1dd129;
     this->animate = squad_find_button_animate;
     this->on_event = squad_create_button_on_event;
     return this;

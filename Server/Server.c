@@ -234,11 +234,10 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 
 void rr_api_websocket_tick(struct rr_server *this)
 {
-    /*
     struct proto_bug encoder;
-    proto_bug_init(&encoder, outgoing_message);
-    lws_write(this->api_socket.socket, outgoing_message, 1, LWS_WRITE_BINARY);    
-    */
+    proto_bug_init(&encoder,  outgoing_message);
+    proto_bug_write_uint8(&encoder, 2, "bruh");
+    //lws_write(this->api_client, outgoing_message, 1, LWS_WRITE_BINARY);    
 }
 
 void rr_server_client_write_message(struct rr_server_client *this,
@@ -357,6 +356,7 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
 
 void rr_server_tick(struct rr_server *this)
 {
+    rr_api_websocket_tick(this);
     rr_simulation_tick(&this->simulation);
 
     uint8_t client_count = 0;
@@ -485,9 +485,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
+                printf("%llu %llu\n", client->requested_verification, received_verification);
                 fputs("invalid verification\n", stderr);
                 lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                 (uint8_t *)"invalid v", sizeof "invalid v");
+                                 (uint8_t *)"invalid v", sizeof "invalid v"-1);
                 return -1;
             }
 
@@ -574,10 +575,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 x = proto_bug_read_float32(&encoder, "mouse x");
                 y = proto_bug_read_float32(&encoder, "mouse y");
-                float mag_1 = RR_PLAYER_SPEED / sqrtf(x * x + y * y);
-                float scale = rr_fclamp((mag_1 - 25) / 50, 0, 1);
-                x *= mag_1 * scale;
-                y *= mag_1 * scale;
+                if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
+                {
+                    float mag_1 = sqrtf(x * x + y * y);
+                    float scale = RR_PLAYER_SPEED * rr_fclamp((mag_1 - 25) / 50, 0, 1);
+                    x *= scale / mag_1;
+                    y *= scale / mag_1;
+                }
             }
             if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
             {
@@ -788,35 +792,44 @@ static int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons rea
 
 void rr_server_run(struct rr_server *this)
 {
-    struct lws_context_creation_info info;
-    memset(&info, 0, sizeof(info));
+    {
+        struct lws_context_creation_info info = {0};
 
-    info.protocols = (struct lws_protocols[]){
-        {"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
-        {0}};
+        info.protocols = (struct lws_protocols[]){
+            {"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
+            {0}};
 
-    info.port = 1234;
-    info.user = this;
-    info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
-    lws_set_log_level(0, lws_log);
+        info.port = 1234;
+        info.user = this;
+        info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+        lws_set_log_level(0, lws_log);
 
-    this->server = lws_create_context(&info);
-    assert(this->server);
+        this->server = lws_create_context(&info);
+        assert(this->server);
+    }
 
-    //api ws
-    struct lws_context_creation_info info2;
-    struct lws_protocols protocols[2] = {{"g", rr_on_socket_event_lws, 0, 0},
-                                         {NULL, NULL, 0, 0}};
-    memset(&info2, 0, sizeof info2);
-    protocols[0].callback = rr_on_socket_event_lws;
-    protocols[0].name = "g";
+    {
+        struct lws_context_creation_info info = {0};
 
-    info2.port = CONTEXT_PORT_NO_LISTEN;
-    info2.protocols = protocols;
-    info2.gid = -1;
-    info2.uid = -1;
-    info2.user = this;
-    info2.pt_serv_buf_size = 1024 * 1024;
+        info.protocols = (struct lws_protocols[]){
+            {"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
+            {0}};
+
+        info.port = CONTEXT_PORT_NO_LISTEN;
+        info.user = this;
+        info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
+        info.pt_serv_buf_size = 1024 * 1024;
+        this->api_client_context = lws_create_context(&info);
+        struct lws_client_connect_info connection_info;
+        memset(&connection_info, 0, sizeof connection_info);
+        connection_info.context = this->api_client_context;
+        connection_info.address = "localhost";
+        connection_info.port = 55554;
+        connection_info.host = lws_canonical_hostname(this->api_client_context);
+        connection_info.origin = "ggez";
+        connection_info.protocol = "g";
+        this->api_client = lws_client_connect_via_info(&connection_info);
+    }
 
     while (1)
     {
@@ -827,6 +840,7 @@ void rr_server_run(struct rr_server *this)
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
         lws_service(this->server, -1);
+        lws_service(this->api_client_context, -1);
         
         rr_server_tick(this);
         gettimeofday(&end, NULL);

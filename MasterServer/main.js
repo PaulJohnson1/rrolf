@@ -443,30 +443,29 @@ process.on("uncaughtException", try_save_exit);
 
 setInterval(saveDatabaseToFile, 60000);
 
-
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
+/*
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
+*/
 
-// // server.listen(port, () => {
-// //     console.log(`Server running at http://localhost:${port}`);
-// // });
+const wss = new WSS.WebSocketServer({server});
+const game_servers = {};
 
-// const wss = new WSS.WebSocketServer({server});
-// const game_servers = {};
+wss.on("connection", (ws, req) => {
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
 
-
-// wss.on("connection", (ws, req) => {
-//     ws.on('close', () => {
-//         console.log('Client disconnected');
-//     });
-
-//     if (req.url !== `/api/${SERVER_SECRET}`)
-//         return ws.close();
-//     ws.on('message', (message) => {
-//         console.log(`Received: ${message}`);
-//     });
-//     console.log("connect");
-// });
+    //if (req.url !== `/api/${SERVER_SECRET}`)
+        //return ws.close();
+    ws.on('message', (message) => {
+        console.log(`Received: ${message}`);
+    });
+    console.log("connect");
+});

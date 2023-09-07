@@ -13,6 +13,7 @@ RR_SERVER_ONLY(struct rr_maze_grid;)
 struct rr_component_mob
 {
     RR_SERVER_ONLY(struct rr_maze_grid *zone;)
+    RR_SERVER_ONLY(float squad_damage_counter[RR_SQUAD_COUNT + 1];)
     EntityIdx parent_id;
     RR_SERVER_ONLY(uint8_t protocol_state;)
     uint8_t id;

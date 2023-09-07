@@ -27,7 +27,7 @@ static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
     return; // does nothing
 }
 
-static void default_animate(struct rr_ui_element *this, struct rr_game *game)
+void default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     this->width = this->abs_width * (1 - this->completely_hidden);
     this->height = this->abs_height * (1 - this->completely_hidden);

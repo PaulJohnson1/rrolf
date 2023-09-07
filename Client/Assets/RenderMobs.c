@@ -212,6 +212,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_an
         render_sprite(renderer, id, 0, flags);
         break;
     case rr_mob_id_hornet:
+    case rr_mob_id_honeybee:
         rr_renderer_scale(renderer, 0.2f);
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_rotate(renderer, animation_tick * 0.1f - M_PI / 6);
@@ -264,7 +265,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_an
         rr_renderer_translate(renderer, 100, 0);
         render_sprite(renderer, id, 4, flags);
         rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_translate(renderer, 90, 0);
+        rr_renderer_translate(renderer, 80, 0);
         render_sprite(renderer, id, 0, flags);
         break;
     case rr_mob_id_dragonfly:
@@ -288,6 +289,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_an
         render_sprite(renderer, id, 0, flags);
         break;
     }
+        
     rr_renderer_context_state_free(renderer, &original_state);
 }
 
@@ -351,4 +353,8 @@ void rr_renderer_mob_cache_init()
 
     rr_renderer_spritesheet_init(&mob_sprites[14], NULL, 192, 192, rr_dragonfly_head_draw, 
     192, 192, rr_dragonfly_thorax_draw, 192, 192, rr_dragonfly_abdomen_draw, 192, 192, rr_dragonfly_wing_draw, 0);
+
+    rr_renderer_spritesheet_init(&mob_sprites[15], NULL, 192, 192, rr_honeybee_head_draw, 
+    192, 192, rr_honeybee_thorax_draw, 192, 192, rr_honeybee_abdomen_draw, 192, 192, rr_honeybee_leg_draw,
+    192, 192, rr_honeybee_wing_draw, 0);
 }

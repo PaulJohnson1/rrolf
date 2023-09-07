@@ -127,7 +127,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         CODE;                                                                  \
     };
 
-#define GRID_MOB_LIMIT 10
+#define GRID_MOB_LIMIT 1
 
 static void tick_wave(struct rr_simulation *this)
 {

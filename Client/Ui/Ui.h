@@ -103,6 +103,7 @@ void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
+void default_animate(struct rr_ui_element *, struct rr_game *);
 void scale_animate(struct rr_ui_element *, struct rr_game *);
 struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *,
                                         uint8_t (*)(struct rr_ui_element *,
