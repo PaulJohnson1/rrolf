@@ -10,7 +10,7 @@ typedef uint16_t EntityIdx;
 #define RR_MAX_CLIENT_COUNT (64)
 #define RR_SQUAD_COUNT (RR_MAX_CLIENT_COUNT)
 #define RR_LOOT_SHARE_COUNT (4)
-#define RR_MAX_COLLISION_COUNT (128)
+#define RR_MAX_COLLISION_COUNT (512)
 #endif
 
 struct rr_id_rarity_pair

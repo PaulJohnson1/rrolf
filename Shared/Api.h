@@ -10,6 +10,12 @@
 #define RR_API_SECRET "the_rrolf_api_secret_key_that_no_one_will_guess"
 #endif
 
+#ifdef RIVET_BUILD
+#define RR_BASE_API_URL "https://rrolf.io/api/"
+#else
+#define RR_BASE_API_URL "http://localhost:55554/api/"
+#endif
+
 struct rr_api_account
 {
     double xp;

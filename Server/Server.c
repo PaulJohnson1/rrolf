@@ -133,9 +133,9 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
     player_info->squad = client->squad;
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
     rr_component_player_info_set_slot_count(player_info, 10);
-    player_info->level = 1;
+    player_info->level = client->level;
     #define min(a,b) (((a) < (b)) ? (a) : (b))
-    //rr_component_player_info_set_slot_count(this->player_info, min(10, 5 + this->level / RR_LEVELS_PER_EXTRA_SLOT));
+    rr_component_player_info_set_slot_count(client->player_info, min(10, 5 + client->level / RR_LEVELS_PER_EXTRA_SLOT));
     #undef min
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&server->simulation, 1);
@@ -164,6 +164,7 @@ void rr_server_client_free(struct rr_server_client *this)
     char petals_string[50000] = {0}; // Ensure this is large enough
     char buffer[1000] = {0};         // Temporary buffer for each item
     uint32_t wave = 0;
+    /*
     if (this->player_info != NULL)
     {
         uint8_t first = 1;
@@ -217,10 +218,11 @@ void rr_server_client_free(struct rr_server_client *this)
                 this->player_info->parent_id, &this->server->simulation);
             __rr_simulation_pending_deletion_unset_entity(
                 this->player_info->parent_id, &this->server->simulation);
-            // rr_simulation_request_entity_deletion(&this->server->simulation,
-            //                                       this->player_info->parent_id);
+            //rr_simulation_request_entity_deletion(&this->server->simulation,
+                                                   //this->player_info->parent_id);
         }
     }
+    */
     puts("client disconnected");
 }
 
@@ -234,10 +236,14 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 
 void rr_api_websocket_tick(struct rr_server *this)
 {
-    struct proto_bug encoder;
-    proto_bug_init(&encoder,  outgoing_message);
-    proto_bug_write_uint8(&encoder, 2, "bruh");
-    //lws_write(this->api_client, outgoing_message, 1, LWS_WRITE_BINARY);    
+    if (!this->api_ws_ready)
+        return;
+    /*
+    struct rr_binary_encoder encoder;
+    rr_binary_encoder_init(&encoder, outgoing_message);
+    rr_binary_encoder_write_uint8(&encoder, 0); //api update packet
+    lws_write(this->api_client, outgoing_message, encoder.at - encoder.start, LWS_WRITE_BINARY);
+    */ 
 }
 
 void rr_server_client_write_message(struct rr_server_client *this,
@@ -275,6 +281,21 @@ void rr_server_client_tick(struct rr_server_client *this)
                           this->player_accel_y);
         }
         rr_server_client_broadcast_update(this);
+        if (this->player_info->drops_this_tick_size > 0)
+        {
+            struct rr_binary_encoder encoder;
+            rr_binary_encoder_init(&encoder, outgoing_message);
+            rr_binary_encoder_write_uint8(&encoder, 2);
+            rr_binary_encoder_write_nt_string(&encoder, this->rivet_account.uuid);
+            rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick_size);
+            for (uint32_t i = 0; i < this->player_info->drops_this_tick_size; ++i)
+            {
+                rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick[i].id);
+                rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick[i].rarity);
+            }
+            lws_write(this->server->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+            this->player_info->drops_this_tick_size = 0;
+        }
     }
     else
     {
@@ -356,6 +377,8 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
 
 void rr_server_tick(struct rr_server *this)
 {
+    if (!this->api_ws_ready)
+        return;
     rr_api_websocket_tick(this);
     rr_simulation_tick(&this->simulation);
 
@@ -380,6 +403,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     {
     case LWS_CALLBACK_ESTABLISHED:
     {
+        if (!this->api_ws_ready)
+        {
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                         (uint8_t *)"api ws not ready",
+                         sizeof "api ws not ready" - 1);
+            return -1;
+        }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
             if (!rr_bitset_get_bit(this->clients_in_use, i))
             {
@@ -433,6 +463,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                         getenv("RIVET_LOBBY_TOKEN"),
                         this->clients[i].rivet_account.token);
 #endif
+                    struct rr_binary_encoder encoder;
+                    rr_binary_encoder_init(&encoder, outgoing_message);
+                    rr_binary_encoder_write_uint8(&encoder, 1);
+                    rr_binary_encoder_write_nt_string(&encoder, this->clients[i].rivet_account.uuid);
+                    rr_binary_encoder_write_uint8(&encoder, i);
+                    lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
                     rr_server_client_free(this->clients + i);
                     char log[100] = {"ip: `"};
                     strcat(log, this->clients[i].ip_address);
@@ -501,7 +537,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // Read uuid
             proto_bug_read_string(&encoder, client->rivet_account.uuid,
                                   100, "rivet uuid");
-            puts(client->rivet_account.uuid);
+            //puts(client->rivet_account.uuid);
 #ifdef RIVET_BUILD
             for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
             {
@@ -543,6 +579,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             puts("socket verified");
             client->verified = 1;
+            struct rr_binary_encoder encoder;
+            rr_binary_encoder_init(&encoder, outgoing_message);
+            rr_binary_encoder_write_uint8(&encoder, 0);
+            rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
+            rr_binary_encoder_write_varuint(&encoder, i);
+            lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
             return 0;
         }
         switch (proto_bug_read_uint8(&encoder, "header"))
@@ -678,6 +720,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (loadout_count > 10)
                 break;
             struct rr_squad_member *member = rr_squad_get_client_slot(this, client);
+            uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
+
+            memcpy(temp_inv, client->inventory, sizeof client->inventory);
             for (uint8_t i = 0; i < loadout_count; i++)
             {
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
@@ -688,6 +733,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     break;
                 member->loadout[i].rarity = rarity;
                 member->loadout[i].id = id;
+                if (id && temp_inv[id][rarity]-- == 0)
+                {
+                    memset(member->loadout, 0, sizeof member->loadout);
+                    break;
+                }
                 id = proto_bug_read_uint8(&encoder, "id");
                 rarity = proto_bug_read_uint8(&encoder, "rarity");
                 if (id >= rr_petal_id_max)
@@ -696,6 +746,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     break;
                 member->loadout[i + 10].rarity = rarity;
                 member->loadout[i + 10].id = id;
+                if (id && temp_inv[id][rarity]-- == 0)
+                {
+                    memset(member->loadout, 0, sizeof member->loadout);
+                    break;
+                }
             }
 
             break;
@@ -724,6 +779,82 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         return 0;
     }
 
+    return 0;
+}
+
+static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
+                        void *user, void *packet, size_t size)
+{
+    struct rr_server *this =
+        (struct rr_server *)lws_context_user(lws_get_context(ws));
+    //printf("packet rec + connect %llu %p\n", reason, this);
+    switch (reason)
+    {
+    case LWS_CALLBACK_CLIENT_ESTABLISHED:
+        this->api_ws_ready = 1;
+        break;
+    case LWS_CALLBACK_CLIENT_RECEIVE:
+    {
+        //parse incoming client data
+        struct rr_binary_encoder decoder;
+        rr_binary_encoder_init(&decoder, packet);
+        if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
+            break;
+        switch (rr_binary_encoder_read_uint8(&decoder))
+        {
+            case 0:
+            {
+                char a[4] = {0};
+                rr_binary_encoder_read_nt_string(&decoder, a);
+                printf("server link is %s\n", a);
+                break;
+            }
+            case 1:
+            {
+                uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
+                char uuid[100];
+                rr_binary_encoder_read_nt_string(&decoder, uuid);
+                struct rr_server_client *client = &this->clients[pos];
+                if (strcmp(uuid, client->rivet_account.uuid))
+                    break; // fake client
+                printf("reading account %s\n", uuid);
+                double xp = rr_binary_encoder_read_float64(&decoder);
+                uint32_t next_level = 2;
+                while (xp >= xp_to_reach_level(next_level))
+                {
+                    xp -= xp_to_reach_level(next_level);
+                    ++next_level;
+                }
+                #define min(a,b) (((a) < (b)) ? (a) : (b))
+                client->level = min(next_level - 1, 150);
+                #undef min
+                uint8_t id = rr_binary_encoder_read_uint8(&decoder);
+                while (id)
+                {
+                    uint32_t count = rr_binary_encoder_read_varuint(&decoder);
+                    uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+                    client->inventory[id][rarity] = count;
+                    id = rr_binary_encoder_read_uint8(&decoder);
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        break;
+    }
+    case LWS_CALLBACK_CLIENT_CLOSED:
+        //uh oh
+        fprintf(stderr, "api ws disconnected\n");
+        abort();
+        break;
+    case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
+        fprintf(stderr, "api ws refused to connect\n");
+        abort();
+        break;
+    default:
+        return 0;
+    }
     return 0;
 }
 
@@ -812,7 +943,7 @@ void rr_server_run(struct rr_server *this)
         struct lws_context_creation_info info = {0};
 
         info.protocols = (struct lws_protocols[]){
-            {"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
+            {"g", api_lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0},
             {0}};
 
         info.port = CONTEXT_PORT_NO_LISTEN;
@@ -825,9 +956,10 @@ void rr_server_run(struct rr_server *this)
         connection_info.context = this->api_client_context;
         connection_info.address = "localhost";
         connection_info.port = 55554;
+        connection_info.path = "api/" RR_API_SECRET;
         connection_info.host = lws_canonical_hostname(this->api_client_context);
-        connection_info.origin = "ggez";
-        connection_info.protocol = "g";
+        connection_info.origin = "localhost";
+        connection_info.protocol = "h";
         this->api_client = lws_client_connect_via_info(&connection_info);
     }
 

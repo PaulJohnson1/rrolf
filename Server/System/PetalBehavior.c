@@ -396,7 +396,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
-    player_info->modifiers.rotation_direction = 1;
+
     physical->aggro_range_multiplier = 1;
     health->damage_reduction = 0;
     uint8_t rot_count = 0;

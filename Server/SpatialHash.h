@@ -5,8 +5,8 @@
 
 #define SPATIAL_HASH_GRID_SIZE 9
 #define RR_SPATIAL_HASH_GRID_LENGTH                                            \
-    (((uint32_t)(RR_ARENA_LENGTH) >> SPATIAL_HASH_GRID_SIZE) + 1)
-#define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (RR_MAX_COLLISION_COUNT * 4)
+    (((uint32_t)(RR_ARENA_LENGTH) >> SPATIAL_HASH_GRID_SIZE))
+#define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (1024)
 
 struct rr_simulation;
 

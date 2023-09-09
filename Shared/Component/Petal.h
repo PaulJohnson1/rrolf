@@ -18,7 +18,7 @@ struct rr_component_petal
     uint8_t id;
     uint8_t rarity;
     RR_SERVER_ONLY(uint16_t protocol_state;)
-    RR_SERVER_ONLY(int32_t effect_delay;)
+    RR_SERVER_ONLY(int16_t effect_delay;)
 };
 
 void rr_component_petal_init(struct rr_component_petal *,

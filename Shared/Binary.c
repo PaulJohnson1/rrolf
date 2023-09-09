@@ -95,3 +95,12 @@ void rr_binary_encoder_write_utf8(struct rr_binary_encoder *this, uint32_t v)
     }
     rr_binary_encoder_write_uint8(this, v);
 }
+
+void rr_binary_encoder_write_nt_string(struct rr_binary_encoder *this, char *buf)
+{
+    while(*buf)
+    {
+        rr_binary_encoder_write_uint8(this, *buf++);
+    }
+    rr_binary_encoder_write_uint8(this, 0);
+}

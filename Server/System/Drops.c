@@ -39,10 +39,15 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
     if (rr_vector_get_magnitude(&delta) >
         physical->radius + player_info->modifiers.drop_pickup_radius)
         return;
+    if (player_info->drops_this_tick_size >= 8)
+        return;
     rr_bitset_set(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos);
 
     ++player_info->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
     rr_component_player_info_set_update_loot(player_info);
+    player_info->drops_this_tick[player_info->drops_this_tick_size].id = drop->id;
+    player_info->drops_this_tick[player_info->drops_this_tick_size].rarity = drop->rarity;
+    ++player_info->drops_this_tick_size;
 }
 
 static void drop_despawn_tick(EntityIdx entity, void *_captures)

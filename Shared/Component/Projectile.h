@@ -15,7 +15,7 @@ struct rr_component_projectile
     EntityIdx parent_id;
     RR_SERVER_ONLY(int16_t ticks_until_death;)
 
-    RR_SERVER_ONLY(uint32_t protocol_state;)
+    RR_SERVER_ONLY(uint8_t protocol_state;)
 };
 
 void rr_component_projectile_init(struct rr_component_projectile *,

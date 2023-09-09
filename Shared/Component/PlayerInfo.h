@@ -31,7 +31,7 @@ struct rr_component_player_info_petal_slot
 struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
-    float rotation_direction;
+    //float rotation_direction;
 };
 
 struct rr_component_player_info
@@ -49,7 +49,7 @@ struct rr_component_player_info
     RR_CLIENT_ONLY(float lerp_camera_y;)
     float camera_fov;
     RR_CLIENT_ONLY(float lerp_camera_fov;)
-    RR_SERVER_ONLY(uint32_t protocol_state;)
+    RR_SERVER_ONLY(uint16_t protocol_state;)
     EntityIdx parent_id;
     EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
     RR_SERVER_ONLY(uint8_t rotation_count;)
@@ -59,6 +59,8 @@ struct rr_component_player_info
     uint8_t slot_count;
     RR_SERVER_ONLY(
         uint8_t entities_in_view[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    RR_SERVER_ONLY(struct rr_id_rarity_pair drops_this_tick[8];) //yes, it's limited to 8. if the player poicks up more than that then it waits until the next tick
+    RR_SERVER_ONLY(uint8_t drops_this_tick_size;)
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *,

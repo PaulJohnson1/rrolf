@@ -7,6 +7,9 @@ const http = require("http")
 const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
+const GameServer = require("./gameserver");
+const { connect } = require("http2");
+const { connected } = require("process");
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -161,12 +164,15 @@ function craft(count, initial_fails, chance)
 async function write_db_entry(username, data)
 {
     changed = true;
+    //delete data.needs_update;
     database[username] = structuredClone(data);
     // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
+    if (connected_clients[username] && (1 || password === SERVER_SECRET))
+        return connected_clients[username];
     const user = structuredClone({value: database[username]});
     // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
@@ -180,7 +186,7 @@ async function db_read_user(username, password)
     
     apply_missing_defaults(user.value);
 
-    if (user.value.password !== password && password !== SERVER_SECRET)
+    if (0 && user.value.password !== password && password !== SERVER_SECRET) //fix this noob
         throw new Error("invalid password")
 
     return user.value;
@@ -376,6 +382,8 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
         const petals = parse_id_rarity_count(petals_string);
         const user = await db_read_user(username, password);
         const results = craft_user_petals(user, petals);
+        if (connected_clients[username])
+            connected_clients[username].needs_update = 1;
         await write_db_entry(username, user);
         return results;
     })
@@ -443,29 +451,139 @@ process.on("uncaughtException", try_save_exit);
 
 setInterval(saveDatabaseToFile, 60000);
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-
-const server = http.createServer(app);
 /*
-server.listen(port, () => {
+app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 */
 
-const wss = new WSS.WebSocketServer({server});
+const server = http.createServer(app);
+
+server.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
+
+
+const wss = new WSS.Server({server});
 const game_servers = {};
+const connected_clients = {};
 
 wss.on("connection", (ws, req) => {
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-
+    console.log(req.url);
     //if (req.url !== `/api/${SERVER_SECRET}`)
-        //return ws.close();
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
+       //return ws.close();
+    const game_server = new GameServer();
+    game_server[game_server.server_id] = game_server;
+    ws.on('message', async (message) => {
+        const data = new Uint8Array(message);
+        const decoder = new protocol.BinaryReader(data);
+        switch(decoder.ReadUint8())
+        {
+            case 0:
+            {
+                const uuid = decoder.ReadStringNT();
+                const pos = decoder.ReadUint8();
+                try {
+                    const user = await db_read_user(uuid, SERVER_SECRET);
+                    connected_clients[uuid] = user;
+                    game_server.clients[pos] = uuid;
+                    user.needs_update = 0;  
+                    console.log("initing " + user.username);
+                    const encoder = new protocol.BinaryWriter();
+                    encoder.WriteUint8(1);
+                    encoder.WriteUint8(pos);
+                    encoder.WriteStringNT(user.username);
+                    encoder.WriteFloat64(user.xp);
+                    for (const petal of Object.keys(user.petals))
+                    {
+                        if (!(user.petals[petal] > 0))
+                            continue;
+                        const [id, rarity] = petal.split(":");
+                        encoder.WriteUint8(id);
+                        encoder.WriteVarUint(user.petals[petal]);
+                        encoder.WriteUint8(rarity);
+                    }
+                    encoder.WriteUint8(0);
+                    ws.send(encoder.data.subarray(0, encoder.at));
+                } catch(e) {
+                    console.log(e);
+                }
+                break;
+            }
+            case 1:
+            {
+                const uuid = decoder.ReadStringNT();
+                const pos = decoder.ReadUint8();
+                if (game_server.clients[pos] === uuid)
+                {
+                    delete connected_clients[game_server.clients[pos]];
+                    game_server.clients[pos] = 0;
+                }
+                break;
+            }
+            case 2:
+            {
+                const uuid = decoder.ReadStringNT();
+                if (!connected_clients[uuid])
+                    break;
+                const user = connected_clients[uuid];
+                const pos = game_server.clients.indexOf(uuid);
+                if (pos === -1)
+                    break;
+                const amount = decoder.ReadUint8();
+                for (let u = 0; u < amount; ++u)
+                {
+                    const id = decoder.ReadUint8();
+                    const rarity = decoder.ReadUint8();
+                    const key = id + ":" + rarity;
+                    if (!user.petals[key])
+                        user.petals[key] = 1;
+                    else
+                        ++user.petals[key];
+                }
+                user.needs_update = 1;
+                write_db_entry(user.username, user);
+                break;
+            }
+        }
     });
     console.log("connect");
+    const encoder = new protocol.BinaryWriter();
+    encoder.WriteUint8(0);
+    encoder.WriteStringNT(game_server.server_id);
+    ws.send(encoder.data.subarray(0, encoder.at));
+    setInterval(() => {
+        for (let pos = 0; pos < 64; ++pos)
+        {
+            if (!connected_clients[game_server.clients[pos]])
+                continue;
+            const user = connected_clients[game_server.clients[pos]];
+            if (!user.needs_update)
+                continue;
+            console.log("!!!!!!!!!!!!!!!!updating " + user.username + " !!!!!!!!!!!!!!!!!!!");
+            const encoder = new protocol.BinaryWriter();
+            encoder.WriteUint8(1);
+            encoder.WriteUint8(pos);
+            encoder.WriteStringNT(user.username);
+            encoder.WriteFloat64(user.xp);
+            for (const petal of Object.keys(user.petals))
+            {
+                if (!(user.petals[petal] > 0))
+                    continue;
+                const [id, rarity] = petal.split(":");
+                encoder.WriteUint8(id);
+                encoder.WriteVarUint(user.petals[petal]);
+                encoder.WriteUint8(rarity);
+            }
+            encoder.WriteUint8(0);
+            ws.send(encoder.data.subarray(0, encoder.at));
+            user.needs_update = 0;
+        }
+    }, 1500);
+    ws.on('close', () => {
+        console.log('Client disconnected');
+        for (const uuid of game_server.clients)
+            delete connected_clients[uuid];
+        delete game_servers[game_server.server_id];
+    });
 });

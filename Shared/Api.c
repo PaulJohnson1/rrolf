@@ -9,12 +9,6 @@
 #include <emscripten.h>
 #endif
 
-#ifdef RIVET_BUILD
-#define BASE_API_URL "https://rrolf.io/api/"
-#else
-#define BASE_API_URL "http://localhost:55554/api/"
-#endif
-
 #define RR_RIVET_CURL_PROLOGUE                                                 \
     CURLcode err;                                                              \
     CURL *curl = curl_easy_init();                                             \
@@ -38,11 +32,13 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 {
+    //puts(param_1);
+    //puts(param_2);
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), BASE_API_URL "user_get/%s/%s", param_1, param_2);
+    snprintf(url, sizeof(url), RR_BASE_API_URL "user_get/%s/%s", param_1, param_2);
     //printf("url is %s\n", url);
     curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -63,7 +59,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
                     Module._rr_api_on_get_petals($a, $2);
                 });
         },
-        param_1, param_2, captures, BASE_API_URL);
+        param_1, param_2, captures, RR_BASE_API_URL);
 #endif
 }
 
@@ -73,7 +69,7 @@ void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
 #ifndef EMSCRIPTEN
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), BASE_API_URL "user_on_close/%s/%s/%s/%d/%s",
+    snprintf(url, sizeof(url), RR_BASE_API_URL "user_on_close/%s/%s/%s/%d/%s",
              RR_API_SECRET, id, petals, wave, gallery);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     RR_RIVET_CURL_EPILOGUE
@@ -86,7 +82,7 @@ void rr_api_on_open(char const *uuid, void *captures)
     char readBuffer[50000] = {0};
     char url[5000] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
+    snprintf(url, sizeof(url), RR_BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
              uuid);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -108,7 +104,7 @@ void rr_api_get_password(char const *token, void *captures)
                     HEAPU8[$pw + pw.length] = 0;
                     Module._rr_api_on_get_password($pw, $2);         
                 });
-        }, BASE_API_URL, token, captures
+        }, RR_BASE_API_URL, token, captures
     );
 #endif
 }
@@ -120,7 +116,7 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
     char readBuffer[50000] = {0};
     char url[500] = {0};
     RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), BASE_API_URL "user_craft_petals/%s/%s/%s",
+    snprintf(url, sizeof(url), RR_BASE_API_URL "user_craft_petals/%s/%s/%s",
              param_1, param_2, param_3);
     curl_easy_setopt(curl, CURLOPT_HTTPPOST, 1);
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -141,7 +137,7 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
                     Module._rr_api_on_craft_result($a, $3);
                 });
         },
-        param_1, param_2, param_3, captures, BASE_API_URL);
+        param_1, param_2, param_3, captures, RR_BASE_API_URL);
 #endif
 }
 
@@ -165,6 +161,6 @@ void rr_api_create_squad(char const *param_1, char const *param_2, void *capture
            console.log(UTF8ToString($3) + "user_create_squad/" + UTF8ToString($0) +
                   '/' + UTF8ToString($1) + '/' + UTF8ToString($2));
         },
-        param_1, param_2, captures, BASE_API_URL);
+        param_1, param_2, captures, RR_BASE_API_URL);
 #endif
 }

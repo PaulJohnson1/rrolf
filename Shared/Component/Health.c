@@ -68,29 +68,22 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
     float damage = this->health - v;
     this->health = v;
     this->protocol_state |= state_flags_health;
-    puts("ch1");
     if (!rr_simulation_has_mob(simulation, this->parent_id))
         return;
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, this->parent_id);
-    puts("ch2");
     if (mob->player_spawned)
         return;
-    puts("ch3");
     if (rr_simulation_get_relations(simulation, from)->team != rr_simulation_team_id_players)
         return;
     EntityIdx p_info_id = rr_simulation_get_relations(simulation, from)->owner;
     if (rr_simulation_has_flower(simulation, p_info_id))
         p_info_id = rr_simulation_get_relations(simulation, p_info_id)->owner;
-    puts("ch4");
     if (!rr_simulation_has_player_info(simulation, p_info_id))
         return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_info_id);
     uint8_t squad = player_info->squad;
-    puts("ch5");
-    printf("%d %f\n", squad, damage);
     if (squad == 0)
         return;
-    printf("mob id %d %f\n", mob->parent_id, mob->squad_damage_counter[squad]);
     mob->squad_damage_counter[squad] += damage;
 }
 

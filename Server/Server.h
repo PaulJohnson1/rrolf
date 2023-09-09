@@ -29,6 +29,7 @@ struct rr_server
     struct lws *api_client;
     struct rr_squad squads[RR_MAX_CLIENT_COUNT];
     uint8_t biome;
+    uint8_t api_ws_ready;
 };
 
 void rr_server_init(struct rr_server *);

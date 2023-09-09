@@ -59,6 +59,7 @@ void rr_simulation_init(struct rr_simulation *this)
     set_respawn_zone(&this->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
     printf("simulation size: %lu\n", sizeof *this);
+    printf("spatial hash size: %lu\n", sizeof *this->grid);
 
 #define XX(COMPONENT, ID)                                                      \
     printf(#COMPONENT);                                                        \
@@ -120,24 +121,15 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     ++grid->mob_count;
 }
 
-
-
-#define RR_TIME_BLOCK(_, CODE)                                                 \
-    {                                                                          \
-        CODE;                                                                  \
-    };
-
 #define GRID_MOB_LIMIT 1
 
 static void tick_wave(struct rr_simulation *this)
 {
     for (uint32_t grid_x = 0; grid_x < RR_MAZE_DIM; ++grid_x)
     {
-        if (grid_x == SPAWN_ZONE_X)
-            grid_x += SPAWN_ZONE_W;
         for (uint32_t grid_y = 0; grid_y < RR_MAZE_DIM; ++grid_y)
         {
-            if (grid_y == SPAWN_ZONE_Y)
+            if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 grid_y += SPAWN_ZONE_H;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value != 1)
                 continue;
@@ -148,6 +140,26 @@ static void tick_wave(struct rr_simulation *this)
         }
     }
 }
+
+#define RR_TIME_BLOCK_(_, CODE)                                                 \
+    {                                                                          \
+        struct timeval start; \
+        struct timeval end; \
+        gettimeofday(&start, NULL); \
+        CODE;                                                                  \
+        gettimeofday(&end, NULL); \
+        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
+        if (elapsed_time > 3000) \
+        { \
+            puts(_); \
+            printf("took %lu microseconds\n", elapsed_time); \
+        } \
+    };
+
+#define RR_TIME_BLOCK(_, CODE)                                                 \
+    {                                                                          \
+        CODE;                                                                  \
+    };
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
@@ -167,21 +179,16 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-
     tick_wave(this);
     // delete pending deletions
     rr_bitset_for_each_bit(
         this->pending_deletions,
         this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
         rr_simulation_pending_deletion_free_components);
-    memset(this->recently_deleted, 0,
-           RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) *
-               sizeof *this->recently_deleted);
+    memset(this->recently_deleted, 0, sizeof this->recently_deleted);
     rr_bitset_for_each_bit(this->pending_deletions,
                            this->pending_deletions +
                                (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
                            this, __rr_simulation_pending_deletion_unset_entity);
-    memset(this->pending_deletions, 0,
-           RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) *
-               sizeof *this->pending_deletions);
+    memset(this->pending_deletions, 0, sizeof this->pending_deletions);
 }
