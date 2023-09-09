@@ -223,6 +223,18 @@ void rr_server_client_free(struct rr_server_client *this)
         }
     }
     */
+    if (this->player_info != NULL)
+    {
+        if (this->player_info->flower_id != RR_NULL_ENTITY)
+            rr_simulation_request_entity_deletion(
+                &this->server->simulation, this->player_info->flower_id);
+        __rr_simulation_pending_deletion_free_components(
+            this->player_info->parent_id, &this->server->simulation);
+        __rr_simulation_pending_deletion_unset_entity(
+            this->player_info->parent_id, &this->server->simulation);
+        //rr_simulation_request_entity_deletion(&this->server->simulation,
+                                                //this->player_info->parent_id);
+    }
     puts("client disconnected");
 }
 
