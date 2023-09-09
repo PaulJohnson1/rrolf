@@ -968,7 +968,7 @@ void rr_server_run(struct rr_server *this)
         connection_info.context = this->api_client_context;
         connection_info.address = 
         #ifdef RIVET_BUILD
-            "rrolf.io";
+            "45.79.197.197";
         #else
             "localhost";
         #endif
