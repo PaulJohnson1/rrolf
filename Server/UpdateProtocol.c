@@ -189,7 +189,7 @@ void rr_simulation_write_binary(struct rr_simulation *this,
         if (p_info->squad != player_info->squad)
             continue;
         rr_bitset_set(new_entities_in_view, p_id);
-        if (p_info->flower_id != RR_NULL_ENTITY)
+        if (p_info->flower_id != RR_NULL_ENTITY && p_info->arena == player_info->arena)
             rr_bitset_set(new_entities_in_view, p_info->flower_id);
     }
 

@@ -93,8 +93,8 @@ static void minimap_on_render(struct rr_ui_element *this,
         if (player_info->arena != game->player_info->arena)
             continue;
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, this->abs_width * (player_info->camera_x / RR_ARENA_LENGTH
-        - 0.5), this->abs_height * (player_info->camera_y / RR_ARENA_LENGTH - 0.5), 3);
+        rr_renderer_arc(renderer, this->abs_width * (player_info->camera_x / (grid_size * maze_dim)
+        - 0.5), this->abs_height * (player_info->camera_y / (grid_size * maze_dim) - 0.5), 3);
         rr_renderer_fill(renderer);
     }
 }
