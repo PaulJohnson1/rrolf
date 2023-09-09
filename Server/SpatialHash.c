@@ -20,9 +20,9 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
         return;
     // force positions unsigned for a significantly better hash function
     uint32_t x =
-        (uint32_t)(physical->x) >> SPATIAL_HASH_GRID_SIZE;
+        (uint32_t)(physical->x) / SPATIAL_HASH_GRID_SIZE;
     uint32_t y =
-        (uint32_t)(physical->y) >> SPATIAL_HASH_GRID_SIZE;
+        (uint32_t)(physical->y) / SPATIAL_HASH_GRID_SIZE;
     struct rr_spatial_hash_cell *cell = &this->cells[x][y];
     cell->entities[cell->entities_in_use++] = entity;
 }
@@ -37,25 +37,25 @@ void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy,
     float y = fmaxf(fy - fh, 0);
     // should not take in an entity id like insert does. the reason is so stuff
     // like ai can query a large radius without a viewing entity
-    uint32_t s_x = (((uint32_t)(x)) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_x = (((uint32_t)(x)) / SPATIAL_HASH_GRID_SIZE);
     if (s_x > 1)
         s_x -= 2;
     else
         s_x = 0;
 
-    uint32_t s_y = (((uint32_t)(y)) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t s_y = (((uint32_t)(y)) / SPATIAL_HASH_GRID_SIZE);
     if (s_y > 1)
         s_y -= 2;
     else
         s_y = 0;
 
-    uint32_t e_x = (((uint32_t)(x + 2 * fw)) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_x = (((uint32_t)(x + 2 * fw)) / SPATIAL_HASH_GRID_SIZE);
     if (e_x < RR_SPATIAL_HASH_GRID_LENGTH - 2)
         e_x += 2;
     else
         e_x = RR_SPATIAL_HASH_GRID_LENGTH - 1;
 
-    uint32_t e_y = (((uint32_t)(y + 2 * fh)) >> SPATIAL_HASH_GRID_SIZE);
+    uint32_t e_y = (((uint32_t)(y + 2 * fh)) / SPATIAL_HASH_GRID_SIZE);
     if (e_y < RR_SPATIAL_HASH_GRID_LENGTH - 2)
         e_y += 2;
     else

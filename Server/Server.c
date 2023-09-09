@@ -702,7 +702,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (client->squad != 0)
             {
-                if (client->player_info == NULL)
+                if (rr_squad_get_client_slot(this, client)->playing == 0)
                 {
                     rr_squad_get_client_slot(this, client)->playing = 1;
                     rr_server_client_create_player_info(this, client);

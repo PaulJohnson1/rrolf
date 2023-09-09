@@ -56,6 +56,8 @@ static uint8_t player_hud_should_show(struct rr_ui_element *this,
 static void player_hud_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
+    if (!game->simulation_ready)
+        return;
     struct player_hud_metadata *data = this->data;
     if (data->pos >= game->simulation->player_info_count)
         return;

@@ -3,9 +3,9 @@
 #include <Shared/Entity.h>
 #include <Shared/StaticData.h>
 
-#define SPATIAL_HASH_GRID_SIZE 9
+#define SPATIAL_HASH_GRID_SIZE 768
 #define RR_SPATIAL_HASH_GRID_LENGTH                                            \
-    (((uint32_t)(RR_ARENA_LENGTH) >> SPATIAL_HASH_GRID_SIZE))
+    (((RR_ARENA_LENGTH + SPATIAL_HASH_GRID_SIZE - 1) / SPATIAL_HASH_GRID_SIZE))
 #define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (1024)
 
 struct rr_simulation;

@@ -44,9 +44,7 @@ void rr_component_health_write(struct rr_component_health *this,
     float tmp_max = this->max_health;
     if (this->flags & 1)
     {
-        this->max_health = 0;
-        if (this->health != 0)
-            this->health = 0.25;
+        this->health = this->max_health = 0;
     }
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD

@@ -15,6 +15,8 @@ struct rr_renderer minimap;
 static void minimap_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
+    if (!game->simulation_ready)
+        return;
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_player_info *player_info = game->player_info;
     float a = renderer->height / 1080;

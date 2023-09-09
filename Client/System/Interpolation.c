@@ -91,7 +91,11 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
         struct rr_component_player_info *player_info =
             rr_simulation_get_player_info(this, entity);
         if (player_info->lerp_camera_fov == 0)
-            player_info->lerp_camera_fov = 0.5;
+            player_info->lerp_camera_fov = player_info->camera_fov;
+        if (player_info->lerp_camera_x == 0)
+            player_info->lerp_camera_x = player_info->camera_x;
+        if (player_info->lerp_camera_y == 0)
+            player_info->lerp_camera_y = player_info->camera_y;
         player_info->lerp_camera_fov = rr_lerp(
             player_info->lerp_camera_fov, player_info->camera_fov, 15 * delta);
         player_info->lerp_camera_x = rr_lerp(player_info->lerp_camera_x,
