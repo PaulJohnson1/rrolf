@@ -954,7 +954,12 @@ void rr_server_run(struct rr_server *this)
         struct lws_client_connect_info connection_info;
         memset(&connection_info, 0, sizeof connection_info);
         connection_info.context = this->api_client_context;
-        connection_info.address = RR_BASE_API_URL;
+        connection_info.address = 
+        #ifdef RIVET_BUILD
+            "rrolf.io";
+        #else
+            "localhost";
+        #endif
         connection_info.port = 55554;
         connection_info.path = "api/" RR_API_SECRET;
         connection_info.host = lws_canonical_hostname(this->api_client_context);
