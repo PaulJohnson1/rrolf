@@ -533,7 +533,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
-                printf("%llu %llu\n", client->requested_verification, received_verification);
+                printf("%lu %lu\n", client->requested_verification, received_verification);
                 fputs("invalid verification\n", stderr);
                 lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                  (uint8_t *)"invalid v", sizeof "invalid v"-1);
