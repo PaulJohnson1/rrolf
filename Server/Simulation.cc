@@ -88,7 +88,7 @@ namespace app
         uint32_t mobCount = 0;
         ForEachEntity([&](Entity e)
                       { mobCount += HasComponent<component::Mob>(e); });
-        if (mobCount < 0)
+        if (mobCount < 50)
         {
             Entity id = Create();
             component::Mob &mob = AddComponent<component::Mob>(id);
@@ -99,9 +99,9 @@ namespace app
             Vector p = Vector::FromPolar(sqrt(((float)rand() / (float)RAND_MAX)) * 1650, (float)rand() / (float)RAND_MAX * 1000.0);
             physical.X(p.m_X);
             physical.Y(p.m_Y);
-            basic.Team(1); // arena team
+            basic.Team(0); // arena team
             mob.Id(rand() % 5); // baby ant
-            mob.Rarity(rand() % 3);
+            mob.Rarity(rand() % 4);
             Get<component::ArenaInfo>(m_Arena).IncrWave();
             //mob.Rarity(5);
         }

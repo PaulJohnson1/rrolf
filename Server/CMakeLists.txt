@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 include_directories(..)
 include_directories(ThirdParty)
 include_directories(../Shared)
+include_directories(websocketpp)
 
 set(SOURCES
     Component/Ai.cc
