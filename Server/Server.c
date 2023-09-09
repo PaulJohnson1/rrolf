@@ -954,11 +954,11 @@ void rr_server_run(struct rr_server *this)
         struct lws_client_connect_info connection_info;
         memset(&connection_info, 0, sizeof connection_info);
         connection_info.context = this->api_client_context;
-        connection_info.address = "localhost";
+        connection_info.address = RR_BASE_API_URL;
         connection_info.port = 55554;
         connection_info.path = "api/" RR_API_SECRET;
         connection_info.host = lws_canonical_hostname(this->api_client_context);
-        connection_info.origin = "localhost";
+        connection_info.origin = RR_BASE_API_URL;
         connection_info.protocol = "h";
         this->api_client = lws_client_connect_via_info(&connection_info);
     }
