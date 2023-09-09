@@ -7,9 +7,11 @@
 #define RR_LEVELS_PER_EXTRA_SLOT (20)
 #define RR_BIOME_COUNT (2)
 #define RR_MAZE_DIM (42)
+#define RR_BURROW_MAZE_DIM (6)
 #define RR_MAZE_GRID_SIZE (1536)
+#define RR_BURRON_GRID_SIZE (512)
 #define RR_ARENA_LENGTH (RR_MAZE_GRID_SIZE * RR_MAZE_DIM)
-#define RR_PLAYER_SPEED 4
+#define RR_PLAYER_SPEED (4)
 
 enum rr_rarity_id
 {
@@ -147,18 +149,23 @@ extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
 extern uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2];
 
+extern uint8_t RR_MAZE_TEMPLATE_BURROW[RR_BURROW_MAZE_DIM/2][RR_BURROW_MAZE_DIM/2];
+
 struct rr_maze_grid
 {
+    uint8_t value : 4;
 #ifdef RR_SERVER
-    uint32_t mob_count;
+    uint8_t is_special : 1;
+    uint8_t mob_count;
     uint8_t difficulty;
-    uint8_t is_special;
     uint8_t special_id;
 #endif
-    uint8_t value;
 };
 
 extern struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
+
+extern struct rr_maze_grid RR_MAZE_BURROW[RR_BURROW_MAZE_DIM][RR_BURROW_MAZE_DIM];
+
 
 void rr_static_data_init();
 

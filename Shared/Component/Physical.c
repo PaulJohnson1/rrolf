@@ -10,7 +10,7 @@ enum
     state_flags_radius = 0b00010,
     state_flags_angle = 0b00100,
     state_flags_x = 0b01000,
-    state_flags_all = 0b11111
+    state_flags_all = 0b01111
 };
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \

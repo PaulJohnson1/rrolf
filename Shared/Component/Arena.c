@@ -8,16 +8,11 @@
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
 
-#define FOR_EACH_PUBLIC_FIELD                                                  \
-    X(radius, float32) 
+#ifdef RR_SERVER
+#include <math.h>
 
-enum
-{
-    state_flags_radius = 0b000001,
-    state_flags_wave = 0b000010,
-    state_flags_wave_tick = 0b000100,
-    state_flags_all = 0b000111
-};
+#include <Shared/Utilities.h>
+#endif
 
 void rr_component_arena_init(struct rr_component_arena *this,
                              struct rr_simulation *simulation)
@@ -28,6 +23,25 @@ void rr_component_arena_init(struct rr_component_arena *this,
 void rr_component_arena_free(struct rr_component_arena *this,
                              struct rr_simulation *simulation)
 {
+#ifdef RR_SERVER
+    if (rr_simulation_has_mob(simulation, this->parent_id))
+    {
+        struct rr_component_physical *this_physical = rr_simulation_get_physical(simulation, this->parent_id);
+        for (uint32_t i = 0; i < simulation->physical_count; ++i)
+        {
+            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, simulation->physical_vector[i]);
+            if (physical->arena != this->parent_id)
+                continue;
+            physical->arena = 1;
+            rr_component_physical_set_x(physical, this_physical->x);
+            rr_component_physical_set_y(physical, this_physical->y);
+            float angle = rr_frand() * M_PI * 2;
+            float v = rr_frand() * 5;
+            physical->velocity.x = cosf(angle) * v;
+            physical->velocity.y = sinf(angle) * v;
+        }
+    }
+#endif
 }
 
 #ifdef RR_SERVER
@@ -35,25 +49,12 @@ void rr_component_arena_write(struct rr_component_arena *this,
                               struct proto_bug *encoder, int is_creation,
                               struct rr_component_player_info *client)
 {
-    uint64_t state = this->protocol_state | (state_flags_all * is_creation);
-    proto_bug_write_varuint(encoder, state, "arena component state");
-
-#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
-    FOR_EACH_PUBLIC_FIELD
-#undef X
 }
-
-RR_DEFINE_PUBLIC_FIELD(arena, float, radius)
 #endif
 
 #ifdef RR_CLIENT
 void rr_component_arena_read(struct rr_component_arena *this,
                              struct proto_bug *encoder)
 {
-    uint64_t state = proto_bug_read_varuint(encoder, "arena component state");
-
-#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
-    FOR_EACH_PUBLIC_FIELD
-#undef X
 }
 #endif

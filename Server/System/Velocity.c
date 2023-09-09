@@ -7,11 +7,13 @@
 #include <Shared/Vector.h>
 #include <Shared/StaticData.h>
 
-static void perform_internal_bound_check_custom_grid(float test_x, float test_y, int32_t x, int32_t y, struct rr_component_physical *physical)
+static void perform_internal_bound_check_custom_grid(struct rr_component_arena *arena, float test_x, float test_y, int32_t x, int32_t y, struct rr_component_physical *physical)
 {
 //add a check for in-wall
+    uint32_t size = arena->maze_dim;
+    float maze_dim = arena->grid_size;
     #define offset(a,b) \
-    ((x + a < 0 || y + b < 0 || x + a >= RR_MAZE_DIM || y + b >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[y+b][x+a].value)
+    ((x + a < 0 || y + b < 0 || x + a >= size || y + b >= size) ? 0 : arena->grid[(y+b)*size+x+a].value)
     if (offset(0,0) != 1)
     {
         //tile can't be 0 (that would be illegal)
@@ -21,30 +23,30 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
         uint8_t left = (tile >> 1) & 1;
         uint8_t top = tile & 1;
         uint8_t inverse = ((tile >> 3) & 1);
-        float cx = (x + left) * RR_MAZE_GRID_SIZE;
-        float cy = (y + top) * RR_MAZE_GRID_SIZE;
+        float cx = (x + left) * maze_dim;
+        float cy = (y + top) * maze_dim;
         struct rr_vector dist = {test_x - cx, test_y - cy};
-        if (rr_vector_get_magnitude(&dist) > RR_MAZE_GRID_SIZE - physical->radius && inverse == 0)
+        if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
         {
-            rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE - physical->radius);
+            rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
             rr_component_physical_set_x(physical, cx + dist.x);
             rr_component_physical_set_y(physical, cy + dist.y);
             return;
         }
-        if (rr_vector_get_magnitude(&dist) < RR_MAZE_GRID_SIZE + physical->radius && inverse == 1)
+        if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
         {
-            rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE + physical->radius);
+            rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
             rr_component_physical_set_x(physical, cx + dist.x);
             rr_component_physical_set_y(physical, cy + dist.y);
             return;
         }
     }
-    if (offset(-1,0) != 1 && test_x - x * RR_MAZE_GRID_SIZE < physical->radius)
+    if (offset(-1,0) != 1 && test_x - x * maze_dim < physical->radius)
     {
         uint8_t tile = offset(-1,0);
         if (tile == 0)
         {
-            test_x = x * RR_MAZE_GRID_SIZE + physical->radius;
+            test_x = x * maze_dim + physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
             return;
@@ -54,31 +56,31 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
             uint8_t left = (tile >> 1) & 1;
             uint8_t top = tile & 1;
             uint8_t inverse = ((tile >> 3) & 1);
-            float cx = (x - 1 + left) * RR_MAZE_GRID_SIZE;
-            float cy = (y + top) * RR_MAZE_GRID_SIZE;
+            float cx = (x - 1 + left) * maze_dim;
+            float cy = (y + top) * maze_dim;
             struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > RR_MAZE_GRID_SIZE - physical->radius && inverse == 0)
+            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE - physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
-            if (rr_vector_get_magnitude(&dist) < RR_MAZE_GRID_SIZE + physical->radius && inverse == 1)
+            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE + physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
         }
     }
-    if (offset(0,-1) != 1 && test_y - y * RR_MAZE_GRID_SIZE < physical->radius)
+    if (offset(0,-1) != 1 && test_y - y * maze_dim < physical->radius)
     {
         uint8_t tile = offset(0,-1);
         if (tile == 0)
         {
-            test_y = y * RR_MAZE_GRID_SIZE + physical->radius;
+            test_y = y * maze_dim + physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
             return;
@@ -88,31 +90,31 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
             uint8_t left = (tile >> 1) & 1;
             uint8_t top = tile & 1;
             uint8_t inverse = ((tile >> 3) & 1);
-            float cx = (x + left) * RR_MAZE_GRID_SIZE;
-            float cy = (y - 1 + top) * RR_MAZE_GRID_SIZE;
+            float cx = (x + left) * maze_dim;
+            float cy = (y - 1 + top) * maze_dim;
             struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > RR_MAZE_GRID_SIZE - physical->radius && inverse == 0)
+            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE - physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
-            if (rr_vector_get_magnitude(&dist) < RR_MAZE_GRID_SIZE + physical->radius && inverse == 1)
+            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE + physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
         }
     }
-    if (offset(1,0) != 1 && (x + 1) * RR_MAZE_GRID_SIZE - test_x < physical->radius)
+    if (offset(1,0) != 1 && (x + 1) * maze_dim - test_x < physical->radius)
     {
         uint8_t tile = offset(1,0);
         if (tile == 0)
         {
-            test_x = (x + 1) * RR_MAZE_GRID_SIZE - physical->radius;
+            test_x = (x + 1) * maze_dim - physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
             return;
@@ -122,31 +124,31 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
             uint8_t left = (tile >> 1) & 1;
             uint8_t top = tile & 1;
             uint8_t inverse = ((tile >> 3) & 1);
-            float cx = (x + 1 + left) * RR_MAZE_GRID_SIZE;
-            float cy = (y + top) * RR_MAZE_GRID_SIZE;
+            float cx = (x + 1 + left) * maze_dim;
+            float cy = (y + top) * maze_dim;
             struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > RR_MAZE_GRID_SIZE - physical->radius && inverse == 0)
+            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE - physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
-            if (rr_vector_get_magnitude(&dist) < RR_MAZE_GRID_SIZE + physical->radius && inverse == 1)
+            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE + physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
         }
     }
-    if (offset(0,1) != 1 && (y + 1) * RR_MAZE_GRID_SIZE - test_y < physical->radius)
+    if (offset(0,1) != 1 && (y + 1) * maze_dim - test_y < physical->radius)
     {
         uint8_t tile = offset(0,1);
         if (tile == 0)
         {
-            test_y = (y + 1) * RR_MAZE_GRID_SIZE - physical->radius;
+            test_y = (y + 1) * maze_dim - physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
             return;
@@ -156,19 +158,19 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
             uint8_t left = (tile >> 1) & 1;
             uint8_t top = tile & 1;
             uint8_t inverse = ((tile >> 3) & 1);
-            float cx = (x + left) * RR_MAZE_GRID_SIZE;
-            float cy = (y + 1 + top) * RR_MAZE_GRID_SIZE;
+            float cx = (x + left) * maze_dim;
+            float cy = (y + 1 + top) * maze_dim;
             struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > RR_MAZE_GRID_SIZE - physical->radius && inverse == 0)
+            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE - physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
             }
-            if (rr_vector_get_magnitude(&dist) < RR_MAZE_GRID_SIZE + physical->radius && inverse == 1)
+            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
             {
-                rr_vector_set_magnitude(&dist, RR_MAZE_GRID_SIZE + physical->radius);
+                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
                 rr_component_physical_set_x(physical, cx + dist.x);
                 rr_component_physical_set_y(physical, cy + dist.y);
                 return;
@@ -179,11 +181,11 @@ static void perform_internal_bound_check_custom_grid(float test_x, float test_y,
     rr_component_physical_set_y(physical, test_y);
 }
 
-static void perform_internal_bound_check(float test_x, float test_y, struct rr_component_physical *physical)
+static void perform_internal_bound_check(struct rr_component_arena *arena, float test_x, float test_y, struct rr_component_physical *physical)
 {
-    int32_t x = test_x / RR_MAZE_GRID_SIZE;
-    int32_t y = test_y / RR_MAZE_GRID_SIZE;
-    perform_internal_bound_check_custom_grid(test_x, test_y, x, y, physical);
+    int32_t x = test_x / arena->grid_size;
+    int32_t y = test_y / arena->grid_size;
+    perform_internal_bound_check_custom_grid(arena, test_x, test_y, x, y, physical);
 }
 
 static float reverse_lerp(float test, float start, float end)
@@ -242,27 +244,28 @@ static void system(EntityIdx id, void *simulation)
     }
     rr_vector_set(&physical->acceleration, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
+    struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
     float before_x = physical->x;
     float before_y = physical->y;
     float now_x = before_x + vel.x;
     float now_y = before_y + vel.y;
-    now_x = rr_fclamp(now_x, physical->radius, RR_ARENA_LENGTH - physical->radius);
-    now_y = rr_fclamp(now_y, physical->radius, RR_ARENA_LENGTH - physical->radius);
-    int32_t before_grid_x = floorf(before_x / RR_MAZE_GRID_SIZE);
-    int32_t now_grid_x = floorf(now_x / RR_MAZE_GRID_SIZE);
-    int32_t before_grid_y = floorf(before_y / RR_MAZE_GRID_SIZE);
-    int32_t now_grid_y = floorf(now_y / RR_MAZE_GRID_SIZE);
+    now_x = rr_fclamp(now_x, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+    now_y = rr_fclamp(now_y, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+    int32_t before_grid_x = floorf(before_x / arena->grid_size);
+    int32_t now_grid_x = floorf(now_x / arena->grid_size);
+    int32_t before_grid_y = floorf(before_y / arena->grid_size);
+    int32_t now_grid_y = floorf(now_y / arena->grid_size);
     #define grid(a,b) \
-    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= RR_MAZE_DIM || before_grid_y + b >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[before_grid_y+b][before_grid_x+a].value)
+    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= arena->maze_dim || before_grid_y + b >= arena->maze_dim) ? 0 : arena->grid[(before_grid_y+b)*arena->maze_dim+before_grid_x+a].value)
     if (before_grid_x == now_grid_x && before_grid_y == now_grid_y)
-        perform_internal_bound_check(now_x, now_y, physical);
+        perform_internal_bound_check(arena, now_x, now_y, physical);
     else
     {
         float border_phase[4];
-        border_phase[0] = reverse_lerp(before_grid_x * RR_MAZE_GRID_SIZE, before_x, now_x);
-        border_phase[1] = reverse_lerp((before_grid_x + 1) * RR_MAZE_GRID_SIZE, before_x, now_x);
-        border_phase[2] = reverse_lerp(before_grid_y * RR_MAZE_GRID_SIZE, before_y, now_y);
-        border_phase[3] = reverse_lerp((before_grid_y + 1) * RR_MAZE_GRID_SIZE, before_y, now_y);
+        border_phase[0] = reverse_lerp(before_grid_x * arena->grid_size, before_x, now_x);
+        border_phase[1] = reverse_lerp((before_grid_x + 1) * arena->grid_size, before_x, now_x);
+        border_phase[2] = reverse_lerp(before_grid_y * arena->grid_size, before_y, now_y);
+        border_phase[3] = reverse_lerp((before_grid_y + 1) * arena->grid_size, before_y, now_y);
         //if (passes_behind_borders) fclamp(x and y)
         uint32_t phase = min_of_4(border_phase);
         //printf("phase is %d\n", phase);
@@ -276,9 +279,9 @@ static void system(EntityIdx id, void *simulation)
             uint8_t illegal_ver = (left ^ inverse);
             if (phase == illegal_hor || phase == illegal_ver)
             {
-                now_x = rr_fclamp(now_x, before_grid_x * RR_MAZE_GRID_SIZE, (before_grid_x+1) * RR_MAZE_GRID_SIZE);
-                now_y = rr_fclamp(now_y, before_grid_y * RR_MAZE_GRID_SIZE, (before_grid_y+1) * RR_MAZE_GRID_SIZE);
-                perform_internal_bound_check_custom_grid(now_x, now_y, before_grid_x, before_grid_y, physical);
+                now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size, (before_grid_x+1) * arena->grid_size);
+                now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size, (before_grid_y+1) * arena->grid_size);
+                perform_internal_bound_check_custom_grid(arena, now_x, now_y, before_grid_x, before_grid_y, physical);
             }
             else
             {
@@ -287,13 +290,13 @@ static void system(EntityIdx id, void *simulation)
                 if (grid(hor,ver) == 0)
                 {
                     if (hor)
-                        now_x = rr_fclamp(now_x, before_grid_x * RR_MAZE_GRID_SIZE + physical->radius, (before_grid_x+1) * RR_MAZE_GRID_SIZE - physical->radius);
+                        now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size + physical->radius, (before_grid_x+1) * arena->grid_size - physical->radius);
                     else
-                        now_y = rr_fclamp(now_y, before_grid_y * RR_MAZE_GRID_SIZE + physical->radius, (before_grid_y+1) * RR_MAZE_GRID_SIZE - physical->radius);
+                        now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size + physical->radius, (before_grid_y+1) * arena->grid_size - physical->radius);
                     rr_component_physical_set_x(physical, now_x);
                     rr_component_physical_set_y(physical, now_y);
                 }
-                perform_internal_bound_check_custom_grid(now_x, now_y, before_grid_x + hor, before_grid_y + ver, physical);
+                perform_internal_bound_check_custom_grid(arena, now_x, now_y, before_grid_x + hor, before_grid_y + ver, physical);
             }
         }
         else
@@ -303,13 +306,13 @@ static void system(EntityIdx id, void *simulation)
             if (grid(hor,ver) == 0)
             {
                 if (hor)
-                    now_x = rr_fclamp(now_x, before_grid_x * RR_MAZE_GRID_SIZE + physical->radius, (before_grid_x+1) * RR_MAZE_GRID_SIZE - physical->radius);
+                    now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size + physical->radius, (before_grid_x+1) * arena->grid_size - physical->radius);
                 else
-                    now_y = rr_fclamp(now_y, before_grid_y * RR_MAZE_GRID_SIZE + physical->radius, (before_grid_y+1) * RR_MAZE_GRID_SIZE - physical->radius);
+                    now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size + physical->radius, (before_grid_y+1) * arena->grid_size - physical->radius);
                 rr_component_physical_set_x(physical, now_x);
                 rr_component_physical_set_y(physical, now_y);
             }
-            perform_internal_bound_check_custom_grid(now_x, now_y, before_grid_x + hor, before_grid_y + ver, physical);
+            perform_internal_bound_check_custom_grid(arena, now_x, now_y, before_grid_x + hor, before_grid_y + ver, physical);
         }
     }
 }

@@ -185,21 +185,21 @@ static void init_game_coefficients()
     }
 }
 
-static void init_maze(uint8_t (*template)[RR_MAZE_DIM/2], struct rr_maze_grid (*maze)[RR_MAZE_DIM])
-{
-    #define offset(a,b) \
-    ((x + a < 0 || y + b < 0 || x + a >= RR_MAZE_DIM/2 || y + b >= RR_MAZE_DIM/2) ? 0 : template[y+b][x+a])
+#define offset(a,b) ((x + a < 0 || y + b < 0 || x + a >= size/2 || y + b >= size/2) ? 0 : template[(y+b)*size/2+x+a])
+#define maze_grid(x,y) maze[(y) * size + (x)]
 
-    for (int32_t y = 0; y < RR_MAZE_DIM/2; ++y)
+static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maze)
+{
+    for (int32_t y = 0; y < size/2; ++y)
     {
-        for (int32_t x = 0; x < RR_MAZE_DIM/2; ++x)
+        for (int32_t x = 0; x < size/2; ++x)
         {
-            uint8_t this_tile = template[y][x];
+            uint8_t this_tile = offset(0,0);
             #ifdef RR_SERVER
-            maze[y*2][x*2].difficulty = this_tile;
-            maze[y*2][x*2+1].difficulty = this_tile;
-            maze[y*2+1][x*2].difficulty = this_tile;
-            maze[y*2+1][x*2+1].difficulty = this_tile;
+            maze_grid(x*2,y*2).difficulty = this_tile;
+            maze_grid(x*2+1,y*2).difficulty = this_tile;
+            maze_grid(x*2,y*2+1).difficulty = this_tile;
+            maze_grid(x*2+1,y*2+1).difficulty = this_tile;
             #endif
             this_tile = this_tile != 0;
             //top left
@@ -210,34 +210,34 @@ static void init_maze(uint8_t (*template)[RR_MAZE_DIM/2], struct rr_maze_grid (*
                 if (top == 0)
                 {
                     if (offset(-1,0) == 0)
-                        maze[y*2][x*2].value = 7;
+                        maze_grid(x*2,y*2).value = 7;
                     else
-                        maze[y*2][x*2].value = this_tile;
+                        maze_grid(x*2,y*2).value = this_tile;
                     if (offset(1,0) == 0)
-                        maze[y*2][x*2+1].value = 5;
+                        maze_grid(x*2+1,y*2).value = 5;
                     else
-                        maze[y*2][x*2+1].value = this_tile;
+                        maze_grid(x*2+1,y*2).value = this_tile;
                 }
                 else
                 {
-                    maze[y*2][x*2].value = this_tile;
-                    maze[y*2][x*2+1].value = this_tile;
+                    maze_grid(x*2,y*2).value = this_tile;
+                    maze_grid(x*2+1,y*2).value = this_tile;
                 }
                 if (bottom == 0)
                 {
                     if (offset(-1,0) == 0)
-                        maze[y*2+1][x*2].value = 6;
+                        maze_grid(x*2,y*2+1).value = 6;
                     else
-                        maze[y*2+1][x*2].value = this_tile;
+                        maze_grid(x*2,y*2+1).value = this_tile;
                     if (offset(1,0) == 0)
-                        maze[y*2+1][x*2+1].value = 4;
+                        maze_grid(x*2+1,y*2+1).value = 4;
                     else
-                        maze[y*2+1][x*2+1].value = this_tile;
+                        maze_grid(x*2+1,y*2+1).value = this_tile;
                 }
                 else
                 {
-                    maze[y*2+1][x*2].value = this_tile;
-                    maze[y*2+1][x*2+1].value = this_tile;
+                    maze_grid(x*2,y*2+1).value = this_tile;
+                    maze_grid(x*2+1,y*2+1).value = this_tile;
                 }
             }
             else
@@ -245,34 +245,34 @@ static void init_maze(uint8_t (*template)[RR_MAZE_DIM/2], struct rr_maze_grid (*
                 if (top)
                 {
                     if (offset(-1,0) && offset(-1,-1))
-                        maze[y*2][x*2].value = 15;
+                        maze_grid(x*2,y*2).value = 15;
                     else
-                        maze[y*2][x*2].value = this_tile;
+                        maze_grid(x*2,y*2).value = this_tile;
                     if (offset(1,0) && offset(1,-1))
-                        maze[y*2][x*2+1].value = 13;
+                        maze_grid(x*2+1,y*2).value = 13;
                     else
-                        maze[y*2][x*2+1].value = this_tile;
+                        maze_grid(x*2+1,y*2).value = this_tile;
                 }
                 else
                 {
-                    maze[y*2][x*2].value = this_tile;
-                    maze[y*2][x*2].value = this_tile;
+                    maze_grid(x*2,y*2).value = this_tile;
+                    maze_grid(x*2+1,y*2).value = this_tile;
                 }
                 if (bottom)
                 {
                     if (offset(-1,0) && offset(-1,1))
-                        maze[y*2+1][x*2].value = 14;
+                        maze_grid(x*2,y*2+1).value = 14;
                     else
-                        maze[y*2+1][x*2].value = this_tile;
+                        maze_grid(x*2,y*2+1).value = this_tile;
                     if (offset(1,0) && offset(1,1))
-                        maze[y*2+1][x*2+1].value = 12;
+                        maze_grid(x*2+1,y*2+1).value = 12;
                     else
-                        maze[y*2+1][x*2+1].value = this_tile;
+                        maze_grid(x*2+1,y*2+1).value = this_tile;
                 }
                 else
                 {
-                    maze[y*2+1][x*2].value = this_tile;
-                    maze[y*2+1][x*2+1].value = this_tile;
+                    maze_grid(x*2,y*2+1).value = this_tile;
+                    maze_grid(x*2+1,y*2+1).value = this_tile;
                 }
             }
         }
@@ -282,7 +282,8 @@ static void init_maze(uint8_t (*template)[RR_MAZE_DIM/2], struct rr_maze_grid (*
 void rr_static_data_init()
 {
     init_game_coefficients();
-    init_maze(RR_MAZE_TEMPLATE_HELL_CREEK, RR_MAZE_HELL_CREEK);
+    init_maze(RR_MAZE_DIM, &RR_MAZE_TEMPLATE_HELL_CREEK[0][0], &RR_MAZE_HELL_CREEK[0][0]);
+    init_maze(RR_BURROW_MAZE_DIM, &RR_MAZE_TEMPLATE_BURROW[0][0], &RR_MAZE_BURROW[0][0]);
 }
 
 double xp_to_reach_level(uint32_t level)
@@ -322,4 +323,11 @@ uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 };
 
-struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM] = {0};
+uint8_t RR_MAZE_TEMPLATE_BURROW[RR_BURROW_MAZE_DIM/2][RR_BURROW_MAZE_DIM/2] = {
+    {1, 1, 0},
+    {0, 1, 1},
+    {1, 1, 1}
+};
+
+struct rr_maze_grid RR_MAZE_BURROW[RR_BURROW_MAZE_DIM][RR_BURROW_MAZE_DIM];
+struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];

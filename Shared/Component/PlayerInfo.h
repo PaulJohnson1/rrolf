@@ -52,6 +52,7 @@ struct rr_component_player_info
     RR_SERVER_ONLY(uint16_t protocol_state;)
     EntityIdx parent_id;
     EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
+    EntityIdx arena;
     RR_SERVER_ONLY(uint8_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
     uint8_t squad_pos;
@@ -87,4 +88,5 @@ RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_y);
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_fov);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint32_t, slot_count);
 RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
+RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, arena);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);

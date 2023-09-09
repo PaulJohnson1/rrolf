@@ -17,7 +17,6 @@
 #include <Server/System/Drops.h>
 #include <Server/System/Health.h>
 #include <Server/System/PetalBehavior.h>
-#include <Server/System/Respawn.h>
 #include <Server/System/Velocity.h>
 #include <Server/System/Web.h>
 #include <Server/Waves.h>
@@ -53,10 +52,13 @@ void rr_simulation_init(struct rr_simulation *this)
     rr_spatial_hash_init(this->grid);
     this->grid->simulation = this;
     EntityIdx id = rr_simulation_alloc_entity(this);
-    struct rr_component_arena *arena_component =
+    struct rr_component_arena *arena =
         rr_simulation_add_arena(this, id);
-    rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    set_respawn_zone(&this->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
+    //rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
+    arena->grid = &RR_MAZE_HELL_CREEK[0][0];
+    arena->maze_dim = RR_MAZE_DIM;
+    arena->grid_size = RR_MAZE_GRID_SIZE;
+    set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     //set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
     printf("simulation size: %lu\n", sizeof *this);
     printf("spatial hash size: %lu\n", sizeof *this->grid);
@@ -115,7 +117,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     if (!should_spawn_at(id, rarity))
         return;
     struct rr_vector pos = {(grid_x + rr_frand()) * RR_MAZE_GRID_SIZE, (grid_y + rr_frand()) * RR_MAZE_GRID_SIZE};
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, pos.x, pos.y, id, rarity,
+    EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
                                                rr_simulation_team_id_mobs);
     rr_simulation_get_mob(this, mob_id)->zone = grid;
     ++grid->mob_count;

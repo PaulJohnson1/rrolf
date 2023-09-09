@@ -24,7 +24,8 @@
     X(flower_id, varuint)                                                      \
     X(camera_x, float32)                                                       \
     X(slot_count, varuint)                                                     \
-    X(squad_pos, uint8)
+    X(squad_pos, uint8)                                                        \
+    X(arena, varuint)
 
 enum
 {
@@ -36,33 +37,9 @@ enum
     state_flags_petals = 0b0100000,
     state_flags_squad_pos = 0b1000000,
     state_flags_petals_collected = 0b10000000,
-    state_flags_all = 0b11111111
+    state_flags_arena = 0b100000000,
+    state_flags_all = 0b111111111
 };
-
-#ifdef RR_SERVER
-// struct api_join_captures
-// {
-//     char const *rivet_uuid;
-//     char *petals_string;
-// };
-
-// void *api_join(void *_captures)
-// {
-//     struct api_join_captures *captures = _captures;
-//     rr_api_on_close(captures->rivet_uuid, captures->petals_string);
-//     free(captures->rivet_uuid);
-//     free(captures->petals_string);
-//     free(captures);
-//     puts("api join thread end");
-//     return NULL;
-// }
-
-// void *sleeper(void *arg)
-// {
-//     usleep(10000000);
-//     return NULL;
-// }
-#endif
 
 void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
@@ -177,6 +154,7 @@ RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_y)
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_fov)
 RR_DEFINE_PUBLIC_FIELD(player_info, uint32_t, slot_count)
 RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
+RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, arena);
 RR_DEFINE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);
 #endif
 

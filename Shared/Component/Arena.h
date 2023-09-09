@@ -9,11 +9,25 @@ struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 RR_SERVER_ONLY(struct rr_component_player_info;)
 
+#ifdef RR_SERVER
+struct rr_spawn_zone
+{
+    float x;
+    float y;
+    float w;
+    float h;
+};
+#endif
+
 struct rr_component_arena
 {
+    RR_SERVER_ONLY(struct rr_spawn_zone respawn_zone;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(uint16_t protocol_state;)
-    float radius;
+    RR_SERVER_ONLY(struct rr_maze_grid *grid;)
+    RR_SERVER_ONLY(uint32_t maze_dim;)
+    RR_SERVER_ONLY(float grid_size;)
+    RR_SERVER_ONLY(uint8_t first_squad_to_enter;)
 };
 
 void rr_component_arena_init(struct rr_component_arena *,
@@ -26,5 +40,3 @@ RR_SERVER_ONLY(void rr_component_arena_write(
                    struct rr_component_player_info *);)
 RR_CLIENT_ONLY(void rr_component_arena_read(struct rr_component_arena *,
                                             struct proto_bug *);)
-
-RR_DECLARE_PUBLIC_FIELD(arena, float, radius)

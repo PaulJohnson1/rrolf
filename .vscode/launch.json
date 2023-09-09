@@ -33,7 +33,7 @@
             "name": "(gdb) Launch server",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/root/rrolf/Server/build/rrolf-server",
+            "program": "C:/rrolf/Server/build/rrolf-server",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

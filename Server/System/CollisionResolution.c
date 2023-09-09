@@ -19,18 +19,15 @@ static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
         rr_simulation_has_##component_b(this, a))                              \
         return 0;
 
-    exclude(drop, drop);
     exclude(drop, petal);
     exclude(drop, flower);
-    exclude(drop, mob);
+    exclude(arena, petal);
+    exclude(arena, mob);
     uint8_t team1 = rr_simulation_get_relations(this, a)->team;
     uint8_t team2 = rr_simulation_get_relations(this, b)->team;
     if (team1 != team2)
         return 1; // only drop doesn't care about team
-    exclude(petal, petal);
-    exclude(petal, flower);
-    exclude(petal, mob);
-    exclude(flower, mob);
+
 #undef exclude
 
     return 1;
@@ -61,17 +58,38 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_component_physical *physical1 = captures->physical;
     EntityIdx entity1 = physical1->parent_id;
     EntityIdx entity2 = i;
+    struct rr_component_physical *physical2 =
+        rr_simulation_get_physical(captures->simulation, entity2);
 
     if (!should_entities_collide(this, entity1, entity2))
         return;
+    if (rr_simulation_has_arena(this, entity1))
+    {
+        physical2->arena = entity1;
+        struct rr_spawn_zone *respawn_zone = &rr_simulation_get_arena(this, entity1)->respawn_zone;
+        rr_component_physical_set_x(physical2, respawn_zone->x + respawn_zone->w * rr_frand());
+        rr_component_physical_set_y(physical2, respawn_zone->y + respawn_zone->h * rr_frand());
+        rr_vector_set(&physical2->velocity, 0, 0);
+        rr_vector_set(&physical2->collision_velocity, 0, 0);
+        return;
+    }
+    else if (rr_simulation_has_arena(this, entity2))
+    {
+        physical1->arena = entity2;
+        struct rr_spawn_zone *respawn_zone = &rr_simulation_get_arena(this, entity2)->respawn_zone;
+        rr_component_physical_set_x(physical1, respawn_zone->x + respawn_zone->w * rr_frand());
+        rr_component_physical_set_y(physical1, respawn_zone->y + respawn_zone->h * rr_frand());
+        rr_vector_set(&physical1->velocity, 0, 0);
+        rr_vector_set(&physical2->collision_velocity, 0, 0);
+        return;
+    }
 
     if (rr_simulation_has_web(this, entity1))
         return web_logic(this, entity1, entity2);
     else if (rr_simulation_has_web(this, entity2))
         return web_logic(this, entity2, entity1);
 
-    struct rr_component_physical *physical2 =
-        rr_simulation_get_physical(captures->simulation, entity2);
+    
 
     struct rr_vector position1 = {physical1->x, physical1->y};
     struct rr_vector position2 = {physical2->x, physical2->y};

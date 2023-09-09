@@ -207,7 +207,7 @@ static void system_flower_petal_movement_logic(
                 for (uint32_t i = 1; i < count; ++i)
                 {
                     EntityIdx new_petal = rr_simulation_alloc_petal(
-                        simulation, physical->x, physical->y, petal->id, petal->rarity,
+                        simulation, physical->arena, physical->x, physical->y, petal->id, petal->rarity,
                         flower_physical->parent_id);
                     struct rr_component_physical *new_physical =
                         rr_simulation_get_physical(simulation, new_petal);
@@ -509,7 +509,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 if (--p_petal->cooldown_ticks <= 0)
                 {
                     p_petal->simulation_id = rr_simulation_alloc_petal(
-                        simulation, player_info->camera_x, player_info->camera_y, slot->id, slot->rarity,
+                        simulation, player_info->arena, player_info->camera_x, player_info->camera_y, slot->id, slot->rarity,
                         player_info->flower_id);
                 }
             }
@@ -546,7 +546,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         m_rar = petal->rarity ? petal->rarity - 1 : 0;
                     }
                     EntityIdx mob_id = p_petal->simulation_id =
-                        rr_simulation_alloc_mob(simulation, petal_physical->x, petal_physical->y, m_id, m_rar,
+                        rr_simulation_alloc_mob(simulation, petal_physical->arena, petal_physical->x, petal_physical->y, m_id, m_rar,
                                                 rr_simulation_team_id_players);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);
@@ -628,8 +628,7 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
                             simulation, simulation->player_info_vector[i])
                             ->flower_id != RR_NULL_ENTITY)
                         continue;
-                    EntityIdx flower = rr_simulation_alloc_player(
-                        simulation->player_info_vector[i], simulation);
+                    EntityIdx flower = rr_simulation_alloc_player(simulation, physical->arena, simulation->player_info_vector[i]);
                     struct rr_component_physical *flower_physical =
                         rr_simulation_get_physical(simulation, flower);
                     rr_component_physical_set_x(flower_physical, physical->x);

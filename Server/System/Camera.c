@@ -17,6 +17,7 @@ void rr_system_camera_tick(struct rr_simulation *this)
                 rr_simulation_get_physical(this, player_info->flower_id);
             rr_component_player_info_set_camera_x(player_info, physical->x);
             rr_component_player_info_set_camera_y(player_info, physical->y);
+            rr_component_player_info_set_arena(player_info, physical->arena);
             continue;
         }
         //tempfix

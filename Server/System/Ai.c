@@ -371,7 +371,7 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                 rr_simulation_get_mob(simulation, entity);
             // spawn a shell
             EntityIdx petal_id = rr_simulation_alloc_petal(
-                simulation, physical->x, physical->y, rr_petal_id_shell,
+                simulation, physical->arena, physical->x, physical->y, rr_petal_id_shell,
                 mob->rarity, mob->parent_id);
             struct rr_component_physical *physical2 =
                 rr_simulation_get_physical(simulation, petal_id);
@@ -851,6 +851,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if (rr_simulation_has_centipede(this, entity) &&
         rr_simulation_get_centipede(this, entity)->parent_node !=
             RR_NULL_ENTITY)
+        return;
+    if (rr_simulation_has_arena(this, entity))
         return;
     if (rr_simulation_get_health(this, entity)->health < 0.0001f)
         return;

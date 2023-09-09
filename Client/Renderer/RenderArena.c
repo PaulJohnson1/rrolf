@@ -11,6 +11,8 @@
 static void render_background(struct rr_component_player_info *player_info,
                               struct rr_game *this, uint32_t prop_amount)
 {
+    if (player_info->arena == 0)
+        return;
     if (this->cache.low_performance_mode)
         return;
     float a = this->renderer->height / 1080;
@@ -88,29 +90,32 @@ static void render_background(struct rr_component_player_info *player_info,
 
 #undef GRID_SIZE
 #undef render_map_feature
+    uint8_t main_arena = player_info->arena == 1;
+    float grid_size = main_arena ? RR_MAZE_GRID_SIZE : RR_BURRON_GRID_SIZE; 
+    uint32_t maze_dim = main_arena ? RR_MAZE_DIM : RR_BURROW_MAZE_DIM;
+    struct rr_maze_grid *grid = main_arena ? &RR_MAZE_HELL_CREEK[0][0] : &RR_MAZE_BURROW[0][0];
     rr_renderer_set_fill(this->renderer, 0xff000000);
     rr_renderer_set_global_alpha(this->renderer, 0.5f);
-    int32_t nx = floorf(leftX / RR_MAZE_GRID_SIZE);
-    int32_t ny = floorf(topY / RR_MAZE_GRID_SIZE);
-    for (; nx < rightX / RR_MAZE_GRID_SIZE; ++nx)
-        for (int32_t currY = ny; currY < bottomY / RR_MAZE_GRID_SIZE; ++currY)
+    int32_t nx = floorf(leftX / grid_size);
+    int32_t ny = floorf(topY / grid_size);
+    for (; nx < rightX / grid_size; ++nx)
+        for (int32_t currY = ny; currY < bottomY / grid_size; ++currY)
         {
-            uint8_t tile = (nx < 0 || currY < 0 || nx >= RR_MAZE_DIM || currY >= RR_MAZE_DIM) ? 0 : RR_MAZE_HELL_CREEK[currY][nx].value;
+            uint8_t tile = (nx < 0 || currY < 0 || nx >= maze_dim || currY >= maze_dim) ? 0 : grid[currY*maze_dim+nx].value;
             if (tile != 1)
             {
                 if (tile == 0)
                 {
                     rr_renderer_begin_path(this->renderer);
-                    rr_renderer_fill_rect(this->renderer, nx * RR_MAZE_GRID_SIZE, currY * RR_MAZE_GRID_SIZE, RR_MAZE_GRID_SIZE, RR_MAZE_GRID_SIZE);
+                    rr_renderer_fill_rect(this->renderer, nx * grid_size, currY * grid_size, grid_size, grid_size);
                 }
                 else
                 {
-                    #define s RR_MAZE_GRID_SIZE
                     uint8_t left = (tile >> 1) & 1;
                     uint8_t top = tile & 1;
                     uint8_t inverse = 1 - ((tile >> 3) & 1);
                     rr_renderer_begin_path(this->renderer);
-                    rr_renderer_move_to(this->renderer, (nx + inverse ^ left) * s, (currY + inverse ^ top) * s);
+                    rr_renderer_move_to(this->renderer, (nx + inverse ^ left) * grid_size, (currY + inverse ^ top) * grid_size);
                     float start_angle = 0;
                     if (top == 0 && left == 1)
                         start_angle = M_PI / 2;
@@ -118,9 +123,8 @@ static void render_background(struct rr_component_player_info *player_info,
                         start_angle = M_PI;
                     else if (top == 1 && left == 0)
                         start_angle = M_PI * 3 / 2;
-                    rr_renderer_partial_arc(this->renderer, (nx + left) * s, (currY + top) * s, s, start_angle, start_angle + M_PI / 2, 0);
+                    rr_renderer_partial_arc(this->renderer, (nx + left) * grid_size, (currY + top) * grid_size, grid_size, start_angle, start_angle + M_PI / 2, 0);
                     rr_renderer_fill(this->renderer);
-                    #undef s
                 }
             }
         }
@@ -146,11 +150,6 @@ void rr_component_arena_render(EntityIdx entity, struct rr_game *this, struct rr
 
     struct rr_component_arena *arena =
         rr_simulation_get_arena(this->simulation, 1);
-    rr_renderer_begin_path(this->renderer);
-    rr_renderer_rect(this->renderer, 0, 0, arena->radius, arena->radius);
-    rr_renderer_set_fill(this->renderer, 0xff45230a);
-    rr_renderer_fill(this->renderer);
-    //rr_renderer_clip(this->renderer);
 
     rr_renderer_set_line_width(this->renderer, 1.0f);
     rr_renderer_set_stroke(this->renderer, alpha);

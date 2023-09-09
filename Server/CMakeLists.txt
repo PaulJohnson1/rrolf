@@ -14,7 +14,6 @@ set(SRCS
     System/Drops.c
     System/Health.c
     System/PetalBehavior.c
-    System/Respawn.c
     System/Velocity.c
     System/Web.c
     Main.c

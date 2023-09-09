@@ -78,6 +78,8 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
 
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
+    if (captures->player_info->arena != physical->arena)
+        return;
 
     if (physical->x + physical->radius <
             captures->view_x - captures->view_width ||

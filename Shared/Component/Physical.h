@@ -45,7 +45,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     EntityIdx parent_id;
-    EntityIdx arena;
+    RR_SERVER_ONLY(EntityIdx arena;)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
 };
