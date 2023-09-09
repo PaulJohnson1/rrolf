@@ -33,7 +33,7 @@ static void minimap_on_render(struct rr_ui_element *this,
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_begin_path(renderer);
     rr_renderer_rect(renderer, midX - W / 2, midY - H / 2, W, H);
-    rr_renderer_clip(renderer);
+    //rr_renderer_clip(renderer);
     rr_renderer_draw_image(renderer, &minimap);
     rr_renderer_set_fill(renderer, 0xff0000ff);
     rr_renderer_set_global_alpha(renderer, 0.8);
@@ -55,7 +55,7 @@ static void minimap_on_render(struct rr_ui_element *this,
 
 struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
 {
-    uint32_t s = 4;
+    uint32_t s = 5;
     struct rr_ui_element *this = rr_ui_element_init();
     rr_renderer_init(&minimap);
     rr_renderer_set_dimensions(&minimap, RR_MAZE_DIM * s, RR_MAZE_DIM * s);

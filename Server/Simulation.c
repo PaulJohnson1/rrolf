@@ -34,7 +34,7 @@ static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y,
 }
 static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    struct rr_maze_grid (*grid)[48] = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
+    struct rr_maze_grid (*grid)[RR_MAZE_DIM] = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
     for (uint32_t Y = 0; Y < h; ++Y)
         for (uint32_t X = 0; X < h; ++X)
         {
@@ -42,10 +42,10 @@ static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, 
             grid[Y+y][X+x].special_id = id;
         }
 }
-#define SPAWN_ZONE_X 14
-#define SPAWN_ZONE_Y 38
-#define SPAWN_ZONE_W 5
-#define SPAWN_ZONE_H 3
+#define SPAWN_ZONE_X 36
+#define SPAWN_ZONE_Y 20
+#define SPAWN_ZONE_W 4
+#define SPAWN_ZONE_H 2
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -57,7 +57,7 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
     set_respawn_zone(&this->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-    set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
+    //set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
     printf("simulation size: %lu\n", sizeof *this);
     printf("spatial hash size: %lu\n", sizeof *this->grid);
 
@@ -121,7 +121,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     ++grid->mob_count;
 }
 
-#define GRID_MOB_LIMIT 1
+#define GRID_MOB_LIMIT(DIFFICULTY) \
+    5 - DIFFICULTY / 10
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -133,7 +134,7 @@ static void tick_wave(struct rr_simulation *this)
                 grid_y += SPAWN_ZONE_H;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value != 1)
                 continue;
-            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT)
+            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT(RR_MAZE_HELL_CREEK[grid_y][grid_x].difficulty))
                 continue;
             if (rand() % 75 == 0)
                 spawn_mob(this, grid_x, grid_y);

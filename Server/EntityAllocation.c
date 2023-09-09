@@ -26,7 +26,7 @@ EntityIdx rr_simulation_alloc_player(EntityIdx entity,
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     rr_simulation_add_flower(this, flower_id);
-    rr_component_health_set_max_health(health, 100 * pow(1.01557361544, player_info->level - 1));
+    rr_component_health_set_max_health(health, 100 * pow(1.01557361544, player_info->level));
     rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
     health->damage_paused = 25;
