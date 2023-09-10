@@ -168,7 +168,6 @@ function modify_file(name, cb)
 
 modify_file("/Shared/Entity.h",               modify_component_list);
 modify_file("/Shared/MagicNumber.h",          modify_magic_number);
-modify_file("/Shared/Component/Arena.c",      modify_field_list);
 modify_file("/Shared/Component/Drop.c",       modify_field_list);
 modify_file("/Shared/Component/Flower.c",     modify_field_list);
 modify_file("/Shared/Component/Health.c",     modify_field_list);
