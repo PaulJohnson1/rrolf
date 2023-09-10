@@ -10,7 +10,6 @@
 
 #ifdef RR_SERVER
 #include <math.h>
-
 #include <Shared/Utilities.h>
 #endif
 
