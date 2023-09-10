@@ -23,11 +23,13 @@ struct rr_component_arena
 {
     RR_SERVER_ONLY(struct rr_spawn_zone respawn_zone;)
     EntityIdx parent_id;
-    RR_SERVER_ONLY(uint16_t protocol_state;)
-    RR_SERVER_ONLY(struct rr_maze_grid *grid;)
-    RR_SERVER_ONLY(uint32_t maze_dim;)
-    RR_SERVER_ONLY(float grid_size;)
+    RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(uint8_t first_squad_to_enter;)
+    RR_SERVER_ONLY(EntityIdx mob_count;)
+    RR_SERVER_ONLY(uint16_t ticks_to_deletion;)
+    RR_SERVER_ONLY(uint16_t maze_dim;)
+    RR_SERVER_ONLY(struct rr_maze_grid *grid;)
+    RR_SERVER_ONLY(float grid_size;)
 };
 
 void rr_component_arena_init(struct rr_component_arena *,

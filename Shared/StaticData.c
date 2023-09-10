@@ -81,7 +81,7 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Basic", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
+    "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
     "Beak", "Lightning", "Third Eye", "Mandible"};
@@ -299,35 +299,65 @@ double xp_to_reach_level(uint32_t level)
     return base;
 }
 
+#define c 1
+#define C 4
+#define u 8
+#define U 12
+#define r 16
+#define R 20
+#define e 24
+#define E 28
+#define l 32
+#define L 36
+#define m 40
+#define M 44
+#define x 48
+
 uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
-    {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0},
-    {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1},
-    {1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1},
-    {0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1},
-    {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-    {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1},
-    {0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1},
-    {1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
-    {1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0},
-    {1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0},
-    {1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1},
-    {1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0},
-    {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0},
-    {1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1},
-    {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1},
-    {0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0},
-    {0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0},
-    {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+    {l, l, l, l, l, l, l, l, l, E, E, E, 0, 0, 0, R, e, 0, e, e, 0},
+    {l, 0, 0, 0, L, 0, 0, 0, 0, 0, 0, e, 0, 0, 0, R, 0, 0, 0, R, R},
+    {l, l, 0, L, L, 0, 0, 0, 0, 0, e, e, e, 0, 0, R, 0, 0, 0, 0, r},
+    {0, L, 0, 0, 0, 0, 0, 0, 0, 0, R, 0, R, R, R, r, r, U, 0, 0, r},
+    {0, L, 0, M, M, m, m, L, L, 0, R, 0, 0, 0, 0, 0, 0, U, 0, 0, r},
+    {0, L, 0, x, M, 0, 0, 0, L, 0, R, r, r, r, 0, 0, 0, u, 0, 0, U},
+    {0, L, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, U, U, U, u, u, 0, 0, U},
+    {L, L, m, m, m, m, 0, l, l, 0, 0, 0, 0, 0, 0, 0, 0, C, u, u, u},
+    {L, 0, 0, 0, 0, M, 0, E, 0, 0, 0, R, e, e, e, e, 0, C, 0, 0, 0},
+    {m, 0, M, M, M, M, 0, E, 0, 0, 0, R, 0, 0, 0, R, 0, C, 0, 0, 0},
+    {m, 0, M, 0, 0, 0, 0, E, e, e, e, R, R, 0, 0, R, 0, c, c, c, c},
+    {m, 0, x, x, x, x, 0, 0, 0, 0, 0, 0, r, r, r, r, 0, C, 0, 0, 0},
+    {m, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U, 0, 0, C, u, u, 0},
+    {m, m, m, M, M, 0, 0, x, x, M, M, 0, 0, 0, U, 0, 0, C, 0, U, U},
+    {0, m, 0, 0, M, 0, 0, 0, 0, 0, M, M, 0, 0, U, u, u, u, 0, U, r},
+    {0, m, 0, 0, M, x, 0, 0, 0, 0, 0, m, 0, 0, 0, 0, 0, u, 0, 0, 0},
+    {0, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, m, 0, 0, 0, 0, 0, u, 0, 0, 0},
+    {0, m, 0, 0, 0, 0, M, M, 0, 0, 0, m, 0, 0, 0, 0, 0, U, U, U, r},
+    {0, M, 0, 0, x, 0, 0, m, 0, 0, 0, L, L, 0, R, r, r, U, 0, 0, r},
+    {0, M, M, M, x, x, 0, m, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, r},
+    {0, 0, 0, 0, x, 0, 0, m, L, L, l, l, l, E, E, E, e, e, R, R, R},
 };
 
 uint8_t RR_MAZE_TEMPLATE_BURROW[RR_BURROW_MAZE_DIM/2][RR_BURROW_MAZE_DIM/2] = {
-    {1, 1, 0},
-    {0, 1, 1},
-    {1, 1, 1}
+    {1, 1, 0, 0, 1},
+    {0, 1, 1, 1, 1},
+    {1, 1, 1, 0, 1},
+    {0, 1, 0, 1, 1},
+    {1, 1, 1, 0, 1}
 };
 
 struct rr_maze_grid RR_MAZE_BURROW[RR_BURROW_MAZE_DIM][RR_BURROW_MAZE_DIM];
 struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
+
+#undef c
+#undef C
+#undef u
+#undef U
+#undef r
+#undef R
+#undef e
+#undef E
+#undef l
+#undef L
+#undef m
+#undef M
+#undef x

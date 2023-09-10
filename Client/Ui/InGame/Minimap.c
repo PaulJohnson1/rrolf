@@ -10,7 +10,42 @@
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
-struct rr_renderer minimap;
+struct rr_renderer minimaps[2];
+
+#define DRAW_MINIMAP(renderer, grid, maze_dim) \
+    {\
+        rr_renderer_init(renderer); \
+        float s = floorf(this->abs_width / maze_dim);\
+        rr_renderer_set_dimensions(renderer, s * maze_dim, s * maze_dim); \
+        rr_renderer_set_fill(renderer, 0xffffffff); \
+        for (uint32_t x = 0; x < maze_dim; ++x)\
+            for (uint32_t y = 0; y < maze_dim; ++y)\
+            {\
+                uint8_t at = grid[y][x].value;\
+                if (at == 1)\
+                {\
+                    rr_renderer_begin_path(renderer);\
+                    rr_renderer_fill_rect(renderer, x * s, y * s, s, s);\
+                }\
+                else if (at != 0)\
+                {\
+                    uint8_t left = (at >> 1) & 1;\
+                    uint8_t top = at & 1;\
+                    uint8_t inverse = (at >> 3) & 1;\
+                    rr_renderer_begin_path(renderer);\
+                    rr_renderer_move_to(renderer, (x + inverse ^ left) * s, (y + inverse ^ top) * s);\
+                    float start_angle = 0;\
+                    if (top == 0 && left == 1)\
+                        start_angle = M_PI / 2;\
+                    else if (top == 1 && left == 1)\
+                        start_angle = M_PI;\
+                    else if (top == 1 && left == 0)\
+                        start_angle = M_PI * 3 / 2;\
+                    rr_renderer_partial_arc(renderer, (x + left) * s, (y + top) * s, s, start_angle, start_angle + M_PI / 2, 0);\
+                    rr_renderer_fill(renderer);\
+                }\
+            }\
+    }
 
 static void minimap_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
@@ -27,7 +62,6 @@ static void minimap_on_render(struct rr_ui_element *this,
     uint8_t main_arena = player_info->arena == 1;
     float grid_size = main_arena ? RR_MAZE_GRID_SIZE : RR_BURRON_GRID_SIZE; 
     uint32_t maze_dim = main_arena ? RR_MAZE_DIM : RR_BURROW_MAZE_DIM;
-    struct rr_maze_grid *grid = main_arena ? &RR_MAZE_HELL_CREEK[0][0] : &RR_MAZE_BURROW[0][0];
     double midX =
         (player_info->lerp_camera_x / (grid_size * maze_dim) - 0.5) * this->abs_width;
     double midY =
@@ -37,48 +71,11 @@ static void minimap_on_render(struct rr_ui_element *this,
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_begin_path(renderer);
     rr_renderer_rect(renderer, midX - W / 2, midY - H / 2, W, H);
-    rr_renderer_translate(renderer, -this->abs_width / 2, -this->abs_height / 2);
     //rr_renderer_clip(renderer);
-    //rr_renderer_draw_image(renderer, renderer);
-    rr_renderer_set_fill(renderer, 0xffffffff);
-    float s = this->abs_width / maze_dim;
-    for (uint32_t x = 0; x < maze_dim; ++x)
-        for (uint32_t y = 0; y < maze_dim; ++y)
-        {
-            //rr_renderer_set_fill(renderer, 0xffffffff);
-            uint8_t at = grid[y*maze_dim+x].value;
-            if (at == 1)
-            {
-                rr_renderer_begin_path(renderer);
-                rr_renderer_fill_rect(renderer, x * s, y * s, s, s);
-            }
-            else if (at != 0)
-            {
-                uint8_t left = (at >> 1) & 1;
-                uint8_t top = at & 1;
-                uint8_t inverse = (at >> 3) & 1;
-                rr_renderer_begin_path(renderer);
-                rr_renderer_move_to(renderer, (x + inverse ^ left) * s, (y + inverse ^ top) * s);
-                float start_angle = 0;
-                if (top == 0 && left == 1)
-                    start_angle = M_PI / 2;
-                else if (top == 1 && left == 1)
-                    start_angle = M_PI;
-                else if (top == 1 && left == 0)
-                    start_angle = M_PI * 3 / 2;
-                rr_renderer_partial_arc(renderer, (x + left) * s, (y + top) * s, s, start_angle, start_angle + M_PI / 2, 0);
-                rr_renderer_fill(renderer);
-            }
-            continue;
-            rr_renderer_set_fill(renderer, 0xffff0000);
-            rr_renderer_set_text_size(renderer, s / 2.5);
-            char a[16];
-            a[sprintf(a, "%d,%d", x % 10, y % 10)] = 0;
-            rr_renderer_set_text_align(renderer, 1);
-            rr_renderer_set_text_baseline(renderer, 1);
-            rr_renderer_fill_text(renderer, a, (x + 0.5) * s, (y + 0.5) * s);
-        }
-    rr_renderer_translate(renderer, this->abs_width / 2, this->abs_height / 2);
+    struct rr_renderer *minimap = &minimaps[1 - main_arena];
+    rr_renderer_scale(renderer, this->abs_width / minimap->width);
+    rr_renderer_draw_image(renderer, minimap);
+    rr_renderer_scale(renderer, minimap->width / this->abs_width);
     rr_renderer_set_fill(renderer, 0xff0000ff);
     rr_renderer_set_global_alpha(renderer, 0.8);
     rr_renderer_begin_path(renderer);
@@ -105,5 +102,7 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
     
     this->abs_width = this->width = this->abs_height = this->height = 150;
     this->on_render = minimap_on_render;
+    DRAW_MINIMAP(&minimaps[0], RR_MAZE_HELL_CREEK, RR_MAZE_DIM)
+    DRAW_MINIMAP(&minimaps[1], RR_MAZE_BURROW, RR_BURROW_MAZE_DIM)
     return this;
 }

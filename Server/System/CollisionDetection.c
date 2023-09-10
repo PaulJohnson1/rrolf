@@ -26,8 +26,8 @@ static void system_reset_colliding_with(EntityIdx entity, void *captures)
     if (owner != RR_NULL_ENTITY && rr_simulation_has_entity(this, owner) && rr_simulation_has_physical(this, owner))
         if (physical->arena != rr_simulation_get_physical(this, owner)->arena)
             rr_simulation_request_entity_deletion(this, entity);
-    if (!rr_simulation_has_arena(this, physical->arena))
-        physical->arena = 1;
+    //if (!rr_simulation_has_arena(this, physical->arena))
+        //physical->arena = 1;
     
 }
 
@@ -114,7 +114,8 @@ static void collapse_arena(EntityIdx entity, void *_captures)
     if (entity == 1)
         return;
     struct rr_simulation *this = _captures;
-    if (rr_frand() < 0.005)
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
+    if ((arena->ticks_to_deletion -= (arena->mob_count == 0)) == 0)
         rr_simulation_request_entity_deletion(this, entity);
 }
 void rr_system_collision_detection_tick(struct rr_simulation *this)

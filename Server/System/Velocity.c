@@ -245,6 +245,8 @@ static void system(EntityIdx id, void *simulation)
     rr_vector_set(&physical->acceleration, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
+    if (rr_vector_get_magnitude(&vel) > arena->grid_size)
+        rr_vector_set_magnitude(&vel, arena->grid_size);
     float before_x = physical->x;
     float before_y = physical->y;
     float now_x = before_x + vel.x;
@@ -269,9 +271,9 @@ static void system(EntityIdx id, void *simulation)
         //if (passes_behind_borders) fclamp(x and y)
         uint32_t phase = min_of_4(border_phase);
         //printf("phase is %d\n", phase);
-        if (RR_MAZE_HELL_CREEK[before_grid_y][before_grid_x].value != 1)
+        if (grid(0,0) != 1)
         {
-            uint8_t tile = RR_MAZE_HELL_CREEK[before_grid_y][before_grid_x].value;
+            uint8_t tile = grid(0,0);
             uint8_t left = (tile >> 1) & 1;
             uint8_t top = tile & 1;
             uint8_t inverse = ((tile >> 3) & 1) ^ 1;
