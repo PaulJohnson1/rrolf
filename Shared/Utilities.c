@@ -35,7 +35,7 @@ float rr_angle_lerp(float start, float end, float t)
     }
 }
 
-float rr_frand() { return (double)rand() / (double)RAND_MAX; }
+float rr_frand() { return (double)rand() / (double)(RAND_MAX+1); }
 
 float rr_fclamp(float v, float s, float e)
 {
