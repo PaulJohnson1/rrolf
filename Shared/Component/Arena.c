@@ -18,7 +18,7 @@ void rr_component_arena_init(struct rr_component_arena *this,
                              struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    RR_SERVER_ONLY(this->ticks_to_deletion = 12334;)
+    RR_SERVER_ONLY(this->ticks_to_deletion = 25;)
 }
 
 void rr_component_arena_free(struct rr_component_arena *this,
