@@ -53,7 +53,10 @@ uint8_t rr_client_create_squad(struct rr_server *this, struct rr_server_client *
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
         if (this->squads[i].member_count == 0)
+        {
+            this->squads[i].private = 1;
             return i;
+        }
     return RR_ERROR_CODE_INVALID_SQUAD;
 }
 
