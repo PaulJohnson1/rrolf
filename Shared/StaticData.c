@@ -299,6 +299,7 @@ double xp_to_reach_level(uint32_t level)
     return base;
 }
 
+#ifdef RR_SERVER
 #define c 1
 #define C 4
 #define u 8
@@ -312,8 +313,27 @@ double xp_to_reach_level(uint32_t level)
 #define m 40
 #define M 44
 #define x 48
+#else
+#define c 1
+#define C 1
+#define u 1
+#define U 1
+#define r 1
+#define R 1
+#define e 1
+#define E 1
+#define l 1
+#define L 1
+#define m 1
+#define M 1
+#define x 1
+#endif
 
-uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
+#define RR_DEFINE_MAZE(name, size) \
+struct rr_maze_grid RR_MAZE_##name[size][size]; \
+uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]
+
+RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
     {l, l, l, l, l, l, l, l, l, E, E, E, 0, 0, 0, R, e, 0, e, e, 0},
     {l, 0, 0, 0, L, 0, 0, 0, 0, 0, 0, e, 0, 0, 0, R, 0, 0, 0, R, R},
     {l, l, 0, L, L, 0, 0, 0, 0, 0, e, e, e, 0, 0, R, 0, 0, 0, 0, r},
@@ -337,16 +357,13 @@ uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2] = {
     {0, 0, 0, 0, x, 0, 0, m, L, L, l, l, l, E, E, E, e, e, R, R, R},
 };
 
-uint8_t RR_MAZE_TEMPLATE_BURROW[RR_BURROW_MAZE_DIM/2][RR_BURROW_MAZE_DIM/2] = {
+RR_DEFINE_MAZE(BURROW, RR_BURROW_MAZE_DIM) = {
     {1, 1, 0, 0, 1},
     {0, 1, 1, 1, 1},
     {1, 1, 1, 0, 1},
     {0, 1, 0, 1, 1},
     {1, 1, 1, 0, 1}
 };
-
-struct rr_maze_grid RR_MAZE_BURROW[RR_BURROW_MAZE_DIM][RR_BURROW_MAZE_DIM];
-struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
 
 #undef c
 #undef C

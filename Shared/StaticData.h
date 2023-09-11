@@ -147,10 +147,6 @@ extern double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
-extern uint8_t RR_MAZE_TEMPLATE_HELL_CREEK[RR_MAZE_DIM/2][RR_MAZE_DIM/2];
-
-extern uint8_t RR_MAZE_TEMPLATE_BURROW[RR_BURROW_MAZE_DIM/2][RR_BURROW_MAZE_DIM/2];
-
 struct rr_maze_grid
 {
     uint8_t value : 4;
@@ -162,9 +158,12 @@ struct rr_maze_grid
 #endif
 };
 
-extern struct rr_maze_grid RR_MAZE_HELL_CREEK[RR_MAZE_DIM][RR_MAZE_DIM];
+#define RR_DECLARE_MAZE(name, size) \
+extern uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]; \
+extern struct rr_maze_grid RR_MAZE_##name[size][size];
 
-extern struct rr_maze_grid RR_MAZE_BURROW[RR_BURROW_MAZE_DIM][RR_BURROW_MAZE_DIM];
+RR_DECLARE_MAZE(HELL_CREEK, RR_MAZE_DIM)
+RR_DECLARE_MAZE(BURROW, RR_BURROW_MAZE_DIM)
 
 
 void rr_static_data_init();

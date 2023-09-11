@@ -471,13 +471,14 @@ const connected_clients = {};
 
 wss.on("connection", (ws, req) => {
     console.log(req.url);
-    //if (req.url !== `/api/${SERVER_SECRET}`)
-       //return ws.close();
+    if (req.url !== `/api/${SERVER_SECRET}`)
+       return ws.close();
     const game_server = new GameServer();
     game_server[game_server.server_id] = game_server;
     ws.on('message', async (message) => {
         const data = new Uint8Array(message);
         const decoder = new protocol.BinaryReader(data);
+        console.log("recv'ed message from gameserver");
         switch(decoder.ReadUint8())
         {
             case 0:
@@ -485,11 +486,11 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
                 try {
+                    console.log("initing " + uuid);
                     const user = await db_read_user(uuid, SERVER_SECRET);
                     connected_clients[uuid] = user;
                     game_server.clients[pos] = uuid;
                     user.needs_update = 0;  
-                    console.log("initing " + user.username);
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
@@ -543,12 +544,11 @@ wss.on("connection", (ws, req) => {
                         ++user.petals[key];
                 }
                 user.needs_update = 1;
-                write_db_entry(user.username, user);
                 break;
             }
         }
     });
-    console.log("connect");
+    console.log("game server connected");
     const encoder = new protocol.BinaryWriter();
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.server_id);
@@ -580,11 +580,17 @@ wss.on("connection", (ws, req) => {
             ws.send(encoder.data.subarray(0, encoder.at));
             user.needs_update = 0;
         }
-    }, 1500);
+    }, 2500);
     ws.on('close', () => {
-        console.log('Client disconnected');
+        console.log('Game server disconnected');
         for (const uuid of game_server.clients)
             delete connected_clients[uuid];
         delete game_servers[game_server.server_id];
     });
 });
+
+setInterval(() => {
+    console.log('Updating active clients');
+    for (const user in connected_clients)
+        write_db_entry(connected_clients[user].username, connected_clients[user]);
+}, 60000);

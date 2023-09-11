@@ -840,6 +840,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 #define min(a,b) (((a) < (b)) ? (a) : (b))
                 client->level = min(next_level - 1, 150);
                 #undef min
+                printf("client level is %d %f\n", client->level, xp);
                 uint8_t id = rr_binary_encoder_read_uint8(&decoder);
                 while (id)
                 {
@@ -906,33 +907,6 @@ void *thread_func(void *arg)
 
 static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
-static int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
-                           void *user, void *in, size_t size)
-{
-    struct rr_websocket *this = lws_context_user(lws_get_context(wsi));
-
-    switch (reason)
-    {
-    case LWS_CALLBACK_CLIENT_ESTABLISHED:
-        //this->on_event(rr_websocket_event_type_open, NULL, this->user_data, 0);
-        break;
-    case LWS_CALLBACK_CLIENT_RECEIVE:
-        //this->on_event(rr_websocket_event_type_data, in, this->user_data, size);
-        break;
-    case LWS_CALLBACK_CLIENT_CLOSED:
-        //this->on_event(rr_websocket_event_type_close, NULL, this->user_data, size);
-        break;
-    case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
-        fputs((char *)in, stderr);
-        fputs("\n", stderr);
-        abort();
-        break;
-    default:
-        break;
-    }
-    return 0;
-}
-
 void rr_server_run(struct rr_server *this)
 {
     {
@@ -960,8 +934,7 @@ void rr_server_run(struct rr_server *this)
 
         info.port = CONTEXT_PORT_NO_LISTEN;
         info.user = this;
-        info.pt_serv_buf_size = MESSAGE_BUFFER_SIZE;
-        info.pt_serv_buf_size = 1024 * 1024;
+        info.pt_serv_buf_size = 16 * 1024;
         this->api_client_context = lws_create_context(&info);
         struct lws_client_connect_info connection_info;
         memset(&connection_info, 0, sizeof connection_info);
