@@ -125,6 +125,8 @@ static void player_hud_on_render(struct rr_ui_element *this,
                 0);
             return;
         }
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(game->simulation, player_info->flower_id);
         struct rr_component_health *health =
             rr_simulation_get_health(game->simulation, player_info->flower_id);
         float length = this->abs_width / 2;
@@ -147,7 +149,9 @@ static void player_hud_on_render(struct rr_ui_element *this,
         rr_renderer_stroke(renderer);
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
+        rr_renderer_scale(renderer, 25 / physical->lerp_radius);
         rr_component_flower_render(player_info->flower_id, game, game->simulation);
+        rr_renderer_scale(renderer, physical->lerp_radius / 25);
         rr_renderer_set_text_baseline(renderer, 1);
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_fill(renderer, 0xffffffff);
