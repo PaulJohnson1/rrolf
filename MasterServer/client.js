@@ -1,6 +1,6 @@
-class Client
+class GameClient
 {
-    constuctor(user) 
+    constructor(user) 
     {
         this.user = user;
         this.needs_gameserver_update = false;
@@ -26,4 +26,4 @@ class Client
     }
 }
 
-module.exports = Client;
+module.exports = GameClient;

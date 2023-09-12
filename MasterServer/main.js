@@ -8,7 +8,7 @@ const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
 const GameServer = require("./gameserver");
-const Client = require("./client");
+const GameClient = require("./client");
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -170,7 +170,7 @@ async function write_db_entry(username, data)
 async function db_read_user(username, password)
 {
     if (connected_clients[username] && (1 || password === SERVER_SECRET))
-        return connected_clients[username];
+        return connected_clients[username].user;
     const user = structuredClone({value: database[username]});
     // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
@@ -382,7 +382,7 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
         const user = await db_read_user(username, password);
         const results = craft_user_petals(user, petals);
         if (connected_clients[username])
-            connected_clients[username].needs_update = 1;
+            connected_clients[username].needs_gameserver_update = 1;
         await write_db_entry(username, user);
         return results;
     })
@@ -478,7 +478,7 @@ wss.on("connection", (ws, req) => {
                 try {
                     log("client init", [uuid]);
                     const user = await db_read_user(uuid, SERVER_SECRET);
-                    connected_clients[uuid] = new Client(user);
+                    connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(1);
@@ -506,7 +506,7 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 if (!connected_clients[uuid])
                     break;
-                const user = connected_clients[uuid];
+                const user = connected_clients[uuid].user;
                 const pos = game_server.clients.indexOf(uuid);
                 if (pos === -1)
                     break;
@@ -535,12 +535,13 @@ wss.on("connection", (ws, req) => {
     setInterval(() => {
         for (let pos = 0; pos < 64; ++pos)
         {
-            if (!connected_clients[game_server.clients[pos]])
+            const uuid = game_server.clients[pos];
+            if (!connected_clients[uuid])
                 continue;
-            const client = connected_clients[game_server.clients[pos]];
+            const client = connected_clients[uuid];
             if (!client.needs_gameserver_update)
                 continue;
-            log("client update", [client.user.username]);
+            log("client update", [uuid]);
             const encoder = new protocol.BinaryWriter();
             encoder.WriteUint8(1);
             encoder.WriteUint8(pos);

@@ -166,6 +166,16 @@ static void tick_wave(struct rr_simulation *this)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
+    // delete pending deletions
+    rr_bitset_for_each_bit(
+        this->pending_deletions,
+        this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
+        rr_simulation_pending_deletion_free_components);
+    //memset(this->recently_deleted, 0, sizeof this->recently_deleted);
+    rr_bitset_for_each_bit(this->pending_deletions,
+                           this->pending_deletions +
+                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
+                           this, __rr_simulation_pending_deletion_unset_entity);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
     this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
@@ -184,15 +194,5 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
     tick_wave(this);
-    // delete pending deletions
-    rr_bitset_for_each_bit(
-        this->pending_deletions,
-        this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        rr_simulation_pending_deletion_free_components);
-    //memset(this->recently_deleted, 0, sizeof this->recently_deleted);
-    rr_bitset_for_each_bit(this->pending_deletions,
-                           this->pending_deletions +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           this, __rr_simulation_pending_deletion_unset_entity);
     //udp uses pemnding delete
 }
