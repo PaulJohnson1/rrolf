@@ -537,18 +537,18 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
-        case 0:
+        case RR_CLIENTBOUND_UPDATE:
         {
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
             break;
         }
-        case 68:
+        case RR_CLIENTBOUND_SQUAD_FAIL:
         {
             this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
             break;
         }
-        case 69:
+        case RR_CLIENTBOUND_SQUAD_UPDATE:
         {
             this->socket.found_error = 0;
             this->joined_squad = 1;
@@ -578,7 +578,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_code[6] = 0;
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 70, "header");
+            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
             proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
                                   "loadout count");
             for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
@@ -596,7 +596,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 71, "header");
+            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_NICKNAME_UPDATE, "header");
             proto_bug_write_string(&encoder2, this->cache.nickname, 16 + 1,
                                    "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
@@ -695,7 +695,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
 {
     struct proto_bug encoder2;
     proto_bug_init(&encoder2, output_packet);
-    proto_bug_write_uint8(&encoder2, 0, "header");
+    proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_INPUT, "header");
     uint8_t movement_flags = 0;
     movement_flags |=
         (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
@@ -735,7 +735,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
     struct proto_bug encoder;
     proto_bug_init(&encoder, output_packet);
-    proto_bug_write_uint8(&encoder, 2, "header");
+    proto_bug_write_uint8(&encoder, RR_SERVERBOUND_PETAL_SWITCH, "header");
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');
@@ -908,31 +908,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 #endif
     if (this->socket_ready)
     {
-#ifndef RIVET_BUILD
-#define WRITE_CHEAT(X) \
-struct proto_bug encoder; \
-proto_bug_init(&encoder, output_packet); \
-proto_bug_write_uint8(&encoder, 3, "header"); \
-proto_bug_write_uint8(&encoder, X, "cheat type"); \
-rr_websocket_send(&this->socket, encoder.current - encoder.start);
-
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              75 /* k */))
-        {
-            WRITE_CHEAT(2)
-        }
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              76 /* l */))
-        {
-            WRITE_CHEAT(1)
-        }
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              86 /* v */))
-        {
-            WRITE_CHEAT(3)
-        }
-#undef WRITE_CHEAT
-#endif
         if (this->simulation_ready)
         {
             if (!this->is_mobile)

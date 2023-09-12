@@ -140,23 +140,23 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     if (!rr_bitset_get_bit(new_entities_in_view, id))
     {
         // deletion spotted!
-        uint8_t out_of_view =
-            rr_simulation_has_entity(captures->simulation, id) == 0;
-        if (!out_of_view)
+        uint8_t serverside_delete =
+            (rr_simulation_has_entity(captures->simulation, id) == 0) || rr_bitset_get(&captures->simulation->pending_deletions[0], id);
+        if (serverside_delete)
         {
             if (rr_simulation_has_drop(captures->simulation, id))
             {
                 struct rr_component_drop *drop = rr_simulation_get_drop(captures->simulation, id);
                 if (!rr_bitset_get(drop->can_be_picked_up_by, player_info->squad))
-                    out_of_view = 1;
+                    serverside_delete = 1;
                 else if (rr_bitset_get(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos))
                 //1 = in-place deletion, 2 = suck to player
-                    out_of_view = 2;
+                    serverside_delete = 2;
             }
         }
         rr_bitset_unset(player_info->entities_in_view, id);
         proto_bug_write_varuint(encoder, id, "entity deletion id");
-        proto_bug_write_uint8(encoder, out_of_view, "deletion type");
+        proto_bug_write_uint8(encoder, serverside_delete, "deletion type");
     }
 }
 

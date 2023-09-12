@@ -8,8 +8,7 @@ const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
 const GameServer = require("./gameserver");
-const { connect } = require("http2");
-const { connected } = require("process");
+const Client = require("./client");
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -136,16 +135,15 @@ function apply_missing_defaults(account)
 
 function craft(count, initial_fails, chance)
 {
-    if (chance === 0)
-        return {count, successes: 0};
     let successes = 0;
     let fails = initial_fails;
     let attempts = 0;
+    if (chance === 0)
+        return {count, successes, attempts, fails};
     while (count >= PETALS_TO_UPGRADE)
     {
         attempts++;
-        let this_chance = chance * (fails + 1);
-        if (Math.random() < this_chance)
+        if (Math.random() < chance * (fails + 1))
         {
             fails = 0;
             successes++;
@@ -452,12 +450,6 @@ process.on("uncaughtException", try_save_exit);
 
 setInterval(saveDatabaseToFile, 60000);
 
-/*
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-*/
-
 const server = http.createServer(app);
 
 server.listen(port, () => {
@@ -470,7 +462,6 @@ const game_servers = {};
 const connected_clients = {};
 
 wss.on("connection", (ws, req) => {
-    console.log(req.url);
     if (req.url !== `/api/${SERVER_SECRET}`)
        return ws.close();
     const game_server = new GameServer();
@@ -478,7 +469,6 @@ wss.on("connection", (ws, req) => {
     ws.on('message', async (message) => {
         const data = new Uint8Array(message);
         const decoder = new protocol.BinaryReader(data);
-        console.log("recv'ed message from gameserver");
         switch(decoder.ReadUint8())
         {
             case 0:
@@ -486,26 +476,14 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
                 try {
-                    console.log("initing " + uuid);
+                    log("client init", [uuid]);
                     const user = await db_read_user(uuid, SERVER_SECRET);
-                    connected_clients[uuid] = user;
+                    connected_clients[uuid] = new Client(user);
                     game_server.clients[pos] = uuid;
-                    user.needs_update = 0;  
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
-                    encoder.WriteStringNT(user.username);
-                    encoder.WriteFloat64(user.xp);
-                    for (const petal of Object.keys(user.petals))
-                    {
-                        if (!(user.petals[petal] > 0))
-                            continue;
-                        const [id, rarity] = petal.split(":");
-                        encoder.WriteUint8(id);
-                        encoder.WriteVarUint(user.petals[petal]);
-                        encoder.WriteUint8(rarity);
-                    }
-                    encoder.WriteUint8(0);
+                    connected_clients[uuid].write(encoder);
                     ws.send(encoder.data.subarray(0, encoder.at));
                 } catch(e) {
                     console.log(e);
@@ -518,7 +496,7 @@ wss.on("connection", (ws, req) => {
                 const pos = decoder.ReadUint8();
                 if (game_server.clients[pos] === uuid)
                 {
-                    delete connected_clients[game_server.clients[pos]];
+                    delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
                 break;
@@ -543,12 +521,13 @@ wss.on("connection", (ws, req) => {
                     else
                         ++user.petals[key];
                 }
-                user.needs_update = 1;
+                //user.needs_gameserver_update = 1;
+                user.needs_database_update = 1;
                 break;
             }
         }
     });
-    console.log("game server connected");
+    log("game connect", [game_server.server_id]);
     const encoder = new protocol.BinaryWriter();
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.server_id);
@@ -558,31 +537,25 @@ wss.on("connection", (ws, req) => {
         {
             if (!connected_clients[game_server.clients[pos]])
                 continue;
-            const user = connected_clients[game_server.clients[pos]];
-            if (!user.needs_update)
+            const client = connected_clients[game_server.clients[pos]];
+            if (!client.needs_gameserver_update)
                 continue;
-            console.log("!!!!!!!!!!!!!!!!updating " + user.username + " !!!!!!!!!!!!!!!!!!!");
+            log("client update", [client.user.username]);
             const encoder = new protocol.BinaryWriter();
             encoder.WriteUint8(1);
             encoder.WriteUint8(pos);
-            encoder.WriteStringNT(user.username);
-            encoder.WriteFloat64(user.xp);
-            for (const petal of Object.keys(user.petals))
-            {
-                if (!(user.petals[petal] > 0))
-                    continue;
-                const [id, rarity] = petal.split(":");
-                encoder.WriteUint8(id);
-                encoder.WriteVarUint(user.petals[petal]);
-                encoder.WriteUint8(rarity);
-            }
-            encoder.WriteUint8(0);
+            client.write(encoder);
             ws.send(encoder.data.subarray(0, encoder.at));
-            user.needs_update = 0;
         }
     }, 2500);
+    setInterval(() => {
+        //ping packet
+        const encoder = new protocol.BinaryWriter();
+        encoder.WriteUint8(100);
+        ws.send(encoder.data.subarray(0, encoder.at));
+    }, 20000);
     ws.on('close', () => {
-        console.log('Game server disconnected');
+        log("game disconnect", [game_server.server_id]);
         for (const uuid of game_server.clients)
             delete connected_clients[uuid];
         delete game_servers[game_server.server_id];
@@ -590,7 +563,13 @@ wss.on("connection", (ws, req) => {
 });
 
 setInterval(() => {
-    console.log('Updating active clients');
-    for (const user in connected_clients)
-        write_db_entry(connected_clients[user].username, connected_clients[user]);
-}, 60000);
+    log("updating db", Object.keys(connected_clients))
+    for (const uuid in connected_clients)
+    {
+        const client = connected_clients[uuid];
+        if (!client.needs_database_update)
+            continue;
+        log("updating db", uuid);
+        write_db_entry(client.user.username, client.user);
+    }
+}, 15000);

@@ -269,7 +269,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     struct rr_server *server = this->server;
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
-    proto_bug_write_uint8(&encoder, 0, "header");
+    proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_UPDATE, "header");
     rr_simulation_write_binary(&server->simulation, &encoder,
                                this->player_info);
     rr_server_client_encrypt_message(this, encoder.start,
@@ -302,18 +302,23 @@ void rr_server_client_tick(struct rr_server_client *this)
             rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick_size);
             for (uint32_t i = 0; i < this->player_info->drops_this_tick_size; ++i)
             {
-                rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick[i].id);
-                rr_binary_encoder_write_uint8(&encoder, this->player_info->drops_this_tick[i].rarity);
+                uint8_t id = this->player_info->drops_this_tick[i].id;
+                uint8_t rarity = this->player_info->drops_this_tick[i].rarity;
+                ++this->inventory[id][rarity];
+                rr_binary_encoder_write_uint8(&encoder, id);
+                rr_binary_encoder_write_uint8(&encoder, rarity);
             }
             lws_write(this->server->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
             this->player_info->drops_this_tick_size = 0;
+            // this doesn't require a gameserver update. server synchronously updates drops
+            // the only time the server needs to update is when the user crafts
         }
     }
     else
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
-        proto_bug_write_uint8(&encoder, 69, "header");
+        proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
         struct rr_squad *squad = &this->server->squads[this->squad - 1];
         for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -601,7 +606,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
-        case 0:
+        case RR_SERVERBOUND_INPUT:
         {
             if (client->player_info == NULL)
                 break;
@@ -651,7 +656,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
-        case 2:
+        case RR_SERVERBOUND_PETAL_SWITCH:
         {
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
@@ -665,7 +670,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case 68:
+        case RR_SERVERBOUND_SQUAD_JOIN:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
             if (type > 2)
@@ -686,7 +691,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, 68, "header");
+                proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
                 proto_bug_write_uint8(&failure, 0, "fail type");
                 rr_server_client_encrypt_message(client, failure.start,
                                 failure.current - failure.start);
@@ -698,7 +703,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_client_join_squad(this, client, squad);
             break;
         }
-        case 69:
+        case RR_SERVERBOUND_SQUAD_READY:
         {
             if (client->squad != 0)
             {
@@ -724,7 +729,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case 70:
+        case RR_SERVERBOUND_LOADOUT_UPDATE:
         {
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
@@ -767,16 +772,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             break;
         }
-        case 71:
+        case RR_SERVERBOUND_NICKNAME_UPDATE:
         {
-            memset(&client->client_nickname, 0,
-                   sizeof(client->client_nickname));
-
             proto_bug_read_string(&encoder, client->client_nickname,
                                   16 + 1, "nick");
             break;
         }
-        case 72:
+        case RR_SERVERBOUND_PRIVATE_UPDATE:
         {
             if (client->squad_pos != 0 && first)
                 this->squads[client->squad - 1].private = 0;
@@ -849,6 +851,14 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     client->inventory[id][rarity] = count;
                     id = rr_binary_encoder_read_uint8(&decoder);
                 }
+                break;
+            }
+            case 100:
+            {
+                struct rr_binary_encoder encoder;
+                rr_binary_encoder_init(&encoder, outgoing_message);
+                rr_binary_encoder_write_uint8(&encoder, 100);
+                lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
                 break;
             }
             default:
