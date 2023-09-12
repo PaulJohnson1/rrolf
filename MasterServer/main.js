@@ -474,8 +474,8 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
                 try {
-                    log("client init", [uuid]);
                     const user = await db_read_user(uuid, SERVER_SECRET);
+                    log("client init", [user]);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
