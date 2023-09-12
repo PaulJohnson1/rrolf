@@ -149,9 +149,10 @@ static void player_hud_on_render(struct rr_ui_element *this,
         rr_renderer_stroke(renderer);
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
-        rr_renderer_scale(renderer, 25 / physical->radius);
+        float r = physical->radius == 0 ? 25 : physical->radius;
+        rr_renderer_scale(renderer, 25 / r);
         rr_component_flower_render(player_info->flower_id, game, game->simulation);
-        rr_renderer_scale(renderer, physical->radius / 25);
+        rr_renderer_scale(renderer, r / 25);
         rr_renderer_set_text_baseline(renderer, 1);
         rr_renderer_set_text_align(renderer, 0);
         rr_renderer_set_fill(renderer, 0xffffffff);
@@ -172,7 +173,7 @@ static void player_hud_on_render(struct rr_ui_element *this,
                 physical->x - game->player_info->camera_x,
                 physical->y - game->player_info->camera_y};
             rr_renderer_rotate(renderer, rr_vector_theta(&vector));
-            rr_renderer_translate(renderer, this->abs_height * 0.6, 0);
+            rr_renderer_translate(renderer, 25 + 6, 0);
             rr_renderer_set_line_cap(renderer, 1);
             rr_renderer_set_stroke(renderer, 0xff222222);
             rr_renderer_set_fill(renderer, 0xffffffff);

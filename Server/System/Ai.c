@@ -872,6 +872,18 @@ static void system_for_each(EntityIdx entity, void *simulation)
         ai->ai_state = rr_ai_state_idle;
         ai->ticks_until_next_action = 25;
     }
+    if (ai->target_entity != RR_NULL_ENTITY)
+    {
+        struct rr_component_physical *t_physical =
+        rr_simulation_get_physical(this, ai->target_entity);
+        struct rr_vector diff = {physical->x - t_physical->x, physical->y - t_physical->y};
+        if (rr_vector_get_magnitude(&diff) > 2000)
+        {
+            ai->target_entity = RR_NULL_ENTITY;
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = 25;
+        } 
+    }
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
