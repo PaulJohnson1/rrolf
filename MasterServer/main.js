@@ -475,7 +475,8 @@ wss.on("connection", (ws, req) => {
                 const pos = decoder.ReadUint8();
                 try {
                     const user = await db_read_user(uuid, SERVER_SECRET);
-                    log("client init", [user]);
+                    log("client init", [uuid]);
+                    console.log(user);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
@@ -494,6 +495,7 @@ wss.on("connection", (ws, req) => {
                 const pos = decoder.ReadUint8();
                 if (game_server.clients[pos] === uuid)
                 {
+                    log("client delete", [uuid]);
                     delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
