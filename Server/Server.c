@@ -594,13 +594,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             //client->max_wave = account.maximum_wave;
 
-            puts("socket verified");
+            printf("socket %s verified\n", client->rivet_account.uuid);
             client->verified = 1;
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
             rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
-            rr_binary_encoder_write_varuint(&encoder, i);
+            rr_binary_encoder_write_uint8(&encoder, i);
             lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
             return 0;
         }
