@@ -214,7 +214,7 @@ function user_merge_petals(user, petals)
 function craft_user_petals(user, petals)
 {
     if (petals.length === 0)
-        return "";
+        return "\x00error";
     // validate
     for (let i = 0; i < petals.length; i++)
         if (petals[i].count < PETALS_TO_UPGRADE)
@@ -334,9 +334,6 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
     log("user_get", [username]);
     handle_error(res, async () => {
         const user = await db_read_user(username, password);
-        delete user.failed_crafts;
-        delete user.password;
-        delete user.already_playing;
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(user.username);
         out.WriteFloat64(user.xp);
@@ -377,7 +374,6 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
         log("crafted petals", [username, petals_string])
         const petals = parse_id_rarity_count(petals_string);
         const user = await db_read_user(username, password);
-        console.log(user);
         const results = craft_user_petals(user, petals);
         if (connected_clients[username])
             connected_clients[username].needs_gameserver_update = 1;
@@ -391,10 +387,7 @@ app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) =
     log("user_get", [username]);
     handle_error(res, async () => {
         const user = await db_read_user(username, password);
-        delete user.failed_crafts;
-        delete user.password;
-        delete user.already_playing;
-        return JSON.stringify(user)
+        return JSON.stringify(user);
     });
 });
 
@@ -476,7 +469,6 @@ wss.on("connection", (ws, req) => {
                 try {
                     const user = await db_read_user(uuid, SERVER_SECRET);
                     log("client init", [uuid]);
-                    console.log(user);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
