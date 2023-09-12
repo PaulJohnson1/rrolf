@@ -829,9 +829,10 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 char uuid[100];
                 rr_binary_encoder_read_nt_string(&decoder, uuid);
                 struct rr_server_client *client = &this->clients[pos];
+                printf("reading account %s\n", uuid);
+                printf("cmp to %s\n", client->rivet_account.uuid);
                 if (strcmp(uuid, client->rivet_account.uuid))
                     break; // fake client
-                printf("reading account %s\n", uuid);
                 double xp = rr_binary_encoder_read_float64(&decoder);
                 uint32_t next_level = 2;
                 while (xp >= xp_to_reach_level(next_level))
