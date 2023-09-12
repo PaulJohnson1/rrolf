@@ -141,9 +141,9 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 10, 15, 30, 150, 500};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 8, 12, 25, 50, 200, 500};
+    0, 1, 8, 12, 25, 50, 150, 500};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    5, 2, 10, 12, 15, 18, 25};
+    5, 2, 7, 10, 12, 15, 25};
 
 static void init_game_coefficients()
 {

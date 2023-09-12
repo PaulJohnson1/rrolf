@@ -124,7 +124,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
 }
 
 #define GRID_MOB_LIMIT(DIFFICULTY) \
-    5 - DIFFICULTY / 10
+    6 - DIFFICULTY / 20
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -134,7 +134,7 @@ static void tick_wave(struct rr_simulation *this)
         {
             if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 grid_y += SPAWN_ZONE_H;
-            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value != 1)
+            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value == 0 || (RR_MAZE_HELL_CREEK[grid_y][grid_x].value & 8))
                 continue;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT(RR_MAZE_HELL_CREEK[grid_y][grid_x].difficulty))
                 continue;
