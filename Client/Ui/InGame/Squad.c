@@ -149,7 +149,7 @@ static void player_hud_on_render(struct rr_ui_element *this,
         rr_renderer_stroke(renderer);
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
-        float r = physical->radius == 0 ? 25 : physical->radius;
+        float r = physical->lerp_radius == 0 ? 25 : physical->lerp_radius;
         rr_renderer_scale(renderer, 25 / r);
         rr_component_flower_render(player_info->flower_id, game, game->simulation);
         rr_renderer_scale(renderer, r / 25);
