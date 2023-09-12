@@ -111,7 +111,6 @@ set(SRCS
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_CLIENT")
 set(CMAKE_C_COMPILER "clang")
 
-# release by default
 if(DEBUG_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4")
     # add_compile_options(-fsanitize=address)
@@ -120,7 +119,7 @@ elseif(CALLGRIND_BUILD)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -gdwarf-4 -DHSHG_NDEBUG -march=native")
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -ffast-math -DNDEBUG")
-    # set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 if (WASM_BUILD)
