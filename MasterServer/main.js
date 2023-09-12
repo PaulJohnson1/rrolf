@@ -184,9 +184,6 @@ async function db_read_user(username, password)
     
     apply_missing_defaults(user.value);
 
-    if (0 && user.value.password !== password && password !== SERVER_SECRET) //fix this noob
-        throw new Error("invalid password")
-
     return user.value;
 }
 
@@ -380,6 +377,7 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
         log("crafted petals", [username, petals_string])
         const petals = parse_id_rarity_count(petals_string);
         const user = await db_read_user(username, password);
+        console.log(user);
         const results = craft_user_petals(user, petals);
         if (connected_clients[username])
             connected_clients[username].needs_gameserver_update = 1;
