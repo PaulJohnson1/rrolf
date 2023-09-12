@@ -469,6 +469,7 @@ wss.on("connection", (ws, req) => {
                 try {
                     const user = await db_read_user(uuid, SERVER_SECRET);
                     log("client init", [uuid]);
+                    console.log("for real", user);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
