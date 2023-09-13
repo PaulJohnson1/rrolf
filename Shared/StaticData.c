@@ -57,21 +57,21 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1,   1},
     {1.5, 1.8},
-    {2.4, 3.0},
-    {3.5, 4.5},
-    {6.0, 7.2},
+    {2.8, 3.0},
+    {4.5, 4.5},
+    {7.0, 7.2},
     {12.0, 18.0},
-    {25.0, 54.0},
+    {30.0, 54.0},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {3.2, 1.3, 1.2},
-    {10.5, 1.6, 1.5}, 
-    {30,  2.5, 1.8},
-    {100,  4.0, 2.5},
-    {250, 7.0, 4.0},
-    {1000, 15,  6.0},
+    {3.2, 1.4, 1.2},
+    {12, 1.9, 1.5}, 
+    {35,  2.8, 1.8},
+    {120,  4.5, 2.5},
+    {300, 7.8, 4.0},
+    {1250, 18,  6.0},
 };
 // clang-format on
 
@@ -133,7 +133,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 10, 8, 12, 8};
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1.5, 25,
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1};
 //END                                            
@@ -141,9 +141,9 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 10, 15, 30, 150, 500};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 8, 12, 25, 50, 150, 500};
+    0, 1, 10, 25, 50, 200, 500, 1};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    5, 2, 7, 10, 12, 15, 25};
+    4, 5, 6, 10, 18, 15, 200};
 
 static void init_game_coefficients()
 {

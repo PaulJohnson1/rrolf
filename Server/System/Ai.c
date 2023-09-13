@@ -941,10 +941,10 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_pachycephalosaurus(entity, this);
         break;
     case rr_mob_id_trex:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.85);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.9);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.25);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.3);
         break;
     case rr_mob_id_dragonfly:
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.85);
