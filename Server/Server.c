@@ -808,7 +808,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
         this->api_ws_ready = 1;
         char *lobby_id = 
         #ifdef RIVET_BUILD
-        getenv("RIVET_LOBBY_TOKEN");
+        getenv("RIVET_LOBBY_ID");
         #else
         "localhost";
         #endif
