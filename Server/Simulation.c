@@ -154,7 +154,6 @@ static void tick_wave(struct rr_simulation *this)
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
         if (elapsed_time > 3000) \
         { \
-            puts(_); \
             printf("took %lu microseconds\n", elapsed_time); \
         } \
     };

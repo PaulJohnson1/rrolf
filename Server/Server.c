@@ -477,7 +477,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
                     rr_rivet_players_disconnected(
-                        getenv("RIVET_LOBBY_TOKEN"),
+                        getenv("RIVET_TOKEN"),
                         this->clients[i].rivet_account.token);
 #endif
                     struct rr_binary_encoder encoder;
@@ -579,7 +579,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             printf("client connecting with token: %s\n",
                     client->rivet_account.token);
             if (!rr_rivet_players_connected(
-                    getenv("RIVET_LOBBY_TOKEN"),
+                    getenv("RIVET_TOKEN"),
                     client->rivet_account.token))
             {
                 fputs("rivet error\n", stderr);
@@ -595,7 +595,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             //client->max_wave = account.maximum_wave;
 
             printf("socket %s verified\n", client->rivet_account.uuid);
-            client->verified = 1;
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
@@ -805,7 +804,20 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
     switch (reason)
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
+    {
         this->api_ws_ready = 1;
+        char *lobby_id = 
+        #ifdef RIVET_BUILD
+        getenv("RIVET_LOBBY_TOKEN");
+        #else
+        "localhost";
+        #endif
+        struct rr_binary_encoder encoder;
+        rr_binary_encoder_init(&encoder, outgoing_message);
+        rr_binary_encoder_write_uint8(&encoder, 101);
+        rr_binary_encoder_write_nt_string(&encoder, lobby_id);
+        lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+    }
         break;
     case LWS_CALLBACK_CLIENT_RECEIVE:
     {
@@ -851,6 +863,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     client->inventory[id][rarity] = count;
                     id = rr_binary_encoder_read_uint8(&decoder);
                 }
+                client->verified = 1;
                 break;
             }
             case 100:

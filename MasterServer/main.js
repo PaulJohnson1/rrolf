@@ -456,7 +456,7 @@ wss.on("connection", (ws, req) => {
     if (req.url !== `/api/${SERVER_SECRET}`)
        return ws.close();
     const game_server = new GameServer();
-    game_server[game_server.server_id] = game_server;
+    game_server[game_server.alias] = game_server;
     ws.on('message', async (message) => {
         const data = new Uint8Array(message);
         const decoder = new protocol.BinaryReader(data);
@@ -488,6 +488,9 @@ wss.on("connection", (ws, req) => {
                 if (game_server.clients[pos] === uuid)
                 {
                     log("client delete", [uuid]);
+                    const client = connected_clients[uuid];
+                    if (client.needs_database_update)
+                        write_db_entry(client.user.username, client.user);
                     delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
@@ -513,16 +516,22 @@ wss.on("connection", (ws, req) => {
                     else
                         ++user.petals[key];
                 }
-                //user.needs_gameserver_update = 1;
                 user.needs_database_update = 1;
                 break;
             }
+            case 100:
+                //ping
+                break;
+            case 101:
+                game_server.rivet_server_id = decoder.ReadStringNT();
+                log("server id recv", [game_server.rivet_server_id]);
+                break;
         }
     });
-    log("game connect", [game_server.server_id]);
+    log("game connect", [game_server.alias]);
     const encoder = new protocol.BinaryWriter();
     encoder.WriteUint8(0);
-    encoder.WriteStringNT(game_server.server_id);
+    encoder.WriteStringNT(game_server.alias);
     ws.send(encoder.data.subarray(0, encoder.at));
     setInterval(() => {
         for (let pos = 0; pos < 64; ++pos)
@@ -548,10 +557,10 @@ wss.on("connection", (ws, req) => {
         ws.send(encoder.data.subarray(0, encoder.at));
     }, 20000);
     ws.on('close', () => {
-        log("game disconnect", [game_server.server_id]);
+        log("game disconnect", [game_server.alias]);
         for (const uuid of game_server.clients)
             delete connected_clients[uuid];
-        delete game_servers[game_server.server_id];
+        delete game_servers[game_server.alias];
     });
 });
 
@@ -562,6 +571,7 @@ setInterval(() => {
         const client = connected_clients[uuid];
         if (!client.needs_database_update)
             continue;
+        client.needs_database_update = 0;
         log("updating db", uuid);
         write_db_entry(client.user.username, client.user);
     }

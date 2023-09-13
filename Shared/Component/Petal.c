@@ -56,7 +56,8 @@ void rr_component_petal_free(struct rr_component_petal *this,
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     physical->mass = 1;
     physical->friction = 0;
-    web->ticks_until_death = (5 + 2 * this->rarity) * 25;
+    physical->arena = petal_phys->arena;
+    web->ticks_until_death = (5 + this->rarity) * 25;
 #endif
 }
 
