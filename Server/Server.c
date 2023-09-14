@@ -228,12 +228,8 @@ void rr_server_client_free(struct rr_server_client *this)
         if (this->player_info->flower_id != RR_NULL_ENTITY)
             rr_simulation_request_entity_deletion(
                 &this->server->simulation, this->player_info->flower_id);
-        __rr_simulation_pending_deletion_free_components(
-            this->player_info->parent_id, &this->server->simulation);
-        __rr_simulation_pending_deletion_unset_entity(
-            this->player_info->parent_id, &this->server->simulation);
-        //rr_simulation_request_entity_deletion(&this->server->simulation,
-                                                //this->player_info->parent_id);
+        rr_simulation_request_entity_deletion(&this->server->simulation,
+                                                this->player_info->parent_id);
     }
     puts("client disconnected");
 }
@@ -350,7 +346,9 @@ void rr_server_client_tick(struct rr_server_client *this)
         proto_bug_write_uint8(&encoder, this->squad_pos, "sqpos");
         proto_bug_write_uint8(&encoder, squad->private, "private");
         proto_bug_write_uint8(&encoder, this->server->biome, "biome");
-        proto_bug_write_string(&encoder, squad->squad_code, 7, "squad code");
+        char joined_code[16];
+        joined_code[sprintf(joined_code, "%s-%s", this->server->server_alias, squad->squad_code)] = 0;
+        proto_bug_write_string(&encoder, joined_code, 16, "squad code");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -398,7 +396,6 @@ void rr_server_tick(struct rr_server *this)
         return;
     rr_api_websocket_tick(this);
     rr_simulation_tick(&this->simulation);
-
     uint8_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified)
@@ -407,6 +404,7 @@ void rr_server_tick(struct rr_server *this)
             ++client_count;
         }
 
+    rr_simulation_tick_deletions(&this->simulation);
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
         rr_simulation_tick_entity_resetter_function);
@@ -680,7 +678,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 squad = rr_client_create_squad(this, client);
             else if (type == 1)
             {
-                char link[7];
+                char link[16];
                 proto_bug_read_string(&encoder, link, 6, "connect link");
                 squad = rr_client_join_squad_with_code(this, link);
             }
@@ -830,9 +828,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
         {
             case 0:
             {
-                char a[4] = {0};
-                rr_binary_encoder_read_nt_string(&decoder, a);
-                printf("server link is %s\n", a);
+                rr_binary_encoder_read_nt_string(&decoder, this->server_alias);
+                printf("server link is %s\n", this->server_alias);
                 break;
             }
             case 1:

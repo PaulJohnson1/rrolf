@@ -314,13 +314,15 @@ static void join_code_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (strlen(game->connect_code) != 6)
-            return;
         struct proto_bug encoder2;
         proto_bug_init(&encoder2, output_packet);
         proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_SQUAD_JOIN, "header");
         proto_bug_write_uint8(&encoder2, 1, "join type");
-        proto_bug_write_string(&encoder2, game->connect_code, 6, "connect link");
+        char *code = game->connect_code;
+        while (*code != 0 && *code != '-')
+            ++code;
+        ++code;
+        proto_bug_write_string(&encoder2, code, 6, "connect link");
         
         rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
     }
@@ -362,6 +364,12 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
     }
 }
 
+static uint8_t copy_button_should_show(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    return !game->socket.found_error;
+}
+
 struct rr_ui_element *rr_ui_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
@@ -391,6 +399,7 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
     struct rr_ui_element *this = rr_ui_labeled_button_init("Copy Code", 24, 0);
     this->animate = ready_button_animate;
     this->on_event = copy_code_on_event;
+    this->should_show = copy_button_should_show;
     return this;
 }
 

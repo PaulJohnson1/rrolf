@@ -73,7 +73,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         *captures = data;
     struct rr_simulation *simulation = captures->simulation;
 
-    if (!rr_simulation_has_entity(simulation, entity))
+    if (!rr_simulation_has_entity(simulation, entity) || rr_bitset_get(&simulation->recently_deleted[0], entity))
         return;
 
     struct rr_component_physical *physical =
@@ -98,7 +98,6 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
             captures->player_info->squad * RR_SQUAD_MEMBER_COUNT + captures->player_info->squad_pos)))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
-    return;
 }
 
 static void rr_simulation_find_entities_in_view(
@@ -141,7 +140,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     {
         // deletion spotted!
         uint8_t serverside_delete =
-            (rr_simulation_has_entity(captures->simulation, id) == 0) || rr_bitset_get(&captures->simulation->pending_deletions[0], id);
+            rr_bitset_get(&captures->simulation->recently_deleted[0], id);
         if (serverside_delete)
         {
             if (rr_simulation_has_drop(captures->simulation, id))

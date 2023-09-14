@@ -254,7 +254,7 @@ void rr_game_init(struct rr_game *this)
                                     rr_ui_flex_container_init(
                                         rr_ui_copy_squad_code_button_init(),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                            rr_ui_text_input_init(100, 18, this->connect_code, 7, "_0x4347"),
+                                            rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"),
                                             rr_ui_join_squad_code_button_init(),
                                             NULL
                                         ),
@@ -529,6 +529,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               verify_encoder.current - verify_encoder.start);
             this->socket_ready = 1;
             this->socket_pending = 0;
+            //send instajoin
             return;
         }
 
@@ -574,8 +575,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad_code, 6, "squad code");
-            this->squad_code[6] = 0;
+            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
@@ -1037,7 +1037,6 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         return;
     }
     game->socket_pending = 1;
-    // rr_websocket_connect_to(&game->socket, "127.0.0.1", 1234, 0);
     char link[100];
     link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s,
            port)] = 0;
@@ -1049,5 +1048,4 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     s[36] = 0;
     memcpy(&game->socket.rivet_player_token[0], token, strlen(token) + 1);
     free(token);
-    // game->socket.uuid = game->rivet_account.uuid;
 }

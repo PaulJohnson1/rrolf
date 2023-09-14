@@ -83,7 +83,6 @@ struct rr_game
     uint64_t dev_flag;
     float lerp_delta;
     
-    uint8_t squad_pos;
     uint8_t socket_ready;
     uint8_t socket_pending;
     uint8_t rivet_lobby_pending;
@@ -96,9 +95,10 @@ struct rr_game
     uint8_t selected_biome;
     uint8_t is_mobile;
 
+    uint8_t squad_pos;
     uint8_t squad_private;
-    char squad_code[7];
-    char connect_code[7];
+    char squad_code[16];
+    char connect_code[16];
 };
 
 void rr_game_init(struct rr_game *);
