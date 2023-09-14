@@ -141,7 +141,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
         // deletion spotted!
         uint8_t serverside_delete =
             rr_bitset_get(&captures->simulation->recently_deleted[0], id);
-        if (serverside_delete)
+        if (serverside_delete == 0)
         {
             if (rr_simulation_has_drop(captures->simulation, id))
             {
