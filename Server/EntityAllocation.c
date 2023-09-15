@@ -1,9 +1,12 @@
 #include <Server/EntityAllocation.h>
+#include <Server/Waves.h>
 
 #include <math.h>
 #include <stdlib.h>
 
 #include <Shared/Utilities.h>
+
+static struct rr_maze_grid DEFAULT_GRID = {0};
 
 static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
@@ -100,6 +103,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     }
     return petal_id;
 }
+
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id,
                                   float x, float y,
                                   enum rr_mob_id mob_id,
@@ -116,6 +120,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         rr_simulation_add_relations(this, entity);
     struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
     // init team elsewhere
+    mob->zone = &DEFAULT_GRID;
     rr_component_mob_set_id(mob, mob_id);
     rr_component_mob_set_rarity(mob, rarity_id);
     struct rr_mob_rarity_scale const *rarity_scale =
@@ -134,7 +139,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         physical->mass *= 100;
         team_id = rr_simulation_team_id_players;
     }
-    if (0)
+    rr_component_relations_set_team(relations, team_id);
+    if (mob_id == rr_mob_id_beehive)
     {
         struct rr_component_arena *arena =
         rr_simulation_add_arena(this, entity);
@@ -142,6 +148,16 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         arena->maze_dim = RR_BURROW_MAZE_DIM;
         arena->grid_size = RR_BURRON_GRID_SIZE;
         set_respawn_zone(&arena->respawn_zone, 1, 1, 1, 1);
+        for (uint32_t X = 0; X < arena->maze_dim; ++X)
+        {
+            for (uint32_t Y = 0; Y < arena->maze_dim; ++Y)
+            {
+                uint8_t v = arena->grid[Y * arena->maze_dim + X].value;
+                if (v == 0 || (v & 8))
+                    continue;
+                rr_simulation_alloc_mob(this, entity, (X+rr_frand())*arena->grid_size, (Y+rr_frand())*arena->grid_size, rr_mob_id_honeybee, rarity_id, team_id);
+            }
+        }
     }
     else
     {
@@ -151,8 +167,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         rr_component_health_set_health(health,
                                     mob_data->health * rarity_scale->health);
         health->damage = mob_data->damage * rarity_scale->damage;
-
-        rr_component_relations_set_team(relations, team_id);
     }
     /*
     if (mob_id == 255 && 0)
@@ -190,8 +204,8 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
     {
         if (!rr_simulation_has_entity(this, i))
         {
-            //if (rr_bitset_get_bit(this->recently_deleted, i))
-                //continue;
+            if (rr_bitset_get_bit(this->deleted_last_tick, i))
+                continue;
             rr_bitset_set(this->entity_tracker, i);
 #ifndef NDEBUG
             //printf("created with id %d\n", i);

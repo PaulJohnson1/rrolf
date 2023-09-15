@@ -11,6 +11,7 @@ set(SRCS
     Assets/MapFeature/WaterLettuce.c
     Assets/Mob/Ankylosaurus.c
     Assets/Mob/Ant.c
+    Assets/Mob/Beehive.c
     Assets/Mob/Dakotaraptor.c
     Assets/Mob/Dragonfly.c
     Assets/Mob/Edmontosaurus.c

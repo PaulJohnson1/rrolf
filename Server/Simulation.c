@@ -70,13 +70,6 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-static void rr_simulation_pending_deletion_free_components(uint64_t id,
-                                                           void *_simulation)
-{
-    struct rr_simulation *simulation = _simulation;
-    __rr_simulation_pending_deletion_free_components(id, simulation);
-}
-
 static struct rr_vector
 find_position_away_from_players(struct rr_simulation *this)
 {
@@ -123,8 +116,13 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     ++grid->mob_count;
 }
 
+#ifdef RIVET_BUILD
 #define GRID_MOB_LIMIT(DIFFICULTY) \
     6 - DIFFICULTY / 20
+#else
+#define GRID_MOB_LIMIT(DIFFICULTY) \
+    4
+#endif
 
 static void tick_wave(struct rr_simulation *this)
 {
@@ -144,7 +142,7 @@ static void tick_wave(struct rr_simulation *this)
     }
 }
 
-#define RR_TIME_BLOCK_(_, CODE)                                                 \
+#define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
         struct timeval start; \
         struct timeval end; \
@@ -154,7 +152,7 @@ static void tick_wave(struct rr_simulation *this)
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec); \
         if (elapsed_time > 3000) \
         { \
-            printf("took %lu microseconds\n", elapsed_time); \
+            printf(_ " took %lu microseconds with %d entities\n", elapsed_time, this->physical_count); \
         } \
     };
 
@@ -165,12 +163,9 @@ static void tick_wave(struct rr_simulation *this)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    // delete pending deletions
     this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
-    // printf("%d %d %d\n", this->physical_count, this->mob_count,
-    // this->health_count);
-    tick_wave(this);
+    //printf("server has %d entities\n", this->physical_count);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
@@ -183,20 +178,20 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-    memcpy(this->recently_deleted, this->pending_deletions, sizeof this->pending_deletions);
+    tick_wave(this);
     rr_bitset_for_each_bit(
         this->pending_deletions,
         this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        rr_simulation_pending_deletion_free_components);
-}
-
-void rr_simulation_tick_deletions(struct rr_simulation *this)
-{
-
-    //memset(this->recently_deleted, 0, sizeof this->recently_deleted);
+        __rr_simulation_pending_deletion_free_components);
     rr_bitset_for_each_bit(this->pending_deletions,
                            this->pending_deletions +
                                (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
                            this, __rr_simulation_pending_deletion_unset_entity);
+    memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
+}
+
+uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)
+{
+    return id && rr_bitset_get(this->entity_tracker, id) && !rr_bitset_get(this->deleted_last_tick, id);
 }

@@ -23,11 +23,9 @@ static void system_reset_colliding_with(EntityIdx entity, void *captures)
         rr_simulation_get_physical(this, entity);
     physical->colliding_with_size = 0;
     EntityIdx owner = rr_simulation_get_relations(this, entity)->owner;
-    if (owner != RR_NULL_ENTITY && rr_simulation_has_entity(this, owner) && rr_simulation_has_physical(this, owner))
+    if (rr_simulation_entity_alive(this, owner) && rr_simulation_has_physical(this, owner))
         if (physical->arena != rr_simulation_get_physical(this, owner)->arena)
             rr_simulation_request_entity_deletion(this, entity);
-    //if (!rr_simulation_has_arena(this, physical->arena))
-        //physical->arena = 1;
     
 }
 

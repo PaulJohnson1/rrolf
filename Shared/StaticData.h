@@ -20,7 +20,7 @@
 #define RR_LEVELS_PER_EXTRA_SLOT (20)
 #define RR_BIOME_COUNT (2)
 #define RR_MAZE_DIM (42)
-#define RR_BURROW_MAZE_DIM (10)
+#define RR_BURROW_MAZE_DIM (4)
 #define RR_MAZE_GRID_SIZE (1536)
 #define RR_BURRON_GRID_SIZE (384)
 #define RR_ARENA_LENGTH (RR_MAZE_GRID_SIZE * RR_MAZE_DIM)
@@ -65,6 +65,7 @@ enum rr_petal_id
     rr_petal_id_lightning,
     rr_petal_id_third_eye,
     rr_petal_id_mandible,
+    rr_petal_id_wax,
     /*
     rr_petal_id_kelp,
     rr_petal_id_fish_egg,
@@ -97,6 +98,7 @@ enum rr_mob_id
     rr_mob_id_hornet,
     rr_mob_id_dragonfly,
     rr_mob_id_honeybee,
+    rr_mob_id_beehive,
     rr_mob_id_max
 };
 

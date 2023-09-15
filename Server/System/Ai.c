@@ -22,8 +22,7 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
 static uint8_t check_if_aggro(struct rr_component_ai *ai,
                               struct rr_simulation *simulation)
 {
-    if (ai->target_entity == RR_NULL_ENTITY ||
-        !rr_simulation_has_entity(simulation, ai->target_entity))
+    if (ai->target_entity == RR_NULL_ENTITY)
     {
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
         if (relations->team == rr_simulation_team_id_mobs)
@@ -33,8 +32,7 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
         }
     }
-    if (ai->target_entity != RR_NULL_ENTITY &&
-        rr_simulation_has_entity(simulation, ai->target_entity))
+    else
     {
         if (ai->ai_state == rr_ai_state_idle ||
             ai->ai_state == rr_ai_state_idle_moving)
@@ -42,13 +40,12 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
             ai->ticks_until_next_action = 25;
             return 1;
         }
-    }
-    else if (!(ai->ai_state == rr_ai_state_idle ||
-            ai->ai_state == rr_ai_state_idle_moving))
-    {
-        ai->target_entity = RR_NULL_ENTITY;
-        ai->ai_state = rr_ai_state_idle;
-        ai->ticks_until_next_action = rand() % 25 + 25;
+        else
+        {
+            ai->target_entity = RR_NULL_ENTITY;
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+        }
     }
     return 0;
 }
@@ -116,7 +113,7 @@ static void tick_ai_aggro_ornithomimus(EntityIdx entity,
     if (ai->ai_state == rr_ai_state_idle ||
         ai->ai_state == rr_ai_state_idle_moving)
     {
-        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        if (rr_simulation_entity_alive(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_chasing;
             ai->ticks_until_next_action = 84;
@@ -172,7 +169,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
     if (ai->ai_state == rr_ai_state_idle ||
         ai->ai_state == rr_ai_state_idle_moving)
     {
-        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        if (rr_simulation_entity_alive(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = 25;
@@ -291,10 +288,9 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    if (ai->target_entity == RR_NULL_ENTITY ||
-        !rr_simulation_has_entity(simulation, ai->target_entity))
+    if (ai->target_entity == RR_NULL_ENTITY)
         ai->target_entity = rr_simulation_find_nearest_enemy(simulation, entity, 1550, NULL, no_filter);
-    if (rr_simulation_has_entity(simulation, ai->target_entity) &&
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_shell_shoot_delay))
     {
@@ -313,12 +309,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         break;
     case rr_ai_state_attacking:
     {
-        if (!rr_simulation_has_entity(simulation, ai->target_entity))
-        {
-            ai->ai_state = rr_ai_state_idle;
-            ai->ticks_until_next_action = 50;
-            break;
-        }
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
@@ -346,12 +336,6 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
     }
     case rr_ai_state_shell_shoot_delay:
     {
-        if (!rr_simulation_has_entity(simulation, ai->target_entity))
-        {
-            ai->ai_state = rr_ai_state_idle;
-            ai->ticks_until_next_action = 50;
-            break;
-        }
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
@@ -494,7 +478,7 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
     if (ai->ai_state == rr_ai_state_idle ||
         ai->ai_state == rr_ai_state_idle_moving)
     {
-        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        if (rr_simulation_entity_alive(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_chasing;
             ai->ticks_until_next_action = 25;
@@ -722,15 +706,12 @@ static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
     if (ai->ai_state == rr_ai_state_idle ||
         ai->ai_state == rr_ai_state_idle_moving)
     {
-        if (rr_simulation_has_entity(simulation, ai->target_entity))
+        if (rr_simulation_entity_alive(simulation, ai->target_entity))
         {
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = 25;
         }
     }
-    if (ai->target_entity != RR_NULL_ENTITY &&
-        !rr_simulation_has_entity(simulation, ai->target_entity))
-        ai->target_entity = RR_NULL_ENTITY;
 
     switch (ai->ai_state)
     {
@@ -866,7 +847,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
     if (ai->target_entity != RR_NULL_ENTITY &&
-        !rr_simulation_has_entity(simulation, ai->target_entity))
+        !rr_simulation_entity_alive(simulation, ai->target_entity))
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;
@@ -887,7 +868,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if ((mob->player_spawned ||
         ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
     {
-        if (!rr_simulation_has_entity(simulation, relations->owner))
+        if (!rr_simulation_entity_alive(simulation, relations->owner))
         {
             rr_simulation_request_entity_deletion(simulation, entity);
             return;
@@ -944,10 +925,10 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.9);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.3);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.5);
         break;
     case rr_mob_id_dragonfly:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.85);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.9);
         break;
     case rr_mob_id_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);

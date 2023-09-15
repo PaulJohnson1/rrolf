@@ -32,6 +32,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_lightning, rr_rarity_id_unusual, 16.0f, 4.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_third_eye, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_mandible, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_wax, rr_rarity_id_unusual, 5.0f, 10.0f, 10.0f, 75, 0, {2, 2, 2, 2, 2, 2, 2}},
 };    
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
@@ -51,6 +52,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_hornet, rr_rarity_id_common, 30, 30, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
     {rr_mob_id_dragonfly, rr_rarity_id_common, 15, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.04}}},
     {rr_mob_id_honeybee, rr_rarity_id_common, 10, 25, 22.0f, {{rr_petal_id_pellet, 0.05},{rr_petal_id_stinger, 0.04}}},
+    {rr_mob_id_beehive, rr_rarity_id_common, 10, 25, 45.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_azalea, 0.04}}},
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -84,7 +86,7 @@ char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
-    "Beak", "Lightning", "Third Eye", "Mandible"};
+    "Beak", "Lightning", "Third Eye", "Mandible", "Wax"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
@@ -110,7 +112,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Stuns mobs and prevents them from moving",
     "A stunning display",
     "It allows you to see further away",
-    "Does more damage if target hp is below 50%"
+    "Does more damage if target hp is below 50%",
+    "Made by the bees"
 };
 
 // CHANGE WHEN ADD MOB
@@ -129,13 +132,14 @@ char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
                                            "Ant",
                                            "Hornet",
                                            "Dragonfly",
-                                           "Honeybee"};
+                                           "Honeybee",
+                                           "Beehive"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 10, 8, 12, 8};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25};
-double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1};
+double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0};
 //END                                            
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 10, 15, 30, 150, 500};
@@ -358,11 +362,8 @@ RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
 };
 
 RR_DEFINE_MAZE(BURROW, RR_BURROW_MAZE_DIM) = {
-    {1, 1, 0, 0, 1},
-    {0, 1, 1, 1, 1},
-    {1, 1, 1, 0, 1},
-    {0, 1, 0, 1, 1},
-    {1, 1, 1, 0, 1}
+    {1, 1},
+    {0, 1}
 };
 
 #undef c

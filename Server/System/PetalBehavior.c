@@ -55,7 +55,7 @@ static void uranium_petal_system(struct rr_simulation *simulation,
             rr_simulation_get_health(simulation, petal->parent_id);
         struct rr_component_physical *physical =
             rr_simulation_get_physical(simulation, petal->parent_id);
-        if (!rr_simulation_has_entity(simulation, relations->owner))
+        if (!rr_simulation_entity_alive(simulation, relations->owner))
             return;
         struct rr_component_physical *flower_physical =
             rr_simulation_get_physical(simulation, relations->owner);
@@ -490,7 +490,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
             if (p_petal->simulation_id != RR_NULL_ENTITY &&
-                !rr_simulation_has_entity(simulation,
+                !rr_simulation_entity_alive(simulation,
                                            p_petal->simulation_id))
             {
                 p_petal->simulation_id = RR_NULL_ENTITY;
@@ -571,19 +571,17 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
         rr_simulation_get_relations(simulation, id);
     if (petal->detached == 0) // it's mob owned if this is true
     {
-        if (petal->id == rr_petal_id_uranium)
-            uranium_petal_system(simulation, petal);
-        else if (petal->id == rr_petal_id_lightning)
-            lightning_petal_system(simulation, petal);
-        if (!rr_simulation_has_entity(simulation, relations->owner))
+        if (!rr_simulation_entity_alive(simulation, relations->owner))
         {
             rr_simulation_request_entity_deletion(simulation, id);
             return;
         }
+        if (petal->id == rr_petal_id_uranium)
+            uranium_petal_system(simulation, petal);
+        else if (petal->id == rr_petal_id_lightning)
+            lightning_petal_system(simulation, petal);
         if (!rr_simulation_has_mob(simulation, relations->owner))
-        {
             return;
-        }
         if (--petal->effect_delay == 0)
             rr_simulation_request_entity_deletion(simulation, id);
         // check if owner is a mob

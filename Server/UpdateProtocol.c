@@ -72,8 +72,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
     struct rr_simulation_find_entities_in_view_for_each_function_captures
         *captures = data;
     struct rr_simulation *simulation = captures->simulation;
-
-    if (!rr_simulation_has_entity(simulation, entity) || rr_bitset_get(&simulation->recently_deleted[0], entity))
+    if (!rr_simulation_entity_alive(simulation, entity))
         return;
 
     struct rr_component_physical *physical =
@@ -116,15 +115,12 @@ static void rr_simulation_find_entities_in_view(
     captures.simulation = this;
 
     rr_bitset_set(entities_in_view, player_info->parent_id);
-    // don't add the player into the view if it is null (player died lmfao skill
-    // issue)
-    if (player_info->flower_id != RR_NULL_ENTITY)
+
+    if (rr_simulation_entity_alive(this, player_info->flower_id))
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
     rr_bitset_set(captures.entities_in_view, 1);
     rr_spatial_hash_query(this->grid, captures.view_x, captures.view_y, captures.view_width, captures.view_height, &captures, rr_simulation_find_entities_in_view_for_each_function);
-    //rr_simulation_for_each_physical(
-        //this, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 static void rr_simulation_write_entity_deletions_function(uint64_t _id,
@@ -139,8 +135,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     if (!rr_bitset_get_bit(new_entities_in_view, id))
     {
         // deletion spotted!
-        uint8_t serverside_delete =
-            rr_bitset_get(&captures->simulation->recently_deleted[0], id);
+        uint8_t serverside_delete = !rr_simulation_entity_alive(captures->simulation, id);
         if (serverside_delete == 0)
         {
             if (rr_simulation_has_drop(captures->simulation, id))

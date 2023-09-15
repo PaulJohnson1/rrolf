@@ -19,7 +19,7 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_component_relations *flower_relations =
         rr_simulation_get_relations(this, entity);
-    if (!rr_simulation_has_entity(this, flower_relations->owner))
+    if (!rr_simulation_entity_alive(this, flower_relations->owner))
         return;
 
     struct rr_component_player_info *player_info =

@@ -63,66 +63,6 @@ void rr_api_on_open_result(char *bin, void *captures)
 }
 
 void rr_api_on_get_petals(char *bin, void *_client) {}
-// loadout validation
-/*
-void rr_api_on_get_petals(char *bin, void *_client)
-{
-    puts("attempting petal validation");
-    struct rr_server_client *client = _client;
-    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max] = {0};
-    struct rr_binary_encoder decoder;
-    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
-    if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
-    {
-        puts("api serverside error");
-        return;
-    }
-    rr_binary_encoder_read_nt_string(&decoder, client->rivet_account.uuid);
-    puts(client->rivet_account.uuid);
-    if (strlen(client->rivet_account.uuid) < 30)
-    {
-        memset(&client->loadout[0], 0, sizeof client->loadout);
-        puts("id is invalid");
-        return;
-    }
-    float xp = rr_binary_encoder_read_float64(&decoder);
-    uint32_t next_level = 2;
-    while (xp >= xp_to_reach_level(next_level))
-    {
-        xp -= xp_to_reach_level(next_level);
-        ++next_level;
-    }
-    #define min(a,b) (((a) < (b)) ? (a) : (b))
-    client->level = min(next_level - 1, 150);
-    #undef min
-    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
-    while (id)
-    {
-        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
-        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
-        inventory[id][rarity] = count;
-        //printf("%d %d %d\n", id, rarity, count);
-        id = rr_binary_encoder_read_uint8(&decoder);
-    }
-    for (uint8_t i = 0; i < 20; ++i)
-    {
-        uint8_t id = client->loadout[i].id;
-        if (id != 0)
-        {
-            uint8_t rarity = client->loadout[i].rarity;
-            if (inventory[id][rarity] > 0)
-                --inventory[id][rarity];
-            else
-            {
-                memset(&client->loadout[0], 0, sizeof client->loadout);
-                puts("petals are invalid");
-                return;
-            }
-        }
-    }
-    puts("petals are valid");
-}
-*/
 
 static void rr_server_client_create_player_info(struct rr_server *server, struct rr_server_client *client)
 {
@@ -161,68 +101,7 @@ void rr_server_client_free(struct rr_server_client *this)
     {
         rr_client_leave_squad(this->server, this);
     }
-    char petals_string[50000] = {0}; // Ensure this is large enough
-    char buffer[1000] = {0};         // Temporary buffer for each item
-    uint32_t wave = 0;
-    /*
-    if (this->player_info != NULL)
-    {
-        uint8_t first = 1;
-        wave = 0;
-        for (uint8_t id = 1; id < rr_petal_id_max; ++id)
-            for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
-            {
-                if (this->player_info->collected_this_run[id * rr_rarity_id_max + rarity] == 0)
-                    continue;
-                // Format each item into buffer
-                snprintf(buffer, sizeof buffer, "%u:%u:%u", id, rarity, this->player_info->collected_this_run[id * rr_rarity_id_max + rarity]);
-
-                // If not the first item, append a comma before the item
-                if (!first)
-                {
-                    strncat(petals_string, ",",
-                            5000 - strlen(petals_string) - 1);
-                }
-                first = 0;
-
-                // Append the item
-                strncat(petals_string, buffer,
-                        5000 - strlen(petals_string) - 1);
-            }
-        if (petals_string[0] == 0)
-            memcpy(petals_string, "1:0:0", sizeof "1:0:0");
-        puts(petals_string);
-        // if (1)
-        // {
-        rr_api_on_close(this->rivet_account.uuid, petals_string, wave, "1:0:0");
-        // }
-        // else
-        // {
-        //     char *malloc_string = malloc(sizeof petals_string);
-        //     char *malloc_uuid = malloc(sizeof
-        //     this->client->rivet_account.uuid); memcpy(malloc_string,
-        //     &petals_string, sizeof petals_string); memcpy(malloc_uuid,
-        //     &this->client->rivet_account.uuid, sizeof
-        //     this->client->rivet_account.uuid); struct api_join_captures
-        //     *captures = malloc(sizeof *captures); captures->rivet_uuid =
-        //     malloc_uuid; captures->petals_string = malloc_string; pthread_t
-        //     thread_id; int result = pthread_create(&thread_id, NULL,
-        //     api_join, &captures); pthread_detach(thread_id);
-        // }
-        if (this->player_info != NULL)
-        {
-            if (this->player_info->flower_id != RR_NULL_ENTITY)
-                rr_simulation_request_entity_deletion(
-                    &this->server->simulation, this->player_info->flower_id);
-            __rr_simulation_pending_deletion_free_components(
-                this->player_info->parent_id, &this->server->simulation);
-            __rr_simulation_pending_deletion_unset_entity(
-                this->player_info->parent_id, &this->server->simulation);
-            //rr_simulation_request_entity_deletion(&this->server->simulation,
-                                                   //this->player_info->parent_id);
-        }
-    }
-    */
+    
     if (this->player_info != NULL)
     {
         if (this->player_info->flower_id != RR_NULL_ENTITY)
@@ -404,7 +283,6 @@ void rr_server_tick(struct rr_server *this)
             ++client_count;
         }
 
-    rr_simulation_tick_deletions(&this->simulation);
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
         rr_simulation_tick_entity_resetter_function);
