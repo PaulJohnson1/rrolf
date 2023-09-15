@@ -22,8 +22,11 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
 static uint8_t check_if_aggro(struct rr_component_ai *ai,
                               struct rr_simulation *simulation)
 {
-    if (ai->target_entity == RR_NULL_ENTITY)
+    if (!rr_simulation_entity_alive(simulation, ai->target_entity))
     {
+        ai->target_entity = RR_NULL_ENTITY;
+        ai->ai_state = rr_ai_state_idle;
+        ai->ticks_until_next_action = rand() % 25 + 25;
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
         if (relations->team == rr_simulation_team_id_mobs)
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
@@ -31,21 +34,14 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
         {
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
         }
+        if (ai->target_entity != RR_NULL_ENTITY)
+            return 1;
+        else
+            return 0;
     }
     else
     {
-        if (ai->ai_state == rr_ai_state_idle ||
-            ai->ai_state == rr_ai_state_idle_moving)
-        {
-            ai->ticks_until_next_action = 25;
-            return 1;
-        }
-        else
-        {
-            ai->target_entity = RR_NULL_ENTITY;
-            ai->ai_state = rr_ai_state_idle;
-            ai->ticks_until_next_action = rand() % 25 + 25;
-        }
+        return 1;
     }
     return 0;
 }
@@ -928,7 +924,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.5);
         break;
     case rr_mob_id_dragonfly:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.9);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.6);
         break;
     case rr_mob_id_pteranodon:
         tick_ai_aggro_pteranodon(entity, this);
