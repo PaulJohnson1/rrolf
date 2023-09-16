@@ -284,7 +284,7 @@ void rr_server_tick(struct rr_server *this)
     if (!this->api_ws_ready)
         return;
     rr_api_websocket_tick(this);
-    rr_simulation_tick(&this->simulation);
+    //rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
@@ -376,10 +376,11 @@ void rr_server_tick(struct rr_server *this)
             }
         }
     }
-
+/*
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
         rr_simulation_tick_entity_resetter_function);
+*/
 }
 
 static int handle_lws_event(struct rr_server *this, struct lws *ws,
@@ -901,7 +902,6 @@ static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
 void rr_server_run(struct rr_server *this)
 {
-    fprintf(stderr, "server %p\n", this);
     {
         struct lws_context_creation_info info = {0};
 
