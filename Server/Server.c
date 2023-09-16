@@ -291,8 +291,99 @@ void rr_server_tick(struct rr_server *this)
     {
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
+            struct rr_server_client *client = this->clients + i;
+            if (client->squad == 0)
+            {
+                struct proto_bug encoder;
+                proto_bug_init(&encoder, outgoing_message);
+                proto_bug_write_uint8(&encoder, 234, "header");
+                rr_server_client_encrypt_message(client, encoder.start,
+                                                encoder.current - encoder.start);
+                rr_server_client_write_message(client, encoder.start,
+                                            encoder.current - encoder.start);
+            }
+            if (client->player_info != NULL)
+            {
+                if (rr_simulation_has_entity(&this->simulation,
+                                            client->player_info->flower_id))
+                {
+                    struct rr_component_physical *physical = rr_simulation_get_physical(
+                        &this->simulation, client->player_info->flower_id);
+                    rr_vector_set(&physical->acceleration, client->player_accel_x,
+                                client->player_accel_y);
+                }
+                rr_server_client_broadcast_update(client);
+                if (client->player_info->drops_this_tick_size > 0)
+                {
+                    struct rr_binary_encoder encoder;
+                    rr_binary_encoder_init(&encoder, outgoing_message);
+                    rr_binary_encoder_write_uint8(&encoder, 2);
+                    rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
+                    rr_binary_encoder_write_uint8(&encoder, client->player_info->drops_this_tick_size);
+                    for (uint32_t i = 0; i < client->player_info->drops_this_tick_size; ++i)
+                    {
+                        uint8_t id = client->player_info->drops_this_tick[i].id;
+                        uint8_t rarity = client->player_info->drops_this_tick[i].rarity;
+                        ++client->inventory[id][rarity];
+                        rr_binary_encoder_write_uint8(&encoder, id);
+                        rr_binary_encoder_write_uint8(&encoder, rarity);
+                    }
+                    lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+                    client->player_info->drops_this_tick_size = 0;
+                    // this doesn't require a gameserver update. server synchronously updates drops
+                    // the only time the server needs to update is when the user crafts
+                }
+            }
+            else
+            {
+                struct proto_bug encoder;
+                proto_bug_init(&encoder, outgoing_message);
+                proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
+
+                struct rr_squad *squad = this->squads + (client->squad - 1);
+                for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+                {
+                    if (squad->members[i].in_use == 0)
+                    {
+                        proto_bug_write_uint8(
+                        &encoder,
+                        0,
+                        "bitbit");
+                        continue;
+                    }
+                    struct rr_squad_member *member = &squad->members[i];
+                    proto_bug_write_uint8(
+                        &encoder,
+                        1,
+                        "bitbit");
+                    proto_bug_write_uint8(&encoder, member->playing, "ready");
+                    proto_bug_write_string(&encoder, member->nickname,
+                                        71, "nick");
+                    for (uint8_t j = 0; j < 20; ++j)
+                    {
+                        proto_bug_write_uint8(&encoder, member->loadout[j].id,
+                                            "id");
+                        proto_bug_write_uint8(&encoder, member->loadout[j].rarity,
+                                            "rar");
+                    }
+                }
+                proto_bug_write_uint8(&encoder, client->squad_pos, "sqpos");
+                proto_bug_write_uint8(&encoder, squad->private, "private");
+                proto_bug_write_uint8(&encoder, this->biome, "biome");
+                char joined_code[16];
+                joined_code[sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code)] = 0;
+                proto_bug_write_string(&encoder, joined_code, 15, "squad code");
+                rr_server_client_encrypt_message(client, encoder.start,
+                                                encoder.current - encoder.start);
+                rr_server_client_write_message(client, encoder.start,
+                                            encoder.current - encoder.start);
+                fprintf(stderr, "finished writing for client in squad %d\n", client->squad - 1);
+                fprintf(stderr, "client ptr is %p\n", this);
+            }
+            /*
             fprintf(stderr, "bruh %ld\n", rr_server_client_tick(&this->clients[i]));
             fprintf(stderr, "finished ticking client %ld\n", i);
+            */
         }
     }
 
