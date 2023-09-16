@@ -404,9 +404,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
         proto_bug_set_bound(&encoder, packet + size);
+        printf("[[[recv'ed a packet from client %d]]]\n", i);
 
         if (!client->received_first_packet)
         {
+            printf("'''recv'ed init packet from client %d'''\n", i);
             client->received_first_packet = 1;
 
             proto_bug_read_uint64(&encoder, "useless bytes");
@@ -479,6 +481,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
             return 0;
         }
+        if (!client->verified)
+            break;
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case RR_SERVERBOUND_INPUT:
@@ -575,6 +579,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->squad = 0;
                 break;
             }
+            printf("client joining squad %d\n", squad);
             rr_client_join_squad(this, client, squad);
             break;
         }
