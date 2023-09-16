@@ -204,7 +204,7 @@ int rr_server_client_tick(struct rr_server_client *this)
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
-        struct rr_squad *squad = &this->server->squads[this->squad - 1];
+        struct rr_squad *squad = &this->server->squads[this->squad + 1];
         for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
         {
             if (squad->members[i].in_use == 0)
@@ -963,8 +963,8 @@ void rr_server_run(struct rr_server *this)
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-        if (elapsed_time > 25000)
-            fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        //if (elapsed_time > 25000)
+            //fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);
