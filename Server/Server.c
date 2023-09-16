@@ -243,6 +243,7 @@ void rr_server_client_tick(struct rr_server_client *this)
                                        encoder.current - encoder.start);
         fprintf(stderr, "finished writing for client in squad %d\n", this->squad - 1);
         fprintf(stderr, "client ptr os %p\n", this);
+        return;
     }
 }
 
