@@ -236,7 +236,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         proto_bug_write_uint8(&encoder, this->server->biome, "biome");
         char joined_code[16];
         joined_code[sprintf(joined_code, "%s-%s", this->server->server_alias, squad->squad_code)] = 0;
-        proto_bug_write_string(&encoder, joined_code, 16, "squad code");
+        proto_bug_write_string(&encoder, joined_code, 15, "squad code");
         rr_server_client_encrypt_message(this, encoder.start,
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
@@ -287,6 +287,7 @@ void rr_server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
+        fprintf(stderr, "%d\n", i);
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             rr_server_client_tick(&this->clients[i]);
