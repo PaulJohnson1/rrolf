@@ -156,7 +156,16 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
 void rr_server_client_tick(struct rr_server_client *this)
 {
     if (this->squad == 0)
+    {
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, outgoing_message);
+        proto_bug_write_uint8(&encoder, 234, "header");
+        rr_server_client_encrypt_message(this, encoder.start,
+                                         encoder.current - encoder.start);
+        rr_server_client_write_message(this, encoder.start,
+                                       encoder.current - encoder.start);
         return;
+    }
     if (this->player_info != NULL)
     {
         if (rr_simulation_has_entity(&this->server->simulation,
@@ -384,7 +393,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         struct rr_server_client *client = NULL;
         uint64_t i = 0;
         uint32_t first = 1;
-        printf("it is %ld\n", lws_get_socket_fd(ws));
         for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
             if (!rr_bitset_get(this->clients_in_use, i))
@@ -404,7 +412,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         proto_bug_set_bound(&encoder, packet + size);
         if (!client->received_first_packet)
         {
-            printf("lol hello5, %d %d %ld %p\n", i, client->received_first_packet, size, client);
             client->received_first_packet = 1;
 
             proto_bug_read_uint64(&encoder, "useless bytes");
