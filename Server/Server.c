@@ -289,7 +289,7 @@ void rr_server_tick(struct rr_server *this)
     {
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
-            rr_server_client_tick(this->clients + i);
+            rr_server_client_tick(&this->clients[i]);
             fprintf(stderr, "finished ticking client %ld\n", i);
         }
     }
