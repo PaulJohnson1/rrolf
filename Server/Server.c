@@ -707,11 +707,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             if (loadout_count > 10)
                 break;
-            fprintf(stderr, "%d %d hello\n", client->squad, client->squad_pos);
             struct rr_squad_member *member = rr_squad_get_client_slot(this, client);
             if (member == NULL)
                 break;
-            fprintf(stderr, "memmber is %p\n", member);
             uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
 
             memcpy(temp_inv, client->inventory, sizeof client->inventory);
@@ -958,10 +956,13 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&start,
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
+        fputs("step0\n", stderr);
         lws_service(this->server, -1);
+        fputs("step1\n", stderr);
         lws_service(this->api_client_context, -1);
-        
+        fputs("step2\n", stderr);
         rr_server_tick(this);
+        fputs("step3\n", stderr);
         gettimeofday(&end, NULL);
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
