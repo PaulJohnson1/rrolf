@@ -551,6 +551,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case RR_CLIENTBOUND_SQUAD_UPDATE:
         {
+            puts("squad update");
             this->socket.found_error = 0;
             this->joined_squad = 1;
             this->simulation_ready = 0;
