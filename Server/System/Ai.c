@@ -19,7 +19,7 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
     (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 500 * 500);
 }
 
-static uint8_t check_if_aggro(struct rr_component_ai *ai,
+static uint8_t has_new_target(struct rr_component_ai *ai,
                               struct rr_simulation *simulation)
 {
     if (!rr_simulation_entity_alive(simulation, ai->target_entity))
@@ -41,7 +41,7 @@ static uint8_t check_if_aggro(struct rr_component_ai *ai,
     }
     else
     {
-        return 1;
+        return 0;
     }
     return 0;
 }
@@ -240,7 +240,7 @@ static void tick_ai_aggro_default(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (check_if_aggro(ai, simulation))
+    if (has_new_target(ai, simulation))
         ai->ai_state = rr_ai_state_attacking;
 
     switch (ai->ai_state)
@@ -397,7 +397,7 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (check_if_aggro(ai, simulation))
+    if (has_new_target(ai, simulation))
         ai->ai_state = rr_ai_state_waiting_to_attack;
 
     switch (ai->ai_state)
@@ -419,13 +419,6 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
             break;
         }
 
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
-            break;
-        }
-
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
@@ -443,13 +436,6 @@ static void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
         {
             ai->ai_state = rr_ai_state_waiting_to_attack;
             ai->ticks_until_next_action = rand() % 25 + 25;
-            break;
-        }
-
-        if (ai->target_entity == RR_NULL_ENTITY)
-        {
-            ai->ai_state = rr_ai_state_idle_moving;
-            ai->ticks_until_next_action = 25;
             break;
         }
 
@@ -614,7 +600,7 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    if (check_if_aggro(ai, simulation))
+    if (has_new_target(ai, simulation))
         ai->ai_state = rr_ai_state_waiting_to_attack;
 
     switch (ai->ai_state)
@@ -756,7 +742,7 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    if (check_if_aggro(ai, simulation))
+    if (has_new_target(ai, simulation))
         ai->ai_state = rr_ai_state_waiting_to_attack;
 
     switch (ai->ai_state)
