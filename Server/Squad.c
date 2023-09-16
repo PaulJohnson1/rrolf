@@ -19,8 +19,6 @@ uint8_t rr_squad_has_space(struct rr_squad *this)
 
 void rr_squad_add_client(struct rr_squad *this, struct rr_server_client *client)
 {
-    if (this->member_count == 0)
-        rr_squad_init(this);
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         if (this->members[i].in_use)

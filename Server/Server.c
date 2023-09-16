@@ -554,6 +554,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             rr_client_leave_squad(this, client);
             uint8_t squad = RR_ERROR_CODE_INVALID_SQUAD;
+            printf("attempting a squad create of type %d\n", type);
             if (type == 2)
                 squad = rr_client_create_squad(this, client);
             else if (type == 1)
