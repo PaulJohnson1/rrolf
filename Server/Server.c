@@ -382,7 +382,7 @@ void rr_server_tick(struct rr_server *this)
             fprintf(stderr, "finished ticking client %ld\n", i);
         }
     }
-    fputs("finished", stderr);
+    fputs("finished\n", stderr);
 
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
@@ -959,10 +959,12 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&start,
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
+        fputs("start\n", stderr);
         lws_service(this->server, -1);
         lws_service(this->api_client_context, -1);
         
         rr_server_tick(this);
+        fputs("end\n", stderr);
         gettimeofday(&end, NULL);
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
