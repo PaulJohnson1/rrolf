@@ -222,7 +222,7 @@ void rr_server_client_tick(struct rr_server_client *this)
                 "bitbit");
             proto_bug_write_uint8(&encoder, member->playing, "ready");
             proto_bug_write_string(&encoder, member->nickname,
-                                   16 + 1, "nick");
+                                   71, "nick");
             for (uint8_t j = 0; j < 20; ++j)
             {
                 proto_bug_write_uint8(&encoder, member->loadout[j].id,
@@ -287,7 +287,7 @@ void rr_server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
-        fprintf(stderr, "%d\n", i);
+        fprintf(stderr, "%lu\n", i);
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             rr_server_client_tick(&this->clients[i]);
@@ -558,7 +558,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case RR_SERVERBOUND_SQUAD_JOIN:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
-            fprintf(stderr, "client %d attempting a squad create of type %d\n", i, type);
+            fprintf(stderr, "client %lu attempting a squad create of type %d\n", i, type);
             if (type > 2)
                 break;
             rr_client_leave_squad(this, client);
