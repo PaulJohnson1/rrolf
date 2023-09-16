@@ -551,7 +551,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case RR_CLIENTBOUND_SQUAD_UPDATE:
         {
-            puts("squad update");
             this->socket.found_error = 0;
             this->joined_squad = 1;
             this->simulation_ready = 0;
@@ -601,9 +600,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         }
-        case 234:
-            puts("client is verified prob");
-            break;
         default:
             RR_UNREACHABLE("how'd this happen");
         }

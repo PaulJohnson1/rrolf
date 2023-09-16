@@ -19,8 +19,7 @@ uint8_t rr_squad_has_space(struct rr_squad *this)
 
 void rr_squad_add_client(struct rr_squad *this, struct rr_server_client *client)
 {
-    if (this->member_count == 0)
-        rr_squad_init(this);
+
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         if (this->members[i].in_use)
@@ -39,15 +38,17 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
     this->member_count -= 1;
     memset(&this->members[client->squad_pos], 0, sizeof (struct rr_squad_member));
     client->squad_pos = 0;
-    if (this->member_count == 0)
-        rr_squad_init(this);
 }
 
 uint8_t rr_client_find_squad(struct rr_server *this, struct rr_server_client *member)
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
         if (rr_squad_has_space(&this->squads[i]))
+        {
+            if (this->squads[i].member_count == 0)
+                rr_squad_init(&this->squads[i]);
             return i;
+        }
     return RR_ERROR_CODE_INVALID_SQUAD;
 }
 

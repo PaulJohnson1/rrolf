@@ -293,15 +293,7 @@ void rr_server_tick(struct rr_server *this)
         {
             struct rr_server_client *client = &this->clients[i];
             if (client->squad == 0 || client->squad > 10)
-            {
-                struct proto_bug encoder;
-                proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, 234, "header");
-                rr_server_client_encrypt_message(client, encoder.start,
-                                                encoder.current - encoder.start);
-                rr_server_client_write_message(client, encoder.start,
-                                            encoder.current - encoder.start);
-            }
+                continue;
             else if (client->player_info != NULL)
             {
                 if (rr_simulation_has_entity(&this->simulation,
@@ -969,15 +961,7 @@ void rr_server_run(struct rr_server *this)
             {
                 struct rr_server_client *client = &this->clients[i];
                 if (client->squad == 0 || client->squad > 10)
-                {
-                    struct proto_bug encoder;
-                    proto_bug_init(&encoder, outgoing_message);
-                    proto_bug_write_uint8(&encoder, 234, "header");
-                    rr_server_client_encrypt_message(client, encoder.start,
-                                                    encoder.current - encoder.start);
-                    rr_server_client_write_message(client, encoder.start,
-                                                encoder.current - encoder.start);
-                }
+                    continue;
                 else if (client->player_info != NULL)
                 {
                     if (rr_simulation_has_entity(&this->simulation,
