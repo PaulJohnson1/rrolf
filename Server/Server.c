@@ -338,7 +338,7 @@ void rr_server_tick(struct rr_server *this)
                 proto_bug_init(&encoder, outgoing_message);
                 proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
-                struct rr_squad *squad = &this->squads[client->squad + 1];
+                struct rr_squad *squad = &this->squads[client->squad];
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 {
                     if (squad->members[i].in_use == 0)
