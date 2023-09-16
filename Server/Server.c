@@ -670,8 +670,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->squad = 0;
                 break;
             }
-            fprintf(stderr, "client joining squad %d\n", squad);
             rr_client_join_squad(this, client, squad);
+            fprintf(stderr, "client joining squad %d\n", squad);
             break;
         }
         case RR_SERVERBOUND_SQUAD_READY:
