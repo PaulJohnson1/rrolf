@@ -293,6 +293,7 @@ void rr_server_tick(struct rr_server *this)
         {
             fprintf(stderr, "ticking client %ld\n", i);
             rr_server_client_tick(this->clients + i);
+            fprintf(stderr, "finished ticking client %ld\n", i);
         }
     }
 
