@@ -286,7 +286,7 @@ void rr_server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
     uint8_t client_count = 0;
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-        if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified)
+        if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             rr_server_client_tick(this->clients + i);
             ++client_count;
