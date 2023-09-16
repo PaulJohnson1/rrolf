@@ -38,6 +38,8 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
     this->member_count -= 1;
     memset(&this->members[client->squad_pos], 0, sizeof (struct rr_squad_member));
     client->squad_pos = 0;
+    if (this->member_count == 0)
+        rr_squad_init(this);
 }
 
 uint8_t rr_client_find_squad(struct rr_server *this, struct rr_server_client *member)
