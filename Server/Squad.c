@@ -45,7 +45,7 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
 uint8_t rr_client_find_squad(struct rr_server *this, struct rr_server_client *member)
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
-        if (rr_squad_has_space(&this->squads[i]))
+        if (rr_squad_has_space(&this->squads[i]) && !this->squads[i].private)
         {
             if (this->squads[i].member_count == 0)
                 rr_squad_init(&this->squads[i]);
