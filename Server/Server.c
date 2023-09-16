@@ -404,11 +404,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
         proto_bug_set_bound(&encoder, packet + size);
-        printf("[[[recv'ed a packet from client %d]]]\n", i);
 
         if (!client->received_first_packet)
         {
-            printf("'''recv'ed init packet from client %d'''\n", i);
             client->received_first_packet = 1;
 
             proto_bug_read_uint64(&encoder, "useless bytes");
