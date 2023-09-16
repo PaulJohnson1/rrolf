@@ -574,7 +574,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
+            proto_bug_read_string(&encoder, this->squad_code, 15, "squad code");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");

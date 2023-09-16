@@ -901,6 +901,7 @@ static void lws_log(int level, char const *log) { printf("%d %s", level, log); }
 
 void rr_server_run(struct rr_server *this)
 {
+    fprintf(stderr, "server %p\n", this);
     {
         struct lws_context_creation_info info = {0};
 
