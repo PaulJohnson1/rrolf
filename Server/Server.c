@@ -291,7 +291,7 @@ void rr_server_tick(struct rr_server *this)
     {
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
-            struct rr_server_client *client = this->clients + i;
+            struct rr_server_client *client = &this->clients[i];
             if (client->squad == 0)
             {
                 struct proto_bug encoder;
@@ -302,7 +302,7 @@ void rr_server_tick(struct rr_server *this)
                 rr_server_client_write_message(client, encoder.start,
                                             encoder.current - encoder.start);
             }
-            if (client->player_info != NULL)
+            else if (client->player_info != NULL)
             {
                 if (rr_simulation_has_entity(&this->simulation,
                                             client->player_info->flower_id))
