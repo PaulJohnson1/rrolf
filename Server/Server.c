@@ -382,7 +382,6 @@ void rr_server_tick(struct rr_server *this)
             fprintf(stderr, "finished ticking client %ld\n", i);
         }
     }
-    fputs("finished\n", stderr);
 
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
@@ -574,6 +573,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
             rr_binary_encoder_write_uint8(&encoder, i);
             lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+            rr_client_join_squad(this, client, 0);
             return 0;
         }
         if (!client->verified)
@@ -959,17 +959,16 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&start,
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
-        fputs("start\n", stderr);
         lws_service(this->server, -1);
         lws_service(this->api_client_context, -1);
         
         rr_server_tick(this);
-        fputs("end\n", stderr);
         gettimeofday(&end, NULL);
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
                                 (end.tv_usec - start.tv_usec);
-        fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
+        if (elapsed_time > 25000)
+            fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);
