@@ -499,7 +499,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         if (!this->socket.recieved_first_packet)
         {
             this->socket.recieved_first_packet = 1;
-            puts("recv a packet");
             rr_decrypt(data, 1024, 21094093777837637ull);
             rr_decrypt(data, 8, 1);
             rr_decrypt(data, 1024, 59731158950470853ull);

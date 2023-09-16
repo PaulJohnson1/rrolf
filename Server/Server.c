@@ -384,6 +384,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         struct rr_server_client *client = NULL;
         uint64_t i = 0;
         uint32_t first = 1;
+        printf("it is %ld\n", lws_get_socket_fd(ws));
         for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
             if (!rr_bitset_get(this->clients_in_use, i))
