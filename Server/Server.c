@@ -200,7 +200,6 @@ void rr_server_client_tick(struct rr_server_client *this)
     }
     else
     {
-        fprintf(stderr, "writing for client in squad %d\n", this->squad - 1);
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
@@ -288,10 +287,8 @@ void rr_server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
-        fprintf(stderr, "preticking client %ld\n", i);
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
-            fprintf(stderr, "ticking client %ld\n", i);
             rr_server_client_tick(this->clients + i);
             fprintf(stderr, "finished ticking client %ld\n", i);
         }
