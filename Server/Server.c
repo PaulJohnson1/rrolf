@@ -290,7 +290,7 @@ void rr_server_tick(struct rr_server *this)
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             struct rr_server_client *client = &this->clients[i];
-            if (client->squad == 0)
+            if (client->squad == 0 || client->squad > 10)
             {
                 struct proto_bug encoder;
                 proto_bug_init(&encoder, outgoing_message);
@@ -338,7 +338,7 @@ void rr_server_tick(struct rr_server *this)
                 proto_bug_init(&encoder, outgoing_message);
                 proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
-                struct rr_squad *squad = this->squads + (client->squad - 1);
+                struct rr_squad *squad = &this->squads[client->squad - 1];
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 {
                     if (squad->members[i].in_use == 0)

@@ -23,11 +23,11 @@ struct rr_server
 {
     struct rr_simulation simulation;
     uint8_t clients_in_use[RR_BITSET_ROUND(RR_MAX_CLIENT_COUNT)];
-    struct rr_server_client clients[RR_MAX_CLIENT_COUNT];
+    struct rr_server_client clients[64];
     struct lws_context *server;
     struct lws_context *api_client_context;
     struct lws *api_client;
-    struct rr_squad squads[RR_MAX_CLIENT_COUNT];
+    struct rr_squad squads[64];
     uint8_t biome;
     uint8_t api_ws_ready;
     char server_alias[16];

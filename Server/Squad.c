@@ -14,7 +14,7 @@ void rr_squad_init(struct rr_squad *this)
 
 uint8_t rr_squad_has_space(struct rr_squad *this)
 {
-    return this->member_count < 1;
+    return this->member_count < RR_SQUAD_MEMBER_COUNT;
 }
 
 void rr_squad_add_client(struct rr_squad *this, struct rr_server_client *client)
