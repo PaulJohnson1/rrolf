@@ -54,6 +54,7 @@ uint8_t rr_client_create_squad(struct rr_server *this, struct rr_server_client *
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
         if (this->squads[i].member_count == 0)
         {
+            rr_squad_init(&this->squads[i]);
             this->squads[i].private = 1;
             return i;
         }
