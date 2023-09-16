@@ -200,7 +200,7 @@ void rr_server_client_tick(struct rr_server_client *this)
     }
     else
     {
-        fprintf(stderr, "writing for client in squad %d\n", this->squad);
+        fprintf(stderr, "writing for client in squad %d\n", this->squad - 1);
         struct proto_bug encoder;
         proto_bug_init(&encoder, outgoing_message);
         proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
@@ -242,6 +242,7 @@ void rr_server_client_tick(struct rr_server_client *this)
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
                                        encoder.current - encoder.start);
+        fprintf(stderr, "finished writing for client in squad %d\n", this->squad - 1);
     }
 }
 
