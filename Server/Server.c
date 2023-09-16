@@ -286,12 +286,15 @@ void rr_server_tick(struct rr_server *this)
         return;
     rr_api_websocket_tick(this);
     rr_simulation_tick(&this->simulation);
-    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
+    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+    {
+        fprintf(stderr, "preticking client %ld\n", i);
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             fprintf(stderr, "ticking client %ld\n", i);
             rr_server_client_tick(this->clients + i);
         }
+    }
 
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
