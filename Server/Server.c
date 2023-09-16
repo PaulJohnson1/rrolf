@@ -153,7 +153,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
                                    encoder.current - encoder.start);
 }
 
-void rr_server_client_tick(struct rr_server_client *this)
+int rr_server_client_tick(struct rr_server_client *this)
 {
     if (this->squad == 0)
     {
@@ -164,7 +164,7 @@ void rr_server_client_tick(struct rr_server_client *this)
                                          encoder.current - encoder.start);
         rr_server_client_write_message(this, encoder.start,
                                        encoder.current - encoder.start);
-        return;
+        return 123;
     }
     if (this->player_info != NULL)
     {
@@ -242,9 +242,9 @@ void rr_server_client_tick(struct rr_server_client *this)
         rr_server_client_write_message(this, encoder.start,
                                        encoder.current - encoder.start);
         fprintf(stderr, "finished writing for client in squad %d\n", this->squad - 1);
-        fprintf(stderr, "client ptr os %p\n", this);
-        return;
+        fprintf(stderr, "client ptr is %p\n", this);
     }
+    return 345;
 }
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
@@ -291,7 +291,7 @@ void rr_server_tick(struct rr_server *this)
     {
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
-            rr_server_client_tick(&this->clients[i]);
+            fprintf(stderr, "bruh %ld\n", rr_server_client_tick(&this->clients[i]));
             fprintf(stderr, "finished ticking client %ld\n", i);
         }
     }
