@@ -242,6 +242,7 @@ void rr_server_client_tick(struct rr_server_client *this)
         rr_server_client_write_message(this, encoder.start,
                                        encoder.current - encoder.start);
         fprintf(stderr, "finished writing for client in squad %d\n", this->squad - 1);
+        fprintf(stderr, "client ptr os %p\n", this);
     }
 }
 
@@ -287,7 +288,6 @@ void rr_server_tick(struct rr_server *this)
     rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
-        fprintf(stderr, "%lu\n", i);
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             rr_server_client_tick(&this->clients[i]);
