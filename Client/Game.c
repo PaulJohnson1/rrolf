@@ -563,8 +563,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     continue;
                 this->squad_members[i].playing =
                     proto_bug_read_uint8(&encoder, "ready");
-                proto_bug_read_string(&encoder, this->squad_members[i].nickname,
-                                      16 + 1, "nick");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =

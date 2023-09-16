@@ -338,7 +338,7 @@ void rr_server_tick(struct rr_server *this)
                 proto_bug_init(&encoder, outgoing_message);
                 proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
-                struct rr_squad *squad = &this->squads[client->squad];
+                struct rr_squad *squad = &this->squads[client->squad - 1];
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 {
                     if (squad->members[i].in_use == 0)
@@ -355,8 +355,6 @@ void rr_server_tick(struct rr_server *this)
                         1,
                         "bitbit");
                     proto_bug_write_uint8(&encoder, member->playing, "ready");
-                    proto_bug_write_string(&encoder, member->nickname,
-                                        71, "nick");
                     for (uint8_t j = 0; j < 20; ++j)
                     {
                         proto_bug_write_uint8(&encoder, member->loadout[j].id,
