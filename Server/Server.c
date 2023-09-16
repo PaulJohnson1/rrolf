@@ -252,7 +252,7 @@ static void delete_entity_function(EntityIdx entity, void *_captures)
 
 void rr_server_init(struct rr_server *this)
 {
-    printf("server size: %lu\n", sizeof *this);
+    //printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
     this->biome = 1; 
@@ -716,7 +716,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             case 0:
             {
                 rr_binary_encoder_read_nt_string(&decoder, this->server_alias);
-                printf("server link is %s\n", this->server_alias);
+                //printf("server link is %s\n", this->server_alias);
                 break;
             }
             case 1:

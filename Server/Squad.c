@@ -23,6 +23,7 @@ void rr_squad_add_client(struct rr_squad *this, struct rr_server_client *client)
     {
         if (this->members[i].in_use)
             continue;
+        memset(&this->members[i], 0, sizeof this->members[i]);
         client->squad_pos = i;
         this->members[i].client = client;
         this->member_count += 1;
