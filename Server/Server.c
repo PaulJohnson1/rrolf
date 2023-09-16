@@ -283,7 +283,9 @@ void rr_server_tick(struct rr_server *this)
 {
     if (!this->api_ws_ready)
         return;
+    fputs("ministep1\n", stderr);
     rr_api_websocket_tick(this);
+    fputs("ministep2\n", stderr);
     //rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
@@ -376,6 +378,7 @@ void rr_server_tick(struct rr_server *this)
             }
         }
     }
+    fputs("ministep3\n", stderr);
 /*
     rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
@@ -956,9 +959,7 @@ void rr_server_run(struct rr_server *this)
         gettimeofday(&start,
                      NULL); // gettimeofday actually starts from unix
                             // timestamp 0 (goofy)
-        fputs("step0\n", stderr);
         lws_service(this->server, -1);
-        fputs("step1\n", stderr);
         lws_service(this->api_client_context, -1);
         fputs("step2\n", stderr);
         rr_server_tick(this);
