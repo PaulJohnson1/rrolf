@@ -166,8 +166,6 @@ void rr_server_client_tick(struct rr_server_client *this)
                                        encoder.current - encoder.start);
         return;
     }
-    if (this->squad != 1)
-        printf("%d dfdsads\n", this->squad);
     if (this->player_info != NULL)
     {
         if (rr_simulation_has_entity(&this->server->simulation,
@@ -474,7 +472,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             //client->max_wave = account.maximum_wave;
 
             printf("socket %s verified\n", client->rivet_account.uuid);
-            puts("");
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
@@ -584,6 +581,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             printf("client joining squad %d\n", squad);
             rr_client_join_squad(this, client, squad);
+            if (i != 0)
+            {
+                fputs("skid multibox\n", stderr);
+                abort();
+            }
             break;
         }
         case RR_SERVERBOUND_SQUAD_READY:
