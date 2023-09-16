@@ -573,7 +573,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
             rr_binary_encoder_write_uint8(&encoder, i);
             lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
-            rr_client_join_squad(this, client, 0);
+            //rr_client_join_squad(this, client, 0);
             return 0;
         }
         if (!client->verified)
