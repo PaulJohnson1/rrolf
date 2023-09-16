@@ -38,6 +38,8 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
     this->members[client->squad_pos].in_use = 0;
     this->members[client->squad_pos].playing = 0;
     client->squad_pos = 0;
+    if (this->member_count == 0)
+        rr_squad_init(this);
 }
 
 uint8_t rr_client_find_squad(struct rr_server *this, struct rr_server_client *member)

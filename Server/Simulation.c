@@ -142,7 +142,7 @@ static void tick_wave(struct rr_simulation *this)
     }
 }
 
-#define RR_TIME_BLOCK(_, CODE)                                                 \
+#define RR_TIME_BLOCK_(_, CODE)                                                 \
     {                                                                          \
         struct timeval start; \
         struct timeval end; \
