@@ -60,11 +60,11 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->grid_size = RR_MAZE_GRID_SIZE;
     set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     //set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
-    printf("simulation size: %lu\n", sizeof *this);
-    printf("spatial hash size: %lu\n", sizeof *this->grid);
+    //printf("simulation size: %lu\n", sizeof *this);
+    //printf("spatial hash size: %lu\n", sizeof *this->grid);
 
 #define XX(COMPONENT, ID)                                                      \
-    printf(#COMPONENT);                                                        \
+    //printf(#COMPONENT);                                                        \
     printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
     RR_FOR_EACH_COMPONENT;
 #undef XX

@@ -555,11 +555,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case RR_SERVERBOUND_SQUAD_JOIN:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
+            printf("attempting a squad create of type %d\n", type);
             if (type > 2)
                 break;
             rr_client_leave_squad(this, client);
             uint8_t squad = RR_ERROR_CODE_INVALID_SQUAD;
-            printf("attempting a squad create of type %d\n", type);
             if (type == 2)
                 squad = rr_client_create_squad(this, client);
             else if (type == 1)
