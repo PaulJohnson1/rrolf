@@ -477,6 +477,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             //client->max_wave = account.maximum_wave;
 
             printf("socket %s verified\n", client->rivet_account.uuid);
+            puts("");
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
