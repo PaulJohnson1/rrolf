@@ -583,8 +583,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             }
             printf("client joining squad %d\n", squad);
-            if (i == 0)
-                rr_client_join_squad(this, client, squad);
+            rr_client_join_squad(this, client, squad);
             break;
         }
         case RR_SERVERBOUND_SQUAD_READY:
