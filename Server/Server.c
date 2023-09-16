@@ -707,9 +707,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             if (loadout_count > 10)
                 break;
+            fprintf(stderr, "%d %d hello\n", client->squad, client->squad_pos);
             struct rr_squad_member *member = rr_squad_get_client_slot(this, client);
             if (member == NULL)
                 break;
+            fprintf(stderr, "memmber is %p\n", member);
             uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
 
             memcpy(temp_inv, client->inventory, sizeof client->inventory);
