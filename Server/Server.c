@@ -378,12 +378,8 @@ void rr_server_tick(struct rr_server *this)
                 rr_server_client_write_message(client, encoder.start,
                                             encoder.current - encoder.start);
                 fprintf(stderr, "finished writing for client in squad %d\n", client->squad - 1);
-                fprintf(stderr, "client ptr is %p\n", this);
             }
-            /*
-            fprintf(stderr, "bruh %ld\n", rr_server_client_tick(&this->clients[i]));
             fprintf(stderr, "finished ticking client %ld\n", i);
-            */
         }
     }
 
