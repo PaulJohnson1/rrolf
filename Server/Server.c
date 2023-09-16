@@ -963,7 +963,7 @@ void rr_server_run(struct rr_server *this)
         lws_service(this->api_client_context, -1);
         fputs("step2\n", stderr);
         if (!this->api_ws_ready)
-        return;
+            continue;
     fputs("ministep1\n", stderr);
     rr_api_websocket_tick(this);
     fputs("ministep2\n", stderr);
