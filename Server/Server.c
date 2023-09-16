@@ -395,24 +395,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             first = 0;
         }
-        if (i == 1)
-            puts("idk wtf is going on");
-        if (i == 1)
-            printf("lol hello2, %d %ld %p\n", client->received_first_packet, size, client);
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
-        if (i == 1)
-            printf("lol hello3, %d %ld %p\n", client->received_first_packet, size, client);
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
         proto_bug_set_bound(&encoder, packet + size);
-        if (i == 1)
-            printf("lol hello4, %d %ld %p\n", client->received_first_packet, size, client);
         if (!client->received_first_packet)
         {
-            if (i == 1)
-            printf("lol hello5, %d %ld %p\n", client->received_first_packet, size, client);
+            printf("lol hello5, %d %d %ld %p\n", i, client->received_first_packet, size, client);
             client->received_first_packet = 1;
 
             proto_bug_read_uint64(&encoder, "useless bytes");
