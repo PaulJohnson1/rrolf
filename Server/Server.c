@@ -395,6 +395,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             first = 0;
         }
+        if (i == 1)
+            printf("lol hello, %d %ld\n", client->received_first_packet, size);
         if (client == NULL || size == 0)
             break;
         rr_decrypt(packet, size, client->serverbound_encryption_key);
