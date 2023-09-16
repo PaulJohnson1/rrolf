@@ -437,7 +437,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 if (!rr_bitset_get(this->clients_in_use, j))
                     continue;
-                if (&this->clients[j] == client)
+                if (i == j)
                     continue;
                 if (strcmp(client->rivet_account.uuid, this->clients[j].rivet_account.uuid) == 0)
                 {
@@ -551,7 +551,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case RR_SERVERBOUND_SQUAD_JOIN:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
-            printf("client %d attempting a squad create of type %d\n", i, type);
+            fprintf(stderr, "client %d attempting a squad create of type %d\n", i, type);
             if (type > 2)
                 break;
             rr_client_leave_squad(this, client);
@@ -579,13 +579,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->squad = 0;
                 break;
             }
-            printf("client joining squad %d\n", squad);
+            fprintf(stderr, "client joining squad %d\n", squad);
             rr_client_join_squad(this, client, squad);
-            if (i != 0)
-            {
-                fputs("skid multibox\n", stderr);
-                abort();
-            }
             break;
         }
         case RR_SERVERBOUND_SQUAD_READY:
