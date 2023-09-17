@@ -178,12 +178,14 @@ void rr_simulation_write_binary(struct rr_simulation *this,
     for (uint64_t i = 0; i < this->player_info_count; i++)
     {
         EntityIdx p_id = this->player_info_vector[i];
+        if (!rr_simulation_entity_alive(this, p_id))
+            continue;
         struct rr_component_player_info *p_info =
             rr_simulation_get_player_info(this, p_id);
         if (p_info->squad != player_info->squad)
             continue;
         rr_bitset_set(new_entities_in_view, p_id);
-        if (p_info->flower_id != RR_NULL_ENTITY && p_info->arena == player_info->arena)
+        if (rr_simulation_entity_alive(this, p_info->flower_id) && p_info->arena == player_info->arena)
             rr_bitset_set(new_entities_in_view, p_info->flower_id);
     }
 

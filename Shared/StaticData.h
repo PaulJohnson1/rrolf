@@ -99,6 +99,8 @@ enum rr_mob_id
     rr_mob_id_dragonfly,
     rr_mob_id_honeybee,
     rr_mob_id_beehive,
+    rr_mob_id_spider,
+    
     rr_mob_id_max
 };
 
