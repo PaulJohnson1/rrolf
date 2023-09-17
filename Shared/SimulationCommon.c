@@ -48,7 +48,6 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
     if (rr_simulation_has_##COMPONENT(this, i))                                \
     {                                                                          \
         rr_bitset_unset(this->COMPONENT##_tracker, i);                         \
-        free(this->COMPONENT##_components[i]);                                 \
     }               
     RR_FOR_EACH_COMPONENT;
 #undef XX
@@ -135,11 +134,9 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     {                                                                          \
         assert(rr_simulation_has_entity(this, entity));                        \
         rr_bitset_set(this->COMPONENT##_tracker, entity);                      \
-        this->COMPONENT##_components[entity] =                                 \
-                            malloc(sizeof *this->COMPONENT##_components[0]);   \
-        rr_component_##COMPONENT##_init(this->COMPONENT##_components[entity],  \
+        rr_component_##COMPONENT##_init(&this->COMPONENT##_components[entity], \
                                         this);                                 \
-        this->COMPONENT##_components[entity]->parent_id = entity;              \
+        this->COMPONENT##_components[entity].parent_id = entity;               \
         this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;          \
         return rr_simulation_get_##COMPONENT(this, entity);                    \
     }                                                                          \
@@ -148,7 +145,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     {                                                                          \
         assert(rr_simulation_has_entity(this, entity));                        \
         assert(rr_simulation_has_##COMPONENT(this, entity));                   \
-        return this->COMPONENT##_components[entity];                           \
+        return &this->COMPONENT##_components[entity];                          \
     }
 RR_FOR_EACH_COMPONENT;
 #undef XX

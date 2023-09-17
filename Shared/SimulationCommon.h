@@ -46,7 +46,7 @@ struct rr_simulation
 
 #define XX(COMPONENT, ID)                                                      \
     struct rr_component_##COMPONENT                                            \
-        *COMPONENT##_components[RR_MAX_ENTITY_COUNT];                          \
+        COMPONENT##_components[RR_MAX_ENTITY_COUNT];                           \
     EntityIdx COMPONENT##_vector[RR_MAX_ENTITY_COUNT];                         \
     EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
