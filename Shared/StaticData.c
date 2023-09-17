@@ -59,22 +59,22 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1,   1},
-    {1.5, 1.8},
-    {2.8, 3.0},
-    {4.5, 4.5},
-    {7.0, 7.2},
-    {12.0, 18.0},
-    {30.0, 54.0},
+    {1.5, 2},
+    {2.8, 4},
+    {4.5, 8},
+    {7.0, 16},
+    {12.0, 40},
+    {30.0, 100},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {3.2, 1.4, 1.2},
-    {12, 1.9, 1.5}, 
-    {35,  2.8, 1.8},
-    {120,  4.5, 2.5},
-    {300, 7.8, 4.0},
-    {1250, 18,  6.0},
+    {3.2, 1.5, 1.2},
+    {12,  2.5, 1.5}, 
+    {35,  4.0, 1.8},
+    {120, 6.0, 2.5},
+    {300, 9,   4.0},
+    {1250,18,  6.0},
 };
 // clang-format on
 
