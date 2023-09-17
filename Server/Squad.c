@@ -10,6 +10,7 @@ void rr_squad_init(struct rr_squad *this)
     memset(this, 0, sizeof *this);
     for (uint32_t i = 0; i < 6; ++i)
         this->squad_code[i] = (char) (97 + rand() % 26);
+    this->squad_code[6] = 0;
 }
 
 uint8_t rr_squad_has_space(struct rr_squad *this)

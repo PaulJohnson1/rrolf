@@ -17,7 +17,8 @@ struct rr_component_petal
     uint8_t detached;
     uint8_t id;
     uint8_t rarity;
-    RR_SERVER_ONLY(uint16_t protocol_state;)
+    RR_SERVER_ONLY(uint8_t no_rotation : 1;)
+    RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(int16_t effect_delay;)
 };
 

@@ -16,7 +16,7 @@ struct rr_squad
     struct rr_squad_member members[RR_SQUAD_MEMBER_COUNT];
     uint8_t member_count;
     uint8_t private;
-    char squad_code[6];
+    char squad_code[7];
 };
 
 void rr_squad_init(struct rr_squad *);

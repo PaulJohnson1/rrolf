@@ -10,7 +10,6 @@
 #include <Shared/Component/Petal.h>
 #include <Shared/Component/Physical.h>
 #include <Shared/Component/PlayerInfo.h>
-#include <Shared/Component/Projectile.h>
 #include <Shared/Component/Relations.h>
 #include <Shared/Component/Web.h>
 #include <Shared/Entity.h>

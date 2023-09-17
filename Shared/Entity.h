@@ -26,9 +26,8 @@ struct rr_id_rarity_pair
     XX(health, 9) \
     XX(drop, 10) \
     XX(centipede, 7) \
-    XX(projectile, 12) \
     XX(arena, 6) \
     XX(mob, 1) \
-    XX(ai, 13) \
+    XX(ai, 12) \
     XX(flower, 4) \
     XX(relations, 5) 

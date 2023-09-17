@@ -173,7 +173,7 @@ static void player_hud_on_render(struct rr_ui_element *this,
                 physical->x - game->player_info->camera_x,
                 physical->y - game->player_info->camera_y};
             rr_renderer_rotate(renderer, rr_vector_theta(&vector));
-            rr_renderer_translate(renderer, 25 + 6, 0);
+            rr_renderer_translate(renderer, 25 + 3, 0);
             rr_renderer_set_line_cap(renderer, 1);
             rr_renderer_set_stroke(renderer, 0xff222222);
             rr_renderer_set_fill(renderer, 0xffffffff);

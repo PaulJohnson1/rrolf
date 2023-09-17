@@ -93,13 +93,8 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
     if (data->secondary_cooldown > 0)
     {
-        struct rr_component_projectile *projectile =
-            rr_simulation_add_projectile(this, petal_id);
         petal->effect_delay = data->secondary_cooldown;
-    }
-    else if (id == rr_petal_id_uranium)
-    {
-        petal->effect_delay = 25;
+        petal->no_rotation = 1;
     }
     return petal_id;
 }

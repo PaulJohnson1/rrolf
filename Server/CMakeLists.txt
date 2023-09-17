@@ -37,7 +37,6 @@ set(SRCS
     ../Shared/Component/Petal.c
     ../Shared/Component/Physical.c
     ../Shared/Component/PlayerInfo.c
-    ../Shared/Component/Projectile.c
     ../Shared/Component/Relations.c
     ../Shared/Component/Web.c
     ../Shared/Api.c

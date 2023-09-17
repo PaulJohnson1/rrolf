@@ -58,6 +58,7 @@ void rr_component_petal_free(struct rr_component_petal *this,
     physical->friction = 0;
     physical->arena = petal_phys->arena;
     web->ticks_until_death = (5 + this->rarity) * 25;
+    relations->team = rr_simulation_get_relations(simulation, this->parent_id)->team;
 #endif
 }
 

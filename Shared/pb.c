@@ -138,8 +138,9 @@ extern "C"
         {
             proto_bug_write_uint8_internal(self, string[i]);
             if (string[i] == 0)
-                break;
+                return;
         }
+        proto_bug_write_uint8_internal(self, 0);
     }
 
     uint8_t proto_bug_read_uint8_internal(struct proto_bug *self)
