@@ -43,9 +43,9 @@ static void web_logic(struct rr_simulation *this, EntityIdx entity1,
                       EntityIdx entity2)
 {
     if (rr_simulation_get_relations(this, entity2)->team ==
-        rr_simulation_team_id_players)
+        rr_simulation_get_relations(this, entity1)->team)
         return;
-    if (!rr_simulation_has_mob(this, entity2))
+    if (!(rr_simulation_has_mob(this, entity2) || rr_simulation_has_flower(this, entity2)))
         return;
     rr_simulation_get_physical(this, entity2)->webbed = 1;
 }

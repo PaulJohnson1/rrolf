@@ -22,7 +22,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 5.0f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_web, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, 15.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
     {rr_petal_id_club, rr_rarity_id_common, 3.5f, 450.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -50,10 +50,10 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
     {rr_mob_id_hornet, rr_rarity_id_common, 30, 30, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
-    {rr_mob_id_dragonfly, rr_rarity_id_common, 20, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.04}}},
-    {rr_mob_id_honeybee, rr_rarity_id_common, 10, 25, 22.0f, {{rr_petal_id_pellet, 0.05},{rr_petal_id_stinger, 0.04}}},
-    {rr_mob_id_beehive, rr_rarity_id_rare, 0, 0, 45.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_azalea, 0.04}}},
-    {rr_mob_id_spider, rr_rarity_id_common, 20, 25, 45.0f, {{rr_petal_id_web, 0.05}}},
+    {rr_mob_id_dragonfly, rr_rarity_id_common, 20, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.05}}},
+    {rr_mob_id_honeybee, rr_rarity_id_common, 10, 25, 22.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_stinger, 0.05}}},
+    {rr_mob_id_beehive, rr_rarity_id_rare, 0, 0, 45.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_azalea, 0.05}}},
+    {rr_mob_id_spider, rr_rarity_id_common, 20, 25, 25.0f, {{rr_petal_id_web, 0.1},{rr_petal_id_magnet, 0.05}}},
 };
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -69,11 +69,11 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {3.2, 1.5, 1.2},
-    {12,  2.5, 1.5}, 
-    {35,  4.0, 1.8},
-    {120, 6.0, 2.5},
-    {300, 9,   4.0},
+    {2.2, 1.5, 1.2},
+    {7.5, 2.5, 1.5}, 
+    {20,  4.0, 1.8},
+    {75,  6.0, 2.5},
+    {200, 9,   4.0},
     {1250,18,  6.0},
 };
 // clang-format on
