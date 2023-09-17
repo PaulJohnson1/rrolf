@@ -81,8 +81,6 @@ struct lightning_captures
 
 static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
 {
-    if (seeker == target)
-        return 0;
     struct lightning_captures *chain = captures;
     for (uint32_t i = 0; i < chain->length; ++i)
     {
@@ -101,7 +99,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
         struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
         animation->type = 1;
-        EntityIdx chain[16] = {0};
+        EntityIdx chain[16] = {petal->parent_id};
         animation->points[0].x = petal_physical->x;
         animation->points[0].y = petal_physical->y;
         uint32_t chain_amount = petal->rarity + 1;   
@@ -110,7 +108,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
         struct lightning_captures captures = {chain, 1, petal_physical->x, petal_physical->y};
         for (; captures.length < chain_amount + 1; ++captures.length)
         {
-            target = rr_simulation_find_nearest_enemy_custom_pos(simulation, petal->parent_id, captures.curr_x, captures.curr_y, 250, &captures, lightning_filter);
+            target = rr_simulation_find_nearest_enemy_custom_pos(simulation, petal->parent_id, captures.curr_x, captures.curr_y, 400, &captures, lightning_filter);
             if (target == RR_NULL_ENTITY)
                 break;
             if (rr_simulation_has_ai(simulation, target))
@@ -311,8 +309,6 @@ static void system_flower_petal_movement_logic(
             }
             case rr_petal_id_seed:
             {
-                if ((player_info->input & 3) == 0)
-                    break;
                 if (simulation->player_info_count > simulation->flower_count)
                 {
                     if (!petal->detached)

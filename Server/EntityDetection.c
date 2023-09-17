@@ -33,7 +33,7 @@ void shg_cb(EntityIdx potential, void *_captures)
     float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius;
     if (dist > captures->closest_dist)
         return;
-    if (!captures->filter(simulation, captures->seeker, potential, captures))
+    if (!captures->filter(simulation, captures->seeker, potential, captures->captures))
         return;
     captures->closest_dist = dist;
     captures->closest = potential;

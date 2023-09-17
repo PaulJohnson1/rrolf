@@ -26,7 +26,8 @@
         "ranges": "c",
         "span": "c",
         "xhash": "c",
-        "xtree": "c"
+        "xtree": "c",
+        "xlocale": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "C:/rrolf/Client"

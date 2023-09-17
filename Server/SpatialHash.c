@@ -38,26 +38,26 @@ void rr_spatial_hash_query(struct rr_spatial_hash *this, float fx, float fy,
     // should not take in an entity id like insert does. the reason is so stuff
     // like ai can query a large radius without a viewing entity
     uint32_t s_x = (((uint32_t)(x)) / SPATIAL_HASH_GRID_SIZE);
-    if (s_x > 1)
-        s_x -= 2;
+    if (s_x > 0)
+        s_x -= 1;
     else
         s_x = 0;
 
     uint32_t s_y = (((uint32_t)(y)) / SPATIAL_HASH_GRID_SIZE);
-    if (s_y > 1)
-        s_y -= 2;
+    if (s_y > 0)
+        s_y -= 1;
     else
         s_y = 0;
 
     uint32_t e_x = (((uint32_t)(x + 2 * fw)) / SPATIAL_HASH_GRID_SIZE);
-    if (e_x < RR_SPATIAL_HASH_GRID_LENGTH - 2)
-        e_x += 2;
+    if (e_x < RR_SPATIAL_HASH_GRID_LENGTH - 1)
+        e_x += 1;
     else
         e_x = RR_SPATIAL_HASH_GRID_LENGTH - 1;
 
     uint32_t e_y = (((uint32_t)(y + 2 * fh)) / SPATIAL_HASH_GRID_SIZE);
-    if (e_y < RR_SPATIAL_HASH_GRID_LENGTH - 2)
-        e_y += 2;
+    if (e_y < RR_SPATIAL_HASH_GRID_LENGTH - 1)
+        e_y += 1;
     else
         e_y = RR_SPATIAL_HASH_GRID_LENGTH - 1;
 
