@@ -80,7 +80,7 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
     shg_captures.arena = physical->arena;
     rr_spatial_hash_query(simulation->grid, x, y, min_dist, min_dist, &shg_captures, shg_cb);
 
-    return target;
+    return shg_captures.closest;
 }
 
 uint8_t no_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)

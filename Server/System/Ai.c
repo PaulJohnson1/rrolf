@@ -15,8 +15,9 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
 {
     struct rr_component_physical *parent_physical = captures;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+    return 1;
     return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
-    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 500 * 500);
+    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 1000 * 1000);
 }
 
 static uint8_t has_new_target(struct rr_component_ai *ai,
@@ -24,16 +25,17 @@ static uint8_t has_new_target(struct rr_component_ai *ai,
 {
     if (!rr_simulation_entity_alive(simulation, ai->target_entity))
     {
-        ai->target_entity = RR_NULL_ENTITY;
-        ai->ai_state = rr_ai_state_idle;
-        ai->ticks_until_next_action = rand() % 25 + 25;
+        if (ai->target_entity != RR_NULL_ENTITY)
+        {
+            ai->target_entity = RR_NULL_ENTITY;
+            ai->ai_state = rr_ai_state_idle;
+            ai->ticks_until_next_action = rand() % 25 + 25;
+        }
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
         if (relations->team == rr_simulation_team_id_mobs)
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
         else
-        {
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
-        }
         if (ai->target_entity != RR_NULL_ENTITY)
             return 1;
         else
@@ -847,8 +849,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
             ai->ticks_until_next_action = 25;
         } 
     }
-    if ((mob->player_spawned ||
-        ai->ai_state == rr_ai_state_returning_to_owner) && mob->id == rr_mob_id_trex)
+    if (mob->player_spawned)
     {
         if (!rr_simulation_entity_alive(simulation, relations->owner))
         {
@@ -864,20 +865,21 @@ static void system_for_each(EntityIdx entity, void *simulation)
                  (250 + physical->radius) * (250 + physical->radius)))
         {
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 2.5);
+            rr_vector_set_magnitude(&accel, RR_PLAYER_SPEED * 1.2);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
             ai->target_entity = RR_NULL_ENTITY;
             return;
         }
         else if (dx * dx + dy * dy >
-                 (400 + physical->radius) * (400 + physical->radius))
+                 (1000 + physical->radius) * (1000 + physical->radius))
         {
             ai->ai_state = rr_ai_state_returning_to_owner;
             struct rr_vector accel = {dx, dy};
-            rr_vector_set_magnitude(&accel, 2.5);
+            rr_vector_set_magnitude(&accel, RR_PLAYER_SPEED * 1.2);
             rr_vector_add(&physical->acceleration, &accel);
             rr_component_physical_set_angle(physical, rr_vector_theta(&accel));
+            ai->target_entity = RR_NULL_ENTITY;
             return;
         }
         else if (ai->ai_state == rr_ai_state_returning_to_owner)
