@@ -60,11 +60,11 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1,   1},
     {1.5, 2},
-    {2.8, 4},
-    {4.5, 8},
-    {7.0, 16},
-    {12.0, 40},
-    {30.0, 100},
+    {3.2, 4},
+    {5.0, 8},
+    {8.5, 16},
+    {15.0, 40},
+    {45.0, 100},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {

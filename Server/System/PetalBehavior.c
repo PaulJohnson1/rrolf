@@ -47,7 +47,7 @@ static void uranium_damage(EntityIdx mob, void *_captures)
 static void uranium_petal_system(struct rr_simulation *simulation,
                                  struct rr_component_petal *petal)
 {
-    if (--petal->effect_delay == 0)
+    if (petal->effect_delay == 0)
     {
         struct rr_component_relations *relations =
             rr_simulation_get_relations(simulation, petal->parent_id);

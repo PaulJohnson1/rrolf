@@ -179,16 +179,16 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
     tick_wave(this);
-    rr_bitset_for_each_bit(
-        this->pending_deletions,
-        this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        __rr_simulation_pending_deletion_free_components);
-    rr_bitset_for_each_bit(this->pending_deletions,
-                           this->pending_deletions +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           this, __rr_simulation_pending_deletion_unset_entity);
     memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
+    rr_bitset_for_each_bit(
+        this->deleted_last_tick,
+        this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
+        __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->deleted_last_tick,
+                           this->deleted_last_tick +
+                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
+                           this, __rr_simulation_pending_deletion_unset_entity);
 }
 
 uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)

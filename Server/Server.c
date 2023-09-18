@@ -682,7 +682,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     rr_squad_get_client_slot(this, client)->playing = 0;
                     if (client->player_info != NULL)
                     {
-                        if (client->player_info->flower_id != RR_NULL_ENTITY)
+                        if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
                             rr_simulation_request_entity_deletion(
                                 &this->simulation, client->player_info->flower_id);
                         rr_simulation_request_entity_deletion(&this->simulation,

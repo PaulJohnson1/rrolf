@@ -15,7 +15,6 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
 {
     struct rr_component_physical *parent_physical = captures;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-    return 1;
     return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
     (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 1000 * 1000);
 }
@@ -36,14 +35,7 @@ static uint8_t has_new_target(struct rr_component_ai *ai,
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
         else
             ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
-        if (ai->target_entity != RR_NULL_ENTITY)
-            return 1;
-        else
-            return 0;
-    }
-    else
-    {
-        return 0;
+        return ai->target_entity != RR_NULL_ENTITY;
     }
     return 0;
 }
@@ -634,10 +626,8 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        struct rr_vector prediction =
-            predict(delta, physical2->velocity, ai->has_prediction * 15);
         rr_component_physical_set_angle(
-            physical, rr_vector_theta(&prediction));
+            physical, rr_vector_theta(&delta));
         break;
     }
     case rr_ai_state_attacking:
@@ -893,7 +883,6 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_tree:
         break;
     case rr_mob_id_ant:
-    case rr_mob_id_honeybee:
     case rr_mob_id_ornithomimus:
         tick_ai_aggro_ornithomimus(entity, this);
         break;
@@ -903,8 +892,9 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_pachycephalosaurus:
         tick_ai_aggro_pachycephalosaurus(entity, this);
         break;
+    case rr_mob_id_honeybee:
     case rr_mob_id_trex:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.9);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.95);
         break;
     case rr_mob_id_dakotaraptor:
         tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.5);
