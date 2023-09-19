@@ -686,7 +686,7 @@ void render_physical_component(EntityIdx entity, struct rr_game *this, struct rr
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x,
-                          physical->lerp_y0);
+                          physical->lerp_y);
     rr_renderer_set_stroke(this->renderer, 0xffff0000);
     rr_renderer_set_line_width(this->renderer, 3);
     rr_renderer_begin_path(this->renderer);
