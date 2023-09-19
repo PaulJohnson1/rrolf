@@ -272,7 +272,6 @@ void rr_server_tick(struct rr_server *this)
     if (!this->api_ws_ready)
         return;
     fputs("ministep1\n", stderr);
-    rr_api_websocket_tick(this);
     fputs("ministep2\n", stderr);
     //rr_simulation_tick(&this->simulation);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
@@ -941,7 +940,6 @@ void rr_server_run(struct rr_server *this)
         lws_service(this->api_client_context, -1);
         if (!this->api_ws_ready)
             continue;
-        rr_api_websocket_tick(this);
         rr_simulation_tick(&this->simulation);
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
         {
