@@ -121,18 +121,6 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
     rr_encrypt(start, size, this->clientbound_encryption_key);
 }
 
-void rr_api_websocket_tick(struct rr_server *this)
-{
-    if (!this->api_ws_ready)
-        return;
-    /*
-    struct rr_binary_encoder encoder;
-    rr_binary_encoder_init(&encoder, outgoing_message);
-    rr_binary_encoder_write_uint8(&encoder, 0); //api update packet
-    lws_write(this->api_client, outgoing_message, encoder.at - encoder.start, LWS_WRITE_BINARY);
-    */ 
-}
-
 void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {

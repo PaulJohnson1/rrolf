@@ -22,7 +22,7 @@ void shg_cb(EntityIdx potential, void *_captures)
 {
     struct entity_finder_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
-    if (!rr_simulation_has_mob(simulation, potential))
+    if (!rr_simulation_has_mob(simulation, potential) && !rr_simulation_has_flower(simulation, potential))
         return;
     if (rr_simulation_get_relations(simulation, potential)->team == captures->seeker_team)
         return;
@@ -51,22 +51,6 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
     EntityIdx target = RR_NULL_ENTITY;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, seeker);
     struct rr_component_relations *relations = rr_simulation_get_relations(simulation, seeker);
-    if (relations->team == rr_simulation_team_id_mobs)
-    {
-        for (uint32_t i = 0; i < simulation->flower_count; ++i)
-        {
-            EntityIdx potential = simulation->flower_vector[i];
-            struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
-            struct rr_vector delta = {x - t_physical->x, y - t_physical->y};
-            float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius - physical->radius;
-            if (dist > min_dist)
-                continue;
-            if (!filter(simulation, seeker, potential, captures))
-                continue;
-            min_dist = dist;
-            target = potential;
-        }
-    }
     struct entity_finder_captures shg_captures;
     shg_captures.simulation = simulation;
     shg_captures.captures = captures;

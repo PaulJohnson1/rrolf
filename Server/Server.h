@@ -12,13 +12,6 @@ struct lws;
 struct rr_server;
 struct rr_squad_member;
 
-enum rr_websocket_event_type
-{
-    rr_websocket_event_type_open,
-    rr_websocket_event_type_close,
-    rr_websocket_event_type_data
-};
-
 struct rr_server
 {
     struct rr_simulation simulation;

@@ -679,6 +679,23 @@ void render_web_component(EntityIdx entity, struct rr_game *this, struct rr_simu
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
+void render_physical_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+{
+    struct rr_renderer_context_state state;
+    rr_renderer_context_state_init(this->renderer, &state);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, entity);
+    rr_renderer_translate(this->renderer, physical->lerp_x,
+                          physical->lerp_y0);
+    rr_renderer_set_stroke(this->renderer, 0xffff0000);
+    rr_renderer_set_line_width(this->renderer, 3);
+    rr_renderer_begin_path(this->renderer);
+    rr_renderer_arc(this->renderer, 0, 0, physical->radius);
+    rr_renderer_stroke(this->renderer);
+    rr_renderer_context_state_free(this->renderer, &state);
+}
+
+
 void player_info_finder(struct rr_game *this)
 {
     struct rr_simulation *simulation = this->simulation;
@@ -853,6 +870,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_system_particle_render_tick(this, delta);
             render_component(petal);
             render_component(flower);
+            render_component(physical);
             rr_renderer_context_state_free(this->renderer, &state1);
             #undef render_component
         }
