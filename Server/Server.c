@@ -946,7 +946,7 @@ void rr_server_run(struct rr_server *this)
             if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
             {
                 struct rr_server_client *client = &this->clients[i];
-                if (client->squad == 0 || client->squad > 10)
+                if (client->squad == 0)
                     continue;
                 else if (client->player_info != NULL)
                 {
