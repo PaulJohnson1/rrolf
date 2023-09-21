@@ -50,14 +50,19 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
 void rr_simulation_create_component_vectors(struct rr_simulation *this)
 {
 #define XX(COMPONENT, ID)                                                      \
-    this->COMPONENT##_count = 0;                                               \
-    for (EntityIdx entity = 1; entity < RR_MAX_ENTITY_COUNT; ++entity)         \
-    {                                                                          \
-        if (this->entity_tracker[entity] & (1 << ID))                          \
-            this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;      \
-    }
+    this->COMPONENT##_count = 0;
     RR_FOR_EACH_COMPONENT;
 #undef XX
+    for (EntityIdx entity = 1; entity < RR_MAX_ENTITY_COUNT; ++entity)
+    {
+        if (!(this->entity_tracker[entity] & 1))
+            continue;
+#define XX(COMPONENT, ID)                                                      \
+        if (this->entity_tracker[entity] & (1 << ID))                          \
+            this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;
+RR_FOR_EACH_COMPONENT;
+#undef XX
+    }
 }
 
 void rr_simulation_for_each_entity(struct rr_simulation *this,
