@@ -54,10 +54,6 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
 void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
-#ifdef RR_SERVER
-    if (this->flower_id != RR_NULL_ENTITY)
-        rr_simulation_request_entity_deletion(simulation, this->flower_id);
-#endif
     free(this->collected_this_run);
 }
 

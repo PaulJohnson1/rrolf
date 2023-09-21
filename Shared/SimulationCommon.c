@@ -10,14 +10,14 @@
 
 int rr_simulation_has_entity(struct rr_simulation *this, EntityIdx entity)
 {
-    return rr_bitset_get(this->entity_tracker, entity);
+    return this->entity_tracker[entity] & 1;
 }
 
 void rr_simulation_request_entity_deletion(struct rr_simulation *this,
                                            EntityIdx entity)
 {
 #ifndef NDEBUG
-    //printf("request deletion of entity %u\n", entity);
+    printf("request deletion of entity %u\n", entity);
 #endif
     assert(rr_simulation_has_entity(this, entity));
     rr_bitset_set(this->pending_deletions, entity);
@@ -41,36 +41,10 @@ void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
     struct rr_simulation *this = captures;
     assert(rr_simulation_has_entity(this, i));
 #ifndef NDEBUG
-    //RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
+    RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
 #endif
 
-#define XX(COMPONENT, ID)                                                      \
-    if (rr_simulation_has_##COMPONENT(this, i))                                \
-    {                                                                          \
-        rr_bitset_unset(this->COMPONENT##_tracker, i);                         \
-    }               
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
-    rr_bitset_unset(this->entity_tracker, i);
-}
-
-struct rr_simulation_for_each_entity_function_captures
-{
-    void (*user_cb)(EntityIdx, void *);
-    void *user_captures;
-    struct rr_simulation *simulation;
-};
-
-// used to convert the uint64_t index that rr_bitset_for_each_bit into an
-// EntityIdx for the user
-void rr_simulation_for_each_entity_function(uint64_t _id, void *_captures)
-{
-    EntityIdx id = _id;
-    struct rr_simulation_for_each_entity_function_captures *captures =
-        _captures;
-
-    captures->user_cb(id, captures->user_captures);
+    this->entity_tracker[i] = 0;
 }
 
 void rr_simulation_create_component_vectors(struct rr_simulation *this)
@@ -79,9 +53,8 @@ void rr_simulation_create_component_vectors(struct rr_simulation *this)
     this->COMPONENT##_count = 0;                                               \
     for (EntityIdx entity = 1; entity < RR_MAX_ENTITY_COUNT; ++entity)         \
     {                                                                          \
-        if (rr_bitset_get(&this->COMPONENT##_tracker[0], entity) == 0)         \
-            continue;                                                          \
-        this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;          \
+        if (this->entity_tracker[entity] & (1 << ID))                          \
+            this->COMPONENT##_vector[this->COMPONENT##_count++] = entity;      \
     }
     RR_FOR_EACH_COMPONENT;
 #undef XX
@@ -91,33 +64,17 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
                                    void *user_captures,
                                    void (*cb)(EntityIdx, void *))
 {
-    struct rr_simulation_for_each_entity_function_captures captures;
-    captures.user_cb = cb;
-    captures.user_captures = user_captures;
 
-    rr_bitset_for_each_bit(&this->entity_tracker[0],
-                           &this->entity_tracker[0] +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           &captures, rr_simulation_for_each_entity_function);
+    for (uint64_t i = 1; i < RR_MAX_ENTITY_COUNT; ++i)
+        if (this->entity_tracker[i])
+            cb(i, user_captures);
 }
 
 #define XX(COMPONENT, ID)                                                      \
-    static void COMPONENT##for_each(uint64_t bit, void *_captures)             \
-    {                                                                          \
-        EntityIdx id = bit;                                                    \
-        struct rr_simulation_for_each_entity_function_captures *captures =     \
-            _captures;                                                         \
-        assert(rr_simulation_has_##COMPONENT(captures->simulation, id));       \
-        captures->user_cb(id, captures->user_captures);                        \
-    }                                                                          \
     void rr_simulation_for_each_##COMPONENT(struct rr_simulation *this,        \
                                             void *user_captures,               \
                                             void (*cb)(EntityIdx, void *))     \
     {                                                                          \
-        struct rr_simulation_for_each_entity_function_captures captures;       \
-        captures.user_cb = cb;                                                 \
-        captures.user_captures = user_captures;                                \
-        captures.simulation = this;                                            \
         for (uint16_t pos = 0; pos < this->COMPONENT##_count; ++pos)           \
             cb(this->COMPONENT##_vector[pos], user_captures);                  \
         return;                                                                \
@@ -127,13 +84,13 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
                                           EntityIdx entity)                    \
     {                                                                          \
         assert(rr_simulation_has_entity(this, entity));                        \
-        return rr_bitset_get(this->COMPONENT##_tracker, entity);               \
+        return (this->entity_tracker[entity] >> ID) & 1;                       \
     }                                                                          \
     struct rr_component_##COMPONENT *rr_simulation_add_##COMPONENT(            \
         struct rr_simulation *this, EntityIdx entity)                          \
     {                                                                          \
         assert(rr_simulation_has_entity(this, entity));                        \
-        rr_bitset_set(this->COMPONENT##_tracker, entity);                      \
+        this->entity_tracker[entity] |= (1 << ID);                             \
         rr_component_##COMPONENT##_init(&this->COMPONENT##_components[entity], \
                                         this);                                 \
         this->COMPONENT##_components[entity].parent_id = entity;               \

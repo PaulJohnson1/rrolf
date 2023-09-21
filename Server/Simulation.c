@@ -193,5 +193,5 @@ void rr_simulation_tick(struct rr_simulation *this)
 
 uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)
 {
-    return id && rr_bitset_get(this->entity_tracker, id) && !rr_bitset_get(this->deleted_last_tick, id);
+    return this->entity_tracker[id] && !rr_bitset_get(this->deleted_last_tick, id);
 }

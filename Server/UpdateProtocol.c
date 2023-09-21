@@ -38,12 +38,8 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
         rr_bitset_set(player_info->entities_in_view, id);
     }
 
-    uint32_t component_flags = 0;
-#define XX(COMPONENT, ID)                                                      \
-    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
+    uint32_t component_flags = simulation->entity_tracker[id];
+    proto_bug_write_uint8(encoder, is_creation, "upcreate");
     proto_bug_write_varuint(encoder, component_flags, "entity component flags");
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \
@@ -53,7 +49,7 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     RR_FOR_EACH_COMPONENT;
 #undef XX
 }
-
+ 
 struct rr_simulation_find_entities_in_view_for_each_function_captures
 {
     int32_t view_width;

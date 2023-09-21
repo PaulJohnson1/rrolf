@@ -20,7 +20,7 @@ void rr_simulation_init(struct rr_simulation *this)
 void rr_simulation_entity_create_with_id(struct rr_simulation *this,
                                          EntityIdx entity)
 {
-    rr_bitset_set(this->entity_tracker, entity);
+    this->entity_tracker[entity] = 1;
 }
 
 void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
@@ -33,7 +33,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         if (id == RR_NULL_ENTITY)
             break;
         assert(id < RR_MAX_ENTITY_COUNT);
-        assert(rr_bitset_get_bit(this->entity_tracker, id));
+        assert(this->entity_tracker[id]);
         uint8_t type = proto_bug_read_uint8(encoder, "deletion type");
         if (type)
         {
@@ -74,23 +74,25 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         id = proto_bug_read_varuint(encoder, "entity update id");
         if (id == RR_NULL_ENTITY)
             break;
-        uint8_t is_creation = !rr_bitset_get_bit(this->entity_tracker, id);
+        uint8_t is_creation = proto_bug_read_uint8(encoder, "upcreate");
         uint32_t component_flags =
             proto_bug_read_varuint(encoder, "entity component flags");
-
+        
         if (is_creation)
         {
 #ifndef RIVET_BUILD
             printf("create entity with id %d, components %d\n", id,
                    component_flags);
 #endif
-            rr_bitset_set(this->entity_tracker, id);
+            this->entity_tracker[id] = 1 | component_flags;
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \
         rr_simulation_add_##COMPONENT(this, id);
             RR_FOR_EACH_COMPONENT
 #undef XX
         }
+        else if ((component_flags >> 1) != (this->entity_tracker[id] >> 1))
+            printf("protocol error: entity %d misaligned: expected %d but got %d", id, this->entity_tracker[id] >> 1, component_flags >> 1);
 
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \
@@ -113,7 +115,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         particle->opacity = 0.8;
     }
     game->player_info = rr_simulation_get_player_info(
-        this, proto_bug_read_varuint(encoder, "pinfo id"));
+        this, proto_bug_read_varuint (encoder, "pinfo id"));
     this->game_over = proto_bug_read_uint8(encoder, "game over");
     this->updated_this_tick = 1;
 }
@@ -145,7 +147,8 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
     {
         if (!rr_simulation_has_entity(this, i))
         {
-            rr_bitset_set(this->entity_tracker, i);
+            this->entity_tracker[i] = 1;
+            //no more manual
 #ifndef NDEBUG
             printf("created with id %d\n", i);
 #endif

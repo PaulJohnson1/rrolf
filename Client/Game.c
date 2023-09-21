@@ -685,7 +685,7 @@ void player_info_finder(struct rr_game *this)
     memset(&this->player_infos, 0, sizeof this->player_infos);
     this->player_infos[0] = this->player_info->parent_id;
     for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; ++i)
-        if (rr_bitset_get(simulation->player_info_tracker, i) &&
+        if (rr_simulation_has_entity(simulation, i) && rr_simulation_has_player_info(simulation, i) &&
             i != this->player_info->parent_id)
             this->player_infos[counter++] = i;
 }

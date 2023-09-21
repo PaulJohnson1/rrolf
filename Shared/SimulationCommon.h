@@ -35,13 +35,9 @@ enum rr_simulation_team_id
 
 struct rr_simulation
 {
-    uint8_t entity_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
+    uint16_t entity_tracker[RR_MAX_ENTITY_COUNT];
     uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     RR_SERVER_ONLY(uint8_t deleted_last_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
-#define XX(COMPONENT, ID)                                                      \
-    uint8_t COMPONENT##_tracker[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    RR_FOR_EACH_COMPONENT;
-#undef XX
 
 #define XX(COMPONENT, ID)                                                      \
     struct rr_component_##COMPONENT                                            \

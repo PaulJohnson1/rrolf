@@ -13,6 +13,8 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game, struct rr_
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
+    if (physical->radius > 30)
+        printf("uh oh %d %d %f\n", entity, simulation->entity_tracker[entity], physical->radius);
     if (physical->deletion_type == 2)
     {
         struct rr_component_player_info *player_info = game->player_info;
