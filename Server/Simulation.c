@@ -136,7 +136,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT(RR_MAZE_HELL_CREEK[grid_y][grid_x].difficulty))
                 continue;
-            if (rand() % 75 == 0)
+            if (rand() % 25 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
