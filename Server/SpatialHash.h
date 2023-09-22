@@ -18,13 +18,12 @@ struct rr_spatial_hash_cell
 
 struct rr_spatial_hash
 {
-    struct rr_spatial_hash_cell cells[RR_SPATIAL_HASH_GRID_LENGTH]
-                                     [RR_SPATIAL_HASH_GRID_LENGTH];
+    struct rr_spatial_hash_cell *cells;
     struct rr_simulation *simulation;
-    // uint32_t query_id;
+    uint32_t size;
 };
 
-void rr_spatial_hash_init(struct rr_spatial_hash *);
+void rr_spatial_hash_init(struct rr_spatial_hash *, struct rr_simulation *, uint32_t);
 void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_update(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float,

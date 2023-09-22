@@ -142,6 +142,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         arena->grid = &RR_MAZE_BURROW[0][0];
         arena->maze_dim = RR_BURROW_MAZE_DIM;
         arena->grid_size = RR_BURRON_GRID_SIZE;
+        rr_component_arena_spatial_hash_init(arena, this);
         set_respawn_zone(&arena->respawn_zone, 1, 1, 1, 1);
         for (uint32_t X = 0; X < arena->maze_dim; ++X)
         {
@@ -151,6 +152,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
                 if (v == 0 || (v & 8))
                     continue;
                 rr_simulation_alloc_mob(this, entity, (X+rr_frand())*arena->grid_size, (Y+rr_frand())*arena->grid_size, rr_mob_id_honeybee, rarity_id, team_id);
+                break;            
             }
         }
     }

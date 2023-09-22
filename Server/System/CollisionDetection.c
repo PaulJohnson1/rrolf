@@ -1,4 +1,4 @@
-#include <Server/System/CollisionDetection.h>
+#include <Server/System/System.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -41,7 +41,7 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
             return;
         rr_component_health_set_flags(health, health->flags & (~2));
     }
-    rr_spatial_hash_insert(this->grid, entity);
+    rr_spatial_hash_insert(&rr_simulation_get_arena(this, physical->arena)->spatial_hash, entity);
 }
 static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
                                        EntityIdx b)
@@ -77,8 +77,6 @@ static void grid_filter_candidates(struct rr_simulation *this,
         rr_simulation_get_physical(this, entity1);
     struct rr_component_physical *physical2 =
         rr_simulation_get_physical(this, entity2);
-    if (physical1->arena != physical2->arena)
-        return;
     if (!should_entities_collide(this, entity1, entity2))
         return;
     struct rr_vector delta = {physical1->x - physical2->x,
@@ -98,32 +96,35 @@ static void grid_filter_candidates(struct rr_simulation *this,
 
 static void find_collisions(struct rr_simulation *this)
 {
+    /*
     rr_spatial_hash_find_possible_collisions(this->grid, NULL,
                                              grid_filter_candidates);
-}
-
-static void update_spatial_hash_entities(EntityIdx entity, void *_captures)
-{
-    struct rr_simulation *this = _captures;
-    rr_spatial_hash_insert(this->grid, entity);
+    */
 }
 
 static void collapse_arena(EntityIdx entity, void *_captures)
 {
-    if (entity == 1)
-        return;
     struct rr_simulation *this = _captures;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
+    rr_spatial_hash_reset(&arena->spatial_hash);
+    if (entity == 1)
+        return;
     if ((arena->ticks_to_deletion -= (arena->mob_count == 0)) == 0)
         rr_simulation_request_entity_deletion(this, entity);
 }
+
+static void collide_entities(EntityIdx entity, void *_captures)
+{
+    struct rr_simulation *this = _captures;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
+    rr_spatial_hash_find_possible_collisions(&arena->spatial_hash, NULL, grid_filter_candidates);
+}
+
 void rr_system_collision_detection_tick(struct rr_simulation *this)
 {
-    rr_spatial_hash_reset(this->grid);
     rr_simulation_for_each_arena(this, this, collapse_arena);
     rr_simulation_for_each_physical(this, this, system_reset_colliding_with);
     rr_simulation_for_each_physical(this, this, system_insert_entities);
-    // rr_simulation_for_each_physical(this, this,
-    // update_spatial_hash_entities);
+    rr_simulation_for_each_arena(this, this, collide_entities);
     find_collisions(this);
 }

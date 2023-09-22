@@ -1,6 +1,4 @@
-#include <Server/System/CollisionResolution.h>
-
-#include <Server/System/CollisionDetection.h>
+#include <Server/System/System.h>
 
 #include <stdio.h>
 #include <string.h>

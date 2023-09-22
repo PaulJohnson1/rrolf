@@ -42,10 +42,16 @@ void rr_component_arena_free(struct rr_component_arena *this,
             physical->velocity.y = sinf(angle) * v;
         }
     }
+    free(this->spatial_hash.cells);
 #endif
 }
 
 #ifdef RR_SERVER
+void rr_component_arena_spatial_hash_init(
+                   struct rr_component_arena *this, struct rr_simulation *simulation)
+{
+    rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze_dim * this->grid_size / SPATIAL_HASH_GRID_SIZE);
+}
 void rr_component_arena_write(struct rr_component_arena *this,
                               struct proto_bug *encoder, int is_creation,
                               struct rr_component_player_info *client)

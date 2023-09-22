@@ -9,16 +9,7 @@
 
 #include <Server/EntityAllocation.h>
 #include <Server/SpatialHash.h>
-#include <Server/System/Ai.h>
-#include <Server/System/Camera.h>
-#include <Server/System/Centipede.h>
-#include <Server/System/CollisionDetection.h>
-#include <Server/System/CollisionResolution.h>
-#include <Server/System/Drops.h>
-#include <Server/System/Health.h>
-#include <Server/System/PetalBehavior.h>
-#include <Server/System/Velocity.h>
-#include <Server/System/Web.h>
+#include <Server/System/System.h>
 #include <Server/Waves.h>
 #include <Shared/Bitset.h>
 #include <Shared/Utilities.h>
@@ -48,9 +39,6 @@ static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, 
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
-    this->grid = malloc(sizeof *this->grid);
-    rr_spatial_hash_init(this->grid);
-    this->grid->simulation = this;
     EntityIdx id = rr_simulation_alloc_entity(this);
     struct rr_component_arena *arena =
         rr_simulation_add_arena(this, id);
@@ -58,6 +46,7 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->grid = &RR_MAZE_HELL_CREEK[0][0];
     arena->maze_dim = RR_MAZE_DIM;
     arena->grid_size = RR_MAZE_GRID_SIZE;
+    rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     //set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
     //printf("simulation size: %lu\n", sizeof *this);

@@ -1,7 +1,6 @@
-#include <Server/System/Camera.h>
+#include <Server/System/System.h>
 
 #include <Server/Simulation.h>
-
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 

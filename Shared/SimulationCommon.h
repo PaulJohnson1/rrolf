@@ -46,7 +46,6 @@ struct rr_simulation
     EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
 #undef XX
-    RR_SERVER_ONLY(struct rr_spatial_hash *grid;)
     RR_SERVER_ONLY(uint32_t wave_points;)
     RR_SERVER_ONLY(uint32_t special_wave_id;)
     RR_SERVER_ONLY(struct rr_simulation_animation animations[512];)

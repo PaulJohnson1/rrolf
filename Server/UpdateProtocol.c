@@ -73,8 +73,6 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
 
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (captures->player_info->arena != physical->arena)
-        return;
 
     if (physical->x + physical->radius <
             captures->view_x - captures->view_width ||
@@ -115,8 +113,12 @@ static void rr_simulation_find_entities_in_view(
     if (rr_simulation_entity_alive(this, player_info->flower_id))
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
+    if (!rr_simulation_entity_alive(this, player_info->arena))
+        rr_component_player_info_set_arena(player_info, 1);
+    rr_bitset_set(captures.entities_in_view, player_info->arena);
     rr_bitset_set(captures.entities_in_view, 1);
-    rr_spatial_hash_query(this->grid, captures.view_x, captures.view_y, captures.view_width, captures.view_height, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    struct rr_spatial_hash *shg = &rr_simulation_get_arena(this, player_info->arena)->spatial_hash;
+    rr_spatial_hash_query(shg, captures.view_x, captures.view_y, captures.view_width, captures.view_height, &captures, rr_simulation_find_entities_in_view_for_each_function);
 }
 
 static void rr_simulation_write_entity_deletions_function(uint64_t _id,

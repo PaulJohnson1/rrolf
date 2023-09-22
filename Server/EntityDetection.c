@@ -11,7 +11,6 @@ struct entity_finder_captures
     uint8_t (*filter)(struct rr_simulation *, EntityIdx, EntityIdx, void *);
     EntityIdx closest;
     EntityIdx seeker;
-    EntityIdx arena;
     uint8_t seeker_team;
     float closest_dist;
     float x;
@@ -22,13 +21,12 @@ void shg_cb(EntityIdx potential, void *_captures)
 {
     struct entity_finder_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
-    if (!rr_simulation_has_mob(simulation, potential) && !rr_simulation_has_flower(simulation, potential))
+    if (!rr_simulation_has_mob(simulation, potential) && !rr_simulation_has_flower(simulation, potential) 
+    || rr_simulation_has_arena(simulation, potential))
         return;
     if (rr_simulation_get_relations(simulation, potential)->team == captures->seeker_team)
         return;
     struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
-    if (t_physical->arena != captures->arena)
-        return;
     struct rr_vector delta = {captures->x - t_physical->x, captures->y - t_physical->y};
     float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius;
     if (dist > captures->closest_dist)
@@ -61,8 +59,8 @@ EntityIdx rr_simulation_find_nearest_enemy_custom_pos(struct rr_simulation *simu
     shg_captures.x = x;
     shg_captures.y = y;
     shg_captures.seeker_team = relations->team;
-    shg_captures.arena = physical->arena;
-    rr_spatial_hash_query(simulation->grid, x, y, min_dist, min_dist, &shg_captures, shg_cb);
+    struct rr_spatial_hash *shg = &rr_simulation_get_arena(simulation, physical->arena)->spatial_hash;
+    rr_spatial_hash_query(shg, x, y, min_dist, min_dist, &shg_captures, shg_cb);
 
     return shg_captures.closest;
 }

@@ -80,7 +80,7 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
                                             void *user_captures,               \
                                             void (*cb)(EntityIdx, void *))     \
     {                                                                          \
-        for (uint16_t pos = 0; pos < this->COMPONENT##_count; ++pos)           \
+        for (EntityIdx pos = 0; pos < this->COMPONENT##_count; ++pos)          \
             cb(this->COMPONENT##_vector[pos], user_captures);                  \
         return;                                                                \
     }                                                                          \
@@ -106,6 +106,8 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
         struct rr_simulation *this, EntityIdx entity)                          \
     {                                                                          \
         assert(rr_simulation_has_entity(this, entity));                        \
+        if (!rr_simulation_has_##COMPONENT(this, entity)) \
+            printf("%d %d %d\n", entity, this->entity_tracker[entity], rr_simulation_has_centipede(this, entity));\
         assert(rr_simulation_has_##COMPONENT(this, entity));                   \
         return &this->COMPONENT##_components[entity];                          \
     }
