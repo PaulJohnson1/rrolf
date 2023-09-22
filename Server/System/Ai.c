@@ -653,13 +653,11 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        struct rr_vector prediction =
-            predict(delta, physical2->velocity, ai->has_prediction * 15);
-        float target_angle = rr_vector_theta(&prediction);
+        float target_angle = rr_vector_theta(&delta);
 
         rr_component_physical_set_angle(physical, target_angle);
 
-        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 20, target_angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 22.5, target_angle);
         rr_vector_add(&physical->acceleration, &accel);
         break;
     }

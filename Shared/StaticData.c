@@ -69,12 +69,12 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.2, 1.5, 1.2},
-    {7.5, 2.5, 1.5}, 
-    {20,  4.0, 1.8},
-    {75,  6.0, 2.5},
-    {200, 9,   4.0},
-    {1250,18,  6.0},
+    {2.2, 1.8, 1.2},
+    {7.5, 4.0, 1.5}, 
+    {20,  10,  1.8},
+    {50,  25,  2.5},
+    {125, 60,  4.0},
+    {500, 150, 6.0},
 };
 // clang-format on
 
