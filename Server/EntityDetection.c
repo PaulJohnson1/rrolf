@@ -26,6 +26,8 @@ void shg_cb(EntityIdx potential, void *_captures)
         return;
     if (rr_simulation_get_relations(simulation, potential)->team == captures->seeker_team)
         return;
+    if (rr_simulation_get_health(simulation, potential)->health == 0)
+        return;
     struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
     struct rr_vector delta = {captures->x - t_physical->x, captures->y - t_physical->y};
     float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius;

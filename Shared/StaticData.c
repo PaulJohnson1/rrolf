@@ -64,17 +64,17 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {5.0, 8},
     {8.5, 16},
     {15.0, 40},
-    {45.0, 100},
+    {45.0, 75},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.2, 1.8, 1.2},
-    {7.5, 4.0, 1.5}, 
-    {20,  10,  1.8},
-    {50,  25,  2.5},
-    {125, 60,  4.0},
-    {500, 150, 6.0},
+    {2.2, 2.5, 1.2},
+    {7.5, 4.5, 1.5}, 
+    {20,  7.5, 1.8},
+    {50,  10,  2.5},
+    {125, 25,  4.0},
+    {500, 80,  6.0},
 };
 // clang-format on
 
@@ -83,11 +83,13 @@ uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xffde1f1f, 0xff1fdbde, 0xffff2b75};
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
+
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
     "Beak", "Lightning", "Third Eye", "Mandible", "Wax"};
+    
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
