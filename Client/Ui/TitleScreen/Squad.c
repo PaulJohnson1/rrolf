@@ -271,28 +271,15 @@ struct rr_ui_element *rr_ui_countdown_init(struct rr_game *game)
 static void squad_find_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
+    default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
-    if (game->rivet_lobby_pending)
+    if (!game->socket_ready)
     {
         this->fill = 0xff999999;
-        data->text = "Finding...";
-    }
-    else if (game->socket_pending)
-    {
-        this->fill = 0xff999999;
-        data->text = "Joining...";
     }
     else
     {
-        rr_ui_element_check_if_focused(this, game);
         this->fill = 0xffd4b30c;
-        if (game->socket_ready)
-            data->text = "Find Squad";
-        else
-        {
-            data->text = "Find Squad";
-            this->fill = 0xffd4b30c;
-        }
     }
 }
 
