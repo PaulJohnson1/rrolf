@@ -5,7 +5,7 @@ node_modules/
 rrolf-client
 rrolf-client.wasm
 database.json
-rwolf-database.json
+MasterServer/rwolf-database.json
 logs.txt
 
 ### Rivet ###

@@ -718,10 +718,16 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
             printf("start wave %d\n", wave);
         }
     }
-    for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+    for (uint64_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         if (squad->members[i].in_use)
         {
+            if (squad->members[i].client == NULL)
+            {
+                printf("ERROR: null client in squad pos %d\n", i);
+                abort();
+                continue;
+            }
             struct rr_server_client *client = squad->members[i].client;
             struct rr_simulation *simulation = &squad->simulation;
             if (client->player_info != NULL && squad->simulation_active)
@@ -755,7 +761,7 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
                     // this doesn't require a gameserver update. server synchronously updates drops
                     // the only time the server needs to update is when the user crafts
                 }
-                if (simulation->wave_advance)
+                if (simulation->wave_advance && rr_simulation_has_entity(simulation, 1))
                 {
                     struct rr_binary_encoder encoder;
                     rr_binary_encoder_init(&encoder, outgoing_message);

@@ -39,11 +39,13 @@ void __rr_simulation_pending_deletion_free_components(uint64_t i,
 void __rr_simulation_pending_deletion_unset_entity(uint64_t i, void *captures)
 {
     struct rr_simulation *this = captures;
+#ifndef NDEBUG
+    RR_SERVER_ONLY(printf("deleting with id %d\n", i);)
+#endif
     assert(rr_simulation_has_entity(this, i));
 #ifndef NDEBUG
     RR_SERVER_ONLY(printf("deleted with id %d\n", i);)
 #endif
-
     this->entity_tracker[i] = 0;
 }
 

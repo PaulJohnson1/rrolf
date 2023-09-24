@@ -106,10 +106,25 @@
     "xp": 1000000,
     "already_playing": 0,
     "petals": {
-      "1:0": 5
+      "1:0": 5,
+      "3:0": 5,
+      "13:0": 1
     },
     "failed_crafts": {},
     "mob_gallery": {},
-    "maximum_wave": 2
+    "maximum_wave": 3,
+    "needs_database_update": 1
+  },
+  "31ac06ea-cc12-467a-b134-8e6dfd173393": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CIz49NHiMRCMmJLaqDEaEgoQGGnBRAr0TOGNfPkS-IB0kCIWUhQKEgoQOIakcygXQCC4Tg_-xETMdCIWChQKEgoQlWPd9u3FS5aqCqR4_go3NQ.sE7afXvmhVjI_lkZaeePEJ1VRKHhHNUCsWgPMS_0RcEsQbnpFz73NaOqmO55BdP_4EJhsUjvbcUCkaACuVZIDQ",
+    "username": "31ac06ea-cc12-467a-b134-8e6dfd173393",
+    "xp": 0,
+    "maximum_wave": 2,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 5
+    },
+    "failed_crafts": {},
+    "mob_gallery": {}
   }
 }
