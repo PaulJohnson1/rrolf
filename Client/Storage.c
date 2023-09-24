@@ -72,8 +72,9 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
             if (!hex)
                 return 0;
             // clang-format off
+            let bytes;
             try {
-                let bytes = new Uint8Array(new TextEncoder().encode(atob(hex)));
+                bytes = new Uint8Array(new TextEncoder().encode(atob(hex)));
             } catch(e) {
                 bytes = new Uint8Array(1);
             }
