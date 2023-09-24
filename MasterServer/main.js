@@ -491,6 +491,8 @@ wss.on("connection", (ws, req) => {
                 {
                     log("client delete", [uuid]);
                     const client = connected_clients[uuid];
+                    if (!client)
+                        break;
                     if (client.needs_database_update)
                         write_db_entry(client.user.username, client.user);
                     delete connected_clients[uuid];
