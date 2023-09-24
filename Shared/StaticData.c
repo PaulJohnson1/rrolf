@@ -58,7 +58,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Baby Ant","Worker Ant","Soldier Ant",
 "Bee","Hornet","Spider","Centipede","Ladybug","Evil Centipede"};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {4,6,8,6,10,9,5,7,8};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {4,6,8,6,10,9,1,7,2};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {2,3,3,2,5,3,0.2,3,0.25};
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {

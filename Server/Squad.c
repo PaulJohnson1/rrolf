@@ -46,7 +46,7 @@ void rr_squad_remove_client(struct rr_squad *this, struct rr_server_client *clie
 uint8_t rr_client_find_squad(struct rr_server *this, struct rr_server_client *member)
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
-        if (rr_squad_has_space(&this->squads[i]) && !this->squads[i].private)
+        if (rr_squad_has_space(&this->squads[i]) && !this->squads[i].private && !this->squads[i].simulation_active)
         {
             if (this->squads[i].member_count == 0)
                 rr_squad_init(&this->squads[i]);
@@ -70,7 +70,7 @@ uint8_t rr_client_create_squad(struct rr_server *this, struct rr_server_client *
 uint8_t rr_client_join_squad_with_code(struct rr_server *this, char *code)
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
-        if (memcmp(this->squads[i].squad_code, code, 6) == 0)
+        if (memcmp(this->squads[i].squad_code, code, 6) == 0 && !this->squads[i].simulation_active)
             return rr_squad_has_space(&this->squads[i]) ? i : RR_ERROR_CODE_FULL_SQUAD;
     return RR_ERROR_CODE_INVALID_SQUAD;
 }

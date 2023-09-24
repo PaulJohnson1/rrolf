@@ -37,7 +37,7 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
     rr_component_arena_set_wave(arena_component, 1);
-    this->wave_points = get_points_from_wave(0, 4);
+    this->wave_points = get_points_from_wave(1, 4);
 
     printf("simulation size: %lu\n", sizeof *this);
 
@@ -156,12 +156,12 @@ static void tick_wave(struct rr_simulation *this)
 {
     if (this->flower_count == 0)
         this->game_over = 1;
-
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
 
     uint32_t wave_length = ((arena->wave < 4 ? arena->wave : 4) * 15);
     uint32_t spawn_time = 1;
     uint32_t after_wave_time = 1;
+    this->wave_advance = 0;
     // idle spawning
     if (arena->wave_tick <= (wave_length * 25 * spawn_time))
     {
@@ -181,6 +181,7 @@ static void tick_wave(struct rr_simulation *this)
     {
         rr_component_arena_set_wave(arena, arena->wave + 1);
         arena->wave_tick = 0;
+        this->wave_advance = 1;
         this->wave_points =
             get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });

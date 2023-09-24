@@ -711,7 +711,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
     struct proto_bug encoder;
     proto_bug_init(&encoder, output_packet);
-    proto_bug_write_uint8(&encoder, 2, "header");
+    proto_bug_write_uint8(&encoder, RR_SERVERBOUND_PETAL_SWITCH, "header");
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');

@@ -98,7 +98,6 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
 
 void rr_server_client_free(struct rr_server_client *this)
 {
-    
     if (this->player_info != NULL && this->squad != 0)
     {
         struct rr_simulation *simulation = rr_client_get_simulation(this->server, this);
@@ -111,6 +110,7 @@ void rr_server_client_free(struct rr_server_client *this)
     {
         rr_client_leave_squad(this->server, this);
     }
+
     puts("client disconnected");
 }
 
@@ -471,7 +471,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->squad != 0)
             {
                 puts("ready");
-                rr_squad_get_client_slot(this, client)->ready ^= 1;
+                if (rr_squad_get_client_slot(this, client)->ready == 1)
+                {
+                    rr_client_leave_squad(this, client);
+                }
+                else 
+                    rr_squad_get_client_slot(this, client)->ready = 1;
             }
             break;
         }
@@ -601,7 +606,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 #define min(a,b) (((a) < (b)) ? (a) : (b))
                 client->level = min(next_level - 1, 150);
                 #undef min
-                printf("reading account %s, client level is %d %f\n", uuid, client->level, xp);
                 uint8_t id = rr_binary_encoder_read_uint8(&decoder);
                 while (id)
                 {
@@ -610,6 +614,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     client->inventory[id][rarity] = count;
                     id = rr_binary_encoder_read_uint8(&decoder);
                 }
+                client->max_wave = rr_binary_encoder_read_varuint(&decoder);
+                printf("reading account %s, client level is %d %f %d\n", uuid, client->level, xp, client->max_wave);
                 client->verified = 1;
                 break;
             }
@@ -698,12 +704,18 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
         {
             rr_simulation_init(&squad->simulation);
             squad->simulation_active = 1;
+            uint32_t sum = 0;
+            uint32_t count = 0;
             for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
                 if (squad->members[i].in_use)
                 {
+                    sum += squad->members[i].client->max_wave;
+                    ++count;
                     rr_server_client_create_player_info(server, squad->members[i].client);
                     rr_server_client_create_flower(squad->members[i].client);
-                }
+                }     
+            uint32_t wave = sum * 3 / count / 4 + 1;
+            printf("start wave %d\n", wave);
         }
     }
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
@@ -742,6 +754,15 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
                     client->player_info->drops_this_tick_size = 0;
                     // this doesn't require a gameserver update. server synchronously updates drops
                     // the only time the server needs to update is when the user crafts
+                }
+                if (simulation->wave_advance)
+                {
+                    struct rr_binary_encoder encoder;
+                    rr_binary_encoder_init(&encoder, outgoing_message);
+                    rr_binary_encoder_write_uint8(&encoder, 3);
+                    rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
+                    rr_binary_encoder_write_uint8(&encoder, rr_simulation_get_arena(simulation, 1)->wave);
+                    lws_write(server->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
                 }
             }
             else
@@ -849,7 +870,8 @@ void rr_server_run(struct rr_server *this)
                             // timestamp 0 (goofy)
         lws_service(this->server, -1);
         lws_service(this->api_client_context, -1);
-        rr_squad_tick(&this->squads[0], this);
+        for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+            rr_squad_tick(&this->squads[i], this);
         gettimeofday(&end, NULL);
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +

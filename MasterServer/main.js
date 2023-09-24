@@ -108,6 +108,7 @@ function apply_missing_defaults(account)
         password: "",
         username: "",
         xp: 0,
+        maximum_wave: 1,
         already_playing: 0,
         petals: {"1:0": 5},
         failed_crafts: {},
@@ -475,6 +476,7 @@ wss.on("connection", (ws, req) => {
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
                     connected_clients[uuid].write(encoder);
+                    encoder.WriteVarUint(user.maximum_wave);
                     ws.send(encoder.data.subarray(0, encoder.at));
                 } catch(e) {
                     console.log(e);
@@ -519,6 +521,20 @@ wss.on("connection", (ws, req) => {
                 user.needs_database_update = 1;
                 break;
             }
+            case 3:
+            {
+                const uuid = decoder.ReadStringNT();
+                if (!connected_clients[uuid])
+                    break;
+                const wave = decoder.ReadUint8();
+                log("wave advance", [uuid, wave]);
+                if (connected_clients[uuid].user.maximum_wave < wave)
+                {
+                    connected_clients[uuid].needs_database_update = 1;
+                    connected_clients[uuid].user.maximum_wave = wave;
+                }
+                break;
+            }
             case 100:
                 //ping
                 break;
@@ -547,6 +563,7 @@ wss.on("connection", (ws, req) => {
             encoder.WriteUint8(1);
             encoder.WriteUint8(pos);
             client.write(encoder);
+            encoder.WriteVarUint(client.user.maximum_wave);
             ws.send(encoder.data.subarray(0, encoder.at));
         }
     }, 2500);
@@ -572,7 +589,7 @@ setInterval(() => {
         if (!client.needs_database_update)
             continue;
         client.needs_database_update = 0;
-        log("updating db", uuid);
+        log("updating db", [uuid]);
         write_db_entry(client.user.username, client.user);
     }
 }, 15000);
