@@ -66,8 +66,9 @@ void rr_api_on_get_petals(char *bin, void *a)
         return;
     }
     rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
+    puts(game->rivet_account.uuid);
     game->cache.experience = rr_binary_encoder_read_float64(&decoder);
-    rr_binary_encoder_read_varuint(&decoder);
+    //rr_binary_encoder_read_varuint(&decoder);
     uint32_t checksum = 5;
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
     while (id)
@@ -78,10 +79,12 @@ void rr_api_on_get_petals(char *bin, void *a)
         checksum += id + ((rarity * count) & 1023);
         id = rr_binary_encoder_read_uint8(&decoder);
     }
+    /*
     if (rr_binary_encoder_read_varuint(&decoder) != checksum)
     {
         memset(game->inventory, 0, sizeof game->inventory);
     }
+    */
     free(bin);
 }
 
@@ -97,6 +100,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
 
     rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.token,
                       this);
+    rr_game_connect_socket(this);
 }
 
 static struct rr_ui_element *make_label_tooltip(char const *text)
@@ -123,14 +127,14 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->socket.found_error)
-        return 2;
+        return 1 + game->socket.found_error;
     return game->socket_ready;
 }
 
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return game->rivet_lobby_pending || game->socket_pending || game->socket_ready || game->socket.found_error;
+    return game->joined_squad || game->socket.found_error;
 }
 
 static uint8_t player_alive(struct rr_ui_element *this,
@@ -174,17 +178,17 @@ void rr_game_init(struct rr_game *this)
         this->window,
         rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
 
-    rr_ui_container_add_element(
+     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
             rr_ui_set_background(
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
                     rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                        rr_ui_text_init("rwolf.io", 96, 0xffffffff),
+                        rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
-                            rr_ui_container_init(), 10, 20,
+                            rr_ui_container_init(), 0, 20,
                             rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "0x4346"),
-                            rr_ui_set_background(rr_ui_join_button_init(), 0xff1dd129),
+                            rr_ui_join_button_init(),
                             NULL
                         ),
                         /*
@@ -194,30 +198,26 @@ void rr_game_init(struct rr_game *this)
                             NULL
                         ),
                         */
-                        rr_ui_set_justify(rr_ui_set_background(rr_ui_squad_button_init(), 0xff1dd129), 1, 0),
+                        rr_ui_set_justify(
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                            rr_ui_create_squad_button_init(),
+                            rr_ui_squad_button_init(),
+                            NULL
+                        ), 1, -1),
                         rr_ui_set_background(
                             rr_ui_link_toggle(
                                 rr_ui_v_container_init(
                                     rr_ui_popup_container_init(), 10, 10,
                                     rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_flex_container_init(
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("initial wave:", 14, 0xffffffff),
-                                            rr_ui_h_slider_init(100, 20, &this->cache.wave_start_percent, 1),
-                                            NULL
-                                        ),
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                            rr_ui_text_init("Private", 14, 0xffffffff),
-                                            rr_ui_create_squad_button_init(this),
-                                            NULL
-                                        ),
-                                        10
+                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                        rr_ui_text_init("Private", 14, 0xffffffff),
+                                        rr_ui_toggle_private_button_init(this),
+                                        NULL
                                     ),
                                     rr_ui_multi_choose_element_init(
                                         socket_ready,
                                         rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                         rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
-                                            rr_ui_wave_spawn_text_init(),
                                             rr_ui_h_container_init(
                                                 rr_ui_container_init(), 0, 10,
                                                 rr_ui_squad_player_container_init(this, 0),
@@ -226,16 +226,17 @@ void rr_game_init(struct rr_game *this)
                                                 rr_ui_squad_player_container_init(this, 3),
                                                 NULL
                                             ),
-                                            rr_ui_set_justify(rr_ui_countdown_init(this), 1, 0),
                                             NULL
                                         ),
                                         rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
+                                        rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
+                                        rr_ui_text_init("Squad is full", 24, 0xffff2222),
                                         NULL
                                     ),
                                     rr_ui_flex_container_init(
                                         rr_ui_copy_squad_code_button_init(),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                            rr_ui_text_input_init(100, 18, &this->connect_link[0], 100, "_0x4347"),
+                                            rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"),
                                             rr_ui_join_squad_code_button_init(),
                                             NULL
                                         ),
@@ -468,7 +469,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         this->rivet_lobby_pending = 0;
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
-        puts("websocket closed");
         break;
     case rr_websocket_event_type_data:
     {
@@ -497,52 +497,51 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
-            uint64_t token_size = strlen(&this->socket.rivet_player_token[0]);
-            uint64_t uuid_size = strlen(this->rivet_account.uuid);
-            proto_bug_write_varuint(&verify_encoder, token_size,
-                                    "rivet token size");
-            proto_bug_write_varuint(&verify_encoder, uuid_size, "uuid size");
             proto_bug_write_string(&verify_encoder,
-                                   &this->socket.rivet_player_token[0], token_size,
+                                   &this->socket.rivet_player_token[0], 300,
                                    "rivet token");
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
-                                   uuid_size, "rivet uuid");
+                                   100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
-            rr_websocket_send_all(&this->socket);
+            this->socket_ready = 1;
+            this->socket_pending = 0;
+            //send instajoin
             return;
         }
-        this->socket_pending = 0;
-        this->socket_ready = 1;
 
         this->socket.clientbound_encryption_key =
             rr_get_hash(this->socket.clientbound_encryption_key);
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
-        case 0:
+        case RR_CLIENTBOUND_UPDATE:
         {
+            if (!this->simulation_ready)
+                rr_simulation_init(this->simulation);
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
             break;
         }
-        case 69:
+        case RR_CLIENTBOUND_SQUAD_FAIL:
         {
-            this->ticks_until_game_start =
-                proto_bug_read_uint8(&encoder, "countdown");
+            this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
+            break;
+        }
+        case RR_CLIENTBOUND_SQUAD_UPDATE:
+        {
+            this->socket.found_error = 0;
+            this->joined_squad = 1;
+            this->simulation_ready = 0;
             for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             {
                 this->squad_members[i].in_use =
                     proto_bug_read_uint8(&encoder, "bitbit");
+                if (this->squad_members[i].in_use == 0)
+                    continue;
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
-                this->squad_members[i].requested_start_wave =
-                    proto_bug_read_varuint(&encoder, "requested start wave");
-                uint32_t length = proto_bug_read_varuint(&encoder, "nick size");
-                proto_bug_read_string(&encoder, &this->squad_members[i].name[0],
-                                      length, "nick");
-                this->squad_members[i].name[length] = 0;
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =
@@ -554,12 +553,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
+            proto_bug_read_string(&encoder, this->squad_code, 15, "squad code");
+            //puts(this->squad_code);
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 70, "header");
-            proto_bug_write_float32(&encoder2,
-                                    this->cache.wave_start_percent * 0.75,
-                                    "requested wave");
+            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
             proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
                                   "loadout count");
             for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
@@ -577,10 +575,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, 71, "header");
-            uint32_t len = strlen(&this->cache.nickname[0]);
-            proto_bug_write_varuint(&encoder2, len, "nick length");
-            proto_bug_write_string(&encoder2, &this->cache.nickname[0], len,
+            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_NICKNAME_UPDATE, "header");
+            proto_bug_write_string(&encoder2, this->cache.nickname, 16 + 1,
                                    "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
@@ -679,7 +675,6 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     struct proto_bug encoder2;
     proto_bug_init(&encoder2, output_packet);
     proto_bug_write_uint8(&encoder2, 0, "header");
-    proto_bug_write_uint8(&encoder2, 0, "movement type");
     uint8_t movement_flags = 0;
     movement_flags |=
         (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
@@ -936,31 +931,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 #endif
     if (this->socket_ready)
     {
-#ifndef RIVET_BUILD
-#define WRITE_CHEAT(X) \
-struct proto_bug encoder; \
-proto_bug_init(&encoder, output_packet); \
-proto_bug_write_uint8(&encoder, 3, "header"); \
-proto_bug_write_uint8(&encoder, X, "cheat type"); \
-rr_websocket_send(&this->socket, encoder.current - encoder.start);
-
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              75 /* k */))
-        {
-            WRITE_CHEAT(2)
-        }
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              76 /* l */))
-        {
-            WRITE_CHEAT(1)
-        }
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              86 /* v */))
-        {
-            WRITE_CHEAT(3)
-        }
-#undef WRITE_CHEAT
-#endif
         if (this->simulation_ready)
         {
             if (!this->is_mobile)

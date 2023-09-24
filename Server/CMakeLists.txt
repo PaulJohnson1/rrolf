@@ -31,6 +31,7 @@ set(SRCS
     Client.c
     Logs.c
     Server.c
+    Squad.c
     Simulation.c
     SpatialHash.c
     UpdateProtocol.c

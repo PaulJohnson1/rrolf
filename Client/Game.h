@@ -6,6 +6,7 @@
 #include <Client/Ui/Ui.h>
 #include <Shared/Entity.h>
 #include <Shared/Rivet.h>
+#include <Shared/Squad.h>
 #include <Shared/StaticData.h>
 #include <Shared/pb.h>
 
@@ -18,21 +19,6 @@ struct rr_game_debug_info
     long tick_times[RR_DEBUG_POLL_SIZE];
     long frame_times[RR_DEBUG_POLL_SIZE];
     long message_sizes[RR_DEBUG_POLL_SIZE];
-};
-
-struct rr_game_loadout_petal
-{
-    uint8_t id;
-    uint8_t rarity;
-};
-
-struct rr_game_squad_client
-{
-    struct rr_game_loadout_petal loadout[20];
-    uint32_t requested_start_wave;
-    char name[18];
-    uint8_t in_use;
-    uint8_t ready;
 };
 
 struct rr_game_crafting_data
@@ -51,7 +37,7 @@ struct rr_game_cache
     uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
     float map_props;
     float wave_start_percent;
-    struct rr_game_loadout_petal loadout[20];
+    struct rr_id_rarity_pair loadout[20];
     uint8_t use_mouse;
     uint8_t displaying_debug_information;
     uint8_t show_ui_hitbox;
@@ -69,7 +55,7 @@ struct rr_game
     struct rr_game_cache cache;
 
     struct rr_rivet_account rivet_account;
-    struct rr_game_squad_client squad_members[RR_SQUAD_MEMBER_COUNT];
+    struct rr_squad_member squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
@@ -109,8 +95,10 @@ struct rr_game
     uint8_t selected_biome;
     uint8_t is_mobile;
 
+    uint8_t joined_squad;
     uint8_t squad_private;
-    char connect_link[100];
+    char squad_code[100];
+    char connect_code[100];
 };
 
 void rr_game_init(struct rr_game *);

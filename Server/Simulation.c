@@ -37,6 +37,7 @@ void rr_simulation_init(struct rr_simulation *this)
         rr_simulation_add_arena(this, id);
     rr_component_arena_set_radius(arena_component, RR_ARENA_RADIUS);
     rr_component_arena_set_wave(arena_component, 1);
+    this->wave_points = get_points_from_wave(0, 4);
 
     printf("simulation size: %lu\n", sizeof *this);
 

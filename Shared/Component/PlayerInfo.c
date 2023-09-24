@@ -24,7 +24,7 @@
     X(flower_id, varuint)                                                      \
     X(camera_x, float32)                                                       \
     X(slot_count, varuint)                                                     \
-    X(client_id, uint8)
+    X(squad_pos, uint8)
 
 enum
 {
@@ -34,16 +34,16 @@ enum
     state_flags_flower_id = 0b0001000,
     state_flags_camera_x = 0b0010000,
     state_flags_petals = 0b0100000,
-    state_flags_client_id = 0b1000000,
+    state_flags_squad_pos = 0b1000000,
     state_flags_petals_collected = 0b10000000,
-    state_flags_all = 0b11111111
+    state_flags_all = 0b011111111
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
-    this->camera_fov = 1.0f;
+    this->camera_fov = RR_BASE_FOV;
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
     this->collected_this_run = malloc(rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
     memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
@@ -147,7 +147,7 @@ RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_y)
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_fov)
 RR_DEFINE_PUBLIC_FIELD(player_info, uint32_t, slot_count)
 RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
-RR_DEFINE_PUBLIC_FIELD(player_info, uint8_t, client_id);
+RR_DEFINE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);
 #endif
 
 #ifdef RR_CLIENT

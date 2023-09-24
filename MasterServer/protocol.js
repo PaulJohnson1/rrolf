@@ -40,7 +40,22 @@ class BinaryWriter
 
 class BinaryReader
 {
-
+    constructor(data) {
+        const buf = new ArrayBuffer(8);
+        this.conv_u8 = new Uint8Array(buf);
+        this.conv_f32 = new Float32Array(buf);
+        this.conv_f64 = new Float64Array(buf);
+        this.data = data;
+        this.at = 0;
+    }
+    ReadUint8() {
+        return this.data[this.at++];
+    }
+    ReadStringNT() {
+        const start = this.at;
+        while (this.ReadUint8());
+        return new TextDecoder().decode(this.data.subarray(start, this.at-1));
+    }
 }
 
 module.exports = { BinaryReader, BinaryWriter };

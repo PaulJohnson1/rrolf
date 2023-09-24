@@ -86,7 +86,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
     if (rr_simulation_has_drop(simulation, entity) &&
         rr_bitset_get(
             rr_simulation_get_drop(captures->simulation, entity)->picked_up_by,
-            captures->player_info->client_id))
+            captures->player_info->squad_pos))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
     return;
@@ -137,7 +137,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
                      rr_bitset_get(
                          rr_simulation_get_drop(captures->simulation, id)
                              ->picked_up_by,
-                         player_info->client_id))
+                         player_info->squad_pos))
                 out_of_view = 2;
         rr_bitset_unset(player_info->entities_in_view, id);
         proto_bug_write_varuint(encoder, id, "entity deletion id");

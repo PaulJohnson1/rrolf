@@ -48,7 +48,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_worker_ant, rr_rarity_id_common, 10, 15, 16, {{rr_petal_id_light, 0.1}}},
     {rr_mob_id_soldier_ant, rr_rarity_id_common, 15, 20, 16, {{rr_petal_id_light, 0.15}}},
     {rr_mob_id_bee, rr_rarity_id_common, 10, 30, 25, {{rr_petal_id_stinger, 0.25},{rr_petal_id_light, 0.1}}},
-    {rr_mob_id_hornet, rr_rarity_id_common, 40, 30, 25, {{rr_petal_id_antennae, 0.25},{rr_petal_id_missile, 0.2},{rr_petal_id_oranges, 0.1}}},
+    {rr_mob_id_hornet, rr_rarity_id_common, 25, 30, 25, {{rr_petal_id_antennae, 0.25},{rr_petal_id_missile, 0.2},{rr_petal_id_oranges, 0.1}}},
     {rr_mob_id_spider, rr_rarity_id_common, 25, 25, 15, {{rr_petal_id_faster, 0.25},{rr_petal_id_web, 0.2}, {rr_petal_id_iris, 0.1}}},
     {rr_mob_id_centipede, rr_rarity_id_common, 30, 10, 35, {{rr_petal_id_peas, 0.25},{rr_petal_id_leaf, 0.2}}},
     {rr_mob_id_ladybug, rr_rarity_id_common, 30, 10, 25, {{rr_petal_id_rose, 0.25},{rr_petal_id_light, 0.1}}},

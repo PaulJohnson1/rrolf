@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include <Shared/Rivet.h>
+#include <Shared/StaticData.h>
 
 struct rr_server_client_loadout_petal
 {
@@ -34,14 +35,14 @@ struct rr_server_client
     uint32_t max_wave;
     int file_descriptor;
     char ip_address[100];
+    uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     char client_nickname[18 * 4];
     uint32_t level;
     uint32_t response_time;
+    uint8_t squad;
+    uint8_t squad_pos;
     uint8_t received_first_packet : 1;
     uint8_t verified : 1;
-    uint8_t ready : 4;
-    uint8_t loadout_validated : 1;
-    uint8_t loadout_pending_validation : 1;
     uint8_t kicked : 1;
 };
 

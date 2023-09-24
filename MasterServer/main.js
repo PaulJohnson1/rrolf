@@ -4,17 +4,23 @@ const path = require("path");
 const fs = require("fs");
 const WSS = require("ws");
 const http = require("http")
+const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
+const GameServer = require("./gameserver");
+const GameClient = require("./client");
 const app = express();
 const port = 55554;
 const namespace = "/api";
 
 const DIRECTORY_SECRET = "a92pd3nf29d38tny9pr34dn3d908ntgb";
+const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad37q2aioymkznsxhmytcaoeyadou37wty3ou7qjoaud37tyadou37j4ywdou7wjytaousrt7jy3t";
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const PETALS_TO_UPGRADE = 5;
+
+const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 
 const CRAFT_CHANCES = [
     rng.get_magic_chance(0.5),
@@ -33,15 +39,9 @@ let changed = false;
 const databaseFilePath = path.join(__dirname, "rwolf-database.json");
 if (fs.existsSync(databaseFilePath))
 {
-    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-    try {
-        database = JSON.parse(databaseData);
-    } catch(e) {
-        database = {};
-    }
+   const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+   database = JSON.parse(databaseData);
 }
-else
-    fs.writeFileSync(databaseFilePath, "");
 
 app.use(cors());
 
@@ -107,7 +107,6 @@ function apply_missing_defaults(account)
     const defaults = {
         password: "",
         username: "",
-        maximum_wave: 1,
         xp: 0,
         already_playing: 0,
         petals: {"1:0": 5},
@@ -131,23 +130,20 @@ function apply_missing_defaults(account)
         }
     }
 
-    account.maximum_wave = parseInt(account.maximum_wave);
-
     return account;
 }
 
 function craft(count, initial_fails, chance)
 {
-    if (chance === 0)
-        return {count, successes: 0};
     let successes = 0;
     let fails = initial_fails;
     let attempts = 0;
+    if (chance === 0)
+        return {count, successes, attempts, fails};
     while (count >= PETALS_TO_UPGRADE)
     {
         attempts++;
-        let this_chance = chance * (fails + 1);
-        if (Math.random() < this_chance)
+        if (Math.random() < chance * (fails + 1))
         {
             fails = 0;
             successes++;
@@ -166,27 +162,28 @@ function craft(count, initial_fails, chance)
 async function write_db_entry(username, data)
 {
     changed = true;
+    //delete data.needs_update;
     database[username] = structuredClone(data);
-    //await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
+    if (connected_clients[username] && (1 || password === SERVER_SECRET))
+        return connected_clients[username].user;
     const user = structuredClone({value: database[username]});
-    //const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         const user = apply_missing_defaults({});
         user.password = password;
         user.username = username;
+        user.xp = 1000000;
         await write_db_entry(username, user);
         return user;
     }
     
     apply_missing_defaults(user.value);
-
-    if (user.value.password !== password && password !== SERVER_SECRET)
-        throw new Error("invalid password")
 
     return user.value;
 }
@@ -199,6 +196,7 @@ async function handle_error(res, cb)
     }
     catch (e)
     {
+        console.log(e);
         res.end("\x00" + e.stack);
     }
 }
@@ -217,7 +215,7 @@ function user_merge_petals(user, petals)
 function craft_user_petals(user, petals)
 {
     if (petals.length === 0)
-        return "";
+        return "\x00error";
     // validate
     for (let i = 0; i < petals.length; i++)
         if (petals[i].count < PETALS_TO_UPGRADE)
@@ -292,7 +290,6 @@ app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res)
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(username);
         out.WriteFloat64(user.xp);
-        out.WriteVarUint(user.maximum_wave);
         let checksum = 5;
         for (const petal of Object.keys(user.petals))
         {
@@ -328,8 +325,6 @@ app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:w
         const user = await db_read_user(username, SERVER_SECRET);
 
         user_merge_petals(user, parse_id_rarity_count(petals_string));
-        if (user.maximum_wave < wave_end)
-            user.maximum_wave = wave_end;
         await write_db_entry(username, user);
         return "success\x00";
     });
@@ -340,13 +335,9 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
     log("user_get", [username]);
     handle_error(res, async () => {
         const user = await db_read_user(username, password);
-        delete user.failed_crafts;
-        delete user.password;
-        delete user.already_playing;
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(user.username);
         out.WriteFloat64(user.xp);
-        out.WriteVarUint(user.maximum_wave);
         let checksum = 5;
         for (const petal of Object.keys(user.petals))
         {
@@ -385,6 +376,8 @@ app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, asy
         const petals = parse_id_rarity_count(petals_string);
         const user = await db_read_user(username, password);
         const results = craft_user_petals(user, petals);
+        if (connected_clients[username])
+            connected_clients[username].needs_gameserver_update = 1;
         await write_db_entry(username, user);
         return results;
     })
@@ -395,10 +388,22 @@ app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) =
     log("user_get", [username]);
     handle_error(res, async () => {
         const user = await db_read_user(username, password);
-        delete user.failed_crafts;
-        delete user.password;
-        delete user.already_playing;
-        return JSON.stringify(user)
+        return JSON.stringify(user);
+    });
+});
+
+app.get(`${namespace}/user_get_password/:password`, async (req, res) => {
+    const {password} = req.params;
+    handle_error(res, async () => {
+        const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
+            headers: {
+                Authorization: "Bearer " + password
+            }
+        });
+        if (d.status != 200)
+            throw new Error(JSON.stringify(await d.text()));
+        const j = await d.json();
+        return hash(j.identity.identity_id + PASSWORD_SALT);
     });
 });
 
@@ -407,26 +412,26 @@ app.use((req, res) => {
 });
 
 const saveDatabaseToFile = () => {
-    if (changed)
-    {
-        changed = false;
-        console.log("saving database to file:", databaseFilePath);
-        const databaseData = JSON.stringify(database, null, 2);
-        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-    }
-    else
-        console.log("tried save, was not changed");
+   if (changed)
+   {
+       changed = false;
+       console.log("saving database to file:", databaseFilePath);
+       const databaseData = JSON.stringify(database, null, 2);
+       fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+   }
+   else
+       console.log("tried save, was not changed");
 };
 
 let quit = false;
 const try_save_exit = () =>
 {
-    if (!quit)
-    {
-        quit = true;
-        saveDatabaseToFile();
-    }
-    process.exit();
+   if (!quit)
+   {
+       quit = true;
+       saveDatabaseToFile();
+   }
+   process.exit();
 }
 
 process.on("beforeExit", try_save_exit);
@@ -437,27 +442,138 @@ process.on("uncaughtException", try_save_exit);
 
 setInterval(saveDatabaseToFile, 60000);
 
-
-
 const server = http.createServer(app);
 
 server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
+
 const wss = new WSS.Server({server});
 const game_servers = {};
-
+const connected_clients = {};
 
 wss.on("connection", (ws, req) => {
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-
     if (req.url !== `/api/${SERVER_SECRET}`)
-        return ws.close();
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
+       return ws.close();
+    const game_server = new GameServer();
+    game_server[game_server.alias] = game_server;
+    ws.on('message', async (message) => {
+        const data = new Uint8Array(message);
+        const decoder = new protocol.BinaryReader(data);
+        switch(decoder.ReadUint8())
+        {
+            case 0:
+            {
+                const uuid = decoder.ReadStringNT();
+                const pos = decoder.ReadUint8();
+                try {
+                    const user = await db_read_user(uuid, SERVER_SECRET);
+                    log("client init", [uuid]);
+                    connected_clients[uuid] = new GameClient(user);
+                    game_server.clients[pos] = uuid;
+                    const encoder = new protocol.BinaryWriter();
+                    encoder.WriteUint8(1);
+                    encoder.WriteUint8(pos);
+                    connected_clients[uuid].write(encoder);
+                    ws.send(encoder.data.subarray(0, encoder.at));
+                } catch(e) {
+                    console.log(e);
+                }
+                break;
+            }
+            case 1:
+            {
+                const uuid = decoder.ReadStringNT();
+                const pos = decoder.ReadUint8();
+                if (game_server.clients[pos] === uuid)
+                {
+                    log("client delete", [uuid]);
+                    const client = connected_clients[uuid];
+                    if (client.needs_database_update)
+                        write_db_entry(client.user.username, client.user);
+                    delete connected_clients[uuid];
+                    game_server.clients[pos] = 0;
+                }
+                break;
+            }
+            case 2:
+            {
+                const uuid = decoder.ReadStringNT();
+                if (!connected_clients[uuid])
+                    break;
+                const user = connected_clients[uuid].user;
+                const pos = game_server.clients.indexOf(uuid);
+                if (pos === -1)
+                    break;
+                const amount = decoder.ReadUint8();
+                for (let u = 0; u < amount; ++u)
+                {
+                    const id = decoder.ReadUint8();
+                    const rarity = decoder.ReadUint8();
+                    const key = id + ":" + rarity;
+                    if (!user.petals[key])
+                        user.petals[key] = 1;
+                    else
+                        ++user.petals[key];
+                }
+                user.needs_database_update = 1;
+                break;
+            }
+            case 100:
+                //ping
+                break;
+            case 101:
+                game_server.rivet_server_id = decoder.ReadStringNT();
+                log("server id recv", [game_server.rivet_server_id]);
+                break;
+        }
     });
-    console.log("connect");
+    log("game connect", [game_server.alias]);
+    const encoder = new protocol.BinaryWriter();
+    encoder.WriteUint8(0);
+    encoder.WriteStringNT(game_server.alias);
+    ws.send(encoder.data.subarray(0, encoder.at));
+    setInterval(() => {
+        for (let pos = 0; pos < 64; ++pos)
+        {
+            const uuid = game_server.clients[pos];
+            if (!connected_clients[uuid])
+                continue;
+            const client = connected_clients[uuid];
+            if (!client.needs_gameserver_update)
+                continue;
+            log("client update", [uuid]);
+            const encoder = new protocol.BinaryWriter();
+            encoder.WriteUint8(1);
+            encoder.WriteUint8(pos);
+            client.write(encoder);
+            ws.send(encoder.data.subarray(0, encoder.at));
+        }
+    }, 2500);
+    setInterval(() => {
+        //ping packet
+        const encoder = new protocol.BinaryWriter();
+        encoder.WriteUint8(100);
+        ws.send(encoder.data.subarray(0, encoder.at));
+    }, 20000);
+    ws.on('close', () => {
+        log("game disconnect", [game_server.alias]);
+        for (const uuid of game_server.clients)
+            delete connected_clients[uuid];
+        delete game_servers[game_server.alias];
+    });
 });
+
+setInterval(() => {
+    log("updating db", Object.keys(connected_clients))
+    for (const uuid in connected_clients)
+    {
+        const client = connected_clients[uuid];
+        if (!client.needs_database_update)
+            continue;
+        client.needs_database_update = 0;
+        log("updating db", uuid);
+        write_db_entry(client.user.username, client.user);
+    }
+}, 15000);

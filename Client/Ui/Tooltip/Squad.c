@@ -14,7 +14,7 @@
 
 struct squad_loadout_button_metadata
 {
-    struct rr_game_loadout_petal *petal;
+    struct rr_id_rarity_pair *petal;
     uint8_t prev_id;
     uint8_t prev_rarity;
 };
@@ -49,7 +49,7 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
 }
 
 static struct rr_ui_element *
-squad_loadout_button_init(struct rr_game_loadout_petal *petal, uint8_t top)
+squad_loadout_button_init(struct rr_id_rarity_pair *petal, uint8_t top)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_loadout_button_metadata *data = malloc(sizeof *data);
@@ -67,13 +67,13 @@ squad_loadout_button_init(struct rr_game_loadout_petal *petal, uint8_t top)
 static void wave_spawn_at(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_dynamic_text_metadata *data = this->data;
-    struct rr_game_squad_client *client = data->data;
+    struct rr_squad_member *client = data->data;
     data->text[sprintf(data->text, "Spawn on wave %d",
                        client->requested_start_wave)] = 0;
 }
 
 static struct rr_ui_element *
-wave_spawn_element_init(struct rr_game_squad_client *member)
+wave_spawn_element_init(struct rr_squad_member *member)
 {
     struct rr_ui_element *this =
         rr_ui_dynamic_text_init(12, 0xffffffff, wave_spawn_at);
@@ -85,7 +85,7 @@ wave_spawn_element_init(struct rr_game_squad_client *member)
 static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
-    struct rr_game_squad_client *member = data->data;
+    struct rr_squad_member *member = data->data;
     if (&game->squad_members[game->squad_pos] == member)
         return 0;
     if (member->ready & 2)
@@ -93,7 +93,7 @@ static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
     return 1;
 }
 
-static struct rr_ui_element *dev_text_init(struct rr_game_squad_client *member)
+static struct rr_ui_element *dev_text_init(struct rr_squad_member *member)
 {
     struct rr_ui_element *this = rr_ui_multi_choose_element_init(dev_text_choose, rr_ui_text_init("You", 20, 0xffffffff), rr_ui_text_init("Player", 20, 0xffffffff), rr_ui_text_init("Developer", 20, 0xffffffff), NULL);
     struct rr_ui_choose_element_metadata *data = this->data;
@@ -103,12 +103,12 @@ static struct rr_ui_element *dev_text_init(struct rr_game_squad_client *member)
 
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *game, uint8_t pos)
 {
-    struct rr_game_squad_client *member = &game->squad_members[pos];
+    struct rr_squad_member *member = &game->squad_members[pos];
     struct rr_ui_element *this = rr_ui_set_justify(
         rr_ui_set_background(
             rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
                 dev_text_init(member),
-                rr_ui_text_init(&member->name[0], 16, 0xffffffff),
+                rr_ui_text_init(&member->nickname[0], 16, 0xffffffff),
                 wave_spawn_element_init(member),
                 rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 
                     squad_loadout_button_init(&member->loadout[0], 1),

@@ -3,6 +3,11 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
+#ifdef RIVET_BUILD
+#define RR_BASE_API_URL "https://rrolf.io/api/"
+#else
+#define RR_BASE_API_URL "http://localhost:55554/api/"
+#endif
 #ifdef RR_SERVER
 #define RR_API_SECRET                                                          \
     "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y"

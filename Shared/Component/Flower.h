@@ -34,5 +34,4 @@ RR_CLIENT_ONLY(void rr_component_flower_read(struct rr_component_flower *,
                                              struct proto_bug *);)
 
 RR_DECLARE_PUBLIC_FIELD(flower, uint8_t, face_flags)
-RR_DECLARE_PUBLIC_FIELD(flower, uint8_t, client_id)
 RR_DECLARE_PUBLIC_FIELD(flower, float, eye_angle)
