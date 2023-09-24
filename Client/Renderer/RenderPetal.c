@@ -39,7 +39,7 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
     }
     */
     uint8_t use_cache = ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
-    if (petal->id != rr_petal_id_peas || petal->detached == 1)
+    if ((petal->id != rr_petal_id_peas && petal->id != rr_petal_id_grapes) || petal->detached == 1)
         rr_renderer_draw_petal(renderer, petal->id, use_cache);
     else
         rr_renderer_draw_static_petal(renderer, petal->id, petal->rarity, use_cache);

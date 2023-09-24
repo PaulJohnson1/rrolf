@@ -68,6 +68,12 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         health->burn_ticks = 75;
         health->burn = rr_simulation_get_health(simulation, petal_id)->secondary_damage;
     }
+    else if (petal->id == rr_petal_id_grapes)
+    {
+        struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+        health->burn_ticks = 25;
+        health->burn = rr_simulation_get_health(simulation, petal_id)->secondary_damage;
+    }
     /*
     if (petal->id == rr_petal_id_beak)
     {

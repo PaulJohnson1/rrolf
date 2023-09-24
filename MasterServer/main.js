@@ -178,7 +178,6 @@ async function db_read_user(username, password)
         const user = apply_missing_defaults({});
         user.password = password;
         user.username = username;
-        user.xp = 1000000;
         await write_db_entry(username, user);
         return user;
     }
