@@ -518,9 +518,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
         case RR_CLIENTBOUND_UPDATE:
         {
-            if (!this->simulation_ready)
-                rr_simulation_init(this->simulation);
-            this->simulation_ready = 1;
+            if (this->joined_squad) 
+            {
+                if (!this->simulation_ready)
+                    rr_simulation_init(this->simulation);
+                this->simulation_ready = 1;
+            }
             rr_simulation_read_binary(this, &encoder);
             break;
         }
