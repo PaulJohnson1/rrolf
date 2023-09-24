@@ -119,7 +119,7 @@ float x, float y,
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     rr_component_physical_set_x(physical, x);
     rr_component_physical_set_y(physical, y);
-    physical->friction = 0.8;
+    physical->friction = 0.75;
     physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
@@ -165,7 +165,7 @@ float x, float y,
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     rr_component_physical_set_x(physical, x);
     rr_component_physical_set_y(physical, y);
-    physical->friction = 0.8;
+    physical->friction = 0.75;
     physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);

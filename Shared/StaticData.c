@@ -52,7 +52,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_spider, rr_rarity_id_common, 25, 25, 15, {{rr_petal_id_faster, 0.25},{rr_petal_id_web, 0.2}, {rr_petal_id_iris, 0.1}}},
     {rr_mob_id_centipede, rr_rarity_id_common, 30, 10, 35, {{rr_petal_id_peas, 0.25},{rr_petal_id_leaf, 0.2}}},
     {rr_mob_id_ladybug, rr_rarity_id_common, 30, 10, 25, {{rr_petal_id_rose, 0.25},{rr_petal_id_light, 0.1}}},
-    {rr_mob_id_evil_centipede, rr_rarity_id_common, 30, 20, 35, {{rr_petal_id_grapes, 0.25},{rr_petal_id_iris, 0.1}}}
+    {rr_mob_id_evil_centipede, rr_rarity_id_unusual, 30, 20, 35, {{rr_petal_id_grapes, 0.25},{rr_petal_id_iris, 0.1}}}
 };
 
 char const *RR_MOB_NAMES[rr_mob_id_max] = {"Baby Ant","Worker Ant","Soldier Ant",
