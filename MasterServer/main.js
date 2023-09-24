@@ -566,7 +566,7 @@ wss.on("connection", (ws, req) => {
             encoder.WriteVarUint(client.user.maximum_wave);
             ws.send(encoder.data.subarray(0, encoder.at));
         }
-    }, 2500);
+    }, 500);
     setInterval(() => {
         //ping packet
         const encoder = new protocol.BinaryWriter();

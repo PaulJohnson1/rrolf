@@ -593,6 +593,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
                 char uuid[100];
                 rr_binary_encoder_read_nt_string(&decoder, uuid);
+                puts("read");
                 struct rr_server_client *client = &this->clients[pos];
                 if (strcmp(uuid, client->rivet_account.uuid))
                     break; // fake client
