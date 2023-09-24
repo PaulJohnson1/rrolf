@@ -251,7 +251,7 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
         if (distance > 500)
         {
             struct rr_vector accel;
-            rr_vector_from_polar(&accel, 2, physical->angle);
+            rr_vector_from_polar(&accel, RR_BASE_PLAYER_SPEED, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
         }
         if (ai->ticks_until_next_action == 0)
@@ -372,37 +372,37 @@ static void system_for_each(EntityIdx entity, void *simulation)
             tick_ai_passive_default(entity, this);
             break;
         case rr_mob_id_worker_ant:
-            tick_ai_neutral_default(entity, this, 1.9);
+            tick_ai_neutral_default(entity, this, RR_BASE_PLAYER_SPEED * 0.95);
             break;
         case rr_mob_id_soldier_ant:
-            tick_ai_aggro_default(entity, this, 1.9);
+            tick_ai_aggro_default(entity, this, RR_BASE_PLAYER_SPEED * 0.95);
             break;
         case rr_mob_id_bee:
             if (mob->rarity < rr_rarity_id_rare)
                 tick_ai_passive_default(entity, this);
             else
-                tick_ai_neutral_default(entity, this, 1.9);
+                tick_ai_neutral_default(entity, this, RR_BASE_PLAYER_SPEED * 0.95);
             break;
         case rr_mob_id_hornet:
             tick_ai_aggro_hornet(entity, this);
             break;
         case rr_mob_id_spider:
-            tick_ai_aggro_default(entity, this, 2.5);
+            tick_ai_aggro_default(entity, this, RR_BASE_PLAYER_SPEED * 1.2);
             break;
         case rr_mob_id_centipede:
             if (mob->rarity < rr_rarity_id_epic)
                 tick_ai_passive_default(entity, this);
             else
-                tick_ai_neutral_default(entity, this, 1.9);
+                tick_ai_neutral_default(entity, this, RR_BASE_PLAYER_SPEED * 0.95);
             break;
         case rr_mob_id_ladybug:
             if (mob->rarity < rr_rarity_id_epic)
                 tick_ai_passive_default(entity, this);
             else
-                tick_ai_neutral_default(entity, this, 1.9);
+                tick_ai_neutral_default(entity, this, RR_BASE_PLAYER_SPEED * 0.95);
             break;
         case rr_mob_id_evil_centipede:
-            tick_ai_aggro_default(entity, this, 1.8);
+            tick_ai_aggro_default(entity, this, RR_BASE_PLAYER_SPEED * 0.9);
             break;
         default: 
             break;
