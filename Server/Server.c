@@ -716,6 +716,8 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
                 }     
             uint32_t wave = sum * 3 / count / 4 + 1;
             printf("start wave %d\n", wave);
+            rr_component_arena_set_wave(rr_simulation_get_arena(&squad->simulation, 1), wave);
+            squad->simulation.wave_points = get_points_from_wave(wave, count);
         }
     }
     for (uint64_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
