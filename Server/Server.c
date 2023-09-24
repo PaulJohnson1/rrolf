@@ -679,7 +679,7 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
     else
     {
         uint8_t allow = 1;
-        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+        for (uint64_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             if (squad->members[i].in_use && !squad->members[i].ready)
                 allow = 0;
         if (allow)
@@ -688,7 +688,7 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
             squad->simulation_active = 1;
             uint32_t sum = 0;
             uint32_t count = 0;
-            for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+            for (uint64_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 if (squad->members[i].in_use)
                 {
                     sum += squad->members[i].client->max_wave;
