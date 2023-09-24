@@ -12,14 +12,14 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_light, rr_rarity_id_common, 7.0f, 5.0f, 0.0f, 12, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_leaf, rr_rarity_id_common, 8.0f, 6.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 35.0f, 2.0f, 10.0f, 87, 0, {1, 1, 1, 1, 1, 3, 5}},
-    {rr_petal_id_missile, rr_rarity_id_common, 20.0f, 10.0f, 0.0f, 50, 12, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_missile, rr_rarity_id_rare, 20.0f, 10.0f, 0.0f, 50, 12, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_faster, rr_rarity_id_common, 8.0f, 8.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 12, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_antennae, rr_rarity_id_common, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
-    {rr_petal_id_peas, rr_rarity_id_common, 10.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
+    {rr_petal_id_antennae, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
+    {rr_petal_id_peas, rr_rarity_id_unusual, 10.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
     {rr_petal_id_rose, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 75, 25, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_iris, rr_rarity_id_common, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_grapes, rr_rarity_id_common, 2.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
+    {rr_petal_id_iris, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_grapes, rr_rarity_id_rare, 2.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
