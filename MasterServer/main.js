@@ -423,25 +423,6 @@ const saveDatabaseToFile = () => {
        console.log("tried save, was not changed");
 };
 
-let quit = false;
-const try_save_exit = () =>
-{
-   if (!quit)
-   {
-       quit = true;
-       saveDatabaseToFile();
-   }
-   process.exit();
-}
-
-process.on("beforeExit", try_save_exit);
-process.on("exit", try_save_exit)
-process.on("SIGTERM", try_save_exit);
-process.on("SIGINT", try_save_exit);
-process.on("uncaughtException", try_save_exit);
-
-setInterval(saveDatabaseToFile, 60000);
-
 const server = http.createServer(app);
 
 server.listen(port, () => {
@@ -582,6 +563,36 @@ wss.on("connection", (ws, req) => {
         delete game_servers[game_server.alias];
     });
 });
+
+let quit = false;
+const try_save_exit = () =>
+{
+   if (!quit)
+   {
+       quit = true;
+       log("updating db", Object.keys(connected_clients))
+        log("player count: ", [Object.keys(connected_clients).length]);
+        for (const uuid in connected_clients)
+        {
+            const client = connected_clients[uuid];
+            if (!client.needs_database_update)
+                continue;
+            client.needs_database_update = 0;
+            log("updating db", [uuid]);
+            write_db_entry(client.user.username, client.user);
+        }
+       saveDatabaseToFile();
+   }
+   process.exit();
+}
+
+process.on("beforeExit", try_save_exit);
+process.on("exit", try_save_exit)
+process.on("SIGTERM", try_save_exit);
+process.on("SIGINT", try_save_exit);
+process.on("uncaughtException", try_save_exit);
+
+setInterval(saveDatabaseToFile, 60000);
 
 setInterval(() => {
     log("updating db", Object.keys(connected_clients))
