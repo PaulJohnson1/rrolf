@@ -38,28 +38,6 @@ static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
 void rr_api_on_open_result(char *bin, void *captures)
 {
-    struct rr_api_account *account = captures;
-    struct rr_binary_encoder decoder;
-    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
-    account->username = malloc(50 * (sizeof (char)));
-    if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
-    {
-        puts("api serverside error");
-        return;
-    }
-    rr_binary_encoder_read_nt_string(&decoder, account->username);
-    if (strlen(account->username) < 30)
-        return;
-    account->xp = rr_binary_encoder_read_float64(&decoder);
-    account->maximum_wave = rr_binary_encoder_read_varuint(&decoder);
-    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
-    while (id)
-    {
-        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
-        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
-        account->petals[id][rarity] = count;
-        id = rr_binary_encoder_read_uint8(&decoder);
-    }
 }
 
 void rr_api_on_get_petals(char *bin, void *_client) {}
@@ -241,9 +219,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 {
                     rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
+/*
                     rr_rivet_players_disconnected(
                         getenv("RIVET_TOKEN"),
                         this->clients[i].rivet_account.token);
+*/
 #endif
                     struct rr_binary_encoder encoder;
                     rr_binary_encoder_init(&encoder, outgoing_message);
@@ -339,6 +319,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
                     client->rivet_account.token);
+            /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
                     client->rivet_account.token))
@@ -349,6 +330,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 sizeof "rivet error");
                 return -1;
             }
+            */
 #endif
             //struct rr_api_account account = {0};
             //rr_api_on_open(client->rivet_account.uuid, &account);
