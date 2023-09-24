@@ -1,0 +1,17 @@
+{
+  "df283e9a-a083-47db-ad74-4c7ecde3bc21": {
+    "password": "game_user.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CMO1h4vmMRDD1aSTrDEaEgoQXiuMXEnXTqWvlw_4s4GHxiIWUhQKEgoQoVB5gH2HRdyyNYl1U-RRzSIWChQKEgoQwpVcCu54RFyIGdhQ7u4kmg.dAfNw_0PIAn-8YAA101IRJUUTvsZDPu6QN6sYGlt4Xm_BQ3AlBIrnSYzBZpDbLcczB6trf6LuD7jzlNJhGVWDg",
+    "username": "df283e9a-a083-47db-ad74-4c7ecde3bc21",
+    "maximum_wave": 1,
+    "xp": 1,
+    "already_playing": 0,
+    "petals": {
+      "1:0": 3,
+      "1:1": 0
+    },
+    "failed_crafts": {
+      "1:0": 1
+    },
+    "mob_gallery": {}
+  }
+}
