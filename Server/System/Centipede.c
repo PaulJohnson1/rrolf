@@ -30,7 +30,7 @@ void rr_system_centipede_foreach_function(EntityIdx id, void *simulation)
         rr_vector_set_magnitude(&delta, radius + physical->radius + 0.01f);
         rr_component_physical_set_x(physical, parent_vector.x + delta.x);
         rr_component_physical_set_y(physical, parent_vector.y + delta.y);
-        rr_component_physical_set_angle(physical, M_PI + rr_vector_theta(&delta));
+        rr_component_physical_set_angle(physical, 3.1415926535 + rr_vector_theta(&delta));
         rr_vector_set(&parent_vector, physical->x, physical->y);
     }
 }
