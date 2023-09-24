@@ -31,8 +31,6 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
         health->burn = 0;
     if (health->health > 0)
     {
-        rr_component_health_set_health(health, health->health +
-                                                   health->max_health * 0.0002);
         if (health->damage_paused > 0)
             health->damage_paused -= 1;
     }
