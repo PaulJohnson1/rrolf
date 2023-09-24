@@ -149,6 +149,7 @@ static void wave_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     }
     rr_renderer_context_state_free(renderer, &state);
     rr_renderer_context_state_init(renderer, &state);
+    rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_text_baseline(renderer, 1);
     rr_renderer_set_text_align(renderer, 1);
     rr_renderer_set_fill(renderer, 0xffffffff);
