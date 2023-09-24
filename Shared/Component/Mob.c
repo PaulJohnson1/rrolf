@@ -56,16 +56,32 @@ void rr_component_mob_free(struct rr_component_mob *this,
     {
         if (RR_MOB_DATA[this->id].loot[i].id == 0)
             break;
+        uint8_t id = RR_MOB_DATA[this->id].loot[i].id;
         float seed = rr_frand();
-        float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
-        uint8_t rarity = 0;
-        for (; rarity <= rr_rarity_id_mythic; ++rarity)
-            if ((seed <= table[rarity]))
+        float s2 = RR_MOB_DATA[this->id].loot[i].seed;
+        //float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
+        uint8_t drop;
+        uint8_t cap = this->rarity;
+        if (this->rarity < rr_rarity_id_legendary)
+            cap = this->rarity;
+        else
+            cap = this->rarity - 1;
+
+        for (drop = 0; drop <= cap + 1; ++drop)
+        {
+            double end =
+                drop == cap + 1 ? 1 : RR_DROP_RARITY_COEFFICIENTS[drop];
+            if (cap < RR_PETAL_DATA[id].min_rarity)
+                end = 1;
+            else if (drop < RR_PETAL_DATA[id].min_rarity)
+                end = RR_DROP_RARITY_COEFFICIENTS[RR_PETAL_DATA[id].min_rarity];
+            if (seed <= pow(1 - (1 - end) * s2, RR_MOB_LOOT_RARITY_COEFFICIENTS[this->rarity]))
                 break;
-        if (rarity == 0)
+        }
+        if (drop == 0)
             continue;
         spawn_ids[count] = RR_MOB_DATA[this->id].loot[i].id;
-        spawn_rarities[count] = rarity - 1;
+        spawn_rarities[count] = drop - 1;
         ++count;
     }
     for (uint8_t i = 0; i < count; ++i)
@@ -87,7 +103,6 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_component_relations_set_team(relations,
                                         rr_simulation_team_id_players);
         drop->ticks_until_despawn = 25 * 10 * (spawn_rarities[i] + 1);
-
         if (count != 1)
         {
             float angle = M_PI * 2 * i / count;
@@ -95,6 +110,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
             drop_physical->friction = 0.75;
         }
     }
+
 #endif
 }
 

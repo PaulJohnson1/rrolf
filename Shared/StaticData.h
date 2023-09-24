@@ -21,61 +21,38 @@ enum rr_petal_id
 {
     rr_petal_id_no_petal,
     rr_petal_id_basic,
-    rr_petal_id_pellet,
-    rr_petal_id_fossil,
-    rr_petal_id_stinger,
     rr_petal_id_light,
-    rr_petal_id_shell,
-    rr_petal_id_peas,
     rr_petal_id_leaf,
-    rr_petal_id_egg,
-    rr_petal_id_magnet,
-    rr_petal_id_uranium,
-    rr_petal_id_feather,
-    rr_petal_id_azalea,
-    rr_petal_id_bone,
+    rr_petal_id_stinger,
+    rr_petal_id_missile,
+    rr_petal_id_faster,
     rr_petal_id_web,
-    rr_petal_id_seed,
-    rr_petal_id_gravel,
-    rr_petal_id_club,
-    rr_petal_id_crest,
-    rr_petal_id_droplet,
-    rr_petal_id_beak,
-    rr_petal_id_lightning,
-    rr_petal_id_stick,
-    rr_petal_id_kelp,
-    rr_petal_id_fish_egg,
-    rr_petal_id_scales,
+    rr_petal_id_antennae,
+    rr_petal_id_peas,
+    rr_petal_id_rose,
+    rr_petal_id_iris,
+    rr_petal_id_grapes,
     rr_petal_id_max
 };
 
 enum rr_mob_id
 {
-    rr_mob_id_triceratops,
-    rr_mob_id_trex,
-    rr_mob_id_fern,
-    rr_mob_id_tree,
-    rr_mob_id_pteranodon,
-    rr_mob_id_dakotaraptor,
-    rr_mob_id_pachycephalosaurus,
-    rr_mob_id_ornithomimus,
-    rr_mob_id_ankylosaurus,
-    rr_mob_id_meteor,
-    rr_mob_id_quetzalcoatlus,
-    rr_mob_id_pectinodon,
-    rr_mob_id_edmontosaurus,
-    
-    rr_mob_id_king_mackarel,
-    rr_mob_id_sea_snail,
-    rr_mob_id_seagull,
-    rr_mob_id_kelp,
+    rr_mob_id_baby_ant,
+    rr_mob_id_worker_ant,
+    rr_mob_id_soldier_ant,
+    rr_mob_id_bee,
+    rr_mob_id_hornet,
+    rr_mob_id_spider,
+    rr_mob_id_centipede,
+    rr_mob_id_ladybug,
+    rr_mob_id_evil_centipede,
     rr_mob_id_max
 };
 
 struct rr_loot_data
 {
     enum rr_petal_id id;
-    float loot_table[rr_rarity_id_max][rr_rarity_id_max + 1];
+    float seed;
 };
 
 struct rr_mob_data
@@ -121,6 +98,7 @@ extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
+extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1];
 extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];

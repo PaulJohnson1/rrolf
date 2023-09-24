@@ -24,35 +24,16 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[mob->rarity].radius);
-    if (mob->id == rr_mob_id_meteor)
-    {
-        struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
-        float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
-        float dist = rr_frand() * 50;
-        rr_vector_from_polar(&particle->velocity, (rr_frand() * 5 + 5) * RR_MOB_RARITY_SCALING[mob->rarity].radius, angle);
-        rr_vector_set(&particle->position[0], physical->lerp_x + cosf(angle) * dist, physical->lerp_y + sinf(angle) * dist);
-        particle->size = (4 + rr_frand() * 2) * RR_MOB_RARITY_SCALING[mob->rarity].radius;
-        particle->opacity = 0.8;
-        particle->color = 0xffab3423;
-    }
     if (physical->animation_timer > 2 * M_PI)
         physical->animation_timer = fmod(physical->animation_timer, 2 * M_PI);
-    if (mob->flags == 0)
-        physical->animation = rr_lerp(physical->animation, sinf(physical->animation_timer), 30 * game->lerp_delta);
-    else
-    {
-        if (mob->flags & 1)
-        {
-            physical->animation = rr_lerp(physical->animation, 2.5, 30 * game->lerp_delta);
-        }
-    }
 
     uint8_t use_cache = ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
     uint8_t is_friendly =
         (rr_simulation_get_relations(simulation, entity)->team !=
          rr_simulation_team_id_mobs)
         << 1;
-    rr_renderer_draw_mob(renderer, mob->id, physical->animation,
+    uint8_t is_centi_head = 4 - ((rr_simulation_has_centipede(simulation, entity) && rr_simulation_get_centipede(simulation, entity)->is_head) << 2);
+    rr_renderer_draw_mob(renderer, mob->id, physical->animation_timer,
                            physical->turning_animation - physical->lerp_angle,
-                           use_cache | is_friendly);
+                           use_cache | is_friendly | is_centi_head);
 }

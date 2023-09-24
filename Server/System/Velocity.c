@@ -37,6 +37,18 @@ static void system(EntityIdx id, void *simulation)
         }
     }
     rr_vector_set(&physical->acceleration, 0, 0);
+    struct rr_simulation *this = simulation;
+    if (rr_simulation_has_petal(this, id))
+        return;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_vector position;
+    rr_vector_set(&position, physical->x, physical->y);
+    if (rr_vector_get_magnitude(&position) > RR_ARENA_RADIUS - physical->radius)
+    {
+        rr_vector_set_magnitude(&position, RR_ARENA_RADIUS - physical->radius);
+        rr_component_physical_set_x(physical, position.x);
+        rr_component_physical_set_y(physical, position.y);
+    }
 }
 
 void rr_system_velocity_tick(struct rr_simulation *simulation)

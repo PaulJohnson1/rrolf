@@ -64,6 +64,13 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     if (!rr_simulation_has_petal(simulation, petal_id))
         return;
     struct rr_component_petal *petal = rr_simulation_get_petal(simulation, petal_id);
+    if (petal->id == rr_petal_id_iris)
+    {
+        struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+        health->burn_ticks = 75;
+        health->burn = rr_simulation_get_health(simulation, petal_id)->secondary_damage;
+    }
+    /*
     if (petal->id == rr_petal_id_beak)
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
@@ -80,6 +87,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
         struct rr_component_health *health = rr_simulation_get_health(simulation, petal_id);
         rr_component_health_do_damage(health, health->damage_reduction + 1);
     }
+    */
 }
 
 static void colliding_with_function(uint64_t i, void *_captures)

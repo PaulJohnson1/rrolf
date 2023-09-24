@@ -2,9 +2,9 @@
 
 #include <Shared/Entity.h>
 
-#define SPATIAL_HASH_GRID_SIZE 9
+#define SPATIAL_HASH_GRID_SIZE 512
 #define RR_SPATIAL_HASH_GRID_LENGTH                                            \
-    (((uint32_t)(RR_ARENA_RADIUS * 2) >> SPATIAL_HASH_GRID_SIZE) + 2)
+    ((RR_ARENA_RADIUS * 2 + SPATIAL_HASH_GRID_SIZE - 1) / SPATIAL_HASH_GRID_SIZE)
 #define RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT (RR_MAX_ENTITY_COUNT)
 
 struct rr_simulation;
@@ -13,12 +13,6 @@ struct rr_spatial_hash_cell
 {
     uint32_t entities_in_use;
     EntityIdx entities[RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT];
-};
-
-struct rr_spatial_hash_entity_bound
-{
-    uint32_t x;
-    uint32_t y;
 };
 
 struct rr_spatial_hash

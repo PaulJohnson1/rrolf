@@ -37,12 +37,8 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
         rr_bitset_set(player_info->entities_in_view, id);
     }
 
-    uint32_t component_flags = 0;
-#define XX(COMPONENT, ID)                                                      \
-    component_flags |= rr_simulation_has_##COMPONENT(simulation, id) << ID;
-    RR_FOR_EACH_COMPONENT;
-#undef XX
-
+    uint32_t component_flags = simulation->entity_tracker[id];
+    proto_bug_write_uint8(encoder, is_creation, "upcreate");
     proto_bug_write_varuint(encoder, component_flags, "entity component flags");
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \
@@ -72,7 +68,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
         *captures = data;
     struct rr_simulation *simulation = captures->simulation;
 
-    if (!rr_simulation_has_entity(simulation, entity))
+    if (!rr_simulation_entity_alive(simulation, entity))
         return;
 
     struct rr_component_physical *physical =
@@ -135,7 +131,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     {
         // deletion spotted!
         uint8_t out_of_view =
-            rr_simulation_has_entity(captures->simulation, id) == 0;
+            rr_simulation_entity_alive(captures->simulation, id) == 0;
         if (!out_of_view)
             if (rr_simulation_has_drop(captures->simulation, id) &&
                      rr_bitset_get(
@@ -173,8 +169,8 @@ void rr_simulation_write_binary(struct rr_simulation *this,
 
     rr_simulation_find_entities_in_view(this, player_info,
                                         &new_entities_in_view[0]);
-    for (uint64_t i = 0; i < RR_MAX_ENTITY_COUNT; i++)
-        if (rr_bitset_get_bit(this->player_info_tracker, i))
+    for (uint64_t i = 1; i < RR_MAX_ENTITY_COUNT; i++)
+        if (rr_simulation_entity_alive(this, i) && rr_simulation_has_player_info(this, i))
         {
             rr_bitset_set(new_entities_in_view, i);
             struct rr_component_player_info *p_info =

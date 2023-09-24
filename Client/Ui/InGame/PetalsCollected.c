@@ -40,6 +40,8 @@ static uint8_t collected_button_should_show(struct rr_ui_element *this,
 static void collected_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
+    if (!game->simulation_ready)
+        return;
     struct collected_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);

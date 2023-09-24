@@ -86,11 +86,16 @@ static void mob_button_on_render(struct rr_ui_element *this,
     float mob_radius = RR_MOB_DATA[data->id].radius;
     if (mob_radius > 25)
         mob_radius = 25;
-    rr_renderer_scale(renderer, 0.65 * mob_radius /
+    rr_renderer_scale(renderer, 0.55 * mob_radius /
                                     RR_MOB_DATA[data->id].radius);
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
     rr_renderer_draw_mob(renderer, data->id, 0, 0, 1);
+    if (data->id == rr_mob_id_centipede || data->id == rr_mob_id_evil_centipede)
+    {
+        rr_renderer_translate(renderer, -2 * RR_MOB_DATA[data->id].radius, 0);
+        rr_renderer_draw_mob(renderer, data->id, 0, 0, 1 | 4);
+    }
 
     rr_renderer_context_state_free(renderer, &state);
 }

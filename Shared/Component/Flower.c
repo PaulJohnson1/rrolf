@@ -7,6 +7,10 @@
 #include <Shared/SimulationCommon.h>
 #include <Shared/pb.h>
 
+#ifdef RR_SERVER
+#include <Server/Simulation.h>
+#endif
+
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(eye_angle, float32)                                                      \
     X(face_flags, uint8)
@@ -28,7 +32,7 @@ void rr_component_flower_free(struct rr_component_flower *this,
                               struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    if (rr_simulation_has_entity(
+    if (rr_simulation_entity_alive(
             simulation,
             rr_simulation_get_relations(simulation, this->parent_id)->owner))
     {

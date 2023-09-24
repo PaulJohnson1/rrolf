@@ -61,7 +61,7 @@ static void scroll_container_on_render(struct rr_ui_element *this,
         rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
         rr_renderer_move_to(renderer, 0, 0);
-        rr_renderer_line_to(renderer, 0, renderer->scale * height);
+        rr_renderer_line_to(renderer, 0, height);
         rr_renderer_stroke(renderer);
         // scrollbar
         float x = renderer->state.transform_matrix[2];

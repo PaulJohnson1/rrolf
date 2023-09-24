@@ -54,9 +54,9 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game, struct r
     rr_renderer_move_to(renderer, -6, 10);
     rr_renderer_quadratic_curve_to(renderer, 0, flower->lerp_mouth, 6, 10);
     rr_renderer_stroke(renderer);
-    rr_renderer_set_fill(renderer, 0xffffe763);
     if (flower->lerp_mouth <= 8)
     {
+        rr_renderer_set_fill(renderer, 0xffffe763);
         rr_renderer_context_state_init(renderer, &state);
         rr_renderer_translate(renderer, 0, -flower->lerp_mouth - 7.8);
         rr_renderer_begin_path(renderer);
@@ -69,9 +69,9 @@ void rr_component_flower_render(EntityIdx entity, struct rr_game *game, struct r
     }
     if (flower->face_flags & 8)
     {
-        rr_renderer_translate(renderer, 0, -36);
-        rr_renderer_draw_petal(renderer, rr_petal_id_crest, 1);
-        rr_renderer_translate(renderer, 0, 36);
+        rr_renderer_translate(renderer, 0, -30);
+        rr_renderer_draw_petal(renderer, rr_petal_id_antennae, 1);
+        rr_renderer_translate(renderer, 0, 30);
     }
     rr_renderer_rotate(renderer, -physical->lerp_angle);
 }

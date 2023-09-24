@@ -38,36 +38,8 @@ uint8_t get_id_from_wave(uint8_t biome, uint32_t wave, uint8_t special_wave_id)
                     return id;
             return rr_mob_id_max - 1;
         }
-        else if (special_wave_id == 1)
-        {
-            if (rr_frand() > 0.25)
-                return rr_mob_id_pachycephalosaurus;
-            else
-                return rr_mob_id_ornithomimus;
-        }
-        else if (special_wave_id == 2)
-            return rr_mob_id_triceratops;
-        else if (special_wave_id == 3)
-        {
-            if (rr_frand() > 0.025)
-                return rr_mob_id_pteranodon;
-            else
-                return rr_mob_id_meteor;
-        }
-        else if (special_wave_id == 4)
-        {
-            if (rr_frand() > 0.75)
-                return rr_mob_id_fern;
-            else
-                return rr_mob_id_dakotaraptor;
-        }
         else
-        {
-            if (rr_frand() > 0.25)
-                return rr_mob_id_ankylosaurus;
-            else
-                return rr_mob_id_quetzalcoatlus;
-        }
+            return rr_mob_id_baby_ant;
     }
     else
     {

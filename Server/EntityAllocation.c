@@ -58,16 +58,6 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     rr_component_physical_set_y(physical, y);
     physical->mass = 5;
     physical->friction = 0.75;
-    if (id == rr_petal_id_club)
-    {
-        rr_component_physical_set_radius(physical, 15);
-        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.75);
-        physical->knockback_scale = 3.5;
-    }
-    else if (id == rr_petal_id_stick)
-    {
-        health->secondary_damage = 0.45 * RR_PETAL_RARITY_SCALE[rarity].damage;
-    }
 
     rr_component_petal_set_id(petal, id);
     rr_component_petal_set_rarity(petal, rarity);
@@ -80,23 +70,66 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, float x, float y
     float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
     float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
 
-    rr_component_health_set_max_health(health, id == rr_petal_id_scales ? 5 + rarity : scale_h * data->health);
+    rr_component_health_set_max_health(health, scale_h * data->health);
     rr_component_health_set_health(health, health->max_health);
     rr_component_health_set_flags(health, health->flags | 1);
     health->damage = scale_d * data->damage / RR_PETAL_DATA[id].count[rarity];
-    if (id == rr_petal_id_scales)
-        health->damage_reduction = 16384;
     if (data->secondary_cooldown > 0)
     {
-        struct rr_component_projectile *projectile =
-            rr_simulation_add_projectile(this, petal_id);
         petal->effect_delay = data->secondary_cooldown;
+        petal->no_rotation = 1;
     }
-    else if (id == rr_petal_id_uranium)
-    {
-        petal->effect_delay = 25;
-    }
+    if (id == rr_petal_id_iris)
+        health->secondary_damage = 0.5 * scale_d;
+    else if (id == rr_petal_id_grapes)
+        health->secondary_damage = 0.8 * scale_d;
     return petal_id;
+}
+
+static EntityIdx rr_simulation_alloc_mob_non_recursive(struct rr_simulation *this,
+float x, float y,
+                                  enum rr_mob_id mob_id,
+                                  enum rr_rarity_id rarity_id,
+                                  enum rr_simulation_team_id team_id)
+{
+    EntityIdx entity = rr_simulation_alloc_entity(this);
+
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    if (team_id == rr_simulation_team_id_mobs)
+    {
+        arena->mob_count++;
+        arena->mob_counters[mob_id * rr_rarity_id_max + rarity_id]++;
+    }
+
+    struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
+    struct rr_component_physical *physical =
+        rr_simulation_add_physical(this, entity);
+    struct rr_component_health *health = rr_simulation_add_health(this, entity);
+    struct rr_component_relations *relations =
+        rr_simulation_add_relations(this, entity);
+    struct rr_component_ai *ai = rr_simulation_add_ai(this, entity);
+    // init team elsewhere
+    rr_component_mob_set_id(mob, mob_id);
+    rr_component_mob_set_rarity(mob, rarity_id);
+    struct rr_mob_rarity_scale const *rarity_scale =
+        RR_MOB_RARITY_SCALING + rarity_id;
+    struct rr_mob_data const *mob_data = RR_MOB_DATA + mob_id;
+    rr_component_physical_set_radius(physical,
+                                     mob_data->radius * rarity_scale->radius);
+    rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
+    rr_component_physical_set_x(physical, x);
+    rr_component_physical_set_y(physical, y);
+    physical->friction = 0.8;
+    physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
+    rr_component_health_set_max_health(health,
+                                       mob_data->health * rarity_scale->health);
+    rr_component_health_set_health(health,
+                                   mob_data->health * rarity_scale->health);
+    health->damage = mob_data->damage * rarity_scale->damage;
+
+    rr_component_relations_set_team(relations, team_id);
+
+    return entity;
 }
 
 EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
@@ -134,11 +167,6 @@ float x, float y,
     rr_component_physical_set_y(physical, y);
     physical->friction = 0.8;
     physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
-    if (mob_id == rr_mob_id_meteor)
-    {
-        physical->mass *= 100;
-        team_id = rr_simulation_team_id_players;
-    }
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health,
@@ -146,32 +174,25 @@ float x, float y,
     health->damage = mob_data->damage * rarity_scale->damage;
 
     rr_component_relations_set_team(relations, team_id);
-    /*
-    if (mob_id == 255 && 0)
+    if (mob_id == rr_mob_id_centipede || mob_id == rr_mob_id_evil_centipede)
     {
         // ai->ai_type = rr_ai_type_neutral;
         EntityIdx prev_node = entity;
         struct rr_component_centipede *centipede =
             rr_simulation_add_centipede(this, entity);
+        rr_component_centipede_set_is_head(centipede, 1);
         struct rr_vector extension;
-        rr_vector_from_polar(&extension, physical->radius * 2, physical->angle);
+        rr_vector_from_polar(&extension, -physical->radius * 2, physical->angle);
         EntityIdx new_entity = RR_NULL_ENTITY;
         for (uint64_t i = 0; i < 5; ++i)
         {
-            new_entity = rr_simulation_alloc_mob(this, 255, rarity_id, team_id);
+            new_entity = rr_simulation_alloc_mob_non_recursive(this, physical->x + extension.x * (i + 1), physical->y + extension.y * (i + 1), rr_mob_id_centipede, rarity_id, team_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
-            struct rr_component_physical *new_phys =
-                rr_simulation_get_physical(this, new_entity);
-            rr_component_physical_set_x(new_phys,
-                                        physical->x + extension.x * (i + 1));
-            rr_component_physical_set_y(new_phys,
-                                        physical->y + extension.y * (i + 1));
             centipede->parent_node = entity;
             entity = new_entity;
         }
     }
-    */
 
     return entity;
 }
@@ -182,9 +203,9 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
     {
         if (!rr_simulation_has_entity(this, i))
         {
-            if (rr_bitset_get_bit(this->recently_deleted, i))
+            if (rr_bitset_get_bit(this->deleted_last_tick, i))
                 continue;
-            rr_bitset_set(this->entity_tracker, i);
+            this->entity_tracker[i] = 1;
 #ifndef NDEBUG
             printf("created with id %d\n", i);
 #endif

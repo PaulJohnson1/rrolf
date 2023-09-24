@@ -43,18 +43,4 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
         rr_renderer_draw_petal(renderer, petal->id, use_cache);
     else
         rr_renderer_draw_static_petal(renderer, petal->id, petal->rarity, use_cache);
-    if (petal->id == rr_petal_id_stick)
-    {
-        struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
-        float angle = rr_vector_theta(&physical->lerp_velocity) + M_PI - 0.5 + rr_frand();
-        float dist = 10;
-        if (rr_simulation_get_relations(simulation, entity)->team ==
-        rr_simulation_team_id_mobs)
-            dist *= RR_MOB_RARITY_SCALING[petal->rarity].radius;
-        rr_vector_from_polar(&particle->velocity, (rr_frand() * 5 + 5), angle);
-        rr_vector_set(&particle->position[0], physical->lerp_x + sinf(physical->angle) * dist, physical->lerp_y - cosf(physical->angle) * dist);
-        particle->size = (3 + rr_frand() * 2);
-        particle->opacity = 0.8;
-        particle->color = rr_frand() > 0.25 ? 0xffab3423 : 0xff999999;
-    }
 }

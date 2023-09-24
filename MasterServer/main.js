@@ -28,14 +28,20 @@ const CRAFT_CHANCES = [
 
 const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
-//let database = {};
-//let changed = false;
-//const databaseFilePath = path.join(__dirname, "database.json");
-//if (fs.existsSync(databaseFilePath))
-//{
-//    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-//    database = JSON.parse(databaseData);
-//}
+let database = {};
+let changed = false;
+const databaseFilePath = path.join(__dirname, "rwolf-database.json");
+if (fs.existsSync(databaseFilePath))
+{
+    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+    try {
+        database = JSON.parse(databaseData);
+    } catch(e) {
+        database = {};
+    }
+}
+else
+    fs.writeFileSync(databaseFilePath, "");
 
 app.use(cors());
 
@@ -159,15 +165,15 @@ function craft(count, initial_fails, chance)
 
 async function write_db_entry(username, data)
 {
-    //changed = true;
-    //database[username] = structuredClone(data);
-    await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    changed = true;
+    database[username] = structuredClone(data);
+    //await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
-    //const user = structuredClone({value: database[username]});
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    const user = structuredClone({value: database[username]});
+    //const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         const user = apply_missing_defaults({});
@@ -400,36 +406,36 @@ app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });
 
-//const saveDatabaseToFile = () => {
-//    if (changed)
-//    {
-//        changed = false;
-//        console.log("saving database to file:", databaseFilePath);
-//        const databaseData = JSON.stringify(database, null, 2);
-//        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-//    }
-//    else
-//        console.log("tried save, was not changed");
-//};
+const saveDatabaseToFile = () => {
+    if (changed)
+    {
+        changed = false;
+        console.log("saving database to file:", databaseFilePath);
+        const databaseData = JSON.stringify(database, null, 2);
+        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    }
+    else
+        console.log("tried save, was not changed");
+};
 
-//let quit = false;
-//const try_save_exit = () =>
-//{
-//    if (!quit)
-//    {
-//        quit = true;
-//        saveDatabaseToFile();
-//    }
-//    process.exit();
-//}
+let quit = false;
+const try_save_exit = () =>
+{
+    if (!quit)
+    {
+        quit = true;
+        saveDatabaseToFile();
+    }
+    process.exit();
+}
 
-//process.on("beforeExit", try_save_exit);
-//process.on("exit", try_save_exit)
-//process.on("SIGTERM", try_save_exit);
-//process.on("SIGINT", try_save_exit);
-//process.on("uncaughtException", try_save_exit);
+process.on("beforeExit", try_save_exit);
+process.on("exit", try_save_exit)
+process.on("SIGTERM", try_save_exit);
+process.on("SIGINT", try_save_exit);
+process.on("uncaughtException", try_save_exit);
 
-//setInterval(saveDatabaseToFile, 60000);
+setInterval(saveDatabaseToFile, 60000);
 
 
 

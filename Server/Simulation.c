@@ -195,8 +195,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 {
     this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
-    // printf("%d %d %d\n", this->physical_count, this->mob_count,
-    // this->health_count);
+    //printf("server has %d entities\n", this->physical_count);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
@@ -207,25 +206,23 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("web", { rr_system_web_tick(this); });
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
-    RR_TIME_BLOCK("map_boundary", { rr_system_map_boundary_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-
     if (!this->game_over)
         tick_wave(this);
-    // delete pending deletions
+    memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
+    memset(this->pending_deletions, 0, sizeof this->pending_deletions);
     rr_bitset_for_each_bit(
-        this->pending_deletions,
-        this->pending_deletions + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        rr_simulation_pending_deletion_free_components);
-    memset(this->recently_deleted, 0,
-           RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) *
-               sizeof *this->recently_deleted);
-    rr_bitset_for_each_bit(this->pending_deletions,
-                           this->pending_deletions +
+        this->deleted_last_tick,
+        this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
+        __rr_simulation_pending_deletion_free_components);
+    rr_bitset_for_each_bit(this->deleted_last_tick,
+                           this->deleted_last_tick +
                                (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
                            this, __rr_simulation_pending_deletion_unset_entity);
-    memset(this->pending_deletions, 0,
-           RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT) *
-               sizeof *this->pending_deletions);
+}
+
+uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)
+{
+    return this->entity_tracker[id] && !rr_bitset_get(this->deleted_last_tick, id);
 }

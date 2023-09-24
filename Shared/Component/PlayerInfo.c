@@ -39,31 +39,6 @@ enum
     state_flags_all = 0b11111111
 };
 
-#ifdef RR_SERVER
-// struct api_join_captures
-// {
-//     char const *rivet_uuid;
-//     char *petals_string;
-// };
-
-// void *api_join(void *_captures)
-// {
-//     struct api_join_captures *captures = _captures;
-//     rr_api_on_close(captures->rivet_uuid, captures->petals_string);
-//     free(captures->rivet_uuid);
-//     free(captures->petals_string);
-//     free(captures);
-//     puts("api join thread end");
-//     return NULL;
-// }
-
-// void *sleeper(void *arg)
-// {
-//     usleep(10000000);
-//     return NULL;
-// }
-#endif
-
 void rr_component_player_info_init(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
@@ -77,11 +52,6 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
 void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
-#ifdef RR_SERVER
-    if (this->flower_id != RR_NULL_ENTITY)
-        rr_component_health_set_health(
-            rr_simulation_get_health(simulation, this->flower_id), 0);
-#endif
     free(this->collected_this_run);
 }
 
