@@ -578,7 +578,7 @@ setInterval(() => {
         if (!client.needs_database_update)
             continue;
         client.needs_database_update = 0;
-        log("updating db", uuid);
+        log("updating db", [uuid]);
         write_db_entry(client.user.username, client.user);
     }
 }, 15000);
