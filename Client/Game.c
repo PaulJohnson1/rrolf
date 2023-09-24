@@ -166,12 +166,10 @@ void rr_game_init(struct rr_game *this)
     rr_rivet_identities_create_guest(this);
 
     // clang-format off
-    /*
     rr_ui_container_add_element(
         this->window,
         rr_ui_pad(rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
                   10));
-    */
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(rr_ui_wave_container_init(), simulation_ready));
