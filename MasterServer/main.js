@@ -583,6 +583,7 @@ wss.on("connection", (ws, req) => {
 
 setInterval(() => {
     log("updating db", Object.keys(connected_clients))
+    log("player count: ", [Object.keys(connected_clients).length]);
     for (const uuid in connected_clients)
     {
         const client = connected_clients[uuid];
