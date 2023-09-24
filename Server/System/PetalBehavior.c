@@ -357,7 +357,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 health, health->health +
                             0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         }
-        else if (data->id == rr_petal_id_light)
+        else if (data->id == rr_petal_id_faster)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_antennae)
         {

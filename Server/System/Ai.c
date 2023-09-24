@@ -256,7 +256,7 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
         }
         if (ai->ticks_until_next_action == 0)
         {
-            ai->ticks_until_next_action = 50 + rr_frand() * 25;
+            ai->ticks_until_next_action = 50;
 
             struct rr_component_mob *mob =
                 rr_simulation_get_mob(simulation, entity);
@@ -271,7 +271,7 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
             rr_component_physical_set_angle(physical2, physical->angle);
             rr_component_physical_set_radius(
                 physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-            physical2->friction = 0.75f;
+            physical2->friction = 0.6f;
             physical2->mass = 5.0f;
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->velocity, 50, physical->angle);

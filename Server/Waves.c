@@ -31,7 +31,7 @@ uint8_t get_id_from_wave(uint8_t biome, uint32_t wave, uint8_t special_wave_id)
     double seed = rr_frand();
     if (biome == 0)
     {
-        if (special_wave_id == 0)
+        if (special_wave_id != 138)
         {
             for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
                 if (seed < table[id])

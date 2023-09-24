@@ -32,6 +32,7 @@ enum rr_petal_id
     rr_petal_id_rose,
     rr_petal_id_iris,
     rr_petal_id_grapes,
+    rr_petal_id_oranges,
     rr_petal_id_max
 };
 

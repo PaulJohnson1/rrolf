@@ -186,7 +186,7 @@ float x, float y,
         EntityIdx new_entity = RR_NULL_ENTITY;
         for (uint64_t i = 0; i < 5; ++i)
         {
-            new_entity = rr_simulation_alloc_mob_non_recursive(this, physical->x + extension.x * (i + 1), physical->y + extension.y * (i + 1), rr_mob_id_centipede, rarity_id, team_id);
+            new_entity = rr_simulation_alloc_mob_non_recursive(this, physical->x + extension.x * (i + 1), physical->y + extension.y * (i + 1), mob_id, rarity_id, team_id);
             centipede->child_node = new_entity;
             centipede = rr_simulation_add_centipede(this, new_entity);
             centipede->parent_node = entity;
