@@ -54,7 +54,7 @@ void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
             // size of this localstorage shit literally means exactly nothing.
             // stuff won't get larger than 100 bytes and if it does, still who
             // even cares?
-            let hex = [...bytes].map(x => x.toString(16)).join(" ");
+            let hex = btoa(new TextDecoder().decode(bytes));
             localStorage[string] = hex;
             // clang-format on
         },
@@ -72,7 +72,11 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
             if (!hex)
                 return 0;
             // clang-format off
-            let bytes = new Uint8Array(hex.split(" ").map(x => parseInt(x, 16)));
+            try {
+                let bytes = new Uint8Array(new TextEncoder().encode(atob(hex)));
+            } catch(e) {
+                bytes = new Uint8Array(1);
+            }
             // clang-format on
             const len = bytes.length;
             HEAPU8.set(bytes, $1);
