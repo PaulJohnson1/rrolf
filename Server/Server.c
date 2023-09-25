@@ -485,12 +485,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->squad != 0)
             {
                 puts("ready");
-                if (rr_squad_get_client_slot(this, client)->ready == 1)
+                if (client->player_info != NULL)
                 {
-                    rr_client_leave_squad(this, client);
+                    rr_server_client_free(client);
                 }
-                else 
-                    rr_squad_get_client_slot(this, client)->ready = 1;
+                rr_squad_get_client_slot(this, client)->ready ^= 1;
             }
             break;
         }
@@ -809,6 +808,7 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
                         1,
                         "bitbit");
                     proto_bug_write_uint8(&encoder, member->ready, "ready");
+                    proto_bug_write_string(&encoder, member->nickname, 15, "nickname");
                     for (uint8_t j = 0; j < 20; ++j)
                     {
                         proto_bug_write_uint8(&encoder, member->loadout[j].id,
