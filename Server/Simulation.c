@@ -152,6 +152,21 @@ static void spawn_mob_swarm(struct rr_simulation *this)
 
 #define SPECIAL_WAVE_COUNT 5
 
+static uint32_t get_special_wave(uint32_t wave)
+{
+    switch(wave % 10)
+    {
+        case 0:
+            return 1;
+        case 5:
+            return 2;
+        case 9:
+            return 3;
+        default:
+            return 0;
+    }
+    return 0;
+}
 static void tick_wave(struct rr_simulation *this)
 {
     if (this->flower_count == 0)
@@ -185,17 +200,7 @@ static void tick_wave(struct rr_simulation *this)
         this->wave_points =
             get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        switch(arena->wave % 10)
-        {
-            case 0:
-                return 1;
-            case 5:
-                return 2;
-            case 9:
-                return 3;
-            default:
-                return 0;
-        }
+        this->special_wave_id = get_special_wave(arena->wave);
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }
