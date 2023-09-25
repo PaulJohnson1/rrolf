@@ -4,7 +4,6 @@ class GameClient
     {
         this.user = user;
         this.needs_gameserver_update = false;
-        this.needs_database_update = false;
     }
 
     write(encoder) 

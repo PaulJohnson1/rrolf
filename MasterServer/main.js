@@ -474,8 +474,7 @@ wss.on("connection", (ws, req) => {
                     const client = connected_clients[uuid];
                     if (!client)
                         break;
-                    if (client.needs_database_update)
-                        write_db_entry(client.user.username, client.user);
+                    write_db_entry(client.user.username, client.user);
                     delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
@@ -501,7 +500,7 @@ wss.on("connection", (ws, req) => {
                     else
                         ++user.petals[key];
                 }
-                user.needs_database_update = 1;
+                write_db_entry(client.user.username, client.user);
                 break;
             }
             case 3:
@@ -513,8 +512,8 @@ wss.on("connection", (ws, req) => {
                 log("wave advance", [uuid, wave]);
                 if (connected_clients[uuid].user.maximum_wave < wave)
                 {
-                    connected_clients[uuid].needs_database_update = 1;
                     connected_clients[uuid].user.maximum_wave = wave;
+                    write_db_entry(client.user.username, client.user);
                 }
                 break;
             }
@@ -570,17 +569,6 @@ const try_save_exit = () =>
    if (!quit)
    {
        quit = true;
-       log("updating db", Object.keys(connected_clients))
-        log("player count: ", [Object.keys(connected_clients).length]);
-        for (const uuid in connected_clients)
-        {
-            const client = connected_clients[uuid];
-            if (!client.needs_database_update)
-                continue;
-            client.needs_database_update = 0;
-            log("updating db", [uuid]);
-            write_db_entry(client.user.username, client.user);
-        }
        saveDatabaseToFile();
    }
    process.exit();
@@ -595,15 +583,5 @@ process.on("uncaughtException", try_save_exit);
 setInterval(saveDatabaseToFile, 60000);
 
 setInterval(() => {
-    log("updating db", Object.keys(connected_clients))
     log("player count: ", [Object.keys(connected_clients).length]);
-    for (const uuid in connected_clients)
-    {
-        const client = connected_clients[uuid];
-        if (!client.needs_database_update)
-            continue;
-        client.needs_database_update = 0;
-        log("updating db", [uuid]);
-        write_db_entry(client.user.username, client.user);
-    }
 }, 15000);
