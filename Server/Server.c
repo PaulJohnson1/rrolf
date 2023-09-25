@@ -808,7 +808,7 @@ void rr_squad_tick(struct rr_squad *squad, struct rr_server *server)
                         1,
                         "bitbit");
                     proto_bug_write_uint8(&encoder, member->ready, "ready");
-                    proto_bug_write_string(&encoder, member->nickname, 15, "nickname");
+                    proto_bug_write_string(&encoder, member->client->client_nickname, 15, "nickname");
                     for (uint8_t j = 0; j < 20; ++j)
                     {
                         proto_bug_write_uint8(&encoder, member->loadout[j].id,

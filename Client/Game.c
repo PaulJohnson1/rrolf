@@ -66,7 +66,6 @@ void rr_api_on_get_petals(char *bin, void *a)
         return;
     }
     rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
-    puts(game->rivet_account.uuid);
     game->cache.experience = rr_binary_encoder_read_float64(&decoder);
     //rr_binary_encoder_read_varuint(&decoder);
     uint32_t checksum = 5;
@@ -546,6 +545,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 this->squad_members[i].ready =
                     proto_bug_read_uint8(&encoder, "ready");
                 proto_bug_read_string(&encoder, this->squad_members[i].nickname, 15, "nickname");
+                puts(this->squad_members[i].nickname);
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =
