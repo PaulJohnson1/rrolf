@@ -22,7 +22,7 @@ void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()
 {
-    printf("gameserver on version %llu\n", RR_SECRET8 ^ 255);
+    fprintf(stderr, "gameserver on version %llu\n", RR_SECRET8 ^ 255);
     srand(time(0));
     // signal(SIGINT, sigint_handle);
 #ifdef RIVET_BUILD
