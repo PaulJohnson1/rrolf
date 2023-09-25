@@ -500,7 +500,7 @@ wss.on("connection", (ws, req) => {
                     else
                         ++user.petals[key];
                 }
-                write_db_entry(client.user.username, client.user);
+                write_db_entry(user.username, user);
                 break;
             }
             case 3:
@@ -513,7 +513,7 @@ wss.on("connection", (ws, req) => {
                 if (connected_clients[uuid].user.maximum_wave < wave)
                 {
                     connected_clients[uuid].user.maximum_wave = wave;
-                    write_db_entry(client.user.username, client.user);
+                    write_db_entry(connected_clients[uuid].user.username, connected_clients[uuid].user);
                 }
                 break;
             }
