@@ -185,10 +185,17 @@ static void tick_wave(struct rr_simulation *this)
         this->wave_points =
             get_points_from_wave(arena->wave, this->player_info_count);
         RR_TIME_BLOCK("respawn", { rr_system_respawn_tick(this); });
-        if (rr_frand() > 0.3333334)
-            this->special_wave_id = 0;
-        else
-            this->special_wave_id = 1 + (rr_frand() * SPECIAL_WAVE_COUNT);
+        switch(arena->wave % 10)
+        {
+            case 0:
+                return 1;
+            case 5:
+                return 2;
+            case 9:
+                return 3;
+            default:
+                return 0;
+        }
     }
     rr_component_arena_set_wave_tick(arena, arena->wave_tick + 1);
 }

@@ -31,15 +31,24 @@ uint8_t get_id_from_wave(uint8_t biome, uint32_t wave, uint8_t special_wave_id)
     double seed = rr_frand();
     if (biome == 0)
     {
-        if (special_wave_id != 138)
+        if (special_wave_id == 0)
         {
             for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
                 if (seed < table[id])
                     return id;
             return rr_mob_id_max - 1;
         }
-        else
-            return rr_mob_id_baby_ant;
+        else if (special_wave_id == 1)
+        {
+            if (rr_frand() > 0.5)
+                return rr_mob_id_ladybug;
+            else
+                return rr_mob_id_bee;
+        }
+        else if (special_wave_id == 2)
+            return rr_mob_id_hornet;
+        else    
+            return rr_mob_id_spider;
     }
     else
     {

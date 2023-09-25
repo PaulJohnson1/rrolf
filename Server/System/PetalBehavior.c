@@ -288,6 +288,7 @@ static void system_flower_petal_movement_logic(
             }
             case rr_petal_id_pollen:
                 system_petal_detach(simulation, petal, player_info, outer_pos, inner_pos, petal_data);
+                physical->friction = 0.25f;
                 petal->effect_delay = 125;
                 break;
             case rr_petal_id_wing:
@@ -331,8 +332,8 @@ static void system_flower_petal_movement_logic(
         rr_vector_add(&chase_vector, &random_vector);
     }
     float addition = 0.04f;
-    if (petal->id == rr_petal_id_wing);
-        addition = 0.25f;
+    if (petal->id == rr_petal_id_wing)
+        addition = 0.32f;
     if (!petal->no_rotation)
         rr_component_physical_set_angle(
             physical, physical->angle + addition * (float)petal->spin_ccw);
