@@ -145,6 +145,7 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     free(this->curr_link);
     game->socket_ready = 0;
     game->simulation_ready = 0;
+    game->joined_squad = 0;
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint32_t length)
