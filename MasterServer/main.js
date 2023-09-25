@@ -178,12 +178,14 @@ async function db_read_user(username, password)
         const user = apply_missing_defaults({});
         user.password = password;
         user.username = username;
+        /*
         for (let n = 1; n < 24; ++n)
         {
             user.petals[n+":4"] = 4;
             user.petals[n+":5"] = 4;
         }
         user.xp = 1000000;
+        */
         await write_db_entry(username, user);
         return user;
     }
