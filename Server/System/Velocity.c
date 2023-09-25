@@ -5,7 +5,7 @@
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
-static void system(EntityIdx id, void *simulation)
+static void system_for_each(EntityIdx id, void *simulation)
 {
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, id);
@@ -53,5 +53,5 @@ static void system(EntityIdx id, void *simulation)
 
 void rr_system_velocity_tick(struct rr_simulation *simulation)
 {
-    rr_simulation_for_each_physical(simulation, simulation, system);
+    rr_simulation_for_each_physical(simulation, simulation, system_for_each);
 }

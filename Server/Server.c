@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
+#include <pthread.h>
 #include <unistd.h>
 
 #include <libwebsockets.h>
@@ -153,6 +154,17 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
+}
+
+static void *rivet_set_connected(void *_token)
+{
+    char *token = _token;
+    char new[300];
+    memcpy(new, token, strlen(token));
+    rr_rivet_players_connected(
+                    getenv("RIVET_TOKEN"),
+                    new);
+    return NULL;
 }
 
 static int handle_lws_event(struct rr_server *this, struct lws *ws,
@@ -308,7 +320,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     fputs("skid multibox\n", stderr);
                     lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
                                         (uint8_t *)"skid multibox",
-                                        sizeof "skid multibox");
+                                        sizeof "skid multibox"-1);
                     return -1;
                 }
             }
@@ -319,6 +331,24 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
                     client->rivet_account.token);
+            pthread_t my_thread;
+            int thread_create_result;
+            thread_create_result = pthread_create(&my_thread, NULL, rivet_set_connected, NULL);
+            if (thread_create_result != 0) {
+                fputs("thread error\n", stderr);
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                (uint8_t *)"thread error",
+                                sizeof "thread error"-1);
+                return -1;
+            }
+            int thread_detach_result = pthread_detach(my_thread);
+            if (thread_detach_result != 0) {
+                fputs("thread error\n", stderr);
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                (uint8_t *)"thread error",
+                                sizeof "thread error"-1);
+                return -1;
+            }
             /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
