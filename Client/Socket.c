@@ -15,8 +15,8 @@
 
 uint8_t *output_packet;
 static uint8_t incoming_data[1024 * 1024];
-static uint8_t output_buffer_pool[16 * 1024] = {0};
-static uint32_t packet_lengths[32] = {0};
+static uint8_t *outputs[1024];
+static uint32_t packet_lengths[1024] = {0};
 static uint32_t at = 0;
 
 #ifdef EMSCRIPTEN
@@ -150,6 +150,9 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
 
 void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 {
+    uint8_t *output = malloc(length);
+    memcpy(output, output_packet, length);
+    /*
     rr_encrypt(output_packet, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
@@ -160,20 +163,44 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
     EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
            output_packet, length);
 #endif
+*/
+    outputs[at] = output;
+    packet_lengths[at] = length;
+    ++at;
     // packet_lengths[at] = length;
     // output_packet += length;
     //++at;
 }
 
+void rr_websocket_force_send(struct rr_websocket *this, uint32_t length)
+{
+    rr_encrypt(output_packet, length, this->serverbound_encryption_key);
+    this->serverbound_encryption_key =
+        rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+// printf("pooling packet of length %d at ptr %p\n", length, output_packet);
+#ifndef EMSCRIPTEN
+    lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
+#else
+    EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+           output_packet, length);
+#endif
+}
+
 void rr_websocket_send_all(struct rr_websocket *this)
 {
-    uint8_t *offset = &output_buffer_pool[0];
+    if (!this->recieved_first_packet)
+        return;
     for (uint32_t i = 0; i < at; ++i)
     {
-        // printf("sending packret of length %d at ptr %p\n", packet_lengths[i],
-        // offset);
-        offset += packet_lengths[i];
+        rr_encrypt(outputs[i], packet_lengths[i], this->serverbound_encryption_key);
+        this->serverbound_encryption_key =
+            rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+    #ifndef EMSCRIPTEN
+        lws_write(this->socket, outputs[i], packet_lengths[i], LWS_WRITE_BINARY);
+    #else
+        EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+            outputs[i], packet_lengths[i]);
+    #endif
     }
     at = 0;
-    output_packet = &output_buffer_pool[0];
 }

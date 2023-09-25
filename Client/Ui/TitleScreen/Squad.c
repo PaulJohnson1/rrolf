@@ -349,19 +349,21 @@ static void join_code_on_event(struct rr_ui_element *this,
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         #ifdef RIVET_BUILD
-        if (game->socket_ready)
-            rr_websocket_disconnect(&game->socket, game);
-        char server[16] = {0};
-        char *link = server;
-        char *code = game->connect_code;
-        while (*code != 0 && *code != '-')
         {
-            *link++ = *code;
-            ++code;
+            if (game->socket_ready)
+                rr_websocket_disconnect(&game->socket, game);
+            char server[16] = {0};
+            char *link = server;
+            char *code = game->connect_code;
+            while (*code != 0 && *code != '-')
+            {
+                *link++ = *code;
+                ++code;
+            }
+            puts(server);
+            rr_api_get_server_alias(server, game);
         }
-        puts(server);
-        rr_api_get_server_alias(server, game);
-        #else
+        #endif
         struct proto_bug encoder2;
         proto_bug_init(&encoder2, output_packet);
         proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_SQUAD_JOIN, "header");
@@ -374,7 +376,6 @@ static void join_code_on_event(struct rr_ui_element *this,
         
         rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         game->connect_code[0] = 0;
-        #endif
     }
 }
 

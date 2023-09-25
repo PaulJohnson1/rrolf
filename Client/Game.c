@@ -502,25 +502,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
-            rr_websocket_send(&this->socket,
+            rr_websocket_force_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
             this->socket_ready = 1;
             this->socket_pending = 0;
-            if (this->connect_code[0] != 0)
-            {
-                struct proto_bug encoder2;
-                proto_bug_init(&encoder2, output_packet);
-                proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_SQUAD_JOIN, "header");
-                proto_bug_write_uint8(&encoder2, 1, "join type");
-                char *code = this->connect_code;
-                while (*code != 0 && *code != '-')
-                    ++code;
-                ++code;
-                proto_bug_write_string(&encoder2, code, 6, "connect link");
-                
-                rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
-                this->connect_code[0] = 0;
-            }
             //send instajoin
             return;
         }

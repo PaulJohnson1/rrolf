@@ -154,7 +154,8 @@
     "already_playing": 0,
     "petals": {
       "1:0": 5,
-      "2:0": 1
+      "2:0": 1,
+      "13:0": 1
     },
     "failed_crafts": {},
     "mob_gallery": {}
