@@ -407,6 +407,17 @@ app.get(`${namespace}/user_get_password/:password`, async (req, res) => {
     });
 });
 
+app.get(`${namespace}/user_get_server_alias/:alias`, async (req, res) => {
+    const {alias} = req.params;
+    handle_error(res, async () => {
+        if (game_servers[alias])
+            return game_servers[alias].rivet_server_id;
+        else
+            return '';
+    });
+});
+
+
 app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });
@@ -527,6 +538,7 @@ wss.on("connection", (ws, req) => {
         }
     });
     log("game connect", [game_server.alias]);
+    game_servers[game_server.alias] = game_server;
     const encoder = new protocol.BinaryWriter();
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.alias);

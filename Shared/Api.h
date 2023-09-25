@@ -34,4 +34,4 @@ void rr_api_craft_petals(char const *, char const *, char const *, void *);
 void rr_api_on_close(char const *, char const *, uint32_t, char const *);
 void rr_api_on_open(char const *, void *);
 
-void rr_api_create_squad(char const *, char const *, void *);
+void rr_api_get_server_alias(char const *, void *);

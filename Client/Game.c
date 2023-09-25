@@ -506,6 +506,21 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               verify_encoder.current - verify_encoder.start);
             this->socket_ready = 1;
             this->socket_pending = 0;
+            if (this->connect_code[0] != 0)
+            {
+                struct proto_bug encoder2;
+                proto_bug_init(&encoder2, output_packet);
+                proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_SQUAD_JOIN, "header");
+                proto_bug_write_uint8(&encoder2, 1, "join type");
+                char *code = this->connect_code;
+                while (*code != 0 && *code != '-')
+                    ++code;
+                ++code;
+                proto_bug_write_string(&encoder2, code, 6, "connect link");
+                
+                rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
+                this->connect_code[0] = 0;
+            }
             //send instajoin
             return;
         }
