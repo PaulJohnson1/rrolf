@@ -14,9 +14,9 @@
 #include <Shared/Crypto.h>
 
 uint8_t output_packet[1024 * 16];
-static uint8_t incoming_data[1024 * 1024];
-static uint8_t *outputs[1024];
-static uint32_t packet_lengths[1024] = {0};
+static uint8_t incoming_data[1024 * 512];
+static uint8_t *outputs[65536];
+static uint32_t packet_lengths[65536] = {0};
 static uint32_t at = 0;
 
 #ifdef EMSCRIPTEN
