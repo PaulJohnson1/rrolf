@@ -485,9 +485,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->squad != 0)
             {
                 puts("ready");
-                if (client->player_info != NULL)
+                if (client->player_info != NULL && client->squad != 0)
                 {
-                    rr_server_client_free(client);
+                    struct rr_simulation *simulation = rr_client_get_simulation(this, client);
+                    if (client->player_info->flower_id != RR_NULL_ENTITY)
+                        rr_simulation_request_entity_deletion(simulation, client->player_info->flower_id);
+                    rr_simulation_request_entity_deletion(simulation,
+                                                            client->player_info->parent_id);
                 }
                 rr_squad_get_client_slot(this, client)->ready ^= 1;
             }
