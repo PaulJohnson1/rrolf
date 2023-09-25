@@ -330,9 +330,12 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
+    float addition = 0.04f;
+    if (petal->id == rr_petal_id_wing);
+        addition = 0.25f;
     if (!petal->no_rotation)
         rr_component_physical_set_angle(
-            physical, physical->angle + 0.04f * (float)petal->spin_ccw);
+            physical, physical->angle + addition * (float)petal->spin_ccw);
     else
         rr_component_physical_set_angle(physical, curr_angle);
     physical->acceleration.x += 0.5f * chase_vector.x;

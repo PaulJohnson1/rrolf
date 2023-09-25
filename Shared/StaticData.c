@@ -21,8 +21,8 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_iris, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_grapes, rr_rarity_id_rare, 2.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
     {rr_petal_id_oranges, rr_rarity_id_common, 12.0f, 12.0f, 40.0f, 75, 0, {3, 3, 3, 3, 3, 3, 3}},
-    {rr_petal_id_pollen, rr_rarity_id_unusual, 7.0f, 5.0f, 0.0f, 25, 12, {1, 2, 2, 3, 3, 3, 3}},
-    {rr_petal_id_wing, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_pollen, rr_rarity_id_unusual, 10.0f, 5.0f, 0.0f, 25, 12, {1, 2, 2, 3, 3, 3, 3}},
+    {rr_petal_id_wing, rr_rarity_id_unusual, 15.0f, 15.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
