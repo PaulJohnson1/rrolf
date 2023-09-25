@@ -331,6 +331,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
                     client->rivet_account.token);
+            /*
             pthread_t my_thread;
             int thread_create_result;
             thread_create_result = pthread_create(&my_thread, NULL, rivet_set_connected, NULL);
@@ -349,6 +350,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 sizeof "thread error"-1);
                 return -1;
             }
+            */
             /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
