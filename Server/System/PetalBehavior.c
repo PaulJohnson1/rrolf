@@ -433,7 +433,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_third_eye)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 16);
-            if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.05 * slot->rarity))
+            if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.07 * slot->rarity))
             {   
                 rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.07 * slot->rarity));
             }
