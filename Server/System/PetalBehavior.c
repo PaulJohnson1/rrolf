@@ -286,6 +286,13 @@ static void system_flower_petal_movement_logic(
                 }
                 break;
             }
+            case rr_petal_id_pollen:
+                system_petal_detach(simulation, petal, player_info, outer_pos, inner_pos, petal_data);
+                petal->effect_delay = 125;
+                break;
+            case rr_petal_id_wing:
+                petal->effect_delay = 49;
+                break;
             default:
                 break;
         }
@@ -296,8 +303,12 @@ static void system_flower_petal_movement_logic(
     if (petal->detached)
         should_extend = player_info->input & 1;
     if (should_extend)
+    {
         holdingRadius = 150;
-    else if (player_info->input & 2)
+        if (petal->id == rr_petal_id_wing)
+            holdingRadius += (sinf(M_PI * 4 * petal->effect_delay / 50)) * 75;
+    }
+    else if (player_info->input & 2 && (petal->id != rr_petal_id_oranges && petal->id != rr_petal_id_pollen))
         holdingRadius = 45;
     struct rr_vector chase_vector;
     rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);

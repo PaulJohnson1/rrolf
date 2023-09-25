@@ -202,6 +202,26 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
             rr_renderer_quadratic_curve_to(renderer,0.20520126819610596,-3.5258703231811523,1.3927149772644043,-0.5570859909057617);
             rr_renderer_fill(renderer);
             break;
+        case rr_petal_id_pollen:
+            rr_renderer_set_stroke(renderer, 0xffcfbb50);
+            rr_renderer_set_fill(renderer, 0xffffe763);
+            rr_renderer_set_line_width(renderer, 3.0f);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_arc(renderer, 0.0f, 0.0f, 7.0f);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
+        case rr_petal_id_wing:
+            rr_renderer_begin_path(renderer);
+            rr_renderer_partial_arc(renderer,0,0,15,-1.5707963267948966,1.5707963267948966,0);
+            rr_renderer_quadratic_curve_to(renderer,10,0,0,-15);
+            rr_renderer_set_fill(renderer,0xffffffff);
+            rr_renderer_fill(renderer);
+            rr_renderer_set_stroke(renderer,0xffcfcfcf);
+            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
+            rr_renderer_stroke(renderer);
             break;
         default:
             break;
@@ -216,6 +236,8 @@ void rr_renderer_draw_static_petal(struct rr_renderer *renderer, uint8_t id, uin
     uint32_t count = RR_PETAL_DATA[id].count[rarity];
     if (id == rr_petal_id_peas || id == rr_petal_id_grapes)
         rr_renderer_rotate(renderer, 1.0f - M_PI / 4.0f);
+    else if (id == rr_petal_id_wing)
+        rr_renderer_rotate(renderer, 1.0f);
     if (count <= 1)
     {
         if (id == rr_petal_id_leaf)

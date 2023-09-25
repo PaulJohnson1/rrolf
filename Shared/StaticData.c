@@ -21,16 +21,19 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_iris, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_grapes, rr_rarity_id_rare, 2.0f, 5.0f, 8.0f, 12, 12, {4, 4, 4, 4, 4, 5, 5}},
     {rr_petal_id_oranges, rr_rarity_id_common, 12.0f, 12.0f, 40.0f, 75, 0, {3, 3, 3, 3, 3, 3, 3}},
+    {rr_petal_id_pollen, rr_rarity_id_unusual, 7.0f, 5.0f, 0.0f, 25, 12, {1, 2, 2, 3, 3, 3, 3}},
+    {rr_petal_id_wing, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Basic", "Light", "Leaf", "Stinger", "Missile", "Faster",
-    "Web", "Antennae", "Peas", "Rose","Iris","Grapes","Orange"};
+    "Web", "Antennae", "Peas", "Rose","Iris","Grapes","Orange", "Pollen",
+    "Wing"};
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
     "It's just a petal",
     "Low damage, but there's lots",
-    "Heal you passively",
+    "Heals you passively",
     "Ow",
     "Pew",
     "So light it makes your petals spin faster",
@@ -40,14 +43,16 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Heals you",
     "Poisonous",
     "4-5+poison in 1",
-    "Delicious"
+    "Delicious",
+    "Allergen",
+    "Weeeee"
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_baby_ant, rr_rarity_id_common, 10, 10, 14, {{rr_petal_id_light, 0.1},{rr_petal_id_leaf, 0.2}}},
     {rr_mob_id_worker_ant, rr_rarity_id_common, 10, 15, 16, {{rr_petal_id_light, 0.1}}},
-    {rr_mob_id_soldier_ant, rr_rarity_id_common, 15, 20, 16, {{rr_petal_id_light, 0.15}}},
-    {rr_mob_id_bee, rr_rarity_id_common, 10, 30, 25, {{rr_petal_id_stinger, 0.25},{rr_petal_id_light, 0.1}}},
+    {rr_mob_id_soldier_ant, rr_rarity_id_common, 15, 20, 16, {{rr_petal_id_light, 0.15},{rr_petal_id_wing, 0.1}}},
+    {rr_mob_id_bee, rr_rarity_id_common, 10, 30, 25, {{rr_petal_id_stinger, 0.25},{rr_petal_id_pollen, 0.1}}},
     {rr_mob_id_hornet, rr_rarity_id_common, 25, 30, 25, {{rr_petal_id_antennae, 0.25},{rr_petal_id_missile, 0.2},{rr_petal_id_oranges, 0.1}}},
     {rr_mob_id_spider, rr_rarity_id_common, 25, 25, 15, {{rr_petal_id_faster, 0.25},{rr_petal_id_web, 0.2}, {rr_petal_id_iris, 0.1}}},
     {rr_mob_id_centipede, rr_rarity_id_common, 30, 10, 35, {{rr_petal_id_peas, 0.25},{rr_petal_id_leaf, 0.2}}},
