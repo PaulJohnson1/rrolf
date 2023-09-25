@@ -379,8 +379,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             //rr_client_join_squad(this, client, 0);
             return 0;
         }
+        /*
         if (!client->verified)
             break;
+        */
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case RR_SERVERBOUND_INPUT:

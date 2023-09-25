@@ -506,7 +506,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                               verify_encoder.current - verify_encoder.start);
             this->socket_ready = 1;
             this->socket_pending = 0;
-            puts(this->connect_code);
             if (this->connect_code[0] != 0)
             {
                 struct proto_bug encoder2;
@@ -517,7 +516,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 while (*code != 0 && *code != '-')
                     ++code;
                 ++code;
-                puts(code);
                 proto_bug_write_string(&encoder2, code, 6, "connect link");
                 
                 rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
