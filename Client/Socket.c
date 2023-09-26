@@ -15,8 +15,8 @@
 
 uint8_t output_packet[1024 * 16];
 static uint8_t incoming_data[1024 * 512];
-static uint8_t *outputs[65536];
-static uint32_t packet_lengths[65536] = {0};
+static uint8_t *outputs[8192];
+static uint32_t packet_lengths[8192] = {0};
 static uint32_t at = 0;
 
 #ifdef EMSCRIPTEN
@@ -148,8 +148,10 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     game->joined_squad = 0;
 }
 
-void rr_websocket_send(struct rr_websocket *this, uint32_t length)
+void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
 {
+    if (at >= 8192)
+        return;
     uint8_t *output = malloc(length);
     memcpy(output, output_packet, length);
     /*
@@ -172,7 +174,7 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
     //++at;
 }
 
-void rr_websocket_force_send(struct rr_websocket *this, uint32_t length)
+void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 {
     rr_encrypt(output_packet, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =

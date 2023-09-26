@@ -17,7 +17,7 @@ void rr_simulation_request_entity_deletion(struct rr_simulation *this,
                                            EntityIdx entity)
 {
 #ifndef NDEBUG
-    fprintf(stderr, "request deletion of id %lu, type %lu, petal id %lu, %lu\n", entity, this->entity_tracker[entity], this->petal_components[entity].id, this->petal_components[entity].rarity);
+    fprintf(stderr, "request deletion of id %hu, type %hu, petal id %hhu, %hhu\n", entity, this->entity_tracker[entity], this->petal_components[entity].id, this->petal_components[entity].rarity);
 #endif
     assert(rr_simulation_has_entity(this, entity));
     rr_bitset_set(this->pending_deletions, entity);
@@ -27,6 +27,10 @@ void __rr_simulation_pending_deletion_free_components(uint64_t i,
                                                       void *captures)
 {
     struct rr_simulation *this = captures;
+#ifndef NDEBUG
+    if (!rr_simulation_has_entity(this, i))
+        fprintf(stderr, "wrong %llu\n", i);
+#endif
     assert(rr_simulation_has_entity(this, i));
 #define XX(COMPONENT, ID)                                                      \
     if (rr_simulation_has_##COMPONENT(this, i))                                \

@@ -374,7 +374,7 @@ static void join_code_on_event(struct rr_ui_element *this,
         ++code;
         proto_bug_write_string(&encoder2, code, 6, "connect link");
         
-        rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
+        rr_websocket_queue_send(&game->socket, encoder2.current - encoder2.start);
         game->connect_code[0] = 0;
     }
 }

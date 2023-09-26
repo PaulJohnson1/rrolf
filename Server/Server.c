@@ -84,6 +84,7 @@ void rr_server_client_free(struct rr_server_client *this)
             rr_simulation_request_entity_deletion(simulation, this->player_info->flower_id);
         rr_simulation_request_entity_deletion(simulation,
                                                 this->player_info->parent_id);
+        this->player_info = NULL;
     }
     if (this->squad != 0)
     {
@@ -494,6 +495,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                         rr_simulation_request_entity_deletion(simulation, client->player_info->flower_id);
                     rr_simulation_request_entity_deletion(simulation,
                                                             client->player_info->parent_id);
+                    client->player_info = NULL;
                 }
                 rr_squad_get_client_slot(this, client)->ready ^= 1;
             }
