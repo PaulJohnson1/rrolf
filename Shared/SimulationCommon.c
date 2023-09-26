@@ -17,7 +17,7 @@ void rr_simulation_request_entity_deletion(struct rr_simulation *this,
                                            EntityIdx entity)
 {
 #ifndef NDEBUG
-    fprintf(stderr, "request deletion of id %lu, type %lu\n", entity, this->entity_tracker[entity]);
+    fprintf(stderr, "request deletion of id %lu, type %lu, petal id %lu, %lu\n", entity, this->entity_tracker[entity], this->petal_components[entity].id, this->petal_components[entity].rarity);
 #endif
     assert(rr_simulation_has_entity(this, entity));
     rr_bitset_set(this->pending_deletions, entity);
