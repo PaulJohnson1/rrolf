@@ -429,11 +429,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 {
                     rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
-/*
                     rr_rivet_players_disconnected(
                         getenv("RIVET_TOKEN"),
                         this->clients[i].rivet_account.token);
-                        */
 #endif
                     struct rr_binary_encoder encoder;
                     rr_binary_encoder_init(&encoder, outgoing_message);
@@ -529,7 +527,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #ifdef RIVET_BUILD
             printf("client connecting with token: %s\n",
                     client->rivet_account.token);
-                    /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
                     client->rivet_account.token))
@@ -540,7 +537,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 sizeof "rivet error");
                 return -1;
             }
-            */
 #endif
             //struct rr_api_account account = {0};
             //rr_api_on_open(client->rivet_account.uuid, &account);
