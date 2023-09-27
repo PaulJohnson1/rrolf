@@ -83,6 +83,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_simulation *this = captures->simulation;
     EntityIdx entity1 = captures->health->parent_id;
     EntityIdx entity2 = i;
+    fprintf(stderr, "%d %d\n", entit1, entity2);
     if (!rr_simulation_has_health(this, entity2))
         return;
     struct rr_component_relations *relations1 =
@@ -171,7 +172,6 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
 void rr_system_health_tick(struct rr_simulation *this)
 {
-    fputs("abcd\n", stderr);
     rr_simulation_for_each_health(this, this, system_default_idle_heal);
     fputs("efgh\n", stderr);
     rr_simulation_for_each_health(this, this, system_for_each_function);
