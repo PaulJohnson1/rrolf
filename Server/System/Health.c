@@ -83,7 +83,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_simulation *this = captures->simulation;
     EntityIdx entity1 = captures->health->parent_id;
     EntityIdx entity2 = i;
-    fprintf(stderr, "%d %d\n", entit1, entity2);
+    fprintf(stderr, "%d %d\n", entity1, entity2);
     if (!rr_simulation_has_health(this, entity2))
         return;
     struct rr_component_relations *relations1 =
