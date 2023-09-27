@@ -105,6 +105,8 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
         struct rr_simulation *this, EntityIdx entity)                          \
     {                                                                          \
+        if (!rr_simulation_has_entity(this, entity)) \
+            printf("%d\n", entity);\
         assert(rr_simulation_has_entity(this, entity));                        \
         if (!rr_simulation_has_##COMPONENT(this, entity)) \
             printf("%d %d %d\n", entity, this->entity_tracker[entity], rr_simulation_has_centipede(this, entity));\
