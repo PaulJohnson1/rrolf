@@ -80,7 +80,6 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
         return;
     if (!rr_simulation_has_player_info(simulation, p_info_id))
         return;
-    fprintf(stderr, "lol %d\n", p_info_id);
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_info_id);
     uint8_t squad = player_info->squad;
     if (squad == 0)
