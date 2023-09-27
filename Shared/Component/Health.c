@@ -34,6 +34,8 @@ void rr_component_health_free(struct rr_component_health *this,
 }
 
 #ifdef RR_SERVER
+#include <Server/Simulation.h>
+
 void rr_component_health_write(struct rr_component_health *this,
                                struct proto_bug *encoder, int is_creation,
                                struct rr_component_player_info *client)
@@ -73,11 +75,12 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
         return;
     if (rr_simulation_get_relations(simulation, from)->team != rr_simulation_team_id_players)
         return;
-    EntityIdx p_info_id = rr_simulation_get_relations(simulation, from)->owner;
-    if (rr_simulation_has_flower(simulation, p_info_id))
-        p_info_id = rr_simulation_get_relations(simulation, p_info_id)->owner;
+    EntityIdx p_info_id = rr_simulation_get_relations(simulation, from)->root_owner;
+    if (!rr_simulation_entity_alive(simulation, p_info_id))
+        return;
     if (!rr_simulation_has_player_info(simulation, p_info_id))
         return;
+    fprintf(stderr, "lol %d\n", p_info_id);
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_info_id);
     uint8_t squad = player_info->squad;
     if (squad == 0)

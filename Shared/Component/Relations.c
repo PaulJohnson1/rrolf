@@ -29,6 +29,19 @@ void rr_component_relations_free(struct rr_component_relations *this,
 }
 
 #ifdef RR_SERVER
+
+void rr_component_relations_update_root_owner(struct rr_simulation *simulation, struct rr_component_relations *this)
+{
+    if (this->owner == RR_NULL_ENTITY)
+        return;
+    if (!rr_simulation_has_entity(simulation, this->owner) || !rr_simulation_has_relations(simulation, this->owner))
+        return;
+    struct rr_component_relations *root = rr_simulation_get_relations(simulation, this->owner);
+    if (root->root_owner == RR_NULL_ENTITY)
+        this->root_owner = root->parent_id;
+    else
+        this->root_owner = root->root_owner;
+}
 void rr_component_relations_write(struct rr_component_relations *this,
                                   struct proto_bug *encoder, int is_creation,
                                   struct rr_component_player_info *client)

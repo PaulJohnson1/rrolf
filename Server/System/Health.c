@@ -83,7 +83,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
     struct rr_simulation *this = captures->simulation;
     EntityIdx entity1 = captures->health->parent_id;
     EntityIdx entity2 = i;
-    fprintf(stderr, "%d %d\n", entity1, entity2);
     if (!rr_simulation_has_health(this, entity2))
         return;
     struct rr_component_relations *relations1 =
@@ -101,6 +100,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
         rr_simulation_get_physical(this, entity2);
     if (health2->health == 0)
         return;
+    fprintf(stderr, "%d %d 3\n", relations1->team, relations2->team);
     uint8_t bypass = rr_simulation_has_petal(this, entity1) ||
                      rr_simulation_has_petal(this, entity2);
     if (health1->damage_paused == 0 || bypass)

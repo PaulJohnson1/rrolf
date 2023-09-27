@@ -44,6 +44,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, entity);
+    rr_component_relations_update_root_owner(this, relations);
     rr_component_player_info_set_camera_x(player_info, physical->x);
     rr_component_player_info_set_camera_y(player_info, physical->y);
     rr_component_player_info_set_flower_id(player_info, flower_id);
@@ -83,7 +84,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
                                      owner); // flower owns petal, not player
     rr_component_relations_set_team(
         relations, rr_simulation_get_relations(this, owner)->team);
-
+    rr_component_relations_update_root_owner(this, relations);
     float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
     float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
 
@@ -135,6 +136,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         team_id = rr_simulation_team_id_players;
     }
     rr_component_relations_set_team(relations, team_id);
+    rr_component_relations_update_root_owner(this, relations);
     if (mob_id == rr_mob_id_beehive)
     {
         struct rr_component_arena *arena =
