@@ -543,6 +543,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         rr_simulation_get_relations(simulation, mob_id);
                     rr_component_relations_set_owner(relations,
                                                      player_info->flower_id);
+                    rr_component_relations_update_root_owner(simulation, relations);
                     rr_simulation_get_mob(simulation, mob_id)->player_spawned = 1;
                 }
             }
