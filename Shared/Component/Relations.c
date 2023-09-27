@@ -34,8 +34,13 @@ void rr_component_relations_update_root_owner(struct rr_simulation *simulation, 
 {
     if (this->owner == RR_NULL_ENTITY)
         return;
-    if (!rr_simulation_has_entity(simulation, this->owner) || !rr_simulation_has_relations(simulation, this->owner))
+    if (!rr_simulation_has_entity(simulation, this->owner))
         return;
+    if (!!rr_simulation_has_relations(simulation, this->owner))
+    {
+        this->root_owner = this->owner;
+        return;
+    }
     struct rr_component_relations *root = rr_simulation_get_relations(simulation, this->owner);
     if (root->root_owner == RR_NULL_ENTITY)
         this->root_owner = root->parent_id;
