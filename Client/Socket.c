@@ -13,10 +13,10 @@
 
 #include <Shared/Crypto.h>
 
-uint8_t *output_packet;
-static uint8_t incoming_data[1024 * 1024];
-static uint8_t output_buffer_pool[16 * 1024] = {0};
-static uint32_t packet_lengths[32] = {0};
+uint8_t output_packet[1024 * 16];
+static uint8_t incoming_data[1024 * 512];
+static uint8_t *outputs[8192];
+static uint32_t packet_lengths[8192] = {0};
 static uint32_t at = 0;
 
 #ifdef EMSCRIPTEN
@@ -24,8 +24,7 @@ void rr_on_socket_event_emscripten(struct rr_websocket *this,
                                    enum rr_websocket_event_type type,
                                    void *data, uint64_t data_size)
 {
-    rr_game_websocket_on_event_function(type, data, this->user_data, data_size);
-    //this->on_event(type, data, this->user_data, data_size);
+    this->on_event(type, data, this->user_data, data_size);
 }
 #else
 int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
@@ -58,9 +57,9 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
 
 void rr_websocket_init(struct rr_websocket *this)
 {
-    //void *event = this->on_event;
+    void *event = this->on_event;
     memset(this, 0, sizeof *this);
-    //this->on_event = event; //cursed
+    this->on_event = event; //cursed
 }
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
@@ -87,16 +86,16 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 socket.onclose = function(a, b)
                 {
                     console.log("close", a, b);
-                    const buf = new TextEncoder().encode(a.reason);
-                    HEAPU8.set(buf, $2);
-                    Module._rr_on_socket_event_emscripten($0, 1, $2, a.code);
+                    if (a.reason === 'invalid v\x00')
+                        location.reload(true);
+                    Module._rr_on_socket_event_emscripten($0, 1, 0, a.code);
                 };
                 socket.onerror = function(a, b) { 
-                       console.log("error", a, b); 
+                    console.log("error", a, b); 
                 };
                 socket.onmessage = function(event)
                 {
-                    HEAPU8.set(new Uint8Array(event.data), $2);
+                    Module.HEAPU8.set(new Uint8Array(event.data), $2);
                     Module._rr_on_socket_event_emscripten(
                         $0, 2, $2, new Uint8Array(event.data).length);
                 };
@@ -108,7 +107,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
     struct lws_protocols protocols[2] = {{"g", rr_on_socket_event_lws, 0, 0},
                                          {NULL, NULL, 0, 0}};
     memset(&info, 0, sizeof info);
-    //protocols[0].callback = rr_on_socket_event_lws;
+    protocols[0].callback = rr_on_socket_event_lws;
     protocols[0].name = "g";
 
     info.port = CONTEXT_PORT_NO_LISTEN;
@@ -146,6 +145,33 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     free(this->curr_link);
     game->socket_ready = 0;
     game->simulation_ready = 0;
+    game->joined_squad = 0;
+}
+
+void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
+{
+    if (at >= 8192)
+        return;
+    uint8_t *output = malloc(length);
+    memcpy(output, output_packet, length);
+    /*
+    rr_encrypt(output_packet, length, this->serverbound_encryption_key);
+    this->serverbound_encryption_key =
+        rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+// printf("pooling packet of length %d at ptr %p\n", length, output_packet);
+#ifndef EMSCRIPTEN
+    lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
+#else
+    EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+           output_packet, length);
+#endif
+*/
+    outputs[at] = output;
+    packet_lengths[at] = length;
+    ++at;
+    // packet_lengths[at] = length;
+    // output_packet += length;
+    //++at;
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint32_t length)
@@ -160,20 +186,23 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
     EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
            output_packet, length);
 #endif
-    // packet_lengths[at] = length;
-    // output_packet += length;
-    //++at;
 }
 
 void rr_websocket_send_all(struct rr_websocket *this)
 {
-    uint8_t *offset = &output_buffer_pool[0];
+    if (!this->recieved_first_packet)
+        return;
     for (uint32_t i = 0; i < at; ++i)
     {
-        // printf("sending packret of length %d at ptr %p\n", packet_lengths[i],
-        // offset);
-        offset += packet_lengths[i];
+        rr_encrypt(outputs[i], packet_lengths[i], this->serverbound_encryption_key);
+        this->serverbound_encryption_key =
+            rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+    #ifndef EMSCRIPTEN
+        lws_write(this->socket, outputs[i], packet_lengths[i], LWS_WRITE_BINARY);
+    #else
+        EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+            outputs[i], packet_lengths[i]);
+    #endif
     }
     at = 0;
-    output_packet = &output_buffer_pool[0];
 }

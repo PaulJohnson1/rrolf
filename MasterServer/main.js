@@ -36,7 +36,7 @@ const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
 let database = {};
 let changed = false;
-const databaseFilePath = path.join(__dirname, "database.json");
+const databaseFilePath = path.join(__dirname, "rwolf-database.json");
 if (fs.existsSync(databaseFilePath))
 {
    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
@@ -178,14 +178,6 @@ async function db_read_user(username, password)
         const user = apply_missing_defaults({});
         user.password = password;
         user.username = username;
-        /*
-        for (let n = 1; n < 24; ++n)
-        {
-            user.petals[n+":4"] = 4;
-            user.petals[n+":5"] = 4;
-        }
-        user.xp = 1000000;
-        */
         await write_db_entry(username, user);
         return user;
     }
@@ -414,6 +406,17 @@ app.get(`${namespace}/user_get_password/:password`, async (req, res) => {
     });
 });
 
+app.get(`${namespace}/user_get_server_alias/:alias`, async (req, res) => {
+    const {alias} = req.params;
+    handle_error(res, async () => {
+        if (game_servers[alias])
+            return game_servers[alias].rivet_server_id;
+        else
+            return '';
+    });
+});
+
+
 app.use((req, res) => {
     res.status(404).send("404 Not Found\n");
 });
@@ -429,25 +432,6 @@ const saveDatabaseToFile = () => {
    else
        console.log("tried save, was not changed");
 };
-
-let quit = false;
-const try_save_exit = () =>
-{
-   if (!quit)
-   {
-       quit = true;
-       saveDatabaseToFile();
-   }
-   process.exit();
-}
-
-process.on("beforeExit", try_save_exit);
-process.on("exit", try_save_exit)
-process.on("SIGTERM", try_save_exit);
-process.on("SIGINT", try_save_exit);
-process.on("uncaughtException", try_save_exit);
-
-setInterval(saveDatabaseToFile, 60000);
 
 const server = http.createServer(app);
 
@@ -497,8 +481,9 @@ wss.on("connection", (ws, req) => {
                 {
                     log("client delete", [uuid]);
                     const client = connected_clients[uuid];
-                    if (client.needs_database_update)
-                        write_db_entry(client.user.username, client.user);
+                    if (!client)
+                        break;
+                    write_db_entry(client.user.username, client.user);
                     delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
@@ -524,7 +509,7 @@ wss.on("connection", (ws, req) => {
                     else
                         ++user.petals[key];
                 }
-                user.needs_database_update = 1;
+                write_db_entry(user.username, user);
                 break;
             }
             case 100:
@@ -537,6 +522,7 @@ wss.on("connection", (ws, req) => {
         }
     });
     log("game connect", [game_server.alias]);
+    game_servers[game_server.alias] = game_server;
     const encoder = new protocol.BinaryWriter();
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.alias);
@@ -557,7 +543,7 @@ wss.on("connection", (ws, req) => {
             client.write(encoder);
             ws.send(encoder.data.subarray(0, encoder.at));
         }
-    }, 2500);
+    }, 500);
     setInterval(() => {
         //ping packet
         const encoder = new protocol.BinaryWriter();
@@ -572,15 +558,25 @@ wss.on("connection", (ws, req) => {
     });
 });
 
+let quit = false;
+const try_save_exit = () =>
+{
+   if (!quit)
+   {
+       quit = true;
+       saveDatabaseToFile();
+   }
+   process.exit();
+}
+
+process.on("beforeExit", try_save_exit);
+process.on("exit", try_save_exit)
+process.on("SIGTERM", try_save_exit);
+process.on("SIGINT", try_save_exit);
+process.on("uncaughtException", try_save_exit);
+
+setInterval(saveDatabaseToFile, 60000);
+
 setInterval(() => {
-    log("updating db", Object.keys(connected_clients))
-    for (const uuid in connected_clients)
-    {
-        const client = connected_clients[uuid];
-        if (!client.needs_database_update)
-            continue;
-        client.needs_database_update = 0;
-        log("updating db", [uuid]);
-        write_db_entry(client.user.username, client.user);
-    }
+    log("player count: ", [Object.keys(connected_clients).length]);
 }, 15000);
