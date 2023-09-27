@@ -36,7 +36,7 @@ const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
 let database = {};
 let changed = false;
-const databaseFilePath = path.join(__dirname, "rwolf-database.json");
+const databaseFilePath = path.join(__dirname, "database.json");
 if (fs.existsSync(databaseFilePath))
 {
    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
