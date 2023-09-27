@@ -100,7 +100,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
         rr_simulation_get_physical(this, entity2);
     if (health2->health == 0)
         return;
-    fprintf(stderr, "%d %d 3\n", relations1->team, relations2->team);
     uint8_t bypass = rr_simulation_has_petal(this, entity1) ||
                      rr_simulation_has_petal(this, entity2);
     if (health1->damage_paused == 0 || bypass)
@@ -118,6 +117,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(this, entity2);
+                    fprintf(stderr, "found %d\n", relations->root_owner);
                     ai->target_entity = relations->owner;
                 }
                 else // allows for mob targeting
@@ -141,6 +141,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(this, entity1);
+                    fprintf(stderr, "found %d\n", relations->root_owner);
                     ai->target_entity = relations->owner;
                 }
                 else
