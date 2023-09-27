@@ -171,6 +171,8 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
 void rr_system_health_tick(struct rr_simulation *this)
 {
+    fputs("abcd\n", stderr);
     rr_simulation_for_each_health(this, this, system_default_idle_heal);
+    fputs("efgh\n", stderr);
     rr_simulation_for_each_health(this, this, system_for_each_function);
 }
