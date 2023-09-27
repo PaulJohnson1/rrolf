@@ -36,7 +36,7 @@ void rr_component_relations_update_root_owner(struct rr_simulation *simulation, 
         return;
     if (!rr_simulation_has_entity(simulation, this->owner))
         return;
-    if (!!rr_simulation_has_relations(simulation, this->owner))
+    if (!rr_simulation_has_relations(simulation, this->owner))
     {
         this->root_owner = this->owner;
         return;
