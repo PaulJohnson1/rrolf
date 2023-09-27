@@ -147,6 +147,7 @@ static void tick_wave(struct rr_simulation *this)
 
 #define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
+    puts(_);\
         CODE;                                                                  \
     };
 
