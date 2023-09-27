@@ -88,6 +88,8 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this,          \
                                           EntityIdx entity)                    \
     {                                                                          \
+        if (!rr_simulation_has_entity(this, entity)) \
+            printf("%d\n", entity);\
         assert(rr_simulation_has_entity(this, entity));                        \
         return (this->entity_tracker[entity] >> ID) & 1;                       \
     }                                                                          \
