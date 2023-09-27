@@ -32,8 +32,6 @@ size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp)
 
 void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 {
-    //puts(param_1);
-    //puts(param_2);
 #ifndef EMSCRIPTEN
     char readBuffer[50000] = {0};
     char url[5000] = {0};
@@ -92,23 +90,6 @@ void rr_api_on_open(char const *uuid, void *captures)
 #endif
 }
 
-void rr_api_get_password(char const *token, void *captures)
-{
-#ifdef EMSCRIPTEN
-    EM_ASM(
-        {
-            fetch(UTF8ToString($0) + "user_get_password/" + UTF8ToString($1)).then(x => x.text()).then(pw => {
-                    const $pw = _malloc(pw.length + 1);
-                    for (let i = 0; i < pw.length; i++)
-                        HEAPU8[$pw + i] = pw[i].charCodeAt();
-                    HEAPU8[$pw + pw.length] = 0;
-                    Module._rr_api_on_get_password($pw, $2);         
-                });
-        }, RR_BASE_API_URL, token, captures
-    );
-#endif
-}
-
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                          char const *param_3, void *captures)
 {
@@ -141,26 +122,44 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
 #endif
 }
 
-void rr_api_create_squad(char const *param_1, char const *param_2, void *captures)
+void rr_api_get_server_alias(char const *param_1, void *game)
 {
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            /*
-            fetch(UTF8ToString($3) + "user_craft_petals/" + UTF8ToString($0) +
-                  '/' + UTF8ToString($1) + '/' + UTF8ToString($2))
-                .then(function(response){return response.text()})
-                .then(function(data) {
-                    const $a = _malloc(1 + data.length);
-                    for (let i = 0; i < data.length; i++)
-                        HEAPU8[$a + i] = data[i].charCodeAt();
-                    HEAPU8[$a + data.length] = 0;
-                    Module._rr_api_on_craft_result($a, $3);
+            fetch(UTF8ToString($1) + 'user_get_server_alias/' + UTF8ToString($0)).then(function(x) {return x.text()})
+            .then(function(data) {
+                fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
+                headers : {
+                    Authorization :
+                        // clang-format off
+                        "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
+                    // clang-format on
+                },
+                method : "POST",
+                body : '{"lobby_id":"' + data + '"}'
+            })
+                .then(function(r) { return r.json(); })
+                .then(function(json) {
+                    console.log("join with: ", json);
+                    const host = json.ports.default.hostname;
+                    const token = "Bearer " + json.player.token;
+                    const $host = _malloc(host.length + 1);
+                    const $token = _malloc(1 + token.length);
+                    for (let i = 0; i < host.length; i++)
+                        HEAPU8[$host + i] = host[i].charCodeAt();
+                    for (let i = 0; i < token.length; i++)
+                        HEAPU8[$token + i] = token[i].charCodeAt();
+                    HEAPU8[$host + host.length] = 0;
+                    HEAPU8[$token + token.length] = 0;
+                    Module._rr_rivet_lobby_on_find(
+                        $host, $token, json.ports.default.port, $2);
+                })
+                .catch(function(error) {
+                    Module._rr_rivet_lobby_on_find(0, 0, 0, $2);
                 });
-            */
-           console.log(UTF8ToString($3) + "user_create_squad/" + UTF8ToString($0) +
-                  '/' + UTF8ToString($1) + '/' + UTF8ToString($2));
+            });
         },
-        param_1, param_2, captures, RR_BASE_API_URL);
+        param_1, RR_BASE_API_URL, game);
 #endif
 }
