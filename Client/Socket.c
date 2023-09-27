@@ -24,7 +24,7 @@ void rr_on_socket_event_emscripten(struct rr_websocket *this,
                                    enum rr_websocket_event_type type,
                                    void *data, uint64_t data_size)
 {
-    this->on_event(type, data, this->user_data, data_size);
+    rr_game_websocket_on_event_function(type, data, this->user_data, data_size);
 }
 #else
 int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
@@ -35,13 +35,13 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
     switch (reason)
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
-        this->on_event(rr_websocket_event_type_open, NULL, this->user_data, 0);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_open, NULL, this->user_data, 0);
         break;
     case LWS_CALLBACK_CLIENT_RECEIVE:
-        this->on_event(rr_websocket_event_type_data, in, this->user_data, size);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_data, in, this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CLOSED:
-        this->on_event(rr_websocket_event_type_close, NULL, this->user_data, size);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_close, NULL, this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
         fputs((char *)in, stderr);
@@ -57,9 +57,7 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
 
 void rr_websocket_init(struct rr_websocket *this)
 {
-    void *event = this->on_event;
     memset(this, 0, sizeof *this);
-    this->on_event = event; //cursed
 }
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
@@ -154,24 +152,9 @@ void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
         return;
     uint8_t *output = malloc(length);
     memcpy(output, output_packet, length);
-    /*
-    rr_encrypt(output_packet, length, this->serverbound_encryption_key);
-    this->serverbound_encryption_key =
-        rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
-// printf("pooling packet of length %d at ptr %p\n", length, output_packet);
-#ifndef EMSCRIPTEN
-    lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
-#else
-    EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
-           output_packet, length);
-#endif
-*/
     outputs[at] = output;
     packet_lengths[at] = length;
     ++at;
-    // packet_lengths[at] = length;
-    // output_packet += length;
-    //++at;
 }
 
 void rr_websocket_send(struct rr_websocket *this, uint32_t length)

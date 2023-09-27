@@ -61,35 +61,6 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
 #endif
 }
 
-void rr_api_on_close(char const *id, char const *petals, uint32_t wave,
-                     char const *gallery)
-{
-#ifndef EMSCRIPTEN
-    char url[5000] = {0};
-    RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), RR_BASE_API_URL "user_on_close/%s/%s/%s/%d/%s",
-             RR_API_SECRET, id, petals, wave, gallery);
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    RR_RIVET_CURL_EPILOGUE
-#endif
-}
-
-void rr_api_on_open(char const *uuid, void *captures)
-{
-#ifndef EMSCRIPTEN
-    char readBuffer[50000] = {0};
-    char url[5000] = {0};
-    RR_RIVET_CURL_PROLOGUE
-    snprintf(url, sizeof(url), RR_BASE_API_URL "user_on_open/%s/%s", RR_API_SECRET,
-             uuid);
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-    RR_RIVET_CURL_EPILOGUE
-    rr_api_on_open_result(readBuffer, captures);
-#endif
-}
-
 void rr_api_craft_petals(char const *param_1, char const *param_2,
                          char const *param_3, void *captures)
 {
@@ -119,6 +90,23 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
                 });
         },
         param_1, param_2, param_3, captures, RR_BASE_API_URL);
+#endif
+}
+
+void rr_api_get_password(char const *token, void *captures)
+{
+#ifdef EMSCRIPTEN
+    EM_ASM(
+        {
+            fetch(UTF8ToString($0) + "user_get_password/" + UTF8ToString($1)).then(x => x.text()).then(pw => {
+                    const $pw = _malloc(pw.length + 1);
+                    for (let i = 0; i < pw.length; i++)
+                        HEAPU8[$pw + i] = pw[i].charCodeAt();
+                    HEAPU8[$pw + pw.length] = 0;
+                    Module._rr_api_on_get_password($pw, $2);         
+                });
+        }, RR_BASE_API_URL, token, captures
+    );
 #endif
 }
 
