@@ -133,7 +133,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     if (mob_id == rr_mob_id_meteor)
     {
         physical->mass *= 100;
-        team_id = rr_simulation_team_id_players;
+        //team_id = rr_simulation_team_id_players;
     }
     rr_component_relations_set_team(relations, team_id);
     rr_component_relations_update_root_owner(this, relations);
