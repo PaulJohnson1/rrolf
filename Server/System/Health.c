@@ -175,4 +175,5 @@ void rr_system_health_tick(struct rr_simulation *this)
     rr_simulation_for_each_health(this, this, system_default_idle_heal);
     fputs("efgh\n", stderr);
     rr_simulation_for_each_health(this, this, system_for_each_function);
+    fputs("hijk\n", stderr);
 }
