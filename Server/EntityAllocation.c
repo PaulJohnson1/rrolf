@@ -106,7 +106,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
                                   enum rr_rarity_id rarity_id,
                                   enum rr_simulation_team_id team_id)
 {
-    ++rr_simulation_get_arena(this, arena_id)->mob_count;
     EntityIdx entity = rr_simulation_alloc_entity(this);
 
     struct rr_component_mob *mob = rr_simulation_add_mob(this, entity);
@@ -150,9 +149,10 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         {
             for (uint32_t Y = 0; Y < arena->maze_dim; ++Y)
             {
-                uint8_t v = arena->grid[Y * arena->maze_dim + X].value;
+                uint8_t v = rr_component_arena_get_grid(arena, X, Y)->value;
                 if (v == 0 || (v & 8))
                     continue;
+                ++arena->mob_count;
                 rr_simulation_alloc_mob(this, entity, (X+rr_frand())*arena->grid_size, (Y+rr_frand())*arena->grid_size, rr_mob_id_honeybee, rarity_id, team_id);
                 break;            
             }

@@ -59,37 +59,10 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
-static struct rr_vector
-find_position_away_from_players(struct rr_simulation *this)
-{
-    struct rr_vector ret;
-    uint8_t invalid = 1;
-    while (invalid)
-    {
-        //float rad = sqrtf(rr_frand()) * RR_ARENA_LENGTH;
-        //float angle = rr_frand() * 2 * M_PI;
-        ret.x = rr_frand() * RR_ARENA_LENGTH;//rad * cosf(angle);
-        ret.y = rr_frand() * RR_ARENA_LENGTH;//rad * sinf(angle);
-        invalid = 0;
-        for (uint16_t i = 0; i < this->flower_count; ++i)
-        {
-            struct rr_component_physical *physical =
-                rr_simulation_get_physical(this, this->flower_vector[i]);
-            struct rr_vector delta = {ret.x - physical->x, ret.y - physical->y};
-            if (rr_vector_get_magnitude(&delta) < 500)
-            {
-                invalid = 1;
-                break;
-            }
-        }
-    }
-    return ret;
-}
-
 static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid_y)
 {
-    struct rr_maze_grid *grid = &(RR_MAZE_HELL_CREEK[grid_y][grid_x]);
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
     uint8_t id;
     if (grid->is_special)
         id = grid->special_id;
@@ -102,28 +75,61 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
                                                rr_simulation_team_id_mobs);
     rr_simulation_get_mob(this, mob_id)->zone = grid;
-    ++grid->mob_count;
+    grid->grid_points += RR_MOB_DIFFICULTY_COEFFICIENTS[id];
 }
 
 #ifdef RIVET_BUILD
-#define GRID_MOB_LIMIT(DIFFICULTY) \
-    6 - DIFFICULTY / 20
+#define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
+    (10 - (DIFFICULTY) * 0.08) * ((PLAYER_COUNT + 1) * 0.5) + 4
 #else
-#define GRID_MOB_LIMIT(DIFFICULTY) \
-    4
+#define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
+    10
 #endif
+
+static void count_flower_vicinity(EntityIdx entity, void *_simulation)
+{
+    struct rr_simulation *this = _simulation;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    uint32_t sx = rr_fclamp(physical->x - 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t sy = rr_fclamp(physical->y - 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ex = rr_fclamp(physical->x + 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ey = rr_fclamp(physical->y + 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    for (uint32_t x = sx; x <= ex; ++x)
+        for (uint32_t y = sy; y <= ey; ++y)
+            ++rr_component_arena_get_grid(arena, x, y)->player_count;
+}
+
+static void despawn_mob(EntityIdx entity, void *_simulation)
+{
+    struct rr_simulation *this = _simulation;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    if (rr_component_arena_get_grid(arena, physical->x / arena->grid_size, physical->y / arena->grid_size)->player_count == 0)
+    {
+        rr_simulation_request_entity_deletion(this, entity);
+    }
+}
 
 static void tick_wave(struct rr_simulation *this)
 {
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    for (uint32_t i = 0; i < RR_MAZE_DIM * RR_MAZE_DIM; ++i)
+        arena->grid[i].player_count = 0;
+    rr_simulation_for_each_flower(this, this, count_flower_vicinity);
+    rr_simulation_for_each_mob(this, this, despawn_mob);
     for (uint32_t grid_x = 0; grid_x < RR_MAZE_DIM; ++grid_x)
     {
         for (uint32_t grid_y = 0; grid_y < RR_MAZE_DIM; ++grid_y)
         {
             if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 grid_y += SPAWN_ZONE_H;
-            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].value == 0 || (RR_MAZE_HELL_CREEK[grid_y][grid_x].value & 8))
+            struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
+            if (grid->player_count == 0)
                 continue;
-            if (RR_MAZE_HELL_CREEK[grid_y][grid_x].mob_count >= GRID_MOB_LIMIT(RR_MAZE_HELL_CREEK[grid_y][grid_x].difficulty))
+            if (grid->value == 0 || (grid->value & 8))
+                continue;
+            if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
             if (rand() % 25 == 0)
                 spawn_mob(this, grid_x, grid_y);

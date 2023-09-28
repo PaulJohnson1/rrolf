@@ -217,7 +217,7 @@ void rr_server_init(struct rr_server *this)
     //printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
-    this->biome = 1; 
+    this->biome = 0; 
 #endif
     rr_static_data_init();
     rr_simulation_init(&this->simulation);

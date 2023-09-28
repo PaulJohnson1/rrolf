@@ -52,6 +52,10 @@ void rr_component_arena_spatial_hash_init(
 {
     rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze_dim * this->grid_size / SPATIAL_HASH_GRID_SIZE);
 }
+struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *this, uint32_t x, uint32_t y)
+{
+    return &this->grid[y * this->maze_dim + x];
+}
 void rr_component_arena_write(struct rr_component_arena *this,
                               struct proto_bug *encoder, int is_creation,
                               struct rr_component_player_info *client)

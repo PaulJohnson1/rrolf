@@ -88,8 +88,6 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     uint8_t rr_simulation_has_##COMPONENT(struct rr_simulation *this,          \
                                           EntityIdx entity)                    \
     {                                                                          \
-        if (!rr_simulation_has_entity(this, entity)) \
-            fprintf(stderr, "%d\n", entity);\
         assert(rr_simulation_has_entity(this, entity));                        \
         return (this->entity_tracker[entity] >> ID) & 1;                       \
     }                                                                          \
@@ -107,11 +105,6 @@ void rr_simulation_for_each_entity(struct rr_simulation *this,
     struct rr_component_##COMPONENT *rr_simulation_get_##COMPONENT(            \
         struct rr_simulation *this, EntityIdx entity)                          \
     {                                                                          \
-        if (!rr_simulation_has_entity(this, entity)) \
-            fprintf(stderr, "%d\n", entity);\
-        assert(rr_simulation_has_entity(this, entity));                        \
-        if (!rr_simulation_has_##COMPONENT(this, entity)) \
-            fprintf(stderr, "%d %d %d\n", entity, this->entity_tracker[entity], rr_simulation_has_centipede(this, entity));\
         assert(rr_simulation_has_##COMPONENT(this, entity));                   \
         return &this->COMPONENT##_components[entity];                          \
     }

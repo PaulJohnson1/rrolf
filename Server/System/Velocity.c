@@ -13,7 +13,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
     uint32_t size = arena->maze_dim;
     float maze_dim = arena->grid_size;
     #define offset(a,b) \
-    ((x + a < 0 || y + b < 0 || x + a >= size || y + b >= size) ? 0 : arena->grid[(y+b)*size+x+a].value)
+    ((x + a < 0 || y + b < 0 || x + a >= size || y + b >= size) ? 0 : rr_component_arena_get_grid(arena, x+a, y+b)->value)
     if (offset(0,0) != 1)
     {
         //tile can't be 0 (that would be illegal)
@@ -258,7 +258,7 @@ static void system(EntityIdx id, void *simulation)
     int32_t before_grid_y = floorf(before_y / arena->grid_size);
     int32_t now_grid_y = floorf(now_y / arena->grid_size);
     #define grid(a,b) \
-    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= arena->maze_dim || before_grid_y + b >= arena->maze_dim) ? 0 : arena->grid[(before_grid_y+b)*arena->maze_dim+before_grid_x+a].value)
+    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= arena->maze_dim || before_grid_y + b >= arena->maze_dim) ? 0 : rr_component_arena_get_grid(arena, before_grid_x+a, before_grid_y+b)->value)
     if (before_grid_x == now_grid_x && before_grid_y == now_grid_y)
         perform_internal_bound_check(arena, now_x, now_y, physical);
     else

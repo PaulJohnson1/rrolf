@@ -169,9 +169,10 @@ struct rr_maze_grid
     uint8_t value : 4;
 #ifdef RR_SERVER
     uint8_t is_special : 1;
-    uint8_t mob_count;
+    uint8_t player_count;
     uint8_t difficulty;
     uint8_t special_id;
+    int32_t grid_points;
 #endif
 };
 
