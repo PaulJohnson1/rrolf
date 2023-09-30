@@ -117,7 +117,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(this, entity2);
-                    fprintf(stderr, "found %d\n", relations->root_owner);
                     ai->target_entity = relations->owner;
                 }
                 else // allows for mob targeting
@@ -141,7 +140,6 @@ static void colliding_with_function(uint64_t i, void *_captures)
                 {
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(this, entity1);
-                    fprintf(stderr, "found %d\n", relations->root_owner);
                     ai->target_entity = relations->owner;
                 }
                 else
