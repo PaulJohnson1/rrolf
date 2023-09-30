@@ -659,6 +659,13 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     id = rr_binary_encoder_read_uint8(&decoder);
                 }
                 client->verified = 1;
+                struct proto_bug encoder;
+                proto_bug_init(&encoder, outgoing_message);
+                proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_LEAVE, "header");
+                rr_server_client_encrypt_message(client, encoder.start,
+                                encoder.current - encoder.start);
+                rr_server_client_write_message(client, encoder.start,
+                            encoder.current - encoder.start);
                 break;
             }
             case 100:
