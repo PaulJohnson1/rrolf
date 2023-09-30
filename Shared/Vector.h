@@ -16,3 +16,4 @@ void rr_vector_set_magnitude(struct rr_vector *, float);
 float rr_vector_get_magnitude(struct rr_vector *);
 float rr_vector_theta(struct rr_vector *);
 void rr_vector_from_polar(struct rr_vector *, float, float);
+int rr_vector_magnitude_cmp(struct rr_vector *, float);

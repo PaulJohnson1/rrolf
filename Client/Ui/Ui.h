@@ -82,10 +82,11 @@ struct rr_ui_element
     int8_t h_justify;
     int8_t v_justify;
     uint8_t resizeable;
-    uint8_t completely_hidden;
-    uint8_t first_frame;
-    uint8_t stop_event_propagation;
-    uint8_t allow_overlap;
+    uint8_t completely_hidden : 1;
+    uint8_t first_frame : 1;
+    uint8_t stop_event_propagation : 1;
+    uint8_t allow_overlap : 1;
+    uint8_t no_reposition : 1;
     uint8_t h_flex;
     uint8_t v_flex;
 };
@@ -103,8 +104,9 @@ void rr_ui_element_check_if_focused(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_always_show(struct rr_ui_element *, struct rr_game *);
 uint8_t rr_ui_never_show(struct rr_ui_element *, struct rr_game *);
 void rr_ui_no_focus(struct rr_ui_element *, struct rr_game *);
-void default_animate(struct rr_ui_element *, struct rr_game *);
-void scale_animate(struct rr_ui_element *, struct rr_game *);
+void rr_ui_default_animate(struct rr_ui_element *, struct rr_game *);
+void rr_ui_scale_animate(struct rr_ui_element *, struct rr_game *);
+void rr_ui_instant_hide_animate(struct rr_ui_element *, struct rr_game *);
 struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *,
                                         uint8_t (*)(struct rr_ui_element *,
                                                     struct rr_game *));
@@ -138,7 +140,8 @@ struct rr_ui_element *rr_ui_multi_choose_element_init(
 struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
 struct rr_ui_element *rr_ui_h_slider_init(float, float, float *, uint8_t);
-struct rr_ui_element *rr_ui_v_slider_init(float, float, float *);
+
+struct rr_ui_element *rr_ui_close_button_init(float, void (*)(struct rr_ui_element *, struct rr_game *));
 
 //struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint32_t);
 struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char *);
@@ -181,8 +184,8 @@ struct rr_ui_element *rr_ui_finished_game_screen_init();
 
 struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);
 
-struct rr_ui_element *rr_ui_changelog_toggle_button_init();
-struct rr_ui_element *rr_ui_changelog_container_init();
+//struct rr_ui_element *rr_ui_changelog_toggle_button_init();
+//struct rr_ui_element *rr_ui_changelog_container_init();
 
 struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
 
@@ -191,5 +194,3 @@ struct rr_ui_element *rr_ui_level_bar_init(float);
 struct rr_ui_element *rr_ui_loot_container_init();
 
 struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
-
-struct rr_ui_element *rr_ui_abandon_game_button_init(float);

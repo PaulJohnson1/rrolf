@@ -450,12 +450,13 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
+    uint32_t count = data->count;
+    if (game->crafting_data.crafting_id == data->id && game->crafting_data.crafting_rarity == data->rarity)
+        count += game->crafting_data.count;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
         game->pressed == this && game->crafting_data.animation == 0)
     {
-        if (game->inventory[data->id][data->rarity] < PETALS_PER_CRAFT ||
-            game->crafting_data.success_count > 0 ||
-            data->rarity == rr_rarity_id_max - 1)
+        if (count < PETALS_PER_CRAFT || data->rarity == rr_rarity_id_max - 1)
             return;
         if (game->crafting_data.crafting_id != data->id ||
             game->crafting_data.crafting_rarity != data->rarity)
@@ -471,6 +472,7 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             game->crafting_data.count += PETALS_PER_CRAFT;
         else
             game->crafting_data.count += data->count;
+        data->secondary_animation = 0.4;
     }
     else if (data->count > 0)
         rr_ui_render_tooltip_above(
@@ -496,7 +498,13 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_draw_background(renderer, data->rarity, 1);
+    uint32_t count = data->count;
+    if (game->crafting_data.crafting_id == data->id && game->crafting_data.crafting_rarity == data->rarity)
+        count += game->crafting_data.count;
+    if (count < 5)
+        rr_renderer_draw_background(renderer, rr_rarity_id_max + 2, 1);
+    else
+        rr_renderer_draw_background(renderer, data->rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, data->id,
                                              data->rarity);
     rr_renderer_context_state_free(renderer, &state);
@@ -538,7 +546,7 @@ struct rr_ui_element *crafting_inventory_button_init(uint8_t id, uint8_t rarity)
 static uint8_t crafting_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->bottom_ui_open == 3 && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_crafting && !game->simulation_ready;
 }
 
 struct rr_ui_element *rr_ui_crafting_container_init()
@@ -686,10 +694,10 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        if (game->bottom_ui_open == 3)
-            game->bottom_ui_open = 0;
+        if (game->menu_open == rr_game_menu_crafting)
+            game->menu_open = rr_game_menu_none;
         else
-            game->bottom_ui_open = 3;
+            game->menu_open = rr_game_menu_crafting;
     }
     else
         rr_ui_render_tooltip_right(this, game->craft_tooltip, game);

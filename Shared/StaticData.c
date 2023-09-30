@@ -35,55 +35,6 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_wax, rr_rarity_id_unusual, 5.0f, 10.0f, 10.0f, 75, 0, {2, 2, 2, 2, 2, 2, 2}},
 };    
 
-struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
-    {rr_mob_id_triceratops, rr_rarity_id_rare, 45, 15, 30.0f, {{rr_petal_id_leaf, 0.15},{rr_petal_id_fossil, 0.1}}},
-    {rr_mob_id_trex, rr_rarity_id_epic, 30, 25, 32.0f, {{rr_petal_id_bone, 0.2},{rr_petal_id_fossil, 0.05},{rr_petal_id_egg, 0.05}}},
-    {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
-    {rr_mob_id_tree, rr_rarity_id_rare, 50, 5, 60.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.04}}},
-    {rr_mob_id_pteranodon, rr_rarity_id_unusual, 30, 20, 20.0f, {{rr_petal_id_shell, 0.15},{rr_petal_id_beak, 0.15}}},
-    {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 35, 10, 25.0f, {{rr_petal_id_crest, 1},{rr_petal_id_feather, 0.15}}},
-    {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 30, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1}}},
-    {rr_mob_id_ornithomimus, rr_rarity_id_common, 20, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05}}},
-    {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 40, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
-    {rr_mob_id_meteor, rr_rarity_id_rare, 200, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
-    {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 75, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15}}},
-    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 50, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
-    {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
-    {rr_mob_id_hornet, rr_rarity_id_common, 30, 30, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
-    {rr_mob_id_dragonfly, rr_rarity_id_common, 20, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.05}}},
-    {rr_mob_id_honeybee, rr_rarity_id_common, 10, 25, 22.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_stinger, 0.05}}},
-    {rr_mob_id_beehive, rr_rarity_id_common, 0, 0, 45.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_azalea, 0.05}}},
-    {rr_mob_id_spider, rr_rarity_id_common, 20, 25, 25.0f, {{rr_petal_id_web, 0.1},{rr_petal_id_magnet, 0.05}}},
-};
-
-// zeach's numbers from the pinned screenshot of the old scaling
-struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1,   1},
-    {1.5, 2},
-    {3.2, 4},
-    {5.0, 8},
-    {8.5, 16},
-    {15.0, 40},
-    {45.0, 75},
-};
-
-struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1.0, 1.0, 1.0},
-    {2.2, 2.5, 1.2},
-    {7.5, 4.5, 1.5}, 
-    {20,  7.5, 1.8},
-    {50,  10,  2.5},
-    {125, 25,  4.0},
-    {500, 80,  6.0},
-};
-// clang-format on
-
-uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
-    0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
-    0xffde1f1f, 0xff1fdbde, 0xffff2b75};
-char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
-
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
@@ -119,32 +70,67 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Made by the bees"
 };
 
-// CHANGE WHEN ADD MOB
-char const *RR_MOB_NAMES[rr_mob_id_max] = {"Triceratops",
-                                           "T-Rex",
-                                           "Fern",
-                                           "Tree",
-                                           "Pteranodon",
-                                           "Dakotaraptor",
-                                           "Pachycephalosaurus",
-                                           "Ornithomimus",
-                                           "Ankylosaurus",
-                                           "Meteor",
-                                           "Quetzalcoatlus",
-                                           "Edmontosaurus",
-                                           "Ant",
-                                           "Hornet",
-                                           "Dragonfly",
-                                           "Honeybee",
-                                           "Beehive",
-                                           "Spider"};
+struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
+    {rr_mob_id_triceratops, rr_rarity_id_rare, 25, 15, 30.0f, {{rr_petal_id_leaf, 0.15},{rr_petal_id_fossil, 0.1}}},
+    {rr_mob_id_trex, rr_rarity_id_epic, 20, 25, 32.0f, {{rr_petal_id_bone, 0.2},{rr_petal_id_fossil, 0.05},{rr_petal_id_egg, 0.05}}},
+    {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
+    {rr_mob_id_tree, rr_rarity_id_rare, 50, 5, 60.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.04}}},
+    {rr_mob_id_pteranodon, rr_rarity_id_unusual, 30, 20, 20.0f, {{rr_petal_id_shell, 0.15},{rr_petal_id_beak, 0.15}}},
+    {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 30, 10, 25.0f, {{rr_petal_id_crest, 1},{rr_petal_id_feather, 0.15}}},
+    {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1}}},
+    {rr_mob_id_ornithomimus, rr_rarity_id_common, 10, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05}}},
+    {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 25, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
+    {rr_mob_id_meteor, rr_rarity_id_rare, 150, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
+    {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 45, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15}}},
+    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 35, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
+    {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
+    {rr_mob_id_hornet, rr_rarity_id_common, 25, 25, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
+    {rr_mob_id_dragonfly, rr_rarity_id_common, 20, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.05}}},
+    {rr_mob_id_honeybee, rr_rarity_id_common, 10, 25, 22.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_stinger, 0.05}}},
+    {rr_mob_id_beehive, rr_rarity_id_common, 0, 0, 45.0f, {{rr_petal_id_wax, 0.05},{rr_petal_id_azalea, 0.05}}},
+    {rr_mob_id_spider, rr_rarity_id_common, 20, 25, 25.0f, {{rr_petal_id_web, 0.1},{rr_petal_id_magnet, 0.05}}},
+};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9,  10, 2, 4, 20,
+char const *RR_MOB_NAMES[rr_mob_id_max] = 
+{"Triceratops","T-Rex","Fern","Tree","Pteranodon","Dakotaraptor",
+"Pachycephalosaurus","Ornithomimus","Ankylosaurus","Meteor",
+"Quetzalcoatlus","Edmontosaurus","Ant","Hornet","Dragonfly",
+ "Honeybee","Beehive","Spider"};
+
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9, 10, 2, 4, 20,
                                                           12, 9,  3, 10, 1, 8, 10, 8, 12, 8};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 10};
-//END                                            
+
+// zeach's numbers from the pinned screenshot of the old scaling
+struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
+    {1,   1},
+    {1.5, 2},
+    {3.2, 4},
+    {5.0, 8},
+    {8.5, 16},
+    {15.0, 40},
+    {45.0, 75},
+};
+
+struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
+    {1.0, 1.0, 1.0},
+    {2.2, 2.5, 1.2},
+    {7.5, 4.5, 1.5}, 
+    {20,  7.5, 1.8},
+    {50,  10,  2.5},
+    {125, 25,  4.0},
+    {500, 80,  6.0},
+};
+// clang-format on
+
+uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
+    0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
+    0xffde1f1f, 0xff1fdbde, 0xffff2b75};
+char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
+    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
+                                          
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 5, 10, 15, 30, 150, 500};
 

@@ -20,7 +20,9 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
         if (element == NULL)
             break;
-        element->container = c;
+        rr_ui_container_add_element(c, element);
+        if (element->no_reposition)
+            continue;
         element->h_justify = -1;
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
@@ -28,7 +30,6 @@ struct rr_ui_element *rr_ui_h_container_init(struct rr_ui_element *c,
         width += element->width * (1 - c->allow_overlap) + inner_spacing;
         if (element->height > height)
             height = element->height;
-        rr_ui_container_add_element(c, element);
     }
     height += 2 * outer_spacing;
     width += outer_spacing - inner_spacing;
@@ -58,7 +59,9 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
         struct rr_ui_element *element = va_arg(args, struct rr_ui_element *);
         if (element == NULL)
             break;
-        element->container = c;
+        rr_ui_container_add_element(c, element);
+        if (element->no_reposition)
+            continue;
         element->v_justify = -1;
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
@@ -66,7 +69,6 @@ struct rr_ui_element *rr_ui_v_container_init(struct rr_ui_element *c,
         height += element->height * (1 - c->allow_overlap) + inner_spacing;
         if (element->width > width)
             width = element->width;
-        rr_ui_container_add_element(c, element);
     }
     width += 2 * outer_spacing;
     height += outer_spacing - inner_spacing;
@@ -138,11 +140,12 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
+        if (element->no_reposition)
+            continue;
         element->h_justify = -1;
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 ||
-            element->height == 0)
+        if (element->completely_hidden || element->width == 0 || element->height == 0)
             continue;
 
         width += element->width * (1 - c->allow_overlap) + inner_spacing;
@@ -169,11 +172,12 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
     for (uint32_t i = 0; i < c->elements.size; ++i)
     {
         struct rr_ui_element *element = c->elements.start[i];
+        if (element->no_reposition)
+            continue;
         element->v_justify = -1;
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 ||
-            element->height == 0)
+        if (element->completely_hidden || element->width == 0 || element->height == 0)
             continue;
 
         height += element->height * (1 - c->allow_overlap) + inner_spacing;
@@ -223,14 +227,9 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
         w = element->abs_width;
         h = element->abs_height;
         if (count - pos > mod)
-            element->x =
-                outer_spacing + (pos % data->width) * (w + inner_spacing);
+            element->x = outer_spacing + (pos % data->width) * (w + inner_spacing);
         else
-        {
-            element->x =
-                outer_spacing +
-                (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
-        }
+            element->x = outer_spacing + (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
         element->y = outer_spacing + (pos / data->width) * (h + inner_spacing);
         if (element->completely_hidden)
             continue;

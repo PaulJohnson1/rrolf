@@ -14,6 +14,26 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
     float maze_dim = arena->grid_size;
     #define offset(a,b) \
     ((x + a < 0 || y + b < 0 || x + a >= size || y + b >= size) ? 0 : rr_component_arena_get_grid(arena, x+a, y+b)->value)
+
+    #define curve_check \
+    { \
+        struct rr_vector dist = {test_x - cx, test_y - cy}; \
+        if (rr_vector_magnitude_cmp(&dist, maze_dim - physical->radius) == 1 && inverse == 0) \
+        { \
+            rr_vector_set_magnitude(&dist, maze_dim - physical->radius); \
+            rr_component_physical_set_x(physical, cx + dist.x); \
+            rr_component_physical_set_y(physical, cy + dist.y); \
+            return; \
+        } \
+        if (rr_vector_magnitude_cmp(&dist, maze_dim + physical->radius) == -1 && inverse == 1) \
+        { \
+            rr_vector_set_magnitude(&dist, maze_dim + physical->radius); \
+            rr_component_physical_set_x(physical, cx + dist.x); \
+            rr_component_physical_set_y(physical, cy + dist.y); \
+            return; \
+        } \
+    }
+
     if (offset(0,0) != 1)
     {
         //tile can't be 0 (that would be illegal)
@@ -25,21 +45,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
         uint8_t inverse = ((tile >> 3) & 1);
         float cx = (x + left) * maze_dim;
         float cy = (y + top) * maze_dim;
-        struct rr_vector dist = {test_x - cx, test_y - cy};
-        if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
-        {
-            rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
-            rr_component_physical_set_x(physical, cx + dist.x);
-            rr_component_physical_set_y(physical, cy + dist.y);
-            return;
-        }
-        if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
-        {
-            rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
-            rr_component_physical_set_x(physical, cx + dist.x);
-            rr_component_physical_set_y(physical, cy + dist.y);
-            return;
-        }
+        curve_check;
     }
     if (offset(-1,0) != 1 && test_x - x * maze_dim < physical->radius)
     {
@@ -58,21 +64,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             uint8_t inverse = ((tile >> 3) & 1);
             float cx = (x - 1 + left) * maze_dim;
             float cy = (y + top) * maze_dim;
-            struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
-            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
+            curve_check;
         }
     }
     if (offset(0,-1) != 1 && test_y - y * maze_dim < physical->radius)
@@ -92,21 +84,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             uint8_t inverse = ((tile >> 3) & 1);
             float cx = (x + left) * maze_dim;
             float cy = (y - 1 + top) * maze_dim;
-            struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
-            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
+            curve_check;
         }
     }
     if (offset(1,0) != 1 && (x + 1) * maze_dim - test_x < physical->radius)
@@ -126,21 +104,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             uint8_t inverse = ((tile >> 3) & 1);
             float cx = (x + 1 + left) * maze_dim;
             float cy = (y + top) * maze_dim;
-            struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
-            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
+            curve_check;
         }
     }
     if (offset(0,1) != 1 && (y + 1) * maze_dim - test_y < physical->radius)
@@ -160,25 +124,13 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             uint8_t inverse = ((tile >> 3) & 1);
             float cx = (x + left) * maze_dim;
             float cy = (y + 1 + top) * maze_dim;
-            struct rr_vector dist = {test_x - cx, test_y - cy};
-            if (rr_vector_get_magnitude(&dist) > maze_dim - physical->radius && inverse == 0)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim - physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
-            if (rr_vector_get_magnitude(&dist) < maze_dim + physical->radius && inverse == 1)
-            {
-                rr_vector_set_magnitude(&dist, maze_dim + physical->radius);
-                rr_component_physical_set_x(physical, cx + dist.x);
-                rr_component_physical_set_y(physical, cy + dist.y);
-                return;
-            }
+            curve_check;
         }
     }
     rr_component_physical_set_x(physical, test_x);
     rr_component_physical_set_y(physical, test_y);
+    #undef offset
+    #undef curve_check
 }
 
 static void perform_internal_bound_check(struct rr_component_arena *arena, float test_x, float test_y, struct rr_component_physical *physical)
@@ -217,7 +169,7 @@ static void system(EntityIdx id, void *simulation)
         rr_simulation_get_physical(simulation, id);
     rr_vector_scale(&physical->velocity, physical->friction);
     if (physical->webbed)
-        physical->acceleration_scale *= 0.2;
+        physical->acceleration_scale *= 0.25;
     if (physical->stun_ticks > 0)
     {
         if (!rr_simulation_has_petal(simulation, id))
@@ -245,14 +197,12 @@ static void system(EntityIdx id, void *simulation)
     rr_vector_set(&physical->acceleration, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
-    if (rr_vector_get_magnitude(&vel) > arena->grid_size)
+    if (rr_vector_magnitude_cmp(&vel, arena->grid_size) == 1)
         rr_vector_set_magnitude(&vel, arena->grid_size);
     float before_x = physical->x;
     float before_y = physical->y;
-    float now_x = before_x + vel.x;
-    float now_y = before_y + vel.y;
-    now_x = rr_fclamp(now_x, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
-    now_y = rr_fclamp(now_y, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+    float now_x = rr_fclamp(before_x + vel.x, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+    float now_y = rr_fclamp(before_y + vel.y, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
     int32_t before_grid_x = floorf(before_x / arena->grid_size);
     int32_t now_grid_x = floorf(now_x / arena->grid_size);
     int32_t before_grid_y = floorf(before_y / arena->grid_size);

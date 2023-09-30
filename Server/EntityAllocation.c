@@ -32,6 +32,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
     rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
     rr_component_physical_set_radius(physical, 32.0f);
+    physical->mass = 10;
     physical->arena = arena;
     physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)

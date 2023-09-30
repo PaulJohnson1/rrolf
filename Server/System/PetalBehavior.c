@@ -175,8 +175,7 @@ static void system_flower_petal_movement_logic(
         rr_simulation_get_physical(simulation, player_info->flower_id);
     struct rr_vector position_vector = {physical->x, physical->y};
     struct rr_vector flower_vector = {flower_physical->x, flower_physical->y};
-    float curr_angle = player_info->global_rotation +
-                       rotation_pos * 2 * M_PI / player_info->rotation_count;
+    float curr_angle = player_info->global_rotation + rotation_pos * 2 * M_PI / player_info->rotation_count;
     
     if (petal->effect_delay == 0)
     {
@@ -186,13 +185,8 @@ static void system_flower_petal_movement_logic(
         {
             if ((player_info->input & 1) == 0)
                 break;
-            system_petal_detach(simulation, petal, player_info, outer_pos,
-                                inner_pos, petal_data);
-            rr_vector_from_polar(&physical->acceleration, 15.0f,
-                                    curr_angle);
+            system_petal_detach(simulation, petal, player_info, outer_pos, inner_pos, petal_data);
             petal->effect_delay = 75;
-            rr_simulation_get_health(simulation, id)->damage =
-                25 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
             physical->friction = 0.5;
             physical->bearing_angle = curr_angle;
             break;
@@ -239,11 +233,8 @@ static void system_flower_petal_movement_logic(
                 struct rr_vector delta = {
                     (flower_vector.x - position_vector.x),
                     (flower_vector.y - position_vector.y)};
-                if (rr_vector_get_magnitude(&delta) <
-                    flower_physical->radius + physical->radius)
+                if (rr_vector_magnitude_cmp(&delta, flower_physical->radius + physical->radius) == -1)
                 {
-                
-                    // heal
                     rr_component_health_set_health(flower_health, flower_health->health + heal);
                     rr_simulation_request_entity_deletion(simulation, id);
                     return;
@@ -265,19 +256,16 @@ static void system_flower_petal_movement_logic(
                     struct rr_vector delta = {
                         (target_physical->x - position_vector.x),
                         (target_physical->y - position_vector.y)};
-                    if (rr_vector_get_magnitude(&delta) > 200)
+                    if (rr_vector_magnitude_cmp(&delta, 200) == 1)
                         continue;
                     flower_health =
                         rr_simulation_get_health(simulation, potential);
                     if (flower_health->health == flower_health->max_health)
                         continue;
-                    if (rr_vector_get_magnitude(&delta) <
-                        target_physical->radius + physical->radius)
+                    if (rr_vector_magnitude_cmp(&delta, target_physical->radius + physical->radius) == -1)
                     {
-                        // heal
                         rr_component_health_set_health(flower_health, flower_health->health + heal);
-                        rr_simulation_request_entity_deletion(simulation,
-                                                                id);
+                        rr_simulation_request_entity_deletion(simulation, id);
                         return;
                     }
                     else
@@ -349,8 +337,17 @@ static void system_flower_petal_movement_logic(
     else if (player_info->input & 2)
         holdingRadius = 45;
     struct rr_vector chase_vector;
-    rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
-    rr_vector_add(&chase_vector, &flower_vector);
+    EntityIdx gravity_target = rr_simulation_find_nearest_enemy(simulation, id, 50, NULL, no_filter);
+    if (gravity_target != RR_NULL_ENTITY)
+    {
+        struct rr_component_physical *t_phys = rr_simulation_get_physical(simulation, gravity_target);
+        rr_vector_set(&chase_vector, t_phys->x, t_phys->y);
+    }
+    else
+    {
+        rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
+        rr_vector_add(&chase_vector, &flower_vector);
+    }
     rr_vector_sub(&chase_vector, &position_vector);
     if (petal_data->clump_radius != 0.0f &&
         petal_data->count[petal->rarity] != 1)
@@ -399,11 +396,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
             &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         if (data->id == rr_petal_id_leaf)
-        {
-            rr_component_health_set_health(
-                health, health->health +
-                            0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
-        }
+            rr_component_health_set_health(health, health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
         else if (data->id == rr_petal_id_light)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
@@ -421,16 +414,12 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 physical->aggro_range_multiplier = 1.1 + (0.15 * slot->rarity);
         }
         else if (data->id == rr_petal_id_droplet)
-        {
            ++rot_count;
-        }
         else if (data->id == rr_petal_id_third_eye)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 16);
             if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.07 * slot->rarity))
-            {   
                 rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.07 * slot->rarity));
-            }
         }
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
@@ -474,29 +463,20 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 ++rotation_pos; // clump rotpos ++
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
-            if (p_petal->simulation_id != RR_NULL_ENTITY &&
-                !rr_simulation_entity_alive(simulation,
-                                           p_petal->simulation_id))
+            if (rr_simulation_entity_died(simulation, p_petal->simulation_id))
             {
                 p_petal->simulation_id = RR_NULL_ENTITY;
                 p_petal->cooldown_ticks = data->cooldown;
             }
             if (p_petal->simulation_id == RR_NULL_ENTITY)
             {
-                float cd =
-                    ((float)p_petal->cooldown_ticks / data->cooldown) * 255;
+                float cd = rr_fclamp(255.0f * p_petal->cooldown_ticks / data->cooldown, 0, 255);
                 if (cd > max_cd)
-                {
-                    if (cd > 255)
-                        cd = 255;
-                    max_cd = (uint8_t)cd;
-                }
+                    max_cd = cd;
                 if (--p_petal->cooldown_ticks <= 0)
-                {
                     p_petal->simulation_id = rr_simulation_alloc_petal(
                         simulation, player_info->arena, player_info->camera_x, player_info->camera_y, slot->id, slot->rarity,
                         player_info->flower_id);
-                }
             }
             else
             {
@@ -577,21 +557,8 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     {
         if (petal->id == rr_petal_id_shell)
         {
-            //autoaim instead of autotarget
-            /*
-            if (relations->team == rr_simulation_team_id_players)
-            {
-                EntityIdx target = rr_simulation_find_nearest_enemy(simulation, id, 500, NULL, no_filter);
-                if (target != RR_NULL_ENTITY)
-                {
-                    struct rr_component_physical *mob_physical = rr_simulation_get_physical(simulation, target);
-                    struct rr_vector delta = {mob_physical->x - physical->x, mob_physical->y - physical->y};
-                    //physical->bearing_angle = rr_angle_lerp(physical->bearing_angle, rr_vector_theta(&delta), 0.01 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
-                }
-            }
             rr_component_physical_set_angle(physical, physical->angle + 0.12f * (float)petal->spin_ccw);
             rr_vector_from_polar(&physical->acceleration, 15.0f, physical->bearing_angle);
-            */
         }
         else if (petal->id == rr_petal_id_peas)
             rr_vector_from_polar(&physical->acceleration, 7.5f, physical->angle);

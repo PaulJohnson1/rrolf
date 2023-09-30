@@ -27,7 +27,9 @@
         "span": "c",
         "xhash": "c",
         "xtree": "c",
-        "xlocale": "c"
+        "xlocale": "c",
+        "entityallocation.h": "c",
+        "utilities.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "C:/rrolf/Client"

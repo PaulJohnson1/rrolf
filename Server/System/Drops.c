@@ -36,8 +36,8 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_vector delta = {physical->x - flower_physical->x,
                               physical->y - flower_physical->y};
-    if (rr_vector_get_magnitude(&delta) >
-        physical->radius + player_info->modifiers.drop_pickup_radius)
+    if (rr_vector_magnitude_cmp(&delta,
+        physical->radius + player_info->modifiers.drop_pickup_radius) == 1)
         return;
     if (player_info->drops_this_tick_size >= 8)
         return;

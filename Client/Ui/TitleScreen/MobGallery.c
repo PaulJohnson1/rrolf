@@ -91,7 +91,7 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
 static uint8_t mob_container_should_show(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
-    return game->bottom_ui_open == 2 && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_gallery && !game->simulation_ready;
 }
 
 static void mob_container_animate(struct rr_ui_element *this,
@@ -231,10 +231,10 @@ void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        if (game->bottom_ui_open == 2)
-            game->bottom_ui_open = 0;
+        if (game->menu_open == rr_game_menu_gallery)
+            game->menu_open = rr_game_menu_none;
         else
-            game->bottom_ui_open = 2;
+            game->menu_open = rr_game_menu_gallery;
     }
     else
         rr_ui_render_tooltip_right(this, game->gallery_tooltip, game);

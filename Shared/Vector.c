@@ -58,3 +58,13 @@ void rr_vector_from_polar(struct rr_vector *this, float radius, float angle)
     this->x = radius * cosf(angle);
     this->y = radius * sinf(angle);
 }
+
+int rr_vector_magnitude_cmp(struct rr_vector *this, float v)
+{
+    float mag2 = this->x * this->x + this->y * this->y;
+    if (mag2 > v * v)
+        return 1;
+    if (mag2 == v * v)
+        return 0;
+    return -1;
+}

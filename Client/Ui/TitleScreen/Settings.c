@@ -14,7 +14,7 @@
 static uint8_t settings_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->top_ui_open == 1;
+    return game->menu_open == rr_game_menu_settings;
 }
 
 static void settings_container_animate(struct rr_ui_element *this,
@@ -51,10 +51,10 @@ static void settings_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        if (game->top_ui_open == 1)
-            game->top_ui_open = 0;
+        if (game->menu_open == rr_game_menu_settings)
+            game->menu_open = rr_game_menu_none;
         else
-            game->top_ui_open = 1;
+            game->menu_open = rr_game_menu_settings;
     }
     else
         rr_ui_render_tooltip_below(this, game->settings_tooltip, game);
@@ -79,14 +79,6 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                     rr_ui_v_container_init(
                         rr_ui_container_init(), 10, 10,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
-                        rr_ui_set_justify(
-                            rr_ui_h_container_init(
-                                rr_ui_container_init(), 5, 10,
-                                rr_ui_h_slider_init(150, 20,
-                                                    &game->cache.map_props, 1),
-                                rr_ui_text_init("map props", 12, 0xffffffff),
-                                NULL),
-                            -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,

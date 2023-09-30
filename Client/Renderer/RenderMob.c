@@ -42,15 +42,8 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
     }
     if (physical->animation_timer > 2 * M_PI)
         physical->animation_timer = fmod(physical->animation_timer, 2 * M_PI);
-    if (mob->flags == 0)
-        physical->animation = rr_lerp(physical->animation, sinf(physical->animation_timer), 30 * game->lerp_delta);
-    else
-    {
-        if (mob->flags & 1)
-        {
-            physical->animation = rr_lerp(physical->animation, 2.5, 30 * game->lerp_delta);
-        }
-    }
+    physical->animation = rr_lerp(physical->animation, sinf(physical->animation_timer), 30 * game->lerp_delta);
+
 
     uint8_t use_cache = has_arena ? 1 : ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
     uint8_t is_friendly =

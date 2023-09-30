@@ -52,6 +52,7 @@ set(SRCS
     System/ParticleRender.c
     Ui/Button.c
     Ui/ChooseElement.c
+    Ui/CloseButton.c
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
@@ -62,7 +63,6 @@ set(SRCS
     Ui/InGame/Squad.c
     Ui/ScrollContainer.c
     Ui/TitleScreen/BiomeButton.c
-    Ui/TitleScreen/Changelog.c
     Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/Inventory.c
     Ui/TitleScreen/LevelBar.c

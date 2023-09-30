@@ -237,7 +237,7 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
 static void squad_find_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    default_animate(this, game);
+    rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
     {
@@ -252,16 +252,12 @@ static void squad_find_button_animate(struct rr_ui_element *this,
 static void ready_button_animate(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
-    default_animate(this, game);
+    rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
-    {
         this->fill = 0xff999999;
-    }
     else
-    {
         this->fill = 0xffd4b30c;
-    }
 }
 
 static void join_button_on_event(struct rr_ui_element *this,

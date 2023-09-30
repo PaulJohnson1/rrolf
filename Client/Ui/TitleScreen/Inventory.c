@@ -92,7 +92,7 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
 static uint8_t inventory_container_should_show(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
-    return game->bottom_ui_open == 1 && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_inventory && !game->simulation_ready;
 }
 
 static void inventory_container_animate(struct rr_ui_element *this,
@@ -146,7 +146,7 @@ static struct rr_ui_element *inventory_button_init(uint8_t id, uint8_t rarity)
     this->on_render = inventory_button_on_render;
     this->should_show = inventory_button_should_show;
     this->on_event = inventory_button_on_event;
-    this->animate = scale_animate;
+    this->animate = rr_ui_scale_animate;
     return this;
 }
 
@@ -157,15 +157,16 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     struct rr_ui_element *this = rr_ui_2d_container_init(5, 6, 15, 15);
     for (uint8_t rarity = rr_rarity_id_max - 1; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
-            rr_ui_container_add_element(this,
-                                        inventory_button_init(id, rarity));
+            rr_ui_container_add_element(this, inventory_button_init(id, rarity));
     this->fill = 0x00000000;
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
                                   rr_ui_container_init(), 10, 10,
                                   rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(this, 400), NULL),
+                                  rr_ui_scroll_container_init(this, 400),
+                                  NULL
+                            ),
                               -1, 1),
             20),
         0x40ffffff);
@@ -250,13 +251,12 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        if (game->bottom_ui_open == 1)
-            game->bottom_ui_open = 0;
+        if (game->menu_open == rr_game_menu_inventory)
+            game->menu_open = rr_game_menu_none;
         else
         {
-            game->bottom_ui_open = 1;
-            rr_api_get_petals(game->rivet_account.uuid,
-                              game->rivet_account.api_password, game);
+            game->menu_open = rr_game_menu_inventory;
+            rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.api_password, game);
         }
     }
     else

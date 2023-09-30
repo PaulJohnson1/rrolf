@@ -12,6 +12,15 @@
 
 #define RR_DEBUG_POLL_SIZE 10
 
+enum rr_game_menu
+{
+    rr_game_menu_none,
+    rr_game_menu_inventory,
+    rr_game_menu_gallery,
+    rr_game_menu_crafting,
+    rr_game_menu_settings
+};
+
 struct rr_game_debug_info
 {
     uint8_t frame_pos;
@@ -83,17 +92,15 @@ struct rr_game
     uint64_t dev_flag;
     float lerp_delta;
     
-    uint8_t socket_ready;
-    uint8_t socket_pending;
-    uint8_t rivet_lobby_pending;
-    uint8_t joined_squad;
-    uint8_t simulation_ready;
-    uint8_t bottom_ui_open; // 0 = none, 1 = inv, 2 = crafting
-    uint8_t top_ui_open;    // 0 = none, 1 = settings, 2 = changelog
-    uint8_t block_ui_input;
+    uint8_t socket_ready : 1;
+    uint8_t socket_pending : 1;
+    uint8_t joined_squad : 1;
+    uint8_t simulation_ready : 1;
+    uint8_t block_ui_input : 1;
+    uint8_t is_mobile : 1;
+    uint8_t menu_open;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;
-    uint8_t is_mobile;
 
     uint8_t squad_pos;
     uint8_t squad_private;

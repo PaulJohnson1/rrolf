@@ -122,8 +122,8 @@ static void tick_wave(struct rr_simulation *this)
     {
         for (uint32_t grid_y = 0; grid_y < RR_MAZE_DIM; ++grid_y)
         {
-            if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
-                grid_y += SPAWN_ZONE_H;
+            //if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
+                //grid_y += SPAWN_ZONE_H;
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
             if (grid->player_count == 0)
                 continue;
@@ -189,4 +189,9 @@ void rr_simulation_tick(struct rr_simulation *this)
 uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)
 {
     return this->entity_tracker[id] && !rr_bitset_get(this->deleted_last_tick, id);
+}
+
+uint8_t rr_simulation_entity_died(struct rr_simulation *this, EntityIdx id)
+{
+    return id && rr_bitset_get(this->deleted_last_tick, id);
 }

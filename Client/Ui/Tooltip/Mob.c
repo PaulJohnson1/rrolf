@@ -68,7 +68,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_pteranodon)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 10 *
+        extra[sprintf(extra, "%.1f", 8 *
                           RR_MOB_RARITY_SCALING[rarity].health)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
@@ -78,7 +78,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 10 *
+        extra[sprintf(extra, "%.1f", 8 *
                           RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
         rr_ui_container_add_element(
             this, rr_ui_set_justify(

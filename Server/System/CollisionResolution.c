@@ -107,7 +107,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
     }
 
     {
-        #define KNOCKBACK_CONST (25.0f / 2)
+        #define KNOCKBACK_CONST (40.0f / 2)
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
         physical1->collision_velocity.x += coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
@@ -124,21 +124,13 @@ static void system_for_each_function(EntityIdx entity, void *_captures)
 
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
-    // if (!physical->has_collisions)
-    //     return;
 
     struct colliding_with_captures captures;
     captures.physical = physical;
     captures.simulation = this;
 
     for (uint64_t i = 0; i < physical->colliding_with_size; ++i)
-    {
         colliding_with_function(physical->colliding_with[i], &captures);
-    }
-
-    // rr_bitset_for_each_bit(physical->collisions, physical->collisions +
-    // (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), &captures,
-    // colliding_with_function);
 }
 
 void rr_system_collision_resolution_tick(struct rr_simulation *this)

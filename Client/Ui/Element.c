@@ -14,32 +14,36 @@
 
 static void default_function(struct rr_ui_element *this, struct rr_game *game)
 {
-    // puts("default on render, please manually set");
     return; // does nothing
 }
 
 static void default_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    /*
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
-        game->top_ui_open = game->bottom_ui_open = 0;
-    */
     return; // does nothing
 }
 
-void default_animate(struct rr_ui_element *this, struct rr_game *game)
+void rr_ui_default_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     this->width = this->abs_width * (1 - this->completely_hidden);
     this->height = this->abs_height * (1 - this->completely_hidden);
     rr_renderer_set_global_alpha(game->renderer, game->renderer->state.global_alpha * (1 - this->animation));
 }
 
-void scale_animate(struct rr_ui_element *this, struct rr_game *game)
+void rr_ui_scale_animate(struct rr_ui_element *this, struct rr_game *game)
 {
     this->width = this->abs_width * (1 - this->animation);
     this->height = this->abs_height * (1 - this->animation);
     rr_renderer_scale(game->renderer, (1 - this->animation));
 }
+
+void rr_ui_instant_hide_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    this->width = this->abs_width * (1 - this->animation);
+    this->height = this->abs_height * (1 - this->animation);
+    rr_renderer_scale(game->renderer, (1 - this->animation));
+    this->completely_hidden |= !this->should_show(this, game);
+}
+
 
 void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -177,7 +181,7 @@ struct rr_ui_element *rr_ui_element_init()
     this->on_event = default_on_event; // null on_event
     this->should_show = rr_ui_always_show;
     this->poll_events = rr_ui_element_check_if_focused;
-    this->animate = default_animate;
+    this->animate = rr_ui_default_animate;
     this->resizeable = rr_ui_not_resizeable;
     this->elements.size = 0;
     this->elements.capacity = 1;
@@ -200,3 +204,5 @@ struct rr_ui_element *rr_ui_link_toggle(
     this->should_show = should_show;
     return this;
 }
+
+

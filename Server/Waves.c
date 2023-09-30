@@ -33,7 +33,5 @@ uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 
 int should_spawn_at(uint8_t id, uint8_t rarity)
 {
-    if (RR_MOB_DATA[id].min_rarity > rarity)
-        return 0;
-    return 1;
+    return rarity >= RR_MOB_DATA[id].min_rarity;
 }

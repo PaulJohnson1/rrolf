@@ -13,16 +13,11 @@ enum rr_ai_state
 {
     rr_ai_state_idle,
     rr_ai_state_idle_moving,
-    rr_ai_state_chasing,
+    rr_ai_state_charging,
     rr_ai_state_attacking,
 
-    // triceratops
     rr_ai_state_waiting_to_attack,
-    rr_ai_state_recovering_after_charge,
 
-    // hornet
-    rr_ai_state_shell_shoot_delay,
-    // player mobs
     rr_ai_state_returning_to_owner
 };
 

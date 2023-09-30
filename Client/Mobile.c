@@ -27,7 +27,7 @@ static void draw_mobile_joystick(struct rr_game *this, struct proto_bug *encoder
     {
         struct rr_input_touch *touch = &this->input_data->touches[joystick_press];
         struct rr_vector delta = {touch->touch_x - cx, touch->touch_y - cy};
-        if (rr_vector_get_magnitude(&delta) > 100 * renderer->scale)
+        if (rr_vector_magnitude_cmp(&delta, 100 * renderer->scale) == 1)
             rr_vector_set_magnitude(&delta, 100 * renderer->scale);
         rr_renderer_set_fill(renderer, 0x80ffffff);
         rr_renderer_begin_path(renderer);

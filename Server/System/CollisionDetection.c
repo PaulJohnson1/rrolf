@@ -94,14 +94,6 @@ static void grid_filter_candidates(struct rr_simulation *this,
     }
 }
 
-static void find_collisions(struct rr_simulation *this)
-{
-    /*
-    rr_spatial_hash_find_possible_collisions(this->grid, NULL,
-                                             grid_filter_candidates);
-    */
-}
-
 static void collapse_arena(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
@@ -113,7 +105,7 @@ static void collapse_arena(EntityIdx entity, void *_captures)
         rr_simulation_request_entity_deletion(this, entity);
 }
 
-static void collide_entities(EntityIdx entity, void *_captures)
+static void find_collisions(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
@@ -125,6 +117,5 @@ void rr_system_collision_detection_tick(struct rr_simulation *this)
     rr_simulation_for_each_arena(this, this, collapse_arena);
     rr_simulation_for_each_physical(this, this, system_reset_colliding_with);
     rr_simulation_for_each_physical(this, this, system_insert_entities);
-    rr_simulation_for_each_arena(this, this, collide_entities);
-    find_collisions(this);
+    rr_simulation_for_each_arena(this, this, find_collisions);
 }

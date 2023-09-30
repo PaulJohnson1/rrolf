@@ -88,7 +88,7 @@ void rr_ui_container_poll_events(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this,
                                                   struct rr_ui_element *add)
 {
-    if (++this->elements.size == this->elements.capacity)
+    if (this->elements.size == this->elements.capacity)
     {
         struct rr_ui_element **_new =
             malloc((sizeof *_new) * (this->elements.capacity *= 2));
@@ -97,7 +97,7 @@ struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this,
         free(this->elements.start);
         this->elements.start = _new;
     }
-    this->elements.start[this->elements.size - 1] = add;
+    this->elements.start[this->elements.size++] = add;
     add->container = this;
     return add;
 }
@@ -116,7 +116,7 @@ struct rr_ui_element *rr_ui_container_init()
 struct rr_ui_element *rr_ui_popup_container_init()
 {
     struct rr_ui_element *this = rr_ui_container_init();
-    this->animate = scale_animate;
+    this->animate = rr_ui_scale_animate;
     return this;
 }
 

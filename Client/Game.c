@@ -150,7 +150,15 @@ static uint8_t player_alive(struct rr_ui_element *this,
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
-        game->bottom_ui_open = game->top_ui_open = 0;
+        game->menu_open = 0;
+}
+
+static struct rr_ui_element *close_menu_button_init(float w)
+{
+    struct rr_ui_element *this = rr_ui_close_button_init(w, window_on_event);
+    this->no_reposition = 1;
+    rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
+    return this;
 }
 
 void rr_game_init(struct rr_game *this)
@@ -164,7 +172,7 @@ void rr_game_init(struct rr_game *this)
     this->window->on_event = window_on_event;
     this->cache.slots_unlocked = 0;
 
-    this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 1;
+    this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 5;
 
     strcpy(this->rivet_account.name, "loading");
     strcpy(this->rivet_account.avatar_url, "");
@@ -299,9 +307,9 @@ void rr_game_init(struct rr_game *this)
             0x00000000),
         simulation_not_ready)
     );
-    rr_ui_container_add_element(this->window, rr_ui_inventory_container_init());
-    rr_ui_container_add_element(this->window, rr_ui_mob_container_init());
-    rr_ui_container_add_element(this->window, rr_ui_crafting_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_mob_container_init(), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
     rr_ui_container_add_element(this->window, rr_ui_pad(
@@ -370,10 +378,7 @@ void rr_game_init(struct rr_game *this)
             0, 1),
         player_alive)
     );
-    rr_ui_container_add_element(this->window,
-                                rr_ui_settings_container_init(this));
-    rr_ui_container_add_element(this->window,
-                                rr_ui_changelog_container_init());
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
 
     this->rivet_info_tooltip = rr_ui_container_add_element(
         this->window,
@@ -453,7 +458,6 @@ void rr_game_init(struct rr_game *this)
     rr_local_storage_get_bytes("debug",
                                &this->cache.displaying_debug_information);
     rr_local_storage_get_bytes("loadout", &this->cache.loadout);
-    rr_local_storage_get_bytes("props", &this->cache.map_props);
     rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
     rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
     rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
@@ -487,7 +491,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->socket.found_error = 1;
         this->socket_pending = 0;
         this->socket_ready = 0;
-        this->rivet_lobby_pending = 0;
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
         break;
@@ -775,8 +778,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         sizeof this->cache.displaying_debug_information);
     rr_local_storage_store_bytes("loadout", &this->cache.loadout,
                                  sizeof this->cache.loadout);
-    rr_local_storage_store_bytes("props", &this->cache.map_props,
-                                 sizeof this->cache.map_props);
     rr_local_storage_store_bytes("screen_shake", &this->cache.screen_shake,
                                  sizeof this->cache.screen_shake);
     rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,
@@ -998,7 +999,6 @@ void rr_game_connect_socket(struct rr_game *this)
     //this->socket.on_event = rr_game_websocket_on_event_function;
 
 #ifdef RIVET_BUILD
-    this->rivet_lobby_pending = 1;
     rr_rivet_lobbies_find(this);
 #else
     this->socket.curr_link = "hello";
@@ -1023,7 +1023,6 @@ struct on_find_captures
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
 {
     struct rr_game *game = _game;
-    game->rivet_lobby_pending = 0;
     if (port == 0 || s == NULL || token == NULL)
     {
         // error;
