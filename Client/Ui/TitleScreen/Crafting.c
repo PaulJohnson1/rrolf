@@ -582,9 +582,9 @@ struct rr_ui_element *rr_ui_crafting_container_init()
                         craft, NULL),
                     rr_ui_scroll_container_init(this, 300), NULL),
                 -1, 1),
-            20),
+            10),
         0x40ffffff);
-    c->x += 60 + 20;
+    c->x += 60 + 10;
     c->animate = crafting_container_animate;
     c->should_show = crafting_container_should_show;
     return c;

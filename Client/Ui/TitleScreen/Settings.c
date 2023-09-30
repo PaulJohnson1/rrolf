@@ -154,7 +154,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             -1, -1),
                         NULL),
                     -1, -1),
-                80),
+                50),
             0x40ffffff),
         10);
     this->animate = settings_container_animate;

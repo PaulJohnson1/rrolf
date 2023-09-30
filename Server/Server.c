@@ -240,7 +240,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     {
         struct rr_server_client *client = NULL;
         uint64_t i = 0;
-        uint32_t first = 1;
         for (; i < RR_MAX_CLIENT_COUNT; i++)
         {
             if (!rr_bitset_get(this->clients_in_use, i))
@@ -250,7 +249,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client = &this->clients[i];
                 break;
             }
-            first = 0;
         }
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
@@ -418,12 +416,25 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             else if (type == 0)
                 squad = rr_client_find_squad(this, client);
-            if (squad == RR_ERROR_CODE_INVALID_SQUAD || squad == RR_ERROR_CODE_FULL_SQUAD)
+            if (squad == RR_ERROR_CODE_INVALID_SQUAD)
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
                 proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
                 proto_bug_write_uint8(&failure, 0, "fail type");
+                rr_server_client_encrypt_message(client, failure.start,
+                                failure.current - failure.start);
+                rr_server_client_write_message(client, failure.start,
+                            failure.current - failure.start);
+                client->squad = 0;
+                break;
+            }
+            if (squad == RR_ERROR_CODE_FULL_SQUAD)
+            {
+                struct proto_bug failure;
+                proto_bug_init(&failure, outgoing_message);
+                proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
+                proto_bug_write_uint8(&failure, 1, "fail type");
                 rr_server_client_encrypt_message(client, failure.start,
                                 failure.current - failure.start);
                 rr_server_client_write_message(client, failure.start,
@@ -513,8 +524,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case RR_SERVERBOUND_PRIVATE_UPDATE:
         {
-            if (client->squad != 0 && client->squad_pos != 0 && first)
-                this->squads[client->squad - 1].private = 0;
+            if (client->squad != 0)
+                rr_client_get_squad(this, client)->private = 0;
             break;
         }
         case RR_SERVERBOUND_SQUAD_LEAVE:
@@ -530,6 +541,43 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 rr_server_client_write_message(client, encoder.start,
                             encoder.current - encoder.start);
             }
+            break;
+        }
+        case RR_SERVERBOUND_SQUAD_KICK:
+        {
+            if (client->squad == 0)
+                break;
+            if (client->squad_pos != 0)
+                break;
+            uint8_t pos = proto_bug_read_uint8(&encoder, "kick pos");
+            if (pos >= RR_SQUAD_MEMBER_COUNT)
+                break;
+            if (pos == client->squad_pos)
+                break;
+            struct rr_squad *squad = rr_client_get_squad(this, client);
+            if (!squad->members[pos].in_use)
+                break;
+            struct rr_server_client *to_kick = squad->members[pos].client;
+            if (to_kick == NULL)
+                break;
+            if (to_kick->player_info != NULL)
+            {
+                if (rr_simulation_entity_alive(&this->simulation, to_kick->player_info->flower_id))
+                    rr_simulation_request_entity_deletion(
+                        &this->simulation, to_kick->player_info->flower_id);
+                rr_simulation_request_entity_deletion(&this->simulation,
+                                                        to_kick->player_info->parent_id);
+                to_kick->player_info = NULL;
+            }
+            rr_client_leave_squad(this, to_kick);
+            struct proto_bug failure;
+            proto_bug_init(&failure, outgoing_message);
+            proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
+            proto_bug_write_uint8(&failure, 2, "fail type");
+            rr_server_client_encrypt_message(to_kick, failure.start,
+                            failure.current - failure.start);
+            rr_server_client_write_message(to_kick, failure.start,
+                        failure.current - failure.start);
             break;
         }
         default:
@@ -727,7 +775,7 @@ static void server_tick(struct rr_server *this)
                 proto_bug_init(&encoder, outgoing_message);
                 proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
 
-                struct rr_squad *squad = &this->squads[client->squad - 1];
+                struct rr_squad *squad = rr_client_get_squad(this, client);
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 {
                     if (squad->members[i].in_use == 0)

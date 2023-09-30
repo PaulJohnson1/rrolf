@@ -98,3 +98,10 @@ struct rr_squad_member *rr_squad_get_client_slot(struct rr_server *this, struct 
         return NULL;
     return &this->squads[member->squad - 1].members[member->squad_pos];
 }
+
+struct rr_squad *rr_client_get_squad(struct rr_server *this, struct rr_server_client *member)
+{
+    if (member->squad == 0)
+        return NULL;
+    return &this->squads[member->squad - 1];
+}

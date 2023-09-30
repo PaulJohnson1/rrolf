@@ -116,14 +116,12 @@ static struct rr_ui_element *make_label_tooltip(char const *text)
         ),
     0x80000000);
 }
-static uint8_t simulation_not_ready(struct rr_ui_element *this,
-                                    struct rr_game *game)
+static uint8_t simulation_not_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     return 1 - game->simulation_ready;
 }
 
-static uint8_t simulation_ready(struct rr_ui_element *this,
-                                struct rr_game *game)
+static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     return game->simulation_ready;
 }
@@ -135,8 +133,7 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
     return game->socket_ready;
 }
 
-static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
-                                       struct rr_game *game)
+static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     return game->joined_squad || game->socket.found_error;
 }
@@ -160,6 +157,19 @@ static struct rr_ui_element *close_menu_button_init(float w)
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
     return this;
 }
+
+static void abandon_game_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, output_packet);
+        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_READY, "header");
+        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+    }    
+    rr_ui_render_tooltip_below(this, game->abandon_game_tooltip, game);
+}
+
 
 static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -203,8 +213,15 @@ void rr_game_init(struct rr_game *this)
     // clang-format off
     rr_ui_container_add_element(
         this->window,
-        rr_ui_pad(rr_ui_set_justify(rr_ui_rivet_container_init(this), -1, -1),
-                  10));
+        rr_ui_set_justify(
+            rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                rr_ui_settings_toggle_button_init(),
+                rr_ui_account_toggle_button_init(),
+                rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
+                NULL
+            ),
+        -1, -1)
+    );
 
     rr_ui_container_add_element(
         this->window,
@@ -254,7 +271,7 @@ void rr_game_init(struct rr_game *this)
                                 rr_ui_container_add_element(
                                     rr_ui_v_container_init(
                                         rr_ui_popup_container_init(), 10, 10,
-                                        rr_ui_text_init("Squad", 18, 0xffffffff),
+                                        rr_ui_text_init("Squad", 24, 0xffffffff),
                                         rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
                                             rr_ui_text_init("Private", 14, 0xffffffff),
                                             rr_ui_toggle_private_button_init(this),
@@ -277,6 +294,7 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
                                             rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
                                             rr_ui_text_init("Squad is full", 24, 0xffff2222),
+                                            rr_ui_text_init("Kicked from squad", 24, 0xffff2222),
                                             NULL
                                         ),
                                         rr_ui_flex_container_init(
@@ -329,9 +347,7 @@ void rr_game_init(struct rr_game *this)
             0x00000000),
         simulation_not_ready)
     );
-    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
-    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_mob_container_init(), close_menu_button_init(25))->container);
-    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(), close_menu_button_init(25))->container);
+    
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
     rr_ui_container_add_element(this->window, rr_ui_pad(
@@ -347,6 +363,7 @@ void rr_game_init(struct rr_game *this)
             , -1, -1)
         , 100)
     , 50));
+
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_justify(
@@ -360,6 +377,7 @@ void rr_game_init(struct rr_game *this)
             simulation_not_ready),
         -1, 1)
     );
+
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -400,18 +418,14 @@ void rr_game_init(struct rr_game *this)
             0, 1),
         player_alive)
     );
-    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
+    
 
-    this->rivet_info_tooltip = rr_ui_container_add_element(
-        this->window,
-        rr_ui_set_background(
-            rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
-                rr_ui_text_init(this->rivet_account.uuid, 16, 0xffffffff),
-                rr_ui_text_init("click to copy", 16, 0xffffffff),
-                NULL
-            ),
-        0x80000000)
-    );
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_mob_container_init(), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_account_container_init(this), close_menu_button_init(25))->container);
+
 
     this->link_account_tooltip = rr_ui_container_add_element(
         this->window,
@@ -441,6 +455,11 @@ void rr_game_init(struct rr_game *this)
     this->abandon_game_tooltip = rr_ui_container_add_element(
         this->window,
         make_label_tooltip("Leave Game")
+    );
+
+    this->account_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Account")
     );
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)

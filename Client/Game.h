@@ -18,7 +18,8 @@ enum rr_game_menu
     rr_game_menu_inventory,
     rr_game_menu_gallery,
     rr_game_menu_crafting,
-    rr_game_menu_settings
+    rr_game_menu_settings,
+    rr_game_menu_account
 };
 
 struct rr_game_debug_info
@@ -70,12 +71,12 @@ struct rr_game
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
     struct rr_ui_element *squad_player_tooltips[RR_SQUAD_MEMBER_COUNT];
-    struct rr_ui_element *rivet_info_tooltip;
     struct rr_ui_element *link_account_tooltip;
     struct rr_ui_element *inventory_tooltip;
     struct rr_ui_element *gallery_tooltip;
     struct rr_ui_element *craft_tooltip;
     struct rr_ui_element *settings_tooltip;
+    struct rr_ui_element *account_tooltip;
     struct rr_ui_element *abandon_game_tooltip;
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;

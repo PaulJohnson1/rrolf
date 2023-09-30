@@ -35,6 +35,7 @@ uint8_t rr_client_join_squad_with_code(struct rr_server *, char *);
 uint8_t rr_client_join_squad(struct rr_server *, struct rr_server_client *, uint8_t);
 void rr_client_leave_squad(struct rr_server *, struct rr_server_client *);
 struct rr_squad_member *rr_squad_get_client_slot(struct rr_server *, struct rr_server_client *);
+struct rr_squad *rr_client_get_squad(struct rr_server *, struct rr_server_client *);
 
 // Blocking function. The only time this function will never end unless the server crashes
 void rr_server_run(struct rr_server *);

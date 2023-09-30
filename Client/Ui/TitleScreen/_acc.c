@@ -62,17 +62,6 @@ static struct rr_ui_element *rr_ui_rivet_init(struct rr_game *game)
     return this;
 }
 
-static void abandon_game_event(struct rr_ui_element *this, struct rr_game *game)
-{
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
-    {
-        struct proto_bug encoder;
-        proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_READY, "header");
-        rr_websocket_send(&game->socket, encoder.current - encoder.start);
-    }    
-    rr_ui_render_tooltip_below(this, game->abandon_game_tooltip, game);
-}
 
 static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game)
 {

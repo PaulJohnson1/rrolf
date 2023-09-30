@@ -62,12 +62,12 @@ set(SRCS
     Ui/InGame/PetalsCollected.c
     Ui/InGame/Squad.c
     Ui/ScrollContainer.c
+    Ui/TitleScreen/Account.c
     Ui/TitleScreen/BiomeButton.c
     Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/Inventory.c
     Ui/TitleScreen/LevelBar.c
     Ui/TitleScreen/MobGallery.c
-    Ui/TitleScreen/Rivet.c
     Ui/TitleScreen/Settings.c
     Ui/TitleScreen/Squad.c
     Ui/Slider.c

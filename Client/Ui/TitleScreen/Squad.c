@@ -25,14 +25,17 @@ struct squad_flower_metadata
     struct rr_squad_member *member;
 };
 
+struct squad_pos_metadata
+{
+    uint8_t pos;
+};
+
 void render_flower(struct rr_ui_element *element, struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct squad_flower_metadata *data = element->data;
     if (data->member->dev)
-    {
         rr_renderer_rotate(renderer, -M_PI);
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
     rr_renderer_set_fill(renderer, 0xffffe763);
@@ -167,31 +170,41 @@ static void background_change_animate(struct rr_ui_element *this,
         this->container->fill = 0x40000000;
 }
 
-void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_container_metadata *data = this->data;
     rr_ui_render_tooltip_above(
             this, game->squad_player_tooltips[data->width], game);
-    if (game->input_data->mouse_buttons_up_this_tick & 2)
+}
+
+static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_game *game)
+{
+    return game->squad_private && game->squad_pos == 0;
+}
+
+static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->squad_private == 0)
-            return;
-        uint8_t first_pos = 0;
-        for (; first_pos < RR_SQUAD_MEMBER_COUNT; ++first_pos)
-            if (game->squad_members[first_pos].in_use)
-                break;
-        if (first_pos != game->squad_pos)
-            return;
-        if (first_pos == data->width)
-            return;
-        /*
+        struct squad_pos_metadata *data = this->data;
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, 73, "header");
-        proto_bug_write_uint8(&encoder, data->width, "kick");
+        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_KICK, "header");
+        proto_bug_write_uint8(&encoder, data->pos, "kick pos");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
-        */
     }
+}
+
+static struct rr_ui_element *kick_player_button_init(uint8_t pos)
+{
+    struct rr_ui_element *this = rr_ui_close_button_init(20, kick_player_on_event);
+    this->no_reposition = 1;
+    this->should_show = kick_player_should_slow;
+    rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
+    struct squad_pos_metadata *data = malloc(sizeof *data);
+    data->pos = pos;
+    this->data = data;
+    return this;
 }
 
 struct rr_ui_element *
@@ -217,8 +230,10 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
     squad_container->abs_height = squad_container->height = 120;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
+    if (pos != 0)
+        rr_ui_container_add_element(squad_container, kick_player_button_init(pos));
     squad_container->on_event = squad_container_on_event;
-    squad_container->stop_event_propagation = 1;
+    //squad_container->stop_event_propagation = 1;
     squad_container->resizeable = 0;
     struct rr_ui_container_metadata *d_data = squad_container->data;
     d_data->width = pos;
@@ -240,13 +255,9 @@ static void squad_find_button_animate(struct rr_ui_element *this,
     rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
-    {
         this->fill = 0xff999999;
-    }
     else
-    {
         this->fill = 0xffd4b30c;
-    }
 }
 
 static void ready_button_animate(struct rr_ui_element *this,
@@ -279,25 +290,20 @@ static void copy_code_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
-    {
         if (game->socket_ready)
-        {
             rr_copy_string(game->squad_code);   
-        }
-    }
 }
 
-static void create_squad_on_event(struct rr_ui_element *this,
+static void toggle_private_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->socket_ready)
+        if (game->socket_ready && game->squad_private)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
             proto_bug_write_uint8(&encoder, RR_SERVERBOUND_PRIVATE_UPDATE, "header");
-            proto_bug_write_uint8(&encoder, (*((uint8_t *)this->data) ^ 1), "private");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
@@ -425,6 +431,6 @@ struct rr_ui_element *rr_ui_join_squad_code_button_init()
 struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_toggle_box_init(&game->squad_private);
-    this->on_event = create_squad_on_event;
+    this->on_event = toggle_private_on_event;
     return this;
 }
