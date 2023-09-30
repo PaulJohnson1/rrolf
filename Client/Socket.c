@@ -186,6 +186,9 @@ void rr_websocket_send_all(struct rr_websocket *this)
         EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
             outputs[i], packet_lengths[i]);
     #endif
+        free(outputs[i]);
     }
+    if (at != 0)
+        puts("sent stuff");
     at = 0;
 }
