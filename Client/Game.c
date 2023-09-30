@@ -570,12 +570,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
-            this->socket_ready = 1;
-            this->socket_pending = 0;
-            //send instajoin
+
             return;
         }
-
+        this->socket_ready = 1; //signifies that the socket is verified on the serverside
+        this->socket_pending = 0;
+        //send instajoin
         this->socket.clientbound_encryption_key =
             rr_get_hash(this->socket.clientbound_encryption_key);
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
