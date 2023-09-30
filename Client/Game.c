@@ -161,6 +161,25 @@ static struct rr_ui_element *close_menu_button_init(float w)
     return this;
 }
 
+static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if ((game->input_data->mouse_buttons_up_this_tick & 1) && game->socket_ready)
+    {
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, output_packet);
+        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_LEAVE, "header");
+        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+    }
+}
+
+static struct rr_ui_element *close_squad_button_init(float w)
+{
+    struct rr_ui_element *this = rr_ui_close_button_init(w, squad_leave_on_event);
+    this->no_reposition = 1;
+    rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
+    return this;
+}
+
 void rr_game_init(struct rr_game *this)
 {
     memset(this, 0, sizeof *this);
@@ -232,46 +251,49 @@ void rr_game_init(struct rr_game *this)
                         ), 1, -1),
                         rr_ui_set_background(
                             rr_ui_link_toggle(
-                                rr_ui_v_container_init(
-                                    rr_ui_popup_container_init(), 10, 10,
-                                    rr_ui_text_init("Squad", 18, 0xffffffff),
-                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-                                        rr_ui_text_init("Private", 14, 0xffffffff),
-                                        rr_ui_toggle_private_button_init(this),
-                                        NULL
-                                    ),
-                                    rr_ui_multi_choose_element_init(
-                                        socket_ready,
-                                        rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
-                                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
-                                            rr_ui_h_container_init(
-                                                rr_ui_container_init(), 0, 10,
-                                                rr_ui_squad_player_container_init(this, 0),
-                                                rr_ui_squad_player_container_init(this, 1),
-                                                rr_ui_squad_player_container_init(this, 2),
-                                                rr_ui_squad_player_container_init(this, 3),
+                                rr_ui_container_add_element(
+                                    rr_ui_v_container_init(
+                                        rr_ui_popup_container_init(), 10, 10,
+                                        rr_ui_text_init("Squad", 18, 0xffffffff),
+                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                                            rr_ui_text_init("Private", 14, 0xffffffff),
+                                            rr_ui_toggle_private_button_init(this),
+                                            NULL
+                                        ),
+                                        rr_ui_multi_choose_element_init(
+                                            socket_ready,
+                                            rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
+                                            rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
+                                                rr_ui_h_container_init(
+                                                    rr_ui_container_init(), 0, 10,
+                                                    rr_ui_squad_player_container_init(this, 0),
+                                                    rr_ui_squad_player_container_init(this, 1),
+                                                    rr_ui_squad_player_container_init(this, 2),
+                                                    rr_ui_squad_player_container_init(this, 3),
+                                                    NULL
+                                                ),
                                                 NULL
                                             ),
+                                            rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
+                                            rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
+                                            rr_ui_text_init("Squad is full", 24, 0xffff2222),
                                             NULL
                                         ),
-                                        rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
-                                        rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
-                                        rr_ui_text_init("Squad is full", 24, 0xffff2222),
+                                        rr_ui_flex_container_init(
+                                            rr_ui_copy_squad_code_button_init(),
+                                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                                rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"),
+                                                rr_ui_join_squad_code_button_init(),
+                                                NULL
+                                            ),
+                                            10
+                                        ),
                                         NULL
                                     ),
-                                    rr_ui_flex_container_init(
-                                        rr_ui_copy_squad_code_button_init(),
-                                        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                            rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"),
-                                            rr_ui_join_squad_code_button_init(),
-                                            NULL
-                                        ),
-                                        10
-                                    ),
-                                    NULL
-                                ),
-                            socket_pending_or_ready),
-                        0x40ffffff),
+                                    close_squad_button_init(25)
+                                )->container, 
+                            socket_pending_or_ready
+                        ), 0x40ffffff),
                         NULL
                     ),
                     rr_ui_level_bar_init(400),
@@ -541,20 +563,17 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
         case RR_CLIENTBOUND_UPDATE:
-        {
             if (!this->simulation_ready)
                 rr_simulation_init(this->simulation);
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
             break;
-        }
         case RR_CLIENTBOUND_SQUAD_FAIL:
-        {
             this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
             break;
-        }
         case RR_CLIENTBOUND_SQUAD_UPDATE:
-        {
+            if (!this->joined_squad)
+                memset(&this->squad_members[0], 0, sizeof this->squad_members);
             this->socket.found_error = 0;
             this->joined_squad = 1;
             this->simulation_ready = 0;
@@ -603,7 +622,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
-        }
+        case RR_CLIENTBOUND_SQUAD_LEAVE:
+            this->joined_squad = 0;
+            break;
         default:
             RR_UNREACHABLE("how'd this happen");
         }

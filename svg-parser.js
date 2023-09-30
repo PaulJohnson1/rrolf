@@ -22,6 +22,22 @@ const parse_path = (path, x, y) => {
                     ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
                 break;
             }
+            case 'h':
+            {
+                const prev_x = x;
+                x += parseFloat(path[at++]);
+                if (Math.abs(x - prev_x) > 0.001)
+                    ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
+            case 'v':
+            {
+                const prev_y = y;
+                y += parseFloat(path[at++]);
+                if (Math.abs(y - prev_y) > 0.001)
+                    ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
             case 'q':
             {
                 const x1 = x + parseFloat(path[at++]);

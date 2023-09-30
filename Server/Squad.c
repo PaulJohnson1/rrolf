@@ -88,7 +88,6 @@ void rr_client_leave_squad(struct rr_server *this, struct rr_server_client *memb
 {
     if (member->squad == 0)
         return;
-    printf("leaving squad %d\n", member->squad - 1);
     rr_squad_remove_client(&this->squads[member->squad - 1], member);
     member->squad = 0;
 }

@@ -27,7 +27,7 @@ static void settings_container_animate(struct rr_ui_element *this,
         0);
 }
 
-static void inventory_toggle_on_render(struct rr_ui_element *this,
+static void settings_toggle_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
@@ -41,6 +41,36 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_begin_path(renderer);
     rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2,
                            this->abs_width, this->abs_height, 6);
+    rr_renderer_fill(renderer);
+    rr_renderer_scale(renderer, 1.2);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, 12.00, 1.62);
+    rr_renderer_line_to(renderer, 12.00, -1.62);
+    rr_renderer_bezier_curve_to(renderer, 10.35, -2.20, 9.31, -2.37, 8.78, -3.64);
+    rr_renderer_bezier_curve_to(renderer, 8.25, -4.91, 8.88, -5.77, 9.63, -7.34);
+    rr_renderer_line_to(renderer, 7.34, -9.63);
+    rr_renderer_bezier_curve_to(renderer, 5.78, -8.89, 4.91, -8.25, 3.64, -8.78);
+    rr_renderer_bezier_curve_to(renderer, 2.37, -9.31, 2.20, -10.36, 1.62, -12.00);
+    rr_renderer_line_to(renderer, -1.62, -12.00);
+    rr_renderer_bezier_curve_to(renderer, -2.20, -10.37, -2.37, -9.31, -3.64, -8.78);
+    rr_renderer_bezier_curve_to(renderer, -4.91, -8.25, -5.77, -8.88, -7.34, -9.63);
+    rr_renderer_line_to(renderer, -9.63, -7.34);
+    rr_renderer_bezier_curve_to(renderer, -8.88, -5.78, -8.25, -4.91, -8.78, -3.64);
+    rr_renderer_bezier_curve_to(renderer, -9.31, -2.37, -10.37, -2.20, -12.00, -1.62);
+    rr_renderer_line_to(renderer, -12.00, 1.62);
+    rr_renderer_bezier_curve_to(renderer, -10.37, 2.20, -9.31, 2.37, -8.78, 3.64);
+    rr_renderer_bezier_curve_to(renderer, -8.25, 4.92, -8.90, 5.80, -9.63, 7.34);
+    rr_renderer_line_to(renderer, -7.34, 9.63);
+    rr_renderer_bezier_curve_to(renderer, -5.78, 8.88, -4.91, 8.25, -3.64, 8.78);
+    rr_renderer_bezier_curve_to(renderer, -2.37, 9.31, -2.20, 10.36, -1.62, 12.00);
+    rr_renderer_line_to(renderer, 1.62, 12.00);
+    rr_renderer_bezier_curve_to(renderer, 2.20, 10.36, 2.37, 9.31, 3.64, 8.78);
+    rr_renderer_bezier_curve_to(renderer, 4.91, 8.25, 5.76, 8.88, 7.34, 9.63);
+    rr_renderer_line_to(renderer, 9.63, 7.34);
+    rr_renderer_bezier_curve_to(renderer, 8.88, 5.78, 8.25, 4.91, 8.78, 3.64);
+    rr_renderer_bezier_curve_to(renderer, 9.31, 2.37, 10.37, 2.20, 12.00, 1.62);
+    rr_renderer_arc(renderer, 0, 0, 4);
     rr_renderer_fill(renderer);
 }
 
@@ -66,7 +96,7 @@ struct rr_ui_element *rr_ui_settings_toggle_button_init()
     this->fill = 0x80888888;
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = settings_toggle_button_on_event;
-    this->on_render = inventory_toggle_on_render;
+    this->on_render = settings_toggle_button_on_render;
     return this;
 }
 
