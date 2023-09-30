@@ -13,10 +13,9 @@ RR_SERVER_ONLY(struct rr_component_player_info;)
 struct rr_component_centipede
 {
     EntityIdx parent_id;
-    RR_SERVER_ONLY(EntityIdx child_node;)
-    RR_SERVER_ONLY(EntityIdx parent_node;)
-
     RR_SERVER_ONLY(uint16_t protocol_state;)
+    RR_SERVER_ONLY(EntityHash child_node;)
+    RR_SERVER_ONLY(EntityHash parent_node;)
 };
 
 void rr_component_centipede_init(struct rr_component_centipede *,

@@ -11,6 +11,8 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
+#define entity_alive(sim, id) (sim->entity_tracker[id] && !rr_bitset_get(sim->deleted_last_tick, id))
+
 struct rr_protocol_for_each_function_captures
 {
     struct rr_simulation *simulation;
@@ -68,7 +70,7 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
     struct rr_simulation_find_entities_in_view_for_each_function_captures
         *captures = data;
     struct rr_simulation *simulation = captures->simulation;
-    if (!rr_simulation_entity_alive(simulation, entity))
+    if (!entity_alive(simulation, entity))
         return;
 
     struct rr_component_physical *physical =
@@ -110,10 +112,10 @@ static void rr_simulation_find_entities_in_view(
 
     rr_bitset_set(entities_in_view, player_info->parent_id);
 
-    if (rr_simulation_entity_alive(this, player_info->flower_id))
+    if (entity_alive(this, player_info->flower_id))
         rr_bitset_set(entities_in_view, player_info->flower_id);
 
-    if (!rr_simulation_entity_alive(this, player_info->arena))
+    if (!entity_alive(this, player_info->arena))
         rr_component_player_info_set_arena(player_info, 1);
     rr_bitset_set(captures.entities_in_view, player_info->arena);
     rr_bitset_set(captures.entities_in_view, 1);
@@ -133,7 +135,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     if (!rr_bitset_get_bit(new_entities_in_view, id))
     {
         // deletion spotted!
-        uint8_t serverside_delete = !rr_simulation_entity_alive(captures->simulation, id);
+        uint8_t serverside_delete = !entity_alive(captures->simulation, id);
         if (serverside_delete == 0)
         {
             if (rr_simulation_has_drop(captures->simulation, id))
@@ -176,14 +178,14 @@ void rr_simulation_write_binary(struct rr_simulation *this,
     for (uint64_t i = 0; i < this->player_info_count; i++)
     {
         EntityIdx p_id = this->player_info_vector[i];
-        if (!rr_simulation_entity_alive(this, p_id))
+        if (!entity_alive(this, p_id))
             continue;
         struct rr_component_player_info *p_info =
             rr_simulation_get_player_info(this, p_id);
         if (p_info->squad != player_info->squad)
             continue;
         rr_bitset_set(new_entities_in_view, p_id);
-        if (rr_simulation_entity_alive(this, p_info->flower_id) && p_info->arena == player_info->arena)
+        if (entity_alive(this, p_info->flower_id) && p_info->arena == player_info->arena)
             rr_bitset_set(new_entities_in_view, p_info->flower_id);
     }
 
@@ -215,3 +217,4 @@ void rr_simulation_write_binary(struct rr_simulation *this,
                             "pinfo id"); // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");
 }
+#undef entity_alive

@@ -51,10 +51,18 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
     memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
 }
 
+#ifdef RR_SERVER
+#include <Server/Simulation.h>
+#endif 
+
 void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
 {
     free(this->collected_this_run);
+#ifdef RR_SERVER
+    if (rr_simulation_entity_alive(simulation, this->flower_id))
+        rr_simulation_request_entity_deletion(simulation, this->flower_id);
+#endif
 }
 
 #ifdef RR_SERVER
@@ -81,12 +89,11 @@ void rr_component_player_info_petal_swap(struct rr_component_player_info *this,
         &this->secondary_slots[pos];
     for (uint32_t i = 0; i < slot->count; ++i)
     {
-        EntityIdx id = slot->petals[i].simulation_id;
+        EntityIdx id = slot->petals[i].entity_hash;
         if (id != RR_NULL_ENTITY && rr_simulation_has_entity(simulation, id))
         {
             rr_simulation_request_entity_deletion(simulation, id);
-
-            slot->petals[i].simulation_id = RR_NULL_ENTITY;
+            slot->petals[i].entity_hash = RR_NULL_ENTITY;
         }
     }
     uint8_t temp = slot->id;
@@ -148,7 +155,7 @@ RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_x)
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_y)
 RR_DEFINE_PUBLIC_FIELD(player_info, float, camera_fov)
 RR_DEFINE_PUBLIC_FIELD(player_info, uint32_t, slot_count)
-RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
+RR_DEFINE_PUBLIC_FIELD(player_info, EntityHash, flower_id);
 RR_DEFINE_PUBLIC_FIELD(player_info, EntityIdx, arena);
 RR_DEFINE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);
 #endif

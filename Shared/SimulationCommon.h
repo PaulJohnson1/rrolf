@@ -36,6 +36,7 @@ enum rr_simulation_team_id
 struct rr_simulation
 {
     uint16_t entity_tracker[RR_MAX_ENTITY_COUNT];
+    RR_SERVER_ONLY(uint16_t entity_hash_tracker[RR_MAX_ENTITY_COUNT];)
     uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
     RR_SERVER_ONLY(uint8_t deleted_last_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 
@@ -46,8 +47,6 @@ struct rr_simulation
     EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
 #undef XX
-    RR_SERVER_ONLY(uint32_t wave_points;)
-    RR_SERVER_ONLY(uint32_t special_wave_id;)
     RR_SERVER_ONLY(struct rr_simulation_animation animations[512];)
     RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)

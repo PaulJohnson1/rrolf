@@ -4,5 +4,6 @@
 
 void rr_simulation_tick(struct rr_simulation *);
 
-uint8_t rr_simulation_entity_alive(struct rr_simulation *, EntityIdx); //stricter version
-uint8_t rr_simulation_entity_died(struct rr_simulation *, EntityIdx); //effectively onDeath
+int rr_simulation_entity_alive(struct rr_simulation *, EntityHash); //stricter version
+
+EntityHash rr_simulation_get_entity_hash(struct rr_simulation *, EntityIdx);

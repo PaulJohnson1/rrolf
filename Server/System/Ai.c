@@ -24,7 +24,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
-    if (rr_simulation_entity_died(simulation, ai->target_entity))
+    if (!rr_simulation_entity_alive(simulation, ai->target_entity) && ai->target_entity != RR_NULL_ENTITY)
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;

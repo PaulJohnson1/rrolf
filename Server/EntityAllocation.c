@@ -1,4 +1,5 @@
 #include <Server/EntityAllocation.h>
+#include <Server/Simulation.h>
 #include <Server/Waves.h>
 
 #include <math.h>
@@ -44,11 +45,11 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     health->damage = 10;
     health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
-    rr_component_relations_set_owner(relations, entity);
+    rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(this, entity));
     rr_component_relations_update_root_owner(this, relations);
     rr_component_player_info_set_camera_x(player_info, physical->x);
     rr_component_player_info_set_camera_y(player_info, physical->y);
-    rr_component_player_info_set_flower_id(player_info, flower_id);
+    rr_component_player_info_set_flower_id(player_info, rr_simulation_get_entity_hash(this, flower_id));
     return flower_id;
 }
 
@@ -74,15 +75,14 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     if (id == rr_petal_id_club)
     {
         rr_component_physical_set_radius(physical, 15);
-        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 2);
+        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.3);
         physical->knockback_scale = 4.5;
     }
 
     rr_component_petal_set_id(petal, id);
     rr_component_petal_set_rarity(petal, rarity);
 
-    rr_component_relations_set_owner(relations,
-                                     owner); // flower owns petal, not player
+    rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(this, owner)); // flower owns petal, not player
     rr_component_relations_set_team(
         relations, rr_simulation_get_relations(this, owner)->team);
     rr_component_relations_update_root_owner(this, relations);
@@ -129,7 +129,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     rr_component_physical_set_y(physical, y);
     physical->arena = arena_id;
     physical->friction = 0.75;
-    physical->mass = 100.0f * powf(3, RR_MOB_RARITY_SCALING[rarity_id].damage);
+    physical->mass = 25.0f * powf(1.1, RR_MOB_RARITY_SCALING[rarity_id].damage);
     if (mob_id == rr_mob_id_meteor)
     {
         physical->mass *= 100;
@@ -207,6 +207,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
             if (rr_bitset_get_bit(this->deleted_last_tick, i))
                 continue;
             this->entity_tracker[i] = 1;
+            ++this->entity_hash_tracker[i];
 #ifndef NDEBUG
             //printf("created with id %d\n", i);
 #endif

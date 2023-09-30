@@ -24,8 +24,8 @@ enum rr_ai_state
 struct rr_component_ai
 {
     RR_SERVER_ONLY(uint32_t ticks_until_next_action;)
+    RR_SERVER_ONLY(EntityHash target_entity;)
     EntityIdx parent_id;
-    RR_SERVER_ONLY(EntityIdx target_entity;)
     RR_SERVER_ONLY(enum rr_ai_state ai_state;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(uint8_t has_prediction;)

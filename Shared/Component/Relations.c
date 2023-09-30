@@ -29,6 +29,7 @@ void rr_component_relations_free(struct rr_component_relations *this,
 }
 
 #ifdef RR_SERVER
+#include <Server/Simulation.h>
 
 void rr_component_relations_update_root_owner(struct rr_simulation *simulation, struct rr_component_relations *this)
 {
@@ -43,7 +44,7 @@ void rr_component_relations_update_root_owner(struct rr_simulation *simulation, 
     }
     struct rr_component_relations *root = rr_simulation_get_relations(simulation, this->owner);
     if (root->root_owner == RR_NULL_ENTITY)
-        this->root_owner = root->parent_id;
+        this->root_owner = rr_simulation_get_entity_hash(simulation, root->parent_id);
     else
         this->root_owner = root->root_owner;
 }
@@ -58,7 +59,7 @@ void rr_component_relations_write(struct rr_component_relations *this,
 #undef X
 }
 
-RR_DEFINE_PUBLIC_FIELD(relations, EntityIdx, owner)
+RR_DEFINE_PUBLIC_FIELD(relations, EntityHash, owner)
 RR_DEFINE_PUBLIC_FIELD(relations, uint32_t, team)
 #endif
 

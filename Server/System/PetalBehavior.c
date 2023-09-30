@@ -147,7 +147,7 @@ static void system_petal_detach(struct rr_simulation *simulation,
     rr_component_petal_set_detached(petal, 1);
     struct rr_component_player_info_petal *ppetal =
         &player_info->slots[outer_pos].petals[inner_pos];
-    ppetal->simulation_id = RR_NULL_ENTITY;
+    ppetal->entity_hash = RR_NULL_ENTITY;
     ppetal->cooldown_ticks = petal_data->cooldown;
 }
 
@@ -160,6 +160,14 @@ static EntityIdx squad_has_dead_player(struct rr_simulation *simulation, uint8_t
             return pl->parent_id; 
     }
     return RR_NULL_ENTITY;
+}
+
+static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    struct rr_component_physical *parent_physical = captures;
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+    return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
+    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 250 * 250);
 }
 
 static void system_flower_petal_movement_logic(
@@ -337,16 +345,14 @@ static void system_flower_petal_movement_logic(
     else if (player_info->input & 2)
         holdingRadius = 45;
     struct rr_vector chase_vector;
-    EntityIdx gravity_target = rr_simulation_find_nearest_enemy(simulation, id, 50, NULL, no_filter);
+    rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
+    rr_vector_add(&chase_vector, &flower_vector);
+    EntityIdx gravity_target = rr_simulation_find_nearest_enemy(simulation, id, 100, flower_physical, is_close_enough_to_parent);
     if (gravity_target != RR_NULL_ENTITY)
     {
         struct rr_component_physical *t_phys = rr_simulation_get_physical(simulation, gravity_target);
-        rr_vector_set(&chase_vector, t_phys->x, t_phys->y);
-    }
-    else
-    {
-        rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
-        rr_vector_add(&chase_vector, &flower_vector);
+        chase_vector.x += (t_phys->x - chase_vector.x) * 0.8;
+        chase_vector.y += (t_phys->y - chase_vector.y) * 0.8;
     }
     rr_vector_sub(&chase_vector, &position_vector);
     if (petal_data->clump_radius != 0.0f &&
@@ -424,7 +430,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else
             for (uint32_t inner = 0; inner < slot->count; ++inner)
             {
-                if (slot->petals[inner].simulation_id == RR_NULL_ENTITY)
+                if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
                 {
@@ -463,45 +469,45 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                 ++rotation_pos; // clump rotpos ++
             struct rr_component_player_info_petal *p_petal =
                 &slot->petals[inner];
-            if (rr_simulation_entity_died(simulation, p_petal->simulation_id))
+            if (p_petal->entity_hash != RR_NULL_ENTITY && !rr_simulation_entity_alive(simulation, p_petal->entity_hash))
             {
-                p_petal->simulation_id = RR_NULL_ENTITY;
+                p_petal->entity_hash = RR_NULL_ENTITY;
                 p_petal->cooldown_ticks = data->cooldown;
             }
-            if (p_petal->simulation_id == RR_NULL_ENTITY)
+            if (p_petal->entity_hash == RR_NULL_ENTITY)
             {
                 float cd = rr_fclamp(255.0f * p_petal->cooldown_ticks / data->cooldown, 0, 255);
                 if (cd > max_cd)
                     max_cd = cd;
                 if (--p_petal->cooldown_ticks <= 0)
-                    p_petal->simulation_id = rr_simulation_alloc_petal(
+                    p_petal->entity_hash = rr_simulation_get_entity_hash(simulation, rr_simulation_alloc_petal(
                         simulation, player_info->arena, player_info->camera_x, player_info->camera_y, slot->id, slot->rarity,
-                        player_info->flower_id);
+                        player_info->flower_id));
             }
             else
             {
-                if (rr_simulation_has_mob(simulation, p_petal->simulation_id))
+                if (rr_simulation_has_mob(simulation, p_petal->entity_hash))
                 {
                     if (inner == 0 || data->clump_radius == 0)
                         --rotation_pos;
                     continue;
                 }
                 system_flower_petal_movement_logic(
-                    simulation, p_petal->simulation_id, player_info,
+                    simulation, p_petal->entity_hash, player_info,
                     rotation_pos - 1, outer, inner, data);
                 if (data->id == rr_petal_id_egg)
                 {
                     struct rr_component_petal *petal = rr_simulation_get_petal(
-                        simulation, p_petal->simulation_id);
+                        simulation, p_petal->entity_hash);
                     if (petal->effect_delay > 0)
                         continue;
                     rr_component_petal_set_detached(petal, 1);
                     struct rr_component_physical *petal_physical =
                         rr_simulation_get_physical(simulation,
-                                                   p_petal->simulation_id);
+                                                   p_petal->entity_hash);
                     rr_simulation_request_entity_deletion(
-                        simulation, p_petal->simulation_id);
-                    p_petal->simulation_id = RR_NULL_ENTITY;
+                        simulation, p_petal->entity_hash);
+                    p_petal->entity_hash = RR_NULL_ENTITY;
                     if (petal->rarity == 0)
                         return;
                     uint8_t m_id, m_rar;
@@ -510,13 +516,13 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                         m_id = rr_mob_id_trex;
                         m_rar = petal->rarity ? petal->rarity - 1 : 0;
                     }
-                    EntityIdx mob_id = p_petal->simulation_id =
+                    EntityIdx mob_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->arena, petal_physical->x, petal_physical->y, m_id, m_rar,
                                                 rr_simulation_team_id_players);
+                    p_petal->entity_hash = rr_simulation_get_entity_hash(simulation, mob_id);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);
-                    rr_component_relations_set_owner(relations,
-                                                     player_info->flower_id);
+                    rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(simulation, player_info->flower_id));
                     rr_component_relations_update_root_owner(simulation, relations);
                     rr_simulation_get_mob(simulation, mob_id)->player_spawned = 1;
                 }

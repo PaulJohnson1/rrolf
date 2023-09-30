@@ -73,9 +73,6 @@ void rr_server_client_free(struct rr_server_client *this)
     //WARNING: ONLY TO BE USED WHEN CLIENT DISCONNECTS
     if (this->player_info != NULL)
     {
-        if (this->player_info->flower_id != RR_NULL_ENTITY)
-            rr_simulation_request_entity_deletion(
-                &this->server->simulation, this->player_info->flower_id);
         rr_simulation_request_entity_deletion(&this->server->simulation,
                                                 this->player_info->parent_id);
     }
@@ -460,9 +457,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     rr_squad_get_client_slot(this, client)->playing = 0;
                     if (client->player_info != NULL)
                     {
-                        if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
-                            rr_simulation_request_entity_deletion(
-                                &this->simulation, client->player_info->flower_id);
                         rr_simulation_request_entity_deletion(&this->simulation,
                                                              client->player_info->parent_id);
                         client->player_info = NULL;
@@ -562,9 +556,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (to_kick->player_info != NULL)
             {
-                if (rr_simulation_entity_alive(&this->simulation, to_kick->player_info->flower_id))
-                    rr_simulation_request_entity_deletion(
-                        &this->simulation, to_kick->player_info->flower_id);
                 rr_simulation_request_entity_deletion(&this->simulation,
                                                         to_kick->player_info->parent_id);
                 to_kick->player_info = NULL;

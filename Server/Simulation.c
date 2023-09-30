@@ -161,23 +161,23 @@ void rr_simulation_tick(struct rr_simulation *this)
     this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
     //printf("server has %d entities\n", this->physical_count);
-    fputs("part 1\n", stderr);
+    //fputs("part 1\n", stderr);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("drops", { rr_system_drops_tick(this); });
-    fputs("part 2\n", stderr);
+    //fputs("part 2\n", stderr);
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("collision_resolution",
                   { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("web", { rr_system_web_tick(this); });
-    fputs("part 3\n", stderr);
+    //fputs("part 3\n", stderr);
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
     tick_wave(this);
-    fputs("part 4\n", stderr);
+    //fputs("part 4\n", stderr);
     memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
     rr_bitset_for_each_bit(
@@ -190,12 +190,12 @@ void rr_simulation_tick(struct rr_simulation *this)
                            this, __rr_simulation_pending_deletion_unset_entity);
 }
 
-uint8_t rr_simulation_entity_alive(struct rr_simulation *this, EntityIdx id)
+int rr_simulation_entity_alive(struct rr_simulation *this, EntityHash hash)
 {
-    return this->entity_tracker[id] && !rr_bitset_get(this->deleted_last_tick, id);
+    return this->entity_tracker[(EntityIdx) hash] && this->entity_hash_tracker[(EntityIdx) hash] == (hash >> 16);
 }
 
-uint8_t rr_simulation_entity_died(struct rr_simulation *this, EntityIdx id)
+EntityHash rr_simulation_get_entity_hash(struct rr_simulation *this, EntityIdx id)
 {
-    return id && rr_bitset_get(this->deleted_last_tick, id);
+    return ((uint32_t)(this->entity_hash_tracker[id]) << 16) | id;
 }

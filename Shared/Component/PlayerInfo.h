@@ -15,8 +15,8 @@ RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_player_info_petal
 {
-    EntityIdx simulation_id;
-    int16_t cooldown_ticks;
+    EntityHash entity_hash;
+    int32_t cooldown_ticks;
 };
 
 struct rr_component_player_info_petal_slot
@@ -51,7 +51,7 @@ struct rr_component_player_info
     RR_CLIENT_ONLY(float lerp_camera_fov;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
     EntityIdx parent_id;
-    EntityIdx flower_id; // will be RR_NULL_ENTITY if nonexistant
+    EntityHash flower_id; // will be RR_NULL_ENTITY if nonexistant
     EntityIdx arena;
     RR_SERVER_ONLY(uint8_t rotation_count;)
     RR_SERVER_ONLY(uint8_t input;)
@@ -87,6 +87,6 @@ RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_x);
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_y);
 RR_DECLARE_PUBLIC_FIELD(player_info, float, camera_fov);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint32_t, slot_count);
-RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, flower_id);
+RR_DECLARE_PUBLIC_FIELD(player_info, EntityHash, flower_id);
 RR_DECLARE_PUBLIC_FIELD(player_info, EntityIdx, arena);
 RR_DECLARE_PUBLIC_FIELD(player_info, uint8_t, squad_pos);

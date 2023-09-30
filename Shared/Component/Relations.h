@@ -11,9 +11,9 @@ RR_SERVER_ONLY(struct rr_component_player_info;)
 
 struct rr_component_relations
 {
+    EntityHash owner;
+    RR_SERVER_ONLY(EntityHash root_owner;)
     EntityIdx parent_id;
-    EntityIdx owner;
-    RR_SERVER_ONLY(EntityIdx root_owner;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     uint8_t team;
 };
@@ -32,5 +32,5 @@ RR_SERVER_ONLY(void rr_component_relations_write(
 RR_CLIENT_ONLY(void rr_component_relations_read(struct rr_component_relations *,
                                                 struct proto_bug *);)
 
-RR_DECLARE_PUBLIC_FIELD(relations, EntityIdx, owner)
+RR_DECLARE_PUBLIC_FIELD(relations, EntityHash, owner)
 RR_DECLARE_PUBLIC_FIELD(relations, uint32_t, team)

@@ -3,6 +3,8 @@
 #include <stdint.h>
 
 typedef uint16_t EntityIdx;
+typedef uint32_t EntityHash;
+
 #define RR_MAX_ENTITY_COUNT (16384)
 #define RR_NULL_ENTITY (0)
 #define RR_SQUAD_MEMBER_COUNT (4)

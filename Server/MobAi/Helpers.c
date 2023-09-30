@@ -10,7 +10,7 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
     struct rr_component_physical *parent_physical = captures;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
     return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
-    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 500 * 500);
+    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 1000 * 1000);
 }
 
 uint8_t has_new_target(struct rr_component_ai *ai,
@@ -20,10 +20,12 @@ uint8_t has_new_target(struct rr_component_ai *ai,
         !rr_simulation_entity_alive(simulation, ai->target_entity))
     {
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
+        EntityIdx target_id;
         if (relations->team == rr_simulation_team_id_mobs)
-            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
+            target_id = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
         else
-            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
+            target_id = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
+        ai->target_entity = rr_simulation_get_entity_hash(simulation, target_id);
     }
     if (ai->target_entity != RR_NULL_ENTITY &&
         rr_simulation_entity_alive(simulation, ai->target_entity))
