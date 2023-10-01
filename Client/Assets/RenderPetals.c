@@ -5,7 +5,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
-#define IMAGE_SIZE (256.0f)
+#define IMAGE_SIZE (150.0f)
 struct rr_renderer petal_cache;
 
 void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t flags)
