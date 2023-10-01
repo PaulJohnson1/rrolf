@@ -32,12 +32,12 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     {
         if (data->level == next_level - 1)
         {
-            data->lerp_xp = rr_lerp(data->lerp_xp, xp, 0.1);
+            data->lerp_xp = rr_lerp(data->lerp_xp, xp, 25 * game->lerp_delta);
         }
         else
         {
-            data->lerp_xp = rr_lerp(data->lerp_xp, xp_to_reach_level(data->level + 1), 0.1);
-            if (data->lerp_xp >= xp_to_reach_level(data->level + 1) * 0.999)
+            data->lerp_xp = rr_lerp(data->lerp_xp, xp_to_reach_level(data->level + 1), 25 * game->lerp_delta);
+            if (data->lerp_xp >= xp_to_reach_level(data->level + 1) * 0.995)
             {
                 ++data->level;
                 data->lerp_xp = 0;
