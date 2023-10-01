@@ -315,8 +315,8 @@ double xp_to_reach_level(uint32_t level)
 uint32_t level_from_xp(double xp)
 {
     uint32_t level = 1;
-    while (xp >= xp_to_reach_level(level))
-        xp -= xp_to_reach_level(level++);
+    while (xp >= xp_to_reach_level(level + 1))
+        xp -= xp_to_reach_level(++level);
     return level;
 }
 
