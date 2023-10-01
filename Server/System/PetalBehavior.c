@@ -347,7 +347,7 @@ static void system_flower_petal_movement_logic(
     struct rr_vector chase_vector;
     rr_vector_from_polar(&chase_vector, holdingRadius, curr_angle);
     rr_vector_add(&chase_vector, &flower_vector);
-    EntityIdx gravity_target = rr_simulation_find_nearest_enemy(simulation, id, 100, flower_physical, is_close_enough_to_parent);
+    EntityIdx gravity_target = rr_simulation_find_nearest_enemy(simulation, id, 50, flower_physical, is_close_enough_to_parent);
     if (gravity_target != RR_NULL_ENTITY)
     {
         struct rr_component_physical *t_phys = rr_simulation_get_physical(simulation, gravity_target);

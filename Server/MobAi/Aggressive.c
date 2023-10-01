@@ -102,6 +102,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
                 physical2, 11 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
             physical2->friction = 0.4f;
             physical2->mass = 5.0f;
+            physical2->knockback_scale = 3;
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->velocity, 50, physical->angle);
             rr_component_petal_set_detached(rr_simulation_get_petal(simulation, petal_id), 1);
