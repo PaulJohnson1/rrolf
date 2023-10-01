@@ -5,7 +5,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
-#define IMAGE_SIZE (150.0f)
+#define IMAGE_SIZE (256.0f)
 struct rr_renderer petal_cache;
 
 void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t flags)
@@ -1397,7 +1397,7 @@ void rr_renderer_petal_cache_init()
     for (uint32_t i = 0; i < rr_petal_id_max; ++i)
     {
         rr_renderer_context_state_init(&petal_cache, &state);
-        rr_renderer_scale(&petal_cache, 4);
+        rr_renderer_scale(&petal_cache, IMAGE_SIZE / 50);
         rr_renderer_draw_petal(&petal_cache, i, 0);
         rr_renderer_context_state_free(&petal_cache, &state);
         rr_renderer_translate(&petal_cache, IMAGE_SIZE, 0);
