@@ -116,6 +116,7 @@ static struct rr_ui_element *make_label_tooltip(char const *text)
         ),
     0x80000000);
 }
+
 static uint8_t simulation_not_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     return 1 - game->simulation_ready;
@@ -604,6 +605,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     continue;
                 this->squad_members[i].playing =
                     proto_bug_read_uint8(&encoder, "ready");
+                proto_bug_read_string(&encoder, this->squad_members[i].nickname, 16, "nickname");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad_members[i].loadout[j].id =
@@ -615,7 +617,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad_code, 15, "squad code");
+            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
@@ -637,8 +639,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_NICKNAME_UPDATE, "header");
-            proto_bug_write_string(&encoder2, this->cache.nickname, 16 + 1,
-                                   "nick");
+            proto_bug_write_string(&encoder2, this->cache.nickname, 15, "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         case RR_CLIENTBOUND_SQUAD_LEAVE:
@@ -727,10 +728,9 @@ void player_info_finder(struct rr_game *this)
     uint8_t counter = 1;
     memset(&this->player_infos, 0, sizeof this->player_infos);
     this->player_infos[0] = this->player_info->parent_id;
-    for (EntityIdx i = 1; i < RR_MAX_ENTITY_COUNT; ++i)
-        if (rr_simulation_has_entity(simulation, i) && rr_simulation_has_player_info(simulation, i) &&
-            i != this->player_info->parent_id)
-            this->player_infos[counter++] = i;
+    for (EntityIdx i = 0; i < simulation->player_info_count; ++i)
+        if (simulation->player_info_vector[i] != this->player_info->parent_id)
+            this->player_infos[counter++] = simulation->player_info_vector[i];
 }
 
 static void write_serverbound_packet_desktop(struct rr_game *this)

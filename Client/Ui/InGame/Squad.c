@@ -66,6 +66,10 @@ static void player_hud_on_render(struct rr_ui_element *this,
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(game->simulation,
                                       game->player_infos[data->pos]);
+    struct rr_renderer_context_state state;
+    rr_renderer_context_state_init(renderer, &state);
+    printf("helfasdsd %u\n", player_info->flower_id);
+    printf("%d %d\n", rr_simulation_has_entity(game->simulation, player_info->flower_id));
     if (player_info->flower_id == RR_NULL_ENTITY)
     {
         float length = this->abs_width / 2;
@@ -79,18 +83,6 @@ static void player_hud_on_render(struct rr_ui_element *this,
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
         render_dead_flower(game);
-        rr_renderer_set_text_baseline(renderer, 1);
-        rr_renderer_set_text_align(renderer, 0);
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_text_size(renderer, 18);
-        rr_renderer_set_line_width(renderer, 18 * 0.12);
-        rr_renderer_stroke_text(
-            renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-            0);
-        rr_renderer_fill_text(
-            renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-            0);
     }
     else
     {
@@ -111,83 +103,74 @@ static void player_hud_on_render(struct rr_ui_element *this,
             rr_renderer_begin_path(renderer);
             rr_renderer_arc(renderer, 0, 0, 25);
             rr_renderer_fill(renderer);
-            rr_renderer_set_text_baseline(renderer, 1);
-            rr_renderer_set_text_align(renderer, 0);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_text_size(renderer, 18);
-            rr_renderer_set_line_width(renderer, 18 * 0.12);
-            rr_renderer_stroke_text(
-                renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-                0);
-            rr_renderer_fill_text(
-                renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-                0);
-            return;
         }
-        struct rr_component_physical *physical =
-            rr_simulation_get_physical(game->simulation, player_info->flower_id);
-        struct rr_component_health *health =
-            rr_simulation_get_health(game->simulation, player_info->flower_id);
-        float length = this->abs_width / 2;
-        rr_renderer_set_line_cap(renderer, 1);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_line_width(renderer, 25);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, -length, 0);
-        rr_renderer_line_to(renderer, length, 0);
-        rr_renderer_stroke(renderer);
-
-        rr_renderer_set_stroke(renderer, 0xff75dd34);
-        rr_renderer_set_line_width(renderer, 20);
-        rr_renderer_begin_path(renderer);
-        rr_renderer_move_to(renderer, -length / 2, 0);
-        rr_renderer_line_to(renderer,
-                            -length / 2 + 1.5 * length * health->lerp_health /
-                                              health->max_health,
-                            0);
-        rr_renderer_stroke(renderer);
-        rr_renderer_translate(renderer, -length, 0);
-        rr_renderer_scale(renderer, this->abs_height / 50);
-        float r = physical->radius == 0 ? 25 : physical->radius;
-        rr_renderer_scale(renderer, 25 / r);
-        rr_component_flower_render(player_info->flower_id, game, game->simulation);
-        rr_renderer_scale(renderer, r / 25);
-        rr_renderer_set_text_baseline(renderer, 1);
-        rr_renderer_set_text_align(renderer, 0);
-        rr_renderer_set_fill(renderer, 0xffffffff);
-        rr_renderer_set_stroke(renderer, 0xff222222);
-        rr_renderer_set_text_size(renderer, 18);
-        rr_renderer_set_line_width(renderer, 18 * 0.12);
-        rr_renderer_stroke_text(
-            renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-            0);
-        rr_renderer_fill_text(
-            renderer, game->squad_members[player_info->squad_pos].nickname, 35,
-            0);
-        if (data->pos != 0 && game->player_info != NULL)
+        else
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(
-                game->simulation, player_info->flower_id);
-            struct rr_vector vector = {
-                physical->x - game->player_info->camera_x,
-                physical->y - game->player_info->camera_y};
-            rr_renderer_rotate(renderer, rr_vector_theta(&vector));
-            rr_renderer_translate(renderer, 25 + 3, 0);
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(game->simulation, player_info->flower_id);
+            struct rr_component_health *health =
+                rr_simulation_get_health(game->simulation, player_info->flower_id);
+            float length = this->abs_width / 2;
             rr_renderer_set_line_cap(renderer, 1);
             rr_renderer_set_stroke(renderer, 0xff222222);
-            rr_renderer_set_fill(renderer, 0xffffffff);
-            rr_renderer_set_line_join(renderer, 1);
-            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_set_line_width(renderer, 25);
             rr_renderer_begin_path(renderer);
-            rr_renderer_move_to(renderer, 0, -8);
-            rr_renderer_line_to(renderer, 10, 0);
-            rr_renderer_line_to(renderer, 0, 8);
-            rr_renderer_line_to(renderer, 0, -8);
-            rr_renderer_fill(renderer);
+            rr_renderer_move_to(renderer, -length, 0);
+            rr_renderer_line_to(renderer, length, 0);
             rr_renderer_stroke(renderer);
+
+            rr_renderer_set_stroke(renderer, 0xff75dd34);
+            rr_renderer_set_line_width(renderer, 20);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer, -length / 2, 0);
+            rr_renderer_line_to(renderer,
+                                -length / 2 + 1.5 * length * health->lerp_health /
+                                                health->max_health,
+                                0);
+            rr_renderer_stroke(renderer);
+            rr_renderer_translate(renderer, -length, 0);
+            rr_renderer_scale(renderer, this->abs_height / 50);
+            rr_renderer_scale(renderer, 25 / physical->radius);
+            rr_component_flower_render(player_info->flower_id, game, game->simulation);
+            rr_renderer_scale(renderer, physical->radius / 25);
+            if (data->pos != 0 && game->player_info != NULL)
+            {
+                struct rr_component_physical *physical = rr_simulation_get_physical(
+                    game->simulation, player_info->flower_id);
+                struct rr_vector vector = {
+                    physical->x - game->player_info->camera_x,
+                    physical->y - game->player_info->camera_y};
+                rr_renderer_rotate(renderer, rr_vector_theta(&vector));
+                rr_renderer_translate(renderer, 25 + 3, 0);
+                rr_renderer_set_line_cap(renderer, 1);
+                rr_renderer_set_stroke(renderer, 0xff222222);
+                rr_renderer_set_fill(renderer, 0xffffffff);
+                rr_renderer_set_line_join(renderer, 1);
+                rr_renderer_set_line_width(renderer, 3);
+                rr_renderer_begin_path(renderer);
+                rr_renderer_move_to(renderer, 0, -8);
+                rr_renderer_line_to(renderer, 10, 0);
+                rr_renderer_line_to(renderer, 0, 8);
+                rr_renderer_line_to(renderer, 0, -8);
+                rr_renderer_fill(renderer);
+                rr_renderer_stroke(renderer);
+            }
         }
     }
+    rr_renderer_context_state_free(renderer, &state);
+    rr_renderer_set_text_baseline(renderer, 1);
+    rr_renderer_set_text_align(renderer, 0);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_set_stroke(renderer, 0xff222222);
+    rr_renderer_set_text_size(renderer, 18);
+    rr_renderer_set_line_width(renderer, 18 * 0.12);
+    rr_renderer_translate(renderer, -this->abs_width / 2, 0);
+    rr_renderer_stroke_text(
+        renderer, game->squad_members[player_info->squad_pos].nickname, 45,
+        0);
+    rr_renderer_fill_text(
+        renderer, game->squad_members[player_info->squad_pos].nickname, 45,
+        0);
 }
 
 struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t pos)

@@ -44,6 +44,7 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
         &server->simulation,
         rr_simulation_alloc_entity(&server->simulation));
     player_info->squad = client->squad;
+    struct rr_squad_member *member = player_info->squad_member = rr_squad_get_client_slot(server, client);
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
     rr_component_player_info_set_slot_count(player_info, 10);
     player_info->level = client->level;
@@ -52,7 +53,6 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
     #undef min
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&server->simulation, 1);
-    struct rr_squad_member *member = rr_squad_get_client_slot(server, client);
     for (uint64_t i = 0; i < player_info->slot_count; ++i)
     {
         uint8_t id = member->loadout[i].id;
@@ -408,7 +408,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             else if (type == 1)
             {
                 char link[16];
-                proto_bug_read_string(&encoder, link, 6, "connect link");
+                proto_bug_read_string(&encoder, link, 7, "connect link");
                 squad = rr_client_join_squad_with_code(this, link);
             }
             else if (type == 0)
@@ -512,8 +512,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case RR_SERVERBOUND_NICKNAME_UPDATE:
         {
-            proto_bug_read_string(&encoder, client->client_nickname,
-                                  16 + 1, "nick");
+            if (client->squad != 0)
+                proto_bug_read_string(&encoder, rr_squad_get_client_slot(this, client)->nickname, 16, "nick");
             break;
         }
         case RR_SERVERBOUND_PRIVATE_UPDATE:
@@ -784,6 +784,7 @@ static void server_tick(struct rr_server *this)
                     struct rr_squad_member *member = &squad->members[i];
                     proto_bug_write_uint8(&encoder, 1, "bitbit");
                     proto_bug_write_uint8(&encoder, member->playing, "ready");
+                    proto_bug_write_string(&encoder, member->nickname, 16, "nickname");
                     for (uint8_t j = 0; j < 20; ++j)
                     {
                         proto_bug_write_uint8(&encoder, member->loadout[j].id, "id");
@@ -795,7 +796,7 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_uint8(&encoder, this->biome, "biome");
                 char joined_code[16];
                 joined_code[sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code)] = 0;
-                proto_bug_write_string(&encoder, joined_code, 15, "squad code");
+                proto_bug_write_string(&encoder, joined_code, 16, "squad code");
                 rr_server_client_encrypt_message(client, encoder.start,
                                                 encoder.current - encoder.start);
                 rr_server_client_write_message(client, encoder.start,

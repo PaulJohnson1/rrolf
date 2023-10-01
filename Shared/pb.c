@@ -132,9 +132,9 @@ extern "C"
         proto_bug_write_uint8_internal(self, data << 1);
     }
     void proto_bug_write_string_internal(struct proto_bug *self,
-                                         char const *string, uint64_t max_size)
+                                         char const *string, uint64_t buf_length)
     {
-        for (uint64_t i = 0; i < max_size; ++i)
+        for (uint64_t i = 0; i < buf_length - 1; ++i)
         {
             proto_bug_write_uint8_internal(self, string[i]);
             if (string[i] == 0)

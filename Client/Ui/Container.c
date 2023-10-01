@@ -82,7 +82,8 @@ void rr_ui_container_poll_events(struct rr_ui_element *this,
     if (game->focused != this || this->stop_event_propagation)
         return;
     for (uint32_t i = 0; i < this->elements.size; ++i)
-        this->elements.start[i]->poll_events(this->elements.start[i], game);
+        if (!this->elements.start[i]->prevent_on_event)
+            this->elements.start[i]->poll_events(this->elements.start[i], game);
 }
 
 struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *this,

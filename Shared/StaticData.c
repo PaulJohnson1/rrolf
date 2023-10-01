@@ -132,12 +132,12 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
                                           
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 10, 15, 30, 150, 500};
+    0, 1, 5, 10, 15, 30, 150, 1000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 10, 25, 50, 200, 500, 1};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    4, 5, 6, 10, 18, 15, 200};
+    4, 5, 6, 10, 18, 15, 100};
 
 static void init_game_coefficients()
 {
@@ -273,12 +273,31 @@ static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maz
     }
 }
 
+/*
+static void print_chances(float difficulty) {
+    printf("-----Chances for %.0f-----\n", difficulty);
+    uint32_t rarity_cap = rr_rarity_id_unusual + difficulty / 8;
+    if (rarity_cap > rr_rarity_id_ultra)
+        rarity_cap = rr_rarity_id_ultra;
+    uint8_t rarity = 0;
+    for (; rarity <= rarity_cap; ++rarity)
+    {
+        float start = rarity == 0 ? 0 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity]) * 0.3,
+                pow(1.45, difficulty));
+        float end = rarity == rarity_cap ? 1 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
+                pow(1.45, difficulty));
+        printf("%s: %.9f\n", RR_RARITY_NAMES[rarity], end - start);
+    }
+}
+*/
+
 void rr_static_data_init()
 {
     init_game_coefficients();
     init_maze(RR_MAZE_DIM, &RR_MAZE_TEMPLATE_HELL_CREEK[0][0], &RR_MAZE_HELL_CREEK[0][0]);
     init_maze(RR_BURROW_MAZE_DIM, &RR_MAZE_TEMPLATE_BURROW[0][0], &RR_MAZE_BURROW[0][0]);
 }
+
 
 double xp_to_reach_level(uint32_t level)
 {
@@ -329,8 +348,8 @@ uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]
 
 RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
     {l, l, l, l, l, l, l, l, l, E, E, E, 0, 0, 0, R, e, 0, e, e, 0},
-    {l, 0, 0, 0, L, 0, 0, 0, 0, 0, 0, e, 0, 0, 0, R, 0, 0, 0, R, R},
-    {l, l, 0, L, L, 0, 0, 0, 0, 0, e, e, e, 0, 0, R, 0, 0, 0, 0, r},
+    {l, 0, 0, 0, L, 0, 0, 0, 0, 0, 0, e, 0, 0, 0, R, 0, 0, e, R, R},
+    {l, l, 0, L, L, 0, 0, 0, 0, 0, e, e, e, 0, 0, R, 0, 0, 0, R, r},
     {0, L, 0, 0, 0, 0, 0, 0, 0, 0, R, 0, R, R, R, r, r, U, 0, 0, r},
     {0, L, 0, M, M, m, m, L, L, 0, R, 0, 0, 0, 0, 0, 0, U, 0, 0, r},
     {0, L, 0, x, M, 0, 0, 0, L, 0, R, r, r, r, 0, 0, 0, u, 0, 0, U},

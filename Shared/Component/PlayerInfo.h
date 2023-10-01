@@ -11,6 +11,7 @@
 #define RR_BASE_FOV (0.8f)
 struct rr_simulation;
 struct proto_bug;
+RR_SERVER_ONLY(struct rr_squad_member;)
 RR_CLIENT_ONLY(struct rr_renderer;)
 
 struct rr_component_player_info_petal
@@ -38,6 +39,7 @@ struct rr_component_player_info
 {
     struct rr_component_player_info_petal_slot slots[10];
     struct rr_component_player_info_petal_slot secondary_slots[10];
+    RR_SERVER_ONLY(struct rr_squad_member *squad_member;)
     RR_SERVER_ONLY(struct rr_player_info_modifiers modifiers;)
     uint32_t *collected_this_run;
     RR_SERVER_ONLY(struct rr_server_client *client;)

@@ -53,6 +53,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
 
 #ifdef RR_SERVER
 #include <Server/Simulation.h>
+#include <Server/Squad.h>
 #endif 
 
 void rr_component_player_info_free(struct rr_component_player_info *this,

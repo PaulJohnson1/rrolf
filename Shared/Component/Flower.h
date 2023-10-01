@@ -20,6 +20,7 @@ struct rr_component_flower
     RR_CLIENT_ONLY(float eye_y;)
     RR_CLIENT_ONLY(float lerp_eye_y;)
     RR_CLIENT_ONLY(float lerp_mouth;)
+    char nickname[16];
 };
 
 void rr_component_flower_init(struct rr_component_flower *,

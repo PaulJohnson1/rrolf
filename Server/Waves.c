@@ -7,16 +7,16 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
-uint32_t get_spawn_rarity(float seed)
+uint32_t get_spawn_rarity(float difficulty)
 {
     double rarity_seed = rr_frand();
-    uint32_t rarity_cap = rr_rarity_id_unusual + seed / 8;
+    uint32_t rarity_cap = rr_rarity_id_unusual + difficulty / 8;
     if (rarity_cap > rr_rarity_id_ultra)
         rarity_cap = rr_rarity_id_ultra;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                pow(1.45, seed)) >= rarity_seed)
+                pow(1.45, difficulty)) >= rarity_seed)
             return rarity;
     return rarity;
 }

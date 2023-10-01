@@ -225,6 +225,7 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
     );
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 10);
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
+    top->prevent_on_event = loadout->prevent_on_event = 1;
     struct rr_ui_element *squad_container = rr_ui_container_init();
     squad_container->abs_width = squad_container->width = 120;
     squad_container->abs_height = squad_container->height = 120;
@@ -322,11 +323,7 @@ static void join_code_on_event(struct rr_ui_element *this,
             char *link = server;
             char *code = game->connect_code;
             while (*code != 0 && *code != '-')
-            {
-                *link++ = *code;
-                ++code;
-            }
-            puts(server);
+                *link++ = *code++;
             rr_api_get_server_alias(server, game);
         }
         #endif
@@ -338,7 +335,7 @@ static void join_code_on_event(struct rr_ui_element *this,
         while (*code != 0 && *code != '-')
             ++code;
         ++code;
-        proto_bug_write_string(&encoder2, code, 6, "connect link");
+        proto_bug_write_string(&encoder2, code, 7, "connect link");
         
         rr_websocket_queue_send(&game->socket, encoder2.current - encoder2.start);
         game->connect_code[0] = 0;

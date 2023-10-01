@@ -15,6 +15,7 @@ enum
 {
     state_flags_face_flags = 0b000001,
     state_flags_eye_angle = 0b000010,
+    state_flags_nickname = 0b000100,
     state_flags_all = 0b000111
 };
 
@@ -51,6 +52,8 @@ void rr_component_flower_write(struct rr_component_flower *this,
 #define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
+    if (state & state_flags_nickname)
+        proto_bug_write_string(encoder, this->nickname, 16, "nickname");
 }
 
 RR_DEFINE_PUBLIC_FIELD(flower, uint8_t, face_flags)
@@ -65,5 +68,7 @@ void rr_component_flower_read(struct rr_component_flower *this,
 #define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
     FOR_EACH_PUBLIC_FIELD
 #undef X
+    if (state & state_flags_nickname)
+        proto_bug_read_string(encoder, this->nickname, 16, "nickname");
 }
 #endif

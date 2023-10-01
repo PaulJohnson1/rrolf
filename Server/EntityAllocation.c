@@ -3,8 +3,10 @@
 #include <Server/Waves.h>
 
 #include <math.h>
+#include <string.h>
 #include <stdlib.h>
 
+#include <Shared/Squad.h>
 #include <Shared/Utilities.h>
 
 static struct rr_maze_grid DEFAULT_GRID = {0};
@@ -39,7 +41,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
-    rr_simulation_add_flower(this, flower_id);
+    memcpy(rr_simulation_add_flower(this, flower_id)->nickname, player_info->squad_member->nickname, sizeof player_info->squad_member->nickname);
     rr_component_health_set_max_health(health, 100 * pow(1.02169107605, player_info->level));
     rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
