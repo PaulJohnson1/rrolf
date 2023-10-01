@@ -17,7 +17,12 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     double xp = game->cache.experience;
-    uint32_t next_level = level_from_xp(xp) + 1;
+    uint32_t next_level = 2;
+    while (xp >= xp_to_reach_level(next_level))
+    {
+        xp -= xp_to_reach_level(next_level);
+        ++next_level;
+    }
     if (data->lerp_xp == 0 && data->level == 0)
     {
         data->lerp_xp = xp;

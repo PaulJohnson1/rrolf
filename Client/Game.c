@@ -503,7 +503,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     switch (type)
     {
     case rr_websocket_event_type_open:
-        puts("websocket opened");
+        puts("<rr_websocket::open>");
         break;
     case rr_websocket_event_type_close:
         // memset the clients

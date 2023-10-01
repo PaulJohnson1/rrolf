@@ -62,7 +62,7 @@ void rr_websocket_init(struct rr_websocket *this)
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
-    printf("connecting to server %s\n", link);
+    printf("<rr_websocket::server_connect::%s>\n", link);
     this->recieved_first_packet = 0;
     this->found_error = 0;
 #ifdef EMSCRIPTEN
@@ -151,7 +151,6 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
     rr_encrypt(output_packet, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
-// printf("pooling packet of length %d at ptr %p\n", length, output_packet);
 #ifndef EMSCRIPTEN
     lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
 #else

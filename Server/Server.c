@@ -298,7 +298,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
-            printf("client connecting with token: %s\n",
+            printf("<rr_server::client_connect::%s>\n",
                     client->rivet_account.token);
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
@@ -316,7 +316,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             //client->max_wave = account.maximum_wave;
 
-            printf("socket %s verified\n", client->rivet_account.uuid);
+            printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
@@ -586,7 +586,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
 {
     struct rr_server *this =
         (struct rr_server *)lws_context_user(lws_get_context(ws));
-    //printf("packet rec + connect %llu %p\n", reason, this);
     switch (reason)
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
@@ -617,7 +616,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             case 0:
             {
                 rr_binary_encoder_read_nt_string(&decoder, this->server_alias);
-                //printf("server link is %s\n", this->server_alias);
                 break;
             }
             case 1:
@@ -630,7 +628,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     break; // fake client
                 double xp = rr_binary_encoder_read_float64(&decoder);
                 client->level = level_from_xp(xp);
-                printf("reading account %s, client level is %d %f\n", uuid, client->level, xp);
+                printf("<rr_api::account_read::%s>\n", uuid);
                 uint8_t id = rr_binary_encoder_read_uint8(&decoder);
                 while (id)
                 {

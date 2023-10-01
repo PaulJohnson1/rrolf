@@ -211,7 +211,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
             this->entity_tracker[i] = 1;
             ++this->entity_hash_tracker[i];
 #ifndef NDEBUG
-            //printf("created with id %d\n", i);
+            printf("<rr_simulation::entity_create::%d>\n", i);
 #endif
             return i;
         }

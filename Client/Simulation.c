@@ -150,7 +150,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
             this->entity_tracker[i] = 1;
             //no more manual
 #ifndef NDEBUG
-            printf("created with id %d\n", i);
+            printf("<rr_simulation::entity_create::%d>\n", i);
 #endif
             return i;
         }
