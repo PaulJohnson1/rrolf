@@ -45,7 +45,7 @@ static void validate_loadout(struct rr_game *this)
     {
         uint8_t id = this->cache.loadout[i].id;
         uint8_t rarity = this->cache.loadout[i].rarity;
-        if (temp_inv[id][rarity] == 0 || (i % 10) >= this->cache.slots_unlocked)
+        if (temp_inv[id][rarity] == 0 || (i % 10) >= this->slots_unlocked)
             this->cache.loadout[i].id = this->cache.loadout[i].rarity = 0;
         else
             --temp_inv[id][rarity];
@@ -62,7 +62,7 @@ void rr_api_on_get_petals(char *bin, void *a)
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
     {
-        puts("api serverside error");
+        puts("<rr_api::serverside_error>");
         return;
     }
     rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
@@ -78,19 +78,15 @@ void rr_api_on_get_petals(char *bin, void *a)
         id = rr_binary_encoder_read_uint8(&decoder);
     }
     if (rr_binary_encoder_read_varuint(&decoder) != checksum)
-    {
         memset(game->inventory, 0, sizeof game->inventory);
-    }
-    free(bin);
 }
 
 void rr_api_on_get_password(char *s, void *captures)
 {
     struct rr_game *this = captures;
     strcpy(this->rivet_account.api_password, s);
-
-    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.api_password,
-                      this);
+    this->logged_in = 1;
+    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.api_password, this);
     rr_game_connect_socket(this);
 }
 
@@ -200,7 +196,6 @@ void rr_game_init(struct rr_game *this)
     this->window->h_justify = this->window->v_justify = 1;
     this->window->resizeable = 0;
     this->window->on_event = window_on_event;
-    this->cache.slots_unlocked = 0;
 
     this->inventory[rr_petal_id_basic][rr_rarity_id_common] = 5;
 
@@ -250,7 +245,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 0, 20,
-                            rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "0x4346"),
+                            rr_ui_link_toggle(rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "_0x4346"), simulation_not_ready),
                             rr_ui_join_button_init(),
                             NULL
                         ),
@@ -301,7 +296,7 @@ void rr_game_init(struct rr_game *this)
                                         rr_ui_flex_container_init(
                                             rr_ui_copy_squad_code_button_init(),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                                rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"),
+                                                rr_ui_link_toggle(rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"), simulation_not_ready),
                                                 rr_ui_join_squad_code_button_init(),
                                                 NULL
                                             ),
@@ -482,11 +477,7 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            #ifndef RIVET_BUILD
-            this->inventory[id][rarity] = 1;
-            #else
             this->inventory[id][rarity] = 0;
-            #endif
             this->petal_tooltips[id][rarity] =
                 rr_ui_petal_tooltip_init(id, rarity);
             rr_ui_container_add_element(this->window,
@@ -496,25 +487,12 @@ void rr_game_init(struct rr_game *this)
     }
 
     rr_assets_init(this);
-
-    rr_local_storage_get_bytes("debug",
-                               &this->cache.displaying_debug_information);
-    rr_local_storage_get_bytes("loadout", &this->cache.loadout);
-    rr_local_storage_get_bytes("screen_shake", &this->cache.screen_shake);
-    rr_local_storage_get_bytes("ui_hitboxes", &this->cache.show_ui_hitbox);
-    rr_local_storage_get_bytes("mouse", &this->cache.use_mouse);
-    rr_local_storage_get_bytes("nickname", &this->cache.nickname);
-    rr_local_storage_get_bytes("xp", &this->cache.experience);
-    rr_local_storage_get_bytes("sloc", &this->cache.slots_unlocked);
-
-    rr_local_storage_get_bytes("performance_mode", &this->dev_flag);
-
-    rr_local_storage_get_id_rarity("inventory", &this->inventory[0][0], rr_petal_id_max, rr_rarity_id_max);
-    rr_local_storage_get_id_rarity("mob gallery", &this->cache.mob_kills[0][0], rr_mob_id_max, rr_rarity_id_max);
-    //rr_dom_set_text("name", &this->cache.nickname[0]);
+    rr_game_cache_load(this);
+    rr_dom_set_text("_0x4346", this->cache.nickname);
     // clang-format on
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
+    this->slots_unlocked = RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -626,9 +604,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
-            proto_bug_write_uint8(&encoder2, this->cache.slots_unlocked,
+            proto_bug_write_uint8(&encoder2, this->slots_unlocked,
                                   "loadout count");
-            for (uint32_t i = 0; i < this->cache.slots_unlocked; ++i)
+            for (uint32_t i = 0; i < this->slots_unlocked; ++i)
             {
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
                                       "id");
@@ -786,7 +764,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');
-    for (uint8_t n = 1; n <= this->cache.slots_unlocked; ++n)
+    for (uint8_t n = 1; n <= this->slots_unlocked; ++n)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
                                 '0' + (n % 10)) ||
             switch_all)
@@ -818,29 +796,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     gettimeofday(&start, NULL);
     validate_loadout(this);
 
-    rr_local_storage_store_bytes(
-        "debug", &this->cache.displaying_debug_information,
-        sizeof this->cache.displaying_debug_information);
-    rr_local_storage_store_bytes("loadout", &this->cache.loadout,
-                                 sizeof this->cache.loadout);
-    rr_local_storage_store_bytes("screen_shake", &this->cache.screen_shake,
-                                 sizeof this->cache.screen_shake);
-    rr_local_storage_store_bytes("ui_hitboxes", &this->cache.show_ui_hitbox,
-                                 sizeof this->cache.show_ui_hitbox);
-    rr_local_storage_store_bytes("mouse", &this->cache.use_mouse,
-                                 sizeof this->cache.use_mouse);
-    rr_local_storage_store_bytes("nickname", &this->cache.nickname,
-                                 strlen(&this->cache.nickname[0]));
-    rr_local_storage_store_bytes("xp", &this->cache.experience,
-                                 sizeof this->cache.experience);
-    rr_local_storage_store_bytes("sloc", &this->cache.slots_unlocked,
-                                 sizeof this->cache.slots_unlocked);     
-
-    rr_local_storage_store_id_rarity("inventory", &this->inventory[0][0],
-                                     rr_petal_id_max, rr_rarity_id_max);
-    rr_local_storage_store_id_rarity("mob gallery",
-                                     &this->cache.mob_kills[0][0],
-                                     rr_mob_id_max, rr_rarity_id_max);
+    rr_game_cache_data(this);
 
     double time = start.tv_sec * 1000000 + start.tv_usec;
     rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
@@ -937,7 +893,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     #undef GRID_SIZE
         struct rr_simulation *sim = this->simulation;
         rr_simulation_create_component_vectors(sim);
-        if (this->simulation->petal_count < 25 && rr_frand() < 0.01)
+        if (this->simulation->petal_count < 50 && rr_frand() < 0.015)
         {
             EntityIdx petal_id = rr_simulation_alloc_entity(sim);
             struct rr_component_physical *physical = rr_simulation_add_physical(sim, petal_id);
@@ -952,11 +908,28 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_x = -1200;
             physical->lerp_y = (rr_frand() - 0.5) * this->renderer->height;
             physical->y = physical->lerp_y;
-            petal->id = rand() % 12 + 3;
+            uint32_t sum = 0;
+            for (uint32_t i = 1; i < rr_petal_id_max; ++i)
+                for (uint32_t r = 0; r < rr_rarity_id_max; ++r)
+                    sum += this->inventory[i][r];
+            float seed = rr_frand() * sum;
+            uint8_t id_chosen = 1;
+            for (uint32_t i = 1; i < rr_petal_id_max; ++i)
+            {
+                for (uint32_t r = 0; r < rr_rarity_id_max; ++r)
+                    if ((seed -= this->inventory[i][r]) <= 0)
+                    {
+                        id_chosen = i;
+                        break;
+                    }
+                if (seed < 0)
+                    break;
+            }
+            petal->id = id_chosen;
             physical->velocity.x = rr_frand() * 40 + 80;
             physical->velocity.y = rr_frand() * 5 + 15;
             physical->animation_timer = rr_frand() * M_PI * 2;
-            physical->parent_id = rr_frand() % 2;
+            physical->parent_id = rand() % 3;
         }
         struct rr_renderer_context_state state2;
         for (uint32_t i = 0; i < this->simulation->petal_count; ++i)
@@ -966,7 +939,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_y += physical->velocity.y * delta;
             physical->velocity.y += (physical->y - physical->lerp_y) * delta * 1.25;
             physical->animation_timer += delta;
-            physical->lerp_angle = physical->animation_timer * (2 * (physical->parent_id & 1) - 1);
+            physical->lerp_angle = physical->animation_timer * ((physical->parent_id % 3) - 1);
             rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
             rr_renderer_scale(this->renderer, physical->radius / 10);
@@ -1100,7 +1073,6 @@ void rr_game_connect_socket(struct rr_game *this)
 #ifdef RIVET_BUILD
     rr_rivet_lobbies_find(this);
 #else
-    this->socket.curr_link = "hello";
     this->socket_pending = 1;
     // for testing
     // if (!this->socket.rivet_player_token)
@@ -1132,14 +1104,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     }
     game->socket_pending = 1;
     char link[100];
-    link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s,
-           port)] = 0;
-    if (port == 443)
-        rr_websocket_connect_to(&game->socket, &link[0]);
-    else
-        rr_websocket_connect_to(&game->socket, &link[0]);
-    game->socket.curr_link = s;
-    s[36] = 0;
+    link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port)] = 0;
+    rr_websocket_connect_to(&game->socket, &link[0]);
     memcpy(&game->socket.rivet_player_token[0], token, strlen(token) + 1);
-    free(token);
 }

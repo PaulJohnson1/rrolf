@@ -196,7 +196,6 @@ async function handle_error(res, cb)
     }
     catch (e)
     {
-        console.log(e);
         res.end("\x00" + e.stack);
     }
 }

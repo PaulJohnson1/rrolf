@@ -20,7 +20,7 @@
 #define RR_CLIENTBOUND_SQUAD_FAIL 3
 #define RR_CLIENTBOUND_SQUAD_LEAVE 4
 
-#define RR_LEVELS_PER_EXTRA_SLOT (20)
+#define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
 #define RR_BIOME_COUNT (2)
 #define RR_MAZE_DIM (42)
 #define RR_BURROW_MAZE_DIM (4)
@@ -190,3 +190,4 @@ RR_DECLARE_MAZE(BURROW, RR_BURROW_MAZE_DIM)
 void rr_static_data_init();
 
 double xp_to_reach_level(uint32_t);
+uint32_t level_from_xp(double);

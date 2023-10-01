@@ -42,7 +42,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
     memcpy(rr_simulation_add_flower(this, flower_id)->nickname, player_info->squad_member->nickname, sizeof player_info->squad_member->nickname);
-    rr_component_health_set_max_health(health, 100 * pow(1.02169107605, player_info->level));
+    rr_component_health_set_max_health(health, 100 * pow(1.02169107605, player_info->level > 150 ? 150 : player_info->level));
     rr_component_health_set_health(health, health->max_health);
     health->damage = 10;
     health->damage_paused = 25;

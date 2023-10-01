@@ -31,7 +31,13 @@
         "entityallocation.h": "c",
         "utilities.h": "c",
         "xiosbase": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "locale": "c",
+        "thread": "c",
+        "xlocmes": "c",
+        "xlocmon": "c",
+        "xlocnum": "c",
+        "xloctime": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "C:/rrolf/Client"

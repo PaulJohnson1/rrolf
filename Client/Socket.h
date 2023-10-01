@@ -29,7 +29,6 @@ struct rr_websocket
 #endif
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
-    char *curr_link;
     char rivet_player_token[400];
 };
 

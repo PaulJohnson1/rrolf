@@ -5,11 +5,12 @@
 #endif
 
 #include <Client/Game.h>
-#include <Shared/pb.h>
+#include <Shared/Binary.h>
 
-uint8_t storage_result[16 * 1024] = {0};
+char storage_buf1[8 * 1024] = {0};
+char storage_buf2[8 * 1024] = {0};
 
-uint32_t rr_local_storage_get(char *name)
+uint32_t rr_local_storage_get_string(char *name)
 {
 #ifdef EMSCRIPTEN
     return EM_ASM_INT(
@@ -21,7 +22,7 @@ uint32_t rr_local_storage_get(char *name)
             Module.HEAPU8.set(string, $1);
             return string.length;
         },
-        name, &storage_result);
+        name, storage_buf1);
 #endif
 
     return 0;
@@ -42,44 +43,35 @@ void rr_local_storage_store_string(char *name, char *contents)
 
 void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
 {
+    int new_size = rr_base_64_encode(storage_buf1, bytes, size);
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
             const string = Module.ReadCstr($0);
-            let bytes = HEAPU8.subarray($1, $1 + $2);
-            // clang-format breaks arrow functions into = > and causes a syntax
-            // error in the javascript
+            const bytes = new TextDecoder().decode(HEAPU8.subarray($1, $1 + $2 - 1));
 
-            // clang-format off
-            // size of this localstorage shit literally means exactly nothing.
-            // stuff won't get larger than 100 bytes and if it does, still who
-            // even cares?
-            let hex = [...bytes].map(x => x.toString(16)).join(" ");
-            localStorage[string] = hex;
-            // clang-format on
+            localStorage[string] = bytes;
         },
-        label, bytes, size);
+        label, storage_buf1, new_size);
 #endif
 }
 
 uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
 {
 #ifdef EMSCRIPTEN
-    return EM_ASM_INT(
+    int len = EM_ASM_INT(
         {
             const string = Module.ReadCstr($0);
-            let hex = localStorage[string];
-            if (!hex)
+            let bytes = localStorage[string];
+            if (!bytes)
                 return 0;
-            // clang-format off
-            let bytes = new Uint8Array(hex.split(" ").map(x => parseInt(x, 16)));
-            // clang-format on
-            const len = bytes.length;
-            HEAPU8.set(bytes, $1);
-            return len;
+            HEAPU8.set(new TextEncoder().encode(bytes), $1);
+            return bytes.length;
         },
-        label, bytes);
+        label, storage_buf1);
+    return rr_base_64_decode(bytes, storage_buf1);
 #endif
+    return 0;
 }
 
 void rr_local_storage_store_id_rarity(char *label, uint32_t *start,
@@ -92,38 +84,126 @@ void rr_local_storage_store_id_rarity(char *label, uint32_t *start,
         {
             if (start[id * rarity_count + rarity] == 0)
                 continue;
-            storage_result[at++] = id;
-            storage_result[at++] = rarity;
+            storage_buf2[at++] = id;
+            storage_buf2[at++] = rarity;
             uint32_t amount = start[id * rarity_count + rarity];
             while (amount > 127ull)
             {
-                storage_result[at++] = (amount << 1) | 1;
+                storage_buf2[at++] = (amount << 1) | 1;
                 amount >>= 7ull;
             }
-            storage_result[at++] = amount << 1;
+            storage_buf2[at++] = amount << 1;
         }
     }
-    rr_local_storage_store_bytes(label, &storage_result[0], at);
+    rr_local_storage_store_bytes(label, storage_buf2, at);
 }
 
 void rr_local_storage_get_id_rarity(char *label, uint32_t *start,
                                     uint8_t id_count, uint8_t rarity_count)
 {
-    uint32_t size = rr_local_storage_get_bytes(label, &storage_result[0]);
+    uint32_t size = rr_local_storage_get_bytes(label, storage_buf2);
     uint32_t at = 0;
     while (at < size)
     {
-        uint8_t id = storage_result[at++];
-        uint8_t rarity = storage_result[at++];
+        uint8_t id = storage_buf2[at++];
+        if (id >= id_count)
+            return;
+        uint8_t rarity = storage_buf2[at++];
         uint8_t byte;
         uint32_t count = 0ull;
         uint64_t shift = 0ull;
         do
         {
-            byte = storage_result[at++];
+            byte = storage_buf2[at++];
             count |= ((byte & 254ull) << shift) >> 1;
             shift += 7ull;
         } while (byte & 1ull);
         start[id * rarity_count + rarity] = count;
     }
+}
+
+#define STORE_ID_RARITY(encoder, start, id_count, rarity_count) \
+{ \
+    for (uint8_t id = 0; id < id_count; ++id) \
+    { \
+        for (uint8_t rarity = 0; rarity < rarity_count; ++rarity) \
+        { \
+            if (start[id][rarity] == 0) \
+                continue; \
+            rr_binary_encoder_write_uint8(encoder, id); \
+            rr_binary_encoder_write_uint8(encoder, rarity); \
+            rr_binary_encoder_write_varuint(encoder, start[id][rarity]); \
+        } \
+    } \
+    rr_binary_encoder_write_uint8(encoder, 0); \
+}
+
+#define STORE_LOADOUT \
+{ \
+    for (uint32_t n = 0; n < 20; ++n) \
+    { \
+        if (this->cache.loadout[n].id == 0) \
+            continue; \
+        rr_binary_encoder_write_uint8(&encoder, n + 1); \
+        rr_binary_encoder_write_uint8(&encoder, this->cache.loadout[n].id); \
+        rr_binary_encoder_write_uint8(&encoder, this->cache.loadout[n].rarity); \
+    } \
+    rr_binary_encoder_write_uint8(&encoder, 0); \
+}
+
+#define READ_LOADOUT \
+{ \
+    uint8_t pos = rr_binary_encoder_read_uint8(&decoder); \
+    while (pos && pos <= 20) \
+    { \
+        this->cache.loadout[pos - 1].id = rr_binary_encoder_read_uint8(&decoder); \
+        this->cache.loadout[pos - 1].rarity = rr_binary_encoder_read_uint8(&decoder); \
+        pos = rr_binary_encoder_read_uint8(&decoder); \
+    } \
+}
+
+#define GET_ID_RARITY(encoder, start) \
+{ \
+    uint8_t id = rr_binary_encoder_read_uint8(encoder); \
+    while(id) \
+    { \
+        uint8_t rarity = rr_binary_encoder_read_uint8(encoder); \
+        uint32_t count = rr_binary_encoder_read_varuint(encoder); \
+        start[id][rarity] = count; \
+        id = rr_binary_encoder_read_uint8(encoder); \
+    } \
+}
+
+void rr_game_cache_data(struct rr_game *this)
+{
+    struct rr_binary_encoder encoder;
+    rr_binary_encoder_init(&encoder, (uint8_t *) storage_buf2);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.displaying_debug_information);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.screen_shake);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.show_ui_hitbox);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.use_mouse);
+    rr_binary_encoder_write_nt_string(&encoder, this->cache.nickname);
+    rr_binary_encoder_write_float64(&encoder, this->cache.experience);
+    rr_binary_encoder_write_varuint(&encoder, this->dev_flag);
+    STORE_LOADOUT;
+    STORE_ID_RARITY(&encoder, this->inventory, rr_petal_id_max, rr_rarity_id_max);
+    STORE_ID_RARITY(&encoder, this->cache.mob_kills, rr_mob_id_max, rr_rarity_id_max);
+    rr_local_storage_store_bytes("account_data", encoder.start, encoder.at - encoder.start);
+}
+
+void rr_game_cache_load(struct rr_game *this)
+{
+    struct rr_binary_encoder decoder;
+    rr_local_storage_get_bytes("account_data", storage_buf2);
+    rr_binary_encoder_init(&decoder, (uint8_t *) storage_buf2);
+    this->cache.displaying_debug_information = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.screen_shake = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.show_ui_hitbox = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.use_mouse = rr_binary_encoder_read_uint8(&decoder);
+    rr_binary_encoder_read_nt_string(&decoder, this->cache.nickname);
+    this->cache.experience = rr_binary_encoder_read_float64(&decoder);
+    this->dev_flag = rr_binary_encoder_read_varuint(&decoder);
+    READ_LOADOUT;
+    GET_ID_RARITY(&decoder, this->inventory);
+    GET_ID_RARITY(&decoder, this->cache.mob_kills);
 }

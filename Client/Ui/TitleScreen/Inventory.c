@@ -30,7 +30,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
     {
         if (data->count == 0)
             return;
-        for (uint8_t i = 0; i < game->cache.slots_unlocked; ++i)
+        for (uint8_t i = 0; i < game->slots_unlocked; ++i)
         {
             if (game->cache.loadout[i].id == 0)
             {
@@ -39,7 +39,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
                 return;
             }
         }
-        for (uint8_t i = 10; i < 10 + game->cache.slots_unlocked; ++i)
+        for (uint8_t i = 10; i < 10 + game->slots_unlocked; ++i)
         {
             if (game->cache.loadout[i].id == 0)
             {
@@ -256,7 +256,8 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         else
         {
             game->menu_open = rr_game_menu_inventory;
-            rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.api_password, game);
+            if (game->logged_in)
+                rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.api_password, game);
         }
     }
     else

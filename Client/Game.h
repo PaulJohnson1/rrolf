@@ -45,14 +45,11 @@ struct rr_game_cache
 {
     double experience;
     uint32_t mob_kills[rr_mob_id_max][rr_rarity_id_max];
-    float map_props;
-    float wave_start_percent;
     struct rr_id_rarity_pair loadout[20];
     uint8_t use_mouse;
     uint8_t displaying_debug_information;
     uint8_t show_ui_hitbox;
     uint8_t screen_shake;
-    uint8_t slots_unlocked;
     uint8_t low_performance_mode;
     char nickname[128];
 };
@@ -99,9 +96,11 @@ struct rr_game
     uint8_t simulation_ready : 1;
     uint8_t block_ui_input : 1;
     uint8_t is_mobile : 1;
+    uint8_t logged_in : 1;
     uint8_t menu_open;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;
+    uint8_t slots_unlocked;
 
     uint8_t squad_pos;
     uint8_t squad_private;

@@ -97,6 +97,8 @@ void rr_wheel_event(struct rr_game *this, float delta)
 
 void rr_paste_event(struct rr_game *this, char *buf)
 {
+    if (this->input_data->clipboard)
+        free(this->input_data->clipboard);
     this->input_data->clipboard = buf;
 }
 

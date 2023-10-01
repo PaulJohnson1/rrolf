@@ -312,6 +312,14 @@ double xp_to_reach_level(uint32_t level)
     return base;
 }
 
+uint32_t level_from_xp(double xp)
+{
+    uint32_t level = 1;
+    while (xp >= xp_to_reach_level(level))
+        xp -= xp_to_reach_level(level++);
+    return level;
+}
+
 #ifdef RR_SERVER
 #define c 1
 #define C 4

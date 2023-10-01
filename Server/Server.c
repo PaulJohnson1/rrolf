@@ -48,9 +48,7 @@ static void rr_server_client_create_player_info(struct rr_server *server, struct
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
     rr_component_player_info_set_slot_count(player_info, 10);
     player_info->level = client->level;
-    #define min(a,b) (((a) < (b)) ? (a) : (b))
-    rr_component_player_info_set_slot_count(client->player_info, min(10, 5 + client->level / RR_LEVELS_PER_EXTRA_SLOT));
-    #undef min
+    rr_component_player_info_set_slot_count(client->player_info, RR_SLOT_COUNT_FROM_LEVEL(client->level));
     struct rr_component_arena *arena =
         rr_simulation_get_arena(&server->simulation, 1);
     for (uint64_t i = 0; i < player_info->slot_count; ++i)
@@ -631,15 +629,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 if (strcmp(uuid, client->rivet_account.uuid))
                     break; // fake client
                 double xp = rr_binary_encoder_read_float64(&decoder);
-                uint32_t next_level = 2;
-                while (xp >= xp_to_reach_level(next_level))
-                {
-                    xp -= xp_to_reach_level(next_level);
-                    ++next_level;
-                }
-                #define min(a,b) (((a) < (b)) ? (a) : (b))
-                client->level = min(next_level - 1, 150);
-                #undef min
+                client->level = level_from_xp(xp);
                 printf("reading account %s, client level is %d %f\n", uuid, client->level, xp);
                 uint8_t id = rr_binary_encoder_read_uint8(&decoder);
                 while (id)

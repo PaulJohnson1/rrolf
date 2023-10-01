@@ -41,7 +41,8 @@ void rr_ui_instant_hide_animate(struct rr_ui_element *this, struct rr_game *game
     this->width = this->abs_width * (1 - this->animation);
     this->height = this->abs_height * (1 - this->animation);
     rr_renderer_scale(game->renderer, (1 - this->animation));
-    this->completely_hidden |= !this->should_show(this, game);
+    if (!this->should_show(this, game))
+        this->animation = 1;
 }
 
 

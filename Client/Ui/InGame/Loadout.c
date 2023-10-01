@@ -79,7 +79,7 @@ title_screen_loadout_button_should_show(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     return !game->simulation_ready &&
-           data->pos % 10 < game->cache.slots_unlocked;
+           data->pos % 10 < game->slots_unlocked;
 }
 
 static void title_screen_loadout_button_animate(struct rr_ui_element *this,

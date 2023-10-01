@@ -104,3 +104,15 @@ void rr_binary_encoder_write_nt_string(struct rr_binary_encoder *this, char *buf
     }
     rr_binary_encoder_write_uint8(this, 0);
 }
+
+void rr_binary_encoder_write_float32(struct rr_binary_encoder *this, float data)
+{
+    memcpy(this->at, &data, sizeof data);
+    this->at += sizeof data;
+}
+
+void rr_binary_encoder_write_float64(struct rr_binary_encoder *this, double data)
+{
+    memcpy(this->at, &data, sizeof data);
+    this->at += sizeof data;
+}

@@ -77,25 +77,16 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 let socket = Module.socket =
                     new WebSocket(string);
                 socket.binaryType = "arraybuffer";
-                socket.onopen = function()
-                {
+                socket.onopen = function() {
                     Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
                 };
-                socket.onclose = function(a, b)
-                {
-                    console.log("close", a, b);
-                    if (a.reason === 'invalid v\x00')
-                        location.reload(true);
+                socket.onclose = function(a) {
                     Module._rr_on_socket_event_emscripten($0, 1, 0, a.code);
-                };
-                socket.onerror = function(a, b) { 
-                    console.log("error", a, b); 
                 };
                 socket.onmessage = function(event)
                 {
                     Module.HEAPU8.set(new Uint8Array(event.data), $2);
-                    Module._rr_on_socket_event_emscripten(
-                        $0, 2, $2, new Uint8Array(event.data).length);
+                    Module._rr_on_socket_event_emscripten($0, 2, $2, new Uint8Array(event.data).length);
                 };
             })();
         },
@@ -139,8 +130,6 @@ void rr_websocket_disconnect(struct rr_websocket *this, struct rr_game *game)
     });
 #else
 #endif
-    //free(this->rivet_player_token);
-    free(this->curr_link);
     game->socket_ready = 0;
     game->simulation_ready = 0;
     game->joined_squad = 0;

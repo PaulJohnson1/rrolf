@@ -17,12 +17,7 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     double xp = game->cache.experience;
-    uint32_t next_level = 2;
-    while (xp >= xp_to_reach_level(next_level))
-    {
-        xp -= xp_to_reach_level(next_level);
-        ++next_level;
-    }
+    uint32_t next_level = level_from_xp(xp) + 1;
     if (data->lerp_xp == 0 && data->level == 0)
     {
         data->lerp_xp = xp;
@@ -49,9 +44,6 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
             }
         }
     }
-    #define min(a,b) (((a) < (b)) ? (a) : (b))
-    game->cache.slots_unlocked = min(5 + data->level / RR_LEVELS_PER_EXTRA_SLOT,10);
-    #undef min
     double ratio = data->lerp_xp / xp_to_reach_level(data->level + 1);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_line_cap(renderer, 1);

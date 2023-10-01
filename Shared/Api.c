@@ -55,6 +55,7 @@ void rr_api_get_petals(char const *param_1, char const *param_2, void *captures)
                     const $a = _malloc(data.length);
                     HEAPU8.set(data, $a);
                     Module._rr_api_on_get_petals($a, $2);
+                    _free($a);
                 });
         },
         param_1, param_2, captures, RR_BASE_API_URL);
@@ -87,6 +88,7 @@ void rr_api_craft_petals(char const *param_1, char const *param_2,
                     const $a = _malloc(data.length);
                     HEAPU8.set(data, $a);
                     Module._rr_api_on_craft_result($a, $3);
+                    _free($a);
                 });
         },
         param_1, param_2, param_3, captures, RR_BASE_API_URL);
@@ -103,7 +105,8 @@ void rr_api_get_password(char const *token, void *captures)
                     for (let i = 0; i < pw.length; i++)
                         HEAPU8[$pw + i] = pw[i].charCodeAt();
                     HEAPU8[$pw + pw.length] = 0;
-                    Module._rr_api_on_get_password($pw, $2);         
+                    Module._rr_api_on_get_password($pw, $2);
+                    _free($pw);         
                 });
         }, RR_BASE_API_URL, token, captures
     );
@@ -129,7 +132,6 @@ void rr_api_get_server_alias(char const *param_1, void *game)
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
-                    console.log("join with: ", json);
                     const host = json.ports.default.hostname;
                     const token = "Bearer " + json.player.token;
                     const $host = _malloc(host.length + 1);
@@ -140,8 +142,9 @@ void rr_api_get_server_alias(char const *param_1, void *game)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find(
-                        $host, $token, json.ports.default.port, $2);
+                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
+                    _free($host);
+                    _free($token);
                 })
                 .catch(function(error) {
                     Module._rr_rivet_lobby_on_find(0, 0, 0, $2);

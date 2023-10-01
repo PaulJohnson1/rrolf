@@ -69,7 +69,7 @@ void rr_api_on_craft_result(char *bin, void *_captures)
     rr_binary_encoder_init(&decoder, (uint8_t *) bin);
     if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
     {
-        puts("api serverside error");
+        puts("<rr_api::serverside_error>");
         return;
     }
     uint8_t id = rr_binary_encoder_read_uint8(&decoder);
@@ -84,15 +84,13 @@ void rr_api_on_craft_result(char *bin, void *_captures)
         game->crafting_data.success_count = successes;
         id = rr_binary_encoder_read_uint8(&decoder);
     }
-    printf("you gained %f xp\n", rr_binary_encoder_read_float64(&decoder));
-    //game->cache.experience += rr_binary_encoder_read_float64(&decoder);
-    free(bin);
+    game->cache.experience += rr_binary_encoder_read_float64(&decoder);
 }
 
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
-    if (game->pressed != this)
+    if (game->pressed != this || !game->logged_in)
         return;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
         game->crafting_data.animation == 0)
@@ -573,11 +571,9 @@ struct rr_ui_element *rr_ui_crafting_container_init()
                         rr_ui_container_init(), 0, 25,
                         rr_ui_v_container_init(
                             rr_ui_container_init(), 0, 10,
-                            rr_ui_static_space_init(14),
-                            rr_ui_text_init(
-                                "                                   ", 14,
-                                0x00000000),
-                            crafting_button_init(), crafting_chance_text_init(),
+                            rr_ui_static_space_init(38),
+                            crafting_button_init(), 
+                            crafting_chance_text_init(),
                             crafting_xp_text_init(), NULL),
                         craft, NULL),
                     rr_ui_scroll_container_init(this, 300), NULL),

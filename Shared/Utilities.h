@@ -28,6 +28,9 @@ float rr_angle_lerp(float, float, float);
 float rr_frand();
 float rr_fclamp(float, float, float);
 
+int rr_base_64_decode(char *, const char *);
+int rr_base_64_encode(char *, const char *, int);
+
 #define RR_CONCAT(a, b) a ## b
 #define RR_REPEAT(count, macro) RR_CONCAT(RR_REPEAT, count)(macro)
 

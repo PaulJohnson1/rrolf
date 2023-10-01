@@ -118,7 +118,7 @@ void rr_rivet_players_disconnected(char const *lobby_token,
 
 void rr_rivet_lobbies_find(void *captures)
 {
-    puts("finding rivet lobby");
+    puts("<rr_rivet::lobby_find>");
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
@@ -148,6 +148,8 @@ void rr_rivet_lobbies_find(void *captures)
                         HEAPU8[$token + token.length] = 0;
                         Module._rr_rivet_lobby_on_find(
                             $host, $token, json.ports.default.port, $0);
+                        _free($host);
+                        _free($token);
                     })
                     .catch(function(error) {
                         if (d == 3)
@@ -164,7 +166,7 @@ void rr_rivet_lobbies_find(void *captures)
 
 void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
 {
-    puts("finding rivet lobby");
+    printf("<rr_rivet::lobby_join::%s>\n", lobby_id);
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
@@ -180,7 +182,6 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
-                    console.log("join with: ", json);
                     const host = json.ports.default.hostname;
                     const token = "Bearer " + json.player.token;
                     const $host = _malloc(host.length + 1);
@@ -191,8 +192,9 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find(
-                        $host, $token, json.ports.default.port, $0);
+                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
+                    _free($host);
+                    _free($token);
                 })
                 .catch(function(error) {
                     Module._rr_rivet_lobby_on_find(0, 0, 0, $0);
@@ -204,7 +206,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
 
 void rr_rivet_link_account(char *game_user, void *captures)
 {
-    puts("account linking initiated");
+    puts("<rr_rivet::account_link>");
 #ifdef EMSCRIPTEN
     // clang-format off
     EM_ASM(
@@ -226,15 +228,14 @@ void rr_rivet_link_account(char *game_user, void *captures)
                     h.then(h => h.json()).then(newer => {
                         if (newer.status == "incomplete")
                         {
-                            console.log("not linked yet, checking again");
+                            console.log("<not linked yet, checking again>");
                             let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r.identity_link_token + "&watch_index=" + newer.watch.index);
                             handle(h);
                         }
                         if (newer.status == "cancelled")
-                            console.log("cancelled linking");
+                            console.log("<cancelled linking>");
                         if (newer.status == "complete")
                         {
-                            console.log(newer);
                             fetch(api + "account_link/" +
                                 newer.current_identity.identity_id + "/" +
                                 localStorage.DO_NOT_SHARE_rivet_account_token + "/" +
@@ -245,7 +246,7 @@ void rr_rivet_link_account(char *game_user, void *captures)
                                 localStorage.old_account_uuid = newer.current_identity.identity_id;
                                 localStorage.DO_NOT_SHARE_old_rivet_account_token = localStorage.DO_NOT_SHARE_rivet_account_token;
                                 localStorage.DO_NOT_SHARE_rivet_account_token = newer.new_identity.identity_token;
-                                console.log("completed linking stage");
+                                console.log("<completed linking stage>");
                                 location.reload(false);
                             });
                         }
@@ -263,7 +264,7 @@ void rr_rivet_link_account(char *game_user, void *captures)
 
 void rr_rivet_identities_create_guest(void *captures)
 {
-    puts("making guest or logging in");
+    puts("<rr_rivet::attempt_login>");
 #ifdef EMSCRIPTEN
     // clang-format off
     EM_ASM({
@@ -291,13 +292,17 @@ void rr_rivet_identities_create_guest(void *captures)
             for (let i = 0; i < 5; i++)
                 HEAPU8[$account_number + i] = ("#" + x.identity.account_number.toString().padStart(4, "0"))[i].charCodeAt();
             Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
+            _free($uuid);
+            _free($token);
+            _free($avatar_url);
+            _free($name);
+            _free($account_number);
         }
 
         function attempt(x)
         {
             if (!localStorage.getItem(x))
             {
-                console.log("signing up rivet guest account");
                 fetch("https://identity.api.rivet.gg/v1/identities", {
                     method: "POST",
                     body: "{}",
@@ -309,13 +314,11 @@ void rr_rivet_identities_create_guest(void *captures)
                 .then(r => {
                     localStorage[x] = r.identity_token;
                     localStorage["rivet_account_uuid"] = r.identity.identity_id;
-                    console.log("new rivet account created");
                     on_account(r);
                 });
             }
             else
             {
-                console.log("logging in");
                 fetch("https://identity.api.rivet.gg/v1/identities", {
                     method: "POST",
                     body: JSON.stringify({
@@ -329,25 +332,13 @@ void rr_rivet_identities_create_guest(void *captures)
                 .then(r => {
                     if (r.code == "ERROR")
                         throw r;
-                    console.log("logged in");
                     localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
                     if (!localStorage["rivet_account_uuid"])
                         localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     on_account(r);
                 }).catch(function(e)
                 {
-                    console.log(e);
-                    /*
-                    //localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
-                    const r = confirm("Login failed: please reload. Optionally, click OK to reset your token.\nNOTE: YOUR ACCOUNT WILL BE LOST UNLESS YOU SAVE YOUR TOKEN.\nDO NOT SHARE IT WITH ANYONE ELSE: your token is " + localStorage["DO_NOT_SHARE_rivet_account_token"] + "\n");
-                    //location.reload()
-                    if (r) {
-                        localStorage["DO_NOT_SHARE_rivet_account_token2_backup"] = localStorage["DO_NOT_SHARE_rivet_account_token"];
-                        localStorage["DO_NOT_SHARE_rivet_account_token"] = "";
-                    }
-                    */
                    alert("Login failed: please reload");
-                    //location.reload();
                 });
             };
         };
