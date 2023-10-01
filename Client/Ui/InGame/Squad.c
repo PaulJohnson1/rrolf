@@ -68,8 +68,6 @@ static void player_hud_on_render(struct rr_ui_element *this,
                                       game->player_infos[data->pos]);
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    printf("helfasdsd %u\n", player_info->flower_id);
-    printf("%d %d\n", rr_simulation_has_entity(game->simulation, player_info->flower_id));
     if (player_info->flower_id == RR_NULL_ENTITY)
     {
         float length = this->abs_width / 2;

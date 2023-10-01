@@ -20,12 +20,9 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
-    if (rr_simulation_get_relations(simulation, entity)->team ==
-        rr_simulation_team_id_mobs)
-    {
-        rr_renderer_scale(renderer,
-                          RR_MOB_RARITY_SCALING[petal->rarity].radius);
-    }
+    
+    if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_mobs)
+        rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[petal->rarity].radius);
     /*
     if (rr_frand() < 0.5) {
         struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);

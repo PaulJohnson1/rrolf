@@ -5,12 +5,17 @@
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
+#define IMAGE_SIZE (200.0f)
 struct rr_renderer petal_cache;
 
 void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t flags)
 {
     if (flags & 1)
-        rr_renderer_draw_clipped_image(renderer, &petal_cache, 25 + 50 * id, 25, 50, 50, 0, 0);
+    {
+        rr_renderer_scale(renderer, 50 / IMAGE_SIZE);
+        rr_renderer_draw_clipped_image(renderer, &petal_cache, IMAGE_SIZE / 2 + IMAGE_SIZE * id, IMAGE_SIZE / 2, IMAGE_SIZE, IMAGE_SIZE, 0, 0);
+        rr_renderer_scale(renderer, IMAGE_SIZE / 50);
+    }
     else
     {
         switch (id)
@@ -1386,14 +1391,15 @@ void rr_renderer_draw_petal_with_name(struct rr_renderer *renderer, uint8_t id, 
 void rr_renderer_petal_cache_init()
 {
     rr_renderer_init(&petal_cache);
-    rr_renderer_set_dimensions(&petal_cache, 50 * rr_petal_id_max, 50);
-    rr_renderer_translate(&petal_cache, 25, 25);
+    rr_renderer_set_dimensions(&petal_cache, IMAGE_SIZE * rr_petal_id_max, IMAGE_SIZE);
+    rr_renderer_translate(&petal_cache, IMAGE_SIZE / 2, IMAGE_SIZE / 2);
     struct rr_renderer_context_state state;
     for (uint32_t i = 0; i < rr_petal_id_max; ++i)
     {
         rr_renderer_context_state_init(&petal_cache, &state);
+        rr_renderer_scale(&petal_cache, 4);
         rr_renderer_draw_petal(&petal_cache, i, 0);
         rr_renderer_context_state_free(&petal_cache, &state);
-        rr_renderer_translate(&petal_cache, 50, 0);
+        rr_renderer_translate(&petal_cache, IMAGE_SIZE, 0);
     }
 }

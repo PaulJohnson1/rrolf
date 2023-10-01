@@ -584,7 +584,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
         case RR_CLIENTBOUND_UPDATE:
             if (!this->simulation_ready)
+            {
                 rr_simulation_init(this->simulation);
+                rr_simulation_init(this->deletion_simulation);
+            }
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
             break;
@@ -596,6 +599,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 memset(&this->squad_members[0], 0, sizeof this->squad_members);
             this->socket.found_error = 0;
             this->joined_squad = 1;
+            if (this->simulation_ready)
+                rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
             for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             {
@@ -857,12 +862,9 @@ void rr_game_tick(struct rr_game *this, float delta)
             // screen shake
             rr_renderer_context_state_init(this->renderer, &state1);
             struct rr_component_player_info *player_info = this->player_info;
-            rr_renderer_translate(this->renderer, this->renderer->width / 2,
-                                  this->renderer->height / 2);
-            rr_renderer_scale(this->renderer, player_info->lerp_camera_fov *
-                                                  this->renderer->scale);
-            rr_renderer_translate(this->renderer, -player_info->lerp_camera_x,
-                                  -player_info->lerp_camera_y);
+            rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
+            rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
+            rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
 
             if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
@@ -875,7 +877,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                                           r * sinf(a));
                 }
             }
-            rr_component_arena_render(1, this, this->simulation);
+            rr_component_arena_render(player_info->arena, this, this->simulation);
 
             #define render_component(COMPONENT) \
                 for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
@@ -896,29 +898,86 @@ void rr_game_tick(struct rr_game *this, float delta)
     }
     else
     {
-        // render background but different
-        struct rr_component_player_info custom_player_info;
-        rr_component_player_info_init(&custom_player_info, 0);
-        custom_player_info.lerp_camera_fov = 0.9;
-        uint32_t alpha = (uint32_t)(0.9 * 51) << 24;
-        struct rr_renderer_context_state state;
-        rr_renderer_context_state_init(this->renderer, &state);
-        rr_renderer_set_transform(this->renderer, 1, 0, 0, 0, 1, 0);
-        rr_renderer_set_fill(this->renderer, 0xff45230a);
-        rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
-                              this->renderer->height);
-        rr_renderer_set_fill(this->renderer, alpha);
-        rr_renderer_fill_rect(this->renderer, 0, 0, this->renderer->width,
-                              this->renderer->height);
-        rr_renderer_context_state_free(this->renderer, &state);
-        rr_renderer_context_state_init(this->renderer, &state);
+        struct rr_renderer_context_state state1;
+        rr_renderer_context_state_init(this->renderer, &state1);
+        rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
+        rr_renderer_scale(this->renderer, 1 * this->renderer->scale);
+        rr_renderer_translate(this->renderer, -0, -0);
+        double scale = 1 * this->renderer->scale;
+        double leftX =
+            0 - this->renderer->width / (2 * scale);
+        double rightX =
+            0 + this->renderer->width / (2 * scale);
+        double topY =
+            0 - this->renderer->height / (2 * scale);
+        double bottomY =
+            0 + this->renderer->height / (2 * scale);
 
-        rr_renderer_translate(this->renderer, this->renderer->width * 0.5f,
-                              this->renderer->height * 0.5f);
-        rr_renderer_scale(this->renderer, this->renderer->scale);
-        rr_renderer_context_state_free(this->renderer, &state);
-        rr_component_player_info_free(&custom_player_info, 0);
-        this->player_info = NULL;
+    #define GRID_SIZE (512.0f)
+        double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
+        double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
+        for (; newLeftX < rightX; newLeftX += GRID_SIZE)
+        {
+            for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
+            {
+                uint32_t tile_index = rr_get_hash((uint32_t)(((newLeftX + 8192) / GRID_SIZE + 1) *
+                                                ((currY + 8192) / GRID_SIZE + 2))) % 3;
+                struct rr_renderer_context_state state;
+                rr_renderer_context_state_init(this->renderer, &state);
+                rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
+                                    currY + GRID_SIZE / 2);
+                rr_renderer_scale(this->renderer, (GRID_SIZE + 2) / 256);
+                if (this->selected_biome == 0)
+                    rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
+                else
+                    rr_renderer_draw_tile_garden(this->renderer, tile_index);
+                rr_renderer_context_state_free(this->renderer, &state);
+            }
+        }
+    #undef GRID_SIZE
+        struct rr_simulation *sim = this->simulation;
+        rr_simulation_create_component_vectors(sim);
+        if (this->simulation->petal_count < 25 && rr_frand() < 0.01)
+        {
+            EntityIdx petal_id = rr_simulation_alloc_entity(sim);
+            struct rr_component_physical *physical = rr_simulation_add_physical(sim, petal_id);
+            struct rr_component_petal *petal = rr_simulation_add_petal(sim, petal_id);
+            struct rr_component_relations *relations = rr_simulation_add_relations(sim, petal_id);
+            struct rr_component_health *health = rr_simulation_add_health(sim, petal_id);
+            rr_component_physical_init(physical, sim);
+            rr_component_petal_init(petal, sim);
+            rr_component_relations_init(relations, sim);
+            rr_component_health_init(health, sim);
+            physical->radius = rr_frand() * 15 + 5;
+            physical->lerp_x = -1200;
+            physical->lerp_y = (rr_frand() - 0.5) * this->renderer->height;
+            physical->y = physical->lerp_y;
+            petal->id = rand() % 12 + 3;
+            physical->velocity.x = rr_frand() * 10 + 80;
+            physical->velocity.y = rr_frand() * 5 + 15;
+            physical->animation_timer = rr_frand() * M_PI * 2;
+        }
+        struct rr_renderer_context_state state2;
+        for (uint32_t i = 0; i < this->simulation->petal_count; ++i)
+        {
+            struct rr_component_physical *physical = rr_simulation_get_physical(sim, this->simulation->petal_vector[i]);
+            physical->lerp_x += physical->velocity.x * delta;
+            physical->lerp_y += physical->velocity.y * delta;
+            physical->velocity.y += (physical->y - physical->lerp_y) * delta * 1.25;
+            physical->animation_timer += delta;
+            physical->lerp_angle = physical->animation_timer;
+            rr_renderer_context_state_init(this->renderer, &state2);
+            rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
+            rr_renderer_scale(this->renderer, physical->radius / 10);
+            rr_component_petal_render(this->simulation->petal_vector[i], this, sim);
+            rr_renderer_context_state_free(this->renderer, &state2);
+            if (physical->lerp_x > 1000)
+            {
+                __rr_simulation_pending_deletion_free_components(this->simulation->petal_vector[i], sim);
+                __rr_simulation_pending_deletion_unset_entity(this->simulation->petal_vector[i], sim);
+            }
+        }
+        rr_renderer_context_state_free(this->renderer, &state1);
     }
     // ui
     this->crafting_data.animation -= delta;
@@ -1031,7 +1090,6 @@ void rr_game_tick(struct rr_game *this, float delta)
 
 void rr_game_connect_socket(struct rr_game *this)
 {
-    memset(this->simulation, 0, sizeof *this->simulation);
     this->socket_ready = 0;
     this->simulation_ready = 0;
     rr_websocket_init(&this->socket);
