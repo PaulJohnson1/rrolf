@@ -54,15 +54,13 @@ void rr_component_mob_free(struct rr_component_mob *this,
     uint8_t spawn_rarities[4] = {};
     uint8_t count = 0;
     uint8_t can_be_picked_up_by[RR_BITSET_ROUND(RR_SQUAD_COUNT + 1)];
+
     if (rr_simulation_has_arena(simulation, this->parent_id))
-    {
         rr_bitset_set(can_be_picked_up_by, rr_simulation_get_arena(simulation, this->parent_id)->first_squad_to_enter);
-    }
     else 
-    {
         for (uint32_t i = 0; i < RR_SQUAD_COUNT + 1; ++i)
             rr_bitset_maybe_set(can_be_picked_up_by, i, this->squad_damage_counter[i] > RR_MOB_DATA[this->id].health * RR_MOB_RARITY_SCALING[this->rarity].health * 0.1);
-    }
+
     for (uint64_t i = 0; i < 4; ++i)
     {
         if (RR_MOB_DATA[this->id].loot[i].id == 0)
@@ -111,8 +109,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_component_drop_set_id(drop, spawn_ids[i]);
         rr_component_drop_set_rarity(drop, spawn_rarities[i]);
 
-        rr_component_relations_set_team(relations,
-                                        rr_simulation_team_id_players);
+        rr_component_relations_set_team(relations, rr_simulation_team_id_players);
         drop->ticks_until_despawn = 25 * 10 * (spawn_rarities[i] + 1);
         memcpy(drop->can_be_picked_up_by, can_be_picked_up_by, sizeof can_be_picked_up_by);
         drop_physical->arena = physical->arena;

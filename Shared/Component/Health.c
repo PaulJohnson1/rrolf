@@ -75,7 +75,7 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
         return;
     if (rr_simulation_get_relations(simulation, from)->team != rr_simulation_team_id_players)
         return;
-    EntityIdx p_info_id = rr_simulation_get_relations(simulation, from)->root_owner;
+    EntityHash p_info_id = rr_simulation_get_relations(simulation, from)->root_owner;
     if (!rr_simulation_entity_alive(simulation, p_info_id))
         return;
     if (!rr_simulation_has_player_info(simulation, p_info_id))
