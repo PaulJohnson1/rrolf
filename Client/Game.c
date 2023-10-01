@@ -953,9 +953,10 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_y = (rr_frand() - 0.5) * this->renderer->height;
             physical->y = physical->lerp_y;
             petal->id = rand() % 12 + 3;
-            physical->velocity.x = rr_frand() * 10 + 80;
+            physical->velocity.x = rr_frand() * 40 + 80;
             physical->velocity.y = rr_frand() * 5 + 15;
             physical->animation_timer = rr_frand() * M_PI * 2;
+            physical->parent_id = rr_frand() % 2;
         }
         struct rr_renderer_context_state state2;
         for (uint32_t i = 0; i < this->simulation->petal_count; ++i)
@@ -965,7 +966,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_y += physical->velocity.y * delta;
             physical->velocity.y += (physical->y - physical->lerp_y) * delta * 1.25;
             physical->animation_timer += delta;
-            physical->lerp_angle = physical->animation_timer;
+            physical->lerp_angle = physical->animation_timer * (2 * (physical->parent_id & 1) - 1);
             rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
             rr_renderer_scale(this->renderer, physical->radius / 10);
