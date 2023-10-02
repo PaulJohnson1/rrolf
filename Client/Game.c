@@ -1062,7 +1062,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->clipboard = NULL;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    puts(this->rivet_player_token);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
