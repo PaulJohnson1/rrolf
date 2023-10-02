@@ -1020,15 +1020,15 @@ void rr_game_tick(struct rr_game *this, float delta)
                 frame_max = f_t;
         }
 
-        debug_mspt[sprintf(
+        sprintf(
             debug_mspt,
             "tick time (avg/max): %.1f/%.1f | frame time (avg/max): %.1f/%.1f",
             tick_sum * 0.001f / RR_DEBUG_POLL_SIZE, tick_max * 0.001f,
-            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f)] = 0;
+            frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f);
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        debug_mspt[sprintf(debug_mspt, "ctx calls: %d",
-                           rr_renderer_get_op_size())] = 0;
+        sprintf(debug_mspt, "ctx calls: %d",
+                           rr_renderer_get_op_size());
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
@@ -1104,7 +1104,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     }
     game->socket_pending = 1;
     char link[100];
-    link[sprintf(&link[0], "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port)] = 0;
+    sprintf(link, "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port);
     rr_websocket_connect_to(&game->socket, &link[0]);
     memcpy(&game->socket.rivet_player_token[0], token, strlen(token) + 1);
 }

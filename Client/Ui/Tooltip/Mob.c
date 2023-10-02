@@ -9,6 +9,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
+#include <Shared/Utilities.h>
 #include <Shared/StaticData.h>
 
 static void inventory_button_on_render(struct rr_ui_element *this,
@@ -37,13 +38,9 @@ static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)
 struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
 {
     char *hp = malloc((sizeof *hp) * 16);
-    hp[sprintf(hp, "%.1f",
-               RR_MOB_DATA[id].health * RR_MOB_RARITY_SCALING[rarity].health)] =
-        0;
+    rr_sprintf(hp, RR_MOB_DATA[id].health * RR_MOB_RARITY_SCALING[rarity].health);
     char *dmg = malloc((sizeof *dmg) * 16);
-    dmg[sprintf(dmg, "%.1f",
-                RR_MOB_DATA[id].damage *
-                    RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+    rr_sprintf(dmg, RR_MOB_DATA[id].damage * RR_MOB_RARITY_SCALING[rarity].damage);
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_tooltip_container_init(), 10, 5,
@@ -68,8 +65,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_pteranodon)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 8 *
-                          RR_MOB_RARITY_SCALING[rarity].health)] = 0;
+        rr_sprintf(extra, 8 * RR_MOB_RARITY_SCALING[rarity].health);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -78,8 +74,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        extra[sprintf(extra, "%.1f", 8 *
-                          RR_MOB_RARITY_SCALING[rarity].damage)] = 0;
+        rr_sprintf(extra, 8 * RR_MOB_RARITY_SCALING[rarity].damage);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -119,11 +114,11 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
             char *d = malloc((sizeof *d) * 12);
             float pct = 100 * chance;
             if (pct > 0.1)
-                d[sprintf(d, "%.1f%%", pct)] = 0;
+                sprintf(d, "%.1f%%", pct);
             else if (pct > 0.01)
-                d[sprintf(d, "%.2f%%", pct)] = 0;
+                sprintf(d, "%.2f%%", pct);
             else if (pct > 0.001)
-                d[sprintf(d, "%.3f%%", pct)] = 0;
+                sprintf(d, "%.3f%%", pct);
             rr_ui_container_add_element(
                 temp, rr_ui_v_container_init(
                           rr_ui_container_init(), 0, 5,

@@ -241,12 +241,12 @@ extern "C"
         uint64_t magic = proto_bug_read_uint64_internal(self);
         if (magic != 0x1234567890abcdefull)
         {
-            assertion_fail_message[sprintf(
+            sprintf(
                 assertion_fail_message,
                 "proto_bug exception: read invalid data (maybe OOB)\n"
                 "invalid read at: %s:%u\n"
                 "expected: %llX; encountered: %" PRIX64 "\n",
-                file, line, 0x1234567890abcdefull, magic)] = 0;
+                file, line, 0x1234567890abcdefull, magic);
 
             fputs(assertion_fail_message, stderr);
             abort();
@@ -262,7 +262,7 @@ extern "C"
         uint32_t received_line = proto_bug_read_varuint_internal(self);
         if ((received_encoding_type != expected_encoding_type) || (strcmp(received_name, name)))
         {
-            assertion_fail_message[sprintf(
+            sprintf(
                 assertion_fail_message,
                 "proto_bug exception: read/write debug information does not "
                 "match.\n"
@@ -270,7 +270,7 @@ extern "C"
                 "encountered: encoding_type: %s\tname: %s\twritten_at: %s:%u\n",
                 get_encoding_type_string(expected_encoding_type), name, file,
                 line, get_encoding_type_string(received_encoding_type),
-                received_name, received_file, received_line)] = 0;
+                received_name, received_file, received_line);
 
             fputs(assertion_fail_message, stderr);
             abort();

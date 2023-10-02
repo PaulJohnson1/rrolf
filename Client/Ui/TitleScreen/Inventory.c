@@ -129,7 +129,7 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
 
     char out[12];
-    out[sprintf(&out[0], "x%d", data->count)] = 0;
+    sprintf(&out[0], "x%d", data->count);
     rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }

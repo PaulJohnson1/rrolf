@@ -276,7 +276,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // Read uuid
             proto_bug_read_string(&encoder, client->rivet_account.uuid,
                                   100, "rivet uuid");
-            //puts(client->rivet_account.uuid);
+
 #ifdef RIVET_BUILD
             for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
             {
@@ -311,10 +311,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
 #endif
-            //struct rr_api_account account = {0};
-            //rr_api_on_open(client->rivet_account.uuid, &account);
-
-            //client->max_wave = account.maximum_wave;
 
             printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);
             struct rr_binary_encoder encoder;
@@ -783,7 +779,7 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_uint8(&encoder, squad->private, "private");
                 proto_bug_write_uint8(&encoder, this->biome, "biome");
                 char joined_code[16];
-                joined_code[sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code)] = 0;
+                sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code);
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
                 rr_server_client_encrypt_message(client, encoder.start,
                                                 encoder.current - encoder.start);

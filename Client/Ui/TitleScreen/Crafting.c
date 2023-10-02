@@ -48,12 +48,9 @@ struct craft_captures
 
 void rr_api_on_craft_result(char *bin, void *_captures)
 {
-    // parse format of type delta_xp|id:rarity:count,id:rarity:count
-    // and if it's the same id:rarity as the petal that is being crafted, reset
-    // the animation and set the success count
+
     struct craft_captures *captures = _captures;
     struct rr_game *game = captures->game;
-    // struct rr_game_crafting_data *craft = &captures->craft;
     struct rr_game_crafting_data *craft = &game->crafting_data;
 
     craft->animation = 0;
@@ -201,7 +198,7 @@ static void crafting_ring_petal_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
 
     char out[12];
-    out[sprintf(&out[0], "x%d", data->count)] = 0;
+    sprintf(&out[0], "x%d", data->count);
     rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }
@@ -293,7 +290,7 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
 
     char out[12];
-    out[sprintf(&out[0], "x%d", game->crafting_data.success_count)] = 0;
+    sprintf(&out[0], "x%d", game->crafting_data.success_count);
     rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }
@@ -511,7 +508,7 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
 
     char out[12];
-    out[sprintf(&out[0], "x%d", data->count)] = 0;
+    sprintf(&out[0], "x%d", data->count);
     rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }

@@ -21,6 +21,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(struct rr_vector lerp_velocity;)
     RR_SERVER_ONLY(struct rr_vector collision_velocity;) //used for collision resolution calcs. bypasses all speed modifie
     RR_SERVER_ONLY(struct rr_vector acceleration;)
+    RR_SERVER_ONLY(struct rr_vector wall_collision;) //wall collision angle. can be used to bounce off walls
     RR_SERVER_ONLY(float mass;)
     RR_SERVER_ONLY(float knockback_scale;)
     RR_SERVER_ONLY(float friction;)

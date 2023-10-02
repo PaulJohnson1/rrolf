@@ -27,6 +27,7 @@ float rr_lerp(float, float, float);
 float rr_angle_lerp(float, float, float);
 float rr_frand();
 float rr_fclamp(float, float, float);
+char *rr_sprintf(char *, double);
 
 int rr_base_64_decode(char *, const char *);
 int rr_base_64_encode(char *, const char *, int);

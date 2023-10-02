@@ -8,6 +8,7 @@
 #include <sys/time.h>
 
 #include <Server/EntityAllocation.h>
+#include <Server/EntityDetection.h>
 #include <Server/SpatialHash.h>
 #include <Server/System/System.h>
 #include <Server/Waves.h>
@@ -59,6 +60,43 @@ void rr_simulation_init(struct rr_simulation *this)
 #undef XX
 }
 
+struct too_close_captures
+{
+    struct rr_simulation *simulation;
+    float x;
+    float y;
+    float closest_dist;
+    uint8_t done;
+};
+
+static void too_close_cb(EntityIdx potential, void *_captures)
+{
+    struct too_close_captures *captures = _captures;
+    if (captures->done)
+        return;
+    struct rr_simulation *simulation = captures->simulation;
+    if (!rr_simulation_has_mob(simulation, potential) && !rr_simulation_has_flower(simulation, potential) || rr_simulation_has_arena(simulation, potential))
+        return;
+    if (rr_simulation_get_relations(simulation, potential)->team == rr_simulation_team_id_mobs)
+        return;
+    if (rr_simulation_get_health(simulation, potential)->health == 0)
+        return;
+    struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
+    struct rr_vector delta = {captures->x - t_physical->x, captures->y - t_physical->y};
+    float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius;
+    if (dist > captures->closest_dist)
+        return;
+    captures->done = 1;
+}
+
+static int too_close(struct rr_simulation *this, float x, float y, float r)
+{
+    struct too_close_captures shg_captures = {this, x, y, r, 0};
+    struct rr_spatial_hash *shg = &rr_simulation_get_arena(this, 1)->spatial_hash;
+    rr_spatial_hash_query(shg, x, y, r, r, &shg_captures, too_close_cb);
+    return shg_captures.done;
+}
+
 static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid_y)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
@@ -71,11 +109,17 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     uint8_t rarity = get_spawn_rarity(grid->difficulty);
     if (!should_spawn_at(id, rarity))
         return;
-    struct rr_vector pos = {(grid_x + rr_frand()) * RR_MAZE_GRID_SIZE, (grid_y + rr_frand()) * RR_MAZE_GRID_SIZE};
-    EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
-                                               rr_simulation_team_id_mobs);
-    rr_simulation_get_mob(this, mob_id)->zone = grid;
-    grid->grid_points += RR_MOB_DIFFICULTY_COEFFICIENTS[id];
+    for (uint32_t n = 0; n < 10; ++n)
+    {
+        struct rr_vector pos = {(grid_x + rr_frand()) * RR_MAZE_GRID_SIZE, (grid_y + rr_frand()) * RR_MAZE_GRID_SIZE};
+        if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[id].radius))
+            continue;
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
+                                                rr_simulation_team_id_mobs);
+        rr_simulation_get_mob(this, mob_id)->zone = grid;
+        grid->grid_points += RR_MOB_DIFFICULTY_COEFFICIENTS[id];
+        break;
+    }
 }
 
 #ifdef RIVET_BUILD
@@ -107,6 +151,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
     if (rr_component_arena_get_grid(arena, physical->x / arena->grid_size, physical->y / arena->grid_size)->player_count == 0)
     {
+        rr_simulation_get_mob(this, entity)->no_drop = 1;
         rr_simulation_request_entity_deletion(this, entity);
     }
 }
@@ -125,9 +170,7 @@ static void tick_wave(struct rr_simulation *this)
             //if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 //grid_y += SPAWN_ZONE_H;
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
-            if (grid->player_count == 0)
-                continue;
-            if (grid->value == 0 || (grid->value & 8))
+            if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;

@@ -13,7 +13,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_fossil, rr_rarity_id_common, 10.0f, 50.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, 75.0f, 3.0f, 10.0f, 188, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_shell, rr_rarity_id_rare, 3.5f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_shell, rr_rarity_id_rare, 20.0f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 8.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
@@ -301,31 +301,20 @@ void rr_static_data_init()
 
 double xp_to_reach_level(uint32_t level)
 {
-    //xp it takes from level - 1 to level
     if (level <= 60)
-        return level * pow(1.18, level);
-    double base = level * pow(1.18, 60);
+        return level * pow(1.175, level);
+    double base = (level + 5) * pow(1.175, 60);
     for (uint32_t i = 60; i < level; ++i)
-    {
-        base *= rr_fclamp(1.18 - 0.01 * (i - 60), 1.1, 1.18);
-    }
+        base *= rr_fclamp(1.18 - 0.0075 * (i - 60), 1.1, 1.18);
     return base;
 }
 
 uint32_t level_from_xp(double xp)
 {
-    /*
     uint32_t level = 1;
     while (xp >= xp_to_reach_level(level + 1))
         xp -= xp_to_reach_level(++level);
-    */
-    uint32_t level = 2;
-    while (xp >= xp_to_reach_level(level))
-    {
-        xp -= xp_to_reach_level(level);
-        ++level;
-    }
-    return level - 1;
+    return level;
 }
 
 #ifdef RR_SERVER

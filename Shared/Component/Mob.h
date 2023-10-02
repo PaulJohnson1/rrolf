@@ -20,7 +20,8 @@ struct rr_component_mob
     uint8_t rarity;
     uint8_t flags;
     RR_CLIENT_ONLY(uint8_t counted_as_killed;)
-    RR_SERVER_ONLY(uint8_t player_spawned;)
+    RR_SERVER_ONLY(uint8_t player_spawned : 1;)
+    RR_SERVER_ONLY(uint8_t no_drop : 1;)
 };
 
 void rr_component_mob_init(struct rr_component_mob *, struct rr_simulation *);

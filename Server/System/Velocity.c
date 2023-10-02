@@ -23,6 +23,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             rr_vector_set_magnitude(&dist, maze_dim - physical->radius); \
             rr_component_physical_set_x(physical, cx + dist.x); \
             rr_component_physical_set_y(physical, cy + dist.y); \
+            rr_vector_set(&physical->wall_collision, -dist.x, -dist.y); \
             return; \
         } \
         if (rr_vector_magnitude_cmp(&dist, maze_dim + physical->radius) == -1 && inverse == 1) \
@@ -30,6 +31,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             rr_vector_set_magnitude(&dist, maze_dim + physical->radius); \
             rr_component_physical_set_x(physical, cx + dist.x); \
             rr_component_physical_set_y(physical, cy + dist.y); \
+            rr_vector_set(&physical->wall_collision, dist.x, dist.y); \
             return; \
         } \
     }
@@ -55,6 +57,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             test_x = x * maze_dim + physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
+            rr_vector_set(&physical->wall_collision, 1, 0);
             return;
         }
         else
@@ -75,6 +78,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             test_y = y * maze_dim + physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
+            rr_vector_set(&physical->wall_collision, 0, 1);
             return;
         }
         else
@@ -95,6 +99,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             test_x = (x + 1) * maze_dim - physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
+            rr_vector_set(&physical->wall_collision, -1, 0);
             return;
         }
         else
@@ -115,6 +120,7 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
             test_y = (y + 1) * maze_dim - physical->radius;
             rr_component_physical_set_x(physical, test_x);
             rr_component_physical_set_y(physical, test_y);
+            rr_vector_set(&physical->wall_collision, 0, -1);
             return;
         }
         else
@@ -196,6 +202,7 @@ static void system(EntityIdx id, void *simulation)
     }
     rr_vector_set(&physical->acceleration, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
+    rr_vector_set(&physical->wall_collision, 0, 0);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
     if (rr_vector_magnitude_cmp(&vel, arena->grid_size) == 1)
         rr_vector_set_magnitude(&vel, arena->grid_size);

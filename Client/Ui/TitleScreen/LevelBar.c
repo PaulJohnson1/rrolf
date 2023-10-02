@@ -70,7 +70,7 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_set_text_baseline(renderer, 1);
     rr_renderer_set_line_width(renderer, this->abs_height * 0.5 * 0.12);
     char out[16];
-    out[sprintf(out, "Level %d", data->level)] = 0;
+    sprintf(out, "Level %d", data->level);
     rr_renderer_begin_path(renderer);
     rr_renderer_stroke_text(renderer, out, 0, 0);
     rr_renderer_fill_text(renderer, out, 0, 0);

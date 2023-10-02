@@ -168,3 +168,14 @@ int rr_base_64_encode(char *encoded, const char *string, int len)
     *p++ = '\0';
     return p - encoded;
 }
+
+char *rr_sprintf(char *buf, double i)
+{
+    if (fabs(i) < 1000)
+        sprintf(buf, "%.0f", i);
+    else if (fabs(i) < 1000000)
+        sprintf(buf, "%.1fk", i / 1000);
+    else
+        sprintf(buf, "%.1fm", i / 1000000);
+    return buf;
+}
