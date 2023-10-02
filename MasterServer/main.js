@@ -183,8 +183,6 @@ async function db_read_user(username, password)
     }
     
     apply_missing_defaults(user.value);
-    for (let n = 1; n < 6; ++n)
-        user.value.petals["9:"+n] = 40;
     return user.value;
 }
 

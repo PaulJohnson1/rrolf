@@ -53,6 +53,12 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_set_text_baseline(renderer, 0);
         rr_renderer_stroke_text(renderer, flower->nickname, -length, -18);
         rr_renderer_fill_text(renderer, flower->nickname, -length, -18);
+        rr_renderer_set_text_align(renderer, 2);
+        rr_renderer_set_text_baseline(renderer, 2);
+        char out[16];
+        out[sprintf(out, "Lvl %d\n", flower->level)] = 0;
+        rr_renderer_stroke_text(renderer, out, length, 18);
+        rr_renderer_fill_text(renderer, out, length, 18);
     }
     // the health bar
     rr_renderer_set_line_cap(renderer, 1);

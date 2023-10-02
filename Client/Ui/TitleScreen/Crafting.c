@@ -40,13 +40,6 @@ struct crafting_inventory_button_metadata
     float secondary_animation;
 };
 
-struct server_response
-{
-    int64_t count;
-    int rarity;
-    int id;
-};
-
 struct craft_captures
 {
     struct rr_game_crafting_data craft;
@@ -101,7 +94,7 @@ static void craft_button_on_event(struct rr_ui_element *this,
             game->crafting_data.crafting_rarity < rr_rarity_id_ultra)
         {
             game->crafting_data.success_count = 0;
-            game->crafting_data.animation = 200000;
+            game->crafting_data.animation = 5;
             char petal_data[100] = {0};
             snprintf(
                 petal_data, 90, "%d:%d:%d", game->crafting_data.crafting_id,
@@ -132,8 +125,7 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
         game->pressed == this && game->crafting_data.animation == 0)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
-        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
-            0;
+        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
     }
     else if (data->count > 0)
         rr_ui_render_tooltip_above(
@@ -265,6 +257,7 @@ static struct rr_ui_element *crafting_ring_init()
         rr_ui_container_add_element(this, crafting_ring_petal_init(i));
     this->poll_events = rr_ui_container_poll_events;
     this->should_show = crafting_ring_should_show;
+    this->animate = rr_ui_scale_animate;
     return this;
 }
 
