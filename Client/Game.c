@@ -546,7 +546,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    this->rivet_player_token, 300,
                                    "rivet token");
             puts("buh");
-            puts(this->rivet_account.uuid);
+            printf("%p\n", this->rivet_account.uuid);
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
@@ -1065,7 +1065,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->clipboard = NULL;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    puts(this->rivet_account.uuid);
+    printf("he%p\n", this->rivet_account.uuid);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
