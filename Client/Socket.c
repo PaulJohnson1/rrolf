@@ -62,7 +62,7 @@ void rr_websocket_init(struct rr_websocket *this)
 
 void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
-    printf("<rr_websocket::server_connect::%s>\n", link);
+    puts("<rr_websocket::server_connect>");
     this->recieved_first_packet = 0;
     this->found_error = 0;
 #ifdef EMSCRIPTEN

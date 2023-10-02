@@ -142,7 +142,7 @@ void rr_api_get_server_alias(char const *param_1, void *game)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
+                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $2);
                     _free($host);
                     _free($token);
                 })
