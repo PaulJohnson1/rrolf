@@ -1068,14 +1068,13 @@ void rr_game_connect_socket(struct rr_game *this)
 {
     this->socket_ready = 0;
     this->simulation_ready = 0;
-    rr_websocket_init(&this->socket);
-    this->socket.user_data = this;
-    //this->socket.on_event = rr_game_websocket_on_event_function;
+    this->socket_pending = 1;
 
 #ifdef RIVET_BUILD
     rr_rivet_lobbies_find(this);
 #else
-    this->socket_pending = 1;
+    rr_websocket_init(&this->socket);
+    this->socket.user_data = this;
     rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
@@ -1098,6 +1097,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         game->socket_ready = 0;
         return;
     }
+    rr_websocket_init(&game->socket);
     game->socket_pending = 1;
     char link[256];
     sprintf(link, "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port);
