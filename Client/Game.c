@@ -547,6 +547,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                                    "rivet token");
             puts("buh");
             puts(this->rivet_player_token);
+            puts(this->rivet_account.uuid);
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
