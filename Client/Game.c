@@ -1065,7 +1065,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->clipboard = NULL;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    printf("he%p\n", this->rivet_account.uuid);
+    printf("he%p %p\n", this->socket.user_data, this->rivet_account.uuid);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
