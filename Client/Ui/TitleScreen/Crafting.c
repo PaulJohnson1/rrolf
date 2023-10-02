@@ -460,7 +460,8 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
             game->crafting_data.count += PETALS_PER_CRAFT;
         else
             game->crafting_data.count += data->count;
-        data->secondary_animation = 0.4;
+        if (data->count > 0)
+            data->secondary_animation = 0.4;
     }
     else if (data->count > 0)
         rr_ui_render_tooltip_above(
