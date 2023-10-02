@@ -544,6 +544,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_string(&verify_encoder,
                                    this->socket.rivet_player_token, 300,
                                    "rivet token");
+            puts("buh");
             puts(this->socket.rivet_player_token);
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
@@ -1075,12 +1076,6 @@ void rr_game_connect_socket(struct rr_game *this)
     rr_rivet_lobbies_find(this);
 #else
     this->socket_pending = 1;
-    // for testing
-    // if (!this->socket.rivet_player_token)
-    // {
-    //     this->socket.rivet_player_token = calloc(10, 1);
-    //     this->socket.uuid = calloc(10, 1);
-    // }
     rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
@@ -1109,5 +1104,5 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     memcpy(game->socket.rivet_player_token, token, 400);
     puts("joining");
     puts(game->socket.rivet_player_token);
-    rr_websocket_connect_to(&game->socket, &link[0]);
+    rr_websocket_connect_to(&game->socket, link);
 }
