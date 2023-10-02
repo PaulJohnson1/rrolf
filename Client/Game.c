@@ -628,8 +628,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             break;
         case RR_CLIENTBOUND_SQUAD_LEAVE:
             this->joined_squad = 0;
-            this->socket_ready = 1;
-            this->socket_pending = 0;
             break;
         default:
             RR_UNREACHABLE("how'd this happen");
