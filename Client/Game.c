@@ -513,6 +513,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         this->socket_ready = 0;
         this->simulation_ready = 0;
         this->socket.recieved_first_packet = 0;
+        printf("<rr_websocket_close::%d>\n", size);
         break;
     case rr_websocket_event_type_data:
     {
