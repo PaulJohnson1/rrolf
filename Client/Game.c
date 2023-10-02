@@ -1099,11 +1099,10 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         return;
     }
     rr_websocket_init(&game->socket);
+    game->socket.user_data = game;
     game->socket_pending = 1;
     char link[256];
     sprintf(link, "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port);
     memcpy(game->rivet_player_token, token, 400);
-    puts("joining");
-    puts(game->rivet_player_token);
     rr_websocket_connect_to(&game->socket, link);
 }
