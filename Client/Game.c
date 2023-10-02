@@ -542,10 +542,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_uint64(&verify_encoder, verification,
                                    "verification");
             proto_bug_write_string(&verify_encoder,
-                                   this->socket.rivet_player_token, 300,
+                                   this->rivet_player_token, 300,
                                    "rivet token");
             puts("buh");
-            puts(&this->socket.rivet_player_token[10]);
+            puts(this->rivet_player_token);
             proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
                                    100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
@@ -1062,7 +1062,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->input_data->clipboard = NULL;
     this->input_data->prev_mouse_x = this->input_data->mouse_x;
     this->input_data->prev_mouse_y = this->input_data->mouse_y;
-    puts(this->socket.rivet_player_token);
+    puts(this->rivet_player_token);
 }
 
 void rr_game_connect_socket(struct rr_game *this)
@@ -1102,8 +1102,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     game->socket_pending = 1;
     char link[256];
     sprintf(link, "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port);
-    memcpy(game->socket.rivet_player_token, token, 400);
+    memcpy(game->rivet_player_token, token, 400);
     puts("joining");
-    puts(game->socket.rivet_player_token);
+    puts(game->rivet_player_token);
     rr_websocket_connect_to(&game->socket, link);
 }

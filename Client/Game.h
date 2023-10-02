@@ -104,6 +104,7 @@ struct rr_game
 
     uint8_t squad_pos;
     uint8_t squad_private;
+    char rivet_player_token[400];
     char squad_code[16];
     char connect_code[16];
 };
