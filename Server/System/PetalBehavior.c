@@ -570,14 +570,13 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
             rr_vector_from_polar(&physical->acceleration, 7.5f, physical->angle);
         else if (petal->id == rr_petal_id_seed)
         {
-            EntityIdx player_info = rr_simulation_get_relations(simulation, relations->owner)->owner;
+            EntityHash player_info = relations->root_owner;
             if (!rr_simulation_entity_alive(simulation, player_info))
                 rr_simulation_request_entity_deletion(simulation, id);
             if (!squad_has_dead_player(simulation, rr_simulation_get_player_info(simulation, player_info)->squad))
                 rr_simulation_request_entity_deletion(simulation, id);
         }
-        if (--petal->effect_delay <=
-            0)
+        if (--petal->effect_delay <= 0)
         {
             rr_simulation_request_entity_deletion(simulation, id);
             if (petal->id == rr_petal_id_seed)

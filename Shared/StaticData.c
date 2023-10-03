@@ -80,7 +80,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1}}},
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 10, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05}}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 25, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
-    {rr_mob_id_meteor, rr_rarity_id_common, 150, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
+    {rr_mob_id_meteor, rr_rarity_id_rare, 150, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 45, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15}}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 35, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
@@ -97,10 +97,8 @@ char const *RR_MOB_NAMES[rr_mob_id_max] =
 "Quetzalcoatlus","Edmontosaurus","Ant","Hornet","Dragonfly",
  "Honeybee","Beehive","Spider"};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9, 10, 2, 4, 20,
-                                                          12, 9,  3, 10, 10, 8, 10, 8, 12, 8};
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25,
-                                                       25, 20, 25, 25, 0.5, 75, 25};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max]         = {8,  10,  4,  6, 15, 12, 9,  6,  10, 1,   12, 9,  8, 12, 8, 9, 9, 9};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25, 25, 20, 25, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 10};
 
 // zeach's numbers from the pinned screenshot of the old scaling

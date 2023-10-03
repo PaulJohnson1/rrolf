@@ -10,6 +10,7 @@ void rr_component_web_init(struct rr_component_web *this,
                            struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(this->slow_factor = 1;)
 }
 
 void rr_component_web_free(struct rr_component_web *this,

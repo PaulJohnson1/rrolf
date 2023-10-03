@@ -174,8 +174,8 @@ static void system(EntityIdx id, void *simulation)
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, id);
     rr_vector_scale(&physical->velocity, physical->friction);
-    if (physical->webbed)
-        physical->acceleration_scale *= 0.25;
+    //if (physical->webbed)
+        //physical->acceleration_scale *= 0.25;
     if (physical->stun_ticks > 0)
     {
         if (!rr_simulation_has_petal(simulation, id))
@@ -210,6 +210,15 @@ static void system(EntityIdx id, void *simulation)
     float before_y = physical->y;
     float now_x = rr_fclamp(before_x + vel.x, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
     float now_y = rr_fclamp(before_y + vel.y, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+
+    if (rr_simulation_has_web(simulation, id) || 
+    (rr_simulation_has_petal(simulation, id) && 
+    rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg))
+    {
+        rr_component_physical_set_x(physical, before_x + vel.x);
+        rr_component_physical_set_y(physical, before_y + vel.y);
+        return;
+    }
     int32_t before_grid_x = floorf(before_x / arena->grid_size);
     int32_t now_grid_x = floorf(now_x / arena->grid_size);
     int32_t before_grid_y = floorf(before_y / arena->grid_size);

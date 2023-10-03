@@ -93,9 +93,11 @@ void rr_server_client_write_message(struct rr_server_client *this,
 }
 
 static void write_animation_function(struct rr_simulation *simulation,
-                                     struct proto_bug *encoder, uint32_t pos)
+                                     struct proto_bug *encoder, struct rr_server_client *client, uint32_t pos)
 {
     struct rr_simulation_animation *animation = &simulation->animations[pos];
+    if (animation->type == rr_animation_type_damagenumber && animation->squad != client->squad)
+        return;
     proto_bug_write_uint8(encoder, 1, "continue");
     proto_bug_write_uint8(encoder, animation->type, "ani type");
     switch (animation->type)
@@ -132,7 +134,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_animation_update, "header");
     for (uint32_t i = 0; i < simulation->animation_length; ++i)
-        write_animation_function(simulation, &encoder, i);
+        write_animation_function(simulation, &encoder, this, i);
     proto_bug_write_uint8(&encoder, 0, "continue");
     rr_server_client_encrypt_message(this, encoder.start,
                                      encoder.current - encoder.start);

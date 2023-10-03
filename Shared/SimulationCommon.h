@@ -37,10 +37,10 @@ struct rr_simulation_animation
         struct rr_vector points[16];
         struct 
         {
-            struct rr_vector velocity;
-            struct rr_vector acceleration;
             float x;
             float y;
+            struct rr_vector velocity;
+            struct rr_vector acceleration;   
             float size;
             uint32_t damage;
         };

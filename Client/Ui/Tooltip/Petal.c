@@ -168,7 +168,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         char *extra = malloc((sizeof *extra) * 8);
         sprintf(extra, "%.0f",
-                      50 + RR_PETAL_RARITY_SCALE[rarity].health * 12);
+                      30 + RR_PETAL_RARITY_SCALE[rarity].health * 5);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -177,12 +177,21 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%ds", 5 + rarity);
+        sprintf(extra, "%ds", 3 + rarity);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Web duration: ", 12, 0xff2596be),
+                          rr_ui_text_init(extra, 12, 0xffffffff), NULL),
+                      -1, 0));
+        extra = malloc((sizeof *extra) * 8);
+        sprintf(extra, "%.0f%%", 100 * (1 - (0.9 - 0.02 * rarity * rarity)));
+        rr_ui_container_add_element(
+            this, rr_ui_set_justify(
+                      rr_ui_h_container_init(
+                          rr_ui_container_init(), 0, 0,
+                          rr_ui_text_init("Web slowdown: ", 12, 0xff5d2a1),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }

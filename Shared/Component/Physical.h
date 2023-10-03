@@ -23,6 +23,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(float friction;)
     RR_SERVER_ONLY(float acceleration_scale;)
     RR_SERVER_ONLY(float aggro_range_multiplier;)
+    RR_SERVER_ONLY(float slow_resist;)
     float angle;
     RR_SERVER_ONLY(float bearing_angle;)
     RR_CLIENT_ONLY(float lerp_angle;)
