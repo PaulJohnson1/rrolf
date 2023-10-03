@@ -56,7 +56,7 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
         rr_renderer_set_text_align(renderer, 2);
         rr_renderer_set_text_baseline(renderer, 2);
         char out[16];
-        sprintf(out, "Lvl %d\n", flower->level);
+        sprintf(out, "Lvl %d", flower->level);
         rr_renderer_stroke_text(renderer, out, length, 18);
         rr_renderer_fill_text(renderer, out, length, 18);
     }
