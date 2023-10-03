@@ -33,10 +33,12 @@ static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, 
             grid[Y+y][X+x].special_id = id;
         }
 }
-#define SPAWN_ZONE_X 36
-#define SPAWN_ZONE_Y 20
-#define SPAWN_ZONE_W 4
-#define SPAWN_ZONE_H 2
+
+#define SPAWN_ZONE_X 18
+#define SPAWN_ZONE_Y 18
+#define SPAWN_ZONE_W 6
+#define SPAWN_ZONE_H 4
+
 void rr_simulation_init(struct rr_simulation *this)
 {
     memset(this, 0, sizeof *this);
@@ -49,7 +51,10 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->grid_size = RR_MAZE_GRID_SIZE;
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-    //set_special_zone(0, rr_mob_id_tree, 40, 40, 8, 8);
+    set_special_zone(0, rr_mob_id_ornithomimus, 26, 14, 4, 4);
+    set_special_zone(0, rr_mob_id_tree, 8, 16, 4, 4);
+    set_special_zone(0, rr_mob_id_trex, 0, 34, 6, 6);
+    set_special_zone(0, rr_mob_id_pteranodon, 8, 0, 6, 6);
     //printf("simulation size: %lu\n", sizeof *this);
     //printf("spatial hash size: %lu\n", sizeof *this->grid);
 

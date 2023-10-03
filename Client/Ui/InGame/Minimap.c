@@ -79,7 +79,7 @@ static void minimap_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, 0xff0000ff);
     rr_renderer_set_global_alpha(renderer, 0.8);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, midX, midY, 1.5);
+    rr_renderer_arc(renderer, midX, midY, 2);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffff00ff);
     for (uint32_t i = 1; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -91,7 +91,7 @@ static void minimap_on_render(struct rr_ui_element *this,
             continue;
         rr_renderer_begin_path(renderer);
         rr_renderer_arc(renderer, this->abs_width * (player_info->camera_x / (grid_size * maze_dim)
-        - 0.5), this->abs_height * (player_info->camera_y / (grid_size * maze_dim) - 0.5), 1.5);
+        - 0.5), this->abs_height * (player_info->camera_y / (grid_size * maze_dim) - 0.5), 2);
         rr_renderer_fill(renderer);
     }
 }

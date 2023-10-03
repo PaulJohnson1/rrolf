@@ -80,7 +80,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1}}},
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 10, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05}}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 25, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
-    {rr_mob_id_meteor, rr_rarity_id_rare, 150, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
+    {rr_mob_id_meteor, rr_rarity_id_common, 150, 8, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_unusual, 45, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15}}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 35, 10, 30.0f, {{rr_petal_id_peas, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
@@ -98,7 +98,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] =
  "Honeybee","Beehive","Spider"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {9, 10, 2, 4, 20,
-                                                          12, 9,  3, 10, 1, 8, 10, 8, 12, 8};
+                                                          12, 9,  3, 10, 10, 8, 10, 8, 12, 8};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25,
                                                        25, 20, 25, 25, 0.5, 75, 25};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 10};
@@ -352,27 +352,27 @@ struct rr_maze_grid RR_MAZE_##name[size][size]; \
 uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]
 
 RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
-    {l, l, l, l, l, l, l, l, l, E, E, E, 0, 0, 0, R, e, 0, e, e, 0},
-    {l, 0, 0, 0, L, 0, 0, 0, 0, 0, 0, e, 0, 0, 0, R, 0, 0, e, R, R},
-    {l, l, 0, L, L, 0, 0, 0, 0, 0, e, e, e, 0, 0, R, 0, 0, 0, R, r},
-    {0, L, 0, 0, 0, 0, 0, 0, 0, 0, R, 0, R, R, R, r, r, U, 0, 0, r},
-    {0, L, 0, M, M, m, m, L, L, 0, R, 0, 0, 0, 0, 0, 0, U, 0, 0, r},
-    {0, L, 0, x, M, 0, 0, 0, L, 0, R, r, r, r, 0, 0, 0, u, 0, 0, U},
-    {0, L, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, U, U, U, u, u, 0, 0, U},
-    {L, L, m, m, m, m, 0, l, l, 0, 0, 0, 0, 0, 0, 0, 0, C, u, u, u},
-    {L, 0, 0, 0, 0, M, 0, E, 0, 0, 0, R, e, e, e, e, 0, C, 0, 0, 0},
-    {m, 0, M, M, M, M, 0, E, 0, 0, 0, R, 0, 0, 0, R, 0, C, 0, 0, 0},
-    {m, 0, M, 0, 0, 0, 0, E, e, e, e, R, R, 0, 0, R, 0, c, c, c, c},
-    {m, 0, x, x, x, x, 0, 0, 0, 0, 0, 0, r, r, r, r, 0, C, 0, 0, 0},
-    {m, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U, 0, 0, C, u, u, 0},
-    {m, m, m, M, M, 0, 0, x, x, M, M, 0, 0, 0, U, 0, 0, u, 0, U, U},
-    {0, m, 0, 0, M, 0, 0, 0, 0, 0, M, M, 0, 0, U, u, u, u, 0, U, r},
-    {0, m, 0, 0, M, x, 0, 0, 0, 0, 0, m, 0, 0, 0, 0, 0, U, 0, 0, 0},
-    {0, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, m, 0, 0, 0, 0, 0, U, 0, 0, 0},
-    {0, m, 0, 0, 0, 0, M, M, 0, 0, 0, m, 0, 0, 0, 0, 0, r, r, R, R},
-    {0, M, 0, 0, x, 0, 0, m, 0, 0, 0, L, L, 0, R, r, r, r, 0, 0, R},
-    {0, M, M, M, x, x, 0, m, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, e},
-    {0, 0, 0, 0, x, 0, 0, m, L, L, l, l, l, l, E, E, E, E, e, e, e},
+    {0, 0, 0, 0, 0, m, 0, 0, 0, M, x, 0, 0, 0, 0, 0, 0, 0, l, 0, 0},
+    {0, L, L, L, L, L, m, 0, M, M, x, M, 0, 0, 0, 0, 0, l, l, l, 0},
+    {0, L, 0, 0, 0, m, 0, 0, m, M, 0, M, m, m, 0, 0, 0, l, l, l, 0},
+    {0, L, 0, 0, 0, 0, 0, m, m, m, 0, 0, m, m, m, m, 0, 0, L, 0, 0},
+    {l, L, L, L, L, m, m, m, m, M, x, M, M, 0, 0, L, 0, 0, L, 0, 0},
+    {l, 0, 0, 0, 0, 0, 0, 0, m, M, x, M, 0, 0, 0, L, L, L, L, 0, 0},
+    {l, 0, e, e, E, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L, 0, 0},
+    {l, 0, R, 0, E, 0, 0, 0, 0, 0, 0, 0, 0, u, U, 0, 0, 0, l, 0, 0},
+    {l, 0, R, R, e, e, 0, 0, 0, c, c, 0, 0, u, u, 0, 0, 0, l, 0, 0},
+    {E, 0, r, 0, e, 0, C, C, c, c, c, c, 0, C, 0, 0, 0, 0, l, 0, 0},
+    {E, 0, r, 0, 0, 0, C, 0, 0, c, c, c, c, C, 0, 0, 0, 0, E, 0, 0},
+    {E, 0, r, 0, u, u, u, u, 0, 0, 0, 0, 0, C, 0, 0, 0, E, E, 0, 0},
+    {E, 0, U, U, U, 0, 0, U, U, 0, 0, 0, 0, C, 0, 0, e, E, 0, 0, 0},
+    {E, 0, r, 0, 0, 0, 0, 0, r, 0, 0, 0, 0, u, 0, 0, e, 0, 0, 0, 0},
+    {E, 0, r, 0, 0, 0, E, 0, r, r, r, U, u, u, 0, 0, e, 0, 0, 0, 0},
+    {e, 0, r, 0, 0, E, E, 0, 0, 0, 0, 0, 0, u, 0, 0, e, 0, 0, 0, 0},
+    {e, 0, r, 0, E, E, E, 0, 0, 0, U, U, U, u, U, 0, R, 0, 0, 0, 0},
+    {e, 0, R, 0, e, 0, e, e, 0, 0, r, 0, 0, 0, U, 0, R, R, e, e, e},
+    {e, 0, R, 0, e, 0, e, 0, 0, r, r, 0, 0, 0, U, 0, R, 0, 0, 0, e},
+    {e, e, R, E, e, e, e, 0, r, r, r, r, R, e, r, r, r, 0, R, R, e},
+    {0, 0, 0, 0, e, e, R, R, R, 0, R, 0, 0, 0, 0, 0, r, r, R, 0, 0}    
 };
 
 RR_DEFINE_MAZE(BURROW, RR_BURROW_MAZE_DIM) = {

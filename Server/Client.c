@@ -30,14 +30,11 @@ void rr_server_client_create_flower(struct rr_server_client *this)
 {
     if (this->player_info == NULL)
     {
-        puts("tried to init a flower when player info is null");
         return;
     }
     if (this->player_info->flower_id != RR_NULL_ENTITY)
     {
-        puts("tried to init a flower but flower already exists");
         return;
     }
-    puts("creating flower");
     rr_simulation_alloc_player(&this->server->simulation, 1, this->player_info->parent_id);
 }

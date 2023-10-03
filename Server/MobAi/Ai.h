@@ -21,6 +21,8 @@ void tick_ai_passive_default(EntityIdx, struct rr_simulation *);
 void tick_ai_neutral_default(EntityIdx, struct rr_simulation *, float);
 void tick_ai_aggro_default(EntityIdx, struct rr_simulation *, float);
 
+void tick_ai_passive_meteor(EntityIdx, struct rr_simulation *);
+
 void tick_ai_neutral_triceratops(EntityIdx, struct rr_simulation *);
 void tick_ai_neutral_ornithomimus(EntityIdx, struct rr_simulation *);
 

@@ -15,8 +15,7 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
-    if (rr_simulation_get_relations(simulation, entity)->team ==
-            rr_simulation_team_id_players)
+    if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_players && mob->id == rr_mob_id_trex)
             rr_renderer_add_color_filter(renderer, 0xffffff63, 0.3);
     uint8_t has_arena = rr_simulation_has_arena(simulation, entity);
     struct rr_component_health *health;

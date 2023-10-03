@@ -135,8 +135,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     physical->mass = 25.0f * powf(1.1, RR_MOB_RARITY_SCALING[rarity_id].damage);
     if (mob_id == rr_mob_id_meteor)
     {
-        physical->mass *= 100;
-        //team_id = rr_simulation_team_id_players;
+        physical->mass *= 25;
+        team_id = rr_simulation_team_id_players;
     }
     rr_component_relations_set_team(relations, team_id);
     rr_component_relations_update_root_owner(this, relations);

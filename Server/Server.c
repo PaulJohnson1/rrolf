@@ -75,7 +75,7 @@ void rr_server_client_free(struct rr_server_client *this)
                                                 this->player_info->parent_id);
     }
     rr_client_leave_squad(this->server, this);
-    puts("client disconnected");
+    puts("<rr_server::client_disconnect>");
 }
 
 void rr_server_client_encrypt_message(struct rr_server_client *this,
