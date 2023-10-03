@@ -84,8 +84,6 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
         return;
     struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_info_id);
     uint8_t squad = player_info->squad;
-    if (squad == 0)
-        return;
     mob->squad_damage_counter[squad] += damage;
     struct rr_component_physical *physical = rr_simulation_get_physical(simulation, this->parent_id);
     struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
@@ -93,6 +91,7 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
     animation->x = physical->x;
     animation->y = physical->y;
     animation->damage = damage; 
+    animation->squad = squad;
 }
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)

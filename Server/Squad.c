@@ -87,7 +87,7 @@ uint8_t rr_client_join_squad(struct rr_server *this, struct rr_server_client *me
 
 void rr_client_leave_squad(struct rr_server *this, struct rr_server_client *member)
 {
-    if (member->squad == 0)
+    if (!member->in_squad)
         return;
     rr_squad_remove_client(&this->squads[member->squad], member);
     member->squad = 0;
@@ -95,14 +95,14 @@ void rr_client_leave_squad(struct rr_server *this, struct rr_server_client *memb
 
 struct rr_squad_member *rr_squad_get_client_slot(struct rr_server *this, struct rr_server_client *member)
 {
-    if (member->squad == 0)
+    if (!member->in_squad)
         return NULL;
     return &this->squads[member->squad].members[member->squad_pos];
 }
 
 struct rr_squad *rr_client_get_squad(struct rr_server *this, struct rr_server_client *member)
 {
-    if (member->squad == 0)
+    if (!member->in_squad)
         return NULL;
     return &this->squads[member->squad];
 }

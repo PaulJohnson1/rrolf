@@ -54,7 +54,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_neutral_triceratops(entity, this);
         break;
     case rr_mob_id_trex:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 0.95);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED);
         break;
     case rr_mob_id_fern:
     case rr_mob_id_tree:
@@ -81,7 +81,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_quetzalcoaltus(entity, this);
         break;
     case rr_mob_id_edmontosaurus:
-        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED * 0.95);
+        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED);
         break;
     default:
         tick_ai_aggro_pteranodon(entity, this);

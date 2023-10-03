@@ -18,26 +18,34 @@
 
 static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    zone->x = x * RR_MAZE_GRID_SIZE;
-    zone->y = y * RR_MAZE_GRID_SIZE;
-    zone->w = w * RR_MAZE_GRID_SIZE;
-    zone->h = h * RR_MAZE_GRID_SIZE;
+    zone->x = 2 * x * RR_MAZE_GRID_SIZE;
+    zone->y = 2 * y * RR_MAZE_GRID_SIZE;
+    zone->w = 2 * w * RR_MAZE_GRID_SIZE;
+    zone->h = 2 * h * RR_MAZE_GRID_SIZE;
 }
-static void set_special_zone(uint8_t biome, uint8_t id, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+
+static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
+    x *= 2;
+    y *= 2;
+    w *= 2;
+    h *= 2;
     struct rr_maze_grid (*grid)[RR_MAZE_DIM] = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
     for (uint32_t Y = 0; Y < h; ++Y)
         for (uint32_t X = 0; X < h; ++X)
-        {
-            grid[Y+y][X+x].is_special = 1;
-            grid[Y+y][X+x].special_id = id;
-        }
+            grid[Y+y][X+x].spawn_function = fun;
 }
 
-#define SPAWN_ZONE_X 18
-#define SPAWN_ZONE_Y 18
-#define SPAWN_ZONE_W 6
-#define SPAWN_ZONE_H 4
+#define SPAWN_ZONE_X 12
+#define SPAWN_ZONE_Y 13
+#define SPAWN_ZONE_W 3
+#define SPAWN_ZONE_H 1
+
+uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
+uint8_t rex_quetz_zone() { return rr_frand() > 0.35 ? rr_mob_id_trex : rr_mob_id_quetzalcoatlus; }
+uint8_t ankylo_zone() { return rr_frand() > 0.2 ? rr_mob_id_ankylosaurus : rr_mob_id_tree; }
+uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
+uint8_t ptera_meteor_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -51,10 +59,14 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->grid_size = RR_MAZE_GRID_SIZE;
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-    set_special_zone(0, rr_mob_id_ornithomimus, 26, 14, 4, 4);
-    set_special_zone(0, rr_mob_id_tree, 8, 16, 4, 4);
-    set_special_zone(0, rr_mob_id_trex, 0, 34, 6, 6);
-    set_special_zone(0, rr_mob_id_pteranodon, 8, 0, 6, 6);
+    set_special_zone(0, ornitho_zone, 12, 10, 2, 2);
+    set_special_zone(0, rex_quetz_zone, 14, 1, 4, 1);
+    set_special_zone(0, ankylo_zone, 23, 0, 5, 3);
+    set_special_zone(0, trike_pachy_zone, 22, 17, 2, 2);
+    set_special_zone(0, ptera_meteor_zone, 13, 27, 3, 1);
+    //set_special_zone(0, rr_mob_id_tree, 8, 16, 4, 4);
+    //set_special_zone(0, rr_mob_id_trex, 0, 34, 6, 6);
+    //set_special_zone(0, rr_mob_id_pteranodon, 8, 0, 6, 6);
     //printf("simulation size: %lu\n", sizeof *this);
     //printf("spatial hash size: %lu\n", sizeof *this->grid);
 
@@ -107,8 +119,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
     uint8_t id;
-    if (grid->is_special)
-        id = grid->special_id;
+    if (grid->spawn_function)
+        id = grid->spawn_function();
     else
         id = get_spawn_id(this->biome, grid);
     uint8_t rarity = get_spawn_rarity(grid->difficulty);
