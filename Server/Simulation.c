@@ -140,10 +140,10 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     struct rr_simulation *this = _simulation;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
-    uint32_t sx = rr_fclamp(physical->x - 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t sy = rr_fclamp(physical->y - 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ex = rr_fclamp(physical->x + 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ey = rr_fclamp(physical->y + 1250, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t sx = rr_fclamp(physical->x - 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t sy = rr_fclamp(physical->y - 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ex = rr_fclamp(physical->x + 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ey = rr_fclamp(physical->y + 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
     for (uint32_t x = sx; x <= ex; ++x)
         for (uint32_t y = sy; y <= ey; ++y)
             ++rr_component_arena_get_grid(arena, x, y)->player_count;

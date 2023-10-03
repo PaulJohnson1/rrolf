@@ -10,6 +10,7 @@
 #define RR_ERROR_CODE_FULL_SQUAD 254
 
 struct rr_server_client;
+struct rr_server;
 
 struct rr_squad
 {
@@ -19,7 +20,7 @@ struct rr_squad
     char squad_code[7];
 };
 
-void rr_squad_init(struct rr_squad *);
+void rr_squad_init(struct rr_squad *, struct rr_server *, uint8_t);
 
 uint8_t rr_squad_has_space(struct rr_squad *);
 

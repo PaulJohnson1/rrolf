@@ -453,7 +453,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 failure.current - failure.start);
                 rr_server_client_write_message(client, failure.start,
                             failure.current - failure.start);
-                client->squad = 0;
+                client->in_squad = 0;
                 break;
             }
             if (squad == RR_ERROR_CODE_FULL_SQUAD)
@@ -466,7 +466,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 failure.current - failure.start);
                 rr_server_client_write_message(client, failure.start,
                             failure.current - failure.start);
-                client->squad = 0;
+                client->in_squad = 0;
                 break;
             }
             rr_client_join_squad(this, client, squad);
@@ -474,7 +474,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case rr_serverbound_squad_ready:
         {
-            if (client->squad != 0)
+            if (client->in_squad)
             {
                 if (rr_squad_get_client_slot(this, client)->playing == 0)
                 {
@@ -542,19 +542,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case rr_serverbound_nickname_update:
         {
-            if (client->squad != 0)
+            if (client->in_squad)
                 proto_bug_read_string(&encoder, rr_squad_get_client_slot(this, client)->nickname, 16, "nick");
             break;
         }
         case rr_serverbound_private_update:
         {
-            if (client->squad != 0)
+            if (client->in_squad)
                 rr_client_get_squad(this, client)->private = 0;
             break;
         }
         case rr_serverbound_squad_leave:
         {
-            if (client->squad != 0)
+            if (client->in_squad)
             {
                 rr_client_leave_squad(this, client);
                 struct proto_bug encoder;
@@ -569,7 +569,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case rr_serverbound_squad_kick:
         {
-            if (client->squad == 0)
+            if (!client->in_squad)
                 break;
             if (client->squad_pos != 0)
                 break;
@@ -753,7 +753,7 @@ static void server_tick(struct rr_server *this)
         if (rr_bitset_get(this->clients_in_use, i) && this->clients[i].verified && this->clients[i].received_first_packet)
         {
             struct rr_server_client *client = &this->clients[i];
-            if (client->squad == 0)
+            if (!client->in_squad)
                 continue;
             else if (client->player_info != NULL)
             {

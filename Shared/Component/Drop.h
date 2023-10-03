@@ -18,8 +18,8 @@ struct rr_component_drop
     RR_SERVER_ONLY(int16_t ticks_until_despawn;)
     uint8_t id;
     uint8_t rarity;
-    RR_SERVER_ONLY(uint8_t can_be_picked_up_by[RR_BITSET_ROUND(RR_SQUAD_COUNT + 1)];)
-    RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(RR_SQUAD_MEMBER_COUNT * (RR_SQUAD_COUNT + 1))];)
+    RR_SERVER_ONLY(uint8_t can_be_picked_up_by[RR_BITSET_ROUND(RR_SQUAD_COUNT)];)
+    RR_SERVER_ONLY(uint8_t picked_up_by[RR_BITSET_ROUND(RR_SQUAD_MEMBER_COUNT * RR_SQUAD_COUNT)];)
     RR_SERVER_ONLY(uint8_t protocol_state;)
 };
 

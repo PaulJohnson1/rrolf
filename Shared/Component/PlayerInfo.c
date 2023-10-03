@@ -49,6 +49,10 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
     this->collected_this_run = malloc(rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
     memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
+#ifdef RR_SERVER
+    this->entities_in_view = malloc(RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+    memset(this->entities_in_view, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
+#endif
 }
 
 #ifdef RR_SERVER
@@ -61,6 +65,7 @@ void rr_component_player_info_free(struct rr_component_player_info *this,
 {
     free(this->collected_this_run);
 #ifdef RR_SERVER
+    free(this->entities_in_view);
     if (rr_simulation_entity_alive(simulation, this->flower_id))
         rr_simulation_request_entity_deletion(simulation, this->flower_id);
 #endif
