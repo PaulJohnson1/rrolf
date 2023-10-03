@@ -182,8 +182,8 @@ async function db_read_user(username, password)
         return user;
     }
     for (let n = 1; n < 24; ++n)
-        for (let m = 1; m < 6; ++m)
-            user.value.petals[n+':'+m] = 4;
+        for (let m = 1; m < 7; ++m)
+            user.value.petals[n+':'+m] = 10;
     apply_missing_defaults(user.value);
     return user.value;
 }
