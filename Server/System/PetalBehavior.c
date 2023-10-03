@@ -98,7 +98,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
         struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal->parent_id);
         struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
         struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
-        animation->type = 1;
+        animation->type = rr_animation_type_lightningbolt;
         EntityIdx chain[16] = {petal->parent_id};
         animation->points[0].x = petal_physical->x;
         animation->points[0].y = petal_physical->y;

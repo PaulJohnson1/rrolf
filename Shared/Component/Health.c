@@ -36,6 +36,8 @@ void rr_component_health_free(struct rr_component_health *this,
 #ifdef RR_SERVER
 #include <Server/Simulation.h>
 
+#include <Shared/StaticData.h>
+
 void rr_component_health_write(struct rr_component_health *this,
                                struct proto_bug *encoder, int is_creation,
                                struct rr_component_player_info *client)
@@ -85,6 +87,12 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
     if (squad == 0)
         return;
     mob->squad_damage_counter[squad] += damage;
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, this->parent_id);
+    struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+    animation->type = rr_animation_type_damagenumber;
+    animation->x = physical->x;
+    animation->y = physical->y;
+    animation->damage = damage; 
 }
 
 void rr_component_health_set_health(struct rr_component_health *this, float v)

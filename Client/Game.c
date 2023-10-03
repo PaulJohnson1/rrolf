@@ -161,7 +161,7 @@ static void abandon_game_on_event(struct rr_ui_element *this, struct rr_game *ga
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_READY, "header");
+        proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }    
     rr_ui_render_tooltip_below(this, game->abandon_game_tooltip, game);
@@ -174,7 +174,7 @@ static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *gam
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_LEAVE, "header");
+        proto_bug_write_uint8(&encoder, rr_serverbound_squad_leave, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
 }
@@ -561,7 +561,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
-        case RR_CLIENTBOUND_UPDATE:
+        case rr_clientbound_update:
             if (!this->simulation_ready)
             {
                 rr_simulation_init(this->simulation);
@@ -570,10 +570,44 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->simulation_ready = 1;
             rr_simulation_read_binary(this, &encoder);
             break;
-        case RR_CLIENTBOUND_SQUAD_FAIL:
+        case rr_clientbound_animation_update:
+        {
+            while (proto_bug_read_uint8(&encoder, "continue"))
+            {
+                struct rr_simulation_animation *particle = rr_particle_alloc(
+                    &this->particle_manager, proto_bug_read_uint8(&encoder, "ani type"));
+                switch (particle->type)
+                {
+                    case rr_animation_type_lightningbolt:
+                        particle->length = proto_bug_read_uint8(&encoder, "ani length");
+                        for (uint32_t i = 0; i < particle->length; ++i)
+                        {
+                            particle->points[i].x = proto_bug_read_float32(&encoder, "ani x");
+                            particle->points[i].y = proto_bug_read_float32(&encoder, "ani y");
+                        }
+                        particle->opacity = 0.8;
+                        break;
+                    case rr_animation_type_damagenumber:
+                    {
+                        particle->x = proto_bug_read_float32(&encoder, "ani x");
+                        particle->y = proto_bug_read_float32(&encoder, "ani y");
+                        particle->velocity.x = (rr_frand() - 0.5) * 25;
+                        particle->velocity.y = -50 + rr_frand() * 25;
+                        particle->acceleration.y = 2.5;
+                        particle->damage = proto_bug_read_varuint(&encoder, "damage");
+                        particle->opacity = 1;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            break;
+        }
+        case rr_clientbound_squad_fail:
             this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
             break;
-        case RR_CLIENTBOUND_SQUAD_UPDATE:
+        case rr_clientbound_squad_update:
             if (!this->joined_squad)
                 memset(&this->squad_members[0], 0, sizeof this->squad_members);
             this->socket.found_error = 0;
@@ -604,7 +638,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_LOADOUT_UPDATE, "header");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_loadout_update, "header");
             proto_bug_write_uint8(&encoder2, this->slots_unlocked,
                                   "loadout count");
             for (uint32_t i = 0; i < this->slots_unlocked; ++i)
@@ -622,11 +656,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             encoder2.current = encoder2.start;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_NICKNAME_UPDATE, "header");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_nickname_update, "header");
             proto_bug_write_string(&encoder2, this->cache.nickname, 15, "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
-        case RR_CLIENTBOUND_SQUAD_LEAVE:
+        case rr_clientbound_squad_leave:
             this->joined_squad = 0;
             break;
         default:
@@ -721,7 +755,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
 {
     struct proto_bug encoder2;
     proto_bug_init(&encoder2, output_packet);
-    proto_bug_write_uint8(&encoder2, RR_SERVERBOUND_INPUT, "header");
+    proto_bug_write_uint8(&encoder2, rr_serverbound_input, "header");
     uint8_t movement_flags = 0;
     movement_flags |=
         (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
@@ -761,7 +795,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
     struct proto_bug encoder;
     proto_bug_init(&encoder, output_packet);
-    proto_bug_write_uint8(&encoder, RR_SERVERBOUND_PETAL_SWITCH, "header");
+    proto_bug_write_uint8(&encoder, rr_serverbound_petal_switch, "header");
     uint8_t should_write = 0;
     uint8_t switch_all = rr_bitset_get_bit(
         this->input_data->keys_pressed_this_tick, 'X');

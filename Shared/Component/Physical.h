@@ -6,10 +6,6 @@
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
-#ifdef RR_CLIENT
-#include <Client/Game.h>
-#endif
-
 struct rr_simulation;
 struct proto_bug;
 

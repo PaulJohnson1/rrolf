@@ -14,7 +14,7 @@ static void continue_to_squad_event(struct rr_ui_element *this, struct rr_game *
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, RR_SERVERBOUND_SQUAD_READY, "header");
+        proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
 }

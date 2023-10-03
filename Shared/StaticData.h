@@ -4,21 +4,34 @@
 
 #include <Shared/Entity.h>
 
+enum rr_animation_type
+{
+    rr_animation_type_default = 0,
+    rr_animation_type_lightningbolt = 1,
+    rr_animation_type_damagenumber = 2,
+};
 
-#define RR_SERVERBOUND_INPUT 0
-#define RR_SERVERBOUND_PETAL_SWITCH 1
-#define RR_SERVERBOUND_SQUAD_JOIN 2
-#define RR_SERVERBOUND_SQUAD_READY 3
-#define RR_SERVERBOUND_LOADOUT_UPDATE 4
-#define RR_SERVERBOUND_NICKNAME_UPDATE 5
-#define RR_SERVERBOUND_PRIVATE_UPDATE 6
-#define RR_SERVERBOUND_SQUAD_LEAVE 7
-#define RR_SERVERBOUND_SQUAD_KICK 8
+enum rr_serverbound_packet_header
+{
+    rr_serverbound_input = 0,
+    rr_serverbound_petal_switch = 1,
+    rr_serverbound_squad_join = 2,
+    rr_serverbound_squad_ready = 3,
+    rr_serverbound_loadout_update = 4,
+    rr_serverbound_nickname_update = 5,
+    rr_serverbound_private_update = 6,
+    rr_serverbound_squad_leave = 7,
+    rr_serverbound_squad_kick = 8
+};
 
-#define RR_CLIENTBOUND_UPDATE 1
-#define RR_CLIENTBOUND_SQUAD_UPDATE 2
-#define RR_CLIENTBOUND_SQUAD_FAIL 3
-#define RR_CLIENTBOUND_SQUAD_LEAVE 4
+enum rr_clientbound_packet_header
+{
+    rr_clientbound_update = 0,
+    rr_clientbound_animation_update = 1,
+    rr_clientbound_squad_update = 2,
+    rr_clientbound_squad_fail = 3,
+    rr_clientbound_squad_leave = 4,
+};
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
 #define RR_BIOME_COUNT (2)

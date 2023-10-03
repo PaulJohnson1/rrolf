@@ -154,18 +154,7 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
     }
 }
 
-static void write_animation_function(struct rr_simulation *simulation,
-                                     struct proto_bug *encoder, uint32_t pos)
-{
-    struct rr_simulation_animation *animation = &simulation->animations[pos];
-    proto_bug_write_uint8(encoder, animation->type, "ani type");
-    proto_bug_write_uint8(encoder, animation->length, "ani length");
-    for (uint32_t i = 0; i < animation->length; ++i)
-    {
-        proto_bug_write_float32(encoder, animation->points[i].x, "ani x");
-        proto_bug_write_float32(encoder, animation->points[i].y, "ani y");
-    }
-}
+
 
 void rr_simulation_write_binary(struct rr_simulation *this,
                                 struct proto_bug *encoder,
@@ -210,9 +199,6 @@ void rr_simulation_write_binary(struct rr_simulation *this,
                            &captures, rr_simulation_write_entity_function);
     proto_bug_write_varuint(encoder, RR_NULL_ENTITY,
                             "entity update id"); // null terminate update list
-    proto_bug_write_varuint(encoder, this->animation_length, "ani count");
-    for (uint32_t i = 0; i < this->animation_length; ++i)
-        write_animation_function(this, encoder, i);
     proto_bug_write_varuint(encoder, player_info->parent_id,
                             "pinfo id"); // send client's pinfo
     proto_bug_write_uint8(encoder, this->game_over, "game over");

@@ -18,14 +18,35 @@
 #ifdef RR_SERVER
 #include <Shared/Vector.h>
 struct rr_spatial_hash;
+#endif
 
 struct rr_simulation_animation
 {
     uint8_t type;
-    uint8_t length;
-    struct rr_vector points[16];
+    #ifdef RR_CLIENT
+    float opacity;
+    uint32_t color;
+    #endif
+    union 
+    {
+        uint8_t length;
+        uint8_t squad;
+    };
+    union 
+    {
+        struct rr_vector points[16];
+        struct 
+        {
+            struct rr_vector velocity;
+            struct rr_vector acceleration;
+            float x;
+            float y;
+            float size;
+            uint32_t damage;
+        };
+    };
+    
 };
-#endif
 
 enum rr_simulation_team_id
 {
@@ -47,7 +68,7 @@ struct rr_simulation
     EntityIdx COMPONENT##_count;
     RR_FOR_EACH_COMPONENT;
 #undef XX
-    RR_SERVER_ONLY(struct rr_simulation_animation animations[512];)
+    RR_SERVER_ONLY(struct rr_simulation_animation animations[16384];)
     RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)
     uint8_t game_over;

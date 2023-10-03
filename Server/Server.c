@@ -92,14 +92,48 @@ void rr_server_client_write_message(struct rr_server_client *this,
     lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
+static void write_animation_function(struct rr_simulation *simulation,
+                                     struct proto_bug *encoder, uint32_t pos)
+{
+    struct rr_simulation_animation *animation = &simulation->animations[pos];
+    proto_bug_write_uint8(encoder, 1, "continue");
+    proto_bug_write_uint8(encoder, animation->type, "ani type");
+    switch (animation->type)
+    {
+        case rr_animation_type_lightningbolt:
+            proto_bug_write_uint8(encoder, animation->length, "ani length");
+            for (uint32_t i = 0; i < animation->length; ++i)
+            {
+                proto_bug_write_float32(encoder, animation->points[i].x, "ani x");
+                proto_bug_write_float32(encoder, animation->points[i].y, "ani y");
+            }
+            break;
+        case rr_animation_type_damagenumber:
+            proto_bug_write_float32(encoder, animation->x, "ani x");
+            proto_bug_write_float32(encoder, animation->y, "ani y");
+            proto_bug_write_varuint(encoder, animation->damage, "damage");
+            break;
+    }
+}
+
 void rr_server_client_broadcast_update(struct rr_server_client *this)
 {
     struct rr_server *server = this->server;
+    struct rr_simulation *simulation = &server->simulation;
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
-    proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_UPDATE, "header");
+    proto_bug_write_uint8(&encoder, rr_clientbound_update, "header");
     rr_simulation_write_binary(&server->simulation, &encoder,
                                this->player_info);
+    rr_server_client_encrypt_message(this, encoder.start,
+                                     encoder.current - encoder.start);
+    rr_server_client_write_message(this, encoder.start,
+                                   encoder.current - encoder.start);
+    proto_bug_init(&encoder, outgoing_message);
+    proto_bug_write_uint8(&encoder, rr_clientbound_animation_update, "header");
+    for (uint32_t i = 0; i < simulation->animation_length; ++i)
+        write_animation_function(simulation, &encoder, i);
+    proto_bug_write_uint8(&encoder, 0, "continue");
     rr_server_client_encrypt_message(this, encoder.start,
                                      encoder.current - encoder.start);
     rr_server_client_write_message(this, encoder.start,
@@ -326,7 +360,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             break;
         switch (proto_bug_read_uint8(&encoder, "header"))
         {
-        case RR_SERVERBOUND_INPUT:
+        case rr_serverbound_input:
         {
             if (client->player_info == NULL)
                 break;
@@ -376,7 +410,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             client->player_info->input = (movementFlags >> 4) & 3;
             break;
         }
-        case RR_SERVERBOUND_PETAL_SWITCH:
+        case rr_serverbound_petal_switch:
         {
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 return 0;
@@ -390,7 +424,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case RR_SERVERBOUND_SQUAD_JOIN:
+        case rr_serverbound_squad_join:
         {
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
             if (type > 2)
@@ -411,7 +445,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
+                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
                 proto_bug_write_uint8(&failure, 0, "fail type");
                 rr_server_client_encrypt_message(client, failure.start,
                                 failure.current - failure.start);
@@ -424,7 +458,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
+                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
                 proto_bug_write_uint8(&failure, 1, "fail type");
                 rr_server_client_encrypt_message(client, failure.start,
                                 failure.current - failure.start);
@@ -436,7 +470,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_client_join_squad(this, client, squad);
             break;
         }
-        case RR_SERVERBOUND_SQUAD_READY:
+        case rr_serverbound_squad_ready:
         {
             if (client->squad != 0)
             {
@@ -459,7 +493,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case RR_SERVERBOUND_LOADOUT_UPDATE:
+        case rr_serverbound_loadout_update:
         {
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
@@ -504,26 +538,26 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             break;
         }
-        case RR_SERVERBOUND_NICKNAME_UPDATE:
+        case rr_serverbound_nickname_update:
         {
             if (client->squad != 0)
                 proto_bug_read_string(&encoder, rr_squad_get_client_slot(this, client)->nickname, 16, "nick");
             break;
         }
-        case RR_SERVERBOUND_PRIVATE_UPDATE:
+        case rr_serverbound_private_update:
         {
             if (client->squad != 0)
                 rr_client_get_squad(this, client)->private = 0;
             break;
         }
-        case RR_SERVERBOUND_SQUAD_LEAVE:
+        case rr_serverbound_squad_leave:
         {
             if (client->squad != 0)
             {
                 rr_client_leave_squad(this, client);
                 struct proto_bug encoder;
                 proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_LEAVE, "header");
+                proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
                 rr_server_client_encrypt_message(client, encoder.start,
                                 encoder.current - encoder.start);
                 rr_server_client_write_message(client, encoder.start,
@@ -531,7 +565,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             break;
         }
-        case RR_SERVERBOUND_SQUAD_KICK:
+        case rr_serverbound_squad_kick:
         {
             if (client->squad == 0)
                 break;
@@ -557,7 +591,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_client_leave_squad(this, to_kick);
             struct proto_bug failure;
             proto_bug_init(&failure, outgoing_message);
-            proto_bug_write_uint8(&failure, RR_CLIENTBOUND_SQUAD_FAIL, "header");
+            proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
             proto_bug_write_uint8(&failure, 2, "fail type");
             rr_server_client_encrypt_message(to_kick, failure.start,
                             failure.current - failure.start);
@@ -636,7 +670,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 client->verified = 1;
                 struct proto_bug encoder;
                 proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_LEAVE, "header");
+                proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
                 rr_server_client_encrypt_message(client, encoder.start,
                                 encoder.current - encoder.start);
                 rr_server_client_write_message(client, encoder.start,
@@ -755,7 +789,7 @@ static void server_tick(struct rr_server *this)
             {
                 struct proto_bug encoder;
                 proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, RR_CLIENTBOUND_SQUAD_UPDATE, "header");
+                proto_bug_write_uint8(&encoder, rr_clientbound_squad_update, "header");
 
                 struct rr_squad *squad = rr_client_get_squad(this, client);
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)

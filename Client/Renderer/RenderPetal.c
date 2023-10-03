@@ -23,18 +23,7 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
     
     if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_mobs)
         rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[petal->rarity].radius);
-    /*
-    if (rr_frand() < 0.5) {
-        struct rr_particle *particle = rr_particle_alloc(&game->particle_manager, 0);
-        particle->position.x = physical->lerp_x + rr_frand() * 20 - 10;
-        particle->position.y = physical->lerp_y + rr_frand() * 20 - 10;
-        float angle = rr_frand() * 2 * M_PI;
-        rr_vector_from_polar(&particle->velocity, rr_frand() * 5 + 3, angle);
-        particle->size = 5;
-        particle->opacity = 0.4;
-        particle->color = RR_RARITY_COLORS[petal->rarity];
-    }
-    */
+
     uint8_t use_cache = ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
     if (petal->id != rr_petal_id_peas || petal->detached == 1)
         rr_renderer_draw_petal(renderer, petal->id, use_cache);

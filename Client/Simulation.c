@@ -101,19 +101,6 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         RR_FOR_EACH_COMPONENT
 #undef XX
     }
-    uint32_t len = proto_bug_read_varuint(encoder, "ani count");
-    for (uint32_t i = 0; i < len; ++i)
-    {
-        struct rr_particle *particle = rr_particle_alloc(
-            &game->particle_manager, proto_bug_read_uint8(encoder, "ani type"));
-        particle->length = proto_bug_read_uint8(encoder, "ani length");
-        for (uint32_t i = 0; i < particle->length; ++i)
-        {
-            particle->position[i].x = proto_bug_read_float32(encoder, "ani x");
-            particle->position[i].y = proto_bug_read_float32(encoder, "ani y");
-        }
-        particle->opacity = 0.8;
-    }
     game->player_info = rr_simulation_get_player_info(
         this, proto_bug_read_varuint (encoder, "pinfo id"));
     this->game_over = proto_bug_read_uint8(encoder, "game over");
