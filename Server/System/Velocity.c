@@ -213,7 +213,8 @@ static void system(EntityIdx id, void *simulation)
 
     if (rr_simulation_has_web(simulation, id) || 
     (rr_simulation_has_petal(simulation, id) && 
-    rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg))
+    rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg &&
+    rr_simulation_get_petal(simulation, id)->id != rr_petal_id_seed))
     {
         rr_component_physical_set_x(physical, before_x + vel.x);
         rr_component_physical_set_y(physical, before_y + vel.y);

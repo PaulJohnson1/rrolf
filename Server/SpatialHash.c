@@ -22,8 +22,8 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
         rr_simulation_get_physical(this->simulation, entity);
 
     // force positions unsigned for a significantly better hash function
-    uint32_t x = rr_fclamp(physical->x, 0, this->size * SPATIAL_HASH_GRID_SIZE) / SPATIAL_HASH_GRID_SIZE;
-    uint32_t y = rr_fclamp(physical->y, 0, this->size * SPATIAL_HASH_GRID_SIZE) / SPATIAL_HASH_GRID_SIZE;
+    uint32_t x = rr_fclamp(physical->x, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
+    uint32_t y = rr_fclamp(physical->y, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
     struct rr_spatial_hash_cell *cell = spatial_hash_get(x,y);
     cell->entities[cell->entities_in_use++] = entity;
 }
