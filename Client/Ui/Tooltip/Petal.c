@@ -1,5 +1,6 @@
 #include <Client/Ui/Ui.h>
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -168,7 +169,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         char *extra = malloc((sizeof *extra) * 8);
         sprintf(extra, "%.0f",
-                      30 + RR_PETAL_RARITY_SCALE[rarity].health * 5);
+                      40 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].health) * 15);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -177,7 +178,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
         extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.0f%%", 100 * (1 - (0.9 - 0.014 * rarity * rarity)));
+        sprintf(extra, "%.0f%%", 100 * (1 - (0.9 - 0.015 * rarity * rarity)));
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -202,7 +203,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_beak)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1fs", 1 + 0.5 * rarity);
+        sprintf(extra, "%.1fs", 1 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].damage) / 2);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(

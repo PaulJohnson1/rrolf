@@ -28,7 +28,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_club, rr_rarity_id_common, 3.5f, 300.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_beak, rr_rarity_id_unusual, 12.0f, 10.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_beak, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_lightning, rr_rarity_id_unusual, 16.0f, 4.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_third_eye, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_mandible, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -107,19 +107,19 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1.5, 2},
     {3.2, 4},
     {5.0, 8},
-    {8.5, 16},
-    {15.0, 40},
-    {45.0, 75},
+    {8.0, 16},
+    {20.0, 40},
+    {50.0, 100},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
     {2.2, 2.5, 1.2},
     {7.5, 4.5, 1.5}, 
-    {20,  7.5, 1.8},
-    {75,  10,  2.5},
-    {225, 25,  4.0},
-    {1250, 80,  6.0},
+    {25,  7.5, 1.8},
+    {125, 10,  2.5},
+    {350, 25,  4.0},
+    {1500, 80, 6.0},
 };
 // clang-format on
 

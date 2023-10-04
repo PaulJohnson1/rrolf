@@ -15,7 +15,7 @@
 struct uranium_captures
 {
     struct rr_simulation *simulation;
-    EntityIdx flower_id;
+    EntityHash flower_id;
     float x;
     float y;
     float damage;
@@ -121,7 +121,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
             struct rr_component_health *health = rr_simulation_get_health(simulation, target);
             rr_component_health_do_damage(simulation, health, petal->parent_id, damage);
             health->damage_paused = 5;
-            physical->stun_ticks = 10;
+            physical->stun_ticks = 4;
             chain[captures.length] = target;
             animation->points[captures.length].x = physical->x;
             animation->points[captures.length].y = physical->y;

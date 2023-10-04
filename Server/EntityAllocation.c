@@ -35,7 +35,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     struct rr_spawn_zone *respawn_zone = &rr_simulation_get_arena(this, arena)->respawn_zone;
     rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
     rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
-    rr_component_physical_set_radius(physical, 32.0f);
+    rr_component_physical_set_radius(physical, 25.0f);
     physical->mass = 10;
     physical->arena = arena;
     physical->friction = 0.75;
@@ -169,6 +169,8 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
         rr_component_health_set_health(health,
                                     mob_data->health * rarity_scale->health);
         health->damage = mob_data->damage * rarity_scale->damage;
+        if (mob_id == rr_mob_id_edmontosaurus)
+            health->damage_reduction = 5 * rarity_scale->damage;
     }
     /*
     if (mob_id == 255 && 0)

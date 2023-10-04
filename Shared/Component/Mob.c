@@ -34,6 +34,7 @@ void rr_component_mob_init(struct rr_component_mob *this,
                            struct rr_simulation *simulation)
 {
     memset(this, 0, sizeof *this);
+    RR_SERVER_ONLY(this->ticks_to_despawn = 120 * 25;)
 }
 
 void rr_component_mob_free(struct rr_component_mob *this,
@@ -55,12 +56,12 @@ void rr_component_mob_free(struct rr_component_mob *this,
     uint8_t spawn_ids[4] = {};
     uint8_t spawn_rarities[4] = {};
     uint8_t count = 0;
-    uint8_t can_be_picked_up_by[RR_BITSET_ROUND(RR_SQUAD_COUNT + 1)];
+    uint8_t can_be_picked_up_by[RR_BITSET_ROUND(RR_SQUAD_COUNT)];
 
-    if (rr_simulation_has_arena(simulation, this->parent_id))
+    if (rr_simulation_has_arena(simulation, this->parent_id) && rr_simulation_get_arena(simulation, this->parent_id)->player_entered)
         rr_bitset_set(can_be_picked_up_by, rr_simulation_get_arena(simulation, this->parent_id)->first_squad_to_enter);
     else 
-        for (uint32_t i = 0; i < RR_SQUAD_COUNT + 1; ++i)
+        for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
             rr_bitset_maybe_set(can_be_picked_up_by, i, this->squad_damage_counter[i] > RR_MOB_DATA[this->id].health * RR_MOB_RARITY_SCALING[this->rarity].health * 0.1);
 
     for (uint64_t i = 0; i < 4; ++i)

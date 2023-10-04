@@ -171,9 +171,16 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     if (rr_component_arena_get_grid(arena, physical->x / arena->grid_size, physical->y / arena->grid_size)->player_count == 0)
     {
-        rr_simulation_get_mob(this, entity)->no_drop = 1;
-        rr_simulation_request_entity_deletion(this, entity);
+        struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
+        if (--mob->ticks_to_despawn == 0)
+        {
+            mob->no_drop = 1;
+            rr_simulation_request_entity_deletion(this, entity);
+            return;
+        }
     }
+    else
+        rr_simulation_get_mob(this, entity)->ticks_to_despawn = 120 * 25;
 }
 
 static void tick_wave(struct rr_simulation *this)

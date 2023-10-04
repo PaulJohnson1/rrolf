@@ -67,7 +67,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     if (petal->id == rr_petal_id_beak)
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-        physical->stun_ticks = (25 + 25 * petal->rarity / 2) * (1 - physical->slow_resist);
+        physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].damage) / 2) * (1 - physical->slow_resist);
     }
     else if (petal->id == rr_petal_id_mandible)
     {
@@ -120,7 +120,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = relations->owner;
                 }
                 else // allows for mob targeting
-                    ai->target_entity = entity2;
+                    ai->target_entity = rr_simulation_get_entity_hash(this, entity2);
             }
         }
     }
@@ -143,7 +143,7 @@ static void colliding_with_function(uint64_t i, void *_captures)
                     ai->target_entity = relations->owner;
                 }
                 else
-                    ai->target_entity = entity1;
+                    ai->target_entity = rr_simulation_get_entity_hash(this, entity1);
             }
         }
     }

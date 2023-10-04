@@ -174,8 +174,7 @@ static void system(EntityIdx id, void *simulation)
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, id);
     rr_vector_scale(&physical->velocity, physical->friction);
-    //if (physical->webbed)
-        //physical->acceleration_scale *= 0.25;
+    physical->acceleration_scale *= rr_lerp(physical->web_slowdown, 1, physical->slow_resist);
     if (physical->stun_ticks > 0)
     {
         if (!rr_simulation_has_petal(simulation, id))
@@ -186,8 +185,7 @@ static void system(EntityIdx id, void *simulation)
         physical->acceleration.x * physical->acceleration_scale,
         physical->acceleration.y * physical->acceleration_scale};
     rr_vector_add(&physical->velocity, &accel);
-    physical->acceleration_scale = 1;
-    physical->webbed = 0;
+    physical->acceleration_scale = physical->web_slowdown = 1;
     struct rr_vector vel = {physical->velocity.x, physical->velocity.y};
     rr_vector_add(&vel, &physical->collision_velocity);
     if (rr_simulation_has_flower(simulation, id))

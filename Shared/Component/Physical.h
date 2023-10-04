@@ -24,6 +24,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(float acceleration_scale;)
     RR_SERVER_ONLY(float aggro_range_multiplier;)
     RR_SERVER_ONLY(float slow_resist;)
+    RR_SERVER_ONLY(float web_slowdown;)
     float angle;
     RR_SERVER_ONLY(float bearing_angle;)
     RR_CLIENT_ONLY(float lerp_angle;)
@@ -38,9 +39,8 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float animation_timer;) //global timer
     RR_CLIENT_ONLY(float deletion_animation;)
     RR_SERVER_ONLY(uint32_t stun_ticks;)
-    RR_CLIENT_ONLY(uint8_t deletion_type;)
+    RR_CLIENT_ONLY(uint8_t deletion_type : 2;)
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)
-    RR_SERVER_ONLY(uint8_t webbed : 1;)
     RR_SERVER_ONLY(uint8_t protocol_state;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(EntityIdx arena;)

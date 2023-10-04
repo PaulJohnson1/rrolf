@@ -43,8 +43,7 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
     }
     rr_spatial_hash_insert(&rr_simulation_get_arena(this, physical->arena)->spatial_hash, entity);
 }
-static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
-                                       EntityIdx b)
+static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, EntityIdx b)
 {
 #define exclude(component_a, component_b)                                      \
     if (rr_simulation_has_##component_a(this, a) &&                            \
@@ -99,9 +98,18 @@ static void collapse_arena(EntityIdx entity, void *_captures)
     struct rr_simulation *this = _captures;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
     rr_spatial_hash_reset(&arena->spatial_hash);
-    if (entity == 1)
+    if (!rr_simulation_has_mob(this, entity))
         return;
-    if ((arena->ticks_to_deletion -= (arena->mob_count == 0)) == 0)
+    struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
+    if (arena->mob_count == 0 && arena->player_entered)
+    {
+        if (mob->ticks_to_despawn > 25)
+            mob->ticks_to_despawn = 25;
+        --mob->ticks_to_despawn;
+    }
+    else if (arena->player_entered)
+        --mob->ticks_to_despawn;
+    if (mob->ticks_to_despawn == 0)
         rr_simulation_request_entity_deletion(this, entity);
 }
 

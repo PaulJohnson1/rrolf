@@ -28,8 +28,8 @@ struct rr_component_arena
     uint8_t biome;
     RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_SERVER_ONLY(uint8_t first_squad_to_enter;)
+    RR_SERVER_ONLY(uint8_t player_entered;)
     RR_SERVER_ONLY(EntityIdx mob_count;)
-    RR_SERVER_ONLY(uint16_t ticks_to_deletion;)
     RR_SERVER_ONLY(uint16_t maze_dim;)
     RR_SERVER_ONLY(struct rr_maze_grid *grid;)
     RR_SERVER_ONLY(float grid_size;)
@@ -40,6 +40,7 @@ void rr_component_arena_init(struct rr_component_arena *,
                              struct rr_simulation *);
 void rr_component_arena_free(struct rr_component_arena *,
                              struct rr_simulation *);
+                             
 RR_SERVER_ONLY(void rr_component_arena_spatial_hash_init(
                    struct rr_component_arena *, struct rr_simulation *);)
 RR_SERVER_ONLY(struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *, uint32_t, uint32_t);)
