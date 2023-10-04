@@ -64,7 +64,6 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 {
     puts("<rr_websocket::server_connect>");
     this->recieved_first_packet = 0;
-    this->found_error = 0;
 #ifdef EMSCRIPTEN
     EM_ASM(
         {

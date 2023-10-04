@@ -10,18 +10,17 @@
 #include <Client/Renderer/Renderer.h>
 #include <Shared/StaticData.h>
 
-struct rr_renderer minimaps[2];
+struct rr_renderer minimap;
 
-#define DRAW_MINIMAP(renderer, grid, maze_dim) \
+#define DRAW_MINIMAP(renderer, grid) \
     {\
-        rr_renderer_init(renderer); \
         float s = floorf(this->abs_width / maze_dim);\
         rr_renderer_set_dimensions(renderer, s * maze_dim, s * maze_dim); \
         rr_renderer_set_fill(renderer, 0xffffffff); \
         for (uint32_t x = 0; x < maze_dim; ++x)\
             for (uint32_t y = 0; y < maze_dim; ++y)\
             {\
-                uint8_t at = grid[y][x].value;\
+                uint8_t at = grid[y*maze_dim+x].value;\
                 if (at == 1)\
                 {\
                     rr_renderer_begin_path(renderer);\
@@ -59,9 +58,11 @@ static void minimap_on_render(struct rr_ui_element *this,
 
     float s1 = (renderer->scale = b < a ? a : b);
     double scale = player_info->lerp_camera_fov * 0.25;
-    uint8_t main_arena = player_info->arena == 1;
-    float grid_size = main_arena ? RR_MAZE_GRID_SIZE : RR_BURRON_GRID_SIZE; 
-    uint32_t maze_dim = main_arena ? RR_MAZE_DIM : RR_BURROW_MAZE_DIM;
+    struct rr_component_arena *arena = rr_simulation_get_arena(game->simulation, player_info->arena);
+    float grid_size = RR_MAZES[arena->biome].grid_size;
+    uint32_t maze_dim = RR_MAZES[arena->biome].maze_dim;
+    struct rr_maze_grid *grid = RR_MAZES[arena->biome].maze;
+    DRAW_MINIMAP(&minimap, grid);
     double midX =
         (player_info->lerp_camera_x / (grid_size * maze_dim) - 0.5) * this->abs_width;
     double midY =
@@ -72,10 +73,9 @@ static void minimap_on_render(struct rr_ui_element *this,
     rr_renderer_begin_path(renderer);
     rr_renderer_rect(renderer, midX - W / 2, midY - H / 2, W, H);
     //rr_renderer_clip(renderer);
-    struct rr_renderer *minimap = &minimaps[1 - main_arena];
-    rr_renderer_scale(renderer, this->abs_width / minimap->width);
-    rr_renderer_draw_image(renderer, minimap);
-    rr_renderer_scale(renderer, minimap->width / this->abs_width);
+    rr_renderer_scale(renderer, this->abs_width / minimap.width);
+    rr_renderer_draw_image(renderer, &minimap);
+    rr_renderer_scale(renderer, minimap.width / this->abs_width);
     rr_renderer_set_fill(renderer, 0xff0000ff);
     rr_renderer_set_global_alpha(renderer, 0.8);
     rr_renderer_begin_path(renderer);
@@ -102,7 +102,6 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
     
     this->abs_width = this->width = this->abs_height = this->height = 150;
     this->on_render = minimap_on_render;
-    DRAW_MINIMAP(&minimaps[0], RR_MAZE_HELL_CREEK, RR_MAZE_DIM)
-    DRAW_MINIMAP(&minimaps[1], RR_MAZE_BURROW, RR_BURROW_MAZE_DIM)
+    rr_renderer_init(&minimap);
     return this;
 }

@@ -99,7 +99,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] =
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max]         = {8,  10,  4,  6, 15, 12, 9,  6,  10, 1,   12, 9,  8, 12, 8, 9, 9, 9};
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25, 25, 20, 25, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0};
-double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 10};
+double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 100, 10};
 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
@@ -289,11 +289,13 @@ static void print_chances(float difficulty) {
 }
 */
 
+#define init(MAZE) init_maze(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid), &RR_MAZE_TEMPLATE_##MAZE[0][0], &RR_MAZE_##MAZE[0][0]);
+
 void rr_static_data_init()
 {
     init_game_coefficients();
-    init_maze(RR_MAZE_DIM, &RR_MAZE_TEMPLATE_HELL_CREEK[0][0], &RR_MAZE_HELL_CREEK[0][0]);
-    init_maze(RR_BURROW_MAZE_DIM, &RR_MAZE_TEMPLATE_BURROW[0][0], &RR_MAZE_BURROW[0][0]);
+    init(HELL_CREEK);
+    init(BURROW);
 }
 
 
@@ -349,7 +351,7 @@ uint32_t level_from_xp(double xp)
 struct rr_maze_grid RR_MAZE_##name[size][size]; \
 uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]
 
-RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
+RR_DEFINE_MAZE(HELL_CREEK, 56) = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, l, l, l, 0},
     {0, 0, 0, L, L, L, 0, L, L, L, L, l, l, l, l, l, l, l, l, l, l, l, 0, l, l, l, l, l},
     {0, 0, 0, m, 0, L, L, L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, E, E, l},
@@ -380,11 +382,19 @@ RR_DEFINE_MAZE(HELL_CREEK, RR_MAZE_DIM) = {
     {0, 0, m, m, m, m, 0, 0, 0, 0, m, 0, 0, m, L, L, L, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-RR_DEFINE_MAZE(BURROW, RR_BURROW_MAZE_DIM) = {
+RR_DEFINE_MAZE(BURROW, 4) = {
     {1, 1},
     {0, 1}
 };
 
+#define MAZE_ENTRY(MAZE, GRID_SIZE) {(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid)), GRID_SIZE, &RR_MAZE_##MAZE[0][0]}
+struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
+    MAZE_ENTRY(HELL_CREEK, 1024),
+    MAZE_ENTRY(HELL_CREEK, 1024),
+    MAZE_ENTRY(BURROW, 512),
+};
+
+uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;
 #undef c
 #undef C
 #undef u

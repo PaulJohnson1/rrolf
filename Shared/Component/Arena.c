@@ -14,6 +14,16 @@
 #include <Shared/Utilities.h>
 #endif
 
+#define FOR_EACH_PUBLIC_FIELD                                                  \
+    X(biome, uint8)
+
+enum
+{
+    state_flags_biome = 0b000001,
+    state_flags_all = 0b000001
+};
+
+
 void rr_component_arena_init(struct rr_component_arena *this,
                              struct rr_simulation *simulation)
 {
@@ -47,25 +57,43 @@ void rr_component_arena_free(struct rr_component_arena *this,
 }
 
 #ifdef RR_SERVER
+#include <Shared/StaticData.h>
+
 void rr_component_arena_spatial_hash_init(
                    struct rr_component_arena *this, struct rr_simulation *simulation)
 {
+    this->maze_dim = RR_MAZES[this->biome].maze_dim;
+    this->grid_size = RR_MAZES[this->biome].grid_size;
+    this->grid = RR_MAZES[this->biome].maze;
     rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze_dim * this->grid_size / SPATIAL_HASH_GRID_SIZE);
 }
+
 struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *this, uint32_t x, uint32_t y)
 {
     return &this->grid[y * this->maze_dim + x];
 }
+
 void rr_component_arena_write(struct rr_component_arena *this,
                               struct proto_bug *encoder, int is_creation,
                               struct rr_component_player_info *client)
 {
+    uint64_t state = this->protocol_state | (state_flags_all * is_creation);
+
+    proto_bug_write_varuint(encoder, state, "arena component state");
+#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
 }
+
+RR_DEFINE_PUBLIC_FIELD(arena, uint8_t, biome)
 #endif
 
 #ifdef RR_CLIENT
 void rr_component_arena_read(struct rr_component_arena *this,
                              struct proto_bug *encoder)
 {
+    uint64_t state = proto_bug_read_varuint(encoder, "arena component state");
+#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 #endif

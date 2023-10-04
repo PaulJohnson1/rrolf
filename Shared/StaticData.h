@@ -34,13 +34,15 @@ enum rr_clientbound_packet_header
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
-#define RR_BIOME_COUNT (2)
-#define RR_MAZE_DIM (56)
-#define RR_BURROW_MAZE_DIM (4)
-#define RR_MAZE_GRID_SIZE (1024)
-#define RR_BURRON_GRID_SIZE (384)
-#define RR_ARENA_LENGTH (RR_MAZE_GRID_SIZE * RR_MAZE_DIM)
 #define RR_PLAYER_SPEED (3.2)
+
+enum rr_biome_id
+{
+    rr_biome_id_hell_creek,
+    rr_biome_id_garden,
+    rr_biome_id_beehive,
+    rr_biome_id_max
+};
 
 enum rr_rarity_id
 {
@@ -59,15 +61,15 @@ enum rr_petal_id
     rr_petal_id_no_petal,
     rr_petal_id_basic,
     rr_petal_id_pellet,
-    rr_petal_id_fossil, //remove + replace
+    rr_petal_id_fossil,
     rr_petal_id_stinger,
     rr_petal_id_light,
     rr_petal_id_shell,
-    rr_petal_id_peas, //remove + replace
+    rr_petal_id_peas, 
     rr_petal_id_leaf,
     rr_petal_id_egg,
     rr_petal_id_magnet,
-    rr_petal_id_uranium, //remove
+    rr_petal_id_uranium,
     rr_petal_id_feather,
     rr_petal_id_azalea,
     rr_petal_id_bone,
@@ -76,17 +78,13 @@ enum rr_petal_id
     rr_petal_id_gravel,
     rr_petal_id_club,
     rr_petal_id_crest,
-    rr_petal_id_droplet, //remove + replace
+    rr_petal_id_droplet,
     rr_petal_id_beak,
     rr_petal_id_lightning,
     rr_petal_id_third_eye,
     rr_petal_id_mandible,
     rr_petal_id_wax,
-    /*
-    rr_petal_id_kelp,
-    rr_petal_id_fish_egg,
-    rr_petal_id_scales,
-    */
+
     rr_petal_id_max
 };
 
@@ -104,12 +102,7 @@ enum rr_mob_id
     rr_mob_id_meteor,
     rr_mob_id_quetzalcoatlus,
     rr_mob_id_edmontosaurus,
-    /*
-    rr_mob_id_king_mackarel,
-    rr_mob_id_sea_snail,
-    rr_mob_id_seagull,
-    rr_mob_id_kelp,
-    */
+
     rr_mob_id_ant,
     rr_mob_id_hornet,
     rr_mob_id_dragonfly,
@@ -191,13 +184,23 @@ struct rr_maze_grid
     uint8_t value;
 };
 
+struct rr_maze_declaration
+{
+    uint32_t maze_dim;
+    float grid_size;
+    struct rr_maze_grid *maze;
+};
+
 #define RR_DECLARE_MAZE(name, size) \
 extern uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]; \
 extern struct rr_maze_grid RR_MAZE_##name[size][size];
 
-RR_DECLARE_MAZE(HELL_CREEK, RR_MAZE_DIM)
-RR_DECLARE_MAZE(BURROW, RR_BURROW_MAZE_DIM)
+RR_DECLARE_MAZE(HELL_CREEK, 56)
+RR_DECLARE_MAZE(BURROW, 4)
 
+extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
+
+extern uint8_t RR_GLOBAL_BIOME;
 
 void rr_static_data_init();
 

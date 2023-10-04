@@ -486,6 +486,11 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             }
             else
             {
+                if (rr_simulation_get_physical(simulation, p_petal->entity_hash)->arena != player_info->arena)
+                {
+                    rr_simulation_request_entity_deletion(simulation, p_petal->entity_hash);
+                    continue;
+                }
                 if (rr_simulation_has_mob(simulation, p_petal->entity_hash))
                 {
                     if (inner == 0 || data->clump_radius == 0)

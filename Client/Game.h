@@ -97,6 +97,7 @@ struct rr_game
     uint8_t block_ui_input : 1;
     uint8_t is_mobile : 1;
     uint8_t logged_in : 1;
+    uint8_t socket_error;
     uint8_t menu_open;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;

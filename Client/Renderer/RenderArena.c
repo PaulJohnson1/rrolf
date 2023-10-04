@@ -49,10 +49,10 @@ void render_background(struct rr_component_player_info *player_info, struct rr_g
     }
 
 #undef GRID_SIZE
-    uint8_t main_arena = player_info->arena == 1;
-    float grid_size = main_arena ? RR_MAZE_GRID_SIZE : RR_BURRON_GRID_SIZE; 
-    uint32_t maze_dim = main_arena ? RR_MAZE_DIM : RR_BURROW_MAZE_DIM;
-    struct rr_maze_grid *grid = main_arena ? &RR_MAZE_HELL_CREEK[0][0] : &RR_MAZE_BURROW[0][0];
+    struct rr_component_arena *arena = rr_simulation_get_arena(this->simulation, player_info->arena);
+    float grid_size = RR_MAZES[arena->biome].grid_size;
+    uint32_t maze_dim = RR_MAZES[arena->biome].maze_dim;
+    struct rr_maze_grid *grid = RR_MAZES[arena->biome].maze;
     rr_renderer_set_fill(this->renderer, 0xff000000);
     rr_renderer_set_global_alpha(this->renderer, 0.5f);
     int32_t nx = floorf(leftX / grid_size);

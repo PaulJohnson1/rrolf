@@ -72,7 +72,6 @@ struct rr_simulation
     RR_SERVER_ONLY(uint32_t animation_length;)
     RR_CLIENT_ONLY(uint8_t updated_this_tick;)
     uint8_t game_over;
-    uint8_t biome;
 };
 
 void rr_simulation_init(struct rr_simulation *);

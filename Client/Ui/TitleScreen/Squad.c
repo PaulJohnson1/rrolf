@@ -381,7 +381,7 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
 static uint8_t copy_button_should_show(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    return !game->socket.found_error;
+    return !game->socket_error;
 }
 
 struct rr_ui_element *rr_ui_squad_button_init()

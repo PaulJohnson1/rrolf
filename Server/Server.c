@@ -153,11 +153,10 @@ void rr_server_init(struct rr_server *this)
     //printf("server size: %lu\n", sizeof *this);
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
-    this->biome = 0; 
+    RR_GLOBAL_BIOME = rr_biome_id_garden;
 #endif
     rr_static_data_init();
     rr_simulation_init(&this->simulation);
-    this->simulation.biome = this->biome;
     for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
         rr_squad_init(&this->squads[i], this, i);
 }
@@ -815,7 +814,7 @@ static void server_tick(struct rr_server *this)
                 }
                 proto_bug_write_uint8(&encoder, client->squad_pos, "sqpos");
                 proto_bug_write_uint8(&encoder, squad->private, "private");
-                proto_bug_write_uint8(&encoder, this->biome, "biome");
+                proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
                 char joined_code[16];
                 sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code);
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");

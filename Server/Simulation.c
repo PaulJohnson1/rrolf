@@ -16,12 +16,13 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    zone->x = 2 * x * RR_MAZE_GRID_SIZE;
-    zone->y = 2 * y * RR_MAZE_GRID_SIZE;
-    zone->w = 2 * w * RR_MAZE_GRID_SIZE;
-    zone->h = 2 * h * RR_MAZE_GRID_SIZE;
+    float dim = arena->grid_size;
+    arena->respawn_zone.x = 2 * x * dim;
+    arena->respawn_zone.y = 2 * y * dim;
+    arena->respawn_zone.w = 2 * w * dim;
+    arena->respawn_zone.h = 2 * h * dim;
 }
 
 static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32_t y, uint32_t w, uint32_t h)
@@ -30,10 +31,10 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
     y *= 2;
     w *= 2;
     h *= 2;
-    struct rr_maze_grid (*grid)[RR_MAZE_DIM] = biome == 0 ? RR_MAZE_HELL_CREEK : RR_MAZE_HELL_CREEK;
+    uint32_t dim = RR_MAZES[biome].maze_dim;
     for (uint32_t Y = 0; Y < h; ++Y)
         for (uint32_t X = 0; X < h; ++X)
-            grid[Y+y][X+x].spawn_function = fun;
+            RR_MAZES[biome].maze[(Y+y)*dim+(X+x)].spawn_function = fun;
 }
 
 #define SPAWN_ZONE_X 12
@@ -54,11 +55,9 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena =
         rr_simulation_add_arena(this, id);
     //rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    arena->grid = &RR_MAZE_HELL_CREEK[0][0];
-    arena->maze_dim = RR_MAZE_DIM;
-    arena->grid_size = RR_MAZE_GRID_SIZE;
+    arena->biome = RR_GLOBAL_BIOME; //CHANGE
     rr_component_arena_spatial_hash_init(arena, this);
-    set_respawn_zone(&arena->respawn_zone, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
+    set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     set_special_zone(0, ornitho_zone, 12, 10, 2, 2);
     set_special_zone(0, rex_quetz_zone, 14, 1, 4, 1);
     set_special_zone(0, ankylo_zone, 23, 0, 5, 3);
@@ -122,14 +121,14 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     if (grid->spawn_function)
         id = grid->spawn_function();
     else
-        id = get_spawn_id(this->biome, grid);
+        id = get_spawn_id(RR_GLOBAL_BIOME, grid);
     uint8_t rarity = get_spawn_rarity(grid->difficulty);
     if (!should_spawn_at(id, rarity))
         return;
     for (uint32_t n = 0; n < 10; ++n)
     {
-        struct rr_vector pos = {(grid_x + rr_frand()) * RR_MAZE_GRID_SIZE, (grid_y + rr_frand()) * RR_MAZE_GRID_SIZE};
-        if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[id].radius))
+        struct rr_vector pos = {(grid_x + rr_frand()) * arena->grid_size, (grid_y + rr_frand()) * arena->grid_size};
+        if (too_close(this, pos.x, pos.y, 2 * RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[id].radius))
             continue;
         EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
                                                 rr_simulation_team_id_mobs);
@@ -164,8 +163,12 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 static void despawn_mob(EntityIdx entity, void *_simulation)
 {
     struct rr_simulation *this = _simulation;
-    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    if (physical->arena != 1)
+        return;
+    if (rr_simulation_has_arena(this, entity))
+        return;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     if (rr_component_arena_get_grid(arena, physical->x / arena->grid_size, physical->y / arena->grid_size)->player_count == 0)
     {
         rr_simulation_get_mob(this, entity)->no_drop = 1;
@@ -176,13 +179,13 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
 static void tick_wave(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    for (uint32_t i = 0; i < RR_MAZE_DIM * RR_MAZE_DIM; ++i)
+    for (uint32_t i = 0; i < arena->maze_dim * arena->maze_dim; ++i)
         arena->grid[i].player_count = 0;
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
-    for (uint32_t grid_x = 0; grid_x < RR_MAZE_DIM; ++grid_x)
+    for (uint32_t grid_x = 0; grid_x < arena->maze_dim; ++grid_x)
     {
-        for (uint32_t grid_y = 0; grid_y < RR_MAZE_DIM; ++grid_y)
+        for (uint32_t grid_y = 0; grid_y < arena->maze_dim; ++grid_y)
         {
             //if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 //grid_y += SPAWN_ZONE_H;

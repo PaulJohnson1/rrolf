@@ -125,14 +125,14 @@ static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game
 
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->socket.found_error)
-        return 1 + game->socket.found_error;
+    if (game->socket_error)
+        return 1 + game->socket_error;
     return game->socket_ready;
 }
 
 static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->joined_squad || game->socket.found_error;
+    return game->joined_squad || game->socket_error;
 }
 
 static uint8_t player_alive(struct rr_ui_element *this,
@@ -504,16 +504,22 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     {
     case rr_websocket_event_type_open:
         puts("<rr_websocket::open>");
+        this->socket_error = 0;
         break;
     case rr_websocket_event_type_close:
         // memset the clients
-        if (size == 1006)
-            this->socket.found_error = 1;
-        this->socket_pending = 0;
+        printf("<rr_websocket::close::%llu>\n", size);
+        rr_simulation_init(this->simulation);
         this->socket_ready = 0;
         this->simulation_ready = 0;
-        this->socket.recieved_first_packet = 0;
-        printf("<rr_websocket_close::%llu>\n", size);
+        if (size == 1006)
+        {
+            this->socket_error = 1;
+            rr_simulation_init(this->simulation);
+            this->socket_ready = 0;
+            this->simulation_ready = 0;
+            rr_game_connect_socket(this);
+        }
         break;
     case rr_websocket_event_type_data:
     {
@@ -605,12 +611,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             break;
         }
         case rr_clientbound_squad_fail:
-            this->socket.found_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
+            this->socket_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
             break;
         case rr_clientbound_squad_update:
             if (!this->joined_squad)
                 memset(&this->squad_members[0], 0, sizeof this->squad_members);
-            this->socket.found_error = 0;
+            this->socket_error = 0;
             this->joined_squad = 1;
             if (this->simulation_ready)
                 rr_simulation_init(this->simulation);
@@ -1125,7 +1131,7 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     if (port == 0 || s == NULL || token == NULL)
     {
         // error;
-        game->socket.found_error = 1;
+        game->socket_error = 1;
         game->socket_pending = 0;
         game->socket_ready = 0;
         return;

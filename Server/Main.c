@@ -22,7 +22,6 @@ void rr_api_on_craft_result(char *thing, void *a) { puts(thing); }
 
 int main()
 {
-    printf("%.0f\n", 1064.5);
     fprintf(stderr, "gameserver on version %llu\n", RR_SECRET8 ^ 255);
     srand(time(0));
     // signal(SIGINT, sigint_handle);

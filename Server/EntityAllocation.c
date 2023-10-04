@@ -11,12 +11,13 @@
 
 static struct rr_maze_grid DEFAULT_GRID = {0};
 
-static void set_respawn_zone(struct rr_spawn_zone *zone, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    zone->x = x * RR_BURRON_GRID_SIZE;
-    zone->y = y * RR_BURRON_GRID_SIZE;
-    zone->w = w * RR_BURRON_GRID_SIZE;
-    zone->h = h * RR_BURRON_GRID_SIZE;
+    float dim = arena->grid_size;
+    arena->respawn_zone.x = 2 * x * dim;
+    arena->respawn_zone.y = 2 * y * dim;
+    arena->respawn_zone.w = 2 * w * dim;
+    arena->respawn_zone.h = 2 * h * dim;
 }
 
 EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena, EntityIdx entity)
@@ -145,11 +146,9 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     {
         struct rr_component_arena *arena =
         rr_simulation_add_arena(this, entity);
-        arena->grid = &RR_MAZE_BURROW[0][0];
-        arena->maze_dim = RR_BURROW_MAZE_DIM;
-        arena->grid_size = RR_BURRON_GRID_SIZE;
+        rr_component_arena_set_biome(arena, rr_biome_id_beehive);
         rr_component_arena_spatial_hash_init(arena, this);
-        set_respawn_zone(&arena->respawn_zone, 1, 1, 1, 1);
+        set_respawn_zone(arena, 0, 0, 1, 1);
         for (uint32_t X = 0; X < arena->maze_dim; ++X)
         {
             for (uint32_t Y = 0; Y < arena->maze_dim; ++Y)
@@ -159,7 +158,6 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
                     continue;
                 ++arena->mob_count;
                 rr_simulation_alloc_mob(this, entity, (X+rr_frand())*arena->grid_size, (Y+rr_frand())*arena->grid_size, rr_mob_id_honeybee, rarity_id, team_id);
-                break;            
             }
         }
     }
