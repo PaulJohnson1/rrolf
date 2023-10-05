@@ -834,6 +834,7 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
+    this->slots_unlocked = RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
     validate_loadout(this);
 
     rr_game_cache_data(this);
