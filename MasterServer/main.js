@@ -364,7 +364,6 @@ wss.on("connection", (ws, req) => {
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
                     connected_clients[uuid].write(encoder);
-                    console.log(user);
                     ws.send(encoder.data.subarray(0, encoder.at));
                 } catch(e) {
                     console.log(e);
