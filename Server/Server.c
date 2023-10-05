@@ -4,6 +4,7 @@
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
+#include <pthread.h>
 #include <unistd.h>
 
 #include <libwebsockets.h>
@@ -34,6 +35,7 @@
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
+volatile int a = 0;
 static void *rivet_connected_endpoint(void *captures)
 {
     struct rr_server_client *this = captures;
@@ -47,6 +49,8 @@ static void *rivet_connected_endpoint(void *captures)
             lws_callback_on_writable(this->socket_handle);
         }
     }
+    for (uint32_t n = 0; n < 10000000; ++n)
+        a = (a + 2) * (a + 1);
     return NULL;
 }
 
@@ -251,7 +255,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         struct rr_server_client *client = lws_get_opaque_user_data(ws);
         if (client != NULL)
         {
-            uint64_t i = (client - this->clients) / (sizeof (struct rr_server_client));
+            uint64_t i = (client - this->clients);
             rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
             rr_rivet_players_disconnected(
@@ -291,7 +295,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     case LWS_CALLBACK_RECEIVE:
     {
         struct rr_server_client *client = lws_get_opaque_user_data(ws);
-        uint64_t i = (client - this->clients) / (sizeof (struct rr_server_client));
+        uint64_t i = (client - this->clients);
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
@@ -345,8 +349,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
-            printf("<rr_server::client_connect::%s>\n",
-                    client->rivet_account.token);
             /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
@@ -367,8 +369,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             // Detach the thread
             int thread_detach_result = pthread_detach(my_thread);
+            
 #endif
-
             printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
