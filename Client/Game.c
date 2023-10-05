@@ -52,33 +52,19 @@ static void validate_loadout(struct rr_game *this)
     }
 }
 
-void rr_api_on_get_petals(char *bin, void *a)
+void read_account(struct proto_bug *decoder, struct rr_game *game)
 {
-    struct rr_game *game = a;
-
     memset(game->inventory, 0, sizeof game->inventory);
-
-    struct rr_binary_encoder decoder;
-    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
-    if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
+    char uuid[sizeof game->rivet_account.uuid];
+    proto_bug_read_string(decoder, uuid, sizeof game->rivet_account.uuid, "uuid");
+    game->cache.experience = proto_bug_read_float64(decoder, "xp");
+    uint8_t id;
+    while ((id = proto_bug_read_uint8(decoder, "id")))
     {
-        puts("<rr_api::serverside_error>");
-        return;
-    }
-    rr_binary_encoder_read_nt_string(&decoder, game->rivet_account.uuid);
-    game->cache.experience = rr_binary_encoder_read_float64(&decoder);
-    uint32_t checksum = 5;
-    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
-    while (id)
-    {
-        uint32_t count = rr_binary_encoder_read_varuint(&decoder);
-        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
+        uint8_t rarity = proto_bug_read_uint8(decoder, "rarity");
+        uint32_t count = proto_bug_read_varuint(decoder, "count");
         game->inventory[id][rarity] = count;
-        checksum += id + ((rarity * count) & 1023);
-        id = rr_binary_encoder_read_uint8(&decoder);
     }
-    if (rr_binary_encoder_read_varuint(&decoder) != checksum)
-        memset(game->inventory, 0, sizeof game->inventory);
 }
 
 void rr_api_on_get_password(char *s, void *captures)
@@ -86,7 +72,6 @@ void rr_api_on_get_password(char *s, void *captures)
     struct rr_game *this = captures;
     strcpy(this->rivet_account.api_password, s);
     this->logged_in = 1;
-    rr_api_get_petals(this->rivet_account.uuid, this->rivet_account.api_password, this);
     rr_game_connect_socket(this);
 }
 
@@ -174,7 +159,8 @@ static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *gam
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
-        proto_bug_write_uint8(&encoder, rr_serverbound_squad_leave, "header");
+        proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
+        proto_bug_write_uint8(&encoder, 3, "join type");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
 }
@@ -477,7 +463,6 @@ void rr_game_init(struct rr_game *this)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
         {
-            this->inventory[id][rarity] = 0;
             this->petal_tooltips[id][rarity] =
                 rr_ui_petal_tooltip_init(id, rarity);
             rr_ui_container_add_element(this->window,
@@ -643,7 +628,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, rr_serverbound_loadout_update, "header");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_update, "header");
+            proto_bug_write_string(&encoder2, this->cache.nickname, 16, "nickname");
             proto_bug_write_uint8(&encoder2, this->slots_unlocked,
                                   "loadout count");
             for (uint32_t i = 0; i < this->slots_unlocked; ++i)
@@ -657,17 +643,27 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_write_uint8(
                     &encoder2, this->cache.loadout[i + 10].rarity, "rarity");
             }
-            // write nickname
-            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
-            encoder2.current = encoder2.start;
-            proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, rr_serverbound_nickname_update, "header");
-            proto_bug_write_string(&encoder2, this->cache.nickname, 15, "nick");
             rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         case rr_clientbound_squad_leave:
             this->joined_squad = 0;
             break;
+        case rr_clientbound_account_result:
+            read_account(&encoder, this);
+            break;
+        case rr_clientbound_craft_result:
+        {
+            uint8_t id = proto_bug_read_uint8(&encoder, "craft id");
+            uint8_t rarity = proto_bug_read_uint8(&encoder, "craft rarity");
+            uint32_t successes = proto_bug_read_varuint(&encoder, "success count");
+            uint32_t fails = proto_bug_read_varuint(&encoder, "fail count");
+            this->inventory[id][rarity] -= fails;
+            this->crafting_data.count -= fails;
+            this->inventory[id][rarity + 1] += successes;
+            this->crafting_data.success_count = successes;
+            this->crafting_data.animation = 0;
+            break;
+        }
         default:
             RR_UNREACHABLE("how'd this happen");
         }
@@ -946,7 +942,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             rr_component_relations_init(relations, sim);
             rr_component_health_init(health, sim);
             physical->radius = rr_frand() * 15 + 5;
-            physical->lerp_x = -1200;
+            physical->lerp_x = -1050;
             physical->lerp_y = (rr_frand() - 0.5) * this->renderer->height;
             physical->y = physical->lerp_y;
             uint32_t sum = 0;

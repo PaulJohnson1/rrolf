@@ -10,8 +10,7 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
-#include <Shared/Api.h>
-#include <Shared/Binary.h>
+#include <Shared/pb.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 
@@ -46,41 +45,10 @@ struct craft_captures
     struct rr_game *game;
 };
 
-void rr_api_on_craft_result(char *bin, void *_captures)
-{
-
-    struct craft_captures *captures = _captures;
-    struct rr_game *game = captures->game;
-    struct rr_game_crafting_data *craft = &game->crafting_data;
-
-    craft->animation = 0;
-
-    struct rr_binary_encoder decoder;
-    rr_binary_encoder_init(&decoder, (uint8_t *) bin);
-    if (rr_binary_encoder_read_uint8(&decoder) != RR_API_SUCCESS)
-    {
-        puts("<rr_api::serverside_error>");
-        return;
-    }
-    uint8_t id = rr_binary_encoder_read_uint8(&decoder);
-    while (id)
-    {
-        uint8_t rarity = rr_binary_encoder_read_uint8(&decoder);
-        uint32_t fails = rr_binary_encoder_read_varuint(&decoder);
-        game->inventory[id][rarity] -= fails;
-        game->crafting_data.count -= fails;
-        uint32_t successes = rr_binary_encoder_read_varuint(&decoder);
-        game->inventory[id][rarity + 1] += successes;
-        game->crafting_data.success_count = successes;
-        id = rr_binary_encoder_read_uint8(&decoder);
-    }
-    game->cache.experience += rr_binary_encoder_read_float64(&decoder);
-}
-
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
-    if (game->pressed != this || !game->logged_in)
+    if (game->pressed != this || !game->logged_in || !game->socket_ready)
         return;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
         game->crafting_data.animation == 0)
@@ -92,15 +60,13 @@ static void craft_button_on_event(struct rr_ui_element *this,
         {
             game->crafting_data.success_count = 0;
             game->crafting_data.animation = 5;
-            char petal_data[100] = {0};
-            snprintf(
-                petal_data, 90, "%d:%d:%d", game->crafting_data.crafting_id,
-                game->crafting_data.crafting_rarity, game->crafting_data.count);
-            static struct craft_captures c;
-            c.game = game;
-            memcpy(&c.craft, &game->crafting_data, sizeof c.craft);
-            rr_api_craft_petals(game->rivet_account.uuid,
-                                game->rivet_account.api_password, petal_data, &c);
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, output_packet);
+            proto_bug_write_uint8(&encoder, rr_serverbound_petals_craft, "header");
+            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_id, "craft id");
+            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_rarity, "craft rarity");
+            proto_bug_write_varuint(&encoder, game->crafting_data.count, "craft count");
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
 }

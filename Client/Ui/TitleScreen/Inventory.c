@@ -11,7 +11,6 @@
 
 #include <Client/Ui/Engine.h>
 
-#include <Shared/Api.h>
 #include <Shared/Utilities.h>
 
 struct inventory_button_metadata
@@ -254,11 +253,7 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         if (game->menu_open == rr_game_menu_inventory)
             game->menu_open = rr_game_menu_none;
         else
-        {
             game->menu_open = rr_game_menu_inventory;
-            if (game->logged_in)
-                rr_api_get_petals(game->rivet_account.uuid, game->rivet_account.api_password, game);
-        }
     }
     else
         rr_ui_render_tooltip_right(this, game->inventory_tooltip, game);

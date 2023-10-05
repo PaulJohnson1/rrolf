@@ -7,6 +7,15 @@
 // must be multiple of 8
 // max for normal players is four, developers can bypass that cap
 
+#ifndef NDEBUG
+#define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
+#else
+#define MESSAGE_BUFFER_SIZE (1024 * 1024)
+#endif
+
+extern uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
+extern uint8_t *outgoing_message;
+
 struct lws_context;
 struct lws;
 struct rr_server;

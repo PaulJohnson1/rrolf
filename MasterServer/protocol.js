@@ -51,10 +51,30 @@ class BinaryReader
     ReadUint8() {
         return this.data[this.at++];
     }
+    ReadVarUint() {
+        let byte, data = 0, shift = 0;
+
+        do
+        {
+            byte = this.ReadUint8();
+            data |= ((byte & 254) << shift) >> 1;
+            shift += 7;
+        } while (byte & 1);
+
+        return data;
+    }
     ReadStringNT() {
         const start = this.at;
         while (this.ReadUint8());
         return new TextDecoder().decode(this.data.subarray(start, this.at-1));
+    }
+    ReadFloat32() {
+        this.conv_u8.set(this.data.subarray(this.at, this.at += 4));
+        return this.conv_f32[0];
+    }
+    ReadFloat64() {
+        this.conv_u8.set(this.data.subarray(this.at, this.at += 8));
+        return this.conv_f64[0];
     }
 }
 

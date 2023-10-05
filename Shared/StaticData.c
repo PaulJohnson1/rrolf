@@ -130,12 +130,12 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
                                           
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
-    0, 1, 5, 10, 15, 30, 150, 1000};
+    0, 1, 8, 10, 15, 30, 150, 1000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {
     0, 1, 10, 25, 50, 200, 500, 1};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {
-    4, 5, 6, 10, 18, 15, 100};
+    4, 5, 7, 10, 18, 15, 100};
 
 static void init_game_coefficients()
 {
@@ -289,6 +289,49 @@ static void print_chances(float difficulty) {
 }
 */
 
+#ifdef RR_SERVER
+
+static double from_prd_base(double C)
+{
+    double pProcOnN = 0;
+    double pProcByN = 0;
+    double sumNpProcOnN = 0;
+
+    double maxFails = ceil(1 / C);
+    for (uint32_t N = 1; N <= maxFails; ++N) {
+        pProcOnN = fmin(1, N * C) * (1 - pProcByN);
+        pProcByN += pProcOnN;
+        sumNpProcOnN += N * pProcOnN;
+    }
+
+    return (1 / sumNpProcOnN);
+}
+static double get_prd_base(double p)
+{
+    double Cupper = p;
+    double Clower = 0;
+    double Cmid;
+    double p1;
+    double p2 = 1;
+    while (1)
+    {
+        Cmid = (Cupper + Clower) / 2;
+        p1 = from_prd_base(Cmid);
+        if (fabs(p1 - p2) <= 0) break;
+
+        if (p1 > p)
+            Cupper = Cmid;
+        else 
+            Clower = Cmid;
+        p2 = p1;
+    }
+
+    return Cmid;
+}
+
+double RR_CRAFT_CHANCES[rr_rarity_id_max - 1] = {0.5, 0.3, 0.15, 0.05, 0.03, 0.01};
+#endif
+
 #define init(MAZE) init_maze(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid), &RR_MAZE_TEMPLATE_##MAZE[0][0], &RR_MAZE_##MAZE[0][0]);
 
 void rr_static_data_init()
@@ -296,6 +339,9 @@ void rr_static_data_init()
     init_game_coefficients();
     init(HELL_CREEK);
     init(BURROW);
+    #ifdef RR_SERVER
+    for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_CRAFT_CHANCES[r]);
+    #endif
 }
 
 

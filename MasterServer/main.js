@@ -60,10 +60,10 @@ function format_id_rarity(entry)
     return `${entry.id}:${entry.rarity}`;
 }
 
-function log(type, args)
+function log(type, args, color = 31)
 {
     // todo: save to some sort of log file
-    console.log(`${new Date().toJSON()}::[${type}]:\t${args.join("\t")}`);
+    console.log(`\u001b[${color}[${new Date().toJSON()}::[${type}]:\t${args.join("\t")}\u001b[0m`);
 }
 
 function get_rivet_url(key)
@@ -133,32 +133,6 @@ function apply_missing_defaults(account)
     return account;
 }
 
-function craft(count, initial_fails, chance)
-{
-    let successes = 0;
-    let fails = initial_fails;
-    let attempts = 0;
-    if (chance === 0)
-        return {count, successes, attempts, fails};
-    while (count >= PETALS_TO_UPGRADE)
-    {
-        attempts++;
-        if (Math.random() < chance * (fails + 1))
-        {
-            fails = 0;
-            successes++;
-            count -= PETALS_TO_UPGRADE;
-        }
-        else
-        {
-            fails++;
-            count -= ((Math.random() * (PETALS_TO_UPGRADE - 1)) | 0) + 1;
-        }
-    }
-
-    return {count, successes, attempts, fails};
-}
-
 async function write_db_entry(username, data)
 {
     changed = true;
@@ -175,6 +149,8 @@ async function db_read_user(username, password)
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
+        if (password === SERVER_SECRET)
+            return null;
         const user = apply_missing_defaults({});
         user.password = password;
         user.username = username;
@@ -208,47 +184,6 @@ function user_merge_petals(user, petals)
     }
 }
 
-function craft_user_petals(user, petals)
-{
-    if (petals.length === 0)
-        return "\x00error";
-    // validate
-    for (let i = 0; i < petals.length; i++)
-        if (petals[i].count < PETALS_TO_UPGRADE)
-            throw new Error("need at least " + PETALS_TO_UPGRADE + " in each craft entry");
-
-    for (let i = 0; i < petals.length; i++)
-        if (!(petals[i].count <= user.petals[format_id_rarity(petals[i])]))
-            throw new Error("insufficient funds");
-
-    const writer = new protocol.BinaryWriter();
-    let new_xp = 0;
-    const results = [];
-    for (let i = 0; i < petals.length; i++)
-    {
-        const {id, rarity, count} = petals[i];
-        const key = format_id_rarity(petals[i]);
-        const {successes, attempts, fails: new_fails, count: new_count} = craft(count, user.failed_crafts[key] || 0, CRAFT_CHANCES[rarity]);
-        user.failed_crafts[key] = new_fails;
-        new_xp += attempts * CRAFT_XP_GAINS[rarity];
-        //new_xp += 0.5 * successes * CRAFT_XP_GAINS[rarity + 1];
-        results.push({id, rarity: rarity + 1, count: successes});
-        results.push({id, rarity, count: new_count - count});
-        writer.WriteUint8(id);
-        writer.WriteUint8(rarity);
-        writer.WriteVarUint(count - new_count);
-        writer.WriteVarUint(successes);
-    }
-    writer.WriteUint8(0);
-    writer.WriteFloat64(new_xp);
-
-    user.xp += new_xp;
-
-    user_merge_petals(user, results);
-    
-    return writer.data.subarray(0, writer.at);
-}
-
 // example: 1:0:123,1:5:1236
 function parse_id_rarity_count(string)
 {
@@ -277,32 +212,6 @@ function parse_id_rarity_count(string)
     return result;
 }
 
-app.get(`${namespace}/user_on_open/${SERVER_SECRET}/:username`, async (req, res) => {
-    const {username} = req.params;
-    handle_error(res, async () => {
-        log("user_on_open", [username]);
-        const user = await db_read_user(username, SERVER_SECRET);
-        await write_db_entry(username, user);
-        const out = new protocol.BinaryWriter();
-        out.WriteStringNT(username);
-        out.WriteFloat64(user.xp);
-        let checksum = 5;
-        for (const petal of Object.keys(user.petals))
-        {
-            if (!(user.petals[petal] > 0))
-                continue;
-            const [id, rarity] = petal.split(":");
-            out.WriteUint8(id);
-            out.WriteVarUint(user.petals[petal]);
-            out.WriteUint8(rarity);
-            checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
-        }
-        out.WriteUint8(0);
-        out.WriteVarUint(checksum);
-        return out.data.subarray(0, out.at);
-    });
-});
-
 app.get(`${namespace}/user_on_open_json/${SERVER_SECRET}/:username`, async (req, res) => {
     const {username} = req.params;
     handle_error(res, async () => {
@@ -310,19 +219,6 @@ app.get(`${namespace}/user_on_open_json/${SERVER_SECRET}/:username`, async (req,
         const user = await db_read_user(username, SERVER_SECRET);
         await write_db_entry(username, user);
         return JSON.stringify(user);
-    });
-});
-
-app.get(`${namespace}/user_on_close/${SERVER_SECRET}/:username/:petals_string/:wave_end_str/:gallery`, async (req, res) => {
-    const {username, petals_string, wave_end_str, gallery} = req.params;
-    const wave_end = parseInt(wave_end_str);
-    handle_error(res, async () => {
-        log("user_on_close", [username, wave_end, petals_string]);
-        const user = await db_read_user(username, SERVER_SECRET);
-
-        user_merge_petals(user, parse_id_rarity_count(petals_string));
-        await write_db_entry(username, user);
-        return "success\x00";
     });
 });
 
@@ -363,20 +259,6 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
 
         return "success";
     });
-});
-
-app.get(`${namespace}/user_craft_petals/:username/:password/:petals_string`, async (req, res) => {
-    const {username, password, petals_string} = req.params;
-    handle_error(res, async () => {
-        log("crafted petals", [username, petals_string])
-        const petals = parse_id_rarity_count(petals_string);
-        const user = await db_read_user(username, password);
-        const results = craft_user_petals(user, petals);
-        if (connected_clients[username])
-            connected_clients[username].needs_gameserver_update = 1;
-        await write_db_entry(username, user);
-        return results;
-    })
 });
 
 app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) => {
@@ -455,8 +337,26 @@ wss.on("connection", (ws, req) => {
             {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
+                if (connected_clients[uuid])
+                {
+                    const encoder = new protocol.BinaryWriter();
+                    encoder.WriteUint8(2);
+                    encoder.WriteUint8(pos);
+                    encoder.WriteStringNT(uuid);
+                    ws.send(encoder.data.subarray(0, encoder.at));
+                    break;
+                }
                 try {
                     const user = await db_read_user(uuid, SERVER_SECRET);
+                    if (!user)
+                    {
+                        const encoder = new protocol.BinaryWriter();
+                        encoder.WriteUint8(2);
+                        encoder.WriteUint8(pos);
+                        encoder.WriteStringNT(uuid);
+                        ws.send(encoder.data.subarray(0, encoder.at));
+                        return;
+                    }
                     log("client init", [uuid]);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
@@ -464,6 +364,7 @@ wss.on("connection", (ws, req) => {
                     encoder.WriteUint8(1);
                     encoder.WriteUint8(pos);
                     connected_clients[uuid].write(encoder);
+                    console.log(user);
                     ws.send(encoder.data.subarray(0, encoder.at));
                 } catch(e) {
                     console.log(e);
@@ -495,16 +396,24 @@ wss.on("connection", (ws, req) => {
                 const pos = game_server.clients.indexOf(uuid);
                 if (pos === -1)
                     break;
-                const amount = decoder.ReadUint8();
-                for (let u = 0; u < amount; ++u)
+                user.xp = decoder.ReadFloat64();
+                user.petals = {};
+                user.failed_crafts = {};
+                let id = decoder.ReadUint8();
+                while (id)
                 {
-                    const id = decoder.ReadUint8();
                     const rarity = decoder.ReadUint8();
-                    const key = id + ":" + rarity;
-                    if (!user.petals[key])
-                        user.petals[key] = 1;
-                    else
-                        ++user.petals[key];
+                    const count = decoder.ReadVarUint();
+                    user.petals[id+':'+rarity] = count;
+                    id = decoder.ReadUint8();
+                }
+                id = decoder.ReadUint8();
+                while (id)
+                {
+                    const rarity = decoder.ReadUint8();
+                    const count = decoder.ReadVarUint();
+                    user.failed_crafts[id+':'+rarity] = count;
+                    id = decoder.ReadUint8();
                 }
                 write_db_entry(user.username, user);
                 break;
@@ -575,5 +484,5 @@ process.on("uncaughtException", try_save_exit);
 setInterval(saveDatabaseToFile, 60000);
 
 setInterval(() => {
-    log("player count: ", [Object.keys(connected_clients).length]);
+    log("player count", [Object.keys(connected_clients).length]);
 }, 15000);

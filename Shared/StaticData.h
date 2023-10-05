@@ -17,11 +17,10 @@ enum rr_serverbound_packet_header
     rr_serverbound_petal_switch = 1,
     rr_serverbound_squad_join = 2,
     rr_serverbound_squad_ready = 3,
-    rr_serverbound_loadout_update = 4,
-    rr_serverbound_nickname_update = 5,
-    rr_serverbound_private_update = 6,
-    rr_serverbound_squad_leave = 7,
-    rr_serverbound_squad_kick = 8
+    rr_serverbound_squad_update = 4,
+    rr_serverbound_private_update = 5,
+    rr_serverbound_squad_kick = 6,
+    rr_serverbound_petals_craft = 7
 };
 
 enum rr_clientbound_packet_header
@@ -31,6 +30,8 @@ enum rr_clientbound_packet_header
     rr_clientbound_squad_update = 2,
     rr_clientbound_squad_fail = 3,
     rr_clientbound_squad_leave = 4,
+    rr_clientbound_account_result = 5,
+    rr_clientbound_craft_result = 6
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
@@ -201,6 +202,10 @@ RR_DECLARE_MAZE(BURROW, 4)
 extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
 
 extern uint8_t RR_GLOBAL_BIOME;
+
+#ifdef RR_SERVER 
+extern double RR_CRAFT_CHANCES[rr_rarity_id_max - 1];
+#endif
 
 void rr_static_data_init();
 

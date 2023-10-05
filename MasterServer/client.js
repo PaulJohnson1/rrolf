@@ -18,8 +18,18 @@ class GameClient
                 continue;
             const [id, rarity] = petal.split(":");
             encoder.WriteUint8(id);
-            encoder.WriteVarUint(user.petals[petal]);
             encoder.WriteUint8(rarity);
+            encoder.WriteVarUint(user.petals[petal]);
+        }
+        encoder.WriteUint8(0);
+        for (const petal of Object.keys(user.failed_crafts))
+        {
+            if (!(user.failed_crafts[petal] > 0))
+                continue;
+            const [id, rarity] = petal.split(":");
+            encoder.WriteUint8(id);
+            encoder.WriteUint8(rarity);
+            encoder.WriteVarUint(user.failed_crafts[petal]);
         }
         encoder.WriteUint8(0);
         this.needs_gameserver_update = false;
