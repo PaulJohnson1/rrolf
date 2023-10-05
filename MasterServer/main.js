@@ -50,6 +50,11 @@ app.use(function (req, res, next) {
     next();
 });
 
+function is_valid_uuid(uuid)
+{
+    return uuid.length === 36 && uuid.match(/[0-9a-z]{8}-([0-9a-z]{4}-){3}[0-9a-z]{9}/) !== null;
+}
+
 function format_id_rarity_count(entry)
 {
     return entry.id + ":" + entry.rarity + ":" + entry.count; 
@@ -169,6 +174,7 @@ async function handle_error(res, cb)
     }
     catch (e)
     {
+        console.log(e);
         res.end("\x00" + e.stack);
     }
 }
@@ -215,6 +221,8 @@ function parse_id_rarity_count(string)
 app.get(`${namespace}/user_on_open_json/${SERVER_SECRET}/:username`, async (req, res) => {
     const {username} = req.params;
     handle_error(res, async () => {
+        if (!is_valid_uuid(username))
+            throw new Error("invalid uuid");
         log("user_on_open", [username]);
         const user = await db_read_user(username, SERVER_SECRET);
         await write_db_entry(username, user);
@@ -226,6 +234,8 @@ app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
     const {username, password} = req.params;
     log("user_get", [username]);
     handle_error(res, async () => {
+        if (!is_valid_uuid(username))
+            throw new Error("invalid uuid");
         const user = await db_read_user(username, password);
         const out = new protocol.BinaryWriter();
         out.WriteStringNT(user.username);
@@ -251,6 +261,8 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
     const {old_username, old_password, username, password} = req.params;
     log("account_link", [old_username, username]);
     handle_error(res, async () => {
+        if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
+            throw new Error("invalid uuid");
         const a = await db_read_user(old_username, old_password);
         await db_read_user(username, password); // to create or verify that the new account has valid password
         a.password = password;
@@ -258,15 +270,6 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         await write_db_entry(username, a);
 
         return "success";
-    });
-});
-
-app.get(`${namespace}/user_create_squad/:username/:password`, async (req, res) => {
-    const {username, password} = req.params;
-    log("user_get", [username]);
-    handle_error(res, async () => {
-        const user = await db_read_user(username, password);
-        return JSON.stringify(user);
     });
 });
 
@@ -337,7 +340,8 @@ wss.on("connection", (ws, req) => {
             {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
-                if (connected_clients[uuid])
+                console.log(is_valid_uuid(uuid), uuid.length);
+                if (connected_clients[uuid] || !is_valid_uuid(uuid))
                 {
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(2);
