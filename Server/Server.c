@@ -34,6 +34,21 @@
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
+static void *rivet_connected_endpoint(void *captures)
+{
+    struct rr_server_client *this = captures;
+    char token[500];
+    strcpy(token, this->rivet_account.token);
+    if (!rr_rivet_players_connected(getenv("RIVET_TOKEN"), token))
+    {
+        if (strcmp(token, this->rivet_account.token) == 0)
+        {
+            this->pending_kick = 1;
+            lws_callback_on_writable(this->socket_handle);
+        }
+    }
+    return NULL;
+}
 
 void rr_api_on_get_petals(char *bin, void *_client) {}
 
@@ -198,8 +213,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 rr_bitset_set(this->clients_in_use, i);
                 rr_server_client_init(this->clients + i);
                 this->clients[i].server = this;
-                this->clients[i].file_descriptor = lws_get_socket_fd(ws);
                 this->clients[i].socket_handle = ws;
+                lws_set_opaque_user_data(ws, this->clients + i);
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
@@ -233,55 +248,50 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     }
     case LWS_CALLBACK_CLOSED:
     {
-        int file_descriptor = lws_get_socket_fd(ws);
-        for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
-            if (rr_bitset_get(this->clients_in_use, i))
-            {
-                if (this->clients[i].file_descriptor == file_descriptor)
-                {
-                    rr_bitset_unset(this->clients_in_use, i);
+        struct rr_server_client *client = lws_get_opaque_user_data(ws);
+        if (client != NULL)
+        {
+            uint64_t i = (client - this->clients) / (sizeof (struct rr_server_client));
+            rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
-                    rr_rivet_players_disconnected(
-                        getenv("RIVET_TOKEN"),
-                        this->clients[i].rivet_account.token);
+            rr_rivet_players_disconnected(
+                getenv("RIVET_TOKEN"),
+                this->clients[i].rivet_account.token);
 #endif
-                    struct rr_binary_encoder encoder;
-                    rr_binary_encoder_init(&encoder, outgoing_message);
-                    rr_binary_encoder_write_uint8(&encoder, 1);
-                    rr_binary_encoder_write_nt_string(&encoder, this->clients[i].rivet_account.uuid);
-                    rr_binary_encoder_write_uint8(&encoder, i);
-                    lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
-                    rr_server_client_free(this->clients + i);
-                    char log[100] = {"ip: `"};
-                    strcat(log, this->clients[i].ip_address);
-                    strcat(log, "`");
-                    // rr_discord_webhook_log("player status", "client
-                    // disconnected", log, 0xff4444);
-                    return 0;
-                }
-            }
+            struct rr_binary_encoder encoder;
+            rr_binary_encoder_init(&encoder, outgoing_message);
+            rr_binary_encoder_write_uint8(&encoder, 1);
+            rr_binary_encoder_write_nt_string(&encoder, this->clients[i].rivet_account.uuid);
+            rr_binary_encoder_write_uint8(&encoder, i);
+            lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+            rr_server_client_free(this->clients + i);
+            char log[100] = {"ip: `"};
+            strcat(log, this->clients[i].ip_address);
+            strcat(log, "`");
+            // rr_discord_webhook_log("player status", "client
+            // disconnected", log, 0xff4444);
+            return 0;
+        }
         puts("client joined but instakicked");
         // RR_UNREACHABLE("couldn't remove client");
         break;
     }
     case LWS_CALLBACK_SERVER_WRITEABLE:
     {
+        struct rr_server_client *client = lws_get_opaque_user_data(ws);
+        if (client->pending_kick)
+        {
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                         (uint8_t *)"kicked for unspecified reason",
+                         sizeof "kicked for unspecified reason" - 1);
+            return -1;
+        }
         break;
     }
     case LWS_CALLBACK_RECEIVE:
     {
-        struct rr_server_client *client = NULL;
-        uint64_t i = 0;
-        for (; i < RR_MAX_CLIENT_COUNT; i++)
-        {
-            if (!rr_bitset_get(this->clients_in_use, i))
-                continue;
-            if (this->clients[i].file_descriptor == lws_get_socket_fd(ws))
-            {
-                client = &this->clients[i];
-                break;
-            }
-        }
+        struct rr_server_client *client = lws_get_opaque_user_data(ws);
+        uint64_t i = (client - this->clients) / (sizeof (struct rr_server_client));
         rr_decrypt(packet, size, client->serverbound_encryption_key);
         client->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
@@ -337,6 +347,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 #ifdef RIVET_BUILD
             printf("<rr_server::client_connect::%s>\n",
                     client->rivet_account.token);
+            /*
             if (!rr_rivet_players_connected(
                     getenv("RIVET_TOKEN"),
                     client->rivet_account.token))
@@ -347,6 +358,15 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                                 sizeof "rivet error");
                 return -1;
             }
+            */
+            pthread_t my_thread;
+            int thread_create_result;
+
+            // Create a new thread
+            thread_create_result = pthread_create(&my_thread, NULL, rivet_connected_endpoint, client);
+
+            // Detach the thread
+            int thread_detach_result = pthread_detach(my_thread);
 #endif
 
             printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);

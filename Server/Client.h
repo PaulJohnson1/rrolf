@@ -17,7 +17,6 @@ struct rr_server_client
     struct rr_component_player_info *player_info;
     float player_accel_x;
     float player_accel_y;
-    int file_descriptor;
     char ip_address[100];
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t level;
@@ -28,6 +27,7 @@ struct rr_server_client
     uint8_t verified : 1;
     uint8_t dev : 1;
     uint8_t in_squad : 1;
+    uint8_t pending_kick : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);

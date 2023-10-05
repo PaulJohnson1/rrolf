@@ -525,6 +525,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, data);
+        printf("lenfrer %llu\n", size);
         if (!this->socket.recieved_first_packet)
         {
             this->socket.recieved_first_packet = 1;
@@ -540,7 +541,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "c encryption key");
             this->socket.serverbound_encryption_key =
                 proto_bug_read_uint64(&encoder, "s encryption key");
-
             // respond
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
@@ -556,7 +556,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev flag");
             rr_websocket_send(&this->socket,
                               verify_encoder.current - verify_encoder.start);
-
             return;
         }
         this->socket_ready = 1; //signifies that the socket is verified on the serverside
@@ -565,7 +564,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         this->socket.clientbound_encryption_key =
             rr_get_hash(this->socket.clientbound_encryption_key);
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
-        switch (proto_bug_read_uint8(&encoder, "header"))
+        uint8_t h = proto_bug_read_uint8(&encoder, "header");
+        switch (h)
         {
         case rr_clientbound_update:
             if (!this->simulation_ready)

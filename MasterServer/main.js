@@ -476,8 +476,8 @@ wss.on("connection", (ws, req) => {
             case 1:
             {
                 const uuid = decoder.ReadStringNT();
-                const pos = decoder.ReadUint8();
-                if (game_server.clients[pos] === uuid)
+                const pos = game_server.clients.indexOf(uuid);
+                if (pos !== -1)
                 {
                     log("client delete", [uuid]);
                     const client = connected_clients[uuid];
