@@ -163,16 +163,16 @@ async function write_db_entry(username, data)
 {
     changed = true;
     //delete data.needs_update;
-    database[username] = structuredClone(data);
-    // await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    //database[username] = structuredClone(data);
+    await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
 }
 
 async function db_read_user(username, password)
 {
-    if (connected_clients[username] && (1 || password === SERVER_SECRET))
+    if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
-    const user = structuredClone({value: database[username]});
-    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    //const user = structuredClone({value: database[username]});
+    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         const user = apply_missing_defaults({});
@@ -181,9 +181,6 @@ async function db_read_user(username, password)
         await write_db_entry(username, user);
         return user;
     }
-    for (let n = 1; n < 24; ++n)
-        for (let m = 1; m < 7; ++m)
-            user.value.petals[n+':'+m] = 10;
     apply_missing_defaults(user.value);
     return user.value;
 }
