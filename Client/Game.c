@@ -597,8 +597,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         particle->x = proto_bug_read_float32(&encoder, "ani x");
                         particle->y = proto_bug_read_float32(&encoder, "ani y");
                         particle->velocity.x = (rr_frand() - 0.5) * 25;
-                        particle->velocity.y = -50 + rr_frand() * 25;
-                        particle->acceleration.y = 2.5;
+                        particle->velocity.y = -30 + rr_frand() * 10;
+                        particle->acceleration.y = 1.5;
                         particle->damage = proto_bug_read_varuint(&encoder, "damage");
                         particle->opacity = 1;
                         break;

@@ -6,6 +6,13 @@
 #include <Shared/Bitset.h>
 #include <Shared/StaticData.h>
 
+struct rr_server_client_message
+{
+    struct rr_server_client_message *next;
+    uint64_t len;
+    uint8_t *packet;
+};
+
 struct rr_server_client
 {
     struct rr_rivet_account rivet_account;
@@ -14,6 +21,8 @@ struct rr_server_client
     uint64_t requested_verification;
     struct rr_server *server;
     struct lws *socket_handle;
+    struct rr_server_client_message *message_root;
+    struct rr_server_client_message *message_at;
     struct rr_component_player_info *player_info;
     float player_accel_x;
     float player_accel_y;

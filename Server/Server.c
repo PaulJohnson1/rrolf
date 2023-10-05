@@ -114,7 +114,19 @@ void rr_server_client_encrypt_message(struct rr_server_client *this,
 void rr_server_client_write_message(struct rr_server_client *this,
                                     uint8_t *data, uint64_t size)
 {
-    lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
+    struct rr_server_client_message *message = malloc(sizeof *message);
+    uint8_t *packet = malloc(LWS_PRE + size);
+    memcpy(packet + LWS_PRE, data, size);
+    message->next = NULL;
+    message->len = size;
+    message->packet = packet;
+    if (this->message_root == NULL)
+        this->message_root = message;
+    else
+        this->message_at->next = message;
+    this->message_at = message;
+    lws_callback_on_writable(this->socket_handle);
+    //lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
 static void write_animation_function(struct rr_simulation *simulation,
@@ -291,6 +303,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
     case LWS_CALLBACK_SERVER_WRITEABLE:
     {
         struct rr_server_client *client = lws_get_opaque_user_data(ws);
+        if (client == NULL)
+            return -1;
         if (client->pending_kick)
         {
             lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
@@ -298,6 +312,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                          sizeof "kicked for unspecified reason" - 1);
             return -1;
         }
+        struct rr_server_client_message *message = client->message_root;
+        while (message != NULL)
+        {
+            lws_write(ws, message->packet + LWS_PRE, message->len, LWS_WRITE_BINARY);
+            struct rr_server_client_message *tmp = message->next;
+            free(message->packet);
+            free(message);
+            message = tmp;
+        }
+        client->message_at = client->message_root = NULL;
         break;
     }
     case LWS_CALLBACK_RECEIVE:
