@@ -35,7 +35,6 @@
 static uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 static uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
-volatile int a = 0;
 static void *rivet_connected_endpoint(void *captures)
 {
     struct rr_server_client *this = captures;
@@ -49,8 +48,15 @@ static void *rivet_connected_endpoint(void *captures)
             lws_callback_on_writable(this->socket_handle);
         }
     }
-    for (uint32_t n = 0; n < 10000000; ++n)
-        a = (a + 2) * (a + 1);
+    return NULL;
+}
+
+static void *rivet_disconnected_endpoint(void *captures)
+{
+    struct rr_server_client *this = captures;
+    char token[500];
+    strcpy(token, this->rivet_account.token);
+    rr_rivet_players_disconnected(getenv("RIVET_TOKEN"), token);
     return NULL;
 }
 
@@ -258,9 +264,14 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             uint64_t i = (client - this->clients);
             rr_bitset_unset(this->clients_in_use, i);
 #ifdef RIVET_BUILD
+/*
             rr_rivet_players_disconnected(
                 getenv("RIVET_TOKEN"),
                 this->clients[i].rivet_account.token);
+                */
+            pthread_t thread;
+            pthread_create(&thread, NULL, rivet_disconnected_endpoint, client);
+            pthread_detach(thread);
 #endif
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
@@ -272,12 +283,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             char log[100] = {"ip: `"};
             strcat(log, this->clients[i].ip_address);
             strcat(log, "`");
-            // rr_discord_webhook_log("player status", "client
-            // disconnected", log, 0xff4444);
             return 0;
         }
         puts("client joined but instakicked");
-        // RR_UNREACHABLE("couldn't remove client");
         break;
     }
     case LWS_CALLBACK_SERVER_WRITEABLE:
@@ -361,14 +369,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
             */
-            pthread_t my_thread;
-            int thread_create_result;
-
-            // Create a new thread
-            thread_create_result = pthread_create(&my_thread, NULL, rivet_connected_endpoint, client);
-
-            // Detach the thread
-            int thread_detach_result = pthread_detach(my_thread);
+            pthread_t thread;
+            pthread_create(&thread, NULL, rivet_connected_endpoint, client);
+            pthread_detach(thread);
             
 #endif
             printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);
