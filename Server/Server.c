@@ -686,6 +686,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 rr_binary_encoder_read_nt_string(&decoder, uuid);
                 if (strcmp(uuid, client->rivet_account.uuid) == 0)
                 {
+                    printf("<rr_server::client_kick::%s>\n", uuid);
                     client->pending_kick = 1;
                     if (client->socket_handle != NULL)
                         lws_callback_on_writable(client->socket_handle);

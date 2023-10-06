@@ -342,6 +342,7 @@ wss.on("connection", (ws, req) => {
                 const pos = decoder.ReadUint8();
                 if (connected_clients[uuid])
                 {
+                    log("[player force disconnect]", [uuid]);
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(2);
                     encoder.WriteUint8(pos);
@@ -353,6 +354,7 @@ wss.on("connection", (ws, req) => {
                     const user = await db_read_user(uuid, SERVER_SECRET);
                     if (!user)
                     {
+                        log("[player dne disconnect]", [uuid]);
                         const encoder = new protocol.BinaryWriter();
                         encoder.WriteUint8(2);
                         encoder.WriteUint8(pos);
