@@ -14,7 +14,6 @@ struct rr_ui_text_input_metadata
     char *name;
     char *text;
     uint8_t max;
-    uint8_t focused;
 };
 
 static void text_input_on_hide(struct rr_ui_element *this,
@@ -22,16 +21,6 @@ static void text_input_on_hide(struct rr_ui_element *this,
 {
     struct rr_ui_text_input_metadata *data = this->data;
     rr_dom_element_hide(data->name);
-}
-
-static void text_input_on_event(struct rr_ui_element *this,
-                                 struct rr_game *game)
-{
-    if (game->input_data->mouse_buttons_down_this_tick & 1)
-    {
-        struct rr_ui_text_input_metadata *data = this->data;
-        data->focused = 1;
-    }
 }
 
 static void text_input_on_render(struct rr_ui_element *this,
@@ -55,14 +44,13 @@ static void text_input_on_render(struct rr_ui_element *this,
                             this->width, this->height);
     if (game->is_mobile)
     {
-        if (data->focused)
+        if (rr_ui_mouse_over(this, game) && (game->input_data->mouse_buttons_down_this_tick & 1))
         {
             EM_ASM({
                 const element = document.getElementById(Module.ReadCstr($0));
                 element.value = prompt();
             }, data->name);
         }
-        data->focused = 0;
     }
     return;
 }
@@ -84,7 +72,6 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
     element->on_render = text_input_on_render;
     element->on_hide = text_input_on_hide;
     element->animate = rr_ui_instant_hide_animate;
-    element->on_event = text_input_on_event;
     rr_dom_create_text_element(data->name, 16);
     return element;
 }

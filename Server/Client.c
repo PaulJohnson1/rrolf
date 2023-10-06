@@ -16,6 +16,8 @@
 #include <Shared/Entity.h>
 #include <Shared/pb.h>
 
+double CRAFT_XP_GAINS[rr_rarity_id_max - 1] = {1, 8, 60, 750, 25000, 1000000};
+
 void rr_server_client_init(struct rr_server_client *this)
 {
     memset(this, 0, sizeof *this);
@@ -101,6 +103,7 @@ void rr_server_client_craft_petal(struct rr_server_client *this, uint8_t id, uin
         }
         else
             now -= 1 + rand() % 4;
+        this->experience += CRAFT_XP_GAINS[rarity];
     }
     this->inventory[id][rarity] -= (count - now);
     this->inventory[id][rarity+1] += success;
