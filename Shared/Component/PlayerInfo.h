@@ -8,7 +8,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
-#define RR_BASE_FOV (0.8f)
+#define RR_BASE_FOV (0.9f)
 struct rr_simulation;
 struct proto_bug;
 RR_SERVER_ONLY(struct rr_squad_member;)
