@@ -122,11 +122,14 @@ int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_bina
     memset(this->inventory, 0, sizeof this->inventory);
     char uuid[sizeof this->rivet_account.uuid];
     rr_binary_encoder_read_nt_string(encoder, uuid);
+    fputs(uuid, stderr);
+    fputs("\n", stderr);
+    fputs(this->rivet_account.uuid, stderr);
+    fputs("\n", stderr);
     if (strcmp(uuid, this->rivet_account.uuid))
         return 0;
     this->experience = rr_binary_encoder_read_float64(encoder);
     uint8_t id = rr_binary_encoder_read_uint8(encoder);
-    puts("fdsd");
     puts(uuid);
     while (id)
     {
