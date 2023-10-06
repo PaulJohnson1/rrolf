@@ -154,10 +154,8 @@ async function db_read_user(username, password)
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
-        if (password === SERVER_SECRET)
-            return null;
         const user = apply_missing_defaults({});
-        user.password = password;
+        user.password = hash(username + PASSWORD_SALT);
         user.username = username;
         await write_db_entry(username, user);
         return user;
@@ -340,9 +338,10 @@ wss.on("connection", (ws, req) => {
             {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
-                if (connected_clients[uuid])
+                log("attempt init", [uuid]);
+                if (!is_valid_uuid(uuid) || connected_clients[uuid])
                 {
-                    log("[player force disconnect]", [uuid]);
+                    log("player force disconnect", [uuid]);
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(2);
                     encoder.WriteUint8(pos);
@@ -354,7 +353,7 @@ wss.on("connection", (ws, req) => {
                     const user = await db_read_user(uuid, SERVER_SECRET);
                     if (!user)
                     {
-                        log("[player dne disconnect]", [uuid]);
+                        log("player dne disconnect", [uuid]);
                         const encoder = new protocol.BinaryWriter();
                         encoder.WriteUint8(2);
                         encoder.WriteUint8(pos);
@@ -362,7 +361,6 @@ wss.on("connection", (ws, req) => {
                         ws.send(encoder.data.subarray(0, encoder.at));
                         return;
                     }
-                    log("client init", [uuid]);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
@@ -437,6 +435,7 @@ wss.on("connection", (ws, req) => {
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.alias);
     ws.send(encoder.data.subarray(0, encoder.at));
+    /*
     setInterval(() => {
         for (let pos = 0; pos < 64; ++pos)
         {
@@ -454,6 +453,7 @@ wss.on("connection", (ws, req) => {
             ws.send(encoder.data.subarray(0, encoder.at));
         }
     }, 500);
+    */
     setInterval(() => {
         //ping packet
         const encoder = new protocol.BinaryWriter();
