@@ -1,6 +1,7 @@
 #include <Client/Ui/Ui.h>
 
 #include <stdlib.h>
+#include <emscripten.h>
 #include <string.h>
 
 #include <Client/DOM.h>
@@ -42,6 +43,17 @@ static void text_input_on_render(struct rr_ui_element *this,
                           this->width, this->height);
     rr_renderer_stroke_rect(renderer, -this->width / 2, -this->height / 2,
                             this->width, this->height);
+    if (game->is_mobile)
+    {
+        if (data->focused)
+        {
+            EM_ASM({
+                const element = document.getElementById(Module.ReadCstr($0));
+                element.value = prompt();
+            }, data->name);
+        }
+        data->focused = 0;
+    }
     return;
 }
 
