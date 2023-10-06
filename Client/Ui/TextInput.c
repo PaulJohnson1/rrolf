@@ -24,6 +24,16 @@ static void text_input_on_hide(struct rr_ui_element *this,
     rr_dom_element_hide(data->name);
 }
 
+static void text_input_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_down_this_tick & 1)
+    {
+        struct rr_ui_text_input_metadata *data = this->data;
+        data->focused = 1;
+    }
+}
+
 static void text_input_on_render(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
@@ -74,6 +84,7 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
     element->on_render = text_input_on_render;
     element->on_hide = text_input_on_hide;
     element->animate = rr_ui_instant_hide_animate;
+    element->on_event = text_input_on_event;
     rr_dom_create_text_element(data->name, 16);
     return element;
 }
