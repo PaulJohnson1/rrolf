@@ -52,7 +52,7 @@ app.use(function (req, res, next) {
 
 function is_valid_uuid(uuid)
 {
-    return uuid.length === 36 && uuid.match(/[0-9a-z]{8}-([0-9a-z]{4}-){3}[0-9a-z]{9}/) !== null;
+    return uuid.length === 36 && uuid.match(/[0-9a-z]{8}-([0-9a-z]{4}-){3}[0-9a-z]{12}/) !== null;
 }
 
 function format_id_rarity_count(entry)
@@ -340,8 +340,7 @@ wss.on("connection", (ws, req) => {
             {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
-                console.log(is_valid_uuid(uuid), uuid.length);
-                if (connected_clients[uuid] || !is_valid_uuid(uuid))
+                if (connected_clients[uuid])
                 {
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(2);
