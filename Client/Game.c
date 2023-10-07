@@ -595,6 +595,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case rr_clientbound_squad_fail:
             this->socket_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
+            if (this->simulation_ready)
+                rr_simulation_init(&this->simulation);
+            this->simulation_ready = 0;
+            this->joined_squad = 0;
             break;
         case rr_clientbound_squad_update:
             if (!this->joined_squad)
