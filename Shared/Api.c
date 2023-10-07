@@ -40,7 +40,7 @@ void rr_api_get_password(char const *token, void *captures)
                     for (let i = 0; i < pw.length; i++)
                         HEAPU8[$pw + i] = pw[i].charCodeAt();
                     HEAPU8[$pw + pw.length] = 0;
-                    Module._rr_api_on_get_password($pw, $2);
+                    _rr_api_on_get_password($pw, $2);
                     _free($pw);         
                 });
         }, RR_BASE_API_URL, token, captures
@@ -77,12 +77,12 @@ void rr_api_get_server_alias(char const *param_1, void *game)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $2);
+                    _rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $2);
                     _free($host);
                     _free($token);
                 })
                 .catch(function(error) {
-                    Module._rr_rivet_lobby_on_find(0, 0, 0, $2);
+                    _rr_rivet_lobby_on_find(0, 0, 0, $2);
                 });
             });
         },

@@ -125,14 +125,14 @@ void rr_rivet_lobbies_find(void *captures)
             function attempt(d)
             {
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
-                    headers : {
-                        Authorization :
+                    "headers ": {
+                        "Authorization" :
                             // clang-format off
                             "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
                         // clang-format on
                     },
-                    method : "POST",
-                    body : '{"game_modes":["default"]}'
+                    "method" : "POST",
+                    "body" : '{"game_modes":["default"]}'
                 })
                     .then(function(r) { return r.json(); })
                     .then(function(json) {
@@ -146,7 +146,7 @@ void rr_rivet_lobbies_find(void *captures)
                             HEAPU8[$token + i] = token[i].charCodeAt();
                         HEAPU8[$host + host.length] = 0;
                         HEAPU8[$token + token.length] = 0;
-                        Module._rr_rivet_lobby_on_find(
+                        _rr_rivet_lobby_on_find(
                             $host, $token, json.ports.default.port, $0);
                         _free($host);
                         _free($token);
@@ -171,14 +171,14 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
     EM_ASM(
         {
             fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
-                headers : {
-                    Authorization :
+                "headers" : {
+                    "Authorization" :
                         // clang-format off
                         "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
                     // clang-format on
                 },
-                method : "POST",
-                body : '{"lobby_id":"' + Module.ReadCstr($1) + '"}'
+                "method" : "POST",
+                "body" : '{"lobby_id":"' + Module.ReadCstr($1) + '"}'
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
@@ -192,12 +192,12 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                         HEAPU8[$token + i] = token[i].charCodeAt();
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    Module._rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
+                    _rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
                     _free($host);
                     _free($token);
                 })
                 .catch(function(error) {
-                    Module._rr_rivet_lobby_on_find(0, 0, 0, $0);
+                    _rr_rivet_lobby_on_find(0, 0, 0, $0);
                 });
         },
         captures, lobby_id);
@@ -215,11 +215,11 @@ void rr_rivet_link_account(char *game_user, void *captures)
             let api = UTF8ToString($1);
             let w;
             fetch("https://identity.api.rivet.gg/v1/game-links", {
-                method: "POST",
-                body: "{}",
-                headers: {
+                "method": "POST",
+                "body": "{}",
+                "headers": {
                     // is a dev token
-                    Authorization: "Bearer " + token
+                    "Authorization": "Bearer " + token
                 }
             }).then(r => r.json())
             .then(r => {
@@ -239,7 +239,7 @@ void rr_rivet_link_account(char *game_user, void *captures)
                             fetch(api + "account_link/" +
                                 newer.current_identity.identity_id + "/" +
                                 localStorage.DO_NOT_SHARE_rivet_account_token + "/" +
-                                newer.new_identity.identity.identity_id + "/" +
+                                newer.new_identity["identity"].identity_id + "/" +
                                 newer.new_identity.identity_token
                             ).then(x => {
                                 w.close();
@@ -271,27 +271,22 @@ void rr_rivet_identities_create_guest(void *captures)
         function on_account(x)
         {
             // doesn't matter if this memory gets leaked, it's only ever ran once
-            const $token = _malloc(x.identity_token.length + 1);
-            const $avatar_url = _malloc(x.identity.avatar_url.length + 1);
-            const $name = _malloc(x.identity.display_name.length + 1);
-            const $uuid = _malloc(x.identity.identity_id.length + 1);
+            const $token = _malloc(x["identity_token"].length + 1);
+            const $avatar_url = _malloc(x["identity"]["avatar_url"].length + 1);
+            const $name = _malloc(x["identity"]["display_name"].length + 1);
+            const $uuid = _malloc(x["identity"]["identity_id"].length + 1);
             const $account_number = _malloc(6);
-            HEAPU8[$token + x.identity_token.length] = 0; // null terminate
-            HEAPU8[$avatar_url + x.identity.avatar_url.length] = 0;
-            HEAPU8[$name + x.identity.display_name.length] = 0;
-            HEAPU8[$uuid + x.identity.identity_id.length] = 0;
+            HEAPU8[$token + x["identity_token"].length] = 0; // null terminate
+            HEAPU8[$avatar_url + x["identity"]["avatar_url"].length] = 0;
+            HEAPU8[$name + x["identity"]["display_name"].length] = 0;
+            HEAPU8[$uuid + x["identity"]["identity_id"].length] = 0;
             HEAPU8[$account_number + 5] = 0;
-            for (let i = 0; i < x.identity_token.length; i++)
-                HEAPU8[$token + i] = x.identity_token[i].charCodeAt();
-            for (let i = 0; i < x.identity.avatar_url.length; i++)
-                HEAPU8[$avatar_url + i] = x.identity.avatar_url[i].charCodeAt();
-            for (let i = 0; i < x.identity.display_name.length; i++)
-                HEAPU8[$name + i] = x.identity.display_name[i].charCodeAt();
-            for (let i = 0; i < x.identity.identity_id.length; i++)
-                HEAPU8[$uuid + i] = x.identity.identity_id[i].charCodeAt();
-            for (let i = 0; i < 5; i++)
-                HEAPU8[$account_number + i] = ("#" + x.identity.account_number.toString().padStart(4, "0"))[i].charCodeAt();
-            Module._rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
+            HEAPU8.set(new TextEncoder().encode(x["identity_token"]), $token);
+            HEAPU8.set(new TextEncoder().encode(x["identity"]["avatar_url"]), $avatar_url);
+            HEAPU8.set(new TextEncoder().encode(x["identity"]["display_name"]), $name);
+            HEAPU8.set(new TextEncoder().encode(x["identity"]["identity_id"]), $uuid);
+            HEAPU8.set(new TextEncoder().encode("#"+x["identity"]["account_number"].toString().padStart(4, "0")), $account_number);
+            _rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
             _free($uuid);
             _free($token);
             _free($avatar_url);
@@ -304,16 +299,16 @@ void rr_rivet_identities_create_guest(void *captures)
             if (!window.localStorage[x])
             {
                 fetch("https://identity.api.rivet.gg/v1/identities", {
-                    method: "POST",
-                    body: "{}",
-                    headers: {
+                    "method": "POST",
+                    "body": "{}",
+                    "headers": {
                         // is a dev token
-                        Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                        "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
                     }
                 }).then(r => r.json())
                 .then(r => {
-                    window.localStorage[x] = r.identity_token;
-                    window.localStorage["rivet_account_uuid"] = r.identity.identity_id;
+                    window.localStorage[x] = r["identity_token"];
+                    window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
                     on_account(r);
                 });
             }
@@ -322,11 +317,11 @@ void rr_rivet_identities_create_guest(void *captures)
                 fetch("https://identity.api.rivet.gg/v1/identities", {
                     method: "POST",
                     body: JSON.stringify({
-                        existing_identity_token: window.localStorage[x]
+                        "existing_identity_token": window.localStorage[x]
                     }),
                     headers: {
                         // is a dev token
-                        Authorization: "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                        "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
                     }
                 }).then(r => r.json())
                 .then(r => {
@@ -334,7 +329,7 @@ void rr_rivet_identities_create_guest(void *captures)
                         throw r;
                     window.localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
                     if (!window.localStorage["rivet_account_uuid"])
-                        window.localStorage["rivet_account_uuid"] = r.identity.identity_id;
+                        window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
                     on_account(r);
                 }).catch(function(e)
                 {

@@ -75,15 +75,15 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                     new WebSocket(string);
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function() {
-                    Module._rr_on_socket_event_emscripten($0, 0, 0, 0);
+                    _rr_on_socket_event_emscripten($0, 0, 0, 0);
                 };
                 socket.onclose = function(a) {
-                    Module._rr_on_socket_event_emscripten($0, 1, 0, a.code);
+                    _rr_on_socket_event_emscripten($0, 1, 0, a.code);
                 };
                 socket.onmessage = function(event)
                 {
                     HEAPU8.set(new Uint8Array(event.data), $2);
-                    Module._rr_on_socket_event_emscripten($0, 2, $2, new Uint8Array(event.data).length);
+                    _rr_on_socket_event_emscripten($0, 2, $2, new Uint8Array(event.data).length);
                 };
             })();
         },
