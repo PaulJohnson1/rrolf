@@ -17,6 +17,7 @@ set(SRCS
     Assets/Mob/Edmontosaurus.c
     Assets/Mob/Honeybee.c
     Assets/Mob/Hornet.c
+    Assets/Mob/HouseCentipede.c
     Assets/Mob/Ornithomimus.c
     Assets/Mob/Pachycephalosaurus.c
     Assets/Mob/Pteranodon.c

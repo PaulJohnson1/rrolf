@@ -496,12 +496,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         printf("<rr_websocket::close::%llu>\n", size);
         rr_simulation_init(this->simulation);
         this->socket_ready = 0;
-        this->simulation_ready = 0;
         if (size == 1006)
         {
             this->socket_error = 1;
-            rr_simulation_init(this->simulation);
-            this->socket_ready = 0;
+            if (this->simulation_ready)
+                rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
             rr_game_connect_socket(this);
         }
@@ -630,8 +629,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             proto_bug_init(&encoder2, output_packet);
             proto_bug_write_uint8(&encoder2, rr_serverbound_squad_update, "header");
             proto_bug_write_string(&encoder2, this->cache.nickname, 16, "nickname");
-            proto_bug_write_uint8(&encoder2, this->slots_unlocked,
-                                  "loadout count");
+            proto_bug_write_uint8(&encoder2, this->slots_unlocked, "loadout count");
             for (uint32_t i = 0; i < this->slots_unlocked; ++i)
             {
                 proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
@@ -657,6 +655,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             uint8_t rarity = proto_bug_read_uint8(&encoder, "craft rarity");
             uint32_t successes = proto_bug_read_varuint(&encoder, "success count");
             uint32_t fails = proto_bug_read_varuint(&encoder, "fail count");
+            this->cache.experience += proto_bug_read_float64(&encoder, "craft xp");
             this->inventory[id][rarity] -= fails;
             this->crafting_data.count -= fails;
             this->inventory[id][rarity + 1] += successes;

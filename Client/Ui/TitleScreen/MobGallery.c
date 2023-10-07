@@ -38,9 +38,7 @@ static void mob_button_animate(struct rr_ui_element *this,
     rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
     rr_renderer_draw_background(renderer, rr_rarity_id_max, 1);
     uint32_t count = game->cache.mob_kills[data->id][data->rarity];
-#ifndef RIVET_BUILD
-    count = 1;
-#endif
+
     if (this->first_frame)
         data->secondary_animation = count == 0;
     data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
@@ -68,6 +66,12 @@ static void mob_button_on_render(struct rr_ui_element *this,
 
     rr_renderer_rotate(renderer, -0.78539816339); // pi / 4;
     rr_renderer_draw_mob(renderer, data->id, 0, 0, 1);
+    if (data->id == rr_mob_id_house_centipede)
+    {
+        rr_renderer_translate(renderer, -2 * RR_MOB_DATA[data->id].radius, 0);
+        rr_renderer_draw_mob(renderer, data->id, 0, 0, 1 | 4);
+    }
+
 
     rr_renderer_context_state_free(renderer, &state);
 }

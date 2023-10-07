@@ -46,11 +46,9 @@ void rr_component_mob_render(EntityIdx entity, struct rr_game *game, struct rr_s
 
 
     uint8_t use_cache = has_arena ? 1 : ((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1;
-    uint8_t is_friendly =
-        (rr_simulation_get_relations(simulation, entity)->team !=
-         rr_simulation_team_id_mobs)
-        << 1;
+    uint8_t is_friendly = (rr_simulation_get_relations(simulation, entity)->team != rr_simulation_team_id_mobs) << 1;
+    uint8_t is_centi_body = 4 - ((rr_simulation_has_centipede(simulation, entity) && rr_simulation_get_centipede(simulation, entity)->is_head) << 2);
     rr_renderer_draw_mob(renderer, mob->id, physical->animation_timer,
                            physical->turning_animation - physical->lerp_angle,
-                           use_cache | is_friendly);
+                           use_cache | is_friendly | is_centi_body);
 }

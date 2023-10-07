@@ -85,6 +85,7 @@ enum rr_petal_id
     rr_petal_id_third_eye,
     rr_petal_id_mandible,
     rr_petal_id_wax,
+    rr_petal_id_sand,
 
     rr_petal_id_max
 };
@@ -110,7 +111,7 @@ enum rr_mob_id
     rr_mob_id_honeybee,
     rr_mob_id_beehive,
     rr_mob_id_spider,
-    
+    rr_mob_id_house_centipede,
     rr_mob_id_max
 };
 

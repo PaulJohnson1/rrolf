@@ -84,7 +84,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED);
         break;
     default:
-        tick_ai_aggro_pteranodon(entity, this);
+        tick_ai_passive_default(entity, this);
         break;
     }
     --ai->ticks_until_next_action;

@@ -33,15 +33,18 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
     {
         struct rr_component_mob *mob =
             rr_simulation_get_mob(simulation, entity);
-        length += mob->rarity * 5;
-        // mob rarity
-        rr_renderer_translate(renderer, length, 7);
-        rr_renderer_draw_rarity_name(renderer, mob->rarity, 14, -1, 1);
+        if (!rr_simulation_has_centipede(simulation, entity) || rr_simulation_get_centipede(simulation, entity)->is_head)
+        {
+            length += mob->rarity * 5;
+            // mob rarity
+            rr_renderer_translate(renderer, length, 7);
+            rr_renderer_draw_rarity_name(renderer, mob->rarity, 14, -1, 1);
 
-        // mob name
-        rr_renderer_translate(renderer, -2 * length, -14);
-        rr_renderer_draw_mob_name(renderer, mob->id, 12, 1, -1);
-        rr_renderer_translate(renderer, length, 7);
+            // mob name
+            rr_renderer_translate(renderer, -2 * length, -14);
+            rr_renderer_draw_mob_name(renderer, mob->id, 12, 1, -1);
+            rr_renderer_translate(renderer, length, 7);
+        }
     }
     else if (rr_simulation_has_flower(simulation, entity) && physical->deletion_animation == 0)
     {

@@ -37,7 +37,8 @@
         "xlocmes": "c",
         "xlocmon": "c",
         "xlocnum": "c",
-        "xloctime": "c"
+        "xloctime": "c",
+        "particlerender.h": "c"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "C:/rrolf/Client"

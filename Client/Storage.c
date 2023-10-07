@@ -74,54 +74,6 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
     return 0;
 }
 
-void rr_local_storage_store_id_rarity(char *label, uint32_t *start,
-                                      uint8_t id_count, uint8_t rarity_count)
-{
-    uint32_t at = 0;
-    for (uint8_t id = 0; id < id_count; ++id)
-    {
-        for (uint8_t rarity = 0; rarity < rarity_count; ++rarity)
-        {
-            if (start[id * rarity_count + rarity] == 0)
-                continue;
-            storage_buf2[at++] = id;
-            storage_buf2[at++] = rarity;
-            uint32_t amount = start[id * rarity_count + rarity];
-            while (amount > 127ull)
-            {
-                storage_buf2[at++] = (amount << 1) | 1;
-                amount >>= 7ull;
-            }
-            storage_buf2[at++] = amount << 1;
-        }
-    }
-    rr_local_storage_store_bytes(label, storage_buf2, at);
-}
-
-void rr_local_storage_get_id_rarity(char *label, uint32_t *start,
-                                    uint8_t id_count, uint8_t rarity_count)
-{
-    uint32_t size = rr_local_storage_get_bytes(label, storage_buf2);
-    uint32_t at = 0;
-    while (at < size)
-    {
-        uint8_t id = storage_buf2[at++];
-        if (id >= id_count)
-            return;
-        uint8_t rarity = storage_buf2[at++];
-        uint8_t byte;
-        uint32_t count = 0ull;
-        uint64_t shift = 0ull;
-        do
-        {
-            byte = storage_buf2[at++];
-            count |= ((byte & 254ull) << shift) >> 1;
-            shift += 7ull;
-        } while (byte & 1ull);
-        start[id * rarity_count + rarity] = count;
-    }
-}
-
 #define STORE_ID_RARITY(encoder, start, id_count, rarity_count) \
 { \
     for (uint8_t id = 0; id < id_count; ++id) \
@@ -130,7 +82,7 @@ void rr_local_storage_get_id_rarity(char *label, uint32_t *start,
         { \
             if (start[id][rarity] == 0) \
                 continue; \
-            rr_binary_encoder_write_uint8(encoder, id); \
+            rr_binary_encoder_write_uint8(encoder, id + 1); \
             rr_binary_encoder_write_uint8(encoder, rarity); \
             rr_binary_encoder_write_varuint(encoder, start[id][rarity]); \
         } \
@@ -169,7 +121,7 @@ void rr_local_storage_get_id_rarity(char *label, uint32_t *start,
     { \
         uint8_t rarity = rr_binary_encoder_read_uint8(encoder); \
         uint32_t count = rr_binary_encoder_read_varuint(encoder); \
-        start[id][rarity] = count; \
+        start[id - 1][rarity] = count; \
         id = rr_binary_encoder_read_uint8(encoder); \
     } \
 }

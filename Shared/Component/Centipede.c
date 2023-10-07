@@ -6,6 +6,15 @@
 #include <Shared/SimulationCommon.h>
 #include <Shared/pb.h>
 
+#define FOR_EACH_PUBLIC_FIELD                                                  \
+    X(is_head, float32) 
+
+enum
+{
+    state_flags_is_head = 0b000001,
+    state_flags_all = 0b000001
+};
+
 void rr_component_centipede_init(struct rr_component_centipede *this,
                                  struct rr_simulation *simulation)
 {
@@ -35,18 +44,30 @@ void rr_component_centipede_free(struct rr_component_centipede *this,
 #endif
 }
 
+
 #ifdef RR_SERVER
 void rr_component_centipede_write(struct rr_component_centipede *this,
                                   struct proto_bug *encoder, int is_creation,
                                   struct rr_component_player_info *client)
 {
+    uint64_t state = this->protocol_state | (state_flags_all * is_creation);
+    proto_bug_write_varuint(encoder, state, "centipede component state");
+#define X(NAME, TYPE) RR_ENCODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 
+RR_DEFINE_PUBLIC_FIELD(centipede, uint8_t, is_head)
 #endif
 
 #ifdef RR_CLIENT
 void rr_component_centipede_read(struct rr_component_centipede *this,
                                  struct proto_bug *encoder)
 {
+    uint64_t state =
+        proto_bug_read_varuint(encoder, "centipede component state");
+#define X(NAME, TYPE) RR_DECODE_PUBLIC_FIELD(NAME, TYPE);
+    FOR_EACH_PUBLIC_FIELD
+#undef X
 }
 #endif

@@ -14,8 +14,5 @@ uint32_t rr_local_storage_get_bytes(char *, void *);
 uint32_t rr_local_storage_get_string(char *);
 void rr_local_storage_store_string(char *, char *);
 
-void rr_local_storage_store_id_rarity(char *, uint32_t *, uint8_t, uint8_t);
-void rr_local_storage_get_id_rarity(char *, uint32_t *, uint8_t, uint8_t);
-
 void rr_game_cache_data(struct rr_game *);
 void rr_game_cache_load(struct rr_game *);

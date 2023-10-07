@@ -1317,6 +1317,21 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
             rr_renderer_bezier_curve_to(renderer, 13.90, 33.22, 21.78, 28.68, 25.15, 21.10);
             rr_renderer_fill(renderer);
             break;
+        case rr_petal_id_sand:
+            rr_renderer_set_fill(renderer,0xffe0c85c);
+            rr_renderer_set_stroke(renderer,0xffb5a24b);
+            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_begin_path(renderer);
+            rr_renderer_move_to(renderer,7,0);
+            rr_renderer_line_to(renderer,3.499999761581421,6.062178134918213);
+            rr_renderer_line_to(renderer,-3.500000476837158,6.062177658081055);
+            rr_renderer_line_to(renderer,-7,-6.119594218034763e-7);
+            rr_renderer_line_to(renderer,-3.4999992847442627,-6.062178134918213);
+            rr_renderer_line_to(renderer,3.4999992847442627,-6.062178134918213);
+            rr_renderer_line_to(renderer,7,0);
+            rr_renderer_fill(renderer);
+            rr_renderer_stroke(renderer);
+            break;
         default:
             break;
         }
