@@ -125,7 +125,7 @@ void rr_rivet_lobbies_find(void *captures)
             function attempt(d)
             {
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
-                    "headers ": {
+                    "headers": {
                         "Authorization" :
                             // clang-format off
                             "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
