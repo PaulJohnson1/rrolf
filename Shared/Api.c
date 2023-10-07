@@ -37,8 +37,7 @@ void rr_api_get_password(char const *token, void *captures)
         {
             fetch(UTF8ToString($0) + "user_get_password/" + UTF8ToString($1)).then(x => x.text()).then(pw => {
                     const $pw = _malloc(pw.length + 1);
-                    for (let i = 0; i < pw.length; i++)
-                        HEAPU8[$pw + i] = pw[i].charCodeAt();
+                    HEAPU8.set(new TextEncoder().encode(pw), $pw);
                     HEAPU8[$pw + pw.length] = 0;
                     _rr_api_on_get_password($pw, $2);
                     _free($pw);         
@@ -67,17 +66,15 @@ void rr_api_get_server_alias(char const *param_1, void *game)
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
-                    const host = json.ports.default.hostname;
-                    const token = "Bearer " + json.player.token;
+                    const host = json["ports"]["default"]["hostname"];
+                    const token = "Bearer " + json["player"]["token"];
                     const $host = _malloc(host.length + 1);
                     const $token = _malloc(1 + token.length);
-                    for (let i = 0; i < host.length; i++)
-                        HEAPU8[$host + i] = host[i].charCodeAt();
-                    for (let i = 0; i < token.length; i++)
-                        HEAPU8[$token + i] = token[i].charCodeAt();
+                    HEAPU8.set(new TextEncoder().encode(host), $host);
+                    HEAPU8.set(new TextEncoder().encode(token), $token);
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    _rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $2);
+                    _rr_rivet_lobby_on_find($host, $token, json["ports"]["default"]["port"], $0);
                     _free($host);
                     _free($token);
                 })

@@ -136,18 +136,15 @@ void rr_rivet_lobbies_find(void *captures)
                 })
                     .then(function(r) { return r.json(); })
                     .then(function(json) {
-                        const host = json.ports.default.hostname;
-                        const token = "Bearer " + json.player.token;
+                        const host = json["ports"]["default"]["hostname"];
+                        const token = "Bearer " + json["player"]["token"];
                         const $host = _malloc(host.length + 1);
                         const $token = _malloc(1 + token.length);
-                        for (let i = 0; i < host.length; i++)
-                            HEAPU8[$host + i] = host[i].charCodeAt();
-                        for (let i = 0; i < token.length; i++)
-                            HEAPU8[$token + i] = token[i].charCodeAt();
+                        HEAPU8.set(new TextEncoder().encode(host), $host);
+                        HEAPU8.set(new TextEncoder().encode(token), $token);
                         HEAPU8[$host + host.length] = 0;
                         HEAPU8[$token + token.length] = 0;
-                        _rr_rivet_lobby_on_find(
-                            $host, $token, json.ports.default.port, $0);
+                        _rr_rivet_lobby_on_find($host, $token, json["ports"]["default"]["port"], $0);
                         _free($host);
                         _free($token);
                     })
@@ -182,17 +179,15 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
-                    const host = json.ports.default.hostname;
-                    const token = "Bearer " + json.player.token;
+                    const host = json["ports"]["default"]["hostname"];
+                    const token = "Bearer " + json["player"]["token"];
                     const $host = _malloc(host.length + 1);
                     const $token = _malloc(1 + token.length);
-                    for (let i = 0; i < host.length; i++)
-                        HEAPU8[$host + i] = host[i].charCodeAt();
-                    for (let i = 0; i < token.length; i++)
-                        HEAPU8[$token + i] = token[i].charCodeAt();
+                    HEAPU8.set(new TextEncoder().encode(host), $host);
+                    HEAPU8.set(new TextEncoder().encode(token), $token);
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    _rr_rivet_lobby_on_find($host, $token, json.ports.default.port, $0);
+                    _rr_rivet_lobby_on_find($host, $token, json["ports"]["default"]["port"], $0);
                     _free($host);
                     _free($token);
                 })
