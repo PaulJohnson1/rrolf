@@ -48,7 +48,7 @@ struct rr_game_cache
     struct rr_id_rarity_pair loadout[20];
     uint8_t use_mouse;
     uint8_t displaying_debug_information;
-    uint8_t show_ui_hitbox;
+    uint8_t tint_petals;
     uint8_t screen_shake;
     uint8_t low_performance_mode;
     char nickname[128];

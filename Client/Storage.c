@@ -130,32 +130,32 @@ void rr_game_cache_data(struct rr_game *this)
 {
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, (uint8_t *) storage_buf2);
+    STORE_LOADOUT;
+    STORE_ID_RARITY(&encoder, this->inventory, rr_petal_id_max, rr_rarity_id_max);
+    STORE_ID_RARITY(&encoder, this->cache.mob_kills, rr_mob_id_max, rr_rarity_id_max);
     rr_binary_encoder_write_uint8(&encoder, this->cache.displaying_debug_information);
     rr_binary_encoder_write_uint8(&encoder, this->cache.screen_shake);
-    rr_binary_encoder_write_uint8(&encoder, this->cache.show_ui_hitbox);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.tint_petals);
     rr_binary_encoder_write_uint8(&encoder, this->cache.use_mouse);
     rr_binary_encoder_write_nt_string(&encoder, this->cache.nickname);
     rr_binary_encoder_write_float64(&encoder, this->cache.experience);
     rr_binary_encoder_write_varuint(&encoder, this->dev_flag);
-    STORE_LOADOUT;
-    STORE_ID_RARITY(&encoder, this->inventory, rr_petal_id_max, rr_rarity_id_max);
-    STORE_ID_RARITY(&encoder, this->cache.mob_kills, rr_mob_id_max, rr_rarity_id_max);
-    rr_local_storage_store_bytes("account_data", encoder.start, encoder.at - encoder.start);
+    rr_local_storage_store_bytes("rrolf_account_data", encoder.start, encoder.at - encoder.start);
 }
 
 void rr_game_cache_load(struct rr_game *this)
 {
     struct rr_binary_encoder decoder;
-    rr_local_storage_get_bytes("account_data", storage_buf2);
+    rr_local_storage_get_bytes("rrolf_account_data", storage_buf2);
     rr_binary_encoder_init(&decoder, (uint8_t *) storage_buf2);
+    READ_LOADOUT;
+    GET_ID_RARITY(&decoder, this->inventory);
+    GET_ID_RARITY(&decoder, this->cache.mob_kills);
     this->cache.displaying_debug_information = rr_binary_encoder_read_uint8(&decoder);
     this->cache.screen_shake = rr_binary_encoder_read_uint8(&decoder);
-    this->cache.show_ui_hitbox = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.tint_petals = rr_binary_encoder_read_uint8(&decoder);
     this->cache.use_mouse = rr_binary_encoder_read_uint8(&decoder);
     rr_binary_encoder_read_nt_string(&decoder, this->cache.nickname);
     this->cache.experience = rr_binary_encoder_read_float64(&decoder);
     this->dev_flag = rr_binary_encoder_read_varuint(&decoder);
-    READ_LOADOUT;
-    GET_ID_RARITY(&decoder, this->inventory);
-    GET_ID_RARITY(&decoder, this->cache.mob_kills);
 }

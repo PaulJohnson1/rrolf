@@ -136,7 +136,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(
-                                    &game->cache.show_ui_hitbox),
+                                    &game->cache.tint_petals),
                                 rr_ui_text_init("Show ui hitboxes", 15,
                                                 0xffffffff),
                                 NULL),
