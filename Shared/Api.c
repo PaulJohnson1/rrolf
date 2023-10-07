@@ -55,14 +55,14 @@ void rr_api_get_server_alias(char const *param_1, void *game)
             fetch(UTF8ToString($1) + 'user_get_server_alias/' + UTF8ToString($0)).then(function(x) {return x.text()})
             .then(function(data) {
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
-                headers : {
-                    Authorization :
+                "headers": {
+                    "Authorization":
                         // clang-format off
                         "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
                     // clang-format on
                 },
-                method : "POST",
-                body : '{"lobby_id":"' + data + '"}'
+                "method": "POST",
+                "body": '{"lobby_id":"' + data + '"}'
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
