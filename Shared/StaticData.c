@@ -348,7 +348,7 @@ void rr_static_data_init()
 double xp_to_reach_level(uint32_t level)
 {
     if (level <= 60)
-        return level * pow(1.175, level);
+        return (level + 5) * pow(1.175, level);
     double base = (level + 5) * pow(1.175, 60);
     for (uint32_t i = 60; i < level; ++i)
         base *= rr_fclamp(1.18 - 0.0075 * (i - 60), 1.1, 1.18);
