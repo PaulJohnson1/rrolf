@@ -120,29 +120,29 @@ void rr_main_loop(struct rr_game *this)
                 new Array(256).fill(0).map(function(_, i) { return i; });
             window.onkeydown = function(e)
             {
-                Module._rr_key_event(
+                _rr_key_event(
                     $0, 1, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
             };
             window.onkeyup = function(e)
             {
-                Module._rr_key_event(
+                _rr_key_event(
                     $0, 0, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
             };
             window.onmousedown =
                 function(e){
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    Module._rr_mouse_event(
+                    _rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     1, +!!button)};
             window.onmousemove = function(e){
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    Module._rr_mouse_event(
+                    _rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     2, +!!button)};
             window.onmouseup =
                 function(e){
                     const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    Module._rr_mouse_event(
+                    _rr_mouse_event(
                     $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
                     0, +!!button)};
             window.addEventListener("touchstart", function(e){
@@ -151,11 +151,11 @@ void rr_main_loop(struct rr_game *this)
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
+                _rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     1, 0);
                 for (const t of e.changedTouches)
-                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
+                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
             }, {passive: false});
             window.addEventListener("touchmove", function(e){
                 e.preventDefault();
@@ -163,11 +163,11 @@ void rr_main_loop(struct rr_game *this)
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
+                _rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     2, 0);
                 for (const t of e.changedTouches)
-                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
+                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
             }, {passive: false});
             window.addEventListener("touchend", function(e){
                 e.preventDefault();
@@ -175,20 +175,20 @@ void rr_main_loop(struct rr_game *this)
                 if (!e.changedTouches.length)
                     return;
                 const touch = e.changedTouches[0];
-                Module._rr_mouse_event(
+                _rr_mouse_event(
                     $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
                     0, 0);
                 for (const t of e.changedTouches)
-                    Module._rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 0, t.identifier);
+                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 0, t.identifier);
             }, {passive: false});
             window.onwheel =
-                function({deltaY}){Module._rr_wheel_event($0, deltaY)};
+                function({deltaY}){_rr_wheel_event($0, deltaY)};
             document.body.onpaste = function(e) {
                 const buf = new TextEncoder().encode(e.clipboardData.getData("text/plain"));
                 const $a = _malloc(buf.length + 1);
                 HEAPU8.set(buf, $a);
                 HEAPU8[$a + buf.length] = 0;
-                Module._rr_paste_event($0, $a);
+                _rr_paste_event($0, $a);
             };
             Module.addCtx = function()
             {
@@ -216,21 +216,21 @@ void rr_main_loop(struct rr_game *this)
             Module.ReadCstr = function(ptr)
             {
                 const start = ptr;
-                while (Module.HEAPU8[ptr++])
+                while (HEAPU8[ptr++])
                     ;
                 return new TextDecoder().decode(
-                    Module.HEAPU8.subarray(start, ptr - 1));
+                    HEAPU8.subarray(start, ptr - 1));
             };
 
             function loop(time)
             {
                 if (window.start == null)
                     window.start = time + 1;
-                const delta = Math.min(0.5, (time - start) / 1000);
-                start = time;
+                const delta = Math.min(0.5, (time - window.start) / 1000);
+                window.start = time;
                 Module.canvas.width = innerWidth * devicePixelRatio;
                 Module.canvas.height = innerHeight * devicePixelRatio;
-                Module._rr_renderer_main_loop($0, delta, Module.canvas.width,
+                _rr_renderer_main_loop($0, delta, Module.canvas.width,
                                               Module.canvas.height,
                                               devicePixelRatio);
                 requestAnimationFrame(loop);

@@ -301,7 +301,7 @@ void rr_rivet_identities_create_guest(void *captures)
 
         function attempt(x)
         {
-            if (!localStorage.getItem(x))
+            if (!window.localStorage[x])
             {
                 fetch("https://identity.api.rivet.gg/v1/identities", {
                     method: "POST",
@@ -312,8 +312,8 @@ void rr_rivet_identities_create_guest(void *captures)
                     }
                 }).then(r => r.json())
                 .then(r => {
-                    localStorage[x] = r.identity_token;
-                    localStorage["rivet_account_uuid"] = r.identity.identity_id;
+                    window.localStorage[x] = r.identity_token;
+                    window.localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     on_account(r);
                 });
             }
@@ -322,7 +322,7 @@ void rr_rivet_identities_create_guest(void *captures)
                 fetch("https://identity.api.rivet.gg/v1/identities", {
                     method: "POST",
                     body: JSON.stringify({
-                        existing_identity_token: localStorage[x]
+                        existing_identity_token: window.localStorage[x]
                     }),
                     headers: {
                         // is a dev token
@@ -332,9 +332,9 @@ void rr_rivet_identities_create_guest(void *captures)
                 .then(r => {
                     if (r.code == "ERROR")
                         throw r;
-                    localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
-                    if (!localStorage["rivet_account_uuid"])
-                        localStorage["rivet_account_uuid"] = r.identity.identity_id;
+                    window.localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
+                    if (!window.localStorage["rivet_account_uuid"])
+                        window.localStorage["rivet_account_uuid"] = r.identity.identity_id;
                     on_account(r);
                 }).catch(function(e)
                 {

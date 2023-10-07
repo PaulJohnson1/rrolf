@@ -19,7 +19,7 @@ uint32_t rr_local_storage_get_string(char *name)
             if (!window.localStorage[string])
                 return 0;
             string = new TextEncoder().encode(window.localStorage[string]);
-            Module.HEAPU8.set(string, $1);
+            HEAPU8.set(string, $1);
             return string.length;
         },
         name, storage_buf1);
@@ -50,7 +50,7 @@ void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
             const string = Module.ReadCstr($0);
             const bytes = new TextDecoder().decode(HEAPU8.subarray($1, $1 + $2 - 1));
 
-            localStorage[string] = bytes;
+            window.localStorage[string] = bytes;
         },
         label, storage_buf1, new_size);
 #endif
@@ -62,7 +62,7 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
     int len = EM_ASM_INT(
         {
             const string = Module.ReadCstr($0);
-            let bytes = localStorage[string];
+            let bytes = window.localStorage[string];
             if (!bytes)
                 return 0;
             HEAPU8.set(new TextEncoder().encode(bytes), $1);

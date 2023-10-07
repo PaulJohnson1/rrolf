@@ -61,8 +61,8 @@ void rr_dom_retrieve_text(char const *name, char *out, uint32_t max_len)
         const len = $2 > arr.length ? arr.length : $2;
         // remember off by one errors
         arr = arr.slice(0,len);
-        Module.HEAPU8.set(arr, $1);
-        Module.HEAPU8[$1 + len] = 0;
+        HEAPU8.set(arr, $1);
+        HEAPU8[$1 + len] = 0;
     }, name, out, max_len);
 }
 

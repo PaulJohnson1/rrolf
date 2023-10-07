@@ -67,9 +67,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            let string = "";
-            while (Module.HEAPU8[$1])
-                string += String.fromCharCode(Module.HEAPU8[$1++]);
+            let string = Module.ReadCstr($1);
             if (Module.socket && Module.socket.readyState < 2)
                 Module.socket.close();
             (function() {
@@ -84,7 +82,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 };
                 socket.onmessage = function(event)
                 {
-                    Module.HEAPU8.set(new Uint8Array(event.data), $2);
+                    HEAPU8.set(new Uint8Array(event.data), $2);
                     Module._rr_on_socket_event_emscripten($0, 2, $2, new Uint8Array(event.data).length);
                 };
             })();
@@ -153,7 +151,7 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 #ifndef EMSCRIPTEN
     lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
 #else
-    EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+    EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
            output_packet, length);
 #endif
 }
@@ -170,7 +168,7 @@ void rr_websocket_send_all(struct rr_websocket *this)
     #ifndef EMSCRIPTEN
         lws_write(this->socket, outputs[i], packet_lengths[i], LWS_WRITE_BINARY);
     #else
-        EM_ASM({ Module.socket.send(Module.HEAPU8.subarray($0, $0 + $1)); },
+        EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
             outputs[i], packet_lengths[i]);
     #endif
         free(outputs[i]);

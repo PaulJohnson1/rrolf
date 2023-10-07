@@ -330,9 +330,7 @@ void rr_renderer_draw_svg(struct rr_renderer *this, char *svg, float x, float y)
     update_if_transformed(this);
     EM_ASM(
         {
-            let string = "";
-            while (Module.HEAPU8[$1])
-                string += String.fromCharCode(Module.HEAPU8[$1++]);
+            let string = Module.ReadCstr($1);
             const DOMURL = window.URL || window.webkitURL || window;
             const img = new Image();
             const svgBlob = new Blob([string],
@@ -447,9 +445,7 @@ float rr_renderer_get_text_size(char const *c)
     // clang-format off
     return EM_ASM_DOUBLE(
         {
-            let string = "";
-            while (Module.HEAPU8[$0])
-                string += String.fromCharCode(Module.HEAPU8[$0++]);
+            let string = Module.ReadCstr($0);
             Module.ctxs[0].font = '1px Ubuntu';
             return Module.ctxs[0].measureText(string).width;
         },
@@ -465,13 +461,13 @@ void rr_renderer_execute_instructions()
             let instr = $0;
             for (let n = 0; n < $1; ++n)
             {
-                const ctx_id = Module.HEAPU16[instr + 2 >> 1];
-                const ctx_id_2 = Module.HEAPU16[instr + 4 >> 1];
+                const ctx_id = HEAPU16[instr + 2 >> 1];
+                const ctx_id_2 = HEAPU16[instr + 4 >> 1];
                 const args =
-                    Module.HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
-                const char_arg = Module.HEAPU32[instr + 32 >> 2];
+                    HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
+                const char_arg = HEAPU32[instr + 32 >> 2];
                 let str;
-                switch (Module.HEAPU8[instr])
+                switch (HEAPU8[instr])
                 {
                 case 0:
                     Module.ctxs[ctx_id].fillStyle = "rgba(" + args[0] + ',' +
@@ -591,12 +587,12 @@ void rr_renderer_execute_instructions()
                 case 27:
                     str = Module.ReadCstr(char_arg);
                     Module.ctxs[ctx_id].fillText(str, args[0], args[1]);
-                    Module._free(char_arg);
+                    _free(char_arg);
                     break;
                 case 28:
                     str = Module.ReadCstr(char_arg);
                     Module.ctxs[ctx_id].strokeText(str, args[0], args[1]);
-                    Module._free(char_arg);
+                    _free(char_arg);
                     break;
                 default:
                     break;
