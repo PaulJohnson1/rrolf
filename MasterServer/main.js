@@ -384,9 +384,9 @@ wss.on("connection", (ws, req) => {
                     if (!client)
                         break;
                     write_db_entry(client.user.username, client.user);
-                    delete connected_clients[uuid];
                     game_server.clients[pos] = 0;
                 }
+                delete connected_clients[uuid];
                 break;
             }
             case 2:

@@ -665,6 +665,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 struct rr_server_client *client = &this->clients[pos];
                 if (!rr_server_client_read_from_api(client, &decoder))
                 {
+                    printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
                     client->pending_kick = 1;
                     lws_callback_on_writable(client->socket_handle);
                     break;
