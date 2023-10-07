@@ -1318,6 +1318,8 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
             rr_renderer_fill(renderer);
             break;
         case rr_petal_id_sand:
+            rr_renderer_set_line_cap(renderer, 1);
+            rr_renderer_set_line_join(renderer, 1);
             rr_renderer_set_fill(renderer,0xffe0c85c);
             rr_renderer_set_stroke(renderer,0xffb5a24b);
             rr_renderer_set_line_width(renderer, 3);

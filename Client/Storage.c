@@ -15,7 +15,7 @@ uint32_t rr_local_storage_get_string(char *name)
 #ifdef EMSCRIPTEN
     return EM_ASM_INT(
         {
-            let string = Module.ReadCstr($0);
+            let string = UTF8ToString($0);
             if (!window.localStorage[string])
                 return 0;
             string = new TextEncoder().encode(window.localStorage[string]);
@@ -33,8 +33,8 @@ void rr_local_storage_store_string(char *name, char *contents)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            const string = Module.ReadCstr($0);
-            const string2 = Module.ReadCstr($1);
+            const string = UTF8ToString($0);
+            const string2 = UTF8ToString($1);
             window.localStorage[string] = string2;
         },
         name, contents);
@@ -47,7 +47,7 @@ void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            const string = Module.ReadCstr($0);
+            const string = UTF8ToString($0);
             const bytes = new TextDecoder().decode(HEAPU8.subarray($1, $1 + $2 - 1));
 
             window.localStorage[string] = bytes;
@@ -61,7 +61,7 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
 #ifdef EMSCRIPTEN
     int len = EM_ASM_INT(
         {
-            const string = Module.ReadCstr($0);
+            const string = UTF8ToString($0);
             let bytes = window.localStorage[string];
             if (!bytes)
                 return 0;

@@ -47,7 +47,7 @@ static void text_input_on_render(struct rr_ui_element *this,
         if (rr_ui_mouse_over(this, game) && (game->input_data->mouse_buttons_down_this_tick & 1))
         {
             EM_ASM({
-                const element = document.getElementById(Module.ReadCstr($0));
+                const element = document.getElementById(UTF8ToString($0));
                 element.value = prompt();
             }, data->name);
         }

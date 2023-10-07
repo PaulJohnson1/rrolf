@@ -1,12 +1,64 @@
 const parse_path = (path, x, y) => {
     let at = 0;
-    path = path.replaceAll(/[a-z]/g, str => ' ' + str + ' ');
+    path = path.replaceAll(/[A-Za-z]/g, str => ' ' + str + ' ').replaceAll(",", " ").replaceAll("-", " -");
     path = path.slice(1, path.length - 1).split(' ').filter(x => x);
     let ret_str = 'rr_renderer_begin_path(renderer);\n';
     let curr_op = 'm';
+    const bx = x, by = y;
     const op_parse = _ => {
         switch(curr_op)
         {
+            case 'M':
+                x = parseFloat(path[at++]) + bx;
+                y = parseFloat(path[at++]) + by;
+                ret_str += `rr_renderer_move_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            case 'L':
+            {
+                const prev_x = x;
+                const prev_y = y;
+                x = parseFloat(path[at++]) + bx;
+                y = parseFloat(path[at++]) + by;
+                if (Math.abs(x - prev_x) > 0.001 || Math.abs(y - prev_y) > 0.001)
+                    ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
+            case 'H':
+            {
+                const prev_x = x;
+                x = parseFloat(path[at++]) + bx;
+                if (Math.abs(x - prev_x) > 0.001)
+                    ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
+            case 'V':
+            {
+                const prev_y = y;
+                y = parseFloat(path[at++]) + by;
+                if (Math.abs(y - prev_y) > 0.001)
+                    ret_str += `rr_renderer_line_to(renderer, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
+            case 'Q':
+            {
+                const x1 = parseFloat(path[at++]) + bx;
+                const y1 = parseFloat(path[at++]) + by;
+                x = parseFloat(path[at++]) + bx;
+                y = parseFloat(path[at++]) + by;
+                ret_str += `rr_renderer_quadratic_curve_to(renderer, ${x1.toFixed(2)}, ${y1.toFixed(2)}, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
+            case 'C':
+            {
+                const x1 = parseFloat(path[at++]) + bx;
+                const y1 = parseFloat(path[at++]) + by;
+                const x2 = parseFloat(path[at++]) + bx;
+                const y2 = parseFloat(path[at++]) + by;
+                x = parseFloat(path[at++]) + bx;
+                y = parseFloat(path[at++]) + by;
+                ret_str += `rr_renderer_bezier_curve_to(renderer, ${x1.toFixed(2)}, ${y1.toFixed(2)}, ${x2.toFixed(2)}, ${y2.toFixed(2)}, ${x.toFixed(2)}, ${y.toFixed(2)});\n`;
+                break;
+            }
             case 'm':
                 x += parseFloat(path[at++]);
                 y += parseFloat(path[at++]);

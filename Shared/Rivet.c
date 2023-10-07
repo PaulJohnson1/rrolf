@@ -175,7 +175,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                     // clang-format on
                 },
                 "method" : "POST",
-                "body" : '{"lobby_id":"' + Module.ReadCstr($1) + '"}'
+                "body" : '{"lobby_id":"' + UTF8ToString($1) + '"}'
             })
                 .then(function(r) { return r.json(); })
                 .then(function(json) {
@@ -221,34 +221,33 @@ void rr_rivet_link_account(char *game_user, void *captures)
                 function handle(h)
                 {
                     h.then(h => h.json()).then(newer => {
-                        if (newer.status == "incomplete")
+                        if (newer["status"] === "incomplete")
                         {
                             console.log("<not linked yet, checking again>");
-                            let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r.identity_link_token + "&watch_index=" + newer.watch.index);
+                            let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r["identity_link_token"] + "&watch_index=" + newer["watch"]["index"]);
                             handle(h);
                         }
-                        if (newer.status == "cancelled")
+                        else if (newer["status"] === "cancelled")
                             console.log("<cancelled linking>");
-                        if (newer.status == "complete")
+                        else if (newer["status"] === "complete")
                         {
                             fetch(api + "account_link/" +
-                                newer.current_identity.identity_id + "/" +
-                                localStorage.DO_NOT_SHARE_rivet_account_token + "/" +
-                                newer.new_identity["identity"].identity_id + "/" +
-                                newer.new_identity.identity_token
+                                newer["current_identity"]["identity_id"] + "/" +
+                                window.localStorage["DO_NOT_SHARE_rivet_account_token"] + "/" +
+                                newer["new_identity"]["identity"]["identity_id"] + "/" +
+                                newer["new_identity"]["identity_token"]
                             ).then(x => {
                                 w.close();
-                                localStorage.old_account_uuid = newer.current_identity.identity_id;
-                                localStorage.DO_NOT_SHARE_old_rivet_account_token = localStorage.DO_NOT_SHARE_rivet_account_token;
-                                localStorage.DO_NOT_SHARE_rivet_account_token = newer.new_identity.identity_token;
-                                console.log("<completed linking stage>");
+                                window.localStorage["old_account_uuid"] = newer["current_identity"]["identity_id"];
+                                window.localStorage["DO_NOT_SHARE_old_rivet_account_token"] = window.localStorage["DO_NOT_SHARE_rivet_account_token"];
+                                window.localStorage["DO_NOT_SHARE_rivet_account_token"] = newer["new_identity"]["identity_token"];
                                 location.reload(false);
                             });
                         }
                     })
                 }
-                w = open(r.identity_link_url, "", "width=600,height=600");
-                let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r.identity_link_token);
+                w = window.open(r["identity_link_url"], "", "width=600,height=600");
+                let h = fetch("https://identity.api.rivet.gg/v1/game-links?identity_link_token=" + r["identity_link_token"]);
                 handle(h);
             })
 

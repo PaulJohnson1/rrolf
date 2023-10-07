@@ -213,14 +213,6 @@ void rr_main_loop(struct rr_game *this)
                 Module.ctxs[index] = null;
                 Module.availableCtxs.push(index);
             };
-            Module.ReadCstr = function(ptr)
-            {
-                const start = ptr;
-                while (HEAPU8[ptr++])
-                    ;
-                return new TextDecoder().decode(
-                    HEAPU8.subarray(start, ptr - 1));
-            };
 
             function loop(time)
             {

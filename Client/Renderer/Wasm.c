@@ -330,7 +330,7 @@ void rr_renderer_draw_svg(struct rr_renderer *this, char *svg, float x, float y)
     update_if_transformed(this);
     EM_ASM(
         {
-            let string = Module.ReadCstr($1);
+            let string = UTF8ToString($1);
             const DOMURL = window.URL || window.webkitURL || window;
             const img = new Image();
             const svgBlob = new Blob([string],
@@ -445,7 +445,7 @@ float rr_renderer_get_text_size(char const *c)
     // clang-format off
     return EM_ASM_DOUBLE(
         {
-            let string = Module.ReadCstr($0);
+            let string = UTF8ToString($0);
             Module.ctxs[0].font = '1px Ubuntu';
             return Module.ctxs[0].measureText(string).width;
         },
@@ -585,12 +585,12 @@ void rr_renderer_execute_instructions()
                     Module.ctxs[ctx_id].clip("evenodd");
                     break;
                 case 27:
-                    str = Module.ReadCstr(char_arg);
+                    str = UTF8ToString(char_arg);
                     Module.ctxs[ctx_id].fillText(str, args[0], args[1]);
                     _free(char_arg);
                     break;
                 case 28:
-                    str = Module.ReadCstr(char_arg);
+                    str = UTF8ToString(char_arg);
                     Module.ctxs[ctx_id].strokeText(str, args[0], args[1]);
                     _free(char_arg);
                     break;

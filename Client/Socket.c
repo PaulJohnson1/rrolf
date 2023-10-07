@@ -67,7 +67,7 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            let string = Module.ReadCstr($1);
+            let string = UTF8ToString($1);
             if (Module.socket && Module.socket.readyState < 2)
                 Module.socket.close();
             (function() {
