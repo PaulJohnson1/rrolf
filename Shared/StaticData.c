@@ -40,7 +40,7 @@ char const *RR_PETAL_NAMES[rr_petal_id_max] = {
     "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
-    "Beak", "Lightning", "Third Eye", "Mandible", "Wax"};
+    "Beak", "Lightning", "Third Eye", "Mandible", "Wax", "Sand"};
     
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
@@ -68,7 +68,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "A stunning display",
     "It allows you to see further away",
     "Does more damage if target hp is below 50%",
-    "Made by the bees"
+    "Made by the bees",
+    "Very fine"
 };
 
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {

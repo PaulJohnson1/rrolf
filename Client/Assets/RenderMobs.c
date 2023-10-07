@@ -167,47 +167,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_an
         break;
     case rr_mob_id_ant:
         rr_renderer_scale(renderer, 0.2f);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f - M_PI / 6);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f + M_PI / 6);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f - M_PI / 6 + M_PI);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * -0.1f + M_PI);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-        rr_renderer_context_state_init(renderer, &state);
-        rr_renderer_rotate(renderer, animation_tick * 0.1f + M_PI / 6 + M_PI);
-        rr_renderer_translate(renderer, 0, 75);
-        rr_renderer_rotate(renderer, M_PI / 2);
-        render_sprite(renderer, id, 3, flags);
-        rr_renderer_context_state_free(renderer, &state);
-
-        rr_renderer_translate(renderer, -70, 0);
-        render_sprite(renderer, id, 2, flags);
-        rr_renderer_translate(renderer, 70, 0);
+        rr_renderer_translate(renderer, -35, 0);
         render_sprite(renderer, id, 1, flags);
         rr_renderer_translate(renderer, 70, 0);
         render_sprite(renderer, id, 0, flags);
