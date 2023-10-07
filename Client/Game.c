@@ -494,7 +494,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     case rr_websocket_event_type_close:
         // memset the clients
         printf("<rr_websocket::close::%llu>\n", size);
-        rr_simulation_init(this->simulation);
         this->socket_ready = 0;
         if (size == 1006)
         {
@@ -502,6 +501,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             if (this->simulation_ready)
                 rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
+            this->socket.recieved_first_packet = 0;
             rr_game_connect_socket(this);
         }
         break;
