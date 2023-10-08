@@ -262,11 +262,13 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
             throw new Error("invalid uuid");
         const a = await db_read_user(old_username, old_password);
-        await db_read_user(username, password); // to create or verify that the new account has valid password
-        a.password = password;
-        a.username = username;
-        await write_db_entry(username, a);
-
+        const new_account = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+        if (!new_account.value)
+        {
+            a.password = password;
+            a.username = username;
+            await write_db_entry(username, a);
+        }
         return "success";
     });
 });

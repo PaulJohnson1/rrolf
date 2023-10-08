@@ -487,8 +487,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 char link[16] = {0};
                 proto_bug_read_string(&encoder, link, 7, "connect link");
-                fputs(link, stderr);
-                fputs("\n", stderr);
                 squad = rr_client_join_squad_with_code(this, link);
             }
             else if (type == 0)

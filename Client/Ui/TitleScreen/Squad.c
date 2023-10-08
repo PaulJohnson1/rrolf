@@ -336,7 +336,6 @@ static void join_code_on_event(struct rr_ui_element *this,
             ++code;
         ++code;
         proto_bug_write_string(&encoder2, code, 7, "connect link");
-        printf("joining squad %s\n", code);
         
         rr_websocket_queue_send(&game->socket, encoder2.current - encoder2.start);
         game->connect_code[0] = 0;
