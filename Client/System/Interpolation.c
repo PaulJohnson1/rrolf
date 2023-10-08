@@ -66,8 +66,10 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
     {
         struct rr_component_flower *flower =
             rr_simulation_get_flower(this, entity);
-        flower->eye_x = cosf(flower->eye_angle) * 3;
-        flower->eye_y = sinf(flower->eye_angle) * 3;
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(this, entity);
+        flower->eye_x = cosf(flower->eye_angle - physical->angle) * 3;
+        flower->eye_y = sinf(flower->eye_angle - physical->angle) * 3;
         if (flower->lerp_eye_x == 0)
             flower->lerp_eye_x = flower->eye_x;
         if (flower->lerp_eye_y == 0)

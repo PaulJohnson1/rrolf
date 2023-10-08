@@ -181,6 +181,17 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     {
         physical->mass *= 25;
         team_id = rr_simulation_team_id_players;
+        for (uint32_t i = 0; i < this->player_info_count; ++i)
+        {
+            EntityIdx p_id = this->player_info_vector[i];
+            struct rr_component_player_info *player_info = rr_simulation_get_player_info(this, p_id);
+            if (rr_simulation_entity_alive(this, player_info->flower_id))
+            {
+                struct rr_vector delta = {x - player_info->camera_x, y - player_info->camera_y};
+                if (rr_vector_magnitude_cmp(&delta, 1500 / player_info->camera_fov) == -1)
+                    mob->squad_damage_counter[player_info->squad] = mob_data->health * rarity_scale->health;
+            }
+        }
     }
     rr_component_relations_set_team(relations, team_id);
     rr_component_relations_update_root_owner(this, relations);
