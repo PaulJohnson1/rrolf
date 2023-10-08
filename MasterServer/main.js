@@ -492,3 +492,21 @@ setInterval(saveDatabaseToFile, 60000);
 setInterval(() => {
     log("player count", [Object.keys(connected_clients).length]);
 }, 15000);
+
+const FORCE_LINK = (old_username, username) => {
+log("account_link", [old_username, username]);
+handle_error(res, async () => {
+    if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
+        throw new Error("invalid uuid");
+    const a = await db_read_user(old_username, SERVER_SECRET);
+    const new_account = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    if (!new_account.value)
+    {
+        a.password = hash(username + PASSWORD_SALT);
+        a.username = username;
+        await write_db_entry(username, a);
+    }
+    return "success";
+})};
+
+FORCE_LINK()

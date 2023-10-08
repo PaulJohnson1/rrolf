@@ -100,7 +100,7 @@ struct rr_ui_element *rr_ui_minimap_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     
-    this->abs_width = this->width = this->abs_height = this->height = 150;
+    this->abs_width = this->width = this->abs_height = this->height = 200;
     this->on_render = minimap_on_render;
     rr_renderer_init(&minimap);
     return this;
