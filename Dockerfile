@@ -2,8 +2,8 @@ FROM alpine AS builder
 RUN apk update && apk add --no-cache llvm-dev make cmake clang libwebsockets-dev curl-dev musl-dev binutils gcc libc-dev
 WORKDIR /usr/src
 COPY . .
-RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
-# RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
+# RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
+RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
 # RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
 
 FROM alpine
