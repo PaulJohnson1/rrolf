@@ -521,7 +521,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         // memset the clients
         printf("<rr_websocket::close::%llu>\n", size);
         this->socket_ready = 0;
-        if (size == 1006 || size == 1005)
+        if (size == 1006)
         {
             this->socket_error = 1;
             if (this->simulation_ready)
