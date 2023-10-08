@@ -67,7 +67,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     if (petal->id == rr_petal_id_beak)
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-        physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].damage) / 2) * (1 - physical->slow_resist);
+        physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].damage) / 3.5) * (1 - physical->slow_resist);
     }
     else if (petal->id == rr_petal_id_mandible)
     {
