@@ -115,7 +115,7 @@ struct rr_ui_element *rr_ui_mob_container_init()
     for (uint8_t id = 0; id < rr_mob_id_max; ++id)
         for (uint8_t rarity = 0; rarity <= rr_rarity_id_ultra; ++rarity)
             rr_ui_container_add_element(this, mob_button_init(id, rarity));
-    this->fill = 0x00000000;
+    rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(rr_ui_set_justify(
                       rr_ui_v_container_init(
@@ -247,7 +247,7 @@ void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0x80888888;
+    rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = mob_toggle_toggle_button_on_event;
     this->on_render = mob_toggle_toggle_on_render;

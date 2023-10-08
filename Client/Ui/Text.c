@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 
@@ -52,7 +53,7 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
     struct rr_ui_text_metadata *data = malloc(sizeof *data);
     this->abs_width = this->width =
         rr_renderer_get_text_size(text) * size;
-    this->fill = fill;
+    rr_ui_set_background(this, fill);
     this->abs_height = this->height = data->size = size;
     data->text = text;
     this->data = data;
@@ -68,7 +69,7 @@ struct rr_ui_element *rr_ui_dynamic_text_init(
     struct rr_ui_dynamic_text_metadata *data = malloc(sizeof *data);
     this->abs_height = this->height = size;
     this->abs_width = this->width = 50;
-    this->fill = fill;
+    rr_ui_set_background(this, fill);
     this->height = data->size = size;
     data->text = malloc((sizeof *data->text) * 24);
     data->get_text = get_text;

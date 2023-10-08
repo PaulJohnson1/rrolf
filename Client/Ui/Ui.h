@@ -40,6 +40,8 @@ struct rr_ui_choose_element_metadata
 {
     uint8_t (*choose)(struct rr_ui_element *, struct rr_game *);
     void *data;
+    uint8_t previously_shown;
+    uint8_t not_first_frame;
 };
 
 struct rr_ui_container_metadata
@@ -79,6 +81,8 @@ struct rr_ui_element
     float abs_y;
     float animation;
     uint32_t fill;
+    uint32_t stroke;
+    float stroke_width;
     int8_t h_justify;
     int8_t v_justify;
     uint8_t resizeable;
@@ -195,3 +199,5 @@ struct rr_ui_element *rr_ui_level_bar_init(float);
 struct rr_ui_element *rr_ui_loot_container_init();
 
 struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
+
+struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);

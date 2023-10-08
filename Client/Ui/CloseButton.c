@@ -37,7 +37,7 @@ struct rr_ui_element *rr_ui_close_button_init(float w, void (*on_event)(struct r
     struct rr_ui_element *this = rr_ui_element_init();
     this->abs_width = this->abs_height = w;
     this->on_event = on_event;
-    this->fill = 0x80fc3434;
+    rr_ui_set_background(this, 0x80fc3434);
     this->on_render = close_button_on_render;
     return this;
 }

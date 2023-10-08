@@ -256,9 +256,9 @@ static void squad_find_button_animate(struct rr_ui_element *this,
     rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
-        this->fill = 0xff999999;
+        rr_ui_set_background(this, 0xff888888);
     else
-        this->fill = 0xffd4b30c;
+        rr_ui_set_background(this, 0xffd4b30c);
 }
 
 static void ready_button_animate(struct rr_ui_element *this,
@@ -267,9 +267,9 @@ static void ready_button_animate(struct rr_ui_element *this,
     rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
-        this->fill = 0xff999999;
+        rr_ui_set_background(this, 0xff888888);
     else
-        this->fill = 0xffd4b30c;
+        rr_ui_set_background(this, 0xffd4b30c);
 }
 
 static void join_button_on_event(struct rr_ui_element *this,
@@ -421,6 +421,7 @@ struct rr_ui_element *rr_ui_join_squad_code_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
     //this->animate = ready_button_animate;
+    rr_ui_set_background(this, 0xff45a8a8);
     this->on_event = join_code_on_event;
     return this;
 }

@@ -49,43 +49,15 @@ static void inventory_button_on_event(struct rr_ui_element *this,
         }
     }
     else
-        rr_ui_render_tooltip_above(
-            this, game->petal_tooltips[data->id][data->rarity], game);
+        rr_ui_render_tooltip_above(this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static uint8_t inventory_button_should_show(struct rr_ui_element *this,
                                             struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    int32_t count = game->inventory[data->id][data->rarity];
-    for (uint32_t i = 0; i < 20; ++i)
-    {
-        if (game->cache.loadout[i].id == data->id &&
-            game->cache.loadout[i].rarity == data->rarity)
-        {
-            if (count > 0)
-                --count;
-            else
-                game->cache.loadout[i].id = game->cache.loadout[i].rarity = 0;
-        }
-    }
-    if (data->id == game->crafting_data.crafting_id)
-    {
-        if (data->rarity == game->crafting_data.crafting_rarity)
-        {
-            if (count >= game->crafting_data.count)
-                count -= game->crafting_data.count;
-            else
-            {
-                game->crafting_data.count = count;
-                count = 0;
-            }
-        }
-        // else if (data->rarity == game->crafting_data.crafting_rarity + 1)
-        //  count -= game->crafting_data.success_count;
-    }
-    data->count = count;
-    return count;
+    data->count = rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
+    return data->count;
 }
 
 static uint8_t inventory_container_should_show(struct rr_ui_element *this,
@@ -157,7 +129,7 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     for (uint8_t rarity = rr_rarity_id_max - 1; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
             rr_ui_container_add_element(this, inventory_button_init(id, rarity));
-    this->fill = 0x00000000;
+    rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
@@ -262,7 +234,7 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_inventory_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0x80888888;
+    rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = inventory_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;

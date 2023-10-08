@@ -86,7 +86,7 @@ static struct rr_ui_element *changelog_divider_init()
     struct rr_ui_element *this = rr_ui_element_init();
     this->abs_height = this->height = 10;
     this->abs_width = this->width = 100;
-    this->fill = 0x40000000;
+    rr_ui_set_background(this, 0x40000000);
     this->on_render = changelog_divider_on_render;
     return this;
 }
@@ -100,7 +100,7 @@ static uint8_t changelog_button_should_show(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_changelog_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0xff888888;
+    rr_ui_set_background(this, 0xff888888);
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = changelog_toggle_button_on_event;
     this->on_render = inventory_toggle_on_render;

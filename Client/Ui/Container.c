@@ -35,15 +35,12 @@ static void container_on_render(struct rr_ui_element *this,
         if (this != game->window)
             rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
-        rr_renderer_round_rect(renderer, -this->abs_width / 2,
-                               -this->abs_height / 2, this->abs_width,
-                               this->abs_height, 6);
+        rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2, this->abs_width, this->abs_height, 6);
         rr_renderer_fill(renderer);
         if (this->fill >= 0xff000000)
         {
-            renderer->state.filter.amount = 0.2;
-            rr_renderer_set_stroke(renderer, this->fill);
-            rr_renderer_set_line_width(renderer, 6);
+            rr_renderer_set_stroke(renderer, this->stroke);
+            rr_renderer_set_line_width(renderer, this->stroke_width);
             rr_renderer_set_line_cap(renderer, 1);
             rr_renderer_set_line_join(renderer, 1);
             rr_renderer_stroke(renderer);

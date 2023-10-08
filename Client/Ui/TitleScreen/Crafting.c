@@ -286,7 +286,7 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
     if (game->crafting_data.crafting_id == 0)
     {
         data->text = "Chance: --%";
-        this->fill = 0xff888888;
+        rr_ui_set_background(this, 0xff888888);
         return;
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
@@ -327,7 +327,7 @@ static void crafting_xp_text_animate(struct rr_ui_element *this,
     if (game->crafting_data.crafting_id == 0)
     {
         data->text = "? xp per craft";
-        this->fill = 0xff888888;
+        rr_ui_set_background(this, 0xff888888);
         return;
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity];
@@ -366,35 +366,11 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    int32_t count = game->inventory[data->id][data->rarity];
-    for (uint32_t i = 0; i < 20; ++i)
-    {
-        if (game->cache.loadout[i].id == data->id &&
-            game->cache.loadout[i].rarity == data->rarity)
-        {
-            if (count > 0)
-                --count;
-            else
-                game->cache.loadout[i].id = 0;
-        }
-    }
-    if (data->id == game->crafting_data.crafting_id)
-        if (data->rarity == game->crafting_data.crafting_rarity)
-        {
-            if (count >= game->crafting_data.count)
-                count -= game->crafting_data.count;
-            else
-            {
-                game->crafting_data.count = count;
-                count = 0;
-            }
-        }
-    data->count = count;
+    uint32_t count = data->count = rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
     if (this->first_frame)
         data->secondary_animation = count == 0;
 
-    data->secondary_animation =
-        rr_lerp(data->secondary_animation, count == 0, 0.2);
+    data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
     rr_renderer_draw_background(game->renderer, rr_rarity_id_max, 1);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
@@ -439,9 +415,7 @@ static void crafting_container_animate(struct rr_ui_element *this,
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0,
-                          -(this->y - this->abs_height / 2) * 2 *
-                              this->animation);
+    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
 }
 
 static void crafting_inventory_button_on_render(struct rr_ui_element *this,
@@ -512,7 +486,7 @@ struct rr_ui_element *rr_ui_crafting_container_init()
         for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             rr_ui_container_add_element(
                 this, crafting_inventory_button_init(id, rarity));
-    this->fill = 0x00000000;
+    rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *craft = rr_ui_container_init();
     rr_ui_container_add_element(craft, crafting_ring_init());
     rr_ui_container_add_element(craft, crafting_result_container_init());
@@ -659,7 +633,7 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_crafting_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0x80888888;
+    rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 60;
     this->on_event = crafting_toggle_button_on_event;
     this->on_render = crafting_toggle_on_render;

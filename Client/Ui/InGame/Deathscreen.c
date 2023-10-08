@@ -28,6 +28,7 @@ struct rr_ui_element *rr_ui_finished_game_screen_init()
 {
     struct rr_ui_element *leave_game =
         rr_ui_labeled_button_init("Continue", 36, NULL);
+    rr_ui_set_background(leave_game, 0xff45a8a8);
     leave_game->on_event = continue_to_squad_event;
     struct rr_ui_element *this = rr_ui_v_container_init(
         rr_ui_container_init(), 10, 10,

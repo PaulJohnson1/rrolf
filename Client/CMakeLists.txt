@@ -57,6 +57,7 @@ set(SRCS
     Ui/Container.c
     Ui/Element.c
     Ui/Engine.c
+    Ui/InGame/Chat.c
     Ui/InGame/Deathscreen.c
     Ui/InGame/Loadout.c
     Ui/InGame/Minimap.c

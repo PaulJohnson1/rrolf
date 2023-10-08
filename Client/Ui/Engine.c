@@ -88,6 +88,18 @@ struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this,
                                            uint32_t bg)
 {
     this->fill = bg;
+    if (bg >= 0xff000000)
+    {
+        #define a 0.2
+        uint8_t red = rr_fclamp(
+            (((bg >> 16) & 255) * (1 - a) + ((bg >> 16) & 255) * a), 0, 255);
+        uint8_t green =
+            rr_fclamp((((bg >> 8) & 255) * (1 - a) + ((bg >> 8) & 255) * a), 0, 255);
+        uint8_t blue =
+            rr_fclamp((((bg >> 0) & 255) * (1 - a) + ((bg >> 0) & 255) * a), 0, 255);
+        this->stroke = red | (green << 8) | (blue << 16) | (255 < 24);
+        this->stroke_width = 6;
+    }
     return this;
 }
 

@@ -84,7 +84,7 @@ static void account_toggle_button_on_event(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_account_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->fill = 0x80888888;
+    rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 40;
     this->on_event = account_toggle_button_on_event;
     this->on_render = account_toggle_button_on_render;

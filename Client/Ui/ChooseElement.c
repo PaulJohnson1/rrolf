@@ -12,14 +12,31 @@ static void choose_element_on_render(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
-    rr_ui_render_element(this->elements.start[data->choose(this, game)], game);
+    uint8_t to_show = data->choose(this, game);
+    rr_ui_render_element(this->elements.start[to_show], game);
+    if (to_show != data->previously_shown)
+    {
+        if (data->not_first_frame)
+            this->elements.start[data->previously_shown]->on_hide(this->elements.start[data->previously_shown], game);
+        else
+        {
+            for (uint8_t i = 0; i < this->elements.size; ++i)
+            {
+                if (i == to_show)
+                    continue;
+                this->elements.start[i]->on_hide(this->elements.start[i], game);
+            }
+            data->not_first_frame = 1;
+        }
+        data->previously_shown = to_show;
+    }
 }
 
 static void choose_element_poll_events(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
-    struct rr_ui_element *show = this->elements.start[data->choose(this, game)];
+    struct rr_ui_element *show = this->elements.start[data->previously_shown];
     show->poll_events(show, game);
 }
 

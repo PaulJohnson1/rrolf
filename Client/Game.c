@@ -38,17 +38,17 @@
 
 static void validate_loadout(struct rr_game *this)
 {
-    uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
-    memcpy(&temp_inv, &this->inventory,
-           (sizeof(uint32_t)) * rr_petal_id_max * rr_rarity_id_max);
+    memset(this->loadout_counts, 0, sizeof this->loadout_counts);
     for (uint8_t i = 0; i < 20; ++i)
     {
         uint8_t id = this->cache.loadout[i].id;
+        if (id == 0)
+            continue;
         uint8_t rarity = this->cache.loadout[i].rarity;
-        if (temp_inv[id][rarity] == 0 || (i % 10) >= this->slots_unlocked)
+        if (this->loadout_counts[id][rarity] >= this->inventory[id][rarity] || (i % 10) >= this->slots_unlocked)
             this->cache.loadout[i].id = this->cache.loadout[i].rarity = 0;
         else
-            --temp_inv[id][rarity];
+            ++this->loadout_counts[id][rarity];
     }
 }
 
@@ -129,7 +129,10 @@ static uint8_t player_alive(struct rr_ui_element *this,
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
         game->menu_open = 0;
+        game->chat.chat_active = 0;
+    }
 }
 
 static struct rr_ui_element *close_menu_button_init(float w)
@@ -332,6 +335,15 @@ void rr_game_init(struct rr_game *this)
     
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
+    rr_ui_container_add_element(this->window, 
+        rr_ui_link_toggle(
+            rr_ui_pad(
+                rr_ui_set_justify(
+                    rr_ui_chat_bar_init(this),
+                -1, 1)
+            , 20)
+        , simulation_ready)
+    );
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
             rr_ui_set_justify(
@@ -1142,4 +1154,17 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     sprintf(link, "ws%s://%s:%u\n", port == 443 ? "s" : "", s, port);
     memcpy(game->rivet_player_token, token, 400);
     rr_websocket_connect_to(&game->socket, link);
+}
+
+uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *game, uint8_t id, uint8_t rarity)
+{
+    uint32_t cnt = game->inventory[id][rarity] - game->loadout_counts[id][rarity];
+    if (id == game->crafting_data.crafting_id)
+    {
+        if (rarity == game->crafting_data.crafting_rarity)
+            cnt -= game->crafting_data.count;
+        else if (rarity == game->crafting_data.crafting_rarity + 1)
+            cnt -= game->crafting_data.success_count;
+    }
+    return cnt;
 }

@@ -40,6 +40,22 @@ struct rr_game_crafting_data
     uint8_t crafting_rarity;
 };
 
+struct rr_game_chat_message
+{
+    uint8_t type;
+    char sender_name[16];
+    char message[64];
+};
+
+struct rr_game_chat
+{
+    uint8_t chat_active; //0 = inactive, 1 = local, 2 = squad
+    uint8_t chat_type;
+    uint32_t at;
+    struct rr_game_chat_message messages[10];
+    char sending[64];
+};
+
 // anything cross reload
 struct rr_game_cache
 {
@@ -59,6 +75,7 @@ struct rr_game
     struct rr_particle_manager particle_manager;
     struct rr_game_crafting_data crafting_data;
     struct rr_game_debug_info debug_info;
+    struct rr_game_chat chat;
     struct rr_game_cache cache;
 
     struct rr_rivet_account rivet_account;
@@ -86,6 +103,7 @@ struct rr_game
     struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    uint8_t loadout_counts[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
     uint64_t dev_flag;
     float lerp_delta;
@@ -115,6 +133,6 @@ void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
 
-void rr_game_websocket_on_event_function(enum rr_websocket_event_type,
-                                         void *, void *,
-                                         uint64_t);
+void rr_game_websocket_on_event_function(enum rr_websocket_event_type, void *, void *, uint64_t);
+
+uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *, uint8_t, uint8_t);

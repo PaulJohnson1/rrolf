@@ -95,7 +95,7 @@ struct rr_ui_element *rr_ui_loot_container_init()
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
             rr_ui_container_add_element(this,
                                         collected_button_init(id, rarity));
-    this->fill = 0x00000000;
+    rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(

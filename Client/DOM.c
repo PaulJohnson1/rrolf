@@ -36,6 +36,7 @@ void rr_dom_element_hide(char const *name)
         const name = UTF8ToString($0);
         const elem = document.getElementById(name);
         elem.style.display = 'none';
+        elem.style.width = elem.style.height = "0px";
     }, name);
 }
 

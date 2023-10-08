@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 
@@ -67,6 +68,6 @@ struct rr_ui_element *rr_ui_h_slider_init(float width, float height,
     this->abs_height = this->height = height;
     this->on_render = h_slider_on_render;
     this->stop_event_propagation = !!allow_input;
-    this->fill = 0xff555555;
+    rr_ui_set_background(this, 0xff555555);
     return this;
 }

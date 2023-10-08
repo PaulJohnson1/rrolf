@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
@@ -74,6 +75,6 @@ struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill, uint8_t
     this->abs_width = this->width = 10 + rr_renderer_get_text_size(text) * height / 2;
     this->on_render = biome_button_on_render;
     this->on_event = biome_button_on_event;
-    this->fill = fill;
+    rr_ui_set_background(this, fill);
     return this;
 }
