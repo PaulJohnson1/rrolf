@@ -29,11 +29,17 @@
 uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 uint8_t *outgoing_message = lws_message_data + LWS_PRE;
 
-static void *rivet_connected_endpoint(void *captures)
+struct connected_captures
 {
-    struct rr_server_client *this = captures;
-    char token[500];
-    strcpy(token, this->rivet_account.token);
+    char *token;
+    struct rr_server_client *client;
+};
+
+static void *rivet_connected_endpoint(void *_captures)
+{
+    struct connected_captures *captures = _captures;
+    struct rr_server_client *this = captures->client;
+    char *token = captures->token;
     if (!rr_rivet_players_connected(getenv("RIVET_TOKEN"), token))
     {
         if (strcmp(token, this->rivet_account.token) == 0 && this->in_use)
@@ -42,15 +48,17 @@ static void *rivet_connected_endpoint(void *captures)
             lws_callback_on_writable(this->socket_handle);
         }
     }
+    free(token);
     return NULL;
 }
 
-static void *rivet_disconnected_endpoint(void *captures)
+static void *rivet_disconnected_endpoint(void *_captures)
 {
-    struct rr_server_client *this = captures;
-    char token[500];
-    strcpy(token, this->rivet_account.token);
+    struct connected_captures *captures = _captures;
+    struct rr_server_client *this = captures->client;
+    char *token = captures->token;
     rr_rivet_players_disconnected(getenv("RIVET_TOKEN"), token);
+    free(token);
     return NULL;
 }
 
@@ -248,8 +256,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 getenv("RIVET_TOKEN"),
                 this->clients[i].rivet_account.token);
                 */
+            struct connected_captures *captures = malloc(sizeof *captures);
+            captures->client = client;
+            captures->token = malloc(500);
+            strncpy(captures->token, client->rivet_account.uuid, 500);
             pthread_t thread;
-            pthread_create(&thread, NULL, rivet_disconnected_endpoint, client);
+            pthread_create(&thread, NULL, rivet_disconnected_endpoint, captures);
             pthread_detach(thread);
 #endif
             struct rr_binary_encoder encoder;
@@ -361,7 +373,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
             */
             pthread_t thread;
-            pthread_create(&thread, NULL, rivet_connected_endpoint, client);
+            struct connected_captures *captures = malloc(sizeof *captures);
+            captures->client = client;
+            captures->token = malloc(500);
+            strncpy(captures->token, client->rivet_account.uuid, 500);
+            pthread_t thread;
+            pthread_create(&thread, NULL, rivet_connected_endpoint, captures);
             pthread_detach(thread);
             
 #endif
