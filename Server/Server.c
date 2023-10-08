@@ -261,7 +261,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             struct connected_captures *captures = malloc(sizeof *captures);
             captures->client = client;
             captures->token = malloc(500);
-            strncpy(captures->token, client->rivet_account.uuid, 500);
+            strncpy(captures->token, client->rivet_account.token, 500);
             pthread_t thread;
             pthread_create(&thread, NULL, rivet_disconnected_endpoint, captures);
             pthread_detach(thread);
@@ -377,7 +377,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             struct connected_captures *captures = malloc(sizeof *captures);
             captures->client = client;
             captures->token = malloc(500);
-            strncpy(captures->token, client->rivet_account.uuid, 500);
+            strncpy(captures->token, client->rivet_account.token, 500);
             pthread_t thread;
             pthread_create(&thread, NULL, rivet_connected_endpoint, captures);
             pthread_detach(thread);
