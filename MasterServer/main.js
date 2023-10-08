@@ -265,7 +265,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         const new_account = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
         if (!new_account.value)
         {
-            a.password = password;
+            a.password = hash(username + PASSWORD_SALT);
             a.username = username;
             await write_db_entry(username, a);
         }
