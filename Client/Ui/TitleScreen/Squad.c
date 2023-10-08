@@ -315,6 +315,9 @@ static void join_code_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
+        if (game->socket_pending)
+            return;
+        game->socket_pending = 1;
         #ifdef RIVET_BUILD
         {
             if (game->socket_ready)
