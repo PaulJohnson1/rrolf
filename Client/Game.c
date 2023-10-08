@@ -294,7 +294,7 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                                 rr_ui_set_fill_stroke(
                                                     rr_ui_h_container_init(rr_ui_container_init(), 2, 0,
-                                                        rr_ui_text_input_init(100, 14, &this->connect_code[0], 16, "_0x4346"), 
+                                                        rr_ui_text_input_init(100, 14, &this->connect_code[0], 16, "_0x4347"), 
                                                         NULL
                                                     ), 
                                                 0xffffffff, 0xff222222),
@@ -499,7 +499,7 @@ void rr_game_init(struct rr_game *this)
 
     rr_assets_init(this);
     rr_game_cache_load(this);
-    //rr_dom_set_text("_0x4346", this->cache.nickname);
+    rr_dom_set_text("_0x4346", this->cache.nickname);
     // clang-format on
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
