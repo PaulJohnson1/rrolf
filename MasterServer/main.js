@@ -18,21 +18,8 @@ const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad3
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
-const PETALS_TO_UPGRADE = 5;
 
 const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
-
-const CRAFT_CHANCES = [
-    rng.get_magic_chance(0.5),
-    rng.get_magic_chance(0.3),
-    rng.get_magic_chance(0.15),
-    rng.get_magic_chance(0.05),
-    rng.get_magic_chance(0.03),
-    rng.get_magic_chance(0.01),
-    0
-];
-
-const CRAFT_XP_GAINS = [1, 8, 60, 750, 25000, 1000000];
 
 let database = {};
 let changed = false;
