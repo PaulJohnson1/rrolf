@@ -12,8 +12,6 @@ void render_background(struct rr_component_player_info *player_info, struct rr_g
 {
     if (player_info->arena == 0)
         return;
-    if (this->cache.low_performance_mode)
-        return;
 
     double scale = player_info->lerp_camera_fov * this->renderer->scale;
     double leftX =
