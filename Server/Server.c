@@ -41,7 +41,7 @@ static void *rivet_connected_endpoint(void *_captures)
     struct rr_server_client *this = captures->client;
     char *token = captures->token;
     fputs(token, stderr);
-    fputs("attempt\n", stderr);
+    fputs(" attempt\n", stderr);
     if (!rr_rivet_players_connected(getenv("RIVET_TOKEN"), token))
     {
         if (strcmp(token, this->rivet_account.token) == 0 && this->in_use)
@@ -485,8 +485,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 squad = rr_client_create_squad(this, client);
             else if (type == 1)
             {
-                char link[16];
+                char link[16] = {0};
                 proto_bug_read_string(&encoder, link, 7, "connect link");
+                fputs(link, stderr);
+                fputs("\n", stderr);
                 squad = rr_client_join_squad_with_code(this, link);
             }
             else if (type == 0)
