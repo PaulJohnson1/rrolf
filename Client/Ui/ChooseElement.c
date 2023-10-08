@@ -37,7 +37,9 @@ static void choose_element_poll_events(struct rr_ui_element *this,
 {
     struct rr_ui_choose_element_metadata *data = this->data;
     struct rr_ui_element *show = this->elements.start[data->previously_shown];
-    show->poll_events(show, game);
+    rr_ui_element_check_if_focused(this, game);
+    if (!show->prevent_on_event)
+        show->poll_events(show, game);
 }
 
 static void choose_element_on_hide(struct rr_ui_element *this,

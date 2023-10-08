@@ -53,6 +53,19 @@ struct rr_ui_container_metadata
     void *data;
 };
 
+struct rr_ui_text_input_metadata
+{
+    char *buffer;
+    char *end;
+    uint32_t max_size;
+    uint32_t size;
+    uint32_t caret_pos;
+    uint32_t drag_pos;
+    uint8_t focused;
+    uint8_t dragging;
+    float relative_x;
+};
+
 struct rr_ui_element_vector
 {
     struct rr_ui_element **start;
@@ -201,3 +214,4 @@ struct rr_ui_element *rr_ui_loot_container_init();
 struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);
+struct rr_ui_element *rr_ui_message_box_init(struct rr_game *);

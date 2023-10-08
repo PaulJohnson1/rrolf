@@ -276,6 +276,7 @@ static struct rr_ui_element *crafting_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Craft", 36, NULL);
     this->on_event = craft_button_on_event;
+    rr_ui_set_background(this, 0xfffcfc8c);
     return this;
 }
 

@@ -115,6 +115,11 @@ static void write_animation_function(struct rr_simulation *simulation,
             proto_bug_write_float32(encoder, animation->y, "ani y");
             proto_bug_write_varuint(encoder, animation->damage, "damage");
             break;
+        case rr_animation_type_chat:
+            proto_bug_write_string(encoder, animation->name, 64, "name");
+            proto_bug_write_string(encoder, animation->message, 64, "chat");
+            break;
+
     }
 }
 
@@ -610,6 +615,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_server_client_craft_petal(client, id, rarity, count);
             break;
         }
+        case rr_serverbound_chat:
+        {
+            if (!client->in_squad)
+                break;
+            if (!client->player_info)
+                break;
+            struct rr_simulation_animation *animation = &this->simulation.animations[this->simulation.animation_length++];
+            proto_bug_read_string(&encoder, animation->message, 64, "chat");
+            animation->type = rr_animation_type_chat;
+            animation->squad = client->squad;
+            strncpy(animation->name, rr_squad_get_client_slot(this, client)->nickname, 64);
+            break;
+        }
         default:
             break;
         }
@@ -885,6 +903,7 @@ void rr_server_run(struct rr_server *this)
         rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
         rr_simulation_tick_entity_resetter_function);
+        this->simulation.animation_length = 0;
         gettimeofday(&end, NULL);
 
         uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);

@@ -166,7 +166,7 @@ void rr_renderer_draw_mob(struct rr_renderer *renderer, uint8_t id, float raw_an
         render_sprite(renderer, id, 0, flags);
         break;
     case rr_mob_id_ant:
-        rr_renderer_scale(renderer, 0.2f);
+        rr_renderer_scale(renderer, 0.35f);
         rr_renderer_translate(renderer, -35, 0);
         render_sprite(renderer, id, 1, flags);
         rr_renderer_translate(renderer, 70, 0);

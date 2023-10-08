@@ -234,7 +234,14 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_text_init("rrolf.io", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 0, 20,
-                            rr_ui_link_toggle(rr_ui_text_input_init(385, 36, &this->cache.nickname[0], 16, "_0x4346"), simulation_not_ready),
+                            rr_ui_link_toggle(
+                                rr_ui_set_fill_stroke(
+                                    rr_ui_h_container_init(rr_ui_container_init(), 5, 0,
+                                        rr_ui_text_input_init(350, 24, &this->cache.nickname[0], 16, "_0x4346"), 
+                                        NULL
+                                    ), 
+                                0xffffffff, 0xff222222),
+                            simulation_not_ready),
                             rr_ui_join_button_init(),
                             NULL
                         ),
@@ -285,7 +292,12 @@ void rr_game_init(struct rr_game *this)
                                         rr_ui_flex_container_init(
                                             rr_ui_copy_squad_code_button_init(),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                                                rr_ui_link_toggle(rr_ui_text_input_init(100, 18, this->connect_code, 16, "_0x4347"), simulation_not_ready),
+                                                rr_ui_set_fill_stroke(
+                                                    rr_ui_h_container_init(rr_ui_container_init(), 2, 0,
+                                                        rr_ui_text_input_init(100, 14, &this->connect_code[0], 16, "_0x4346"), 
+                                                        NULL
+                                                    ), 
+                                                0xffffffff, 0xff222222),
                                                 rr_ui_join_squad_code_button_init(),
                                                 NULL
                                             ),
@@ -335,6 +347,7 @@ void rr_game_init(struct rr_game *this)
     
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
+    /*
     rr_ui_container_add_element(this->window, 
         rr_ui_link_toggle(
             rr_ui_pad(
@@ -344,6 +357,7 @@ void rr_game_init(struct rr_game *this)
             , 20)
         , simulation_ready)
     );
+    */
     rr_ui_container_add_element(this->window, rr_ui_pad(
         rr_ui_v_pad(
             rr_ui_set_justify(
@@ -485,7 +499,7 @@ void rr_game_init(struct rr_game *this)
 
     rr_assets_init(this);
     rr_game_cache_load(this);
-    rr_dom_set_text("_0x4346", this->cache.nickname);
+    //rr_dom_set_text("_0x4346", this->cache.nickname);
     // clang-format on
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
@@ -575,8 +589,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
             while (proto_bug_read_uint8(&encoder, "continue"))
             {
-                struct rr_simulation_animation *particle = rr_particle_alloc(
-                    &this->particle_manager, proto_bug_read_uint8(&encoder, "ani type"));
+                struct rr_simulation_animation *particle = rr_particle_alloc(&this->particle_manager, proto_bug_read_uint8(&encoder, "ani type"));
                 switch (particle->type)
                 {
                     case rr_animation_type_lightningbolt:
@@ -599,6 +612,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         particle->opacity = 1;
                         break;
                     }
+                    case rr_animation_type_chat:
+                        rr_particle_delete(&this->particle_manager, particle);
+                        proto_bug_read_string(&encoder, this->chat.messages[this->chat.at].sender_name, 64, "name");
+                        proto_bug_read_string(&encoder, this->chat.messages[this->chat.at].message, 64, "chat");
+                        this->chat.at = (this->chat.at + 1) % 10;
+                        break;
                     default:
                         break;
                 }

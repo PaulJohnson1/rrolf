@@ -43,6 +43,11 @@ struct rr_simulation_animation
             struct rr_vector acceleration;   
             float size;
             uint32_t damage;
+#ifdef RR_SERVER
+            uint8_t chat_type;
+            char message[64];
+            char name[64];
+#endif
         };
     };
     

@@ -9,6 +9,7 @@ enum rr_animation_type
     rr_animation_type_default = 0,
     rr_animation_type_lightningbolt = 1,
     rr_animation_type_damagenumber = 2,
+    rr_animation_type_chat = 3,
 };
 
 enum rr_serverbound_packet_header
@@ -20,7 +21,8 @@ enum rr_serverbound_packet_header
     rr_serverbound_squad_update = 4,
     rr_serverbound_private_update = 5,
     rr_serverbound_squad_kick = 6,
-    rr_serverbound_petals_craft = 7
+    rr_serverbound_petals_craft = 7,
+    rr_serverbound_chat = 8,
 };
 
 enum rr_clientbound_packet_header

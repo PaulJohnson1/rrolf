@@ -103,6 +103,13 @@ struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this,
     return this;
 }
 
+struct rr_ui_element *rr_ui_set_fill_stroke(struct rr_ui_element *this, uint32_t fill, uint32_t stroke)
+{
+    this->fill = fill;
+    this->stroke = stroke;
+    return this;
+};
+
 struct rr_ui_element *rr_ui_set_justify(struct rr_ui_element *c,
                                         int8_t h_justify, int8_t v_justify)
 {

@@ -228,7 +228,6 @@ static void tick_wave(struct rr_simulation *this)
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    this->animation_length = 0;
     rr_simulation_create_component_vectors(this);
     //printf("server has %d entities\n", this->physical_count);
     //fputs("part 1\n", stderr);
