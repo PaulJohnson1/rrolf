@@ -40,6 +40,8 @@ static void *rivet_connected_endpoint(void *_captures)
     struct connected_captures *captures = _captures;
     struct rr_server_client *this = captures->client;
     char *token = captures->token;
+    fputs(token, stderr);
+    fputs("attempt\n", stderr);
     if (!rr_rivet_players_connected(getenv("RIVET_TOKEN"), token))
     {
         if (strcmp(token, this->rivet_account.token) == 0 && this->in_use)
