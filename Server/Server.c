@@ -372,7 +372,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 return -1;
             }
             */
-            pthread_t thread;
             struct connected_captures *captures = malloc(sizeof *captures);
             captures->client = client;
             captures->token = malloc(500);
