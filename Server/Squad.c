@@ -91,6 +91,7 @@ void rr_client_leave_squad(struct rr_server *this, struct rr_server_client *memb
         return;
     rr_squad_remove_client(&this->squads[member->squad], member);
     member->squad = 0;
+    member->in_squad = 0;
 }
 
 struct rr_squad_member *rr_squad_get_client_slot(struct rr_server *this, struct rr_server_client *member)
