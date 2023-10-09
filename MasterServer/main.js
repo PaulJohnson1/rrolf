@@ -250,7 +250,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             throw new Error("invalid uuid");
         const a = await db_read_user(old_username, old_password);
         const new_account = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
-        if (!new_account.value)
+        if (!new_account.value || 1)
         {
             a.password = hash(username + PASSWORD_SALT);
             a.username = username;

@@ -170,6 +170,14 @@ static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, Entit
     (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 250 * 250);
 }
 
+static uint8_t is_mob_and_damaged(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    if (!rr_simulation_has_mob(simulation, target))
+        return 0;
+    struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+    return health->max_health > health->health;
+}
+
 static void system_flower_petal_movement_logic(
     struct rr_simulation *simulation, EntityIdx id,
     struct rr_component_player_info *player_info, uint32_t rotation_pos,
@@ -324,6 +332,29 @@ static void system_flower_petal_movement_logic(
             physical->friction = 0.4;
             break;
         }
+        case rr_petal_id_mint:
+        {
+            EntityIdx mob_to_heal = rr_simulation_find_nearest_friend(simulation, id, 150, NULL, is_mob_and_damaged);
+            if (mob_to_heal == RR_NULL_ENTITY)
+                break;
+            struct rr_component_physical *target_physical = rr_simulation_get_physical(simulation, mob_to_heal);
+            struct rr_vector delta = {target_physical->x - physical->x, target_physical->y - physical->y};
+            if (rr_vector_magnitude_cmp(&delta, target_physical->radius + physical->radius) == -1)
+            {
+                struct rr_component_health *mob_health = rr_simulation_get_health(simulation, mob_to_heal);
+                float heal = 15 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                rr_component_health_set_health(mob_health, mob_health->health + heal);
+                rr_simulation_request_entity_deletion(simulation, id);
+                return;
+            }
+            else
+            {
+                rr_vector_scale(&delta, 0.4);
+                rr_vector_add(&physical->acceleration, &delta);
+                return;
+            }
+            break;
+        }
         default:
             break;
         }
@@ -373,8 +404,7 @@ static void system_flower_petal_movement_logic(
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
         rr_vector_add(&chase_vector, &random_vector);
     }
-    rr_component_physical_set_angle(
-        physical, physical->angle + 0.04f * petal->spin_ccw * (1 - petal->no_rotation));
+    rr_component_physical_set_angle(physical, physical->angle + 0.04f * petal->spin_ccw * (1 - petal->no_rotation));
     physical->acceleration.x += 0.5f * chase_vector.x;
     physical->acceleration.y += 0.5f * chase_vector.y;
 }

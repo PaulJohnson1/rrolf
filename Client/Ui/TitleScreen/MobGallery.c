@@ -38,6 +38,9 @@ static void mob_button_animate(struct rr_ui_element *this,
     rr_renderer_scale(renderer, this->abs_width / 60 * renderer->scale);
     rr_renderer_draw_background(renderer, rr_rarity_id_max, 1);
     uint32_t count = game->cache.mob_kills[data->id][data->rarity];
+    #ifndef RIVET_BUILD
+    count = 1;
+    #endif
 
     if (this->first_frame)
         data->secondary_animation = count == 0;

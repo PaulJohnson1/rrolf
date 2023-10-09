@@ -99,7 +99,8 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     if (data->secondary_cooldown > 0)
     {
         petal->effect_delay = data->secondary_cooldown;
-        petal->no_rotation = 1;
+        if (id != rr_petal_id_mint && id != rr_petal_id_azalea)
+            petal->no_rotation = 1;
     }
     return petal_id;
 }
