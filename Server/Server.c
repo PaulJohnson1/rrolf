@@ -46,6 +46,7 @@ static void *rivet_connected_endpoint(void *_captures)
             this->pending_kick = 1;
     }
     free(token);
+    free(captures);
     return NULL;
 }
 
@@ -56,6 +57,7 @@ static void *rivet_disconnected_endpoint(void *_captures)
     char *token = captures->token;
     rr_rivet_players_disconnected(getenv("RIVET_TOKEN"), token);
     free(token);
+    free(captures);
     return NULL;
 }
 
@@ -932,11 +934,11 @@ void rr_server_run(struct rr_server *this)
         struct timeval end;
 
         gettimeofday(&start, NULL);
-        fputs("before lws_service on server\n", stderr);
+        //fputs("before lws_service on server\n", stderr);
         lws_service(this->server, -1);
-        fputs("before lws_service on api\n", stderr);
+        //fputs("before lws_service on api\n", stderr);
         lws_service(this->api_client_context, -1);
-        fputs("before server tick\n", stderr);
+        //fputs("before server tick\n", stderr);
         server_tick(this);
         rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,

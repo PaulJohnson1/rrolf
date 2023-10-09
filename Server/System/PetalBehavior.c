@@ -71,73 +71,6 @@ static void uranium_petal_system(struct rr_simulation *simulation,
     }
 }
 
-struct lightning_captures
-{
-    EntityIdx *chain;
-    uint32_t length;
-    float curr_x;
-    float curr_y;
-};
-
-static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
-{
-    struct lightning_captures *chain = captures;
-    for (uint32_t i = 0; i < chain->length; ++i)
-    {
-        if (chain->chain[i] == target)
-            return 0;
-    }
-    return 1;
-}
-
-static void lightning_petal_system(struct rr_simulation *simulation,
-                                 struct rr_component_petal *petal)
-{
-    if (petal->effect_delay == 0)
-    {
-        struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal->parent_id);
-        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
-        struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
-        animation->type = rr_animation_type_lightningbolt;
-        EntityIdx chain[16] = {petal->parent_id};
-        animation->points[0].x = petal_physical->x;
-        animation->points[0].y = petal_physical->y;
-        uint32_t chain_amount = petal->rarity + 1;   
-        float damage = rr_simulation_get_health(simulation, petal->parent_id)->damage * 0.5; 
-        EntityIdx target = RR_NULL_ENTITY;
-        struct lightning_captures captures = {chain, 1, petal_physical->x, petal_physical->y};
-        for (; captures.length < chain_amount + 1; ++captures.length)
-        {
-            target = rr_simulation_find_nearest_enemy_custom_pos(simulation, petal->parent_id, captures.curr_x, captures.curr_y, 400, &captures, lightning_filter);
-            if (target == RR_NULL_ENTITY)
-                break;
-            if (rr_simulation_has_ai(simulation, target))
-            {
-                struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
-                if (ai->target_entity == RR_NULL_ENTITY)
-                    ai->target_entity = relations->owner;
-            }
-            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-            struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-            rr_component_health_do_damage(simulation, health, petal->parent_id, damage);
-            health->damage_paused = 5;
-            physical->stun_ticks = 4;
-            chain[captures.length] = target;
-            animation->points[captures.length].x = physical->x;
-            animation->points[captures.length].y = physical->y;
-            captures.curr_x = physical->x;
-            captures.curr_y = physical->y;
-        }
-        animation->length = captures.length;
-        if (captures.length > 1)
-            rr_simulation_request_entity_deletion(simulation, petal->parent_id);
-        else
-            --simulation->animation_length;
-    }
-    else
-        --petal->effect_delay;
-}
-
 static void system_petal_detach(struct rr_simulation *simulation,
                                 struct rr_component_petal *petal,
                                 struct rr_component_player_info *player_info,
@@ -585,8 +518,6 @@ static void system_petal_misc_logic(EntityIdx id, void *_simulation)
     {
         if (petal->id == rr_petal_id_uranium)
             uranium_petal_system(simulation, petal);
-        else if (petal->id == rr_petal_id_lightning)
-            lightning_petal_system(simulation, petal);
         if (!rr_simulation_has_mob(simulation, relations->owner))
             return;
         if (--petal->effect_delay == 0)
