@@ -74,7 +74,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         //float *table = RR_MOB_DATA[this->id].loot[i].loot_table[this->rarity];
         uint8_t drop;
         uint8_t cap = this->rarity;
-        if (this->rarity < rr_rarity_id_mythic)
+        if (this->rarity < rr_rarity_id_legendary)
             cap = this->rarity;
         else
             cap = this->rarity - 1;

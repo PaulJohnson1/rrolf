@@ -105,7 +105,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
         uint64_t cap = rarity;
-        if (rarity < rr_rarity_id_mythic)
+        if (rarity < rr_rarity_id_legendary)
             cap = rarity;
         else
             cap = rarity - 1;
