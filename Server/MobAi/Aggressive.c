@@ -224,7 +224,7 @@ void tick_ai_aggro_ankylosaurus(EntityIdx entity, struct rr_simulation *simulati
     }
     case rr_ai_state_charging:
     {
-        physical->knockback_scale = 5;
+        physical->knockback_scale = 25;
         struct rr_vector accel;
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
