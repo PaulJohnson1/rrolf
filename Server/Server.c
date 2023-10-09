@@ -43,10 +43,7 @@ static void *rivet_connected_endpoint(void *_captures)
     if (!rr_rivet_players_connected(getenv("RIVET_TOKEN"), token))
     {
         if (strcmp(token, this->rivet_account.token) == 0 && this->in_use)
-        {
             this->pending_kick = 1;
-            lws_callback_on_writable(this->socket_handle);
-        }
     }
     free(token);
     return NULL;
@@ -704,7 +701,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 {
                     printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
                     client->pending_kick = 1;
-                    lws_callback_on_writable(client->socket_handle);
                     break;
                 }
                 client->verified = 1;
@@ -726,8 +722,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                 {
                     printf("<rr_server::client_kick::%s>\n", uuid);
                     client->pending_kick = 1;
-                    if (client->socket_handle != NULL)
-                        lws_callback_on_writable(client->socket_handle);
                 }
                 break;
             }
@@ -807,6 +801,8 @@ static void server_tick(struct rr_server *this)
             struct rr_server_client *client = &this->clients[i];
             if (!client->verified || !client->in_squad)
                 continue;
+            else if (client->pending_kick)
+                lws_callback_on_writable(client->socket_handle);
             else if (client->player_info != NULL)
             {
                 if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
