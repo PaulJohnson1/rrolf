@@ -291,6 +291,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                          sizeof "kicked for unspecified reason" - 1);
             return -1;
         }
+        break;
         struct rr_server_client_message *message = client->message_root;
         while (message != NULL)
         {
