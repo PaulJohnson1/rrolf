@@ -916,8 +916,11 @@ void rr_server_run(struct rr_server *this)
         struct timeval end;
 
         gettimeofday(&start, NULL);
+        fputs("before lws_service on server\n", stderr);
         lws_service(this->server, -1);
+        fputs("before lws_service on api\n", stderr);
         lws_service(this->api_client_context, -1);
+        fputs("before server tick\n", stderr);
         server_tick(this);
         rr_simulation_for_each_entity(
         &this->simulation, &this->simulation,
