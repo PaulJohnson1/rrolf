@@ -696,7 +696,17 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             case 1:
             {
                 uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
+                if (pos >= 64)
+                {
+                    printf("<rr_api::malformed_req::%d>\n", pos);
+                    break;
+                }
                 struct rr_server_client *client = &this->clients[pos];
+                if (!client->in_use)
+                {
+                    printf("<rr_api::client_nonexistent::%d>\n", pos);
+                    break;
+                }
                 if (!rr_server_client_read_from_api(client, &decoder))
                 {
                     printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
@@ -715,7 +725,17 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
             case 2:
             {
                 uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
+                if (pos >= 64)
+                {
+                    printf("<rr_api::malformed_req::%d>\n", pos);
+                    break;
+                }
                 struct rr_server_client *client = &this->clients[pos];
+                if (!client->in_use)
+                {
+                    printf("<rr_api::client_nonexistent::%d>\n", pos);
+                    break;
+                }
                 char uuid[sizeof client->rivet_account.uuid];
                 rr_binary_encoder_read_nt_string(&decoder, uuid);
                 if (strcmp(uuid, client->rivet_account.uuid) == 0)
