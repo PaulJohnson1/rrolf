@@ -63,11 +63,6 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(0, ankylo_zone, 23, 0, 5, 3);
     set_special_zone(0, trike_pachy_zone, 22, 17, 2, 2);
     set_special_zone(0, ptera_meteor_zone, 13, 27, 3, 1);
-    //set_special_zone(0, rr_mob_id_tree, 8, 16, 4, 4);
-    //set_special_zone(0, rr_mob_id_trex, 0, 34, 6, 6);
-    //set_special_zone(0, rr_mob_id_pteranodon, 8, 0, 6, 6);
-    //printf("simulation size: %lu\n", sizeof *this);
-    //printf("spatial hash size: %lu\n", sizeof *this->grid);
 
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
