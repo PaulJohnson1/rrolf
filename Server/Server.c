@@ -247,7 +247,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_bitset_unset(this->clients_in_use, i);
             client->in_use = 0;
             client->socket_handle = NULL;
-            if (client->verified == 0 || client->received_first_packet == 0)
+            if (client->received_first_packet == 0)
                 return 0;
 #ifdef RIVET_BUILD
 /*
@@ -799,10 +799,10 @@ static void server_tick(struct rr_server *this)
         if (rr_bitset_get(this->clients_in_use, i))
         {
             struct rr_server_client *client = &this->clients[i];
+            if (client->pending_kick)
+                lws_callback_on_writable(client->socket_handle);
             if (!client->verified || !client->in_squad)
                 continue;
-            else if (client->pending_kick)
-                lws_callback_on_writable(client->socket_handle);
             else if (client->player_info != NULL)
             {
                 if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
