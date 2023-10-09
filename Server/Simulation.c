@@ -94,7 +94,7 @@ static void too_close_cb(EntityIdx potential, void *_captures)
         return;
     struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, potential);
     struct rr_vector delta = {captures->x - t_physical->x, captures->y - t_physical->y};
-    float dist = rr_vector_get_magnitude(&delta) * t_physical->aggro_range_multiplier - t_physical->radius;
+    float dist = rr_vector_get_magnitude(&delta);
     if (dist > captures->closest_dist)
         return;
     captures->done = 1;
@@ -123,7 +123,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     for (uint32_t n = 0; n < 10; ++n)
     {
         struct rr_vector pos = {(grid_x + rr_frand()) * arena->grid_size, (grid_y + rr_frand()) * arena->grid_size};
-        if (too_close(this, pos.x, pos.y, 2 * RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[id].radius))
+        if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[id].radius + 250))
             continue;
         EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
                                                 rr_simulation_team_id_mobs);
