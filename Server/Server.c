@@ -250,6 +250,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_bitset_unset(this->clients_in_use, i);
             client->in_use = 0;
             client->socket_handle = NULL;
+            if (client->verified == 0 || client->received_first_packet == 0)
+                return 0;
 #ifdef RIVET_BUILD
 /*
             rr_rivet_players_disconnected(
