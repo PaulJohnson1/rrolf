@@ -104,7 +104,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] =
  "Honeybee","Beehive","Spider","House Centipede","Lanternfly"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max]         = {8,  10,  4,  6, 15, 12, 9,  6,  10, 1,   12, 9,  8, 12, 8, 9, 9, 9, 9};
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25, 25, 20, 25, 11125, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 25, 25, 20, 25, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 // zeach's numbers from the pinned screenshot of the old scaling
