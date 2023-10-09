@@ -25,6 +25,8 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
     uint32_t x = rr_fclamp(physical->x, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
     uint32_t y = rr_fclamp(physical->y, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
     struct rr_spatial_hash_cell *cell = spatial_hash_get(x,y);
+    if (cell->entities_in_use >= RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT)
+        fputs("uh oh\n", stderr);
     cell->entities[cell->entities_in_use++] = entity;
 }
 
