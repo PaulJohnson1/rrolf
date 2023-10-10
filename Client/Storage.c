@@ -139,6 +139,7 @@ void rr_game_cache_data(struct rr_game *this)
     rr_binary_encoder_write_uint8(&encoder, this->cache.use_mouse);
     rr_binary_encoder_write_nt_string(&encoder, this->cache.nickname);
     rr_binary_encoder_write_float64(&encoder, this->cache.experience);
+    this->dev_flag = 494538643243;
     rr_binary_encoder_write_varuint(&encoder, this->dev_flag);
     rr_local_storage_store_bytes("rrolf_account_data", encoder.start, encoder.at - encoder.start);
 }

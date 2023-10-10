@@ -320,7 +320,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 }
             }
 #endif
-            if (proto_bug_read_varuint(&encoder, "dev flag") == 494538643243)
+            uint64_t developer = proto_bug_read_varuint(&encoder, "dev_flag");
+            printf("developer %ld\n", developer);
+            if (developer == 494538643243)
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
@@ -810,6 +812,7 @@ static void server_tick(struct rr_server *this)
                     struct rr_squad_member *member = &squad->members[i];
                     proto_bug_write_uint8(&encoder, 1, "bitbit");
                     proto_bug_write_uint8(&encoder, member->playing, "ready");
+                    proto_bug_write_uint8(&encoder, member->is_dev, "is_dev");
                     proto_bug_write_string(&encoder, member->nickname, 16, "nickname");
                     for (uint8_t j = 0; j < 20; ++j)
                     {

@@ -4,9 +4,6 @@
 #include <Server/Simulation.h>
 #include <Server/Squad.h>
 
-// must be multiple of 8
-// max for normal players is four, developers can bypass that cap
-
 #ifndef NDEBUG
 #define MESSAGE_BUFFER_SIZE (32 * 1024 * 1024)
 #else

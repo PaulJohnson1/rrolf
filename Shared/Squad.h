@@ -15,7 +15,7 @@ struct rr_squad_member
     uint32_t level;
     uint8_t in_use : 1;
     uint8_t playing : 1;
-    uint8_t dev : 1;
+    uint8_t is_dev : 1;
     struct rr_id_rarity_pair loadout[20];
     char nickname[16];
 };
