@@ -31,6 +31,7 @@ void rr_squad_add_client(struct rr_squad *this, struct rr_server_client *client)
         this->members[i].client = client;
         this->member_count += 1;
         this->members[i].in_use = 1;
+        this->members[i].is_dev = client->dev;
         return;
     }
 }

@@ -237,7 +237,6 @@ server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-
 const wss = new WSS.Server({server});
 const game_servers = {};
 const connected_clients = {};

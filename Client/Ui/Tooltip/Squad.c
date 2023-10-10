@@ -69,16 +69,20 @@ static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
     struct rr_squad_member *member = data->data;
+    if (member->is_dev)
+        return 2;
     if (&game->squad_members[game->squad_pos] == member)
         return 0;
-    if (member->dev)
-        return 2;
     return 1;
 }
 
 static struct rr_ui_element *dev_text_init(struct rr_squad_member *member)
 {
-    struct rr_ui_element *this = rr_ui_multi_choose_element_init(dev_text_choose, rr_ui_text_init("You", 20, 0xffffffff), rr_ui_text_init("Player", 20, 0xffffffff), rr_ui_text_init("Developer", 20, 0xffffffff), NULL);
+    struct rr_ui_element *this = rr_ui_multi_choose_element_init(dev_text_choose,
+        rr_ui_text_init("You", 20, 0xffffffff),
+        rr_ui_text_init("Player", 20, 0xffffffff),
+        rr_ui_text_init("Developer", 20, 0xffffffff),
+        NULL);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
     return this;

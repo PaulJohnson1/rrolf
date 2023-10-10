@@ -34,7 +34,7 @@ void render_flower(struct rr_ui_element *element, struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     struct squad_flower_metadata *data = element->data;
-    if (data->member->dev)
+    if (data->member->is_dev)
         rr_renderer_rotate(renderer, -M_PI);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);
