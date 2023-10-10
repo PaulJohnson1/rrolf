@@ -52,12 +52,9 @@ static void *rivet_connected_endpoint(void *_captures)
 
 static void *rivet_disconnected_endpoint(void *_captures)
 {
-    struct connected_captures *captures = _captures;
-    struct rr_server_client *this = captures->client;
-    char *token = captures->token;
+    char *token = _captures;
     rr_rivet_players_disconnected(getenv("RIVET_TOKEN"), token);
-    free(token);
-    free(captures);
+    free(_captures);
     return NULL;
 }
 
@@ -257,12 +254,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 getenv("RIVET_TOKEN"),
                 this->clients[i].rivet_account.token);
                 */
-            struct connected_captures *captures = malloc(sizeof *captures);
-            captures->client = client;
-            captures->token = malloc(500);
-            strncpy(captures->token, client->rivet_account.token, 500);
+            char *token = malloc(500);
+            strncpy(token, client->rivet_account.token, 500);
             pthread_t thread;
-            pthread_create(&thread, NULL, rivet_disconnected_endpoint, captures);
+            pthread_create(&thread, NULL, rivet_disconnected_endpoint, token);
             pthread_detach(thread);
 #endif
             struct rr_binary_encoder encoder;
@@ -745,14 +740,6 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
                     printf("<rr_server::client_kick::%s>\n", uuid);
                     client->pending_kick = 1;
                 }
-                break;
-            }
-            case 100:
-            {
-                struct rr_binary_encoder encoder;
-                rr_binary_encoder_init(&encoder, outgoing_message);
-                rr_binary_encoder_write_uint8(&encoder, 100);
-                lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
                 break;
             }
             default:

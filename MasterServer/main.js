@@ -24,6 +24,7 @@ const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 let database = {};
 let changed = false;
 const databaseFilePath = path.join(__dirname, "database.json");
+
 if (fs.existsSync(databaseFilePath))
 {
    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
@@ -40,16 +41,6 @@ app.use(function (req, res, next) {
 function is_valid_uuid(uuid)
 {
     return uuid.length === 36 && uuid.match(/[0-9a-z]{8}-([0-9a-z]{4}-){3}[0-9a-z]{12}/) !== null;
-}
-
-function format_id_rarity_count(entry)
-{
-    return entry.id + ":" + entry.rarity + ":" + entry.count; 
-}
-
-function format_id_rarity(entry)
-{
-    return `${entry.id}:${entry.rarity}`;
 }
 
 function log(type, args, color = 31)
@@ -100,13 +91,10 @@ function apply_missing_defaults(account)
         password: "",
         username: "",
         xp: 0,
-        already_playing: 0,
         petals: {"1:0": 5},
         failed_crafts: {},
         mob_gallery: {}
     };
-
-    account.user_playing = 0;
 
     // Fill in any missing defaults
     for (let prop in defaults) {
@@ -141,6 +129,20 @@ async function db_read_user(username, password)
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
+        return null;
+    }
+    apply_missing_defaults(user.value);
+    return user.value;
+}
+
+async function db_read_or_create_user(username, password)
+{
+    if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
+        return connected_clients[username].user;
+    //const user = structuredClone({value: database[username]});
+    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    if (!user.value)
+    {
         const user = apply_missing_defaults({});
         user.password = hash(username + PASSWORD_SALT);
         user.username = username;
@@ -164,99 +166,23 @@ async function handle_error(res, cb)
     }
 }
 
-function user_merge_petals(user, petals)
-{
-    for (let i = 0; i < petals.length; i++)
-    {
-        const petal = petals[i];
-        const key = format_id_rarity(petal);
-        if (!user.petals[key]) user.petals[key] = petal.count;
-        else user.petals[key] += petal.count;
-    }
-}
-
-// example: 1:0:123,1:5:1236
-function parse_id_rarity_count(string)
-{
-    let a = string.split(",");
-    const result = [];
-
-    for (let i = 0; i < a.length; i++)
-    {
-        const entry = a[i].split(":");
-        if (entry.length !== 3)
-            throw new Error("invalid petal entry");
-
-        const id = parseInt(entry[0]);
-        const rarity = parseInt(entry[1]);
-        const count = parseInt(entry[2]);
-        if (!Number.isInteger(id))
-            return new Error("invalid id entry");
-        if (!Number.isInteger(rarity))
-            return new Error("invalid rarity entry");
-        if (!Number.isInteger(count))
-            return new Error("invalid count entry");
-
-        result.push({id, rarity, count});
-    }
-
-    return result;
-}
-
-app.get(`${namespace}/user_on_open_json/${SERVER_SECRET}/:username`, async (req, res) => {
-    const {username} = req.params;
-    handle_error(res, async () => {
-        if (!is_valid_uuid(username))
-            throw new Error("invalid uuid");
-        log("user_on_open", [username]);
-        const user = await db_read_user(username, SERVER_SECRET);
-        await write_db_entry(username, user);
-        return JSON.stringify(user);
-    });
-});
-
-app.get(`${namespace}/user_get/:username/:password`, async (req, res) => {
-    const {username, password} = req.params;
-    log("user_get", [username]);
-    handle_error(res, async () => {
-        if (!is_valid_uuid(username))
-            throw new Error("invalid uuid");
-        const user = await db_read_user(username, password);
-        const out = new protocol.BinaryWriter();
-        out.WriteStringNT(user.username);
-        out.WriteFloat64(user.xp);
-        let checksum = 5;
-        for (const petal of Object.keys(user.petals))
-        {
-            if (!(user.petals[petal] > 0))
-                continue;
-            const [id, rarity] = petal.split(":");
-            out.WriteUint8(id);
-            out.WriteVarUint(user.petals[petal]);
-            out.WriteUint8(rarity);
-            checksum += parseInt(id) + ((rarity * user.petals[petal]) & 1023);
-        }
-        out.WriteUint8(0);
-        out.WriteVarUint(checksum);
-        return out.data.subarray(0, out.at);
-    });
-});
-
 app.get(`${namespace}/account_link/:old_username/:old_password/:username/:password`, async (req, res) => {
     const {old_username, old_password, username, password} = req.params;
     log("account_link", [old_username, username]);
     handle_error(res, async () => {
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
             throw new Error("invalid uuid");
-        const a = await db_read_user(old_username, old_password);
-        const new_account = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
-        console.log(new_account);
+        const old_account = await db_read_user(old_username, old_password);
+        if (!old_account)
+        {
+            return "failed";
+        }
+        const new_account = await db_read_user(username, password);
         if (!new_account.value)
         {
-            console.log("linking now");
-            a.password = hash(username + PASSWORD_SALT);
-            a.username = username;
-            await write_db_entry(username, a);
+            old_account.password = hash(username + PASSWORD_SALT);
+            old_account.username = username;
+            await write_db_entry(username, old_account);
         }
         return "success";
     });
@@ -293,15 +219,16 @@ app.use((req, res) => {
 });
 
 const saveDatabaseToFile = () => {
-   if (changed)
-   {
-       changed = false;
-       console.log("saving database to file:", databaseFilePath);
-       const databaseData = JSON.stringify(database, null, 2);
-       fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-   }
-   else
-       console.log("tried save, was not changed");
+    return;
+    if (changed)
+    {
+        changed = false;
+        console.log("saving database to file:", databaseFilePath);
+        const databaseData = JSON.stringify(database, null, 2);
+        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    }
+    else
+        console.log("tried save, was not changed");
 };
 
 const server = http.createServer(app);
@@ -341,17 +268,7 @@ wss.on("connection", (ws, req) => {
                     break;
                 }
                 try {
-                    const user = await db_read_user(uuid, SERVER_SECRET);
-                    if (!user)
-                    {
-                        log("player dne disconnect", [uuid]);
-                        const encoder = new protocol.BinaryWriter();
-                        encoder.WriteUint8(2);
-                        encoder.WriteUint8(pos);
-                        encoder.WriteStringNT(uuid);
-                        ws.send(encoder.data.subarray(0, encoder.at));
-                        return;
-                    }
+                    const user = await db_read_or_create_user(uuid, SERVER_SECRET);
                     connected_clients[uuid] = new GameClient(user);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
@@ -411,9 +328,6 @@ wss.on("connection", (ws, req) => {
                 write_db_entry(user.username, user);
                 break;
             }
-            case 100:
-                //ping
-                break;
             case 101:
                 game_server.rivet_server_id = decoder.ReadStringNT();
                 log("server id recv", [game_server.rivet_server_id]);
@@ -426,31 +340,6 @@ wss.on("connection", (ws, req) => {
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.alias);
     ws.send(encoder.data.subarray(0, encoder.at));
-    /*
-    setInterval(() => {
-        for (let pos = 0; pos < 64; ++pos)
-        {
-            const uuid = game_server.clients[pos];
-            if (!connected_clients[uuid])
-                continue;
-            const client = connected_clients[uuid];
-            if (!client.needs_gameserver_update)
-                continue;
-            log("client update", [uuid]);
-            const encoder = new protocol.BinaryWriter();
-            encoder.WriteUint8(1);
-            encoder.WriteUint8(pos);
-            client.write(encoder);
-            ws.send(encoder.data.subarray(0, encoder.at));
-        }
-    }, 500);
-    */
-    setInterval(() => {
-        //ping packet
-        const encoder = new protocol.BinaryWriter();
-        encoder.WriteUint8(100);
-        ws.send(encoder.data.subarray(0, encoder.at));
-    }, 20000);
     ws.on('close', () => {
         log("game disconnect", [game_server.alias]);
         for (const uuid of game_server.clients)
