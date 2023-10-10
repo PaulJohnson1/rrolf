@@ -135,7 +135,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
 
 #ifdef RIVET_BUILD
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    (1 - (DIFFICULTY) * 0.01) * (PLAYER_COUNT * 5) + 15
+    (1 - (DIFFICULTY) * 0.01) * (PLAYER_COUNT * 5) + 12
 #else
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
     10

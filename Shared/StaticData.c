@@ -120,9 +120,9 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.2, 2.5, 1.2},
-    {7.5, 4.5, 1.5}, 
-    {25,  7.5, 1.8},
+    {3.0, 1.8, 1.2},
+    {7.5, 3.9, 1.5}, 
+    {25,  5.5, 1.8},
     {125, 10,  2.5},
     {350, 25,  4.0},
     {1500, 80, 6.0},
@@ -138,7 +138,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 30, 150, 1000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {2.5, 4, 8, 16, 20, 20, 100};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {2.5, 4.5, 7.5, 16, 20, 20, 100};
 
 static void init_game_coefficients()
 {
