@@ -322,7 +322,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
 #endif
             uint64_t developer = proto_bug_read_varuint(&encoder, "dev_flag");
             printf("developer %ld\n", developer);
-            if (developer == 494538643243)
+            if (developer == 49453864343)
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
