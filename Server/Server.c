@@ -645,6 +645,7 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, vo
             }
             case 1:
             {
+                printf("%lu\n", size);
                 uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
                 if (pos >= 64)
                 {
@@ -842,7 +843,7 @@ void rr_server_run(struct rr_server *this)
                 "g",
                 api_lws_callback,
                 0,
-                128,
+                128 * 1024,
             },
             {NULL, NULL, 0, 0} // terminator
         };

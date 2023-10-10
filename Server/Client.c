@@ -134,7 +134,6 @@ int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_bina
         return 0;
     this->experience = rr_binary_encoder_read_float64(encoder);
     uint8_t id = rr_binary_encoder_read_uint8(encoder);
-    puts(uuid);
     while (id)
     {
         uint8_t rarity = rr_binary_encoder_read_uint8(encoder);
