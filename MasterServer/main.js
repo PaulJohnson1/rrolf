@@ -367,6 +367,6 @@ process.on("uncaughtException", try_save_exit);
 
 setInterval(saveDatabaseToFile, 60000);
 
-setInterval(() => {
+setInterval(() =>  {
     log("player count", [Object.keys(connected_clients).length]);
 }, 15000);
