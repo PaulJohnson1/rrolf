@@ -87,6 +87,8 @@ only passes around the accounst object instead which results in fewer requests
 */
 function apply_missing_defaults(account)
 {
+    if (!account)
+        account = {};
     const defaults = {
         password: "",
         username: "",
