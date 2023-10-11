@@ -178,8 +178,9 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        if (!new_account.value)
+        if (!new_account)
         {
+            console.log(new_account);
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
             await write_db_entry(username, old_account);
