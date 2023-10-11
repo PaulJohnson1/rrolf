@@ -222,11 +222,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             if (client->received_first_packet == 0)
                 return 0;
 #ifdef RIVET_BUILD
-/*
-            rr_rivet_players_disconnected(
-                getenv("RIVET_TOKEN"),
-                this->clients[i].rivet_account.token);
-                */
+            /*
+                        rr_rivet_players_disconnected(
+                            getenv("RIVET_TOKEN"),
+                            this->clients[i].rivet_account.token);
+                            */
             char *token = malloc(500);
             strncpy(token, client->rivet_account.token, 500);
             pthread_t thread;
@@ -638,66 +638,66 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, vo
             break;
         switch (rr_binary_encoder_read_uint8(&decoder))
         {
-            case 0:
+        case 0:
+        {
+            rr_binary_encoder_read_nt_string(&decoder, this->server_alias);
+            break;
+        }
+        case 1:
+        {
+            printf("%lu\n", size);
+            uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
+            if (pos >= 64)
             {
-                rr_binary_encoder_read_nt_string(&decoder, this->server_alias);
+                printf("<rr_api::malformed_req::%d>\n", pos);
                 break;
             }
-            case 1:
+            struct rr_server_client *client = &this->clients[pos];
+            if (!client->in_use)
             {
-                printf("%lu\n", size);
-                uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
-                if (pos >= 64)
-                {
-                    printf("<rr_api::malformed_req::%d>\n", pos);
-                    break;
-                }
-                struct rr_server_client *client = &this->clients[pos];
-                if (!client->in_use)
-                {
-                    printf("<rr_api::client_nonexistent::%d>\n", pos);
-                    break;
-                }
-                if (!rr_server_client_read_from_api(client, &decoder))
-                {
-                    printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
-                    client->pending_kick = 1;
-                    break;
-                }
-                client->verified = 1;
-                struct proto_bug encoder;
-                proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
-                rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
-                rr_server_client_write_account(client);
-                printf("<rr_server::account_read::%s>\n", client->rivet_account.uuid);
+                printf("<rr_api::client_nonexistent::%d>\n", pos);
                 break;
             }
-            case 2:
+            if (!rr_server_client_read_from_api(client, &decoder))
             {
-                uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
-                if (pos >= 64)
-                {
-                    printf("<rr_api::malformed_req::%d>\n", pos);
-                    break;
-                }
-                struct rr_server_client *client = &this->clients[pos];
-                if (!client->in_use)
-                {
-                    printf("<rr_api::client_nonexistent::%d>\n", pos);
-                    break;
-                }
-                char uuid[sizeof client->rivet_account.uuid];
-                rr_binary_encoder_read_nt_string(&decoder, uuid);
-                if (strcmp(uuid, client->rivet_account.uuid) == 0)
-                {
-                    printf("<rr_server::client_kick::%s>\n", uuid);
-                    client->pending_kick = 1;
-                }
+                printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
+                client->pending_kick = 1;
                 break;
             }
-            default:
+            client->verified = 1;
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, outgoing_message);
+            proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
+            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            rr_server_client_write_account(client);
+            printf("<rr_server::account_read::%s>\n", client->rivet_account.uuid);
+            break;
+        }
+        case 2:
+        {
+            uint8_t pos = rr_binary_encoder_read_uint8(&decoder);
+            if (pos >= 64)
+            {
+                printf("<rr_api::malformed_req::%d>\n", pos);
                 break;
+            }
+            struct rr_server_client *client = &this->clients[pos];
+            if (!client->in_use)
+            {
+                printf("<rr_api::client_nonexistent::%d>\n", pos);
+                break;
+            }
+            char uuid[sizeof client->rivet_account.uuid];
+            rr_binary_encoder_read_nt_string(&decoder, uuid);
+            if (strcmp(uuid, client->rivet_account.uuid) == 0)
+            {
+                printf("<rr_server::client_kick::%s>\n", uuid);
+                client->pending_kick = 1;
+            }
+            break;
+        }
+        default:
+            break;
         }
         break;
     }
