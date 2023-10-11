@@ -141,7 +141,7 @@ async function db_read_or_create_user(username, password)
         return connected_clients[username].user;
     //const user = structuredClone({value: database[username]});
     const user = await db_read_user(username, password);
-    if (!user || user.xp < 3)
+    if (!user)
     {
         const user = apply_missing_defaults({});
         user.password = hash(username + PASSWORD_SALT);
@@ -178,7 +178,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        if (!new_account.value)
+        if (!new_account || new_account.xp < 3)
         {
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
