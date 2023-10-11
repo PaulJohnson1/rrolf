@@ -140,8 +140,8 @@ async function db_read_or_create_user(username, password)
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
     //const user = structuredClone({value: database[username]});
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
-    if (!user.value)
+    const user = await db_read_user(username, password);
+    if (!user || user.xp < 3)
     {
         const user = apply_missing_defaults({});
         user.password = hash(username + PASSWORD_SALT);

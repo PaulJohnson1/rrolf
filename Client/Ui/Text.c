@@ -71,7 +71,7 @@ struct rr_ui_element *rr_ui_dynamic_text_init(
     this->abs_width = this->width = 50;
     rr_ui_set_background(this, fill);
     this->height = data->size = size;
-    data->text = malloc((sizeof *data->text) * 24);
+    data->text = malloc(32);
     data->get_text = get_text;
     this->data = data;
     this->on_render = dynamic_text_on_render;
