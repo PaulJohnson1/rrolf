@@ -29,7 +29,6 @@ enum rr_clientbound_packet_header
 {
     rr_clientbound_update = 0,
     rr_clientbound_animation_update = 1,
-    rr_clientbound_squad_update = 2,
     rr_clientbound_squad_fail = 3,
     rr_clientbound_squad_leave = 4,
     rr_clientbound_account_result = 5,

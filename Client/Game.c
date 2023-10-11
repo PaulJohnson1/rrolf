@@ -577,14 +577,68 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         switch (h)
         {
         case rr_clientbound_update:
-            if (!this->simulation_ready)
+        {
+            if (!this->joined_squad)
+                memset(&this->squad_members[0], 0, sizeof this->squad_members);
+            this->socket_error = 0;
+            this->joined_squad = 1;
+
+            for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             {
-                rr_simulation_init(this->simulation);
-                rr_simulation_init(this->deletion_simulation);
+                this->squad_members[i].in_use =
+                    proto_bug_read_uint8(&encoder, "bitbit");
+                if (this->squad_members[i].in_use == 0)
+                    continue;
+                this->squad_members[i].playing =
+                    proto_bug_read_uint8(&encoder, "ready");
+                this->squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
+                proto_bug_read_string(&encoder, this->squad_members[i].nickname, 16, "nickname");
+                for (uint32_t j = 0; j < 20; ++j)
+                {
+                    this->squad_members[i].loadout[j].id =
+                        proto_bug_read_uint8(&encoder, "id");
+                    this->squad_members[i].loadout[j].rarity =
+                        proto_bug_read_uint8(&encoder, "rar");
+                }
             }
-            this->simulation_ready = 1;
-            rr_simulation_read_binary(this, &encoder);
+            this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
+            this->squad_private = proto_bug_read_uint8(&encoder, "private");
+            this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
+            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
+            if (proto_bug_read_uint8(&encoder, "in game") == 1)
+            {
+                if (!this->simulation_ready)
+                {
+                    rr_simulation_init(this->simulation);
+                    rr_simulation_init(this->deletion_simulation);
+                    this->simulation_ready = 1;
+                }
+                rr_simulation_read_binary(this, &encoder);
+            }
+            else
+            {
+                if (this->simulation_ready)
+                    rr_simulation_init(this->simulation);
+                this->simulation_ready = 0;
+                proto_bug_init(&encoder, output_packet);
+                proto_bug_write_uint8(&encoder, rr_serverbound_squad_update, "header");
+                proto_bug_write_string(&encoder, this->cache.nickname, 16, "nickname");
+                proto_bug_write_uint8(&encoder, this->slots_unlocked, "loadout count");
+                for (uint32_t i = 0; i < this->slots_unlocked; ++i)
+                {
+                    proto_bug_write_uint8(&encoder, this->cache.loadout[i].id,
+                                        "id");
+                    proto_bug_write_uint8(&encoder, this->cache.loadout[i].rarity,
+                                        "rarity");
+                    proto_bug_write_uint8(&encoder, this->cache.loadout[i + 10].id,
+                                        "id");
+                    proto_bug_write_uint8(
+                        &encoder, this->cache.loadout[i + 10].rarity, "rarity");
+                }
+                rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            }
             break;
+        }
         case rr_clientbound_animation_update:
         {
             while (proto_bug_read_uint8(&encoder, "continue"))
@@ -630,54 +684,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
             this->joined_squad = 0;
-            break;
-        case rr_clientbound_squad_update:
-            if (!this->joined_squad)
-                memset(&this->squad_members[0], 0, sizeof this->squad_members);
-            this->socket_error = 0;
-            this->joined_squad = 1;
-            if (this->simulation_ready)
-                rr_simulation_init(this->simulation);
-            this->simulation_ready = 0;
-            for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
-            {
-                this->squad_members[i].in_use =
-                    proto_bug_read_uint8(&encoder, "bitbit");
-                if (this->squad_members[i].in_use == 0)
-                    continue;
-                this->squad_members[i].playing =
-                    proto_bug_read_uint8(&encoder, "ready");
-                this->squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
-                proto_bug_read_string(&encoder, this->squad_members[i].nickname, 16, "nickname");
-                for (uint32_t j = 0; j < 20; ++j)
-                {
-                    this->squad_members[i].loadout[j].id =
-                        proto_bug_read_uint8(&encoder, "id");
-                    this->squad_members[i].loadout[j].rarity =
-                        proto_bug_read_uint8(&encoder, "rar");
-                }
-            }
-            this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
-            this->squad_private = proto_bug_read_uint8(&encoder, "private");
-            this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
-            struct proto_bug encoder2;
-            proto_bug_init(&encoder2, output_packet);
-            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_update, "header");
-            proto_bug_write_string(&encoder2, this->cache.nickname, 16, "nickname");
-            proto_bug_write_uint8(&encoder2, this->slots_unlocked, "loadout count");
-            for (uint32_t i = 0; i < this->slots_unlocked; ++i)
-            {
-                proto_bug_write_uint8(&encoder2, this->cache.loadout[i].id,
-                                      "id");
-                proto_bug_write_uint8(&encoder2, this->cache.loadout[i].rarity,
-                                      "rarity");
-                proto_bug_write_uint8(&encoder2, this->cache.loadout[i + 10].id,
-                                      "id");
-                proto_bug_write_uint8(
-                    &encoder2, this->cache.loadout[i + 10].rarity, "rarity");
-            }
-            rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
             break;
         case rr_clientbound_squad_leave:
             this->joined_squad = 0;
