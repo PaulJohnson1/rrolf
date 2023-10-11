@@ -87,8 +87,6 @@ only passes around the accounst object instead which results in fewer requests
 */
 function apply_missing_defaults(account)
 {
-    if (!account)
-        account = {};
     const defaults = {
         password: "",
         username: "",
@@ -142,8 +140,8 @@ async function db_read_or_create_user(username, password)
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
     //const user = structuredClone({value: database[username]});
-    const user = await db_read_user(username, password);
-    if (!user)
+    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    if (!user.value)
     {
         const user = apply_missing_defaults({});
         user.password = hash(username + PASSWORD_SALT);
@@ -180,7 +178,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        if (!new_account)
+        if (!new_account.value)
         {
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
