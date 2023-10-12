@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Map Editor</title>
+    <style>
+        body {
+            margin: 10px;
+            font-family: Arial, sans-serif;
+            display: flex;          /* Using flexbox layout */
+            justify-content: space-between;
+        }
+
+        #editor {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            width: 90vmin;          /* Adjusting width to accommodate special zones */
+            height: 90vmin;
+            border: 1px solid black;
+        }
+
+        .tile {
+            border: 1px solid black;
+            background-color: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        #specialZones {
+            margin-left: 2%;        /* A bit of spacing between the grid and the special zones */
+            width: 20%;             /* Adjust width based on your preference */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #zoneDetails {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            background-color: #f7f7f7;
+            border: 1px solid black;
+            padding: 20px;
+            width: 300px;
+        }
+
+        .selected {
+            background-color: rgba(0, 128, 0, 0.5); /* Semi-transparent green to indicate selection */
+        }
+    </style>
+</head>
+<body>
+    <div id="editor"></div>
+
+    <div id="specialZones">
+        <button id="createZone">Create Special Zone</button>
+        <ul id="zoneList"></ul>
+    </div>
+    
+    <!-- This is the panel that will open when a zone is clicked -->
+    <div id="zoneDetails" class="hidden">
+        <label for="zoneName">Zone Name:</label>
+        <input type="text" id="zoneName" />
+        <input type="color" id="zoneColorPicker" value="#FF0000">
+        
+        
+        <label for="difficulty">Difficulty:</label>
+        <input type="range" min="0" max="100" value="50" id="difficulty" />
+        <span id="difficultyValue">50</span>
+        <br />
+        <label for="spawnFrequency">Spawn Frequency:</label>
+        <input type="range" min="0" max="100" value="50" id="spawnFrequency" />
+        <span id="spawnFrequencyValue">50</span>
+
+        <div id="zoneDimensions">
+            X: <span id="zoneX">0</span>
+            Y: <span id="zoneY">0</span>
+            W: <span id="zoneW">0</span>
+            H: <span id="zoneH">0</span>
+        </div>
+
+        <button id="selectDimensions">Select Dimensions</button>
+        <button id="closePanel">Close</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
