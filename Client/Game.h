@@ -19,7 +19,8 @@ enum rr_game_menu
     rr_game_menu_gallery,
     rr_game_menu_crafting,
     rr_game_menu_settings,
-    rr_game_menu_account
+    rr_game_menu_account,
+    rr_game_menu_dev_squad_panel
 };
 
 struct rr_game_debug_info
@@ -70,6 +71,14 @@ struct rr_game_cache
     char nickname[128];
 };
 
+struct rr_game_squad
+{
+    struct rr_squad_member squad_members[RR_SQUAD_MEMBER_COUNT];
+    uint8_t squad_pos;
+    uint8_t squad_private;
+    char squad_code[16];
+};
+
 struct rr_game
 {
     struct rr_particle_manager particle_manager;
@@ -77,14 +86,14 @@ struct rr_game
     struct rr_game_debug_info debug_info;
     struct rr_game_chat chat;
     struct rr_game_cache cache;
+    struct rr_game_squad squad;
+    struct rr_game_squad other_squads[RR_SQUAD_COUNT];
 
     struct rr_rivet_account rivet_account;
-    struct rr_squad_member squad_members[RR_SQUAD_MEMBER_COUNT];
     struct rr_websocket socket;
 
     struct rr_ui_element *petal_tooltips[rr_petal_id_max][rr_rarity_id_max];
     struct rr_ui_element *mob_tooltips[rr_mob_id_max][rr_rarity_id_max];
-    struct rr_ui_element *squad_player_tooltips[RR_SQUAD_MEMBER_COUNT];
     struct rr_ui_element *link_account_tooltip;
     struct rr_ui_element *inventory_tooltip;
     struct rr_ui_element *gallery_tooltip;
@@ -116,16 +125,14 @@ struct rr_game
     uint8_t block_ui_input : 1;
     uint8_t is_mobile : 1;
     uint8_t logged_in : 1;
+    uint8_t is_dev;
     uint8_t socket_error;
     uint8_t menu_open;
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;
     uint8_t slots_unlocked;
 
-    uint8_t squad_pos;
-    uint8_t squad_private;
     char rivet_player_token[400];
-    char squad_code[16];
     char connect_code[16];
 };
 

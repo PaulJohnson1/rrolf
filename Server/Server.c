@@ -130,7 +130,35 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_update, "header");
-    rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
+
+    struct rr_squad *squad = rr_client_get_squad(server, this);
+    for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+    {
+        if (squad->members[i].in_use == 0)
+        {
+            proto_bug_write_uint8(&encoder, 0, "bitbit");
+            continue;
+        }
+        struct rr_squad_member *member = &squad->members[i];
+        proto_bug_write_uint8(&encoder, 1, "bitbit");
+        proto_bug_write_uint8(&encoder, member->playing, "ready");
+        proto_bug_write_uint8(&encoder, member->is_dev, "is_dev");
+        proto_bug_write_string(&encoder, member->nickname, 16, "nickname");
+        for (uint8_t j = 0; j < 20; ++j)
+        {
+            proto_bug_write_uint8(&encoder, member->loadout[j].id, "id");
+            proto_bug_write_uint8(&encoder, member->loadout[j].rarity, "rar");
+        }
+    }
+    proto_bug_write_uint8(&encoder, this->squad_pos, "sqpos");
+    proto_bug_write_uint8(&encoder, squad->private, "private");
+    proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
+    char joined_code[16];
+    sprintf(joined_code, "%s-%s", server->server_alias, squad->squad_code);
+    proto_bug_write_string(&encoder, joined_code, 16, "squad code");
+    proto_bug_write_uint8(&encoder, this->player_info != NULL, "in game");
+    if (this->player_info != NULL)
+        rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
     rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_animation_update, "header");
@@ -315,9 +343,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 }
             }
 #endif
-            uint64_t developer = proto_bug_read_varuint(&encoder, "dev_flag");
-            printf("developer %ld\n", developer);
-            if (developer == 49453864343)
+            if (proto_bug_read_varuint(&encoder, "dev_flag") == 49453864343)
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
@@ -769,7 +795,6 @@ static void server_tick(struct rr_server *this)
                 if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
                     rr_vector_set(&rr_simulation_get_physical(&this->simulation, client->player_info->flower_id)->acceleration, client->player_accel_x,
                                   client->player_accel_y);
-                rr_server_client_broadcast_update(client);
                 if (client->player_info->drops_this_tick_size > 0)
                 {
                     for (uint32_t i = 0; i < client->player_info->drops_this_tick_size; ++i)
@@ -783,13 +808,13 @@ static void server_tick(struct rr_server *this)
                     client->player_info->drops_this_tick_size = 0;
                 }
             }
-            else
+            rr_server_client_broadcast_update(client); 
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, outgoing_message);
+            proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump, "header");
+            for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
             {
-                struct proto_bug encoder;
-                proto_bug_init(&encoder, outgoing_message);
-                proto_bug_write_uint8(&encoder, rr_clientbound_squad_update, "header");
-
-                struct rr_squad *squad = rr_client_get_squad(this, client);
+                struct rr_squad *squad = &this->squads[s];
                 for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
                 {
                     if (squad->members[i].in_use == 0)
@@ -808,14 +833,13 @@ static void server_tick(struct rr_server *this)
                         proto_bug_write_uint8(&encoder, member->loadout[j].rarity, "rar");
                     }
                 }
-                proto_bug_write_uint8(&encoder, client->squad_pos, "sqpos");
                 proto_bug_write_uint8(&encoder, squad->private, "private");
                 proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
                 char joined_code[16];
                 sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code);
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
-                rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
             }
+            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
         }
     }
 }

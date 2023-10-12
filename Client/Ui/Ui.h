@@ -3,8 +3,10 @@
 #include <stdint.h>
 
 struct rr_game;
+struct rr_squad_member;
 struct rr_ui_element;
 struct rr_game_squad_client;
+struct rr_game_squad;
 
 enum rr_ui_resizeable_type
 {
@@ -165,8 +167,8 @@ struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float)
 
 struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char *);
 // custom
-struct rr_ui_element *rr_ui_squad_player_container_init(struct rr_game *, uint8_t);
-struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *, uint8_t);
+struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *);
+struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *);
 
 struct rr_ui_element *rr_ui_inventory_container_init();
 
@@ -202,8 +204,8 @@ struct rr_ui_element *rr_ui_finished_game_screen_init();
 
 struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);
 
-//struct rr_ui_element *rr_ui_changelog_toggle_button_init();
-//struct rr_ui_element *rr_ui_changelog_container_init();
+struct rr_ui_element *rr_ui_dev_squad_panel_toggle_button_init();
+struct rr_ui_element *rr_ui_dev_squad_panel_container_init(struct rr_game *);
 
 struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
 

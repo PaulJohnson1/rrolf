@@ -71,7 +71,7 @@ static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
     struct rr_squad_member *member = data->data;
     if (member->is_dev)
         return 2;
-    if (&game->squad_members[game->squad_pos] == member)
+    if (&game->squad.squad_members[game->squad.squad_pos] == member)
         return 0;
     return 1;
 }
@@ -88,9 +88,8 @@ static struct rr_ui_element *dev_text_init(struct rr_squad_member *member)
     return this;
 }
 
-struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_game *game, uint8_t pos)
+struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *member)
 {
-    struct rr_squad_member *member = &game->squad_members[pos];
     struct rr_ui_element *this = rr_ui_set_justify(
         rr_ui_set_background(
             rr_ui_v_container_init(rr_ui_container_init(), 10, 10,

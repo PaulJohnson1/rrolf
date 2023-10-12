@@ -1,0 +1,130 @@
+#include <Client/Ui/Ui.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <Client/Game.h>
+#include <Client/InputData.h>
+#include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
+
+#include <Shared/Utilities.h>
+
+static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
+                                              struct rr_game *game)
+{
+    return game->is_dev && game->menu_open == rr_game_menu_dev_squad_panel;
+}
+
+static uint8_t dev_squad_panel_button_should_show(struct rr_ui_element *this,
+                                              struct rr_game *game)
+{
+    return game->is_dev;
+}
+
+static void dev_squad_panel_container_animate(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    this->width = this->abs_width;
+    this->height = this->abs_height;
+    rr_renderer_translate(
+        game->renderer, -(this->x + this->abs_width / 2) * 2 * this->animation,
+        0);
+}
+
+static void dev_squad_panel_toggle_button_on_render(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    struct rr_renderer *renderer = game->renderer;
+    if (game->focused == this)
+        renderer->state.filter.amount = 0.2;
+    rr_renderer_scale(renderer, renderer->scale);
+    rr_renderer_set_fill(renderer, this->fill);
+    renderer->state.filter.amount += 0.2;
+    rr_renderer_begin_path(renderer);
+    rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2,
+                           this->abs_width, this->abs_height, 6);
+    rr_renderer_fill(renderer);
+    rr_renderer_scale(renderer, 1.2);
+    rr_renderer_set_fill(renderer, 0xffffffff);
+    rr_renderer_begin_path(renderer);
+    rr_renderer_move_to(renderer, 12.00, 1.62);
+    rr_renderer_line_to(renderer, 12.00, -1.62);
+    rr_renderer_bezier_curve_to(renderer, 10.35, -2.20, 9.31, -2.37, 8.78, -3.64);
+    rr_renderer_bezier_curve_to(renderer, 8.25, -4.91, 8.88, -5.77, 9.63, -7.34);
+    rr_renderer_line_to(renderer, 7.34, -9.63);
+    rr_renderer_bezier_curve_to(renderer, 5.78, -8.89, 4.91, -8.25, 3.64, -8.78);
+    rr_renderer_bezier_curve_to(renderer, 2.37, -9.31, 2.20, -10.36, 1.62, -12.00);
+    rr_renderer_line_to(renderer, -1.62, -12.00);
+    rr_renderer_bezier_curve_to(renderer, -2.20, -10.37, -2.37, -9.31, -3.64, -8.78);
+    rr_renderer_bezier_curve_to(renderer, -4.91, -8.25, -5.77, -8.88, -7.34, -9.63);
+    rr_renderer_line_to(renderer, -9.63, -7.34);
+    rr_renderer_bezier_curve_to(renderer, -8.88, -5.78, -8.25, -4.91, -8.78, -3.64);
+    rr_renderer_bezier_curve_to(renderer, -9.31, -2.37, -10.37, -2.20, -12.00, -1.62);
+    rr_renderer_line_to(renderer, -12.00, 1.62);
+    rr_renderer_bezier_curve_to(renderer, -10.37, 2.20, -9.31, 2.37, -8.78, 3.64);
+    rr_renderer_bezier_curve_to(renderer, -8.25, 4.92, -8.90, 5.80, -9.63, 7.34);
+    rr_renderer_line_to(renderer, -7.34, 9.63);
+    rr_renderer_bezier_curve_to(renderer, -5.78, 8.88, -4.91, 8.25, -3.64, 8.78);
+    rr_renderer_bezier_curve_to(renderer, -2.37, 9.31, -2.20, 10.36, -1.62, 12.00);
+    rr_renderer_line_to(renderer, 1.62, 12.00);
+    rr_renderer_bezier_curve_to(renderer, 2.20, 10.36, 2.37, 9.31, 3.64, 8.78);
+    rr_renderer_bezier_curve_to(renderer, 4.91, 8.25, 5.76, 8.88, 7.34, 9.63);
+    rr_renderer_line_to(renderer, 9.63, 7.34);
+    rr_renderer_bezier_curve_to(renderer, 8.88, 5.78, 8.25, 4.91, 8.78, 3.64);
+    rr_renderer_bezier_curve_to(renderer, 9.31, 2.37, 10.37, 2.20, 12.00, 1.62);
+    rr_renderer_arc(renderer, 0, 0, 4);
+    rr_renderer_fill(renderer);
+}
+
+static void dev_squad_panel_toggle_button_on_event(struct rr_ui_element *this,
+                                            struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        if (game->pressed != this)
+            return;
+        if (game->menu_open == rr_game_menu_dev_squad_panel)
+            game->menu_open = rr_game_menu_none;
+        else
+            game->menu_open = rr_game_menu_dev_squad_panel;
+    }
+}
+
+struct rr_ui_element *rr_ui_dev_squad_panel_toggle_button_init()
+{
+    struct rr_ui_element *this = rr_ui_element_init();
+    rr_ui_set_background(this, 0x80888888);
+    this->abs_width = this->abs_height = this->width = this->height = 40;
+    this->should_show = dev_squad_panel_button_should_show;
+    this->on_event = dev_squad_panel_toggle_button_on_event;
+    this->on_render = dev_squad_panel_toggle_button_on_render;
+    return this;
+}
+
+struct rr_ui_element *rr_ui_dev_squad_panel_container_init(struct rr_game *game)
+{
+    struct rr_ui_element *inner = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+        NULL
+    );
+    for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+        rr_ui_container_add_element(inner, rr_ui_squad_container_init(&game->other_squads[i]));
+    struct rr_ui_element *this = 
+    rr_ui_pad(
+        rr_ui_set_background(
+            rr_ui_v_pad(
+                rr_ui_set_justify(
+                    rr_ui_scroll_container_init(
+                        rr_ui_set_background(
+                            inner
+                        , 0x40ffffff)
+                    , 400),
+                    -1, -1),
+                50),
+            0x40ffffff),
+        10);
+    this->animate = dev_squad_panel_container_animate;
+    this->should_show = dev_squad_panel_container_should_show;
+    return this;
+}

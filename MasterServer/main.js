@@ -18,7 +18,7 @@ const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad3
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
-const MAX_PETAL_COUNT = 23;
+const MAX_PETAL_COUNT = 24;
 
 const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 
@@ -115,7 +115,7 @@ function apply_missing_defaults(account)
     if (account.inflated_up_to < MAX_PETAL_COUNT)
     {
         log("inflated acc", [account.username]);
-        for (let i = account.inflated_up_to; i <= MAX_PETAL_COUNT; i++)
+        for (let i = account.inflated_up_to; i < MAX_PETAL_COUNT; i++)
         {
             account.failed_crafts[`${i}:0`] = Math.max(4, account.failed_crafts[`${i}:0`] || 0); //  guarantee
             account.failed_crafts[`${i}:1`] = Math.max(4, account.failed_crafts[`${i}:1`] || 0); //  47.5%
@@ -123,7 +123,7 @@ function apply_missing_defaults(account)
             account.failed_crafts[`${i}:3`] = Math.max(8, account.failed_crafts[`${i}:3`] || 0); //  3.04%
             account.failed_crafts[`${i}:4`] = Math.max(10, account.failed_crafts[`${i}:4`] || 0); // 1.38%
         }
-        account.inflated_up_to = MAX_PETAL_COUNT + 1;
+        account.inflated_up_to = MAX_PETAL_COUNT;
     }
 
     return account;
