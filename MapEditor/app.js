@@ -1,11 +1,12 @@
 const editor = document.getElementById("editor");
-const grid = 20;
+const GRID_SIZE = 30;
 let isDragging = false;
 let initialDragState = null;  // This will capture the state of the tile when dragging begins
+let zone_count = 0;
 
 // Create tiles
-for (let y = 0; y < grid; y++) {
-    for (let x = 0; x < grid; x++) {
+for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
         const tile = document.createElement('div');
         tile.classList.add('tile');
         tile.dataset.x = x;
@@ -56,6 +57,7 @@ function createZone() {
     zone.dataset.endX = 0;
     zone.dataset.endY = 0;
     zone.dataset.selected_color = "#ff0000";
+    zone.dataset.index = zone_count++;
     const zoneName = prompt("Enter zone name:", "New Zone");
     if (zoneName === null) return; // If user cancels the prompt
     
@@ -71,8 +73,28 @@ function createZoneDetailsButton() {
         const zone = event.target.parentElement;
         currentlyOpenedZone = zone;
         openZoneDetails(zone);
+        zoneColorPicker.value = currentlyOpenedZone.dataset.selected_color;
     });
     return btn;
+}
+
+function createZoneElement(startX, startY, endX, endY, color, label) {
+    // Create the main zone container
+    const zoneElement = document.createElement('li');
+    zoneElement.dataset.startX = startX;
+    zoneElement.dataset.startY = startY;
+    zoneElement.dataset.endX = endX;
+    zoneElement.dataset.endY = endY;
+    zoneElement.dataset.selected_color = color;
+    zoneElement.textContent = label;
+
+    zoneElement.appendChild(createZoneDetailsButton());
+    document.getElementById('zoneList').appendChild(zoneElement);
+
+    applyZoneColor(zoneElement);
+    applyZoneClassToTiles(zoneElement);
+
+    return zoneElement;
 }
 
 function openZoneDetails(zone) {
@@ -81,8 +103,6 @@ function openZoneDetails(zone) {
     document.getElementById('zoneName').value = zone.textContent.replace("Details", "").trim();
 
     document.getElementById('zoneName').addEventListener('input', updateZoneName);
-    document.getElementById('difficulty').addEventListener('input', updateSliderValue);
-    document.getElementById('spawnFrequency').addEventListener('input', updateSliderValue);
     document.getElementById('closePanel').addEventListener('click', closePanel);
 }
 
@@ -116,6 +136,21 @@ function resetZoneColor(zone)
     }
 }
 
+function applyZoneClassToTiles(zone) {
+    const startX = parseInt(zone.dataset.startX, 10);
+    const startY = parseInt(zone.dataset.startY, 10);
+    const endX = parseInt(zone.dataset.endX, 10);
+    const endY = parseInt(zone.dataset.endY, 10);
+
+    for (let y = startY; y <= endY; y++) {
+        for (let x = startX; x <= endX; x++) {
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            tile.dataset.zone_index = zone.dataset.index
+            tile.classList.add('zone');
+        }
+    }
+}
+
 function updateZoneName(event) {
     currentlyOpenedZone.firstChild.nodeValue = event.target.value;
 }
@@ -138,8 +173,6 @@ function closePanel() {
 
     // Remove the event listeners to prevent multiple bindings
     document.getElementById('zoneName').removeEventListener('input', updateZoneName);
-    document.getElementById('difficulty').removeEventListener('input', updateSliderValue);
-    document.getElementById('spawnFrequency').removeEventListener('input', updateSliderValue);
     document.getElementById('closePanel').removeEventListener('click', closePanel);
 }
 
@@ -238,5 +271,73 @@ editor.addEventListener('mouseup', (event) => {
     }
     isDragging = false;
     applyZoneColor(currentlyOpenedZone);
+    applyZoneClassToTiles(currentlyOpenedZone);
 });
 
+document.getElementById('importData').addEventListener('click', () => {
+    document.getElementById('importInput').click();
+});
+
+document.getElementById('importInput').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const importData = JSON.parse(e.target.result);
+            
+            // Restore Zones (as before)
+            const zones = importData.zones;
+            zones.forEach(zone => {
+                const newZone = createZoneElement(zone.startX, zone.startY, zone.endX, zone.endY, zone.color, zone.label);
+            });
+
+            // Restore Walls based on color
+            const walls = importData.walls;
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+                    if (walls[y][x] === 1) {
+                        tile.style.backgroundColor = 'black';
+                    } else {
+                        tile.style.backgroundColor = ''; // reset to default
+                    }
+                }
+            }
+        };
+        reader.readAsText(file);
+    }
+});
+
+document.getElementById('exportData').addEventListener('click', () => {
+    const zones = [...zoneList.children].map(zone => ({
+        startX: zone.dataset.startX,
+        startY: zone.dataset.startY,
+        endX: zone.dataset.endX,
+        endY: zone.dataset.endY,
+        color: zone.dataset.selected_color,
+        label: zone.firstChild.nodeValue,
+    }));
+
+    const walls = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+        const row = [];
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            row.push(tile.style.backgroundColor === 'black' ? 1 : 0);
+        }
+        walls.push(row);
+    }
+
+    const exportData = {
+        zones,
+        walls
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "map_data.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+});

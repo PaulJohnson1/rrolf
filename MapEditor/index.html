@@ -14,7 +14,7 @@
 
         #editor {
             display: grid;
-            grid-template-columns: repeat(20, 1fr);
+            grid-template-columns: repeat(30, 1fr);
             width: 90vmin;          /* Adjusting width to accommodate special zones */
             height: 90vmin;
             border: 1px solid black;
@@ -53,8 +53,11 @@
 </head>
 <body>
     <div id="editor"></div>
-
+    
     <div id="specialZones">
+        <button id="exportData">Export</button>
+        <button id="importData">Import</button>
+        <input type="file" id="importInput" accept=".json" style="display: none;">
         <button id="createZone">Create Special Zone</button>
         <ul id="zoneList"></ul>
     </div>
@@ -63,17 +66,8 @@
     <div id="zoneDetails" class="hidden">
         <label for="zoneName">Zone Name:</label>
         <input type="text" id="zoneName" />
-        <input type="color" id="zoneColorPicker" value="#FF0000">
+        <input type="color" id="zoneColorPicker">
         
-        
-        <label for="difficulty">Difficulty:</label>
-        <input type="range" min="0" max="100" value="50" id="difficulty" />
-        <span id="difficultyValue">50</span>
-        <br />
-        <label for="spawnFrequency">Spawn Frequency:</label>
-        <input type="range" min="0" max="100" value="50" id="spawnFrequency" />
-        <span id="spawnFrequencyValue">50</span>
-
         <div id="zoneDimensions">
             X: <span id="zoneX">0</span>
             Y: <span id="zoneY">0</span>
