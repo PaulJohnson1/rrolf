@@ -147,6 +147,8 @@ async function db_read_user(username, password)
     {
         return null;
     }
+    if (password !== SERVER_SECRET && password !== user.value.password)
+        return null;
     apply_missing_defaults(user.value);
     return user.value;
 }
@@ -196,10 +198,11 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         const new_account = await db_read_user(username, password);
         if (!new_account)
         {
-            console.log(new_account);
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
+            connected_clients[username] = old_account;
             await write_db_entry(username, old_account);
+            delete connected_clients[username];
         }
         return "success";
     });
