@@ -164,10 +164,10 @@ static void player_hud_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
     rr_renderer_translate(renderer, -this->abs_width / 2, 0);
     rr_renderer_stroke_text(
-        renderer, game->squad_members[player_info->squad_pos].nickname, 45,
+        renderer, game->squad.squad_members[player_info->squad_pos].nickname, 45,
         0);
     rr_renderer_fill_text(
-        renderer, game->squad_members[player_info->squad_pos].nickname, 45,
+        renderer, game->squad.squad_members[player_info->squad_pos].nickname, 45,
         0);
 }
 

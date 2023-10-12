@@ -54,7 +54,7 @@ void rr_api_get_server_alias(char const *param_1, void *game)
         {
             fetch(UTF8ToString($1) + 'user_get_server_alias/' + UTF8ToString($0)).then(function(x) {return x.text()})
             .then(function(data) {
-                if (data === '')
+                if (data === "")
                     return;
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/join", {
                     "headers": {

@@ -173,13 +173,15 @@ static void background_change_animate(struct rr_ui_element *this,
 static void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     struct rr_ui_container_metadata *data = this->data;
-    rr_ui_render_tooltip_above(
-            this, game->squad_player_tooltips[data->width], game);
+    struct rr_squad_member *member = data->data;
+    if (member->tooltip == NULL)
+        return;
+    rr_ui_render_tooltip_above(this, member->tooltip, game);
 }
 
 static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->squad_private && game->squad_pos == 0;
+    return game->squad.squad_private && game->squad.squad_pos == 0;
 }
 
 static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -207,10 +209,9 @@ static struct rr_ui_element *kick_player_button_init(uint8_t pos)
     return this;
 }
 
-struct rr_ui_element *
-rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
+struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, uint8_t pos)
 {
-    struct rr_squad_member *member = &game->squad_members[pos];
+    struct rr_squad_member *member = &squad->squad_members[pos];
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
     struct rr_ui_element *loadout = rr_ui_2d_container_init(4, 5, 0, 5);
     for (uint8_t i = 0; i < 20; ++i)
@@ -234,10 +235,9 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
     if (pos != 0)
         rr_ui_container_add_element(squad_container, kick_player_button_init(pos));
     squad_container->on_event = squad_container_on_event;
-    //squad_container->stop_event_propagation = 1;
     squad_container->resizeable = 0;
     struct rr_ui_container_metadata *d_data = squad_container->data;
-    d_data->width = pos;
+    d_data->data = member;
     struct rr_ui_element *this =
         rr_ui_choose_element_init(squad_container, b, choose);
     rr_ui_choose_container_set(this);
@@ -248,6 +248,28 @@ rr_ui_squad_player_container_init(struct rr_game *game, uint8_t pos)
     return rr_ui_set_background(
         rr_ui_v_container_init(rr_ui_container_init(), 0, 10, this, NULL),
         0x40ffffff);
+}
+
+struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
+{
+    return rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            squad_player_container_init(squad, 0),
+            squad_player_container_init(squad, 1),
+            squad_player_container_init(squad, 2),
+            squad_player_container_init(squad, 3),
+            NULL
+        ),
+        rr_ui_set_justify(
+            rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 
+                rr_ui_text_init("Code: ", 16, 0xffffffff),
+                rr_ui_text_init(squad->squad_code, 16, 0xffffffff),
+                NULL
+            ),
+        -1, -1),
+        NULL
+    );
 }
 
 static void squad_find_button_animate(struct rr_ui_element *this,
@@ -292,7 +314,7 @@ static void copy_code_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         if (game->socket_ready)
-            rr_copy_string(game->squad_code);   
+            rr_copy_string(game->squad.squad_code);   
 }
 
 static void toggle_private_on_event(struct rr_ui_element *this,
@@ -300,7 +322,7 @@ static void toggle_private_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->socket_ready && game->squad_private)
+        if (game->socket_ready && game->squad.squad_private)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
@@ -431,7 +453,7 @@ struct rr_ui_element *rr_ui_join_squad_code_button_init()
 
 struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *game)
 {
-    struct rr_ui_element *this = rr_ui_toggle_box_init(&game->squad_private);
+    struct rr_ui_element *this = rr_ui_toggle_box_init(&game->squad.squad_private);
     this->on_event = toggle_private_on_event;
     return this;
 }

@@ -202,6 +202,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                 rr_ui_settings_toggle_button_init(),
                 rr_ui_account_toggle_button_init(),
+                rr_ui_dev_squad_panel_toggle_button_init(),
                 rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
                 NULL
             ),
@@ -224,7 +225,19 @@ void rr_game_init(struct rr_game *this)
         simulation_ready
         )
     );
-
+    rr_ui_container_add_element(this->window, rr_ui_pad(
+        rr_ui_v_pad(
+            rr_ui_set_justify(
+                rr_ui_v_container_init(rr_ui_container_init(), 10, 40,
+                    rr_ui_in_game_player_hud_init(0),
+                    rr_ui_in_game_player_hud_init(1),
+                    rr_ui_in_game_player_hud_init(2),
+                    rr_ui_in_game_player_hud_init(3),
+                    NULL
+                )
+            , -1, -1)
+        , 100)
+    , 50));
     rr_ui_container_add_element(
         this->window,
         rr_ui_link_toggle(
@@ -272,17 +285,7 @@ void rr_game_init(struct rr_game *this)
                                         rr_ui_multi_choose_element_init(
                                             socket_ready,
                                             rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
-                                            rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
-                                                rr_ui_h_container_init(
-                                                    rr_ui_container_init(), 0, 10,
-                                                    rr_ui_squad_player_container_init(this, 0),
-                                                    rr_ui_squad_player_container_init(this, 1),
-                                                    rr_ui_squad_player_container_init(this, 2),
-                                                    rr_ui_squad_player_container_init(this, 3),
-                                                    NULL
-                                                ),
-                                                NULL
-                                            ),
+                                            rr_ui_squad_container_init(&this->squad),
                                             rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
                                             rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
                                             rr_ui_text_init("Squad is full", 24, 0xffff2222),
@@ -358,19 +361,6 @@ void rr_game_init(struct rr_game *this)
         , simulation_ready)
     );
     */
-    rr_ui_container_add_element(this->window, rr_ui_pad(
-        rr_ui_v_pad(
-            rr_ui_set_justify(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 40,
-                    rr_ui_in_game_player_hud_init(0),
-                    rr_ui_in_game_player_hud_init(1),
-                    rr_ui_in_game_player_hud_init(2),
-                    rr_ui_in_game_player_hud_init(3),
-                    NULL
-                )
-            , -1, -1)
-        , 100)
-    , 50));
 
     rr_ui_container_add_element(
         this->window,
@@ -433,6 +423,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_account_container_init(this), close_menu_button_init(25))->container);
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_dev_squad_panel_container_init(this), close_menu_button_init(25))->container);
 
 
     this->link_account_tooltip = rr_ui_container_add_element(
@@ -472,10 +463,10 @@ void rr_game_init(struct rr_game *this)
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
-        this->squad_player_tooltips[i] = rr_ui_squad_player_tooltip_init(this, i);
-        rr_ui_container_add_element(this->window, this->squad_player_tooltips[i]);
-
+        this->squad.squad_members[i].tooltip = rr_ui_squad_player_tooltip_init(&this->squad.squad_members[i]);
+        rr_ui_container_add_element(this->window, this->squad.squad_members[i].tooltip);
     }
+    
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -578,33 +569,32 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
         case rr_clientbound_update:
         {
-            if (!this->joined_squad)
-                memset(&this->squad_members[0], 0, sizeof this->squad_members);
             this->socket_error = 0;
             this->joined_squad = 1;
 
             for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
             {
-                this->squad_members[i].in_use =
+                this->squad.squad_members[i].in_use =
                     proto_bug_read_uint8(&encoder, "bitbit");
-                if (this->squad_members[i].in_use == 0)
+                if (this->squad.squad_members[i].in_use == 0)
                     continue;
-                this->squad_members[i].playing =
+                this->squad.squad_members[i].playing =
                     proto_bug_read_uint8(&encoder, "ready");
-                this->squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
-                proto_bug_read_string(&encoder, this->squad_members[i].nickname, 16, "nickname");
+                this->squad.squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
+                proto_bug_read_string(&encoder, this->squad.squad_members[i].nickname, 16, "nickname");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
-                    this->squad_members[i].loadout[j].id =
+                    this->squad.squad_members[i].loadout[j].id =
                         proto_bug_read_uint8(&encoder, "id");
-                    this->squad_members[i].loadout[j].rarity =
+                    this->squad.squad_members[i].loadout[j].rarity =
                         proto_bug_read_uint8(&encoder, "rar");
                 }
             }
-            this->squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
-            this->squad_private = proto_bug_read_uint8(&encoder, "private");
+            this->squad.squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
+            this->squad.squad_private = proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad_code, 16, "squad code");
+            proto_bug_read_string(&encoder, this->squad.squad_code, 16, "squad code");
+            this->is_dev = this->squad.squad_members[this->squad.squad_pos].is_dev;
             if (proto_bug_read_uint8(&encoder, "in game") == 1)
             {
                 if (!this->simulation_ready)
@@ -636,6 +626,35 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         &encoder, this->cache.loadout[i + 10].rarity, "rarity");
                 }
                 rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            }
+            break;
+        }
+        case rr_clientbound_squad_dump:
+        {
+            for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
+            {
+                struct rr_game_squad *squad = &this->other_squads[s];
+                for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+                {
+                    squad->squad_members[i].in_use =
+                        proto_bug_read_uint8(&encoder, "bitbit");
+                    if (squad->squad_members[i].in_use == 0)
+                        continue;
+                    squad->squad_members[i].playing =
+                        proto_bug_read_uint8(&encoder, "ready");
+                    squad->squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
+                    proto_bug_read_string(&encoder, squad->squad_members[i].nickname, 16, "nickname");
+                    for (uint32_t j = 0; j < 20; ++j)
+                    {
+                        squad->squad_members[i].loadout[j].id =
+                            proto_bug_read_uint8(&encoder, "id");
+                        squad->squad_members[i].loadout[j].rarity =
+                            proto_bug_read_uint8(&encoder, "rar");
+                    }
+                }
+                squad->squad_private = proto_bug_read_uint8(&encoder, "private");
+                this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
+                proto_bug_read_string(&encoder, squad->squad_code, 16, "squad code");
             }
             break;
         }
