@@ -341,3 +341,85 @@ document.getElementById('exportData').addEventListener('click', () => {
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
 });
+
+function generateMaze() {
+    const MAZE_SIZE = GRID_SIZE;
+    const i = (x, y) => x + y * MAZE_SIZE;
+
+    const visited_map = new Uint8Array(MAZE_SIZE * MAZE_SIZE);
+    const maze = new Uint8Array(MAZE_SIZE * MAZE_SIZE).fill(1);
+
+    const stack = [];
+
+    const append = (x, y) => {
+        stack.push([x, y]);
+        visited_map[i(x, y)] = 1;
+        maze[i(x, y)] = 0;
+    };
+
+    append(
+        Math.floor(MAZE_SIZE / 2),
+        Math.floor(MAZE_SIZE / 2)
+    );
+
+    while (stack.length)
+    {
+        const [x, y] = stack.at(-1);
+
+        let neighbors = [];
+
+        if (y + 2 < MAZE_SIZE && !visited_map[i(x, y + 2)])
+            neighbors.push(0);
+        if (y - 2 > 0 &&         !visited_map[i(x, y - 2)])
+            neighbors.push(1);
+        if (x + 2 < MAZE_SIZE && !visited_map[i(x + 2, y)])
+            neighbors.push(2);
+        if (x - 2 > 0 &&         !visited_map[i(x - 2, y)])
+            neighbors.push(3);
+
+        if (neighbors.length === 0)
+        {
+            stack.pop();
+            continue;
+        }
+
+        const d = neighbors[Math.floor(Math.random() * neighbors.length)];
+        switch (d)
+        {
+            case 0:
+                append(x, y + 2);
+                maze[i(x, y + 1)] = 0;
+                break;
+            case 1:
+                append(x, y - 2);
+                maze[i(x, y - 1)] = 0;
+                break;
+            case 2:
+                append(x + 2, y);
+                maze[i(x + 1, y)] = 0;
+                break;
+            case 3:
+                append(x - 2, y);
+                maze[i(x - 1, y)] = 0;
+                break;
+        }
+    }
+
+    return maze;
+}
+
+createRandom.addEventListener("mousedown", () => {
+    const walls = generateMaze();
+    const i = (x, y) => x + y * GRID_SIZE;
+
+    for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            if (walls[i(x, y)] === 1) {
+                tile.style.backgroundColor = 'black';
+            } else {
+                tile.style.backgroundColor = ''; // reset to default
+            }
+        }
+    }
+})
