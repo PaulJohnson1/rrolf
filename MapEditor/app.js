@@ -19,8 +19,18 @@ for (let y = 0; y < GRID_SIZE; y++) {
 
 function startDrag(event) {
     event.preventDefault();  // Prevent the default drag behavior
-
+    
     const tile = event.currentTarget;
+    if (event.buttons === 2)
+    {
+        document.querySelectorAll('.spawn').forEach(tile => {
+            tile.classList.remove('spawn');
+            tile.style.backgroundColor = "";
+        });
+        tile.style.backgroundColor = "red";
+        tile.classList.add("spawn");
+        return;
+    }
     isDragging = true;
     initialDragState = tile.style.backgroundColor;
 
@@ -31,9 +41,10 @@ function startDrag(event) {
 
 function toggleTile(tile) {
     if (selecting) return;
+    if (tile.classList.contains("spawn")) return;
 
     if (initialDragState === 'black') {
-        tile.style.backgroundColor = 'white';
+        tile.style.backgroundColor = '';
     } else {
         tile.style.backgroundColor = 'black';
     }
@@ -42,6 +53,33 @@ function toggleTile(tile) {
 function dragToggle(event) {
     if (isDragging) {
         toggleTile(event.currentTarget);
+    } else {
+        document.querySelectorAll('.pathed').forEach(tile => {
+            tile.classList.remove('pathed');
+        });
+
+        const walls = [];
+        for (let y = 0; y < GRID_SIZE; y++) {
+            const row = [];
+            for (let x = 0; x < GRID_SIZE; x++) {
+                const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+                row.push(tile.style.backgroundColor === 'black' ? 1 : 0);
+            }
+            walls.push(row);
+        }
+        const spawnElement = document.querySelector(".spawn");
+        if (!spawnElement)
+            return;
+        const spawn = [+spawnElement.dataset.x, +spawnElement.dataset.y];
+        const target = [+event.currentTarget.dataset.x, +event.currentTarget.dataset.y];
+        const path = bfs(walls, spawn, target);
+        console.log(path);
+        for (let i = 0; i < path.length; i++)
+        {
+            const [x, y] = path[i];
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            tile.classList.add("pathed");
+        }
     }
 }
 
@@ -357,10 +395,7 @@ function generateMaze() {
         maze[i(x, y)] = 0;
     };
 
-    append(
-        Math.floor(MAZE_SIZE / 2),
-        Math.floor(MAZE_SIZE / 2)
-    );
+    append(0, 0);
 
     while (stack.length)
     {
@@ -406,6 +441,46 @@ function generateMaze() {
     }
 
     return maze;
+}
+
+function bfs(maze, start, end) {
+    const MAZE_SIZE = maze.length;
+    const visited = Array(MAZE_SIZE).fill(false).map(() => Array(MAZE_SIZE).fill(false));
+    const prev = Array(MAZE_SIZE).fill(null).map(() => Array(MAZE_SIZE).fill(null));
+    const queue = [start];
+
+    function isValid(x, y) {
+        return x >= 0 && y >= 0 && x < MAZE_SIZE && y < MAZE_SIZE;
+    }
+
+    while (queue.length) {
+        const [x, y] = queue.shift();
+
+        if (x === end[0] && y === end[1]) {
+            const path = [];
+            let curr = end;
+            while (curr && !(curr[0] === start[0] && curr[1] === start[1])) {
+                path.push(curr);
+                curr = prev[curr[1]][curr[0]];
+            }
+            path.push(start);  // Don't forget to add the start point.
+            return path.reverse();
+        }
+
+        const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+        for (let dir of directions) {
+            const newX = x + dir[0];
+            const newY = y + dir[1];
+
+            if (isValid(newX, newY) && !visited[newY][newX] && maze[newY][newX] !== 1) {
+                visited[newY][newX] = true;
+                prev[newY][newX] = [x, y];
+                queue.push([newX, newY]);
+            }
+        }
+    }
+
+    return [];
 }
 
 createRandom.addEventListener("mousedown", () => {
