@@ -47,6 +47,10 @@ uint8_t rex_quetz_zone() { return rr_frand() > 0.35 ? rr_mob_id_trex : rr_mob_id
 uint8_t ankylo_zone() { return rr_frand() > 0.2 ? rr_mob_id_ankylosaurus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
+uint8_t plants_zone() { return rr_frand() > 0.2 ? rr_mob_id_fern : rr_mob_id_tree; }
+uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
+uint8_t edmonto_zone() { return rr_mob_id_edmontosaurus; }
+uint8_t rex_zone() { return rr_mob_id_trex; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -63,6 +67,9 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(0, ankylo_zone, 16, 5, 5, 6);
     set_special_zone(0, trike_pachy_zone, 25, 24, 4, 5);
     set_special_zone(0, ptera_meteor_zone, 1, 22, 5, 7);
+    set_special_zone(0, rex_zone, 7, 20, 3, 7);
+    set_special_zone(0, patchy_zone, 19, 17, 1, 6);
+    set_special_zone(0, plants_zone, 22, 20, 2, 4);
 
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
@@ -133,13 +140,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     }
 }
 
-#ifdef RIVET_BUILD
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
     (1 - (DIFFICULTY) * 0.012) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 3.5) + 8
-#else
-#define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    10
-#endif
 
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
@@ -202,7 +204,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            if (rand() % 100 == 0)
+            if (rand() % 20 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
