@@ -147,6 +147,8 @@ async function db_read_user(username, password)
     {
         return null;
     }
+    if (password !== SERVER_SECRET && password !== user.value.password)
+        return null;
     apply_missing_defaults(user.value);
     return user.value;
 }
@@ -159,6 +161,7 @@ async function db_read_or_create_user(username, password)
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
+        log("account create", [username]);
         const user = apply_missing_defaults({});
         user.password = hash(username + PASSWORD_SALT);
         user.username = username;
@@ -184,7 +187,6 @@ async function handle_error(res, cb)
 
 app.get(`${namespace}/account_link/:old_username/:old_password/:username/:password`, async (req, res) => {
     const {old_username, old_password, username, password} = req.params;
-    log("account_link", [old_username, username]);
     handle_error(res, async () => {
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
             throw new Error("invalid uuid");
@@ -196,10 +198,12 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         const new_account = await db_read_user(username, password);
         if (!new_account)
         {
-            console.log(new_account);
+            log("account_link", [old_username, username]);
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
+            connected_clients[username] = old_account;
             await write_db_entry(username, old_account);
+            delete connected_clients[username];
         }
         return "success";
     });

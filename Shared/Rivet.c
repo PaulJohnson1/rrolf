@@ -280,7 +280,7 @@ void rr_rivet_identities_create_guest(void *captures)
             HEAPU8.set(new TextEncoder().encode(x["identity"]["display_name"]), $name);
             HEAPU8.set(new TextEncoder().encode(x["identity"]["identity_id"]), $uuid);
             HEAPU8.set(new TextEncoder().encode("#"+x["identity"]["account_number"].toString().padStart(4, "0")), $account_number);
-            _rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, $0);
+            _rr_rivet_on_log_in($token, $avatar_url, $name, $account_number, $uuid, +x["identity"]["is_game_linked"], $0);
             _free($uuid);
             _free($token);
             _free($avatar_url);

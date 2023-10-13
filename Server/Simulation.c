@@ -135,7 +135,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
 
 #ifdef RIVET_BUILD
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    (1 - (DIFFICULTY) * 0.012) * (PLAYER_COUNT * 3.5) + 8
+    (1 - (DIFFICULTY) * 0.012) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 3.5) + 8
 #else
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
     10
@@ -202,7 +202,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            if (rand() % 50 == 0)
+            if (rand() % 100 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }

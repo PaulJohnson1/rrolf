@@ -252,7 +252,7 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, u
 
 struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
 {
-    return rr_ui_v_container_init(rr_ui_container_init(), 10, 10, 
+    return rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
             squad_player_container_init(squad, 0),

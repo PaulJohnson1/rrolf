@@ -173,6 +173,11 @@ static struct rr_ui_element *link_account_button_init(struct rr_game *game)
     return this;
 }
 
+static uint8_t linked_account(struct rr_ui_element *this, struct rr_game *game)
+{
+    return !game->account_linked;
+}
+
 struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_pad(
@@ -191,14 +196,18 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                         ),
                         rr_ui_text_init(game->rivet_account.uuid, 15, 0xffffffff),
                         rr_ui_static_space_init(10),
-                        rr_ui_flex_container_init(
-                            rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
-                                rr_ui_text_init("Progress on unlinked accounts", 15, 0xffffffff),
-                                rr_ui_text_init("will be lost after 4 months.", 15, 0xffffffff),
-                                NULL
+                        rr_ui_choose_element_init(
+                            rr_ui_flex_container_init(
+                                rr_ui_v_container_init(rr_ui_container_init(), 0, 5, 
+                                    rr_ui_text_init("Progress on unlinked accounts", 15, 0xffffffff),
+                                    rr_ui_text_init("will be lost after 4 months.", 15, 0xffffffff),
+                                    NULL
+                                ),
+                                link_account_button_init(game),
+                                10
                             ),
-                            link_account_button_init(game),
-                            10
+                            rr_ui_text_init("Account is linked", 20, 0xffffffff),
+                            linked_account
                         ),
                         NULL
                     ), -1, -1

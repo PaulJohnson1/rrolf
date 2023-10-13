@@ -200,5 +200,5 @@ const FORCE_LINK = async (old_username, username) => {
     return "success";
 };
 
-const d = FORCE_LINK("5ae90dfb-73ec-4c8f-9cc7-d7ed43c60821","8d58c7e6-0e3d-4714-991f-bfbe665d360f");
+const d = FORCE_LINK("774830da-6848-420e-b715-06891b87a120","a3e5c030-305b-4593-9593-06f616e21c1c");
 console.log(d);
