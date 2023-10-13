@@ -152,6 +152,8 @@ int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_bina
 
 void rr_server_client_write_to_api(struct rr_server_client *this)
 {
+    if (!this->server->api_ws_ready)
+        return;
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, outgoing_message);
     rr_binary_encoder_write_uint8(&encoder, 2);
