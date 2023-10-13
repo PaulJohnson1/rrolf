@@ -196,7 +196,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        if (!new_account)
+        if (!new_account || !(new_account.xp > 10))
         {
             log("account_link", [old_username, username]);
             old_account.password = hash(username + PASSWORD_SALT);

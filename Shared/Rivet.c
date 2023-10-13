@@ -231,6 +231,16 @@ void rr_rivet_link_account(char *game_user, void *captures)
                             console.log("<cancelled linking>");
                         else if (newer["status"] === "complete")
                         {
+                            alert("Please confirm that you are linking the following two accounts:\n" + 
+                            newer["current_identity"]["identity_id"] + " is the old account\n" + 
+                            newer["new_identity"]["identity"]["identity_id"] + " is the new account\n" +
+                            "Please make sure these uuids are not the same. If they are, ss this message and reload immediately\n" +
+                            "Otherwise, SS THIS ANYWAYS so you save your old uuid");
+                            if (newer["current_identity"]["identity_id"] === newer["new_identity"]["identity"]["identity_id"])
+                            {
+                                alert("You didn't listen bozo. Don't worry, I got you.");
+                                return;
+                            }
                             fetch(api + "account_link/" +
                                 newer["current_identity"]["identity_id"] + "/" +
                                 window.localStorage["DO_NOT_SHARE_rivet_account_token"] + "/" +
