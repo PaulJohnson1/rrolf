@@ -429,7 +429,7 @@ void rr_game_init(struct rr_game *this)
 
     this->link_account_tooltip = rr_ui_container_add_element(
         this->window,
-        make_label_tooltip("Link Account")
+        make_label_tooltip("Login with Rivet")
     );
 
     this->inventory_tooltip = rr_ui_container_add_element(
