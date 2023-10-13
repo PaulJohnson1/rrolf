@@ -131,9 +131,12 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
-    0xffde1f1f, 0xff1fdbde, 0xffff2b75};
+    0xffde1f1f, 0xff1fdbde, 0xffff2b75
+};
+
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"};
+    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"
+};
                                           
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 30, 150, 1000};
 
