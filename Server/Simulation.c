@@ -62,15 +62,15 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->biome = RR_GLOBAL_BIOME; //CHANGE
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-    set_special_zone(0, ornitho_zone, 17, 26, 5, 3);
-    set_special_zone(0, rex_quetz_zone, 22, 14, 3, 5);
-    set_special_zone(0, ankylo_zone, 16, 5, 5, 6);
-    set_special_zone(0, trike_pachy_zone, 25, 24, 4, 5);
-    set_special_zone(0, ptera_meteor_zone, 1, 22, 5, 7);
-    set_special_zone(0, rex_zone, 7, 20, 3, 7);
-    set_special_zone(0, patchy_zone, 19, 17, 1, 6);
-    set_special_zone(0, plants_zone, 22, 20, 2, 4);
-    set_special_zone(0, edmonto_zone, 3, 3, 4, 6);
+
+
+
+
+
+
+
+
+
 
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
@@ -205,7 +205,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            if (rand() % 20 == 0)
+            if (rand() % 120 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
