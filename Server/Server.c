@@ -799,10 +799,10 @@ static void server_tick(struct rr_server *this)
             struct rr_server_client *client = &this->clients[i];
             if (client->pending_kick)
                 lws_callback_on_writable(client->socket_handle);
-            if (!client->verified || !client->in_squad)
-                continue;
             if (client->ticks_to_next_squad_action > 0)
                 --client->ticks_to_next_squad_action;
+            if (!client->verified || !client->in_squad)
+                continue;
             if (client->player_info != NULL)
             {
                 if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
