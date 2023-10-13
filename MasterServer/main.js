@@ -192,23 +192,13 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "same uuid linkage not valid";
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
             return "invalid uuid";
-        const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
-            headers: {
-                Authorization: "Bearer " + old_password
-            }
-        });
-        if (d.status !== 200)
-            return "invalid pw";
-        const j = await d.json();
-        if (j.identity.identity_id !== old_username)
-            return "invalid uuid";
-        const old_account = await db_read_user(old_username, SERVER_SECRET);
+        const old_account = await db_read_user(old_username, old_password);
         if (!old_account)
         {
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        if (!new_account || (new_account.xp * 3 < old_account.xp))
+        if (!new_account || (new_account.xp * 3 <= old_account.xp))
         {
             log("account_link", [old_username, username]);
             old_account.password = hash(username + PASSWORD_SALT);
@@ -219,7 +209,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
         }
         else
         {
-            log("account_login", [old_username, username, account.xp, old_account.xp]);
+            log("account_login", [old_username, username, new_account.xp, old_account.xp]);
         }
         return "success";
     });

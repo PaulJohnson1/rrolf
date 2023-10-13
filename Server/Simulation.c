@@ -201,7 +201,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            if (rand() % 120 == 0)
+            if (rand() % 150 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
