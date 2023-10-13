@@ -801,7 +801,9 @@ static void server_tick(struct rr_server *this)
                 lws_callback_on_writable(client->socket_handle);
             if (!client->verified || !client->in_squad)
                 continue;
-            else if (client->player_info != NULL)
+            if (client->ticks_to_next_squad_action > 0)
+                --client->ticks_to_next_squad_action;
+            if (client->player_info != NULL)
             {
                 if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
                     rr_vector_set(&rr_simulation_get_physical(&this->simulation, client->player_info->flower_id)->acceleration, client->player_accel_x,
@@ -820,8 +822,7 @@ static void server_tick(struct rr_server *this)
                 }
             }
             rr_server_client_broadcast_update(client); 
-            if (client->ticks_to_next_squad_action > 0)
-                --client->ticks_to_next_squad_action;
+            
             if (!client->dev)
                 continue;
             struct proto_bug encoder;
