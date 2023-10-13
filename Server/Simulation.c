@@ -37,20 +37,19 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
             RR_MAZES[biome].maze[(Y+y)*dim+(X+x)].spawn_function = fun;
 }
 
-#define SPAWN_ZONE_X 27
-#define SPAWN_ZONE_Y 1
-#define SPAWN_ZONE_W 2
-#define SPAWN_ZONE_H 2
+#define SPAWN_ZONE_X 19
+#define SPAWN_ZONE_Y 15
+#define SPAWN_ZONE_W 3
+#define SPAWN_ZONE_H 1
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_quetz_zone() { return rr_frand() > 0.35 ? rr_mob_id_trex : rr_mob_id_quetzalcoatlus; }
 uint8_t ankylo_zone() { return rr_frand() > 0.2 ? rr_mob_id_ankylosaurus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
-uint8_t ptera_meteor_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
-uint8_t plants_zone() { return rr_frand() > 0.2 ? rr_mob_id_fern : rr_mob_id_tree; }
+uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
 uint8_t edmonto_zone() { return rr_mob_id_edmontosaurus; }
-uint8_t rex_zone() { return rr_frand() > 0.5 ? rr_mob_id_trex : rr_mob_id_fern; }
+uint8_t dako_zone() { return rr_mob_id_dakotaraptor; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -62,16 +61,13 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->biome = RR_GLOBAL_BIOME; //CHANGE
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-
-
-
-
-
-
-
-
-
-
+    set_special_zone(rr_biome_id_hell_creek, ornitho_zone, 11, 11, 2, 2);
+    set_special_zone(rr_biome_id_hell_creek, ptera_meteor_zone, 13, 23, 4, 3);
+    set_special_zone(rr_biome_id_hell_creek, edmonto_zone, 19, 3, 3, 2);
+    set_special_zone(rr_biome_id_hell_creek, dako_zone, 7, 7, 1, 3);
+    set_special_zone(rr_biome_id_hell_creek, rex_quetz_zone, 0, 29, 5, 1);
+    set_special_zone(rr_biome_id_hell_creek, trike_pachy_zone, 6, 23, 2, 2);
+    set_special_zone(rr_biome_id_hell_creek, ankylo_zone, 4, 16, 4, 1);
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
     printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
