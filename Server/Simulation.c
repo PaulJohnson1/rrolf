@@ -50,7 +50,7 @@ uint8_t ptera_meteor_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : 
 uint8_t plants_zone() { return rr_frand() > 0.2 ? rr_mob_id_fern : rr_mob_id_tree; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
 uint8_t edmonto_zone() { return rr_mob_id_edmontosaurus; }
-uint8_t rex_zone() { return rr_mob_id_trex; }
+uint8_t rex_zone() { return rr_frand() > 0.5 ? rr_mob_id_trex : rr_mob_id_fern; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -70,6 +70,7 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(0, rex_zone, 7, 20, 3, 7);
     set_special_zone(0, patchy_zone, 19, 17, 1, 6);
     set_special_zone(0, plants_zone, 22, 20, 2, 4);
+    set_special_zone(0, edmonto_zone, 3, 3, 4, 6);
 
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
