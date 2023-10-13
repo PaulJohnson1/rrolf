@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
@@ -178,9 +179,18 @@ static uint8_t linked_account(struct rr_ui_element *this, struct rr_game *game)
     return !game->account_linked;
 }
 
+static void copy_uuid(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        rr_copy_string(game->rivet_account.uuid);
+}
+
 // clang-format off
 struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
 {
+    struct rr_ui_element *uuid = rr_ui_text_init(game->rivet_account.uuid, 15, 0xffffffff);
+    uuid->on_event = copy_uuid;
     struct rr_ui_element *this = rr_ui_pad(
         rr_ui_set_background(
             rr_ui_v_pad(
@@ -195,7 +205,7 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
                             rr_ui_text_init(game->rivet_account.account_number, 15, 0xffcccccc),
                             NULL
                         ),
-                        rr_ui_text_init(game->rivet_account.uuid, 15, 0xffffffff),
+                        uuid,
                         rr_ui_static_space_init(10),
                         rr_ui_choose_element_init(
                             rr_ui_flex_container_init(
