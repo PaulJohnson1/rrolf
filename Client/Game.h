@@ -125,6 +125,7 @@ struct rr_game
     uint8_t block_ui_input : 1;
     uint8_t is_mobile : 1;
     uint8_t logged_in : 1;
+    uint8_t account_linked : 1;
     uint8_t is_dev;
     uint8_t socket_error;
     uint8_t menu_open;

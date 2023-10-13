@@ -76,7 +76,7 @@ void rr_api_on_get_password(char *s, void *captures)
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
-                        char *account_number, char *uuid, void *captures)
+                        char *account_number, char *uuid, uint8_t linked, void *captures)
 {
     struct rr_game *this = captures;
     strcpy(this->rivet_account.token, token);
@@ -84,6 +84,7 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.avatar_url, avatar_url);
     strcpy(this->rivet_account.account_number, account_number);
     strcpy(this->rivet_account.uuid, uuid);
+    this->account_linked = linked;
 
     rr_api_get_password(this->rivet_account.token, this);
 }
