@@ -37,16 +37,20 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
             RR_MAZES[biome].maze[(Y+y)*dim+(X+x)].spawn_function = fun;
 }
 
-#define SPAWN_ZONE_X 12
-#define SPAWN_ZONE_Y 13
-#define SPAWN_ZONE_W 3
-#define SPAWN_ZONE_H 1
+#define SPAWN_ZONE_X 27
+#define SPAWN_ZONE_Y 1
+#define SPAWN_ZONE_W 2
+#define SPAWN_ZONE_H 2
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_quetz_zone() { return rr_frand() > 0.35 ? rr_mob_id_trex : rr_mob_id_quetzalcoatlus; }
 uint8_t ankylo_zone() { return rr_frand() > 0.2 ? rr_mob_id_ankylosaurus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
+uint8_t plants_zone() { return rr_frand() > 0.2 ? rr_mob_id_fern : rr_mob_id_tree; }
+uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
+uint8_t edmonto_zone() { return rr_mob_id_edmontosaurus; }
+uint8_t rex_zone() { return rr_frand() > 0.5 ? rr_mob_id_trex : rr_mob_id_fern; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -58,11 +62,15 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->biome = RR_GLOBAL_BIOME; //CHANGE
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
-    set_special_zone(0, ornitho_zone, 12, 10, 2, 2);
-    set_special_zone(0, rex_quetz_zone, 14, 1, 4, 1);
-    set_special_zone(0, ankylo_zone, 23, 0, 5, 3);
-    set_special_zone(0, trike_pachy_zone, 22, 17, 2, 2);
-    set_special_zone(0, ptera_meteor_zone, 13, 27, 3, 1);
+
+
+
+
+
+
+
+
+
 
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
@@ -133,23 +141,24 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     }
 }
 
-#ifdef RIVET_BUILD
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
     (1 - (DIFFICULTY) * 0.012) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 3.5) + 8
-#else
-#define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    10
-#endif
 
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
     struct rr_simulation *this = _simulation;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
-    uint32_t sx = rr_fclamp(physical->x - 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t sy = rr_fclamp(physical->y - 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ex = rr_fclamp(physical->x + 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ey = rr_fclamp(physical->y + 2500, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+#ifdef RIVET_BUILD
+#define FOV 2500
+#else
+#define FOV 20000
+#endif
+    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+#undef FOV
     for (uint32_t x = sx; x <= ex; ++x)
         for (uint32_t y = sy; y <= ey; ++y)
             ++rr_component_arena_get_grid(arena, x, y)->player_count;
@@ -196,7 +205,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            if (rand() % 100 == 0)
+            if (rand() % 120 == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
