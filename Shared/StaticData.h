@@ -201,7 +201,8 @@ struct rr_maze_declaration
 extern uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]; \
 extern struct rr_maze_grid RR_MAZE_##name[size][size];
 
-RR_DECLARE_MAZE(HELL_CREEK, 56)
+// RR_DECLARE_MAZE(HELL_CREEK, 54)
+RR_DECLARE_MAZE(HELL_CREEK, 60)
 RR_DECLARE_MAZE(BURROW, 4)
 
 extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];

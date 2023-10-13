@@ -8,7 +8,13 @@
 #include <Shared/Utilities.h>
 #include <Shared/Vector.h>
 
+#ifdef RIVET_BUILD
 #define RR_BASE_FOV (0.9f)
+#else
+#define RR_BASE_FOV (0.1f)
+#endif
+
+
 struct rr_simulation;
 struct proto_bug;
 RR_SERVER_ONLY(struct rr_squad_member;)

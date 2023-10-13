@@ -154,7 +154,7 @@ function applyZoneColor(zone) {
     for (let y = startY; y <= endY; y++) {
         for (let x = startX; x <= endX; x++) {
             const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
-            tile.style["background-color"] = color;
+            tile.style.backgroundColor = color;
         }
     }
 }
