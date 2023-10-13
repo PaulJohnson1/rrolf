@@ -189,10 +189,20 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
     const {old_username, old_password, username, password} = req.params;
     handle_error(res, async () => {
         if (old_username === username)
-            throw new Error("same uuid linkage not valid");
+            return "same uuid linkage not valid";
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
-            throw new Error("invalid uuid");
-        const old_account = await db_read_user(old_username, old_password);
+            return "invalid uuid";
+        const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
+            headers: {
+                Authorization: "Bearer " + old_password
+            }
+        });
+        if (d.status !== 200)
+            return "invalid pw";
+        const j = await d.json();
+        if (j.identity.identity_id !== old_username)
+            return "invalid uuid";
+        const old_account = await db_read_user(old_username, SERVER_SECRET);
         if (!old_account)
         {
             return "failed";
@@ -206,6 +216,10 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             connected_clients[username] = old_account;
             await write_db_entry(username, old_account);
             delete connected_clients[username];
+        }
+        else
+        {
+            log("account_login", [old_username, username, account.xp, old_account.xp]);
         }
         return "success";
     });
