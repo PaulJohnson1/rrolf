@@ -157,7 +157,7 @@ static void link_rivet_account(struct rr_ui_element *this, struct rr_game *game)
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     { // TODO: make it display a loading status and disable the click
         // funcitonality
-        rr_rivet_link_account(game->rivet_account.token, 0);
+        rr_rivet_link_account(game->rivet_account.token, game->rivet_account.api_password, 0);
     }
     else if (!(game->input_data->mouse_buttons & 1))
         rr_ui_render_tooltip_right(this, game->link_account_tooltip, game);
@@ -178,6 +178,7 @@ static uint8_t linked_account(struct rr_ui_element *this, struct rr_game *game)
     return !game->account_linked;
 }
 
+// clang-format off
 struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
 {
     struct rr_ui_element *this = rr_ui_pad(
@@ -219,3 +220,4 @@ struct rr_ui_element *rr_ui_account_container_init(struct rr_game *game)
     this->should_show = account_container_should_show;
     return this;
 }
+// clang-format on

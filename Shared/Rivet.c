@@ -199,7 +199,7 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
 #endif
 }
 
-void rr_rivet_link_account(char *game_user, void *captures)
+void rr_rivet_link_account(char *game_user, char *api_password, void *captures)
 {
     puts("<rr_rivet::account_link>");
 #ifdef EMSCRIPTEN
@@ -208,6 +208,7 @@ void rr_rivet_link_account(char *game_user, void *captures)
         {
             let token = UTF8ToString($0);
             let api = UTF8ToString($1);
+            let api_pw = UTF8ToString($2);
             let w;
             fetch("https://identity.api.rivet.gg/v1/game-links", {
                 "method": "POST",
@@ -231,27 +232,19 @@ void rr_rivet_link_account(char *game_user, void *captures)
                             console.log("<cancelled linking>");
                         else if (newer["status"] === "complete")
                         {
-                            alert("Please confirm that you are linking the following two accounts:\n" + 
-                            newer["current_identity"]["identity_id"] + " is the old account\n" + 
-                            newer["new_identity"]["identity"]["identity_id"] + " is the new account\n" +
-                            "Please make sure these uuids are not the same. If they are, ss this message and reload immediately\n" +
-                            "Otherwise, SS THIS ANYWAYS so you save your old uuid");
-                            if (newer["current_identity"]["identity_id"] === newer["new_identity"]["identity"]["identity_id"])
-                            {
-                                alert("You didn't listen bozo. Don't worry, I got you.");
-                                return;
-                            }
-                            fetch(api + "account_link/" +
-                                newer["current_identity"]["identity_id"] + "/" +
-                                window.localStorage["DO_NOT_SHARE_rivet_account_token"] + "/" +
-                                newer["new_identity"]["identity"]["identity_id"] + "/" +
-                                newer["new_identity"]["identity_token"]
-                            ).then(x => {
-                                w.close();
-                                window.localStorage["old_account_uuid"] = newer["current_identity"]["identity_id"];
-                                window.localStorage["DO_NOT_SHARE_old_rivet_account_token"] = window.localStorage["DO_NOT_SHARE_rivet_account_token"];
-                                window.localStorage["DO_NOT_SHARE_rivet_account_token"] = newer["new_identity"]["identity_token"];
-                                location.reload(false);
+                            fetch(api + "user_get_password/" + newer["new_identity"]["identity_token"]).then(x => x.text()).then(new_pw => {
+                                fetch(api + "account_link/" +
+                                    newer["current_identity"]["identity_id"] + "/" +
+                                    api_pw + "/" +
+                                    newer["new_identity"]["identity"]["identity_id"] + "/" +
+                                    new_pw
+                                ).then(x => {
+                                    w.close();
+                                    window.localStorage["old_account_uuid"] = newer["current_identity"]["identity_id"];
+                                    window.localStorage["DO_NOT_SHARE_old_rivet_account_token"] = window.localStorage["DO_NOT_SHARE_rivet_account_token"];
+                                    window.localStorage["DO_NOT_SHARE_rivet_account_token"] = newer["new_identity"]["identity_token"];
+                                    location.reload(false);
+                                });
                             });
                         }
                     })
@@ -261,7 +254,7 @@ void rr_rivet_link_account(char *game_user, void *captures)
                 handle(h);
             })
 
-        }, game_user, BASE_API_URL);
+        }, game_user, BASE_API_URL, api_password);
     // clang-format on
 #endif
 }

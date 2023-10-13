@@ -29,4 +29,4 @@ RR_SERVER_ONLY(extern void rr_rivet_lobbies_set_closed(char const *lobby_token,
 RR_CLIENT_ONLY(extern void rr_rivet_lobbies_find(void *captures);)
 RR_CLIENT_ONLY(extern void rr_rivet_lobbies_join(void *captures, char const *);)
 RR_CLIENT_ONLY(extern void rr_rivet_identities_create_guest(void *captures);)
-RR_CLIENT_ONLY(extern void rr_rivet_link_account(char *game_user, void *captures);)
+RR_CLIENT_ONLY(extern void rr_rivet_link_account(char *game_user, char *api_password, void *captures);)

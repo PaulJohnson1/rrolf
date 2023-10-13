@@ -11,7 +11,7 @@
 #ifdef RIVET_BUILD
 #define RR_BASE_FOV (0.9f)
 #else
-#define RR_BASE_FOV (0.1f)
+#define RR_BASE_FOV (0.2f)
 #endif
 
 

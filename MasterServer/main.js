@@ -188,6 +188,8 @@ async function handle_error(res, cb)
 app.get(`${namespace}/account_link/:old_username/:old_password/:username/:password`, async (req, res) => {
     const {old_username, old_password, username, password} = req.params;
     handle_error(res, async () => {
+        if (old_username === username)
+            throw new Error("same uuid linkage not valid");
         if (!is_valid_uuid(old_username) || !is_valid_uuid(username))
             throw new Error("invalid uuid");
         const old_account = await db_read_user(old_username, old_password);
