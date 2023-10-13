@@ -445,6 +445,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         }
         case rr_serverbound_squad_join:
         {
+            if (client->ticks_to_next_squad_action > 0)
+                break;
+            client->ticks_to_next_squad_action = 10;
             uint8_t type = proto_bug_read_uint8(&encoder, "join type");
             if (type > 3)
                 break;
@@ -497,23 +500,29 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         }
         case rr_serverbound_squad_ready:
         {
+            if (client->ticks_to_next_squad_action > 0)
+                break;
+            client->ticks_to_next_squad_action = 10;
             if (client->in_squad)
             {
                 if (rr_squad_get_client_slot(this, client)->playing == 0)
                 {
+                    if (client->player_info != NULL)
+                    {
+                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        client->player_info = NULL;
+                    }
                     rr_squad_get_client_slot(this, client)->playing = 1;
                     rr_server_client_create_player_info(this, client);
                     rr_server_client_create_flower(client);
                 }
                 else
                 {
-                    rr_squad_get_client_slot(this, client)->playing = 0;
                     if (client->player_info != NULL)
                     {
-                        if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
-                            rr_simulation_request_entity_deletion(&this->simulation, client->player_info->flower_id);
                         rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
                         client->player_info = NULL;
+                        rr_squad_get_client_slot(this, client)->playing = 0;
                     }
                 }
             }
@@ -811,6 +820,10 @@ static void server_tick(struct rr_server *this)
                 }
             }
             rr_server_client_broadcast_update(client); 
+            if (client->ticks_to_next_squad_action > 0)
+                --client->ticks_to_next_squad_action;
+            if (!client->dev)
+                continue;
             struct proto_bug encoder;
             proto_bug_init(&encoder, outgoing_message);
             proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump, "header");

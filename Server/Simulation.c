@@ -265,7 +265,7 @@ void rr_simulation_tick(struct rr_simulation *this)
 
 int rr_simulation_entity_alive(struct rr_simulation *this, EntityHash hash)
 {
-    return this->entity_tracker[(EntityIdx) hash] && this->entity_hash_tracker[(EntityIdx) hash] == (hash >> 16);
+    return this->entity_tracker[(EntityIdx) hash] && this->entity_hash_tracker[(EntityIdx) hash] == (hash >> 16) && !rr_bitset_get(this->deleted_last_tick, (EntityIdx) hash);
 }
 
 EntityHash rr_simulation_get_entity_hash(struct rr_simulation *this, EntityIdx id)
