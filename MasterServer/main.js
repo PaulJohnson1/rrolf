@@ -7,8 +7,56 @@ const http = require("http")
 const crypto = require("crypto");
 const rng = require("./rng");
 const protocol = require("./protocol");
-const GameServer = require("./gameserver");
-const GameClient = require("./client");
+let id = parseInt('a00', 36);
+class GameServer
+{
+    alias = "aaa";
+    rivet_server_id = "";
+    clients = new Array(64).fill(0);
+    constructor()
+    {
+        this.alias = id.toString(36);
+        ++id;
+    }
+}
+
+class GameClient
+{
+    constructor(user) 
+    {
+        this.user = user;
+        this.needs_gameserver_update = false;
+        this.needs_database_update = false;
+    }
+
+    write(encoder) 
+    {
+        const user = this.user;
+        encoder.WriteStringNT(user.username);
+        encoder.WriteFloat64(user.xp);
+        for (const petal of Object.keys(user.petals))
+        {
+            if (!(user.petals[petal] > 0))
+                continue;
+            const [id, rarity] = petal.split(":");
+            encoder.WriteUint8(id);
+            encoder.WriteUint8(rarity);
+            encoder.WriteVarUint(user.petals[petal]);
+        }
+        encoder.WriteUint8(0);
+        for (const petal of Object.keys(user.failed_crafts))
+        {
+            if (!(user.failed_crafts[petal] > 0))
+                continue;
+            const [id, rarity] = petal.split(":");
+            encoder.WriteUint8(id);
+            encoder.WriteUint8(rarity);
+            encoder.WriteVarUint(user.failed_crafts[petal]);
+        }
+        encoder.WriteUint8(0);
+        this.needs_gameserver_update = false;
+    }
+}
 const app = express();
 const port = 55554;
 const namespace = "/api";
@@ -385,11 +433,8 @@ const try_save_exit = () =>
    process.exit();
 }
 
-process.on("beforeExit", try_save_exit);
-process.on("exit", try_save_exit)
-process.on("SIGTERM", try_save_exit);
-process.on("SIGINT", try_save_exit);
-process.on("uncaughtException", try_save_exit);
+for (const error of ["beforeExit", "exit", "SIGTERM", "SIGINT", "uncaughtException"])
+    process.on(error, args => { console.log(error, args); try_save_exit() });
 
 setInterval(saveDatabaseToFile, 60000);
 
