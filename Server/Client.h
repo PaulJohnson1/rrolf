@@ -33,6 +33,7 @@ struct rr_server_client
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t craft_fails[rr_petal_id_max][rr_rarity_id_max];
     uint32_t ticks_to_next_squad_action;
+    uint32_t ticks_to_afk_kick;
     uint8_t joined_squad_before[RR_BITSET_ROUND(RR_SQUAD_COUNT)];
     uint8_t squad_pos;
     uint8_t squad;
