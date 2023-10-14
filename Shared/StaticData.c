@@ -16,7 +16,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_shell, rr_rarity_id_rare, 20.0f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 6.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 25, 75, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -111,11 +111,11 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1,   1},
     {1.8, 2.5},
-    {3.8, 6},
-    {6.7, 12},
-    {13.3, 20},
-    {30.0, 56},
-    {75.0, 150},
+    {3.8, 8},
+    {6.7, 18},
+    {13.3, 25},
+    {30.0, 72},
+    {75.0, 250},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
