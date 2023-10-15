@@ -181,7 +181,20 @@ static void squad_container_on_event(struct rr_ui_element *this, struct rr_game 
 
 static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->squad.squad_private && game->squad.squad_pos == 0;
+    struct squad_pos_metadata *data = this->data;
+    uint8_t p = data->pos;
+    if (game->squad.squad_members[p].is_dev)
+        return 0;
+    if (game->squad.squad_members[game->squad.squad_pos].is_dev)
+        return 1;
+    if (p == 0)
+        return 0;
+    if (!game->squad.squad_private)
+        return 0;
+    if (game->squad.squad_pos != 0)
+        return 0;
+
+    return 1;
 }
 
 static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -232,8 +245,7 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, u
     squad_container->abs_height = squad_container->height = 120;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
-    if (pos != 0)
-        rr_ui_container_add_element(squad_container, kick_player_button_init(pos));
+    rr_ui_container_add_element(squad_container, kick_player_button_init(pos));
     squad_container->on_event = squad_container_on_event;
     squad_container->resizeable = 0;
     struct rr_ui_container_metadata *d_data = squad_container->data;

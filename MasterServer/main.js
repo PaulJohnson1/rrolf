@@ -20,17 +20,17 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const MAX_PETAL_COUNT = 24;
 
+// let database = {};
+// let changed = false;
+// const databaseFilePath = path.join(__dirname, "database.json");
+
+// if (fs.existsSync(databaseFilePath))
+// {
+//    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+//    database = JSON.parse(databaseData);
+// }
+
 const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
-
-let database = {};
-let changed = false;
-const databaseFilePath = path.join(__dirname, "database.json");
-
-if (fs.existsSync(databaseFilePath))
-{
-   const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-   //database = JSON.parse(databaseData);
-}
 
 app.use(cors());
 
@@ -81,11 +81,6 @@ async function request(method, key, body)
     return data;
 }
 
-/*
-reason this one is better than the rust one:
-in the rust version, users were passed around by the username.passwor, this
-only passes around the accounst object instead which results in fewer requests
-*/
 function apply_missing_defaults(account)
 {
     const defaults = {
@@ -246,16 +241,15 @@ app.use((req, res) => {
 });
 
 const saveDatabaseToFile = () => {
-    return;
-    if (changed)
-    {
-        changed = false;
-        console.log("saving database to file:", databaseFilePath);
-        const databaseData = JSON.stringify(database, null, 2);
-        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-    }
-    else
-        console.log("tried save, was not changed");
+    // if (changed)
+    // {
+    //     changed = false;
+    //     console.log("saving database to file:", databaseFilePath);
+    //     const databaseData = JSON.stringify(database, null, 2);
+    //     fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    // }
+    // else
+    //     console.log("tried save, was not changed");
 };
 
 const server = http.createServer(app);

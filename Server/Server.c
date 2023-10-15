@@ -586,7 +586,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         {
             if (!client->in_squad)
                 break;
-            if (client->squad_pos != 0)
+            if (client->squad_pos != 0 && !client->dev)
                 break;
             uint8_t pos = proto_bug_read_uint8(&encoder, "kick pos");
             if (pos >= RR_SQUAD_MEMBER_COUNT)
@@ -598,6 +598,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 break;
             struct rr_server_client *to_kick = squad->members[pos].client;
             if (to_kick == NULL)
+                break;
+            if (to_kick->dev)
                 break;
             if (to_kick->player_info != NULL)
             {
