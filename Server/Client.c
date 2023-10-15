@@ -36,7 +36,11 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     {
         return;
     }
-    rr_simulation_alloc_player(&this->server->simulation, 1, this->player_info->parent_id);
+    EntityIdx p = rr_simulation_alloc_player(&this->server->simulation, 1, this->player_info->parent_id);
+    if (this->dev)
+    {
+        rr_component_relations_set_team(rr_simulation_get_relations(&this->server->simulation, p), rr_simulation_team_id_mobs);
+    }
 }
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *data, uint64_t size)

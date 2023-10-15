@@ -26,8 +26,10 @@ static void uranium_damage(EntityIdx mob, void *_captures)
 {
     struct uranium_captures *captures = _captures;
     struct rr_simulation *simulation = captures->simulation;
+    if (!rr_simulation_has_mob(simulation, mob))
+        return;
     if (rr_simulation_get_relations(simulation, mob)->team ==
-        rr_simulation_team_id_players)
+        rr_simulation_get_relations(simulation, captures->flower_id)->team)
         return;
     struct rr_component_health *health =
         rr_simulation_get_health(simulation, mob);
@@ -61,7 +63,8 @@ static void uranium_petal_system(struct rr_simulation *simulation,
         struct uranium_captures captures = {simulation, relations->owner, petal->rarity, 
                                             physical->x, physical->y,
                                             health->damage};
-        rr_simulation_for_each_mob(simulation, &captures, uranium_damage);
+        rr_spatial_hash_query(&rr_simulation_get_arena(simulation, physical->arena)->spatial_hash, physical->x, physical->y, 
+        100 + 75 * captures.petal_rarity, 100 + 75 * captures.petal_rarity, &captures, uranium_damage);
     }
 }
 
