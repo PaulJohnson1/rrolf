@@ -111,6 +111,16 @@ static uint8_t is_mob_and_damaged(struct rr_simulation *simulation, EntityIdx se
     return health->max_health > health->health;
 }
 
+static uint8_t is_close_enough_and_angle(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    struct rr_component_physical *seeker_physical = rr_simulation_get_physical(simulation, seeker);
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+    struct rr_vector delta = {physical->x - seeker_physical->x, physical->y - seeker_physical->y};
+    if (rr_vector_magnitude_cmp(&delta, 750) == 1)
+        return 0;
+    return rr_angle_within(rr_vector_theta(&delta), seeker_physical->bearing_angle, 1);
+}
+
 static void system_flower_petal_movement_logic(
     struct rr_simulation *simulation, EntityIdx id,
     struct rr_component_player_info *player_info, uint32_t rotation_pos,
@@ -138,6 +148,13 @@ static void system_flower_petal_movement_logic(
             petal->effect_delay = 75;
             physical->friction = 0.5;
             physical->bearing_angle = curr_angle;
+            EntityIdx target = rr_simulation_find_nearest_enemy(simulation, id, 750, NULL, is_close_enough_and_angle);
+            if (target != RR_NULL_ENTITY)
+            {
+                struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, target);
+                struct rr_vector delta = {t_physical->x - physical->x, t_physical->y - physical->y};
+                physical->bearing_angle = rr_vector_theta(&delta);
+            }
             break;
         }
         case rr_petal_id_peas:
@@ -150,7 +167,7 @@ static void system_flower_petal_movement_logic(
                                     physical->angle);
             rr_vector_from_polar(&physical->velocity, 50.0f,
                                     physical->angle);
-            petal->effect_delay = 15;
+            petal->effect_delay = 38;
             uint32_t count = petal_data->count[petal->rarity];
             for (uint32_t i = 1; i < count; ++i)
             {
@@ -167,7 +184,7 @@ static void system_flower_petal_movement_logic(
                                         new_physical->angle);
                 rr_component_petal_set_detached(
                     rr_simulation_get_petal(simulation, new_petal), 1);
-                rr_simulation_get_petal(simulation, new_petal)->effect_delay = 15;
+                rr_simulation_get_petal(simulation, new_petal)->effect_delay = 38;
             }
             break;
         }
@@ -176,7 +193,7 @@ static void system_flower_petal_movement_logic(
             struct rr_component_health *flower_health =
                 rr_simulation_get_health(simulation,
                                             player_info->flower_id);
-            float heal = 10 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+            float heal = 6 * RR_PETAL_RARITY_SCALE[petal->rarity].heal;
             if (flower_health->health < flower_health->max_health)
             {
                 struct rr_vector delta = {
@@ -305,7 +322,7 @@ static void system_flower_petal_movement_logic(
     if (petal->id == rr_petal_id_gravel && petal->detached)
         should_extend = player_info->input & 1;
     if (should_extend)
-        holdingRadius = 150;
+        holdingRadius = 150 + player_info->modifiers.petal_extension;
     else if (player_info->input & 2)
         holdingRadius = 45;
     struct rr_vector chase_vector;
@@ -355,6 +372,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     // reset
     physical->acceleration_scale = 1;
     player_info->modifiers.drop_pickup_radius = 25;
+    player_info->modifiers.petal_extension = 0;
 
     physical->aggro_range_multiplier = 1;
     health->damage_reduction = 0;
@@ -367,43 +385,35 @@ static void petal_modifiers(struct rr_simulation *simulation,
             &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         if (data->id == rr_petal_id_leaf)
-            rr_component_health_set_health(health, health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].damage);
+            rr_component_health_set_health(health, health->health + 0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].heal);
         else if (data->id == rr_petal_id_light)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
-        {
-            float speed = 1 + 0.05 + 0.025 * slot->rarity;
-            if (speed > physical->acceleration_scale)
-                physical->acceleration_scale = speed;
-        }
+            RR_SET_IF_GREATER(physical->acceleration_scale, 1 + 0.05 + 0.025 * slot->rarity)
         else if (data->id == rr_petal_id_crest)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
-            if (physical->aggro_range_multiplier < 1.1 + (0.15 * slot->rarity))
-                physical->aggro_range_multiplier = 1.1 + (0.15 * slot->rarity);
+            RR_SET_IF_LESS(player_info->camera_fov, 1 - 0.1 * slot->rarity)
         }
         else if (data->id == rr_petal_id_droplet)
            ++rot_count;
         else if (data->id == rr_petal_id_third_eye)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 16);
-            if (player_info->camera_fov > RR_BASE_FOV * (0.9 - 0.07 * slot->rarity))
-                rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV * (0.9 - 0.07 * slot->rarity));
+            RR_SET_IF_GREATER(player_info->modifiers.petal_extension, 35 * (slot->rarity - rr_rarity_id_epic))
         }
+        else if (data->id == rr_petal_id_bone)
+            RR_SET_IF_GREATER(health->damage_reduction, 2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
         else
+        {
             for (uint32_t inner = 0; inner < slot->count; ++inner)
             {
                 if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
-                {
-                    if (player_info->modifiers.drop_pickup_radius < 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
-                        player_info->modifiers.drop_pickup_radius = 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
-                }
-                if (data->id == rr_petal_id_bone)
-                    health->damage_reduction +=
-                        2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].health;
+                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
             }
+        }
     }
     player_info->global_rotation += to_rotate * ((rot_count % 3) ? (rot_count % 3 == 2) ? 0 : -1 : 1);
 }

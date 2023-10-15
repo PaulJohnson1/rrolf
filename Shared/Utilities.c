@@ -47,6 +47,12 @@ float rr_fclamp(float v, float s, float e)
     return v;
 }
 
+int rr_angle_within(float a1, float a2, float within)
+{
+    float diff = fmod(fmod(a1 - a2, 2 * M_PI) + 2 * M_PI, 2 * M_PI);
+    return diff < within || diff > 2 * M_PI - within;
+}
+
 /* aaaack but it's fast and const should make it shared text page. */
 static const unsigned char pr2six[256] =
 {

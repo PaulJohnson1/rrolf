@@ -800,7 +800,7 @@ static void server_tick(struct rr_server *this)
         if (rr_bitset_get(this->clients_in_use, i))
         {
             struct rr_server_client *client = &this->clients[i];
-            if (++client->ticks_to_afk_kick >= 90 * 25)
+            if (++client->ticks_to_afk_kick >= 180 * 25)
             {
                 printf("rr_server::afk_kick::%s>\n", client->rivet_account.uuid);
                 client->pending_kick = 1;

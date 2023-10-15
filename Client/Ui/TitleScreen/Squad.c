@@ -255,9 +255,18 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, u
         0x40ffffff);
 }
 
+static uint8_t squad_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+{
+    struct rr_game_squad *squad = this->data;
+    for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
+        if (squad->squad_members[i].in_use)
+            return 1;
+    return 0;
+}
+
 struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
 {
-    return rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
+    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
             squad_player_container_init(squad, 0),
@@ -275,6 +284,9 @@ struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
         -1, -1),
         NULL
     );
+    this->data = squad;
+    this->should_show = squad_container_should_show;
+    return this;
 }
 
 static void squad_find_button_animate(struct rr_ui_element *this,

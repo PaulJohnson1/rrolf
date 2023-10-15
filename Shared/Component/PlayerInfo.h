@@ -38,6 +38,7 @@ struct rr_component_player_info_petal_slot
 struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
+    float petal_extension;
     //float rotation_direction;
 };
 

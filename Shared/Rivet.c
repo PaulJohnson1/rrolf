@@ -238,12 +238,21 @@ void rr_rivet_link_account(char *game_user, char *api_password, void *captures)
                                     api_pw + "/" +
                                     newer["new_identity"]["identity"]["identity_id"] + "/" +
                                     new_pw
-                                ).then(x => {
-                                    w.close();
-                                    window.localStorage["old_account_uuid"] = newer["current_identity"]["identity_id"];
-                                    window.localStorage["DO_NOT_SHARE_old_rivet_account_token"] = window.localStorage["DO_NOT_SHARE_rivet_account_token"];
-                                    window.localStorage["DO_NOT_SHARE_rivet_account_token"] = newer["new_identity"]["identity_token"];
-                                    location.reload(false);
+                                ).then(x => x.text()).then(x => {
+                                    if (x !== "success")
+                                    {
+                                        alert("Linking failed: please try again\n" + "attempted to link " + 
+                                        newer["current_identity"]["identity_id"] + " and " + newer["new_identity"]["identity"]["identity_id"] 
+                                        + "\nPlease screenshot this and send to devs");
+                                    }
+                                    else
+                                    {
+                                        w.close();
+                                        window.localStorage["old_account_uuid"] = newer["current_identity"]["identity_id"];
+                                        window.localStorage["DO_NOT_SHARE_old_rivet_account_token"] = window.localStorage["DO_NOT_SHARE_rivet_account_token"];
+                                        window.localStorage["DO_NOT_SHARE_rivet_account_token"] = newer["new_identity"]["identity_token"];
+                                        location.reload(false);
+                                    }
                                 });
                             });
                         }

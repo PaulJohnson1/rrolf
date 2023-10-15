@@ -20,15 +20,15 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const MAX_PETAL_COUNT = 24;
 
-let database = {};
-let changed = false;
-const databaseFilePath = path.join(__dirname, "database.json");
+// let database = {};
+// let changed = false;
+// const databaseFilePath = path.join(__dirname, "database.json");
 
-if (fs.existsSync(databaseFilePath))
-{
-       const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-   database = JSON.parse(databaseData);
-}
+// if (fs.existsSync(databaseFilePath))
+// {
+//    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+//    database = JSON.parse(databaseData);
+// }
 
 const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 
@@ -241,16 +241,15 @@ app.use((req, res) => {
 });
 
 const saveDatabaseToFile = () => {
-    return;
-    if (changed)
-    {
-        changed = false;
-        console.log("saving database to file:", databaseFilePath);
-        const databaseData = JSON.stringify(database, null, 2);
-        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-    }
-    else
-        console.log("tried save, was not changed");
+    // if (changed)
+    // {
+    //     changed = false;
+    //     console.log("saving database to file:", databaseFilePath);
+    //     const databaseData = JSON.stringify(database, null, 2);
+    //     fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    // }
+    // else
+    //     console.log("tried save, was not changed");
 };
 
 const server = http.createServer(app);
@@ -380,11 +379,8 @@ const try_save_exit = () =>
    process.exit();
 }
 
-process.on("beforeExit", try_save_exit);
-process.on("exit", try_save_exit)
-process.on("SIGTERM", try_save_exit);
-process.on("SIGINT", try_save_exit);
-process.on("uncaughtException", try_save_exit);
+for (const error of ["beforeExit", "exit", "SIGTERM", "SIGINT", "uncaughtException"])
+    process.on(error, args => { console.log(error, args); try_save_exit() });
 
 setInterval(saveDatabaseToFile, 60000);
 

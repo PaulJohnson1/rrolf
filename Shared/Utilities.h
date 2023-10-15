@@ -25,6 +25,7 @@
 void rr_log_hex(uint8_t *, uint8_t *);
 float rr_lerp(float, float, float);
 float rr_angle_lerp(float, float, float);
+int rr_angle_within(float, float, float);
 float rr_frand();
 float rr_fclamp(float, float, float);
 char *rr_sprintf(char *, double);
@@ -35,6 +36,8 @@ int rr_base_64_encode(char *, const char *, int);
 #define RR_CONCAT(a, b) a ## b
 #define RR_REPEAT(count, macro) RR_CONCAT(RR_REPEAT, count)(macro)
 
+#define RR_SET_IF_GREATER(var, num) { if ((var) < (num)) (var) = (num); }
+#define RR_SET_IF_LESS(var, num) { if ((num) < (var)) (var) = (num); }
 #define RR_REPEAT0(macro)
 #define RR_REPEAT1(macro) macro(0)
 #define RR_REPEAT2(macro) RR_REPEAT1(macro) macro(1)
