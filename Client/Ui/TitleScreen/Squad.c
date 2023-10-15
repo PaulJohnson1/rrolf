@@ -181,7 +181,12 @@ static void squad_container_on_event(struct rr_ui_element *this, struct rr_game 
 
 static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->squad.squad_private && game->squad.squad_pos == 0;
+    if (game->squad.squad_members[game->squad.squad_pos].is_dev)
+        return 1;
+    if (!game->squad.squad_private)
+        return 0;
+    if (game->squad.squad_pos != 0)
+        return 0;
 }
 
 static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *game)
