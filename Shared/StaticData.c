@@ -20,17 +20,17 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 25, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 2.5f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_web, rr_rarity_id_rare, 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, 12.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
     {rr_petal_id_club, rr_rarity_id_common, 3.5f, 300.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
-    {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_droplet, rr_rarity_id_common, 15.0f, 5.0f, 0.0f, 37, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, 5.0f, 5.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_lightning, rr_rarity_id_unusual, 16.0f, 1.0f, 0.0f, 63, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_third_eye, rr_rarity_id_rare, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
+    {rr_petal_id_lightning, rr_rarity_id_unusual, 12.0f, 1.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_third_eye, rr_rarity_id_legendary, 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_mandible, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 75, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_wax, rr_rarity_id_unusual, 5.0f, 10.0f, 10.0f, 75, 0, {2, 2, 2, 2, 2, 2, 2}},
     {rr_petal_id_sand, rr_rarity_id_common, 15.0f, 10.0f, 10.0f, 37, 0, {4, 4, 4, 4, 4, 4, 4}},
@@ -58,16 +58,16 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Does low damage to mobs in a large range. Slowly damages yourself",
     "It's so light it increases your movement speed. Does not stack",
     "It heals you",
-    "Gives the player armor. Stacks with itself",
-    "Web",
+    "Gives the player armor. Does not stack",
+    "It slows everything down",
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
     "Heavy and sturdy",
-    "Decreases mob aggro range. Does not stack",
+    "Increases your vision range. Does not stack",
     "This mysterious petal reverses your petal rotation",
     "Stuns mobs and prevents them from moving",
     "A stunning display",
-    "It allows you to see further away",
+    "Your petals hate it and want to move further away",
     "Does more damage if target hp is below 50%",
     "Made by the bees",
     "Very fine",
@@ -86,7 +86,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 40, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
     {rr_mob_id_meteor, rr_rarity_id_rare, 150, 5, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_rare, 45, 10, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15},{rr_petal_id_lightning, 0.05}}},
-    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 35, 10, 30.0f, {{rr_petal_id_bone, 0.15},{rr_petal_id_fossil, 0.1}}},
+    {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 35, 10, 30.0f, {{rr_petal_id_bone, 0.15},{rr_petal_id_fossil, 0.1},{rr_petal_id_third_eye, 0.05}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
     {rr_mob_id_hornet, rr_rarity_id_common, 25, 25, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
     {rr_mob_id_dragonfly, rr_rarity_id_unusual, 20, 10, 25.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_third_eye, 0.05}}},
@@ -109,23 +109,23 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 
 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1,   1},
-    {1.8, 2.5},
-    {3.8, 8},
-    {6.7, 18},
-    {13.3, 25},
-    {30.0, 72},
-    {75.0, 250},
+    {1,   1,   1},
+    {1.8, 2.5, 2},
+    {3.8, 8,   4},
+    {6.7, 18,  8},
+    {13.3, 25, 16},
+    {30.0, 72, 40},
+    {75.0, 250,100},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
     {6, 1.6, 1.2},
-    {35, 2.8, 1.5}, 
-    {80,  4.6, 1.8},
-    {550, 9.3, 2.5},
-    {3450, 20.3, 4.0},
-    {18000, 45, 6.0},
+    {28, 2.8, 1.5}, 
+    {65,  4.6, 1.8},
+    {450, 9.6, 2.5},
+    {2500, 20.3, 4.0},
+    {15000,45,   6.0},
 };
 // clang-format on
 
@@ -141,7 +141,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 30, 150, 1000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {3, 8, 12, 20, 25, 35, 80};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {3, 7, 12, 20, 25, 35, 80};
 
 static void init_game_coefficients()
 {

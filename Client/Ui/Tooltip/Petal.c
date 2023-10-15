@@ -84,7 +84,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         char *extra = malloc((sizeof *extra) * 8);
         sprintf(extra, "%.1f/s",
-                      25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity].damage);
+                      25 * 0.04 * RR_PETAL_RARITY_SCALE[rarity].heal);
         rr_ui_container_add_element(
             this,
             rr_ui_set_justify(rr_ui_h_container_init(
@@ -144,7 +144,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_azalea)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%s", rr_sprintf(fmt, 10 * RR_PETAL_RARITY_SCALE[rarity].damage));
+        sprintf(extra, "%s", rr_sprintf(fmt, 6 * RR_PETAL_RARITY_SCALE[rarity].heal));
         rr_ui_container_add_element(
             this,
             rr_ui_set_justify(rr_ui_h_container_init(
@@ -156,7 +156,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_bone)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%s", rr_sprintf(fmt, 2.5 * RR_PETAL_RARITY_SCALE[rarity].health));
+        sprintf(extra, "%s", rr_sprintf(fmt, 2.5 * RR_PETAL_RARITY_SCALE[rarity].heal));
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -191,12 +191,12 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     {
         char *extra = malloc((sizeof *extra) * 8);
         sprintf(extra, "%.0f%%",
-                      100 - 100 / (1.1 + 0.15 * rarity));
+                      100 / (1 - 0.1 * rarity) - 100);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Aggro decrease: ", 12, 0xffe38329),
+                          rr_ui_text_init("FOV increase: ", 12, 0xffe38329),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }
@@ -236,13 +236,12 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_third_eye)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.0f%%",
-                      100 / (0.9 - 0.07 * rarity) - 100);
+        sprintf(extra, "+%d", 35 * (rarity - rr_rarity_id_epic));
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
-                          rr_ui_text_init("Vision increase: ", 12, 0xff4266f5),
+                          rr_ui_text_init("Range increase: ", 12, 0xff4266f5),
                           rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                       -1, 0));
     }

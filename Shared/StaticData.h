@@ -158,6 +158,7 @@ struct rr_petal_rarity_scale
 {
     float health;
     float damage;
+    float heal;
 };
 
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];
