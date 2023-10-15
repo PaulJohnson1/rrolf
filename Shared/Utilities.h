@@ -25,6 +25,7 @@
 void rr_log_hex(uint8_t *, uint8_t *);
 float rr_lerp(float, float, float);
 float rr_angle_lerp(float, float, float);
+int rr_angle_within(float, float, float);
 float rr_frand();
 float rr_fclamp(float, float, float);
 char *rr_sprintf(char *, double);

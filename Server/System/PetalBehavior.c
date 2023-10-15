@@ -111,6 +111,16 @@ static uint8_t is_mob_and_damaged(struct rr_simulation *simulation, EntityIdx se
     return health->max_health > health->health;
 }
 
+static uint8_t is_close_enough_and_angle(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+{
+    struct rr_component_physical *seeker_physical = rr_simulation_get_physical(simulation, seeker);
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+    struct rr_vector delta = {physical->x - seeker_physical->x, physical->y - seeker_physical->y};
+    if (rr_vector_magnitude_cmp(&delta, 750) == 1)
+        return 0;
+    return rr_angle_within(rr_vector_theta(&delta), seeker_physical->bearing_angle, 1);
+}
+
 static void system_flower_petal_movement_logic(
     struct rr_simulation *simulation, EntityIdx id,
     struct rr_component_player_info *player_info, uint32_t rotation_pos,
@@ -138,6 +148,13 @@ static void system_flower_petal_movement_logic(
             petal->effect_delay = 75;
             physical->friction = 0.5;
             physical->bearing_angle = curr_angle;
+            EntityIdx target = rr_simulation_find_nearest_enemy(simulation, id, 750, NULL, is_close_enough_and_angle);
+            if (target != RR_NULL_ENTITY)
+            {
+                struct rr_component_physical *t_physical = rr_simulation_get_physical(simulation, target);
+                struct rr_vector delta = {t_physical->x - physical->x, t_physical->y - physical->y};
+                physical->bearing_angle = rr_vector_theta(&delta);
+            }
             break;
         }
         case rr_petal_id_peas:
@@ -150,7 +167,7 @@ static void system_flower_petal_movement_logic(
                                     physical->angle);
             rr_vector_from_polar(&physical->velocity, 50.0f,
                                     physical->angle);
-            petal->effect_delay = 50;
+            petal->effect_delay = 38;
             uint32_t count = petal_data->count[petal->rarity];
             for (uint32_t i = 1; i < count; ++i)
             {
@@ -167,7 +184,7 @@ static void system_flower_petal_movement_logic(
                                         new_physical->angle);
                 rr_component_petal_set_detached(
                     rr_simulation_get_petal(simulation, new_petal), 1);
-                rr_simulation_get_petal(simulation, new_petal)->effect_delay = 15;
+                rr_simulation_get_petal(simulation, new_petal)->effect_delay = 38;
             }
             break;
         }
