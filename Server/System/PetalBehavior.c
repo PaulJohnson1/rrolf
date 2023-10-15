@@ -493,7 +493,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     }
                     EntityIdx mob_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->arena, petal_physical->x, petal_physical->y, m_id, m_rar,
-                                                rr_simulation_team_id_players);
+                                                rr_simulation_get_relations(simulation, player_info->flower_id)->team);
                     p_petal->entity_hash = rr_simulation_get_entity_hash(simulation, mob_id);
                     struct rr_component_relations *relations =
                         rr_simulation_get_relations(simulation, mob_id);

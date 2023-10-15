@@ -30,8 +30,7 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     
-    if (rr_simulation_get_relations(simulation, entity)->team == rr_simulation_team_id_mobs)
-        rr_renderer_scale(renderer, RR_MOB_RARITY_SCALING[petal->rarity].radius);
+    rr_renderer_scale(renderer, physical->radius / 10);
     uint8_t use_cache = (((health->damage_animation < 0.1) | game->cache.low_performance_mode) & 1) & (1 - game->cache.tint_petals);
     if (petal->id != rr_petal_id_peas || petal->detached == 1)
         rr_renderer_draw_petal(renderer, petal->id, use_cache);
