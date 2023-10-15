@@ -68,7 +68,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
         rr_simulation_add_relations(this, petal_id);
     struct rr_component_health *health =
         rr_simulation_add_health(this, petal_id);
-    rr_component_physical_set_radius(physical, 25);
+    rr_component_physical_set_radius(physical, 10);
     rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
     rr_component_physical_set_x(physical, x);
     rr_component_physical_set_y(physical, y);
