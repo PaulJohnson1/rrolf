@@ -18,7 +18,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_leaf, rr_rarity_id_unusual, 6.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, 4.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 6.0f, 10.0f, 0.0f, 50, 15, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 2.5f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -38,7 +38,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Light", "Shell",
+    "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Berries", "Shell",
     "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
     "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
     "Beak", "Lightning", "Third Eye", "Mandible", "Wax", "Sand", "Mint"};
@@ -49,13 +49,13 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Low damage, but there's lots",
     "It came from a dino",
     "Ow that hurts",
-    "Makes your petals lighter so they spin faster",
+    "Gives your other petals more energy",
     "Poor snail",
     "Splits in 4. Or maybe 5 if you're a pro",
     "Heals you gradually",
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Does not stack",
-    "Does low damage to mobs in a large range. Slowly damages yourself",
+    "Does low damage to mobs in a small range",
     "It's so light it increases your movement speed. Does not stack",
     "It heals you",
     "Gives the player armor. Does not stack",

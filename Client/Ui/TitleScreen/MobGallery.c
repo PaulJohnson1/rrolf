@@ -108,7 +108,7 @@ static void mob_container_animate(struct rr_ui_element *this,
     this->height = this->abs_height;
     rr_renderer_translate(game->renderer, 0,
                           -(this->y - this->abs_height / 2) * 2 *
-                              this->animation);
+                              this->animation * game->renderer->scale);
 }
 
 struct rr_ui_element *rr_ui_mob_container_init()

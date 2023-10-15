@@ -416,7 +416,7 @@ static void crafting_container_animate(struct rr_ui_element *this,
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation);
+    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation * game->renderer->scale);
 }
 
 static void crafting_inventory_button_on_render(struct rr_ui_element *this,

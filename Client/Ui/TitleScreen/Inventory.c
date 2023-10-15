@@ -73,7 +73,7 @@ static void inventory_container_animate(struct rr_ui_element *this,
     this->height = this->abs_height;
     rr_renderer_translate(game->renderer, 0,
                           -(this->y - this->abs_height / 2) * 2 *
-                              this->animation);
+                              this->animation * game->renderer->scale);
 }
 
 static void inventory_button_on_render(struct rr_ui_element *this,

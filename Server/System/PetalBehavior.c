@@ -16,6 +16,7 @@ struct uranium_captures
 {
     struct rr_simulation *simulation;
     EntityHash flower_id;
+    uint8_t petal_rarity;
     float x;
     float y;
     float damage;
@@ -32,12 +33,10 @@ static void uranium_damage(EntityIdx mob, void *_captures)
         rr_simulation_get_health(simulation, mob);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, mob);
-    if ((physical->x - captures->x) * (physical->x - captures->x) +
-            (physical->y - captures->y) * (physical->y - captures->y) <
-        901 * 901)
+    struct rr_vector delta = {physical->x - captures->x, physical->y - captures->y};
+    if (rr_vector_magnitude_cmp(&delta, 100 + 75 * captures->petal_rarity) == -1)
     {
         rr_component_health_do_damage(simulation, health, captures->flower_id, captures->damage);
-        // health->damage_paused = 5;
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
         if (ai->target_entity == RR_NULL_ENTITY)
             ai->target_entity = captures->flower_id;
@@ -57,14 +56,9 @@ static void uranium_petal_system(struct rr_simulation *simulation,
             rr_simulation_get_physical(simulation, petal->parent_id);
         if (!rr_simulation_entity_alive(simulation, relations->owner))
             return;
-        struct rr_component_physical *flower_physical =
-            rr_simulation_get_physical(simulation, relations->owner);
-        struct rr_component_health *flower_health =
-            rr_simulation_get_health(simulation, relations->owner);
-        rr_component_health_set_health(flower_health, flower_health->health -
-                                                          health->damage);
-        petal->effect_delay = 25;
-        struct uranium_captures captures = {simulation, relations->owner,
+        petal->effect_delay = 15;
+        rr_component_health_set_flags(health, health->flags | 2);
+        struct uranium_captures captures = {simulation, relations->owner, petal->rarity, 
                                             physical->x, physical->y,
                                             health->damage};
         rr_simulation_for_each_mob(simulation, &captures, uranium_damage);
