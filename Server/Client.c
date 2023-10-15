@@ -111,6 +111,7 @@ void rr_server_client_craft_petal(struct rr_server_client *this, uint8_t id, uin
     this->inventory[id][rarity] -= (count - now);
     this->inventory[id][rarity+1] += success;
     this->experience += xp_gain;
+    rr_server_client_write_to_api(this);
 
     struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
@@ -121,7 +122,6 @@ void rr_server_client_craft_petal(struct rr_server_client *this, uint8_t id, uin
     proto_bug_write_varuint(&encoder, count - now, "fail count");
     proto_bug_write_float64(&encoder, xp_gain, "craft xp");
     rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
-    rr_server_client_write_to_api(this);
 }
 
 int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_binary_encoder *encoder)

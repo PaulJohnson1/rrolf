@@ -110,22 +110,22 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1,   1,   1},
-    {1.8, 2.5, 2},
-    {3.8, 8,   4},
-    {6.7, 18,  8},
-    {13.3, 25, 16},
-    {30.0, 72, 40},
-    {75.0, 250,100},
+    {1.8, 2.5, 2.3},
+    {3.8, 8,   4.9},
+    {6.7, 18,  13},
+    {13.3, 35, 25},
+    {30.0, 90, 50},
+    {75.0, 300,100},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
     {4.5, 1.6, 1.2},
     {18, 2.8, 1.5}, 
-    {45,  4.6, 1.8},
-    {250, 9.6, 2.5},
-    {1200, 20.3, 4.0},
-    {15000,45,   6.0},
+    {50,  4.7, 1.8},
+    {275, 9.6, 2.5},
+    {1250, 20.3, 4.0},
+    {15000,50,   6.0},
 };
 // clang-format on
 
