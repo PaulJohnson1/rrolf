@@ -138,7 +138,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"
 };
                                           
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 25, 75, 1500};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 50, 2000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 25, 75, 100};
@@ -345,9 +345,6 @@ void rr_static_data_init()
     init(BURROW);
     #ifdef RR_SERVER
     for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_CRAFT_CHANCES[r]);
-    //print_chances(40);
-    //print_chances(44);
-    //print_chances(48);
     #endif
 }
 
