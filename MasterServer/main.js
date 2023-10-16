@@ -22,7 +22,7 @@ const MAX_PETAL_COUNT = 24;
 
 let database = [];
 let changed = false;
-const databaseFilePath = path.join(__dirname, "database.json");
+const databaseFilePath = path.join(__dirname, "linklogs.json");
 
 if (fs.existsSync(databaseFilePath))
 {
