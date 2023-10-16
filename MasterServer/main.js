@@ -125,8 +125,6 @@ function apply_missing_defaults(account)
         }
         account.inflated_up_to = MAX_PETAL_COUNT;
     }
-    for (let n = 1; n < 24; ++n)
-        account.petals[n + ":6"] = 10;
     return account;
 }
 

@@ -21,6 +21,10 @@ static uint8_t account_container_should_show(struct rr_ui_element *this,
 static uint8_t account_button_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
+    if (game->account_linked == 0 && !game->simulation_ready)
+    {
+        rr_ui_render_tooltip_right(this, game->link_reminder_tooltip, game);
+    }
     return !game->simulation_ready;
 }
 

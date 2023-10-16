@@ -468,6 +468,11 @@ void rr_game_init(struct rr_game *this)
         make_label_tooltip("Join Our Discord!")
     );
 
+    this->link_reminder_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Login to save progess across devices")
+    );
+
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
         this->squad.squad_members[i].tooltip = rr_ui_squad_player_tooltip_init(&this->squad.squad_members[i]);
