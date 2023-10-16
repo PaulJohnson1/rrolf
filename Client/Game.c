@@ -202,6 +202,7 @@ void rr_game_init(struct rr_game *this)
         rr_ui_set_justify(
             rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                 rr_ui_settings_toggle_button_init(),
+                rr_ui_discord_toggle_button_init(),
                 rr_ui_account_toggle_button_init(),
                 rr_ui_dev_squad_panel_toggle_button_init(),
                 rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
@@ -460,6 +461,11 @@ void rr_game_init(struct rr_game *this)
     this->account_tooltip = rr_ui_container_add_element(
         this->window,
         make_label_tooltip("Account")
+    );
+
+    this->discord_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("Join Our Discord!")
     );
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -1040,7 +1046,6 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_angle = physical->animation_timer * ((physical->parent_id % 3) - 1);
             rr_renderer_context_state_init(this->renderer, &state2);
             rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-            rr_renderer_scale(this->renderer, physical->radius / 10);
             rr_component_petal_render(this->simulation->petal_vector[i], this, sim);
             rr_renderer_context_state_free(this->renderer, &state2);
             if (physical->lerp_x > 1000)

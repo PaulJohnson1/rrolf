@@ -183,6 +183,8 @@ struct rr_ui_element *rr_ui_inventory_toggle_button_init();
 struct rr_ui_element *rr_ui_settings_toggle_button_init();
 struct rr_ui_element *rr_ui_account_toggle_button_init();
 
+struct rr_ui_element *rr_ui_discord_toggle_button_init();
+
 struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 struct rr_ui_element *rr_ui_squad_button_init();
 struct rr_ui_element *rr_ui_create_squad_button_init();

@@ -115,3 +115,12 @@ uint8_t rr_dom_test_mobile()
         return +((/iPhone|iPad|iPod|Android/i).test(navigator.userAgent));
     });
 }
+
+void rr_page_open(char const *name)
+{
+    EM_ASM({
+        try {
+            window.open(UTF8ToString($0), "_blank").focus();
+        } catch (e) {}
+    }, name);
+}

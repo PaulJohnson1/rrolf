@@ -100,6 +100,7 @@ struct rr_game
     struct rr_ui_element *craft_tooltip;
     struct rr_ui_element *settings_tooltip;
     struct rr_ui_element *account_tooltip;
+    struct rr_ui_element *discord_tooltip;
     struct rr_ui_element *abandon_game_tooltip;
     struct rr_ui_element *experience_tooltip;
     struct rr_renderer *renderer;

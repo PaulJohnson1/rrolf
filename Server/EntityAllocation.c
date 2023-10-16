@@ -77,8 +77,8 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     physical->friction = 0.75;
     if (id == rr_petal_id_club)
     {
-        rr_component_physical_set_radius(physical, 35);
-        physical->mass = 5 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.3);
+        rr_component_physical_set_radius(physical, 15);
+        physical->mass = 25 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.3);
         physical->knockback_scale = 4.5;
     }
 
