@@ -18,7 +18,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_leaf, rr_rarity_id_unusual, 6.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_uranium, rr_rarity_id_rare, 10.0f, 10.0f, 0.0f, 50, 15, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_uranium, rr_rarity_id_rare, 12.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_azalea, rr_rarity_id_common, 5.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_bone, rr_rarity_id_common, 2.5f, 25.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -120,12 +120,12 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {4.5, 1.6, 1.2},
-    {18, 3.0, 1.5}, 
-    {50,  4.8, 1.8},
-    {325, 10.6, 2.5},
-    {4000, 21.3, 4.0},
-    {20000,50,   6.0},
+    {4.5, 1.6, 1.3},
+    {18, 3.0, 1.6}, 
+    {50,  4.8, 2.0},
+    {325, 10.6, 2.8},
+    {4000, 21.3, 5.0},
+    {20000,50,   7.0},
 };
 // clang-format on
 
@@ -138,7 +138,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"
 };
                                           
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 30, 100, 1500};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 8, 10, 15, 25, 75, 1500};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 25, 75, 100};
@@ -277,7 +277,6 @@ static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maz
     }
 }
 
-/*
 static void print_chances(float difficulty) {
     printf("-----Chances for %.0f-----\n", difficulty);
     uint32_t rarity_cap = rr_rarity_id_unusual + difficulty / 8;
@@ -293,7 +292,6 @@ static void print_chances(float difficulty) {
         printf("%s: %.9f\n", RR_RARITY_NAMES[rarity], end - start);
     }
 }
-*/
 
 #ifdef RR_SERVER
 
@@ -347,6 +345,9 @@ void rr_static_data_init()
     init(BURROW);
     #ifdef RR_SERVER
     for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_CRAFT_CHANCES[r]);
+    //print_chances(40);
+    //print_chances(44);
+    //print_chances(48);
     #endif
 }
 

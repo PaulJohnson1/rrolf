@@ -16,18 +16,18 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game, struct rr
     struct rr_component_petal *petal =
         rr_simulation_get_petal(simulation, entity);
     struct rr_component_health *health = rr_simulation_get_health(simulation, entity);
+    rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
+    rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     if (petal->id == rr_petal_id_uranium)
     {
         rr_renderer_set_fill(renderer, 0x2063bf2e);
         rr_renderer_begin_path(renderer);
-        rr_renderer_arc(renderer, 0, 0, 100 + 75 * petal->rarity + 20 * sinf(physical->animation_timer * 0.1));
+        rr_renderer_arc(renderer, 0, 0, 30 + 5 * sinf(physical->animation_timer * 0.1));
         rr_renderer_fill(renderer);
     }
     if (game->cache.tint_petals)
         rr_renderer_add_color_filter(renderer, RR_RARITY_COLORS[petal->rarity], 0.4);
     rr_renderer_add_color_filter(renderer, 0xffff0000, 0.5 * health->damage_animation);
-    rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
-    rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_rotate(renderer, physical->lerp_angle);
     
     rr_renderer_scale(renderer, physical->radius / 10);

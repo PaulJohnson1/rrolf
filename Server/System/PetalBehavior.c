@@ -58,7 +58,7 @@ static void uranium_petal_system(struct rr_simulation *simulation,
             rr_simulation_get_physical(simulation, petal->parent_id);
         if (!rr_simulation_entity_alive(simulation, relations->owner))
             return;
-        petal->effect_delay = 15;
+        petal->effect_delay = RR_PETAL_DATA[rr_petal_id_uranium].secondary_cooldown;
         rr_component_health_set_flags(health, health->flags | 2);
         struct uranium_captures captures = {simulation, relations->owner, petal->rarity, 
                                             physical->x, physical->y,
