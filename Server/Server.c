@@ -283,10 +283,17 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             return -1;
         if (client->pending_kick)
         {
+            struct rr_server_client_message *message = client->message_root;
+            while (message != NULL)
+            {
+                struct rr_server_client_message *tmp = message->next;
+                free(message->packet);
+                free(message);
+                message = tmp;
+            }
             lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"kicked for unspecified reason", sizeof "kicked for unspecified reason" - 1);
             return -1;
         }
-        break;
         struct rr_server_client_message *message = client->message_root;
         while (message != NULL)
         {
@@ -802,8 +809,8 @@ static void server_tick(struct rr_server *this)
             struct rr_server_client *client = &this->clients[i];
             if (++client->ticks_to_afk_kick >= 180 * 25)
             {
-                printf("rr_server::afk_kick::%s>\n", client->rivet_account.uuid);
-                client->pending_kick = 1;
+                //printf("rr_server::afk_kick::%s>\n", client->rivet_account.uuid);
+                //client->pending_kick = 1;
             }
             if (client->pending_kick)
                 lws_callback_on_writable(client->socket_handle);

@@ -51,7 +51,6 @@ void rr_server_client_write_message(struct rr_server_client *this, uint8_t *data
             rr_get_hash(this->clientbound_encryption_key);
         rr_encrypt(data, size, this->clientbound_encryption_key);
     }
-    /*
     struct rr_server_client_message *message = malloc(sizeof *message);
     uint8_t *packet = malloc(LWS_PRE + size);
     memcpy(packet + LWS_PRE, data, size);
@@ -64,8 +63,7 @@ void rr_server_client_write_message(struct rr_server_client *this, uint8_t *data
         this->message_at->next = message;
     this->message_at = message;
     lws_callback_on_writable(this->socket_handle);
-    */
-    lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
+    //lws_write(this->socket_handle, data, size, LWS_WRITE_BINARY);
 }
 
 void rr_server_client_write_account(struct rr_server_client *client)
