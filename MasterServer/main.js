@@ -20,15 +20,19 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const MAX_PETAL_COUNT = 24;
 
-// let database = {};
-// let changed = false;
-// const databaseFilePath = path.join(__dirname, "database.json");
+let database = [];
+let changed = false;
+const databaseFilePath = path.join(__dirname, "database.json");
 
-// if (fs.existsSync(databaseFilePath))
-// {
-//    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
-//    database = JSON.parse(databaseData);
-// }
+if (fs.existsSync(databaseFilePath))
+{
+    const databaseData = fs.readFileSync(databaseFilePath, "utf8");
+    try {
+        database = JSON.parse(databaseData);
+    } catch(e) {
+        database = [];
+    }
+}
 
 const hash = s => crypto.createHash("sha512").update(s, "utf8").digest("hex");
 
@@ -90,7 +94,8 @@ function apply_missing_defaults(account)
         petals: {"1:0": 5},
         failed_crafts: {},
         mob_gallery: {},
-        inflated_up_to: 1
+        inflated_up_to: 1,
+        linked_from: {}
     };
 
     // Fill in any missing defaults
@@ -193,9 +198,12 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
+        database.push([old_username, username, old_account, new_account]);
+        changed = true;
         if (!new_account || (new_account.xp * 3 <= old_account.xp))
         {
             log("account_link", [old_username, username]);
+            old_account.linked_from = {...old_account};
             old_account.password = hash(username + PASSWORD_SALT);
             old_account.username = username;
             connected_clients[username] = old_account;
@@ -241,15 +249,13 @@ app.use((req, res) => {
 });
 
 const saveDatabaseToFile = () => {
-    // if (changed)
-    // {
-    //     changed = false;
-    //     console.log("saving database to file:", databaseFilePath);
-    //     const databaseData = JSON.stringify(database, null, 2);
-    //     fs.writeFileSync(databaseFilePath, databaseData, "utf8");
-    // }
-    // else
-    //     console.log("tried save, was not changed");
+    if (changed)
+    {
+        changed = false;
+        console.log("saving database to file:", databaseFilePath);
+        const databaseData = JSON.stringify(database, null, 2);
+        fs.writeFileSync(databaseFilePath, databaseData, "utf8");
+    }
 };
 
 const server = http.createServer(app);
@@ -311,7 +317,7 @@ wss.on("connection", (ws, req) => {
                     const client = connected_clients[uuid];
                     if (!client)
                         break;
-                    write_db_entry(client.user.username, client.user);
+                    //write_db_entry(client.user.username, client.user);
                     game_server.clients[pos] = 0;
                 }
                 delete connected_clients[uuid];
