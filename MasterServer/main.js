@@ -80,9 +80,15 @@ async function request(method, key, body)
             }
         })()
     });
-
-    const data = await data_j.json();
-    return data;
+    if (method === "POST")
+        return;
+    try {
+        const data = await data_j.json();
+        return data;
+    }
+    catch(e) {
+        return {};
+    }
 }
 
 function apply_missing_defaults(account)
