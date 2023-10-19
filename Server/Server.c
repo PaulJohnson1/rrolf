@@ -514,10 +514,32 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             if (!client->in_squad)
             {
                 uint8_t squad = rr_client_find_squad(this, client);
-                if (squad != RR_ERROR_CODE_FULL_SQUAD && squad != RR_ERROR_CODE_INVALID_SQUAD)
-                    rr_client_join_squad(this, client, squad);
+                if (squad == RR_ERROR_CODE_INVALID_SQUAD)
+                {
+                    struct proto_bug failure;
+                    proto_bug_init(&failure, outgoing_message);
+                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                    proto_bug_write_uint8(&failure, 0, "fail type");
+                    rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                    client->in_squad = 0;
+                    client->pending_quick_join = 0;
+                    break;
+                }
+                if (squad == RR_ERROR_CODE_FULL_SQUAD)
+                {
+                    struct proto_bug failure;
+                    proto_bug_init(&failure, outgoing_message);
+                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                    proto_bug_write_uint8(&failure, 1, "fail type");
+                    rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                    client->in_squad = 0;
+                    client->pending_quick_join = 0;
+                    break;
+                }
+                rr_client_join_squad(this, client, squad);
+                client->pending_quick_join = 1;
             }
-            if (client->in_squad)
+            else if (client->in_squad)
             {
                 if (rr_squad_get_client_slot(this, client)->playing == 0)
                 {
@@ -545,7 +567,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         case rr_serverbound_squad_update:
         {
             if (!client->in_squad)
-                return 0;
+                break;
             proto_bug_read_string(&encoder, rr_squad_get_client_slot(this, client)->nickname, 16, "nickname");
             uint8_t loadout_count = proto_bug_read_uint8(&encoder, "loadout count");
 
@@ -586,7 +608,30 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                     break;
                 }
             }
-
+            if (client->pending_quick_join)
+            {
+                client->pending_quick_join = 0;
+                if (member->playing == 0)
+                {
+                    if (client->player_info != NULL)
+                    {
+                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        client->player_info = NULL;
+                    }
+                    member->playing = 1;
+                    rr_server_client_create_player_info(this, client);
+                    rr_server_client_create_flower(client);
+                }
+                else
+                {
+                    if (client->player_info != NULL)
+                    {
+                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        client->player_info = NULL;
+                        member->playing = 0;
+                    }
+                }
+            }
             break;
         }
         case rr_serverbound_private_update:
