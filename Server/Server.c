@@ -511,6 +511,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             if (client->ticks_to_next_squad_action > 0)
                 break;
             client->ticks_to_next_squad_action = 10;
+            if (!client->in_squad)
+            {
+                uint8_t squad = rr_client_find_squad(this, client);
+                if (squad != RR_ERROR_CODE_FULL_SQUAD && squad != RR_ERROR_CODE_INVALID_SQUAD)
+                    rr_client_join_squad(this, client, squad);
+            }
             if (client->in_squad)
             {
                 if (rr_squad_get_client_slot(this, client)->playing == 0)
