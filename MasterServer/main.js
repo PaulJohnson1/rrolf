@@ -136,10 +136,14 @@ function apply_missing_defaults(account)
 
 async function write_db_entry(username, data)
 {
-    changed = true;
-    //delete data.needs_update;
-    //database[username] = structuredClone(data);
-    await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    try {
+        changed = true;
+        //delete data.needs_update;
+        //database[username] = structuredClone(data);
+        await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    } catch(e) {
+        console.log(e);
+    }
 }
 
 async function db_read_user(username, password)
@@ -213,6 +217,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             old_account.username = username;
             connected_clients[username] = old_account;
             await write_db_entry(username, old_account);
+            await write_db_entry(old_username, null);
             delete connected_clients[username];
         }
         else
