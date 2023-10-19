@@ -33,7 +33,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
     h *= 2;
     uint32_t dim = RR_MAZES[biome].maze_dim;
     for (uint32_t Y = 0; Y < h; ++Y)
-        for (uint32_t X = 0; X < h; ++X)
+        for (uint32_t X = 0; X < w; ++X)
             RR_MAZES[biome].maze[(Y+y)*dim+(X+x)].spawn_function = fun;
 }
 
