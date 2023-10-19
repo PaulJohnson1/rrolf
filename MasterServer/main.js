@@ -20,6 +20,16 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const MAX_PETAL_COUNT = 24;
 
+const _jsonparse = JSON.parse;
+JSON.parse = function(str) {
+    try {
+        return _jsonparse(str);
+    } catch(e) {
+        console.log(str, e);
+        throw new Error(e);
+    }
+
+}
 let database = [];
 let changed = false;
 const databaseFilePath = path.join(__dirname, "linklogs.json");
