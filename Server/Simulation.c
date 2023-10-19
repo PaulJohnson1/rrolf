@@ -43,13 +43,14 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 #define SPAWN_ZONE_H 1
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
-uint8_t rex_quetz_zone() { return rr_frand() > 0.35 ? rr_mob_id_trex : rr_mob_id_quetzalcoatlus; }
+uint8_t rex_zone() { return rr_mob_id_trex; }
 uint8_t ankylo_zone() { return rr_frand() > 0.2 ? rr_mob_id_ankylosaurus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
 uint8_t edmonto_zone() { return rr_mob_id_edmontosaurus; }
 uint8_t dako_zone() { return rr_mob_id_dakotaraptor; }
+uint8_t quetz_zone() { return rr_mob_id_quetzalcoatlus; }
 
 void rr_simulation_init(struct rr_simulation *this)
 {
@@ -65,10 +66,11 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(rr_biome_id_hell_creek, ptera_meteor_zone, 13, 23, 4, 3);
     set_special_zone(rr_biome_id_hell_creek, edmonto_zone, 19, 3, 3, 2);
     set_special_zone(rr_biome_id_hell_creek, dako_zone, 7, 7, 1, 3);
-    set_special_zone(rr_biome_id_hell_creek, rex_quetz_zone, 0, 29, 5, 1);
+    set_special_zone(rr_biome_id_hell_creek, rex_zone, 0, 29, 5, 1);
     set_special_zone(rr_biome_id_hell_creek, trike_pachy_zone, 6, 23, 2, 2);
     set_special_zone(rr_biome_id_hell_creek, ankylo_zone, 4, 16, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, patchy_zone, 7, 4, 2, 1);
+    set_special_zone(rr_biome_id_hell_creek, quetz_zone, 11, 0, 3, 2);
 #define XX(COMPONENT, ID)                                                      \
     //printf(#COMPONENT);                                                        \
     printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
