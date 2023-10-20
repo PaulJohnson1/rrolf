@@ -374,6 +374,8 @@ static void petal_modifiers(struct rr_simulation *simulation,
     physical->aggro_range_multiplier = 1;
     health->damage_reduction = 0;
     uint8_t rot_count = 0;
+    float bone_diminish_factor = 1;
+    float feather_diminish_factor = 1;
     rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -386,7 +388,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_light)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
-            RR_SET_IF_GREATER(physical->acceleration_scale, 1 + 0.05 + 0.025 * slot->rarity)
+        {
+            physical->acceleration_scale += (0.05 + 0.025 * slot->rarity) * feather_diminish_factor;
+            feather_diminish_factor *= 0.6;
+        }
         else if (data->id == rr_petal_id_crest)
         {
             rr_component_flower_set_face_flags(flower, flower->face_flags | 8);
@@ -400,7 +405,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
             RR_SET_IF_GREATER(player_info->modifiers.petal_extension, 35 * (slot->rarity - rr_rarity_id_epic))
         }
         else if (data->id == rr_petal_id_bone)
-            RR_SET_IF_GREATER(health->damage_reduction, 1.7 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
+        {
+            health->damage_reduction += 1.7 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
+            bone_diminish_factor *= 0.6;
+        }
         else
         {
             for (uint32_t inner = 0; inner < slot->count; ++inner)

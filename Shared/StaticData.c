@@ -56,9 +56,9 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Spawns a pet dinosaur to protect you",
     "Increases loot pickup radius. Does not stack",
     "Does low damage to mobs in a small range",
-    "It's so light it increases your movement speed. Does not stack",
+    "It's so light it increases your movement speed. Stacks diminishingly",
     "It heals you",
-    "Gives the player armor. Does not stack",
+    "Gives the player armor. Stacks diminishingly",
     "It slows everything down",
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
@@ -123,8 +123,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {4.5, 1.6, 1.3},
     {18, 3.0,  1.7}, 
     {50,  6.9, 2.3},
-    {400, 13.5, 3.6},
-    {1800, 25.0, 4.8},
+    {425, 13.5, 3.6},
+    {1850, 25.0, 4.8},
     {20000,50,   7.0},
 };
 // clang-format on
