@@ -264,7 +264,7 @@ static void system_flower_petal_movement_logic(
             if (squad_has_dead_player(simulation, player_info->squad))
             {
                 petal->effect_delay =
-                    6000 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                    11250 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
                 rr_component_petal_set_detached(petal, 1);
             }
             break;
@@ -406,7 +406,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_bone)
         {
-            health->damage_reduction += 1.7 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
+            health->damage_reduction += 2.0 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
             bone_diminish_factor *= 0.6;
         }
         else
