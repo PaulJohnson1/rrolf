@@ -400,7 +400,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
             RR_SET_IF_GREATER(player_info->modifiers.petal_extension, 35 * (slot->rarity - rr_rarity_id_epic))
         }
         else if (data->id == rr_petal_id_bone)
-            RR_SET_IF_GREATER(health->damage_reduction, 2.5 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
+            RR_SET_IF_GREATER(health->damage_reduction, 1.7 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
         else
         {
             for (uint32_t inner = 0; inner < slot->count; ++inner)

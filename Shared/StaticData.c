@@ -122,9 +122,9 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
     {4.5, 1.6, 1.3},
     {18, 3.0,  1.7}, 
-    {50,  4.8, 2.3},
-    {375, 11.1, 3.6},
-    {2250, 22.5, 4.8},
+    {50,  6.8, 2.3},
+    {325, 13.6, 3.6},
+    {1500, 25.5, 4.8},
     {20000,50,   7.0},
 };
 // clang-format on
@@ -141,7 +141,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 50, 2000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 30, 40, 200};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 25, 30, 200};
 
 static void init_game_coefficients()
 {
