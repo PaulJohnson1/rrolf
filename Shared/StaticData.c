@@ -16,7 +16,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_shell, rr_rarity_id_rare, 20.0f, 8.0f, 15.0f, 38, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, 6.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
-    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_egg, rr_rarity_id_unusual, 1.0f, 20.0f, 0.0f, 12, 112550, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_magnet, rr_rarity_id_rare, 2.0f, 15.0f, 0.0f, 38, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, 12.0f, 10.0f, 0.0f, 50, 25, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_feather, rr_rarity_id_common, 1.0f, 3.0f, 0.0f, 25, 0, {1, 1, 1, 1, 1, 1, 1}},
@@ -78,7 +78,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, rr_rarity_id_rare, 35, 15, 30.0f, {{rr_petal_id_leaf, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_trex, rr_rarity_id_epic, 30, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_egg, 0.05}}},
     {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
-    {rr_mob_id_tree, rr_rarity_id_rare, 75, 5, 60.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.01}}},
+    {rr_mob_id_tree, rr_rarity_id_rare, 75, 5, 60.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.03}}},
     {rr_mob_id_pteranodon, rr_rarity_id_rare, 30, 20, 20.0f, {{rr_petal_id_shell, 0.15},{rr_petal_id_beak, 0.15}}},
     {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 30, 10, 25.0f, {{rr_petal_id_crest, 0.1},{rr_petal_id_feather, 0.15},{rr_petal_id_pellet, 0.05}}},
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 20, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1},{rr_petal_id_web, 0.05}}},
@@ -123,8 +123,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {4.5, 1.6, 1.3},
     {18, 3.0,  1.7}, 
     {50,  6.9, 2.3},
-    {350, 13.5, 3.6},
-    {1750, 25.0, 4.8},
+    {400, 13.5, 3.6},
+    {1800, 25.0, 4.8},
     {20000,50,   7.0},
 };
 // clang-format on
@@ -141,7 +141,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 50, 2000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 45, 200, 500, 1};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 25, 30, 200};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 16, 25, 40, 200};
 
 static void init_game_coefficients()
 {
