@@ -56,6 +56,7 @@ enum rr_rarity_id
     rr_rarity_id_legendary,
     rr_rarity_id_mythic,
     rr_rarity_id_ultra,
+    //rr_rarity_id_super,
     rr_rarity_id_max
 };
 

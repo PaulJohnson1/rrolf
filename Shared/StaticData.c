@@ -14,6 +14,7 @@ struct rr_petal_base_stat_scale const offensive[rr_rarity_id_max] = {
     {16,  81},
     {32,  243},
     {64,  729},
+    //{128, 2187}
 };
 
 struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
@@ -24,6 +25,7 @@ struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
     {81,  16},
     {243, 32},
     {729, 64},
+    //{2187,128}
 };
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
@@ -31,9 +33,9 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_basic, rr_rarity_id_common, &offensive[0], 10.0f, 15.0f, 0.0f, 50, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_pellet, rr_rarity_id_common, &offensive[0], 13.0f, 5.0f, 0.0f, 15, 0, {1, 2, 2, 3, 3, 5, 5}},
     {rr_petal_id_fossil, rr_rarity_id_common, &offensive[0], 10.0f, 60.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
-    {rr_petal_id_stinger, rr_rarity_id_common, &offensive[0], 80.0f, 3.0f, 10.0f, 125, 0, {1, 1, 1, 1, 1, 3, 5}},
+    {rr_petal_id_stinger, rr_rarity_id_common, &offensive[0], 80.0f, 3.0f, 10.0f, 150, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, &offensive[0], 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 3}},
-    {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 20.0f, 8.0f, 15.0f, 75, 13, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 20.0f, 8.0f, 15.0f, 63, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_peas, rr_rarity_id_rare, &offensive[0], 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, &defensive[0], 10.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, &defensive[0], 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},
@@ -130,12 +132,13 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1.0, 240, 45},
-    {2.3, 120, 60},
-    {4.9, 60,  75},
-    {13,  30,  100},
-    {20,  15,  150},
-    {48,  5,   200},
-    {100, 1.5, 250},
+    {2.0, 120, 60},
+    {5.0, 60,  75},
+    {12,  30,  100},
+    {25,  15,  150},
+    {56,  5,   200},
+    {120, 1.5, 250},
+    //{300, 0.5, 250}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -145,7 +148,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {54,  8.0, 2.3},
     {450, 16,  3.6},
     {2700,32,  4.8},
-    {36e3,64, 7.0},
+    {36e3,64,  6.0},
+    //{1e6, 128, 7.0}
 };
 // clang-format on
 
@@ -161,7 +165,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 50, 2000};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 40, 150, 1000, 25};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 12, 25, 100, 150};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 12, 25, 80, 175};
 
 static void init_game_coefficients()
 {
@@ -332,6 +336,8 @@ static double from_prd_base(double C)
 }
 static double get_prd_base(double p)
 {
+    if (p == 0)
+        return 0;
     double Cupper = p;
     double Clower = 0;
     double Cmid;

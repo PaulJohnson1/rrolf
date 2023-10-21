@@ -141,14 +141,18 @@ int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_bina
     while (id)
     {
         uint8_t rarity = rr_binary_encoder_read_uint8(encoder);
-        this->inventory[id][rarity] = rr_binary_encoder_read_varuint(encoder);
+        uint32_t count = rr_binary_encoder_read_varuint(encoder);
+        if (rarity < rr_rarity_id_max)
+            this->inventory[id][rarity] = count;
         id = rr_binary_encoder_read_uint8(encoder);
     }
     id = rr_binary_encoder_read_uint8(encoder);
     while (id)
     {
         uint8_t rarity = rr_binary_encoder_read_uint8(encoder);
-        this->craft_fails[id][rarity] = rr_binary_encoder_read_varuint(encoder);
+        uint32_t count = rr_binary_encoder_read_varuint(encoder);
+        if (rarity < rr_rarity_id_max)
+            this->craft_fails[id][rarity] = count; 
         id = rr_binary_encoder_read_uint8(encoder);
     }
     return 1;
