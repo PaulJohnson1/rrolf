@@ -44,9 +44,9 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
 
     memcpy(rr_simulation_add_flower(this, flower_id)->nickname, player_info->squad_member->nickname, sizeof player_info->squad_member->nickname);
     rr_component_flower_set_level(rr_simulation_get_flower(this, flower_id), player_info->level);
-    rr_component_health_set_max_health(health, 100 * pow(1.03, player_info->level > 120 ? 120 : player_info->level));
+    rr_component_health_set_max_health(health, 100 * pow(1.035, player_info->level > 120 ? 120 : player_info->level));
     rr_component_health_set_health(health, health->max_health);
-    health->damage = 25 * pow(1.03, player_info->level > 120 ? 120 : player_info->level);
+    health->damage = health->max_health * 0.1;
     health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(this, entity));

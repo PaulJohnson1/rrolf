@@ -37,6 +37,8 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         return;
     }
     EntityIdx p = rr_simulation_alloc_player(&this->server->simulation, 1, this->player_info->parent_id);
+    return;
+    //no
     if (this->dev)
     {
         rr_component_relations_set_team(rr_simulation_get_relations(&this->server->simulation, p), rr_simulation_team_id_mobs);

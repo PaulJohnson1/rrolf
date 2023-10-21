@@ -105,9 +105,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
         uint64_t cap = rarity;
-        if (rarity < rr_rarity_id_mythic)
-            cap = rarity;
-        else
+        if (rarity >= rr_rarity_id_mythic)
             cap = rarity - 1;
         uint8_t min_rar = RR_PETAL_DATA[p_id].min_rarity;
         for (uint8_t r = min_rar + 1; r <= cap + 1; ++r)

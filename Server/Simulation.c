@@ -129,7 +129,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         return;
     for (uint32_t n = 0; n < 10; ++n)
     {
-        struct rr_vector pos = {(grid_x + rr_frand()) * arena->grid_size, (grid_y + rr_frand()) * arena->grid_size};
+        struct rr_vector pos = {(grid_x + rr_frand() * 2) * arena->grid_size, (grid_y + rr_frand() * 2) * arena->grid_size};
         if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[rarity].radius + 250))
             continue;
         EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
@@ -141,7 +141,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
 }
 
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    (1 - (DIFFICULTY) * 0.014) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 6) + 4
+    (1 - (DIFFICULTY) * 0.014) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 8) + 15
 
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
@@ -193,9 +193,9 @@ static void tick_wave(struct rr_simulation *this)
         arena->grid[i].player_count = 0;
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
-    for (uint32_t grid_x = 0; grid_x < arena->maze_dim; ++grid_x)
+    for (uint32_t grid_x = 0; grid_x < arena->maze_dim; grid_x += 2)
     {
-        for (uint32_t grid_y = 0; grid_y < arena->maze_dim; ++grid_y)
+        for (uint32_t grid_y = 0; grid_y < arena->maze_dim; grid_y += 2)
         {
             //if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
                 //grid_y += SPAWN_ZONE_H;
@@ -204,9 +204,9 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
-            uint32_t time = (grid->difficulty * 7 / 4) + 175; 
-            if (grid->spawn_function != NULL)
-                time *= 4;
+            uint32_t time = (grid->difficulty * 7 / 4) + 100; 
+            //if (grid->spawn_function != NULL)
+                //time *= 4;
             if (rand() % time == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
