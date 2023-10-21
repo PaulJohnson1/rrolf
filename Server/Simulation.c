@@ -66,7 +66,7 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(rr_biome_id_hell_creek, ptera_meteor_zone, 13, 23, 4, 3);
     set_special_zone(rr_biome_id_hell_creek, edmonto_zone, 19, 3, 3, 2);
     set_special_zone(rr_biome_id_hell_creek, dako_zone, 7, 7, 1, 3);
-    set_special_zone(rr_biome_id_hell_creek, rex_zone, 0, 29, 5, 1);
+    set_special_zone(rr_biome_id_hell_creek, rex_zone, 0, 29, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, trike_pachy_zone, 6, 23, 2, 2);
     set_special_zone(rr_biome_id_hell_creek, ankylo_zone, 4, 16, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, patchy_zone, 7, 4, 2, 1);
