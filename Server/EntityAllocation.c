@@ -75,11 +75,13 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     physical->arena = arena;
     physical->mass = 5;
     physical->friction = 0.75;
+    float scale_h = data->scale[rarity].health;
+    float scale_d = data->scale[rarity].damage;
     if (id == rr_petal_id_club)
     {
         rr_component_physical_set_radius(physical, 15);
-        physical->mass = 25 * powf(RR_PETAL_RARITY_SCALE[id].damage, 1.3);
-        physical->knockback_scale = 4.5;
+        physical->mass = 25 * powf(1.8, petal->rarity);
+        physical->knockback_scale = 5;
     }
 
     rr_component_petal_set_id(petal, id);
@@ -89,9 +91,6 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     rr_component_relations_set_team(
         relations, rr_simulation_get_relations(this, owner)->team);
     rr_component_relations_update_root_owner(this, relations);
-    float scale_h = RR_PETAL_RARITY_SCALE[rarity].health;
-    float scale_d = RR_PETAL_RARITY_SCALE[rarity].damage;
-
     rr_component_health_set_max_health(health, scale_h * data->health);
     rr_component_health_set_health(health, health->max_health);
     rr_component_health_set_flags(health, health->flags | 1);

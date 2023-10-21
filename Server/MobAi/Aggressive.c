@@ -229,7 +229,7 @@ void tick_ai_aggro_ankylosaurus(EntityIdx entity, struct rr_simulation *simulati
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
-        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 2.5, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 2, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         if (ai->ticks_until_next_action == 0)
         {

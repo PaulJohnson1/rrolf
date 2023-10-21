@@ -51,7 +51,7 @@ void rr_component_petal_free(struct rr_component_petal *this,
         rr_simulation_get_physical(simulation, this->parent_id);
     rr_component_physical_set_x(physical, petal_phys->x);
     rr_component_physical_set_y(physical, petal_phys->y);
-    rr_component_physical_set_radius(physical, 40 + sqrtf(RR_PETAL_RARITY_SCALE[this->rarity].health) * 15);
+    rr_component_physical_set_radius(physical, RR_PETAL_RARITY_SCALE[this->rarity].web_radius);
     rr_component_physical_set_angle(physical, rr_frand() * 2 * M_PI);
     physical->mass = 1;
     physical->friction = 0;

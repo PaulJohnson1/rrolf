@@ -37,7 +37,7 @@ enum rr_clientbound_packet_header
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
-#define RR_PLAYER_SPEED (3.5)
+#define RR_PLAYER_SPEED (3.6)
 
 enum rr_biome_id
 {
@@ -119,6 +119,12 @@ enum rr_mob_id
     rr_mob_id_max
 };
 
+struct rr_petal_base_stat_scale
+{
+    float health;
+    float damage;
+};
+
 struct rr_loot_data
 {
     uint8_t id;
@@ -139,6 +145,7 @@ struct rr_petal_data
 {
     uint8_t id;
     uint8_t min_rarity; // minimum rarity petal can spawn at
+    struct rr_petal_base_stat_scale const *scale;
     float damage;
     float health;
     float clump_radius;
@@ -147,18 +154,18 @@ struct rr_petal_data
     uint8_t count[rr_rarity_id_max];
 };
 
+struct rr_petal_rarity_scale
+{
+    float heal;
+    float seed_cooldown;
+    float web_radius;
+};
+
 struct rr_mob_rarity_scale
 {
     float health;
     float damage;
     float radius;
-};
-
-struct rr_petal_rarity_scale
-{
-    float health;
-    float damage;
-    float heal;
 };
 
 extern struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max];

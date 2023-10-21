@@ -112,7 +112,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     if (petal->id == rr_petal_id_beak)
     {
         struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-        physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].damage) / 5) * (1 - physical->slow_resist);
+        physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 4) * (1 - physical->slow_resist);
     }
     else if (petal->id == rr_petal_id_lightning)
     {
@@ -122,7 +122,7 @@ static void petal_effect(struct rr_simulation *simulation, EntityIdx target, Ent
     {
         struct rr_component_health *health = rr_simulation_get_health(simulation, target);
         if (health->health > 0 && health->health * 2 < health->max_health)
-            rr_component_health_do_damage(simulation, health, petal_id, 50 * RR_PETAL_RARITY_SCALE[petal->rarity].damage);
+            rr_component_health_do_damage(simulation, health, petal_id, 50 * RR_PETAL_DATA[petal->id].scale[petal->rarity].damage);
     }
 }
 

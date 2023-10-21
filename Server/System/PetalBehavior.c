@@ -263,8 +263,7 @@ static void system_flower_petal_movement_logic(
                 return;
             if (squad_has_dead_player(simulation, player_info->squad))
             {
-                petal->effect_delay =
-                    11250 / RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                petal->effect_delay = 25 * RR_PETAL_RARITY_SCALE[petal->rarity].seed_cooldown;
                 rr_component_petal_set_detached(petal, 1);
             }
             break;
@@ -289,7 +288,7 @@ static void system_flower_petal_movement_logic(
             if (rr_vector_magnitude_cmp(&delta, target_physical->radius + physical->radius) == -1)
             {
                 struct rr_component_health *mob_health = rr_simulation_get_health(simulation, mob_to_heal);
-                float heal = 15 * RR_PETAL_RARITY_SCALE[petal->rarity].damage;
+                float heal = 15 * RR_PETAL_RARITY_SCALE[petal->rarity].heal;
                 rr_component_health_set_health(mob_health, mob_health->health + heal);
                 rr_simulation_request_entity_deletion(simulation, id);
                 return;
@@ -406,7 +405,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_bone)
         {
-            health->damage_reduction += 2.0 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
+            health->damage_reduction += 1.8 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
             bone_diminish_factor *= 0.6;
         }
         else
@@ -416,7 +415,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
-                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 30 * RR_PETAL_RARITY_SCALE[slot->rarity].health)
+                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 45 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
             }
         }
     }
