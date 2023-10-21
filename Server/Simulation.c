@@ -205,6 +205,8 @@ static void tick_wave(struct rr_simulation *this)
             if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
                 continue;
             uint32_t time = (grid->difficulty * 7 / 4) + 175; 
+            if (grid->spawn_function != NULL)
+                time *= 4;
             if (rand() % time == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
