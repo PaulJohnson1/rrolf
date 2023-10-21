@@ -66,7 +66,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_aggro_pteranodon(entity, this);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * 1.4);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED * (1.4 - mob->rarity * 0.05));
         break;
     case rr_mob_id_pachycephalosaurus:
         tick_ai_aggro_pachycephalosaurus(entity, this);

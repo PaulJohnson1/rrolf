@@ -120,7 +120,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
     uint8_t id;
-    if (grid->spawn_function && rr_frand() < 1.0/3)
+    if (grid->spawn_function && rr_frand() < 2.0/3)
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
