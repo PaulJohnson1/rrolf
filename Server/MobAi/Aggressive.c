@@ -106,9 +106,9 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->velocity, 50, physical->angle);
             rr_component_petal_set_detached(rr_simulation_get_petal(simulation, petal_id), 1);
-            rr_component_health_set_max_health(health, 5 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+            rr_component_health_set_max_health(health, 10 * RR_MOB_RARITY_SCALING[mob->rarity].health);
             rr_component_health_set_health(health, health->max_health);
-            health->damage = 8 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
+            health->damage = 12 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
             struct rr_vector recoil;
             rr_vector_from_polar(&recoil, -5,
@@ -274,7 +274,7 @@ void tick_ai_aggro_quetzalcoaltus(EntityIdx entity, struct rr_simulation *simula
         {
             ai->ticks_until_next_action = 20;
 
-            rr_vector_from_polar(&delta, RR_PLAYER_SPEED * 16, physical->angle);
+            rr_vector_from_polar(&delta, RR_PLAYER_SPEED * 18, physical->angle);
             rr_vector_add(&physical->acceleration, &delta);
         }
         break;
