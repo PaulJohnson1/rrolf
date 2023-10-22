@@ -17,6 +17,7 @@ enum rr_ai_state
     rr_ai_state_attacking,
 
     rr_ai_state_waiting_to_attack,
+    rr_ai_state_exotic_special,
 
     rr_ai_state_returning_to_owner
 };

@@ -371,7 +371,7 @@ wss.on("connection", (ws, req) => {
                     user.failed_crafts[id+':'+rarity] = count;
                     id = decoder.ReadUint8();
                 }
-                write_db_entry(user.username, user);
+                await write_db_entry(uuid, user);
                 break;
             }
             case 101:
@@ -386,10 +386,14 @@ wss.on("connection", (ws, req) => {
     encoder.WriteUint8(0);
     encoder.WriteStringNT(game_server.alias);
     ws.send(encoder.data.subarray(0, encoder.at));
-    ws.on('close', () => {
+    ws.on('close', async () => {
         log("game disconnect", [game_server.alias]);
         for (const uuid of game_server.clients)
+        {
+            if (connected_clients[uuid])
+                await write_db_entry(uuid, connected_clients[uuid].user);
             delete connected_clients[uuid];
+        }
         delete game_servers[game_server.alias];
     });
 });

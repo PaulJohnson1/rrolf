@@ -81,7 +81,8 @@ void rr_api_get_server_alias(char const *param_1, void *game)
                         _free($token);
                     })
                     .catch(function(error) {
-                        _rr_rivet_lobby_on_find(0, 0, 0, $2);
+                        console.log(error);
+                        return;//_rr_rivet_lobby_on_find(0, 0, 0, $2);
                     });
             });
         },
