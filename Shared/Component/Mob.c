@@ -62,7 +62,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         rr_bitset_set(can_be_picked_up_by, rr_simulation_get_arena(simulation, this->parent_id)->first_squad_to_enter);
     else 
         for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
-            rr_bitset_maybe_set(can_be_picked_up_by, i, this->squad_damage_counter[i] > RR_MOB_DATA[this->id].health * RR_MOB_RARITY_SCALING[this->rarity].health * 0.1);
+            rr_bitset_maybe_set(can_be_picked_up_by, i, this->squad_damage_counter[i] > RR_MOB_DATA[this->id].health * RR_MOB_RARITY_SCALING[this->rarity].health * 0.2);
 
     for (uint64_t i = 0; i < 4; ++i)
     {
