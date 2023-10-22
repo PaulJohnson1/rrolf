@@ -35,7 +35,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_fossil, rr_rarity_id_common, &offensive[0], 10.0f, 60.0f, 0.0f, 100, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_stinger, rr_rarity_id_common, &offensive[0], 80.0f, 3.0f, 10.0f, 150, 0, {1, 1, 1, 1, 1, 3, 5}},
     {rr_petal_id_light, rr_rarity_id_rare, &offensive[0], 8.0f, 5.0f, 15.0f, 20, 0, {1, 1, 1, 1, 1, 2, 3}},
-    {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 30.0f, 8.0f, 0.0f, 63, 13, {1, 1, 1, 1, 1, 2, 3}},
+    {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 40.0f, 8.0f, 0.0f, 63, 13, {1, 1, 1, 1, 1, 2, 3}},
     {rr_petal_id_peas, rr_rarity_id_rare, &offensive[0], 20.0f, 8.0f, 8.0f, 13, 12, {4, 4, 4, 4, 4, 4, 5}},
     {rr_petal_id_leaf, rr_rarity_id_unusual, &defensive[0], 10.0f, 12.0f, 8.0f, 25, 0, {1, 1, 1, 1, 1, 2, 2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, &defensive[0], 1.0f, 20.0f, 0.0f, 12, 125, {1, 1, 1, 1, 1, 1, 1}},

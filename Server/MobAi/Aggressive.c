@@ -100,7 +100,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             rr_component_physical_set_angle(physical2, physical->angle);
             rr_component_physical_set_radius(
                 physical2, 10 * RR_MOB_RARITY_SCALING[mob->rarity].radius);
-            physical2->friction = 0.5f;
+            physical2->friction = 0.45f;
             physical2->mass = 5.0f;
             physical2->knockback_scale = 25;
             physical2->bearing_angle = physical->angle;
@@ -229,7 +229,7 @@ void tick_ai_aggro_ankylosaurus(EntityIdx entity, struct rr_simulation *simulati
         struct rr_component_physical *physical2 =
             rr_simulation_get_physical(simulation, ai->target_entity);
 
-        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 2, physical->angle);
+        rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.5, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         if (ai->ticks_until_next_action == 0)
         {
