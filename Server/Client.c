@@ -47,6 +47,12 @@ void rr_server_client_create_flower(struct rr_server_client *this)
 
 void rr_server_client_write_message(struct rr_server_client *this, uint8_t *data, uint64_t size)
 {
+    if (this->message_length++ >= 1024)
+    {
+        this->pending_kick = 1;
+        lws_callback_on_writable(this->socket_handle);
+        return;
+    }
     if (this->received_first_packet)
     {
         this->clientbound_encryption_key =

@@ -304,6 +304,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             message = tmp;
         }
         client->message_at = client->message_root = NULL;
+        client->message_length = 0;
         break;
     }
     case LWS_CALLBACK_RECEIVE:
@@ -315,7 +316,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
         proto_bug_set_bound(&encoder, packet + size);
-        client->ticks_to_afk_kick = 0;
         if (!client->received_first_packet)
         {
             client->received_first_packet = 1;
@@ -863,11 +863,6 @@ static void server_tick(struct rr_server *this)
         if (rr_bitset_get(this->clients_in_use, i))
         {
             struct rr_server_client *client = &this->clients[i];
-            if (++client->ticks_to_afk_kick >= 180 * 25)
-            {
-                //printf("rr_server::afk_kick::%s>\n", client->rivet_account.uuid);
-                //client->pending_kick = 1;
-            }
             if (client->pending_kick)
                 lws_callback_on_writable(client->socket_handle);
             if (client->ticks_to_next_squad_action > 0)

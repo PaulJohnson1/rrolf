@@ -141,7 +141,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
 }
 
 #define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    (1 - (DIFFICULTY) * 0.014) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 8) + 15
+    (1 - (DIFFICULTY) * 0.014) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 10) + 15
 
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
@@ -206,7 +206,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             //if (grid->spawn_function != NULL)
                 //time *= 4;
-            uint32_t time = 180 - (20 * (grid->player_count > 4 ? 4 : grid->player_count));
+            uint32_t time = 180 - (10 * (grid->player_count > 12 ? 12 : grid->player_count));
             if (rand() % time == 0)
                 spawn_mob(this, grid_x, grid_y);
         }
