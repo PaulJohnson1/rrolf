@@ -206,7 +206,7 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             //if (grid->spawn_function != NULL)
                 //time *= 4;
-            uint32_t time = 250 - (20 * (grid->player_count > 4 ? 4 : grid->player_count));
+            uint32_t time = 180 - (20 * (grid->player_count > 4 ? 4 : grid->player_count));
             if (rand() % time == 0)
                 spawn_mob(this, grid_x, grid_y);
         }

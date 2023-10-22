@@ -73,9 +73,7 @@ void rr_component_mob_free(struct rr_component_mob *this,
         float s2 = RR_MOB_DATA[this->id].loot[i].seed;
         uint8_t drop;
         uint8_t cap = this->rarity;
-        if (this->rarity < rr_rarity_id_mythic)
-            cap = this->rarity;
-        else
+        if (this->rarity >= rr_rarity_id_mythic)
             cap = this->rarity - 1;
 
         for (drop = 0; drop <= cap + 1; ++drop)

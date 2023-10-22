@@ -126,7 +126,7 @@ char const *RR_MOB_NAMES[rr_mob_id_max] =
  "Honeybee","Beehive","Spider","House Centipede","Lanternfly"};
 
 uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max]         = {8,  10,  4,  6, 15, 12, 9,  6,  10, 1,   12, 9,  8, 12, 8, 9, 9, 9, 9};
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 0.5, 100, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 0.5, 75, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 // zeach's numbers from the pinned screenshot of the old scaling
@@ -162,10 +162,10 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"
 };
                                           
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 50, 2000};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 100, 2500};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 10, 20, 40, 150, 1000, 25};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 12, 25, 80, 175};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 6, 8, 12, 25, 60, 200};
 
 static void init_game_coefficients()
 {
