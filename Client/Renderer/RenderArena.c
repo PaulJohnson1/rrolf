@@ -59,7 +59,6 @@ void render_background(struct rr_component_player_info *player_info, struct rr_g
     for (; nx < rightX / grid_size; ++nx)
         for (int32_t currY = ny; currY < bottomY / grid_size; ++currY)
         {
-            rr_renderer_set_fill(renderer, 0xff000000);
             uint8_t tile = (nx < 0 || currY < 0 || nx >= maze_dim || currY >= maze_dim) ? 0 : grid[currY*maze_dim+nx].value;
             if (tile != 1)
             {
@@ -82,27 +81,6 @@ void render_background(struct rr_component_player_info *player_info, struct rr_g
                     rr_renderer_partial_arc(renderer, (nx + left) * grid_size, (currY + top) * grid_size, grid_size, start_angle, start_angle + M_PI / 2, 0);
                     rr_renderer_fill(renderer);
                 }
-            }
-            if (tile != 0 && (tile & 8) == 0 && grid[currY*maze_dim+nx].max_points != 0 && rr_bitset_get(this->input_data->keys_pressed, 'Q')) 
-            {
-                char a[16];
-                sprintf(a, "%d/%d\n", grid[currY*maze_dim+nx].grid_points,grid[currY*maze_dim+nx].max_points);
-                rr_renderer_set_fill(renderer, 0xffffffff);
-                rr_renderer_set_text_size(renderer, 60);
-                rr_renderer_set_text_baseline(renderer, 1);
-                rr_renderer_set_text_align(renderer, 1);
-                rr_renderer_begin_path(renderer);
-                rr_renderer_fill_text(renderer, a, (nx + 0.5) * grid_size, (currY + 0.5) * grid_size);
-                float pct = grid[currY*maze_dim+nx].spawn_timer;
-                rr_renderer_set_stroke(renderer, 0xff000000);
-                rr_renderer_set_line_width(renderer, 20);
-                rr_renderer_begin_path(renderer);
-                rr_renderer_arc(renderer, (nx + 0.5) * grid_size, (currY + 0.5) * grid_size, 150);
-                rr_renderer_stroke(renderer);
-                rr_renderer_set_stroke(renderer, 0xff75dd34);
-                rr_renderer_begin_path(renderer);
-                rr_renderer_partial_arc(renderer, (nx + 0.5) * grid_size, (currY + 0.5) * grid_size, 150, -M_PI / 2, -M_PI / 2 + 2 * M_PI * pct, 0);
-                rr_renderer_stroke(renderer);
             }
         }
 }

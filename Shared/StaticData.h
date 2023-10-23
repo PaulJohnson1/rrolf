@@ -196,11 +196,9 @@ struct rr_maze_grid
     uint16_t spawn_timer;
     uint8_t player_count;
     uint8_t difficulty;
-#else
-    float spawn_timer;
-#endif
     uint8_t grid_points;
     uint8_t max_points;
+#endif
     uint8_t value;
 };
 

@@ -727,22 +727,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->crafting_data.animation = 0;
             break;
         }
-        case rr_clientbound_dev_info:
-        {
-            uint8_t biome = proto_bug_read_uint8(&encoder, "biome");
-            struct rr_maze_declaration *decl = &RR_MAZES[biome];
-            for (uint32_t grid_x = 0; grid_x < decl->maze_dim; ++grid_x)
-            {
-                for (uint32_t grid_y = 0; grid_y < decl->maze_dim; ++grid_y)
-                {
-                    struct rr_maze_grid *grid = &decl->maze[grid_y * decl->maze_dim + grid_x];
-                    grid->grid_points = proto_bug_read_uint8(&encoder, "grid points");
-                    grid->max_points = proto_bug_read_uint8(&encoder, "max points");
-                    grid->spawn_timer = rr_lerp(grid->spawn_timer, proto_bug_read_float32(&encoder, "spawn time"), 0.1);
-                }
-            }
-            break;
-        }
         default:
             RR_UNREACHABLE("how'd this happen");
         }
