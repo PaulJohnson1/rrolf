@@ -195,10 +195,11 @@ const FORCE_LINK = async (old_username, username) => {
         a.username = username;
         console.log(a);
         await write_db_entry(username, a);
+        await write_db_entry(old_username, null);
     }
     console.log("lol");
     return "success";
 };
 
-const d = FORCE_LINK("ac09fe1b-bc46-4400-8832-d7a94a4a6867","2a4a74f9-40c4-4964-bf74-25e4a33afea7");
+const d = FORCE_LINK("f4c48930-161e-4c45-a77f-585c2a551d8c","9abe1dd7-4cec-4f7d-ad37-1e311a8601b0");
 console.log(d);

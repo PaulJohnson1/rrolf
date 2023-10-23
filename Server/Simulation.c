@@ -149,7 +149,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 #ifdef RIVET_BUILD
 #define FOV 4096
 #else
-#define FOV 20000
+#define FOV 4096
 #endif
     uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
     uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
@@ -196,19 +196,19 @@ static void tick_maze(struct rr_simulation *this)
         for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; ++grid_y)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
-            if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
-            {
-                grid->spawn_timer = 0;
-                continue;
-            }
-            if (grid->player_count > 8)
-                grid->player_count = 8;
             grid->max_points = 4 + grid->player_count - grid->difficulty / 16;
             if (grid->grid_points >= grid->max_points)
             {
                 grid->spawn_timer = 0;
                 continue;
             }
+            else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
+            {
+                grid->spawn_timer = (rr_frand() * 0.5 + 0.5) * get_spawn_time(grid);
+                continue;
+            }
+            if (grid->player_count > 8)
+                grid->player_count = 8;
             if (grid->spawn_timer >= get_spawn_time(grid))
                 spawn_mob(this, grid_x, grid_y);
             else
