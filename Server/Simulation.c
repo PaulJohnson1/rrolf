@@ -44,7 +44,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
-uint8_t quetz_tree_zone() { return rr_frand() > 0.2 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
+uint8_t quetz_tree_zone() { return rr_frand() > 0.05 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
@@ -146,7 +146,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
 #ifdef RIVET_BUILD
-#define FOV 2500
+#define FOV 4096
 #else
 #define FOV 20000
 #endif
@@ -183,18 +183,6 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         rr_simulation_get_mob(this, entity)->ticks_to_despawn = 120 * 25;
 }
 
-/*
-uint32_t spawn_times[rr_rarity_id_max][8] = {
-    {80, 70, 60, 50, 40, 30, 20, 10},
-    {85, 75, 65, 55, 45, 35, 25, 15},
-    {90, 80, 70, 60, 50, 40, 30, 20},
-    {95, 85, 75, 65, 55, 45, 35, 25},
-    {100,90, 80, 70, 60, 50, 40, 30},
-    {105,95, 85, 75, 65, 55, 45, 35},
-    {110,100,90, 80, 70, 60, 50, 40},
-};
-*/
-
 static void tick_maze(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
@@ -209,11 +197,11 @@ static void tick_maze(struct rr_simulation *this)
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
             if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
                 continue;
-            uint32_t adj_pcnt = (grid->player_count > 8 ? 8 : grid->player_count);
+            uint32_t adj_pcnt = 1;//(grid->player_count > 8 ? 8 : grid->player_count);
             uint32_t points_cap = 4 + adj_pcnt - grid->difficulty / 16;
             if (grid->grid_points >= points_cap)
                 continue;
-            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (12 - adj_pcnt) * 15;
+            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (12 - adj_pcnt) * 40;
             if (rr_frand() < 1 / chance)
                 spawn_mob(this, grid_x, grid_y);
         }
