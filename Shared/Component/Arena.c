@@ -58,18 +58,15 @@ void rr_component_arena_free(struct rr_component_arena *this,
 #ifdef RR_SERVER
 #include <Shared/StaticData.h>
 
-void rr_component_arena_spatial_hash_init(
-                   struct rr_component_arena *this, struct rr_simulation *simulation)
+void rr_component_arena_spatial_hash_init(struct rr_component_arena *this, struct rr_simulation *simulation)
 {
-    this->maze_dim = RR_MAZES[this->biome].maze_dim;
-    this->grid_size = RR_MAZES[this->biome].grid_size;
-    this->grid = RR_MAZES[this->biome].maze;
-    rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze_dim * this->grid_size / SPATIAL_HASH_GRID_SIZE);
+    this->maze = &RR_MAZES[this->biome];
+    rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze->maze_dim * this->maze->grid_size);
 }
 
 struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *this, uint32_t x, uint32_t y)
 {
-    return &this->grid[y * this->maze_dim + x];
+    return &this->maze->maze[y * this->maze->maze_dim + x];
 }
 
 void rr_component_arena_write(struct rr_component_arena *this,

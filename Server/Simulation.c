@@ -18,7 +18,7 @@
 
 static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
 {
-    float dim = arena->grid_size;
+    float dim = arena->maze->grid_size;
     arena->respawn_zone.x = 2 * x * dim;
     arena->respawn_zone.y = 2 * y * dim;
     arena->respawn_zone.w = 2 * w * dim;
@@ -129,7 +129,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         return;
     for (uint32_t n = 0; n < 10; ++n)
     {
-        struct rr_vector pos = {(grid_x + rr_frand() * 2) * arena->grid_size, (grid_y + rr_frand() * 2) * arena->grid_size};
+        struct rr_vector pos = {(grid_x + rr_frand()) * arena->maze->grid_size, (grid_y + rr_frand()) * arena->maze->grid_size};
         if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[rarity].radius + 250))
             continue;
         EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
@@ -150,10 +150,10 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 #else
 #define FOV 20000
 #endif
-    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
-    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->grid_size * arena->maze_dim) / arena->grid_size;
+    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
+    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
+    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
+    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
 #undef FOV
     for (uint32_t x = sx; x <= ex; ++x)
         for (uint32_t y = sy; y <= ey; ++y)
@@ -169,7 +169,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     if (rr_simulation_has_arena(this, entity))
         return;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (rr_component_arena_get_grid(arena, physical->x / arena->grid_size, physical->y / arena->grid_size)->player_count == 0)
+    if (rr_component_arena_get_grid(arena, physical->x / arena->maze->grid_size, physical->y / arena->maze->grid_size)->player_count == 0)
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
         if (--mob->ticks_to_despawn == 0)
@@ -198,13 +198,13 @@ uint32_t spawn_times[rr_rarity_id_max][8] = {
 static void tick_maze(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    for (uint32_t i = 0; i < arena->maze_dim * arena->maze_dim; ++i)
-        arena->grid[i].player_count = 0;
+    for (uint32_t i = 0; i < arena->maze->maze_dim * arena->maze->maze_dim; ++i)
+        arena->maze->maze[i].player_count = 0;
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
-    for (uint32_t grid_x = 0; grid_x < arena->maze_dim; grid_x += 2)
+    for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; ++grid_x)
     {
-        for (uint32_t grid_y = 0; grid_y < arena->maze_dim; grid_y += 2)
+        for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; ++grid_y)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
             if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
@@ -213,7 +213,7 @@ static void tick_maze(struct rr_simulation *this)
             uint32_t points_cap = 4 + adj_pcnt - grid->difficulty / 16;
             if (grid->grid_points >= points_cap)
                 continue;
-            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (9 - adj_pcnt) * 10;
+            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (12 - adj_pcnt) * 15;
             if (rr_frand() < 1 / chance)
                 spawn_mob(this, grid_x, grid_y);
         }

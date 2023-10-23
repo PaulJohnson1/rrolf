@@ -176,7 +176,7 @@ static void delete_entity_function(EntityIdx entity, void *_captures)
 
 void rr_server_init(struct rr_server *this)
 {
-    // printf("server size: %lu\n", sizeof *this);
+    fprintf(stderr, "server size: %lu\n", sizeof (struct rr_server));
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
     // RR_GLOBAL_BIOME = rr_biome_id_garden;

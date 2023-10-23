@@ -10,8 +10,8 @@
 static void perform_internal_bound_check_custom_grid(struct rr_component_arena *arena, float test_x, float test_y, int32_t x, int32_t y, struct rr_component_physical *physical)
 {
 //add a check for in-wall
-    uint32_t size = arena->maze_dim;
-    float maze_dim = arena->grid_size;
+    uint32_t size = arena->maze->maze_dim;
+    float maze_dim = arena->maze->grid_size;
     #define offset(a,b) \
     ((x + a < 0 || y + b < 0 || x + a >= size || y + b >= size) ? 0 : rr_component_arena_get_grid(arena, x+a, y+b)->value)
 
@@ -141,8 +141,8 @@ static void perform_internal_bound_check_custom_grid(struct rr_component_arena *
 
 static void perform_internal_bound_check(struct rr_component_arena *arena, float test_x, float test_y, struct rr_component_physical *physical)
 {
-    int32_t x = test_x / arena->grid_size;
-    int32_t y = test_y / arena->grid_size;
+    int32_t x = test_x / arena->maze->grid_size;
+    int32_t y = test_y / arena->maze->grid_size;
     perform_internal_bound_check_custom_grid(arena, test_x, test_y, x, y, physical);
 }
 
@@ -202,12 +202,12 @@ static void system_velocity(EntityIdx id, void *simulation)
     rr_vector_set(&physical->wall_collision, 0, 0);
     rr_vector_add(&physical->velocity, &physical->collision_velocity);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
-    if (rr_vector_magnitude_cmp(&vel, arena->grid_size) == 1)
-        rr_vector_set_magnitude(&vel, arena->grid_size);
+    if (rr_vector_magnitude_cmp(&vel, arena->maze->grid_size) == 1)
+        rr_vector_set_magnitude(&vel, arena->maze->grid_size);
     float before_x = physical->x;
     float before_y = physical->y;
-    float now_x = rr_fclamp(before_x + vel.x, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
-    float now_y = rr_fclamp(before_y + vel.y, physical->radius, arena->maze_dim * arena->grid_size - physical->radius);
+    float now_x = rr_fclamp(before_x + vel.x, physical->radius, arena->maze->maze_dim * arena->maze->grid_size - physical->radius);
+    float now_y = rr_fclamp(before_y + vel.y, physical->radius, arena->maze->maze_dim * arena->maze->grid_size - physical->radius);
 
     if (rr_simulation_has_web(simulation, id) || 
     (rr_simulation_has_petal(simulation, id) && 
@@ -218,21 +218,21 @@ static void system_velocity(EntityIdx id, void *simulation)
         rr_component_physical_set_y(physical, before_y + vel.y);
         return;
     }
-    int32_t before_grid_x = floorf(before_x / arena->grid_size);
-    int32_t now_grid_x = floorf(now_x / arena->grid_size);
-    int32_t before_grid_y = floorf(before_y / arena->grid_size);
-    int32_t now_grid_y = floorf(now_y / arena->grid_size);
+    int32_t before_grid_x = floorf(before_x / arena->maze->grid_size);
+    int32_t now_grid_x = floorf(now_x / arena->maze->grid_size);
+    int32_t before_grid_y = floorf(before_y / arena->maze->grid_size);
+    int32_t now_grid_y = floorf(now_y / arena->maze->grid_size);
     #define grid(a,b) \
-    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= arena->maze_dim || before_grid_y + b >= arena->maze_dim) ? 0 : rr_component_arena_get_grid(arena, before_grid_x+a, before_grid_y+b)->value)
+    ((before_grid_x + a < 0 || before_grid_y + b < 0 || before_grid_x + a >= arena->maze->maze_dim || before_grid_y + b >= arena->maze->maze_dim) ? 0 : rr_component_arena_get_grid(arena, before_grid_x+a, before_grid_y+b)->value)
     if (before_grid_x == now_grid_x && before_grid_y == now_grid_y)
         perform_internal_bound_check(arena, now_x, now_y, physical);
     else
     {
         float border_phase[4];
-        border_phase[0] = reverse_lerp(before_grid_x * arena->grid_size, before_x, now_x);
-        border_phase[1] = reverse_lerp((before_grid_x + 1) * arena->grid_size, before_x, now_x);
-        border_phase[2] = reverse_lerp(before_grid_y * arena->grid_size, before_y, now_y);
-        border_phase[3] = reverse_lerp((before_grid_y + 1) * arena->grid_size, before_y, now_y);
+        border_phase[0] = reverse_lerp(before_grid_x * arena->maze->grid_size, before_x, now_x);
+        border_phase[1] = reverse_lerp((before_grid_x + 1) * arena->maze->grid_size, before_x, now_x);
+        border_phase[2] = reverse_lerp(before_grid_y * arena->maze->grid_size, before_y, now_y);
+        border_phase[3] = reverse_lerp((before_grid_y + 1) * arena->maze->grid_size, before_y, now_y);
         //if (passes_behind_borders) fclamp(x and y)
         uint32_t phase = min_of_4(border_phase);
         //printf("phase is %d\n", phase);
@@ -246,8 +246,8 @@ static void system_velocity(EntityIdx id, void *simulation)
             uint8_t illegal_ver = (left ^ inverse);
             if (phase == illegal_hor || phase == illegal_ver)
             {
-                now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size, (before_grid_x+1) * arena->grid_size);
-                now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size, (before_grid_y+1) * arena->grid_size);
+                now_x = rr_fclamp(now_x, before_grid_x * arena->maze->grid_size, (before_grid_x+1) * arena->maze->grid_size);
+                now_y = rr_fclamp(now_y, before_grid_y * arena->maze->grid_size, (before_grid_y+1) * arena->maze->grid_size);
                 perform_internal_bound_check_custom_grid(arena, now_x, now_y, before_grid_x, before_grid_y, physical);
             }
             else
@@ -257,9 +257,9 @@ static void system_velocity(EntityIdx id, void *simulation)
                 if (grid(hor,ver) == 0)
                 {
                     if (hor)
-                        now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size + physical->radius, (before_grid_x+1) * arena->grid_size - physical->radius);
+                        now_x = rr_fclamp(now_x, before_grid_x * arena->maze->grid_size + physical->radius, (before_grid_x+1) * arena->maze->grid_size - physical->radius);
                     else
-                        now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size + physical->radius, (before_grid_y+1) * arena->grid_size - physical->radius);
+                        now_y = rr_fclamp(now_y, before_grid_y * arena->maze->grid_size + physical->radius, (before_grid_y+1) * arena->maze->grid_size - physical->radius);
                     rr_component_physical_set_x(physical, now_x);
                     rr_component_physical_set_y(physical, now_y);
                 }
@@ -273,9 +273,9 @@ static void system_velocity(EntityIdx id, void *simulation)
             if (grid(hor,ver) == 0)
             {
                 if (hor)
-                    now_x = rr_fclamp(now_x, before_grid_x * arena->grid_size + physical->radius, (before_grid_x+1) * arena->grid_size - physical->radius);
+                    now_x = rr_fclamp(now_x, before_grid_x * arena->maze->grid_size + physical->radius, (before_grid_x+1) * arena->maze->grid_size - physical->radius);
                 else
-                    now_y = rr_fclamp(now_y, before_grid_y * arena->grid_size + physical->radius, (before_grid_y+1) * arena->grid_size - physical->radius);
+                    now_y = rr_fclamp(now_y, before_grid_y * arena->maze->grid_size + physical->radius, (before_grid_y+1) * arena->maze->grid_size - physical->radius);
                 rr_component_physical_set_x(physical, now_x);
                 rr_component_physical_set_y(physical, now_y);
             }

@@ -8,12 +8,12 @@
 #include <Shared/SimulationCommon.h>
 
 #define spatial_hash_get(x,y) &this->cells[(x)*this->size+(y)]
-void rr_spatial_hash_init(struct rr_spatial_hash *this, struct rr_simulation *simulation, uint32_t length)
+void rr_spatial_hash_init(struct rr_spatial_hash *this, struct rr_simulation *simulation, float size)
 {
     memset(this, 0, sizeof *this);
-    this->size = length;
+    this->size = size / SPATIAL_HASH_GRID_SIZE;
     this->simulation = simulation;
-    this->cells = calloc(sizeof (struct rr_spatial_hash_cell), length * length);
+    this->cells = calloc(sizeof (struct rr_spatial_hash_cell), this->size * this->size);
 }
 
 void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)

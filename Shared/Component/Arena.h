@@ -8,6 +8,7 @@ struct rr_simulation;
 struct proto_bug;
 RR_CLIENT_ONLY(struct rr_renderer;)
 RR_SERVER_ONLY(struct rr_component_player_info;)
+RR_SERVER_ONLY(struct rr_maze_declaration;)
 
 #ifdef RR_SERVER
 #include <Server/SpatialHash.h>
@@ -30,9 +31,7 @@ struct rr_component_arena
     RR_SERVER_ONLY(uint8_t first_squad_to_enter;)
     RR_SERVER_ONLY(uint8_t player_entered;)
     RR_SERVER_ONLY(EntityIdx mob_count;)
-    RR_SERVER_ONLY(uint16_t maze_dim;)
-    RR_SERVER_ONLY(struct rr_maze_grid *grid;)
-    RR_SERVER_ONLY(float grid_size;)
+    RR_SERVER_ONLY(struct rr_maze_declaration *maze;)
     RR_SERVER_ONLY(struct rr_spatial_hash spatial_hash;)
 };
 

@@ -23,7 +23,7 @@ struct rr_spatial_hash
     uint32_t size;
 };
 
-void rr_spatial_hash_init(struct rr_spatial_hash *, struct rr_simulation *, uint32_t);
+void rr_spatial_hash_init(struct rr_spatial_hash *, struct rr_simulation *, float);
 void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_update(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float,

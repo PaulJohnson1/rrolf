@@ -204,6 +204,7 @@ struct rr_maze_declaration
     uint32_t maze_dim;
     float grid_size;
     struct rr_maze_grid *maze;
+    uint8_t *template;
 };
 
 #define RR_DECLARE_MAZE(name, size) \

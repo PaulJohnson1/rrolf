@@ -480,7 +480,7 @@ RR_DEFINE_MAZE(BURROW, 4) = {
     {0, 1}
 };
 
-#define MAZE_ENTRY(MAZE, GRID_SIZE) {(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid)), GRID_SIZE, &RR_MAZE_##MAZE[0][0]}
+#define MAZE_ENTRY(MAZE, GRID_SIZE) {(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid)), GRID_SIZE, &RR_MAZE_##MAZE[0][0], &RR_MAZE_TEMPLATE_##MAZE[0][0]}
 struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
     MAZE_ENTRY(HELL_CREEK, 1024),
     MAZE_ENTRY(HELL_CREEK, 1024),
