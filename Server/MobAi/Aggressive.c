@@ -56,7 +56,7 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
     if (has_new_target(ai, simulation))
     {
         ai->ai_state = rr_ai_state_attacking;
-        ai->ticks_until_next_action = 125;
+        ai->ticks_until_next_action = 300;
     }
 
     switch (ai->ai_state)
@@ -98,11 +98,14 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
         if (ai->ticks_until_next_action == 0)
         {
             float angle = rr_frand() * M_PI + M_PI / 2;
-            EntityIdx id = rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(angle),
-            physical->y + physical->radius * sinf(angle), rr_mob_id_trex, rr_frand() < 0.2 ? rr_rarity_id_mythic : rr_rarity_id_legendary,
+            rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(angle),
+            physical->y + physical->radius * sinf(angle), rr_mob_id_trex, rr_frand() < 0.1 ? rr_rarity_id_mythic : rr_rarity_id_legendary,
+            rr_simulation_team_id_mobs);
+            rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(2 * M_PI - angle),
+            physical->y + physical->radius * sinf(2 * M_PI - angle), rr_mob_id_trex, rr_frand() < 0.1 ? rr_rarity_id_mythic : rr_rarity_id_legendary,
             rr_simulation_team_id_mobs);
             ai->ai_state = rr_ai_state_attacking;
-            ai->ticks_until_next_action = 125;
+            ai->ticks_until_next_action = 300;
         }
         break;
     }
@@ -151,7 +154,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_ultra && rr_frand() < 0.2)
             {
                 ai->ai_state = rr_ai_state_exotic_special;
-                ai->ticks_until_next_action = 50;
+                ai->ticks_until_next_action = 75;
                 break;
             }
             ai->ticks_until_next_action = 50;
@@ -198,8 +201,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             predict(delta, physical2->velocity,
                     ai->has_prediction * 20); // make this less op
         rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
-        if (rr_vector_magnitude_cmp(&delta, 100 + physical->radius) == 1)
-        {
+        if (ai->ticks_until_next_action < 50) {
             struct rr_vector accel;
             rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 2, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);

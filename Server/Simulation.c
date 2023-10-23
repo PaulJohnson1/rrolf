@@ -140,9 +140,6 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     }
 }
 
-#define GRID_MOB_LIMIT(DIFFICULTY, PLAYER_COUNT) \
-    (1 - (DIFFICULTY) * 0.014) * (((PLAYER_COUNT) > 4 ? 4 : (PLAYER_COUNT)) * 10) + 15
-
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
     struct rr_simulation *this = _simulation;
@@ -209,18 +206,15 @@ static void tick_maze(struct rr_simulation *this)
     {
         for (uint32_t grid_y = 0; grid_y < arena->maze_dim; grid_y += 2)
         {
-            //if (grid_y == SPAWN_ZONE_Y && (grid_x >= SPAWN_ZONE_X && grid_x < SPAWN_ZONE_W + SPAWN_ZONE_X))
-                //grid_y += SPAWN_ZONE_H;
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
             if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
                 continue;
-            if (grid->grid_points >= GRID_MOB_LIMIT(grid->difficulty, grid->player_count))
-                continue;
-            //if (grid->spawn_function != NULL)
-                //time *= 4;
             uint32_t adj_pcnt = (grid->player_count > 8 ? 8 : grid->player_count);
-            float chance = 1.0f / (95 - 10 * adj_pcnt + 2.5 * grid->difficulty);
-            if (rr_frand() < chance)
+            uint32_t points_cap = 4 + adj_pcnt - grid->difficulty / 16;
+            if (grid->grid_points >= points_cap)
+                continue;
+            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (9 - adj_pcnt) * 10;
+            if (rr_frand() < 1 / chance)
                 spawn_mob(this, grid_x, grid_y);
         }
     }

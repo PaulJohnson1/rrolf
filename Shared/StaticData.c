@@ -106,7 +106,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 35, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1},{rr_petal_id_web, 0.05}}},
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 25, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05},{rr_petal_id_pellet, 0.1}}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 50, 7.5, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
-    {rr_mob_id_meteor, rr_rarity_id_rare, 150, 5, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
+    {rr_mob_id_meteor, rr_rarity_id_rare, 100, 5, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
     {rr_mob_id_quetzalcoatlus, rr_rarity_id_rare, 60, 15, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.15},{rr_petal_id_lightning, 0.05}}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 40, 10, 30.0f, {{rr_petal_id_bone, 0.15},{rr_petal_id_fossil, 0.1},{rr_petal_id_third_eye, 0.05}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
@@ -119,13 +119,28 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_lanternfly, rr_rarity_id_unusual, 20, 10, 25.0f, {{rr_petal_id_mint, 0.1},{rr_petal_id_sand, 0.05}}},
 };
 
-char const *RR_MOB_NAMES[rr_mob_id_max] = 
-{"Triceratops","T-Rex","Fern","Tree","Pteranodon","Dakotaraptor",
+char const *RR_MOB_NAMES[rr_mob_id_max] = {
+"Triceratops","T-Rex","Fern","Tree","Pteranodon","Dakotaraptor",
 "Pachycephalosaurus","Ornithomimus","Ankylosaurus","Meteor",
 "Quetzalcoatlus","Edmontosaurus","Ant","Hornet","Dragonfly",
- "Honeybee","Beehive","Spider","House Centipede","Lanternfly"};
+"Honeybee","Beehive","Spider","House Centipede","Lanternfly"
+};
 
-uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max]         = {8,  10,  4,  6, 15, 12, 9,  6,  10, 1,   12, 9,  8, 12, 8, 9, 9, 9, 9};
+uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {
+    3, //tric
+    4, //trex
+    1, //fern
+    2, //tree
+    5, //pter
+    5, //dako
+    3, //pachy
+    2, //ornith
+    4, //anky
+    1, //meteor
+    5, //quetz
+    3, //edmon
+};
+
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 0.5, 75, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
