@@ -186,7 +186,19 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         rr_simulation_get_mob(this, entity)->ticks_to_despawn = 120 * 25;
 }
 
-static void tick_wave(struct rr_simulation *this)
+/*
+uint32_t spawn_times[rr_rarity_id_max][8] = {
+    {80, 70, 60, 50, 40, 30, 20, 10},
+    {85, 75, 65, 55, 45, 35, 25, 15},
+    {90, 80, 70, 60, 50, 40, 30, 20},
+    {95, 85, 75, 65, 55, 45, 35, 25},
+    {100,90, 80, 70, 60, 50, 40, 30},
+    {105,95, 85, 75, 65, 55, 45, 35},
+    {110,100,90, 80, 70, 60, 50, 40},
+};
+*/
+
+static void tick_maze(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     for (uint32_t i = 0; i < arena->maze_dim * arena->maze_dim; ++i)
@@ -206,8 +218,9 @@ static void tick_wave(struct rr_simulation *this)
                 continue;
             //if (grid->spawn_function != NULL)
                 //time *= 4;
-            uint32_t time = 150 - (15 * (grid->player_count > 8 ? 8 : grid->player_count));
-            if (rand() % time == 0)
+            uint32_t adj_pcnt = (grid->player_count > 8 ? 8 : grid->player_count);
+            float chance = 1.0f / (95 - 10 * adj_pcnt + 2.5 * grid->difficulty);
+            if (rr_frand() < chance)
                 spawn_mob(this, grid_x, grid_y);
         }
     }
@@ -251,7 +264,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-    tick_wave(this);
+    tick_maze(this);
     //fputs("part 4\n", stderr);
     memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
