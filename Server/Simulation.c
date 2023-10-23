@@ -136,6 +136,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
                                                 rr_simulation_team_id_mobs);
         rr_simulation_get_mob(this, mob_id)->zone = grid;
         grid->grid_points += RR_MOB_DIFFICULTY_COEFFICIENTS[id];
+        grid->spawn_timer = 0;
         break;
     }
 }
@@ -157,7 +158,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 #undef FOV
     for (uint32_t x = sx; x <= ex; ++x)
         for (uint32_t y = sy; y <= ey; ++y)
-            ++rr_component_arena_get_grid(arena, x, y)->player_count;
+            rr_component_arena_get_grid(arena, x, y)->player_count += rr_component_arena_get_grid(arena, x, y)->player_count < 8;
 }
 
 static void despawn_mob(EntityIdx entity, void *_simulation)
@@ -196,14 +197,22 @@ static void tick_maze(struct rr_simulation *this)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
             if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
+            {
+                grid->spawn_timer = 0;
                 continue;
-            uint32_t adj_pcnt = 1;//(grid->player_count > 8 ? 8 : grid->player_count);
-            uint32_t points_cap = 4 + adj_pcnt - grid->difficulty / 16;
-            if (grid->grid_points >= points_cap)
+            }
+            if (grid->player_count > 8)
+                grid->player_count = 8;
+            grid->max_points = 4 + grid->player_count - grid->difficulty / 16;
+            if (grid->grid_points >= grid->max_points)
+            {
+                grid->spawn_timer = 0;
                 continue;
-            float chance = ((float) points_cap) / (points_cap - grid->grid_points) * (12 - adj_pcnt) * 40;
-            if (rr_frand() < 1 / chance)
+            }
+            if (grid->spawn_timer >= get_spawn_time(grid))
                 spawn_mob(this, grid_x, grid_y);
+            else
+                ++grid->spawn_timer;
         }
     }
 }

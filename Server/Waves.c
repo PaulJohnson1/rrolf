@@ -21,6 +21,11 @@ uint32_t get_spawn_rarity(float difficulty)
     return rarity;
 }
 
+float get_spawn_time(struct rr_maze_grid *grid)
+{
+    return ((float) grid->max_points) / (grid->max_points - grid->grid_points) * (12 - grid->player_count) * 20;
+}
+
 uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 {
     double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS;

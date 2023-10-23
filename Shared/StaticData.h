@@ -33,7 +33,8 @@ enum rr_clientbound_packet_header
     rr_clientbound_squad_fail = 3,
     rr_clientbound_squad_leave = 4,
     rr_clientbound_account_result = 5,
-    rr_clientbound_craft_result = 6
+    rr_clientbound_craft_result = 6,
+    rr_clientbound_dev_info = 7
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
@@ -192,10 +193,14 @@ struct rr_maze_grid
 {
 #ifdef RR_SERVER
     uint8_t (*spawn_function)();
-    uint32_t grid_points;
+    uint16_t spawn_timer;
     uint8_t player_count;
     uint8_t difficulty;
+#else
+    float spawn_timer;
 #endif
+    uint8_t grid_points;
+    uint8_t max_points;
     uint8_t value;
 };
 

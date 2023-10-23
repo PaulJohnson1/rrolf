@@ -926,6 +926,24 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
             }
             rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            if (client->player_info != NULL)
+            {
+                proto_bug_init(&encoder, outgoing_message);
+                struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
+                proto_bug_write_uint8(&encoder, rr_clientbound_dev_info, "header");
+                proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
+                for (uint32_t grid_x = 0; grid_x < decl->maze_dim; ++grid_x)
+                {
+                    for (uint32_t grid_y = 0; grid_y < decl->maze_dim; ++grid_y)
+                    {
+                        struct rr_maze_grid *grid = &decl->maze[grid_y * decl->maze_dim + grid_x];
+                        proto_bug_write_uint8(&encoder, grid->grid_points, "grid points");
+                        proto_bug_write_uint8(&encoder, grid->max_points, "max points");
+                        proto_bug_write_float32(&encoder, grid->spawn_timer / get_spawn_time(grid), "spawn time");
+                    }
+                }
+                rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            }
         }
     }
 }

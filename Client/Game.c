@@ -549,32 +549,23 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             uint64_t verification =
                 proto_bug_read_uint64(&encoder, "verification");
             proto_bug_read_uint32(&encoder, "useless bytes");
-            this->socket.clientbound_encryption_key =
-                proto_bug_read_uint64(&encoder, "c encryption key");
-            this->socket.serverbound_encryption_key =
-                proto_bug_read_uint64(&encoder, "s encryption key");
+            this->socket.clientbound_encryption_key = proto_bug_read_uint64(&encoder, "c encryption key");
+            this->socket.serverbound_encryption_key = proto_bug_read_uint64(&encoder, "s encryption key");
             // respond
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
-            proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
-                                   "useless bytes");
-            proto_bug_write_uint64(&verify_encoder, verification,
-                                   "verification");
-            proto_bug_write_string(&verify_encoder,
-                                   this->rivet_player_token, 300,
-                                   "rivet token");
-            proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
-                                   100, "rivet uuid");
+            proto_bug_write_uint64(&verify_encoder, rr_get_rand(), "useless bytes");
+            proto_bug_write_uint64(&verify_encoder, verification, "verification");
+            proto_bug_write_string(&verify_encoder, this->rivet_player_token, 300, "rivet token");
+            proto_bug_write_string(&verify_encoder, this->rivet_account.uuid, 100, "rivet uuid");
             proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev_flag");
-            rr_websocket_send(&this->socket,
-                              verify_encoder.current - verify_encoder.start);
+            rr_websocket_send(&this->socket, verify_encoder.current - verify_encoder.start);
             return;
         }
         this->socket_ready = 1; //signifies that the socket is verified on the serverside
         this->socket_pending = 0;
         //send instajoin
-        this->socket.clientbound_encryption_key =
-            rr_get_hash(this->socket.clientbound_encryption_key);
+        this->socket.clientbound_encryption_key = rr_get_hash(this->socket.clientbound_encryption_key);
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
         uint8_t h = proto_bug_read_uint8(&encoder, "header");
         switch (h)
@@ -734,6 +725,22 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->inventory[id][rarity + 1] += successes;
             this->crafting_data.success_count = successes;
             this->crafting_data.animation = 0;
+            break;
+        }
+        case rr_clientbound_dev_info:
+        {
+            uint8_t biome = proto_bug_read_uint8(&encoder, "biome");
+            struct rr_maze_declaration *decl = &RR_MAZES[biome];
+            for (uint32_t grid_x = 0; grid_x < decl->maze_dim; ++grid_x)
+            {
+                for (uint32_t grid_y = 0; grid_y < decl->maze_dim; ++grid_y)
+                {
+                    struct rr_maze_grid *grid = &decl->maze[grid_y * decl->maze_dim + grid_x];
+                    grid->grid_points = proto_bug_read_uint8(&encoder, "grid points");
+                    grid->max_points = proto_bug_read_uint8(&encoder, "max points");
+                    grid->spawn_timer = rr_lerp(grid->spawn_timer, proto_bug_read_float32(&encoder, "spawn time"), 0.1);
+                }
+            }
             break;
         }
         default:
