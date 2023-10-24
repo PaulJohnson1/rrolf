@@ -23,7 +23,7 @@ uint32_t get_spawn_rarity(float difficulty)
 
 float get_spawn_time(struct rr_maze_grid *grid)
 {
-    return ((float) grid->max_points) / (grid->max_points - grid->grid_points) * (12 - grid->player_count) * 25;
+    return ((float) grid->max_points) / (grid->max_points - grid->grid_points) * (12 - grid->player_count) * 22.5;
 }
 
 uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)

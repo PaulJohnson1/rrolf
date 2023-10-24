@@ -44,7 +44,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
-uint8_t quetz_tree_zone() { return rr_frand() > 0.05 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
+uint8_t quetz_tree_zone() { return rr_frand() > 0.15 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
