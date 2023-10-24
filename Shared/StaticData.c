@@ -47,7 +47,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_web, rr_rarity_id_rare, &defensive[0], 5.0f, 5.0f, 0.0f, 50, 13, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_seed, rr_rarity_id_legendary, &offensive[0], 1.0f, 20.0f, 0.0f, 63, 1, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_gravel, rr_rarity_id_unusual, &offensive[0], 12.0f, 10.0f, 0.0f, 25, 13, {1, 2, 2, 2, 3, 3, 4}},
-    {rr_petal_id_club, rr_rarity_id_common, &defensive[0], 3.5f, 300.0f, 0.0f, 250, 0, {1, 1, 1, 1, 1, 1, 1}},
+    {rr_petal_id_club, rr_rarity_id_common, &defensive[0], 7.0f, 300.0f, 0.0f, 200, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_crest, rr_rarity_id_rare, &offensive[0], 0.0f, 0.0f, 0.0f, 0, 0, {0, 0, 0, 0, 0, 0, 0}},
     {rr_petal_id_droplet, rr_rarity_id_common, &offensive[0], 15.0f, 5.0f, 0.0f, 37, 0, {1, 1, 1, 1, 1, 1, 1}},
     {rr_petal_id_beak, rr_rarity_id_unusual, &offensive[0], 5.0f, 5.0f, 0.0f, 68, 0, {1, 1, 1, 1, 1, 1, 1}},

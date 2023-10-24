@@ -178,7 +178,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->velocity, 100, physical->angle);
             rr_component_petal_set_detached(rr_simulation_get_petal(simulation, petal_id), 1);
-            rr_component_health_set_max_health(health, 10 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+            rr_component_health_set_max_health(health, 5 * RR_MOB_RARITY_SCALING[mob->rarity].health);
             rr_component_health_set_health(health, health->max_health);
             health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;

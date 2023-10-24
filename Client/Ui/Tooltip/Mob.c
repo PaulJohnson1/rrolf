@@ -65,7 +65,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_mob_id_pteranodon)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        rr_sprintf(extra, 10 * RR_MOB_RARITY_SCALING[rarity].health);
+        rr_sprintf(extra, 5 * RR_MOB_RARITY_SCALING[rarity].health);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
