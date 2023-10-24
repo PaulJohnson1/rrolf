@@ -191,12 +191,51 @@ static void tick_maze(struct rr_simulation *this)
         arena->maze->maze[i].player_count = 0;
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
-    for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; ++grid_x)
+    for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; grid_x += 2)
     {
-        for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; ++grid_y)
+        for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; grid_y += 2)
         {
+            //supercluster method
+            struct rr_maze_grid *nw = rr_component_arena_get_grid(arena, grid_x, grid_y);
+            struct rr_maze_grid *ne = rr_component_arena_get_grid(arena, grid_x+1, grid_y);
+            struct rr_maze_grid *sw = rr_component_arena_get_grid(arena, grid_x, grid_y+1);
+            struct rr_maze_grid *se = rr_component_arena_get_grid(arena, grid_x+1, grid_y+1);
+            uint32_t max_sum = 0;
+            #define add(grid) max_sum += (grid->max_points = 4 + grid->player_count - grid->difficulty / 16);
+            add(nw); add(ne); add(sw); add(se);
+            #undef add
+            uint32_t sum = nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points;
+            if (sum >= max_sum)
+                continue;
+            float base = ((float) max_sum) / (max_sum - sum);
+#define spawn(grid, grid_x, grid_y) \
+            if (grid->player_count > 0) \
+            { \
+                float spawn_at = base * (12 - grid->player_count) * 20; \
+                if (grid->grid_points >= grid->max_points) \
+                    grid->spawn_timer = 0; \
+                else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
+                    grid->spawn_timer = (rr_frand() * 0.2 + 0.4) * get_spawn_time(grid); \
+                else \
+                { \
+                    if (grid->spawn_timer >= spawn_at) \
+                    { \
+                        spawn_mob(this, grid_x, grid_y); \
+                        continue; \
+                    } \
+                    else \
+                        ++grid->spawn_timer; \
+                } \
+            }
+            spawn(nw, grid_x, grid_y);
+            spawn(ne, grid_x+1, grid_y);
+            spawn(sw, grid_x, grid_y+1);
+            spawn(se, grid_x+1, grid_y+1);
+#undef spawn
+            //singlet method
+            /*
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
-            grid->max_points = 4 + grid->player_count - grid->difficulty / 16;
+            grid->max_points = 16 + 4 * grid->player_count - grid->difficulty / 4;
             if (grid->grid_points >= grid->max_points)
             {
                 grid->spawn_timer = 0;
@@ -204,7 +243,7 @@ static void tick_maze(struct rr_simulation *this)
             }
             else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8))
             {
-                grid->spawn_timer = (rr_frand() * 0.5 + 0.5) * get_spawn_time(grid);
+                grid->spawn_timer = (rr_frand() * 0.2 + 0.4) * get_spawn_time(grid); //so it's not barren
                 continue;
             }
             if (grid->player_count > 8)
@@ -213,6 +252,7 @@ static void tick_maze(struct rr_simulation *this)
                 spawn_mob(this, grid_x, grid_y);
             else
                 ++grid->spawn_timer;
+            */
         }
     }
 }

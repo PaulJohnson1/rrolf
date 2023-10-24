@@ -21,9 +21,19 @@ uint32_t get_spawn_rarity(float difficulty)
     return rarity;
 }
 
+float spawn_time_constants[rr_rarity_id_max][9] = {
+    {240, 220, 200, 180, 160, 140, 120, 100, 80}, //c C
+    {240, 220, 200, 180, 160, 140, 120, 100, 80}, //u U
+    {240, 220, 200, 180, 160, 140, 120, 100, 80}, //r R
+    {250, 230, 210, 190, 170, 150, 130, 110, 90}, //e E
+    {350, 310, 270, 230, 190, 150, 120, 90,  90}, //l L
+    {250, 230, 210, 190, 170, 150, 130, 110, 90}, //m M
+    {240, 220, 200, 180, 160, 140, 120, 100, 80}, //x
+};
+
 float get_spawn_time(struct rr_maze_grid *grid)
 {
-    return ((float) grid->max_points) / (grid->max_points - grid->grid_points) * (12 - grid->player_count) * 22.5;
+    return ((float) grid->max_points) / (grid->max_points - grid->grid_points) * spawn_time_constants[grid->difficulty / 8][grid->player_count];
 }
 
 uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
