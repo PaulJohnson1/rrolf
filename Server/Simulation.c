@@ -44,7 +44,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
-uint8_t quetz_tree_zone() { return rr_frand() > 0.15 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
+uint8_t quetz_tree_zone() { return rr_frand() > 0.2 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
@@ -120,7 +120,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
     uint8_t id;
-    if (grid->spawn_function && rr_frand() < 2.0/3)
+    if (grid->spawn_function && rr_frand() < 0.5)
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
@@ -201,7 +201,7 @@ static void tick_maze(struct rr_simulation *this)
             struct rr_maze_grid *sw = rr_component_arena_get_grid(arena, grid_x, grid_y+1);
             struct rr_maze_grid *se = rr_component_arena_get_grid(arena, grid_x+1, grid_y+1);
             uint32_t max_sum = 0;
-            #define add(grid) max_sum += (grid->max_points = 4 + grid->player_count - grid->difficulty / 16);
+            #define add(grid) max_sum += (grid->max_points = 5 + 2 * grid->player_count - grid->difficulty / 16);
             add(nw); add(ne); add(sw); add(se);
             #undef add
             uint32_t sum = nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points;
@@ -211,7 +211,7 @@ static void tick_maze(struct rr_simulation *this)
 #define spawn(grid, grid_x, grid_y) \
             if (grid->player_count > 0) \
             { \
-                float spawn_at = base * powf(1/1.45, grid->player_count) * 250; \
+                float spawn_at = base * powf(1/1.5, grid->player_count) * 250; \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \

@@ -80,8 +80,7 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
         // struct rr_vector prediction = predict(delta, physical2->velocity, 4);
         float target_angle = rr_vector_theta(&delta);
 
-        rr_component_physical_set_angle(
-            physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
+        rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
         rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.05, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
@@ -139,9 +138,7 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        struct rr_vector prediction =
-            predict(delta, physical2->velocity,
-                    ai->has_prediction * 20); // make this less op
+        struct rr_vector prediction = predict(delta, physical2->velocity, (ai->has_prediction || rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_ultra) * 20); // make this less op
         rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
         if (rr_vector_magnitude_cmp(&delta, 500) == 1)
         {
