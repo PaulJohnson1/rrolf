@@ -123,11 +123,11 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                 continue;
             char *d = malloc((sizeof *d) * 12);
             float pct = 100 * chance;
-            if (pct > 0.1)
+            if (pct > 1)
                 sprintf(d, "%.1f%%", pct);
-            else if (pct > 0.01)
+            else if (pct > 0.1)
                 sprintf(d, "%.2f%%", pct);
-            else if (pct > 0.001)
+            else if (pct > 0.01)
                 sprintf(d, "%.3f%%", pct);
             rr_ui_container_add_element(
                 temp, rr_ui_v_container_init(
