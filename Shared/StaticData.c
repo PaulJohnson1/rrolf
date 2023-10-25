@@ -98,7 +98,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, rr_rarity_id_rare, 45, 15, 30.0f, {{rr_petal_id_leaf, 0.15},{rr_petal_id_fossil, 0.1}}},
     {rr_mob_id_trex, rr_rarity_id_epic, 40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_egg, 0.05}}},
     {rr_mob_id_fern, rr_rarity_id_common, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
-    {rr_mob_id_tree, rr_rarity_id_rare, 100, 5, 64.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.025}}},
+    {rr_mob_id_tree, rr_rarity_id_rare, 100, 5, 64.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.02}}},
     {rr_mob_id_pteranodon, rr_rarity_id_rare, 40, 15, 20.0f, {{rr_petal_id_shell, 0.15},{rr_petal_id_beak, 0.15}}},
     {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, 40, 10, 25.0f, {{rr_petal_id_crest, 0.1},{rr_petal_id_feather, 0.15},{rr_petal_id_pellet, 0.05}}},
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, 35, 15, 20.0f, {{rr_petal_id_fossil, 0.15},{rr_petal_id_light, 0.1},{rr_petal_id_web, 0.05}}},

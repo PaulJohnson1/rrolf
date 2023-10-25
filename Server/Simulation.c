@@ -210,7 +210,7 @@ static void tick_maze(struct rr_simulation *this)
             struct rr_maze_grid *sw = rr_component_arena_get_grid(arena, grid_x, grid_y+1);
             struct rr_maze_grid *se = rr_component_arena_get_grid(arena, grid_x+1, grid_y+1);
             uint32_t max_sum = 0;
-            #define add(grid) max_sum += (grid->max_points = 4 + grid->player_count - grid->difficulty / 16);
+            #define add(grid) max_sum += (grid->max_points = 5 + 2 * grid->player_count - grid->difficulty / 16);
             add(nw); add(ne); add(sw); add(se);
             #undef add
             uint32_t sum = nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points;
@@ -220,8 +220,9 @@ static void tick_maze(struct rr_simulation *this)
 #define spawn(grid, grid_x, grid_y) \
             if (grid->player_count > 0) \
             { \
-                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.003 / 25 * grid->player_count, 0, 10); \
-                float spawn_at = powf(1/1.25, grid->player_count) * (150 + 5 * grid->difficulty) / (1 + grid->farming_slowdown); \
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.003 / 25 * grid->player_count, 0, 15); \
+                grid->farming_slowdown = 10; \
+                float spawn_at = powf(1/1.25, grid->player_count) * (150 + 4 * grid->difficulty) / (1 + grid->farming_slowdown); \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
@@ -235,7 +236,7 @@ static void tick_maze(struct rr_simulation *this)
                 } \
             } \
             else \
-                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.05 / 25, 0, 5);
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.05 / 25, 0, 7.5);
             spawn(nw, grid_x, grid_y);
             spawn(ne, grid_x+1, grid_y);
             spawn(sw, grid_x, grid_y+1);
