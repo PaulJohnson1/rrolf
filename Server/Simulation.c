@@ -187,7 +187,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         }
     }
     else
-        rr_simulation_get_mob(this, entity)->ticks_to_despawn = 120 * 25;
+        rr_simulation_get_mob(this, entity)->ticks_to_despawn = 30 * 25;
 }
 
 static void tick_maze(struct rr_simulation *this)
@@ -236,7 +236,7 @@ static void tick_maze(struct rr_simulation *this)
                 } \
             } \
             else \
-                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.05 / 25, 0, 7.5);
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.1 / 25, 0, 7.5);
             spawn(nw, grid_x, grid_y);
             spawn(ne, grid_x+1, grid_y);
             spawn(sw, grid_x, grid_y+1);
