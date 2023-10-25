@@ -212,8 +212,8 @@ static void tick_maze(struct rr_simulation *this)
             if (grid->player_count > 0) \
             { \
                 float spawn_at = base * powf(1/1.5, grid->player_count) * (150 + grid->difficulty * 3); \
-                if (grid->spawn_function != NULL)
-                    spawn_at *= 8;
+                if (grid->spawn_function != NULL) \
+                    spawn_at *= 8; \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
