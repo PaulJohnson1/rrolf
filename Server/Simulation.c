@@ -124,7 +124,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-    uint8_t rarity = get_spawn_rarity(grid->difficulty);
+    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty);
     if (!should_spawn_at(id, rarity))
         return;
     for (uint32_t n = 0; n < 10; ++n)
@@ -156,9 +156,15 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
     uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
 #undef FOV
+    uint32_t level = rr_simulation_get_flower(_simulation, entity)->level;
     for (uint32_t x = sx; x <= ex; ++x)
         for (uint32_t y = sy; y <= ey; ++y)
-            rr_component_arena_get_grid(arena, x, y)->player_count += rr_component_arena_get_grid(arena, x, y)->player_count < 8;
+        {
+            struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, x, y);
+            grid->player_count += grid->player_count < 8;
+            grid->local_difficulty += rr_fclamp((level - grid->difficulty * 2) / 10, -1, 1);
+            grid->local_difficulty = rr_fclamp(grid->local_difficulty, -8, 8);
+        }
 }
 
 static void despawn_mob(EntityIdx entity, void *_simulation)
@@ -188,7 +194,10 @@ static void tick_maze(struct rr_simulation *this)
 {
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     for (uint32_t i = 0; i < arena->maze->maze_dim * arena->maze->maze_dim; ++i)
+    {
         arena->maze->maze[i].player_count = 0;
+        arena->maze->maze[i].local_difficulty = 0;
+    }
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
     for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; grid_x += 2)
@@ -211,7 +220,7 @@ static void tick_maze(struct rr_simulation *this)
 #define spawn(grid, grid_x, grid_y) \
             if (grid->player_count > 0) \
             { \
-                float spawn_at = base * powf(1/1.5, grid->player_count) * (100 + 4 * pow(1.1, grid->difficulty)); \
+                float spawn_at = base * powf(1/1.4, grid->player_count) * (75 + 4 * pow(1.1, grid->difficulty)); \
                 if (grid->spawn_function != NULL) \
                     spawn_at *= 8; \
                 if (grid->grid_points >= grid->max_points) \
