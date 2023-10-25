@@ -1168,7 +1168,7 @@ void rr_game_connect_socket(struct rr_game *this)
     this->socket_pending = 1;
 
 #ifdef RIVET_BUILD
-    rr_rivet_lobbies_find(this);
+    rr_rivet_lobbies_find(this, NULL);
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;

@@ -201,7 +201,7 @@ static void tick_maze(struct rr_simulation *this)
             struct rr_maze_grid *sw = rr_component_arena_get_grid(arena, grid_x, grid_y+1);
             struct rr_maze_grid *se = rr_component_arena_get_grid(arena, grid_x+1, grid_y+1);
             uint32_t max_sum = 0;
-            #define add(grid) max_sum += (grid->max_points = 5 + 2 * grid->player_count - grid->difficulty / 16);
+            #define add(grid) max_sum += (grid->max_points = 4 + grid->player_count - grid->difficulty / 16);
             add(nw); add(ne); add(sw); add(se);
             #undef add
             uint32_t sum = nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points;

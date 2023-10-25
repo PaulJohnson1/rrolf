@@ -116,7 +116,7 @@ void rr_rivet_players_disconnected(char const *lobby_token,
 // public token:
 // pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw
 
-void rr_rivet_lobbies_find(void *captures)
+void rr_rivet_lobbies_find(void *captures, char const *region)
 {
     puts("<rr_rivet::lobby_find>");
 #ifdef EMSCRIPTEN
@@ -132,7 +132,7 @@ void rr_rivet_lobbies_find(void *captures)
                         // clang-format on
                     },
                     "method" : "POST",
-                    "body" : '{"game_modes":["default"]}'
+                    "body" : $1 ? '{"game_modes":["default"],"regions":["' + UTF8ToString($1) + '"]}' : '{"game_modes":["default"]}'
                 })
                     .then(function(r) { return r.json(); })
                     .then(function(json) {
@@ -157,7 +157,7 @@ void rr_rivet_lobbies_find(void *captures)
             };
             attempt(0);
         },
-        captures);
+        captures, region);
 #endif
 }
 
