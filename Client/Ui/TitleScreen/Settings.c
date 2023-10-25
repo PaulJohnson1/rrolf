@@ -74,8 +74,6 @@ static void region_join_button_on_event(struct rr_ui_element *this,
     {
 #ifdef RIVET_BUILD
         game->socket_pending = 1;
-        if (game->socket_ready)
-            rr_websocket_disconnect(&game->socket, game);
         switch(selected)
         {
             case 0:

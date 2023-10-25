@@ -122,7 +122,7 @@ void rr_rivet_lobbies_find(void *captures, char const *region)
 #ifdef EMSCRIPTEN
     EM_ASM(
         {
-            function attempt(d)
+            try
             {
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
                     "headers": {
@@ -149,13 +149,11 @@ void rr_rivet_lobbies_find(void *captures, char const *region)
                         _free($token);
                     })
                     .catch(function(error) {
-                        if (d == 3)
-                            location.reload(true);
-                        else
-                            attempt(d + 1);
+                        console.log(error);
                     });
-            };
-            attempt(0);
+            } catch(e) {
+                console.log(e);
+            }
         },
         captures, region);
 #endif

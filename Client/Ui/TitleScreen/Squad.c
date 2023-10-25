@@ -366,8 +366,6 @@ static void join_code_on_event(struct rr_ui_element *this,
         game->socket_pending = 1;
         #ifdef RIVET_BUILD
         {
-            if (game->socket_ready)
-                rr_websocket_disconnect(&game->socket, game);
             char server[16] = {0};
             char *link = server;
             char *code = game->connect_code;
