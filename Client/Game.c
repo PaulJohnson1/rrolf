@@ -1194,8 +1194,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         game->socket_ready = 0;
         return;
     }
-    if (game->socket_ready)
-        rr_websocket_disconnect(&game->socket, game);
+    //if (game->socket_ready)
+        //rr_websocket_disconnect(&game->socket, game);
     rr_websocket_init(&game->socket);
     game->socket.user_data = game;
     game->socket_pending = 1;
