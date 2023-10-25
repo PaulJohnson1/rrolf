@@ -147,7 +147,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
 #ifdef RIVET_BUILD
-#define FOV 4096
+#define FOV 2048
 #else
 #define FOV 4096
 #endif
@@ -220,8 +220,8 @@ static void tick_maze(struct rr_simulation *this)
 #define spawn(grid, grid_x, grid_y) \
             if (grid->player_count > 0) \
             { \
-                grid->farming_slowdown += 0.005 / 25 * grid->player_count; \
-                float spawn_at = base * powf(1/1.25, grid->player_count) * (250 + 5 * grid->difficulty) * (1 + grid->farming_slowdown); \
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.003 / 25 * grid->player_count, 0, 10); \
+                float spawn_at = powf(1/1.25, grid->player_count) * (150 + 5 * grid->difficulty) / (1 + grid->farming_slowdown); \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
@@ -235,7 +235,7 @@ static void tick_maze(struct rr_simulation *this)
                 } \
             } \
             else \
-                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.02 / 25, 0, 5);
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown - 0.05 / 25, 0, 5);
             spawn(nw, grid_x, grid_y);
             spawn(ne, grid_x+1, grid_y);
             spawn(sw, grid_x, grid_y+1);
