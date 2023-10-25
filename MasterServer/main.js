@@ -337,7 +337,7 @@ wss.on("connection", (ws, req) => {
                     const client = connected_clients[uuid];
                     if (!client)
                         break;
-                    await write_db_entry(client.user.username, client.user);
+                    write_db_entry(client.user.username, client.user);
                     game_server.clients[pos] = 0;
                 }
                 delete connected_clients[uuid];
