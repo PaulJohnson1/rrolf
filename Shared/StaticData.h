@@ -195,6 +195,7 @@ struct rr_maze_grid
     uint8_t (*spawn_function)();
     float difficulty;
     float local_difficulty;
+    float farming_slowdown;
     uint32_t spawn_timer;
     uint32_t player_count;
     uint32_t grid_points;
