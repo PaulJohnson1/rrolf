@@ -415,7 +415,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
-                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 25 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
+                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 125 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
             }
         }
     }
