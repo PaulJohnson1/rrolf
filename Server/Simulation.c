@@ -44,7 +44,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
-uint8_t quetz_tree_zone() { return rr_frand() > 0.2 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
+uint8_t quetz_tree_zone() { return rr_frand() > 0.15 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
@@ -216,13 +216,13 @@ static void tick_maze(struct rr_simulation *this)
             uint32_t sum = nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points;
             if (sum >= max_sum)
                 continue;
-            float base = ((float) max_sum) / (max_sum - sum);
+            //float base = ((float) max_sum) / (max_sum - sum);
 #define spawn(grid, grid_x, grid_y) \
             if (grid->player_count > 0) \
             { \
-                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.003 / 25 * grid->player_count, 0, 15); \
+                grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.002 / 25 * grid->player_count, 0, 15); \
                 grid->farming_slowdown = 10; \
-                float spawn_at = powf(1/1.25, grid->player_count) * (150 + 4 * grid->difficulty) / (1 + grid->farming_slowdown); \
+                float spawn_at = powf(1/1.3, grid->player_count) * (200 + 4 * grid->difficulty) / (1 + grid->farming_slowdown); \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
