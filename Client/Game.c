@@ -251,11 +251,11 @@ void rr_game_init(struct rr_game *this)
                             rr_ui_container_init(), 0, 20,
                             rr_ui_link_toggle(
                                 rr_ui_set_fill_stroke(
-                                    rr_ui_h_container_init(rr_ui_container_init(), 5, 0,
-                                        rr_ui_text_input_init(350, 24, &this->cache.nickname[0], 16, "_0x4346"), 
+                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
+                                        rr_ui_text_input_init(350, 30, &this->cache.nickname[0], 16, "_0x4346"), 
                                         NULL
                                     ), 
-                                0xffffffff, 0xff222222),
+                                0x00000000, 0x00000000),
                             simulation_not_ready),
                             rr_ui_join_button_init(),
                             NULL
@@ -298,11 +298,11 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_copy_squad_code_button_init(),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                                 rr_ui_set_fill_stroke(
-                                                    rr_ui_h_container_init(rr_ui_container_init(), 2, 0,
-                                                        rr_ui_text_input_init(100, 14, &this->connect_code[0], 16, "_0x4347"), 
+                                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
+                                                        rr_ui_text_input_init(100, 18, &this->connect_code[0], 16, "_0x4347"), 
                                                         NULL
                                                     ), 
-                                                0xffffffff, 0xff222222),
+                                                0x00000000, 0x00000000),
                                                 rr_ui_join_squad_code_button_init(),
                                                 NULL
                                             ),

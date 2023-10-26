@@ -55,19 +55,6 @@ struct rr_ui_container_metadata
     void *data;
 };
 
-struct rr_ui_text_input_metadata
-{
-    char *buffer;
-    char *end;
-    uint32_t max_size;
-    uint32_t size;
-    uint32_t caret_pos;
-    uint32_t drag_pos;
-    uint8_t focused;
-    uint8_t dragging;
-    float relative_x;
-};
-
 struct rr_ui_element_vector
 {
     struct rr_ui_element **start;
@@ -165,7 +152,7 @@ struct rr_ui_element *rr_ui_close_button_init(float, void (*)(struct rr_ui_eleme
 
 struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
 
-struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char *);
+struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint32_t, char *);
 // custom
 struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *);
 struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *);

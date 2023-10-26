@@ -58,7 +58,7 @@ static void text_input_on_render(struct rr_ui_element *this, struct rr_game *gam
 }
 
 
-struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text, uint8_t max_length, char *name)
+struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text, uint32_t max_length, char *name)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct text_input_metadata *data = malloc(sizeof *data);

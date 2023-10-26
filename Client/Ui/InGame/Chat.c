@@ -9,7 +9,7 @@
 #include <Client/Socket.h>
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
-
+/*
 static void chat_bar_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -123,3 +123,4 @@ struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
         NULL
     );
 }
+*/
