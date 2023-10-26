@@ -11,7 +11,7 @@
 void rr_spatial_hash_init(struct rr_spatial_hash *this, struct rr_simulation *simulation, float size)
 {
     memset(this, 0, sizeof *this);
-    this->size = size / SPATIAL_HASH_GRID_SIZE;
+    this->size = (size + SPATIAL_HASH_GRID_SIZE - 0.1) / SPATIAL_HASH_GRID_SIZE;
     this->simulation = simulation;
     this->cells = calloc(sizeof (struct rr_spatial_hash_cell), this->size * this->size);
 }
@@ -25,8 +25,6 @@ void rr_spatial_hash_insert(struct rr_spatial_hash *this, EntityIdx entity)
     uint32_t x = rr_fclamp(physical->x, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
     uint32_t y = rr_fclamp(physical->y, physical->radius, this->size * SPATIAL_HASH_GRID_SIZE - physical->radius) / SPATIAL_HASH_GRID_SIZE;
     struct rr_spatial_hash_cell *cell = spatial_hash_get(x,y);
-    if (cell->entities_in_use >= RR_SPATIAL_HASH_CELL_MAX_ENTITY_COUNT)
-        fputs("uh oh\n", stderr);
     cell->entities[cell->entities_in_use++] = entity;
 }
 
@@ -103,7 +101,7 @@ void rr_spatial_hash_find_possible_collisions(
                     struct rr_spatial_hash_cell *adj = spatial_hash_get(x,y-1);
                     for (uint64_t j = 0; j < adj->entities_in_use; ++j)
                         cb(this->simulation, cell->entities[i], adj->entities[j], user_captures);
-                    if (x < this->size - 1)
+                    if (x + 1 < this->size)
                     {
                         struct rr_spatial_hash_cell *adj = spatial_hash_get(x+1,y-1);
                         for (uint64_t j = 0; j < adj->entities_in_use; ++j)
