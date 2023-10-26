@@ -136,7 +136,7 @@ static void damage_effect(struct rr_simulation *simulation, EntityIdx target, En
         if (petal->id == rr_petal_id_beak)
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-            physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 4) * (1 - physical->slow_resist);
+            physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 3) * (1 - physical->slow_resist);
         }
         else if (petal->id == rr_petal_id_lightning)
         {
