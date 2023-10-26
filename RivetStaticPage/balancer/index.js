@@ -35,7 +35,7 @@ function init_rarity_coefficients()
 
 }
 
-const names = ["none","common","unusual","rare","epic","legendary","mythic","ultra"]
+const names = ["none","common","unusual","rare","epic","legendary","mythic","exotic"]
 function loop()
 {
     let seed = parseFloat(document.getElementById("seed").value);

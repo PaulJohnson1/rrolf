@@ -124,7 +124,7 @@ static void damage_effect(struct rr_simulation *simulation, EntityIdx target, En
     if (rr_simulation_has_mob(simulation, attacker))
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(simulation, attacker);
-        if (mob->id == rr_mob_id_pachycephalosaurus && mob->rarity >= rr_rarity_id_ultra)
+        if (mob->id == rr_mob_id_pachycephalosaurus && mob->rarity >= rr_rarity_id_exotic)
         {
             struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
             physical->stun_ticks = 25;

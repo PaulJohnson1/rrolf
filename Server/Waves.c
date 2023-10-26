@@ -13,8 +13,8 @@ uint32_t get_spawn_rarity(float difficulty)
         difficulty = 1;
     double rarity_seed = rr_frand();
     uint32_t rarity_cap = rr_rarity_id_unusual + (difficulty - 1) / 8;
-    if (rarity_cap > rr_rarity_id_ultra)
-        rarity_cap = rr_rarity_id_ultra;
+    if (rarity_cap > rr_rarity_id_exotic)
+        rarity_cap = rr_rarity_id_exotic;
     uint8_t rarity = 0;
     for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,

@@ -154,7 +154,7 @@ void tick_ai_neutral_ornithomimus(EntityIdx entity, struct rr_simulation *simula
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_ultra)
+        if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic)
             physical->bearing_angle = rr_vector_theta(&delta);
         else
             physical->bearing_angle = rr_vector_theta(&delta) + M_PI;
@@ -207,7 +207,7 @@ void tick_ai_neutral_ankylosaurus(EntityIdx entity, struct rr_simulation *simula
         ai->ticks_until_next_action = 10;
         if (rr_vector_magnitude_cmp(&delta, 100 + physical->radius) == -1)
         {
-            ai->ai_state = (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_ultra && rr_frand() < 0.2) ? rr_ai_state_exotic_special :  rr_ai_state_charging;
+            ai->ai_state = (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic && rr_frand() < 0.2) ? rr_ai_state_exotic_special :  rr_ai_state_charging;
             ai->ticks_until_next_action = 25;
         }
         break;

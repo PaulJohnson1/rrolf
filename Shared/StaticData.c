@@ -14,6 +14,7 @@ struct rr_petal_base_stat_scale const offensive[rr_rarity_id_max] = {
     {8.5,  16},
     {14.5, 32},
     {24.6, 64},
+    {42.0,128}
 };
 
 struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
@@ -24,6 +25,7 @@ struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
     {16,  8.5},
     {32, 14.5},
     {64, 24.6},
+    {128,42.0}
 };
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
@@ -148,9 +150,10 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1.8, 120, 60},
     {3.5, 60,  75},
     {6.6, 30,  100},
-    {12.0,15,  150},
-    {23.8,5,   200},
-    {45.0,1.5, 250},
+    {12.0,15,  125},
+    {23.8,5,   150},
+    {45.0,1.5, 200},
+    {100, 0.5, 250}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -158,31 +161,35 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {2.4, 1.7, 1.2},
     {6.0, 2.9, 1.8}, 
     {16,  5.0, 2.4},
-    {90,  8.5, 3.6},
-    {400,14.5, 4.8},
+    {80,  8.5, 3.6},
+    {320,14.5, 4.8},
     {1e4,24.6, 6.0},
+    {2e5,42.0, 7.0}
 };
 // clang-format on
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
-    0xffde1f1f, 0xff1fdbde, 0xffff2b75
+    0xffde1f1f, 0xff1fdbde, 0xffff2b75, 0xfff70fb6
 };
 
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "Exotic"
+    "Common", "Uncommon", "Rare", "Epic", 
+    "Legendary", "Mythic", "Exotic", "Ultimate"
 };
                                           
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 6, 10, 15, 25, 100, 2500};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 6, 10, 15, 25, 150, 3000};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2] = {0, 1, 12, 20, 50, 600, 1500, 100};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = {4, 8, 12, 15, 25, 50, 300};
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 12, 20, 50, 600, 1250, 200};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 8, 12, 15, 25, 50, 300, 50};
 
 static void init_game_coefficients()
 {
     double sum = 1;
     double sum2 = 1;
-    for (uint64_t a = 1; a <= rr_rarity_id_ultra; ++a)
+    for (uint64_t a = 1; a < rr_rarity_id_max; ++a)
+        RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *= RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
+    for (uint64_t a = 1; a <= rr_rarity_id_exotic; ++a)
     {
         sum += (RR_DROP_RARITY_COEFFICIENTS[a + 1] =
                     RR_DROP_RARITY_COEFFICIENTS[a] /
@@ -190,10 +197,8 @@ static void init_game_coefficients()
         sum2 += (RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1] =
                      RR_MOB_WAVE_RARITY_COEFFICIENTS[a] /
                      RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1]);
-        RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *=
-            RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
     }
-    for (uint64_t a = 1; a <= rr_rarity_id_ultra + 1; ++a)
+    for (uint64_t a = 1; a <= rr_rarity_id_exotic + 1; ++a)
     {
         RR_DROP_RARITY_COEFFICIENTS[a] = RR_DROP_RARITY_COEFFICIENTS[a] / sum +
                                          RR_DROP_RARITY_COEFFICIENTS[a - 1];
@@ -201,7 +206,7 @@ static void init_game_coefficients()
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
     }
-    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1] = 1;
+    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] +=
@@ -315,8 +320,8 @@ static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maz
 static void print_chances(float difficulty) {
     printf("-----Chances for %.0f-----\n", difficulty);
     uint32_t rarity_cap = rr_rarity_id_unusual + difficulty / 8;
-    if (rarity_cap > rr_rarity_id_ultra)
-        rarity_cap = rr_rarity_id_ultra;
+    if (rarity_cap > rr_rarity_id_exotic)
+        rarity_cap = rr_rarity_id_exotic;
     uint8_t rarity = 0;
     for (; rarity <= rarity_cap; ++rarity)
     {
@@ -382,6 +387,11 @@ void rr_static_data_init()
     init(BURROW);
     #ifdef RR_SERVER
     for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_CRAFT_CHANCES[r]);
+    print_chances(48);
+    print_chances(44);
+    print_chances(40);
+    print_chances(36);
+    print_chances(32);
     #endif
 }
 
