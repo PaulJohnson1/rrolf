@@ -221,7 +221,10 @@ static void tick_maze(struct rr_simulation *this)
             if (grid->player_count > 0) \
             { \
                 grid->farming_slowdown = rr_fclamp(grid->farming_slowdown + 0.002 / 25 * grid->player_count, 0, 15); \
-                float spawn_at = powf(1/1.25, grid->player_count) * (200 + 4 * grid->difficulty) / (1 + grid->farming_slowdown); \
+                float slowdown = grid->farming_slowdown; \
+                if (grid->difficulty > 36) \
+                    slowdown /= 10; \
+                float spawn_at = powf(1/1.25, grid->player_count) * (200 + 4 * grid->difficulty) / (1 + slowdown); \
                 if (grid->grid_points >= grid->max_points) \
                     grid->spawn_timer = 0; \
                 else if (grid->player_count == 0 || grid->value == 0 || (grid->value & 8)) \
