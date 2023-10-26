@@ -135,7 +135,7 @@ static EntityIdx rr_simulation_alloc_mob_non_recursive(struct rr_simulation *thi
     rr_component_physical_set_y(physical, y);
     physical->arena = arena_id;
     physical->friction = 0.75;
-    physical->mass = 25.0f * powf(1.1, RR_MOB_RARITY_SCALING[rarity_id].damage);
+    physical->mass = 25.0f * powf(6, RR_MOB_RARITY_SCALING[rarity_id].radius);
     rr_component_health_set_max_health(health,
                                        mob_data->health * rarity_scale->health);
     rr_component_health_set_health(health,
@@ -175,7 +175,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     rr_component_physical_set_y(physical, y);
     physical->arena = arena_id;
     physical->friction = 0.75;
-    physical->mass = 25.0f * powf(1.1, RR_MOB_RARITY_SCALING[rarity_id].damage);
+    physical->mass = 25.0f * powf(6, RR_MOB_RARITY_SCALING[rarity_id].radius);
     physical->slow_resist = rr_fclamp(0.2 * (rarity_scale->radius - 1), 0, 1);
     if (mob_id == rr_mob_id_meteor)
     {
