@@ -405,7 +405,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_bone)
         {
-            health->damage_reduction += 1.6 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
+            health->damage_reduction += 1.75 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
             bone_diminish_factor *= 0.6;
         }
         else

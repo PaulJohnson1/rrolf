@@ -8,22 +8,22 @@
 // clang-format off
 struct rr_petal_base_stat_scale const offensive[rr_rarity_id_max] = {
     {1.0, 1.0},
-    {1.3, 2.0},
-    {1.7, 4.0},
-    {2.3, 8.0},
-    {3.0,  16},
-    {4.0,  32},
-    {5.5,  64},
+    {1.7, 2.0},
+    {2.9, 4.0},
+    {5.0, 8.0},
+    {8.5,  16},
+    {14.5, 32},
+    {24.6, 64},
 };
 
 struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
     {1.0, 1.0},
-    {2.0, 1.3},
-    {4.0, 1.7},
-    {8.0, 2.3},
-    {16,  3.0},
-    {32,  4.0},
-    {64,  5.5},
+    {2.0, 1.7},
+    {4.0, 2.9},
+    {8.0, 5.0},
+    {16,  8.5},
+    {32, 14.5},
+    {64, 24.6},
 };
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
@@ -145,22 +145,22 @@ double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 
 // zeach's numbers from the pinned screenshot of the old scaling
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {1.0, 240, 45},
-    {1.4, 120, 60},
-    {2.0, 60,  75},
-    {3.0, 30,  100},
-    {4.8, 15,  150},
-    {9.0, 5,   200},
-    {15.0,1.5, 250},
+    {1.8, 120, 60},
+    {3.5, 60,  75},
+    {6.4, 30,  100},
+    {11.5,15,  150},
+    {20.5,5,   200},
+    {40.0,1.5, 250},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.4, 1.3, 1.2},
-    {6.0, 1.7, 1.8}, 
-    {16,  2.2, 2.4},
-    {90,  3.0, 3.6},
-    {400, 4.0, 4.8},
-    {1e4, 5.5, 6.0},
+    {2.4, 1.7, 1.2},
+    {6.0, 2.9, 1.8}, 
+    {16,  5.0, 2.4},
+    {90,  8.5, 3.6},
+    {400,14.5, 4.8},
+    {1e4,24.6, 6.0},
 };
 // clang-format on
 
