@@ -368,7 +368,6 @@ static double get_prd_base(double p)
             Clower = Cmid;
         p2 = p1;
     }
-
     return Cmid;
 }
 
