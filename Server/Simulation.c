@@ -150,10 +150,10 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 #else
 #define FOV 4096
 #endif
-    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
-    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
-    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
-    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim) / arena->maze->grid_size;
+    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
+    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
+    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
+    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
 #undef FOV
     uint32_t level = rr_simulation_get_flower(_simulation, entity)->level;
     for (uint32_t x = sx; x <= ex; ++x)
