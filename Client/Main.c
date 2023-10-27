@@ -140,7 +140,7 @@ void rr_main_loop(struct rr_game *this)
                 _rr_mouse_event($0, clientX * devicePixelRatio,
                                clientY * devicePixelRatio, 2, +!!button);
             });
-            window.addEventLister("mouseup", async function(e){
+            window.addEventListener("mouseup", async function(e){
                 const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
                 _rr_mouse_event($0, clientX * devicePixelRatio,
                                 clientY * devicePixelRatio, 0, +!!button);

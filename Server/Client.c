@@ -157,7 +157,7 @@ int rr_server_client_read_from_api(struct rr_server_client *this, struct rr_bina
     {
         uint8_t rarity = rr_binary_encoder_read_uint8(encoder);
         uint32_t count = rr_binary_encoder_read_varuint(encoder);
-        if (rarity < rr_rarity_id_max)
+        if (rarity < rr_rarity_id_max && rarity != rr_rarity_id_mythic)
             this->craft_fails[id][rarity] = count; 
         id = rr_binary_encoder_read_uint8(encoder);
     }

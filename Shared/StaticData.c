@@ -140,7 +140,7 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {
     3, //edmon
 };
 
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 0.5, 75, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 75, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {

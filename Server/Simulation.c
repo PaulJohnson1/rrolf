@@ -43,7 +43,7 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
-uint8_t quetz_tree_zone() { return rr_frand() > 0.15 ? rr_mob_id_quetzalcoatlus : rr_mob_id_tree; }
+uint8_t quetz_fern_zone() { return rr_frand() > 0.15 ? rr_mob_id_quetzalcoatlus : rr_mob_id_fern; }
 uint8_t trike_pachy_zone() { return rr_frand() > 0.4 ? rr_mob_id_pachycephalosaurus : rr_mob_id_triceratops; }
 uint8_t ptera_meteor_zone() { return rr_frand() > 0.01 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
 uint8_t patchy_zone() { return rr_mob_id_pachycephalosaurus; }
@@ -66,7 +66,7 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(rr_biome_id_hell_creek, dako_zone, 7, 7, 1, 3);
     set_special_zone(rr_biome_id_hell_creek, rex_zone, 0, 29, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, trike_pachy_zone, 6, 23, 2, 2);
-    set_special_zone(rr_biome_id_hell_creek, quetz_tree_zone, 4, 16, 4, 1);
+    set_special_zone(rr_biome_id_hell_creek, quetz_fern_zone, 4, 16, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, patchy_zone, 7, 4, 2, 1);
     set_special_zone(rr_biome_id_hell_creek, anky_zone, 11, 0, 3, 2);
 }
@@ -133,6 +133,8 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     }
 }
 
+#define PLAYER_COUNT_CAP (12)
+
 static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 {
     struct rr_simulation *this = _simulation;
@@ -153,9 +155,9 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
         for (uint32_t y = sy; y <= ey; ++y)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, x, y);
-            grid->player_count += grid->player_count < 8;
+            grid->player_count += grid->player_count < PLAYER_COUNT_CAP;
             grid->local_difficulty += rr_fclamp((level-(grid->difficulty-1)*2) / 10, -1, 1);
-            grid->local_difficulty = rr_fclamp(grid->local_difficulty, -8, 8);
+            grid->local_difficulty = rr_fclamp(grid->local_difficulty, -PLAYER_COUNT_CAP, PLAYER_COUNT_CAP);
         }
 }
 
@@ -248,7 +250,6 @@ static void tick_maze(struct rr_simulation *this)
 
 #define RR_TIME_BLOCK(_, CODE)                                                 \
     {                                                                          \
-    fputs(_ "\n", stderr);\
         CODE;                                                                  \
     };
 

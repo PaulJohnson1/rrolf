@@ -893,7 +893,6 @@ static void server_tick(struct rr_server *this)
                 }
             }
             rr_server_client_broadcast_update(client); 
-            
             if (!client->dev)
                 continue;
             struct proto_bug encoder;
@@ -927,6 +926,22 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
             }
             rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            if (client->player_info != NULL)
+            {
+            proto_bug_init(&encoder, outgoing_message);
+            proto_bug_write_uint8(&encoder, rr_clientbound_dev_info, "header");
+            proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
+            struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
+            for (uint32_t y = 0; y < decl->maze_dim; ++y)
+            {
+                for (uint32_t x = 0; x < decl->maze_dim; ++x)
+                {
+                    proto_bug_write_float32(&encoder, decl->maze[y * decl->maze_dim + x].local_difficulty, "diff");
+                    proto_bug_write_float32(&encoder, decl->maze[y * decl->maze_dim + x].overload_factor, "olf");
+                }
+            }
+            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            }
         }
     }
     rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
