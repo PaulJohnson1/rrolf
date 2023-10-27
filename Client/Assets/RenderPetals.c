@@ -20,7 +20,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
     {
         switch (id)
         {
-        case rr_petal_id_no_petal:
+        case rr_petal_id_none:
             break;
         case rr_petal_id_basic:
             rr_renderer_set_stroke(renderer, 0xffcfcfcf);

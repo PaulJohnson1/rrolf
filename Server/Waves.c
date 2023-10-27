@@ -15,11 +15,11 @@ uint32_t get_spawn_rarity(float difficulty)
     uint32_t rarity_cap = rr_rarity_id_unusual + (difficulty - 1) / 8;
     if (rarity_cap > rr_rarity_id_exotic)
         rarity_cap = rr_rarity_id_exotic;
-    uint8_t rarity = 0;
+    uint32_t rarity = rarity_cap >= 2 ? rarity_cap - 2 : 0;
     for (; rarity < rarity_cap; ++rarity)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                pow(1.45, difficulty - 1)) >= rarity_seed)
-            return rarity;
+                pow(1.5, difficulty)) >= rarity_seed)
+            break;
     return rarity;
 }
 
@@ -27,10 +27,11 @@ uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 {
     double *table = biome == 0 ? RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS : RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS;
     double seed = rr_frand();
-    for (uint8_t id = 0; id < rr_mob_id_max - 1; ++id)
+    uint8_t id = 0;
+    for (; id < rr_mob_id_max - 1; ++id)
             if (seed <= table[id])
-                return id;
-    return rr_mob_id_max - 1;
+                break;
+    return id;
 }
 
 int should_spawn_at(uint8_t id, uint8_t rarity)

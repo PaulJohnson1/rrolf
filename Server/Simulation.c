@@ -1,11 +1,10 @@
 #include <Server/Simulation.h>
 
 #include <assert.h>
-#include <inttypes.h>
+#include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 
 #include <Server/EntityAllocation.h>
 #include <Server/EntityDetection.h>
@@ -58,8 +57,7 @@ void rr_simulation_init(struct rr_simulation *this)
     EntityIdx id = rr_simulation_alloc_entity(this);
     struct rr_component_arena *arena =
         rr_simulation_add_arena(this, id);
-    //rr_component_arena_set_radius(arena_component, RR_ARENA_LENGTH);
-    arena->biome = RR_GLOBAL_BIOME; //CHANGE
+    arena->biome = RR_GLOBAL_BIOME;
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
     set_special_zone(rr_biome_id_hell_creek, ornitho_zone, 11, 11, 2, 2);
@@ -71,11 +69,6 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(rr_biome_id_hell_creek, quetz_tree_zone, 4, 16, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, patchy_zone, 7, 4, 2, 1);
     set_special_zone(rr_biome_id_hell_creek, anky_zone, 11, 0, 3, 2);
-#define XX(COMPONENT, ID)                                                      \
-    //printf(#COMPONENT);                                                        \
-    printf(" size is %lu\n", sizeof *this->COMPONENT##_components);
-    RR_FOR_EACH_COMPONENT;
-#undef XX
 }
 
 struct too_close_captures
@@ -124,7 +117,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty / 2);
+    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty);
     if (!should_spawn_at(id, rarity))
         return;
     for (uint32_t n = 0; n < 10; ++n)
@@ -161,7 +154,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, x, y);
             grid->player_count += grid->player_count < 8;
-            grid->local_difficulty += rr_fclamp((level - grid->difficulty * 2) / 8, -1, 1);
+            grid->local_difficulty += rr_fclamp((level-(grid->difficulty-1)*2) / 10, -1, 1);
             grid->local_difficulty = rr_fclamp(grid->local_difficulty, -8, 8);
         }
 }
@@ -194,22 +187,33 @@ static void tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uin
 {
     if (grid->value == 0 || (grid->value & 8))
         return;
-    if (grid->player_count == 0)
+    if (grid->local_difficulty > 0)
     {
-        grid->spawn_timer = 25 + rr_frand() * 25; //1 secone + (0-0.5)s initial 
-        grid->overload_factor = rr_fclamp(grid->overload_factor - 0.02 / 25, 0, 7);
-        return;   
+        grid->overload_factor = rr_fclamp(
+            grid->overload_factor + 0.002 * grid->local_difficulty / 25, 0, grid->local_difficulty);
     }
-    uint32_t max_points = 4 + grid->player_count - grid->difficulty / 16;
+    else
+    {
+        grid->overload_factor = rr_fclamp(grid->overload_factor - 0.05 / 25, 0,
+                                          grid->overload_factor);
+    }
+    float player_modifier = 1 + grid->player_count * 2.0 / 3;
+    float difficulty_modifier = 200 + 4 * grid->difficulty;
+    float overload_modifier = powf(1.15, grid->local_difficulty + grid->overload_factor);
+    float max_points = (5 + grid->player_count / 2 - grid->difficulty / 16) * powf(1.25, grid->overload_factor);
     if (grid->grid_points >= max_points)
         return;
-    grid->overload_factor = rr_fclamp(grid->overload_factor + 0.001 / 25 * grid->player_count, 0, 7);
-    float base_modifier = ((float) max_points) / (max_points - grid->grid_points);
-    float player_modifier = 1 + grid->player_count * 2.0 / 3;
-    float difficulty_modifier = 250 + 5 * grid->difficulty;
-    float overload_modifier = powf(1.2, grid->local_difficulty);
-    float spawn_at = base_modifier * difficulty_modifier / (player_modifier * overload_modifier);
-    if (grid->spawn_timer >= spawn_at)
+    float base_modifier =
+        (max_points) / (max_points - grid->grid_points);
+    float spawn_at = base_modifier * difficulty_modifier /
+                     (player_modifier * overload_modifier);
+    if (grid->player_count == 0)
+    {
+        grid->overload_factor =
+            rr_fclamp(grid->overload_factor - 0.05 / 25, 0, 15);
+        grid->spawn_timer = rr_frand() * 0.75 * spawn_at;
+    }
+    else if (grid->spawn_timer >= spawn_at)
         spawn_mob(this, grid_x, grid_y);
     else
         ++grid->spawn_timer;
@@ -264,10 +268,12 @@ void rr_simulation_tick(struct rr_simulation *this)
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
     RR_TIME_BLOCK("spawn_tick", { tick_maze(this); });
-    memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
+    memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions); 
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
-    RR_TIME_BLOCK("free_component", { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components); });
-    RR_TIME_BLOCK("unset_entity", { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity); });
+    RR_TIME_BLOCK("free_component", 
+                  { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components); });
+    RR_TIME_BLOCK("unset_entity", 
+                  { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity); });
 }
 
 int rr_simulation_entity_alive(struct rr_simulation *this, EntityHash hash)

@@ -63,7 +63,7 @@ enum rr_rarity_id
 
 enum rr_petal_id
 {
-    rr_petal_id_no_petal,
+    rr_petal_id_none,
     rr_petal_id_basic,
     rr_petal_id_pellet,
     rr_petal_id_fossil,
