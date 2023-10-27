@@ -178,7 +178,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 6, 10, 15, 25, 160, 4800};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 12, 20, 50, 600, 1250, 200};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 8, 12, 15, 25, 56, 400, 50};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 8, 12, 15, 25, 60, 400, 50};
 
 static void init_game_coefficients()
 {
