@@ -331,7 +331,6 @@ static void print_chances(float difficulty) {
 }
 
 #ifdef RR_SERVER
-
 static double from_prd_base(double C)
 {
     double pProcOnN = 0;
@@ -353,8 +352,8 @@ static double get_prd_base(double p)
         return 0;
     double Cupper = p;
     double Clower = 0;
-    double Cmid;
-    double p1;
+    double Cmid = p / 2;
+    double p1 = 0;
     double p2 = 1;
     while (1)
     {

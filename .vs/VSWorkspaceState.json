@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Client",
+    "\\MasterServer",
+    "\\Server",
+    "\\Shared",
+    "\\Shared\\Component"
   ],
-  "SelectedNode": "\\C:\\rrolf",
+  "SelectedNode": "\\MasterServer\\main.js",
   "PreviewInSolutionExplorer": false
 }
