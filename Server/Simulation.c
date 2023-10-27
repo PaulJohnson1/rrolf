@@ -117,7 +117,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty);
+    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty * 0.6);
     if (!should_spawn_at(id, rarity))
         return;
     for (uint32_t n = 0; n < 10; ++n)
