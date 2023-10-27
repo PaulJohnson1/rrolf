@@ -106,7 +106,7 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_ornithomimus, rr_rarity_id_common, 25, 10, 20.0f, {{rr_petal_id_feather, 0.1},{rr_petal_id_droplet, 0.05},{rr_petal_id_pellet, 0.1}}},
     {rr_mob_id_ankylosaurus, rr_rarity_id_rare, 50, 10, 30.0f, {{rr_petal_id_club, 0.15},{rr_petal_id_gravel, 0.1}}},
     {rr_mob_id_meteor, rr_rarity_id_rare, 100, 5, 32.0f, {{rr_petal_id_magnet, 0.5},{rr_petal_id_uranium, 0.25}}},
-    {rr_mob_id_quetzalcoatlus, rr_rarity_id_rare, 65, 15, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.1},{rr_petal_id_lightning, 0.05}}},
+    {rr_mob_id_quetzalcoatlus, rr_rarity_id_rare, 65, 20, 28.0f, {{rr_petal_id_beak, 0.25},{rr_petal_id_fossil, 0.1},{rr_petal_id_lightning, 0.05}}},
     {rr_mob_id_edmontosaurus, rr_rarity_id_epic, 45, 15, 30.0f, {{rr_petal_id_bone, 0.15},{rr_petal_id_fossil, 0.1},{rr_petal_id_third_eye, 0.05}}},
     {rr_mob_id_ant, rr_rarity_id_common, 15, 10, 20.0f, {{rr_petal_id_pellet, 0.1},{rr_petal_id_leaf, 0.1},{rr_petal_id_mandible, 0.05}}},
     {rr_mob_id_hornet, rr_rarity_id_common, 25, 25, 25.0f, {{rr_petal_id_stinger, 0.1},{rr_petal_id_crest, 0.05}}},
@@ -156,13 +156,13 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {1.0, 1.0, 1.0},
-    {2.4, 1.65, 1.2},
-    {6.0, 2.72, 1.8}, 
-    {16,  4.49, 2.4},
-    {64,  7.41, 3.6},
-    {320,12.23, 4.8},
-    {1e4,20.18, 6.0},
-    {2e5,33.30, 7.0}
+    {2.4, 1.7, 1.2},
+    {6.0, 2.9, 1.8}, 
+    {16,  5.0, 2.4},
+    {64,  8.5, 3.6},
+    {320,14.5, 4.8},
+    {1e4,24.6, 6.0},
+    {2e5,42.0, 7.0}
 };
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
@@ -178,7 +178,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 6, 10, 15, 25, 160, 4800};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 12, 20, 50, 600, 1250, 200};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 8, 12, 15, 25, 45, 300, 50};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 8, 12, 15, 25, 50, 300, 50};
 
 static void init_game_coefficients()
 {

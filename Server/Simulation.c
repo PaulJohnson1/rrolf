@@ -113,7 +113,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, grid_x, grid_y);
     uint8_t id;
-    if (grid->spawn_function != NULL && rr_frand() < 0.5)
+    if (grid->spawn_function != NULL && rr_frand() < 0.33)
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
@@ -141,7 +141,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
 #ifdef RIVET_BUILD
-#define FOV 2048
+#define FOV 3072
 #else
 #define FOV 4096
 #endif
@@ -185,26 +185,30 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         rr_simulation_get_mob(this, entity)->ticks_to_despawn = 30 * 25;
 }
 
-static void tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uint32_t grid_x, uint32_t grid_y)
+static float get_max_points(struct rr_maze_grid *grid)
+{
+    return (1 + (grid->player_count + 1) / 2) * powf(1.35, grid->overload_factor);
+}
+static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uint32_t grid_x, uint32_t grid_y)
 {
     if (grid->value == 0 || (grid->value & 8))
-        return;
+        return 0;
     if (grid->local_difficulty > 0)
     {
         grid->overload_factor = rr_fclamp(
-            grid->overload_factor + 0.002 * grid->local_difficulty / 25, 0, grid->local_difficulty);
+            grid->overload_factor + 0.005 * grid->local_difficulty / 25, 0, 1.5 * grid->local_difficulty);
     }
     else
     {
-        grid->overload_factor = rr_fclamp(grid->overload_factor - 0.05 / 25, 0,
+        grid->overload_factor = rr_fclamp(grid->overload_factor - 0.025 / 25, 0,
                                           grid->overload_factor);
     }
     float player_modifier = 1 + grid->player_count * 2.0 / 3;
-    float difficulty_modifier = 200 + 4 * grid->difficulty;
-    float overload_modifier = powf(1.15, grid->local_difficulty + grid->overload_factor);
-    float max_points = (5 + grid->player_count / 2 - grid->difficulty / 16) * powf(1.25, grid->overload_factor);
+    float difficulty_modifier = 200 + 5 * grid->difficulty;
+    float overload_modifier = powf(1.25, grid->local_difficulty + grid->overload_factor);
+    float max_points = get_max_points(grid);
     if (grid->grid_points >= max_points)
-        return;
+        return 0;
     float base_modifier =
         (max_points) / (max_points - grid->grid_points);
     float spawn_at = base_modifier * difficulty_modifier /
@@ -212,13 +216,17 @@ static void tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uin
     if (grid->player_count == 0)
     {
         grid->overload_factor =
-            rr_fclamp(grid->overload_factor - 0.05 / 25, 0, 15);
+            rr_fclamp(grid->overload_factor - 0.025 / 25, 0, 15);
         grid->spawn_timer = rr_frand() * 0.75 * spawn_at;
     }
     else if (grid->spawn_timer >= spawn_at)
+    {
         spawn_mob(this, grid_x, grid_y);
+        return 1;
+    }
     else
         ++grid->spawn_timer;
+    return 0;
 }
 
 static void tick_maze(struct rr_simulation *this)
@@ -229,9 +237,27 @@ static void tick_maze(struct rr_simulation *this)
 
     rr_simulation_for_each_flower(this, this, count_flower_vicinity);
     rr_simulation_for_each_mob(this, this, despawn_mob);
-    for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; ++grid_x)
-        for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; ++grid_y)
-            tick_grid(this, rr_component_arena_get_grid(arena, grid_x, grid_y), grid_x, grid_y);
+    for (uint32_t grid_x = 0; grid_x < arena->maze->maze_dim; grid_x += 2)
+    {
+        for (uint32_t grid_y = 0; grid_y < arena->maze->maze_dim; grid_y += 2)
+        {
+            struct rr_maze_grid *nw = rr_component_arena_get_grid(arena, grid_x, grid_y);
+            struct rr_maze_grid *ne = rr_component_arena_get_grid(arena, grid_x+1, grid_y);
+            struct rr_maze_grid *sw = rr_component_arena_get_grid(arena, grid_x, grid_y+1);
+            struct rr_maze_grid *se = rr_component_arena_get_grid(arena, grid_x+1, grid_y+1);
+            float max_overall = get_max_points(nw) + get_max_points(ne) + get_max_points(sw) + get_max_points(se);
+            if (nw->grid_points + ne->grid_points + sw->grid_points + se->grid_points > max_overall)
+                continue;
+            if (tick_grid(this, nw, grid_x, grid_y))
+                continue;
+            if (tick_grid(this, ne, grid_x+1, grid_y))
+                continue;
+            if (tick_grid(this, sw, grid_x, grid_y+1))
+                continue;
+            if (tick_grid(this, se, grid_x+1, grid_y+1))
+                continue;
+        }
+    }
 }
 
 #define RR_TIME_BLOCK_(_, CODE)                                                 \
