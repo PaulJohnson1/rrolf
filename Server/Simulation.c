@@ -124,7 +124,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         id = grid->spawn_function();
     else
         id = get_spawn_id(RR_GLOBAL_BIOME, grid);
-    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty);
+    uint8_t rarity = get_spawn_rarity(grid->difficulty + grid->local_difficulty / 2);
     if (!should_spawn_at(id, rarity))
         return;
     for (uint32_t n = 0; n < 10; ++n)
@@ -132,8 +132,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x, uint32_t grid
         struct rr_vector pos = {(grid_x + rr_frand()) * arena->maze->grid_size, (grid_y + rr_frand()) * arena->maze->grid_size};
         if (too_close(this, pos.x, pos.y, RR_MOB_DATA[id].radius * RR_MOB_RARITY_SCALING[rarity].radius + 250))
             continue;
-        EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity,
-                                                rr_simulation_team_id_mobs);
+        EntityIdx mob_id = rr_simulation_alloc_mob(this, 1, pos.x, pos.y, id, rarity, rr_simulation_team_id_mobs);
         rr_simulation_get_mob(this, mob_id)->zone = grid;
         grid->grid_points += RR_MOB_DIFFICULTY_COEFFICIENTS[id];
         grid->spawn_timer = 0;
@@ -206,7 +205,7 @@ static void tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uin
     float base_modifier = ((float) max_points) / (max_points - grid->grid_points);
     float player_modifier = powf(1.25, grid->player_count);
     float difficulty_modifier = 150 + 4 * grid->difficulty;
-    float overload_modifier = 1 + grid->overload_factor * powf(1.25, grid->local_difficulty);
+    float overload_modifier = 1 + powf(1.25, grid->local_difficulty);
     float spawn_at = base_modifier * difficulty_modifier / (player_modifier * overload_modifier);
     if (grid->spawn_timer >= spawn_at)
         spawn_mob(this, grid_x, grid_y);
