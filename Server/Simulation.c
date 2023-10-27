@@ -250,34 +250,23 @@ static void tick_maze(struct rr_simulation *this)
 void rr_simulation_tick(struct rr_simulation *this)
 {
     rr_simulation_create_component_vectors(this);
-    //printf("server has %d entities\n", this->physical_count);
-    //fputs("part 1\n", stderr);
     RR_TIME_BLOCK("collision_detection",
                   { rr_system_collision_detection_tick(this); });
     RR_TIME_BLOCK("ai", { rr_system_ai_tick(this); });
     RR_TIME_BLOCK("drops", { rr_system_drops_tick(this); });
-    //fputs("part 2\n", stderr);
     RR_TIME_BLOCK("petal_behavior", { rr_system_petal_behavior_tick(this); });
     RR_TIME_BLOCK("collision_resolution",
                   { rr_system_collision_resolution_tick(this); });
     RR_TIME_BLOCK("web", { rr_system_web_tick(this); });
-    //fputs("part 3\n", stderr);
     RR_TIME_BLOCK("velocity", { rr_system_velocity_tick(this); });
     RR_TIME_BLOCK("centipede", { rr_system_centipede_tick(this); });
     RR_TIME_BLOCK("health", { rr_system_health_tick(this); });
     RR_TIME_BLOCK("camera", { rr_system_camera_tick(this); });
-    tick_maze(this);
-    //fputs("part 4\n", stderr);
+    RR_TIME_BLOCK("spawn_tick", { tick_maze(this); });
     memcpy(this->deleted_last_tick, this->pending_deletions, sizeof this->pending_deletions);
     memset(this->pending_deletions, 0, sizeof this->pending_deletions);
-    rr_bitset_for_each_bit(
-        this->deleted_last_tick,
-        this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this,
-        __rr_simulation_pending_deletion_free_components);
-    rr_bitset_for_each_bit(this->deleted_last_tick,
-                           this->deleted_last_tick +
-                               (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)),
-                           this, __rr_simulation_pending_deletion_unset_entity);
+    RR_TIME_BLOCK("free_component", { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + (RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)), this, __rr_simulation_pending_deletion_free_components); });
+    RR_TIME_BLOCK("unset_entity", { rr_bitset_for_each_bit(this->deleted_last_tick, this->deleted_last_tick + RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT), this, __rr_simulation_pending_deletion_unset_entity); });
 }
 
 int rr_simulation_entity_alive(struct rr_simulation *this, EntityHash hash)
