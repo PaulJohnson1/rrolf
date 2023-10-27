@@ -198,14 +198,14 @@ static void tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uin
         grid->overload_factor = rr_fclamp(grid->overload_factor - 0.02 / 25, 0, 7);
         return;   
     }
-    uint32_t max_points = 5 + grid->player_count - grid->difficulty / 16;
+    uint32_t max_points = 4 + grid->player_count - grid->difficulty / 16;
     if (grid->grid_points >= max_points)
         return;
     grid->overload_factor = rr_fclamp(grid->overload_factor + 0.001 / 25 * grid->player_count, 0, 7);
     float base_modifier = ((float) max_points) / (max_points - grid->grid_points);
-    float player_modifier = powf(1.25, grid->player_count);
-    float difficulty_modifier = 150 + 4 * grid->difficulty;
-    float overload_modifier = 1 + powf(1.25, grid->local_difficulty);
+    float player_modifier = 1 + grid->player_count;
+    float difficulty_modifier = 200 + 4 * grid->difficulty;
+    float overload_modifier = 1 + powf(1.2, grid->local_difficulty);
     float spawn_at = base_modifier * difficulty_modifier / (player_modifier * overload_modifier);
     if (grid->spawn_timer >= spawn_at)
         spawn_mob(this, grid_x, grid_y);
