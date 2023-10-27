@@ -150,10 +150,10 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
 #else
 #define FOV 4096
 #endif
-    uint32_t sx = rr_fclamp(physical->x - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
-    uint32_t sy = rr_fclamp(physical->y - FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
-    uint32_t ex = rr_fclamp(physical->x + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
-    uint32_t ey = rr_fclamp(physical->y + FOV, 0, arena->maze->grid_size * arena->maze->maze_dim - 0.001) / arena->maze->grid_size;
+    uint32_t sx = rr_fclamp((physical->x - FOV) / arena->maze->grid_size, 0, arena->maze->maze_dim - 1);
+    uint32_t sy = rr_fclamp((physical->y - FOV) / arena->maze->grid_size, 0, arena->maze->maze_dim - 1);
+    uint32_t ex = rr_fclamp((physical->x + FOV) / arena->maze->grid_size, 0, arena->maze->maze_dim - 1);
+    uint32_t ey = rr_fclamp((physical->y + FOV) / arena->maze->grid_size, 0, arena->maze->maze_dim - 1);
 #undef FOV
     uint32_t level = rr_simulation_get_flower(_simulation, entity)->level;
     for (uint32_t x = sx; x <= ex; ++x)
@@ -175,7 +175,9 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     if (rr_simulation_has_arena(this, entity))
         return;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
-    if (rr_component_arena_get_grid(arena, physical->x / arena->maze->grid_size, physical->y / arena->maze->grid_size)->player_count == 0)
+    if (rr_component_arena_get_grid(arena, 
+    rr_fclamp(physical->x / arena->maze->grid_size, 0, arena->maze->maze_dim - 1), 
+    rr_fclamp(physical->y / arena->maze->grid_size, 0, arena->maze->maze_dim - 1))->player_count == 0)
     {
         struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
         if (--mob->ticks_to_despawn == 0)
