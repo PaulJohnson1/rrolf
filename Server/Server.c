@@ -990,12 +990,10 @@ void rr_server_run(struct rr_server *this)
             exit(1);
         }
     }
-
+    struct timeval start;
+    struct timeval end;
     while (1)
     {
-        struct timeval start;
-        struct timeval end;
-
         gettimeofday(&start, NULL);
         fputs("server_recv\n", stderr);
         lws_service(this->server, -1);
