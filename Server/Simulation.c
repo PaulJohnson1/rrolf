@@ -156,7 +156,7 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
         {
             struct rr_maze_grid *grid = rr_component_arena_get_grid(arena, x, y);
             grid->player_count += grid->player_count < PLAYER_COUNT_CAP;
-            grid->local_difficulty += rr_fclamp((level-(grid->difficulty-1)*2) / 10, -1, 1);
+            grid->local_difficulty += rr_fclamp((level-(grid->difficulty-1)*2.1) / 10, -1, 1);
             grid->local_difficulty = rr_fclamp(grid->local_difficulty, -PLAYER_COUNT_CAP, PLAYER_COUNT_CAP);
         }
 }
