@@ -381,7 +381,7 @@ void rr_static_data_init()
     init(HELL_CREEK);
     init(BURROW);
     #ifdef RR_SERVER
-    print_chances(48);
+    print_chances(52);
     print_chances(44);
     print_chances(40);
     print_chances(36);

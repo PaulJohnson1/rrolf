@@ -389,7 +389,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_feather)
         {
             physical->acceleration_scale += (0.05 + 0.025 * slot->rarity) * feather_diminish_factor;
-            feather_diminish_factor *= 0.6;
+            feather_diminish_factor *= 0.5;
         }
         else if (data->id == rr_petal_id_crest)
         {
@@ -406,7 +406,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_bone)
         {
             health->damage_reduction += 1.75 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
-            bone_diminish_factor *= 0.6;
+            bone_diminish_factor *= 0.5;
         }
         else
         {
@@ -415,7 +415,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
-                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 35 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
+                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 50 + 180 * slot->rarity)
             }
         }
     }

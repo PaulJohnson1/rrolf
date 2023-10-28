@@ -20,7 +20,7 @@ uint32_t get_spawn_rarity(float difficulty)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
                 pow(1.5, difficulty)) >= rarity_seed)
             break;
-    if (rarity == rr_rarity_id_exotic && rr_frand() < 0.01)
+    if (rarity == rr_rarity_id_exotic && rr_frand() < 0.005)
         rarity = rr_rarity_id_ultimate;
     return rarity;
 }
