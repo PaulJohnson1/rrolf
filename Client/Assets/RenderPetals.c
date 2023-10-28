@@ -1586,7 +1586,7 @@ void rr_renderer_draw_static_petal(struct rr_renderer *renderer, uint8_t id, uin
                 rr_renderer_rotate(renderer, 1.0f);
             else if (id == rr_petal_id_leaf)
                 rr_renderer_rotate(renderer, -1.0f);
-            else if (id == rr_petal_id_stinger && rarity == rr_rarity_id_exotic)
+            else if (id == rr_petal_id_stinger && rarity >= rr_rarity_id_exotic)
                 rr_renderer_rotate(renderer, M_PI);
             else if (id == rr_petal_id_wax)
                 rr_renderer_rotate(renderer, 0.3f);
