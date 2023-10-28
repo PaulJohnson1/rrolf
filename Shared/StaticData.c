@@ -140,7 +140,20 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {
     3, //edmon
 };
 
-double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {50, 100, 30, 1, 75, 50, 25, 40, 25, 0.5, 75, 25, 0, 0,  0, 0, 0, 0, 0};
+double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
+    50, //tric
+    100,//trex
+    15, //fern
+    1,  //tree
+    75, //pter
+    50, //dako
+    25, //pachy
+    40, //ornith
+    25, //anky
+    0.5,//meteor
+    75, //quetz
+    25  //edmo
+};
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
@@ -162,7 +175,7 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {64,  8.5, 3.6},
     {480,14.5, 4.8},
     {2400,24.6, 6.0},
-    {38400,42.0, 7.0}
+    {38400,42.0, 7.5}
 };
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {

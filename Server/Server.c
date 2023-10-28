@@ -278,9 +278,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             rr_binary_encoder_write_uint8(&encoder, i);
             lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
             rr_server_client_free(this->clients + i);
-            char log[100] = {"ip: `"};
-            strcat(log, this->clients[i].ip_address);
-            strcat(log, "`");
             return 0;
         }
         puts("client joined but instakicked");
