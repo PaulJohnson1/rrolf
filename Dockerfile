@@ -2,19 +2,15 @@ FROM alpine AS builder
 RUN apk update && apk add --no-cache llvm-dev make cmake clang libwebsockets-dev curl-dev musl-dev binutils gcc libc-dev
 WORKDIR /usr/src
 COPY . .
-# RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
-RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
+RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
+# RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
+# RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
 
-FROM debian:12
-RUN apt-get update -y && apt-get install -y gcc gdb
 FROM alpine
 RUN apk update && apk add --no-cache ca-certificates curl-dev libwebsockets
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/rrolf-server .
-RUN chmod +x upload_core_dump.sh run.sh
-# RUN gcc -o generate_core_dump generate_core_dump.c
-CMD sh run.sh
-# CMD ./rrolf-server
+CMD ./rrolf-server
 
 # # small ssh server
 # FROM alpine
