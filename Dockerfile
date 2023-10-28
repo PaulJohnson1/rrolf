@@ -18,7 +18,7 @@ CMD ./rrolf-server
 #     apk upgrade && \
 #     apk add --no-cache openssh-server wget unzip && \
 #     mkdir /var/run/sshd && \
-#     sed 's/#Port 22/Port 2222/' -i /etc/ssh/sshd_config
+#    sed 's/#Port 22/Port 2222/' -i /etc/ssh/sshd_config
 
 # COPY --from=builder /usr/src/ /usr/src
 
