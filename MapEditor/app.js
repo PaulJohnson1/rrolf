@@ -405,11 +405,11 @@ function generateMaze() {
 
         if (y + 2 < MAZE_SIZE && !visited_map[i(x, y + 2)])
             neighbors.push(0);
-        if (y - 2 > 0 &&         !visited_map[i(x, y - 2)])
+        if (y - 2 >= 0 &&         !visited_map[i(x, y - 2)])
             neighbors.push(1);
         if (x + 2 < MAZE_SIZE && !visited_map[i(x + 2, y)])
             neighbors.push(2);
-        if (x - 2 > 0 &&         !visited_map[i(x - 2, y)])
+        if (x - 2 >= 0 &&         !visited_map[i(x - 2, y)])
             neighbors.push(3);
 
         if (neighbors.length === 0)
