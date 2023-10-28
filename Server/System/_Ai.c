@@ -10,13 +10,18 @@
 #include <Shared/Entity.h>
 #include <Shared/Vector.h>
 
-
-static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation,
+                                         EntityIdx seeker, EntityIdx target,
+                                         void *captures)
 {
     struct rr_component_physical *parent_physical = captures;
-    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-    return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
-    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 1000 * 1000);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, target);
+    return ((physical->x - parent_physical->x) *
+                    (physical->x - parent_physical->x) +
+                (physical->y - parent_physical->y) *
+                    (physical->y - parent_physical->y) <
+            1000 * 1000);
 }
 
 static uint8_t has_new_target(struct rr_component_ai *ai,
@@ -30,11 +35,16 @@ static uint8_t has_new_target(struct rr_component_ai *ai,
             ai->ai_state = rr_ai_state_idle;
             ai->ticks_until_next_action = rand() % 25 + 25;
         }
-        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
+        struct rr_component_relations *relations =
+            rr_simulation_get_relations(simulation, ai->parent_id);
         if (relations->team == rr_simulation_team_id_mobs)
-            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, NULL, no_filter);
+            ai->target_entity = rr_simulation_find_nearest_enemy(
+                simulation, ai->parent_id, 1500, NULL, no_filter);
         else
-            ai->target_entity = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1500, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
+            ai->target_entity = rr_simulation_find_nearest_enemy(
+                simulation, ai->parent_id, 1500,
+                rr_simulation_get_physical(simulation, relations->owner),
+                is_close_enough_to_parent);
         return ai->target_entity != RR_NULL_ENTITY;
     }
     return 0;
@@ -95,7 +105,7 @@ static void tick_idle_moving(EntityIdx entity, struct rr_simulation *simulation)
 }
 
 static void tick_ai_aggro_ornithomimus(EntityIdx entity,
-                                  struct rr_simulation *simulation)
+                                       struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -109,7 +119,7 @@ static void tick_ai_aggro_ornithomimus(EntityIdx entity,
             ai->ticks_until_next_action = 84;
         }
     }
-    
+
     switch (ai->ai_state)
     {
     case rr_ai_state_idle:
@@ -130,7 +140,8 @@ static void tick_ai_aggro_ornithomimus(EntityIdx entity,
         rr_component_physical_set_angle(
             physical, M_PI + rr_vector_theta(&delta) +
                           sinf(ai->ticks_until_next_action * 0.3) * 0.5);
-        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED, physical->angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED,
+                             physical->angle);
         if (rr_vector_get_magnitude(&delta) > 1000)
         {
             ai->target_entity = RR_NULL_ENTITY;
@@ -229,7 +240,7 @@ static void tick_ai_aggro_triceratops(EntityIdx entity,
 }
 
 static void tick_ai_aggro_default(EntityIdx entity,
-                                struct rr_simulation *simulation, float speed)
+                                  struct rr_simulation *simulation, float speed)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -279,7 +290,8 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
         rr_simulation_get_physical(simulation, entity);
 
     if (ai->target_entity == RR_NULL_ENTITY)
-        ai->target_entity = rr_simulation_find_nearest_enemy(simulation, entity, 1550, NULL, no_filter);
+        ai->target_entity = rr_simulation_find_nearest_enemy(
+            simulation, entity, 1550, NULL, no_filter);
     if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
         (ai->ai_state != rr_ai_state_attacking &&
          ai->ai_state != rr_ai_state_shell_shoot_delay))
@@ -345,8 +357,8 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
                 rr_simulation_get_mob(simulation, entity);
             // spawn a shell
             EntityIdx petal_id = rr_simulation_alloc_petal(
-                simulation, physical->arena, physical->x, physical->y, rr_petal_id_shell,
-                mob->rarity, mob->parent_id);
+                simulation, physical->arena, physical->x, physical->y,
+                rr_petal_id_shell, mob->rarity, mob->parent_id);
             struct rr_component_physical *physical2 =
                 rr_simulation_get_physical(simulation, petal_id);
             struct rr_component_health *health =
@@ -357,16 +369,15 @@ static void tick_ai_aggro_pteranodon(EntityIdx entity,
             physical2->friction = 0.3f;
             physical2->mass = 5.0f;
             physical2->bearing_angle = physical->angle;
-            rr_vector_from_polar(&physical2->acceleration, RR_PLAYER_SPEED * 2, physical->angle);
+            rr_vector_from_polar(&physical2->acceleration, RR_PLAYER_SPEED * 2,
+                                 physical->angle);
 
             rr_component_petal_set_detached(
                 rr_simulation_get_petal(simulation, petal_id), 1);
 
             rr_component_health_set_max_health(
-                health, 10 *
-                            RR_MOB_RARITY_SCALING[mob->rarity].health);
-            rr_component_health_set_health(
-                health, health->max_health);
+                health, 10 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+            rr_component_health_set_health(health, health->max_health);
             health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
 
@@ -552,7 +563,7 @@ static void tick_ai_aggro_ankylosaurus(EntityIdx entity,
 }
 
 static void tick_ai_aggro_meteor(EntityIdx entity,
-                                       struct rr_simulation *simulation)
+                                 struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -563,7 +574,8 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
     case rr_ai_state_idle:
         ai->ai_state = rr_ai_state_idle_moving;
         float angle = rr_frand() * 2 * M_PI;
-        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2, angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2,
+                             angle);
         break;
     case rr_ai_state_idle_moving:
     {
@@ -574,7 +586,8 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
             float tangent = rr_vector_theta(&position);
             angle = tangent - (M_PI - (tangent - angle));
         }
-        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2, angle);
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.2,
+                             angle);
         rr_vector_from_polar(&physical->velocity, 3, angle);
         rr_component_physical_set_angle(physical, physical->angle + 0.1);
         ai->ticks_until_next_action = 10;
@@ -586,7 +599,7 @@ static void tick_ai_aggro_meteor(EntityIdx entity,
 }
 
 static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
-                                       struct rr_simulation *simulation)
+                                         struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -626,8 +639,7 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        rr_component_physical_set_angle(
-            physical, rr_vector_theta(&delta));
+        rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
         break;
     }
     case rr_ai_state_attacking:
@@ -667,7 +679,7 @@ static void tick_ai_aggro_quetzalcoatlus(EntityIdx entity,
 }
 
 static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
-                                      struct rr_simulation *simulation)
+                                        struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -700,7 +712,6 @@ static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
             ai->ai_state = rr_ai_state_idle_moving;
             break;
         }
-    
 
         struct rr_vector accel;
         struct rr_component_physical *physical2 =
@@ -711,8 +722,7 @@ static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
         rr_vector_sub(&delta, &target_pos);
         float target_angle = rr_vector_theta(&delta);
 
-        rr_component_physical_set_angle(
-            physical, target_angle);
+        rr_component_physical_set_angle(physical, target_angle);
 
         rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.25, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
@@ -724,7 +734,7 @@ static void tick_ai_aggro_edmontosaurus(EntityIdx entity,
 }
 
 static void tick_ai_aggro_hornet(EntityIdx entity,
-                                       struct rr_simulation *simulation)
+                                 struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -759,15 +769,14 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        rr_component_physical_set_angle(
-            physical, rr_vector_theta(&delta));
-        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED, physical->angle);
+        rr_component_physical_set_angle(physical, rr_vector_theta(&delta));
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED,
+                             physical->angle);
         if (rr_vector_magnitude_cmp(&delta, physical->radius + 250) == -1)
         {
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = 50;
-            rr_component_physical_set_angle(
-            physical, physical->angle + M_PI);
+            rr_component_physical_set_angle(physical, physical->angle + M_PI);
         }
         break;
     }
@@ -787,7 +796,8 @@ static void tick_ai_aggro_hornet(EntityIdx entity,
             break;
         }
 
-        rr_vector_from_polar(&physical->acceleration, -RR_PLAYER_SPEED * 1.5, physical->angle);
+        rr_vector_from_polar(&physical->acceleration, -RR_PLAYER_SPEED * 1.5,
+                             physical->angle);
         break;
     }
     default:
@@ -826,14 +836,15 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if (ai->target_entity != RR_NULL_ENTITY)
     {
         struct rr_component_physical *t_physical =
-        rr_simulation_get_physical(this, ai->target_entity);
-        struct rr_vector diff = {physical->x - t_physical->x, physical->y - t_physical->y};
+            rr_simulation_get_physical(this, ai->target_entity);
+        struct rr_vector diff = {physical->x - t_physical->x,
+                                 physical->y - t_physical->y};
         if (rr_vector_get_magnitude(&diff) > 2000)
         {
             ai->target_entity = RR_NULL_ENTITY;
             ai->ai_state = rr_ai_state_idle;
             ai->ticks_until_next_action = 25;
-        } 
+        }
     }
     if (mob->player_spawned)
     {

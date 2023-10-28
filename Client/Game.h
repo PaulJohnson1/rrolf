@@ -104,15 +104,17 @@ struct rr_game
     struct rr_ui_element *abandon_game_tooltip;
     struct rr_ui_element *experience_tooltip;
     struct rr_ui_element *link_reminder_tooltip;
+    struct rr_ui_element *window;
+    struct rr_ui_element *prev_focused;
+    struct rr_ui_element *focused;
+    struct rr_ui_element *pressed;
+    struct rr_ui_element *anti_afk;
+
     struct rr_renderer *renderer;
     struct rr_input_data *input_data;
     struct rr_simulation *simulation;
     struct rr_simulation *deletion_simulation;
     struct rr_component_player_info *player_info;
-    struct rr_ui_element *window;
-    struct rr_ui_element *prev_focused;
-    struct rr_ui_element *focused;
-    struct rr_ui_element *pressed;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint8_t loadout_counts[rr_petal_id_max][rr_rarity_id_max];

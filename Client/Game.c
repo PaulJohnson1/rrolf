@@ -45,7 +45,8 @@ static void validate_loadout(struct rr_game *this)
         if (id == 0)
             continue;
         uint8_t rarity = this->cache.loadout[i].rarity;
-        if (this->loadout_counts[id][rarity] >= this->inventory[id][rarity] || (i % 10) >= this->slots_unlocked)
+        if (this->loadout_counts[id][rarity] >= this->inventory[id][rarity] ||
+            (i % 10) >= this->slots_unlocked)
             this->cache.loadout[i].id = this->cache.loadout[i].rarity = 0;
         else
             ++this->loadout_counts[id][rarity];
@@ -56,7 +57,8 @@ void read_account(struct proto_bug *decoder, struct rr_game *game)
 {
     memset(game->inventory, 0, sizeof game->inventory);
     char uuid[sizeof game->rivet_account.uuid];
-    proto_bug_read_string(decoder, uuid, sizeof game->rivet_account.uuid, "uuid");
+    proto_bug_read_string(decoder, uuid, sizeof game->rivet_account.uuid,
+                          "uuid");
     game->cache.experience = proto_bug_read_float64(decoder, "xp");
     uint8_t id;
     while ((id = proto_bug_read_uint8(decoder, "id")))
@@ -76,7 +78,8 @@ void rr_api_on_get_password(char *s, void *captures)
 }
 
 void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
-                        char *account_number, char *uuid, uint8_t linked, void *captures)
+                        char *account_number, char *uuid, uint8_t linked,
+                        void *captures)
 {
     struct rr_game *this = captures;
     strcpy(this->rivet_account.token, token);
@@ -93,18 +96,18 @@ static struct rr_ui_element *make_label_tooltip(char const *text)
 {
     return rr_ui_set_background(
         rr_ui_v_container_init(rr_ui_tooltip_container_init(), 10, 10,
-            rr_ui_text_init(text, 16, 0xffffffff),
-            NULL
-        ),
-    0x80000000);
+                               rr_ui_text_init(text, 16, 0xffffffff), NULL),
+        0x80000000);
 }
 
-static uint8_t simulation_not_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t simulation_not_ready(struct rr_ui_element *this,
+                                    struct rr_game *game)
 {
     return 1 - game->simulation_ready;
 }
 
-static uint8_t simulation_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t simulation_ready(struct rr_ui_element *this,
+                                struct rr_game *game)
 {
     return game->simulation_ready;
 }
@@ -116,15 +119,16 @@ static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
     return game->socket_ready;
 }
 
-static uint8_t socket_pending_or_ready(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t socket_pending_or_ready(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     return game->joined_squad || game->socket_error;
 }
 
-static uint8_t player_alive(struct rr_ui_element *this,
-                                       struct rr_game *game)
+static uint8_t player_alive(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->simulation_ready && game->player_info->flower_id != RR_NULL_ENTITY;
+    return game->simulation_ready &&
+           game->player_info->flower_id != RR_NULL_ENTITY;
 }
 
 static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
@@ -144,7 +148,8 @@ static struct rr_ui_element *close_menu_button_init(float w)
     return this;
 }
 
-static void abandon_game_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void abandon_game_on_event(struct rr_ui_element *this,
+                                  struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -152,14 +157,15 @@ static void abandon_game_on_event(struct rr_ui_element *this, struct rr_game *ga
         proto_bug_init(&encoder, output_packet);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
-    }    
+    }
     rr_ui_render_tooltip_below(this, game->abandon_game_tooltip, game);
 }
 
-
-static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void squad_leave_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
-    if ((game->input_data->mouse_buttons_up_this_tick & 1) && game->socket_ready)
+    if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
+        game->socket_ready)
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, output_packet);
@@ -171,7 +177,8 @@ static void squad_leave_on_event(struct rr_ui_element *this, struct rr_game *gam
 
 static struct rr_ui_element *close_squad_button_init(float w)
 {
-    struct rr_ui_element *this = rr_ui_close_button_init(w, squad_leave_on_event);
+    struct rr_ui_element *this =
+        rr_ui_close_button_init(w, squad_leave_on_event);
     this->no_reposition = 1;
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
     return this;
@@ -418,7 +425,6 @@ void rr_game_init(struct rr_game *this)
             0, 1),
         player_alive)
     );
-    
 
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_mob_container_init(), close_menu_button_init(25))->container);
@@ -472,13 +478,24 @@ void rr_game_init(struct rr_game *this)
         this->window,
         make_label_tooltip("Login to save progess across devices")
     );
+    
+    // this->anti_afk = rr_ui_container_add_element(
+    //     this->window,
+    //     rr_ui_anti_afk_container_init()
+    // );
+
+
+    
+    // clang-format on
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
     {
-        this->squad.squad_members[i].tooltip = rr_ui_squad_player_tooltip_init(&this->squad.squad_members[i]);
-        rr_ui_container_add_element(this->window, this->squad.squad_members[i].tooltip);
+        this->squad.squad_members[i].tooltip =
+            rr_ui_squad_player_tooltip_init(&this->squad.squad_members[i]);
+        rr_ui_container_add_element(this->window,
+                                    this->squad.squad_members[i].tooltip);
     }
-    
+
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {
         for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
@@ -503,10 +520,10 @@ void rr_game_init(struct rr_game *this)
     rr_assets_init(this);
     rr_game_cache_load(this);
     rr_dom_set_text("_0x4346", this->cache.nickname);
-    // clang-format on
     this->ticks_until_text_cache = 24;
     this->is_mobile = rr_dom_test_mobile();
-    this->slots_unlocked = RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
+    this->slots_unlocked =
+        RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
 }
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
@@ -549,23 +566,33 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             uint64_t verification =
                 proto_bug_read_uint64(&encoder, "verification");
             proto_bug_read_uint32(&encoder, "useless bytes");
-            this->socket.clientbound_encryption_key = proto_bug_read_uint64(&encoder, "c encryption key");
-            this->socket.serverbound_encryption_key = proto_bug_read_uint64(&encoder, "s encryption key");
+            this->socket.clientbound_encryption_key =
+                proto_bug_read_uint64(&encoder, "c encryption key");
+            this->socket.serverbound_encryption_key =
+                proto_bug_read_uint64(&encoder, "s encryption key");
             // respond
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, output_packet);
-            proto_bug_write_uint64(&verify_encoder, rr_get_rand(), "useless bytes");
-            proto_bug_write_uint64(&verify_encoder, verification, "verification");
-            proto_bug_write_string(&verify_encoder, this->rivet_player_token, 300, "rivet token");
-            proto_bug_write_string(&verify_encoder, this->rivet_account.uuid, 100, "rivet uuid");
-            proto_bug_write_varuint(&verify_encoder, this->dev_flag, "dev_flag");
-            rr_websocket_send(&this->socket, verify_encoder.current - verify_encoder.start);
+            proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
+                                   "useless bytes");
+            proto_bug_write_uint64(&verify_encoder, verification,
+                                   "verification");
+            proto_bug_write_string(&verify_encoder, this->rivet_player_token,
+                                   300, "rivet token");
+            proto_bug_write_string(&verify_encoder, this->rivet_account.uuid,
+                                   100, "rivet uuid");
+            proto_bug_write_varuint(&verify_encoder, this->dev_flag,
+                                    "dev_flag");
+            rr_websocket_send(&this->socket,
+                              verify_encoder.current - verify_encoder.start);
             return;
         }
-        this->socket_ready = 1; //signifies that the socket is verified on the serverside
+        this->socket_ready =
+            1; // signifies that the socket is verified on the serverside
         this->socket_pending = 0;
-        //send instajoin
-        this->socket.clientbound_encryption_key = rr_get_hash(this->socket.clientbound_encryption_key);
+        // send instajoin
+        this->socket.clientbound_encryption_key =
+            rr_get_hash(this->socket.clientbound_encryption_key);
         rr_decrypt(data, size, this->socket.clientbound_encryption_key);
         uint8_t h = proto_bug_read_uint8(&encoder, "header");
         switch (h)
@@ -583,8 +610,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     continue;
                 this->squad.squad_members[i].playing =
                     proto_bug_read_uint8(&encoder, "ready");
-                this->squad.squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
-                proto_bug_read_string(&encoder, this->squad.squad_members[i].nickname, 16, "nickname");
+                this->squad.squad_members[i].is_dev =
+                    proto_bug_read_uint8(&encoder, "is_dev");
+                proto_bug_read_string(&encoder,
+                                      this->squad.squad_members[i].nickname, 16,
+                                      "nickname");
                 for (uint32_t j = 0; j < 20; ++j)
                 {
                     this->squad.squad_members[i].loadout[j].id =
@@ -594,10 +624,13 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 }
             }
             this->squad.squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
-            this->squad.squad_private = proto_bug_read_uint8(&encoder, "private");
+            this->squad.squad_private =
+                proto_bug_read_uint8(&encoder, "private");
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-            proto_bug_read_string(&encoder, this->squad.squad_code, 16, "squad code");
-            this->is_dev = this->squad.squad_members[this->squad.squad_pos].is_dev;
+            proto_bug_read_string(&encoder, this->squad.squad_code, 16,
+                                  "squad code");
+            this->is_dev =
+                this->squad.squad_members[this->squad.squad_pos].is_dev;
             if (proto_bug_read_uint8(&encoder, "in game") == 1)
             {
                 if (!this->simulation_ready)
@@ -614,21 +647,25 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     rr_simulation_init(this->simulation);
                 this->simulation_ready = 0;
                 proto_bug_init(&encoder, output_packet);
-                proto_bug_write_uint8(&encoder, rr_serverbound_squad_update, "header");
-                proto_bug_write_string(&encoder, this->cache.nickname, 16, "nickname");
-                proto_bug_write_uint8(&encoder, this->slots_unlocked, "loadout count");
+                proto_bug_write_uint8(&encoder, rr_serverbound_squad_update,
+                                      "header");
+                proto_bug_write_string(&encoder, this->cache.nickname, 16,
+                                       "nickname");
+                proto_bug_write_uint8(&encoder, this->slots_unlocked,
+                                      "loadout count");
                 for (uint32_t i = 0; i < this->slots_unlocked; ++i)
                 {
                     proto_bug_write_uint8(&encoder, this->cache.loadout[i].id,
-                                        "id");
-                    proto_bug_write_uint8(&encoder, this->cache.loadout[i].rarity,
-                                        "rarity");
-                    proto_bug_write_uint8(&encoder, this->cache.loadout[i + 10].id,
-                                        "id");
+                                          "id");
+                    proto_bug_write_uint8(
+                        &encoder, this->cache.loadout[i].rarity, "rarity");
+                    proto_bug_write_uint8(&encoder,
+                                          this->cache.loadout[i + 10].id, "id");
                     proto_bug_write_uint8(
                         &encoder, this->cache.loadout[i + 10].rarity, "rarity");
                 }
-                rr_websocket_send(&this->socket, encoder.current - encoder.start);
+                rr_websocket_send(&this->socket,
+                                  encoder.current - encoder.start);
             }
             break;
         }
@@ -645,8 +682,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         continue;
                     squad->squad_members[i].playing =
                         proto_bug_read_uint8(&encoder, "ready");
-                    squad->squad_members[i].is_dev = proto_bug_read_uint8(&encoder, "is_dev");
-                    proto_bug_read_string(&encoder, squad->squad_members[i].nickname, 16, "nickname");
+                    squad->squad_members[i].is_dev =
+                        proto_bug_read_uint8(&encoder, "is_dev");
+                    proto_bug_read_string(&encoder,
+                                          squad->squad_members[i].nickname, 16,
+                                          "nickname");
                     for (uint32_t j = 0; j < 20; ++j)
                     {
                         squad->squad_members[i].loadout[j].id =
@@ -655,9 +695,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                             proto_bug_read_uint8(&encoder, "rar");
                     }
                 }
-                squad->squad_private = proto_bug_read_uint8(&encoder, "private");
+                squad->squad_private =
+                    proto_bug_read_uint8(&encoder, "private");
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-                proto_bug_read_string(&encoder, squad->squad_code, 16, "squad code");
+                proto_bug_read_string(&encoder, squad->squad_code, 16,
+                                      "squad code");
             }
             break;
         }
@@ -665,43 +707,55 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
             while (proto_bug_read_uint8(&encoder, "continue"))
             {
-                struct rr_simulation_animation *particle = rr_particle_alloc(&this->particle_manager, proto_bug_read_uint8(&encoder, "ani type"));
+                struct rr_simulation_animation *particle = rr_particle_alloc(
+                    &this->particle_manager,
+                    proto_bug_read_uint8(&encoder, "ani type"));
                 switch (particle->type)
                 {
-                    case rr_animation_type_lightningbolt:
-                        particle->length = proto_bug_read_uint8(&encoder, "ani length");
-                        for (uint32_t i = 0; i < particle->length; ++i)
-                        {
-                            particle->points[i].x = proto_bug_read_float32(&encoder, "ani x");
-                            particle->points[i].y = proto_bug_read_float32(&encoder, "ani y");
-                        }
-                        particle->opacity = 0.8;
-                        break;
-                    case rr_animation_type_damagenumber:
+                case rr_animation_type_lightningbolt:
+                    particle->length =
+                        proto_bug_read_uint8(&encoder, "ani length");
+                    for (uint32_t i = 0; i < particle->length; ++i)
                     {
-                        particle->x = proto_bug_read_float32(&encoder, "ani x");
-                        particle->y = proto_bug_read_float32(&encoder, "ani y");
-                        particle->velocity.x = (rr_frand() - 0.5) * 25;
-                        particle->velocity.y = -15 + rr_frand() * 5;
-                        particle->acceleration.y = 0.75;
-                        particle->damage = proto_bug_read_varuint(&encoder, "damage");
-                        particle->opacity = 1;
-                        break;
+                        particle->points[i].x =
+                            proto_bug_read_float32(&encoder, "ani x");
+                        particle->points[i].y =
+                            proto_bug_read_float32(&encoder, "ani y");
                     }
-                    case rr_animation_type_chat:
-                        rr_particle_delete(&this->particle_manager, particle);
-                        proto_bug_read_string(&encoder, this->chat.messages[this->chat.at].sender_name, 64, "name");
-                        proto_bug_read_string(&encoder, this->chat.messages[this->chat.at].message, 64, "chat");
-                        this->chat.at = (this->chat.at + 1) % 10;
-                        break;
-                    default:
-                        break;
+                    particle->opacity = 0.8;
+                    break;
+                case rr_animation_type_damagenumber:
+                {
+                    particle->x = proto_bug_read_float32(&encoder, "ani x");
+                    particle->y = proto_bug_read_float32(&encoder, "ani y");
+                    particle->velocity.x = (rr_frand() - 0.5) * 25;
+                    particle->velocity.y = -15 + rr_frand() * 5;
+                    particle->acceleration.y = 0.75;
+                    particle->damage =
+                        proto_bug_read_varuint(&encoder, "damage");
+                    particle->opacity = 1;
+                    break;
+                }
+                case rr_animation_type_chat:
+                    rr_particle_delete(&this->particle_manager, particle);
+                    proto_bug_read_string(
+                        &encoder,
+                        this->chat.messages[this->chat.at].sender_name, 64,
+                        "name");
+                    proto_bug_read_string(
+                        &encoder, this->chat.messages[this->chat.at].message,
+                        64, "chat");
+                    this->chat.at = (this->chat.at + 1) % 10;
+                    break;
+                default:
+                    break;
                 }
             }
             break;
         }
         case rr_clientbound_squad_fail:
-            this->socket_error = 2 + proto_bug_read_uint8(&encoder, "fail type");
+            this->socket_error =
+                2 + proto_bug_read_uint8(&encoder, "fail type");
             if (this->simulation_ready)
                 rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
@@ -717,9 +771,11 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
             uint8_t id = proto_bug_read_uint8(&encoder, "craft id");
             uint8_t rarity = proto_bug_read_uint8(&encoder, "craft rarity");
-            uint32_t successes = proto_bug_read_varuint(&encoder, "success count");
+            uint32_t successes =
+                proto_bug_read_varuint(&encoder, "success count");
             uint32_t fails = proto_bug_read_varuint(&encoder, "fail count");
-            this->cache.experience += proto_bug_read_float64(&encoder, "craft xp");
+            this->cache.experience +=
+                proto_bug_read_float64(&encoder, "craft xp");
             this->inventory[id][rarity] -= fails;
             this->crafting_data.count -= fails;
             this->inventory[id][rarity + 1] += successes;
@@ -749,7 +805,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
     }
 }
 
-void render_drop_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_drop_component(EntityIdx entity, struct rr_game *this,
+                           struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -760,7 +817,8 @@ void render_drop_component(EntityIdx entity, struct rr_game *this, struct rr_sim
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_health_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_health_component(EntityIdx entity, struct rr_game *this,
+                             struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -772,7 +830,8 @@ void render_health_component(EntityIdx entity, struct rr_game *this, struct rr_s
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_mob_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_mob_component(EntityIdx entity, struct rr_game *this,
+                          struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -783,7 +842,8 @@ void render_mob_component(EntityIdx entity, struct rr_game *this, struct rr_simu
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_petal_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_petal_component(EntityIdx entity, struct rr_game *this,
+                            struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -794,7 +854,8 @@ void render_petal_component(EntityIdx entity, struct rr_game *this, struct rr_si
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_flower_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_flower_component(EntityIdx entity, struct rr_game *this,
+                             struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -805,7 +866,8 @@ void render_flower_component(EntityIdx entity, struct rr_game *this, struct rr_s
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
-void render_web_component(EntityIdx entity, struct rr_game *this, struct rr_simulation *simulation)
+void render_web_component(EntityIdx entity, struct rr_game *this,
+                          struct rr_simulation *simulation)
 {
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(this->renderer, &state);
@@ -833,51 +895,42 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     proto_bug_init(&encoder2, output_packet);
     proto_bug_write_uint8(&encoder2, rr_serverbound_input, "header");
     uint8_t movement_flags = 0;
-    movement_flags |=
-        (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
-            rr_bitset_get(this->input_data->keys_pressed, 38))
-        << 0;
-    movement_flags |=
-        (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
-            rr_bitset_get(this->input_data->keys_pressed, 37))
-        << 1;
-    movement_flags |=
-        (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
-            rr_bitset_get(this->input_data->keys_pressed, 40))
-        << 2;
-    movement_flags |=
-        (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
-            rr_bitset_get(this->input_data->keys_pressed, 39))
-        << 3;
+    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
+                       rr_bitset_get(this->input_data->keys_pressed, 38))
+                      << 0;
+    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
+                       rr_bitset_get(this->input_data->keys_pressed, 37))
+                      << 1;
+    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
+                       rr_bitset_get(this->input_data->keys_pressed, 40))
+                      << 2;
+    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
+                       rr_bitset_get(this->input_data->keys_pressed, 39))
+                      << 3;
     movement_flags |= this->input_data->mouse_buttons << 4;
-    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32)
-                        << 4;
-    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16)
-                        << 5;
+    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
+    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
     movement_flags |= this->cache.use_mouse << 6;
-    proto_bug_write_uint8(&encoder2, movement_flags,
-                            "movement kb flags");
+    proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
     if (this->cache.use_mouse)
     {
-        proto_bug_write_float32(&encoder2,
-                                this->input_data->mouse_x -
-                                    this->renderer->width / 2,
-                                "mouse x");
-        proto_bug_write_float32(&encoder2,
-                                this->input_data->mouse_y -
-                                    this->renderer->height / 2,
-                                "mouse y");
+        proto_bug_write_float32(
+            &encoder2, this->input_data->mouse_x - this->renderer->width / 2,
+            "mouse x");
+        proto_bug_write_float32(
+            &encoder2, this->input_data->mouse_y - this->renderer->height / 2,
+            "mouse y");
     }
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
     struct proto_bug encoder;
     proto_bug_init(&encoder, output_packet);
     proto_bug_write_uint8(&encoder, rr_serverbound_petal_switch, "header");
     uint8_t should_write = 0;
-    uint8_t switch_all = rr_bitset_get_bit(
-        this->input_data->keys_pressed_this_tick, 'X');
+    uint8_t switch_all =
+        rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
     for (uint8_t n = 1; n <= this->slots_unlocked; ++n)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                                '0' + (n % 10)) ||
+                              '0' + (n % 10)) ||
             switch_all)
         {
             proto_bug_write_uint8(&encoder, n, "petal switch");
@@ -886,8 +939,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     if (should_write)
     {
         proto_bug_write_uint8(&encoder, 0, "petal switch");
-        rr_websocket_send(&this->socket,
-                            encoder.current - encoder.start);
+        rr_websocket_send(&this->socket, encoder.current - encoder.start);
     }
 }
 
@@ -905,7 +957,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     struct timeval end;
 
     gettimeofday(&start, NULL);
-    this->slots_unlocked = RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
+    this->slots_unlocked =
+        RR_SLOT_COUNT_FROM_LEVEL(level_from_xp(this->cache.experience));
     validate_loadout(this);
 
     rr_game_cache_data(this);
@@ -919,7 +972,8 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->simulation_ready)
     {
         rr_simulation_tick(this->simulation, this->lerp_delta);
-        rr_deletion_simulation_tick(this->deletion_simulation, this->lerp_delta);
+        rr_deletion_simulation_tick(this->deletion_simulation,
+                                    this->lerp_delta);
 
         this->renderer->state.filter.amount = 0;
         struct rr_renderer_context_state state1;
@@ -930,9 +984,12 @@ void rr_game_tick(struct rr_game *this, float delta)
             // screen shake
             rr_renderer_context_state_init(this->renderer, &state1);
             struct rr_component_player_info *player_info = this->player_info;
-            rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
-            rr_renderer_scale(this->renderer, player_info->lerp_camera_fov * this->renderer->scale);
-            rr_renderer_translate(this->renderer, -player_info->lerp_camera_x, -player_info->lerp_camera_y);
+            rr_renderer_translate(this->renderer, this->renderer->width / 2,
+                                  this->renderer->height / 2);
+            rr_renderer_scale(this->renderer, player_info->lerp_camera_fov *
+                                                  this->renderer->scale);
+            rr_renderer_translate(this->renderer, -player_info->lerp_camera_x,
+                                  -player_info->lerp_camera_y);
 
             if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
@@ -945,13 +1002,18 @@ void rr_game_tick(struct rr_game *this, float delta)
                                           r * sinf(a));
                 }
             }
-            rr_component_arena_render(player_info->arena, this, this->simulation);
+            rr_component_arena_render(player_info->arena, this,
+                                      this->simulation);
 
-            #define render_component(COMPONENT) \
-                for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i) \
-                    render_##COMPONENT##_component(this->simulation->COMPONENT##_vector[i], this, this->simulation); \
-                for (uint32_t i = 0; i < this->deletion_simulation->COMPONENT##_count; ++i) \
-                    render_##COMPONENT##_component(this->deletion_simulation->COMPONENT##_vector[i], this, this->deletion_simulation);
+#define render_component(COMPONENT)                                            \
+    for (uint32_t i = 0; i < this->simulation->COMPONENT##_count; ++i)         \
+        render_##COMPONENT##_component(                                        \
+            this->simulation->COMPONENT##_vector[i], this, this->simulation);  \
+    for (uint32_t i = 0; i < this->deletion_simulation->COMPONENT##_count;     \
+         ++i)                                                                  \
+        render_##COMPONENT##_component(                                        \
+            this->deletion_simulation->COMPONENT##_vector[i], this,            \
+            this->deletion_simulation);
 
             render_component(web);
             render_component(health);
@@ -961,57 +1023,61 @@ void rr_game_tick(struct rr_game *this, float delta)
             render_component(petal);
             render_component(flower);
             rr_renderer_context_state_free(this->renderer, &state1);
-            #undef render_component
+#undef render_component
         }
     }
     else
     {
         struct rr_renderer_context_state state1;
         rr_renderer_context_state_init(this->renderer, &state1);
-        rr_renderer_translate(this->renderer, this->renderer->width / 2, this->renderer->height / 2);
+        rr_renderer_translate(this->renderer, this->renderer->width / 2,
+                              this->renderer->height / 2);
         rr_renderer_scale(this->renderer, 1 * this->renderer->scale);
         rr_renderer_translate(this->renderer, -0, -0);
         double scale = 1 * this->renderer->scale;
-        double leftX =
-            0 - this->renderer->width / (2 * scale);
-        double rightX =
-            0 + this->renderer->width / (2 * scale);
-        double topY =
-            0 - this->renderer->height / (2 * scale);
-        double bottomY =
-            0 + this->renderer->height / (2 * scale);
+        double leftX = 0 - this->renderer->width / (2 * scale);
+        double rightX = 0 + this->renderer->width / (2 * scale);
+        double topY = 0 - this->renderer->height / (2 * scale);
+        double bottomY = 0 + this->renderer->height / (2 * scale);
 
-    #define GRID_SIZE (512.0f)
+#define GRID_SIZE (512.0f)
         double newLeftX = floorf(leftX / GRID_SIZE) * GRID_SIZE;
         double newTopY = floorf(topY / GRID_SIZE) * GRID_SIZE;
         for (; newLeftX < rightX; newLeftX += GRID_SIZE)
         {
             for (double currY = newTopY; currY < bottomY; currY += GRID_SIZE)
             {
-                uint32_t tile_index = rr_get_hash((uint32_t)(((newLeftX + 8192) / GRID_SIZE + 1) *
-                                                ((currY + 8192) / GRID_SIZE + 2))) % 3;
+                uint32_t tile_index =
+                    rr_get_hash((uint32_t)(((newLeftX + 8192) / GRID_SIZE + 1) *
+                                           ((currY + 8192) / GRID_SIZE + 2))) %
+                    3;
                 struct rr_renderer_context_state state;
                 rr_renderer_context_state_init(this->renderer, &state);
                 rr_renderer_translate(this->renderer, newLeftX + GRID_SIZE / 2,
-                                    currY + GRID_SIZE / 2);
+                                      currY + GRID_SIZE / 2);
                 rr_renderer_scale(this->renderer, (GRID_SIZE + 2) / 256);
                 if (this->selected_biome == 0)
-                    rr_renderer_draw_tile_hell_creek(this->renderer, tile_index);
+                    rr_renderer_draw_tile_hell_creek(this->renderer,
+                                                     tile_index);
                 else
                     rr_renderer_draw_tile_garden(this->renderer, tile_index);
                 rr_renderer_context_state_free(this->renderer, &state);
             }
         }
-    #undef GRID_SIZE
+#undef GRID_SIZE
         struct rr_simulation *sim = this->simulation;
         rr_simulation_create_component_vectors(sim);
         if (this->simulation->petal_count < 50 && rr_frand() < 0.015)
         {
             EntityIdx petal_id = rr_simulation_alloc_entity(sim);
-            struct rr_component_physical *physical = rr_simulation_add_physical(sim, petal_id);
-            struct rr_component_petal *petal = rr_simulation_add_petal(sim, petal_id);
-            struct rr_component_relations *relations = rr_simulation_add_relations(sim, petal_id);
-            struct rr_component_health *health = rr_simulation_add_health(sim, petal_id);
+            struct rr_component_physical *physical =
+                rr_simulation_add_physical(sim, petal_id);
+            struct rr_component_petal *petal =
+                rr_simulation_add_petal(sim, petal_id);
+            struct rr_component_relations *relations =
+                rr_simulation_add_relations(sim, petal_id);
+            struct rr_component_health *health =
+                rr_simulation_add_health(sim, petal_id);
             rr_component_physical_init(physical, sim);
             rr_component_petal_init(petal, sim);
             rr_component_relations_init(relations, sim);
@@ -1046,20 +1112,27 @@ void rr_game_tick(struct rr_game *this, float delta)
         struct rr_renderer_context_state state2;
         for (uint32_t i = 0; i < this->simulation->petal_count; ++i)
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(sim, this->simulation->petal_vector[i]);
+            struct rr_component_physical *physical = rr_simulation_get_physical(
+                sim, this->simulation->petal_vector[i]);
             physical->lerp_x += physical->velocity.x * delta;
             physical->lerp_y += physical->velocity.y * delta;
-            physical->velocity.y += (physical->y - physical->lerp_y) * delta * 1.25;
+            physical->velocity.y +=
+                (physical->y - physical->lerp_y) * delta * 1.25;
             physical->animation_timer += delta;
-            physical->lerp_angle = physical->animation_timer * ((physical->parent_id % 3) - 1);
+            physical->lerp_angle =
+                physical->animation_timer * ((physical->parent_id % 3) - 1);
             rr_renderer_context_state_init(this->renderer, &state2);
-            rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
-            rr_component_petal_render(this->simulation->petal_vector[i], this, sim);
+            rr_renderer_translate(this->renderer, physical->lerp_x,
+                                  physical->lerp_y);
+            rr_component_petal_render(this->simulation->petal_vector[i], this,
+                                      sim);
             rr_renderer_context_state_free(this->renderer, &state2);
             if (physical->lerp_x > 1000)
             {
-                __rr_simulation_pending_deletion_free_components(this->simulation->petal_vector[i], sim);
-                __rr_simulation_pending_deletion_unset_entity(this->simulation->petal_vector[i], sim);
+                __rr_simulation_pending_deletion_free_components(
+                    this->simulation->petal_vector[i], sim);
+                __rr_simulation_pending_deletion_unset_entity(
+                    this->simulation->petal_vector[i], sim);
             }
         }
         rr_renderer_context_state_free(this->renderer, &state1);
@@ -1093,7 +1166,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         {
             if (!this->is_mobile)
                 write_serverbound_packet_desktop(this);
-            else    
+            else
                 rr_write_serverbound_packet_mobile(this);
         }
     }
@@ -1138,8 +1211,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             frame_sum * 0.001f / RR_DEBUG_POLL_SIZE, frame_max * 0.001f);
         rr_renderer_stroke_text(this->renderer, debug_mspt, 0, 0);
         rr_renderer_fill_text(this->renderer, debug_mspt, 0, 0);
-        sprintf(debug_mspt, "ctx calls: %d",
-                           rr_renderer_get_op_size());
+        sprintf(debug_mspt, "ctx calls: %d", rr_renderer_get_op_size());
         rr_renderer_context_state_free(this->renderer, &state);
         // rr_renderer_stroke_text
     }
@@ -1206,8 +1278,8 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
         game->socket_ready = 0;
         return;
     }
-    //if (game->socket_ready)
-        //rr_websocket_disconnect(&game->socket, game);
+    // if (game->socket_ready)
+    // rr_websocket_disconnect(&game->socket, game);
     rr_websocket_init(&game->socket);
     game->socket.user_data = game;
     game->socket_pending = 1;
@@ -1217,9 +1289,11 @@ void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *_game)
     rr_websocket_connect_to(&game->socket, link);
 }
 
-uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *game, uint8_t id, uint8_t rarity)
+uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *game, uint8_t id,
+                                              uint8_t rarity)
 {
-    uint32_t cnt = game->inventory[id][rarity] - game->loadout_counts[id][rarity];
+    uint32_t cnt =
+        game->inventory[id][rarity] - game->loadout_counts[id][rarity];
     if (id == game->crafting_data.crafting_id)
     {
         if (rarity == game->crafting_data.crafting_rarity)
