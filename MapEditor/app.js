@@ -1,5 +1,5 @@
 const editor = document.getElementById("editor");
-const GRID_SIZE = 30;
+const GRID_SIZE = 40;
 let isDragging = false;
 let initialDragState = null;  // This will capture the state of the tile when dragging begins
 let zone_count = 0;
@@ -11,6 +11,7 @@ for (let y = 0; y < GRID_SIZE; y++) {
         tile.classList.add('tile');
         tile.dataset.x = x;
         tile.dataset.y = y;
+        tile.dataset.d = 0;
         tile.addEventListener('mousedown', startDrag);
         tile.addEventListener('mouseenter', dragToggle);
         editor.appendChild(tile);
@@ -23,6 +24,8 @@ function startDrag(event) {
     const tile = event.currentTarget;
     if (event.buttons === 2)
     {
+        built = true;
+
         document.querySelectorAll('.spawn').forEach(tile => {
             tile.classList.remove('spawn');
             tile.style.backgroundColor = "";
@@ -38,16 +41,68 @@ function startDrag(event) {
     toggleTile(event.currentTarget);
 }
 
+function refreshDistances() {
+    const walls = getWalls();
+    const spawnElement = document.querySelector(".spawn");
+    if (!spawnElement)
+        return;
+    const spawn = [+spawnElement.dataset.x, +spawnElement.dataset.y];
+
+    const ds = floodFill(walls, spawn);
+    for (let x = 0; x < ds.length; x++)
+        for (let y = 0; y < ds.length; y++)
+        {
+            let d = ds[x][y];
+            if (d == Infinity)
+                d = "i";
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            tile.dataset.d = d;
+            tile.textContent = d == "i" ? "" : d;
+        }
+}
+
+function onDoneBuilding()
+{
+    console.log("refreshing");
+    refreshDistances();
+}
+
+let currentRefreshTimeout;
 
 function toggleTile(tile) {
     if (selecting) return;
     if (tile.classList.contains("spawn")) return;
 
+    let built = false;
+
     if (initialDragState === 'black') {
         tile.style.backgroundColor = '';
+        built = true;
     } else {
         tile.style.backgroundColor = 'black';
+        built = true;
     }
+
+    if (built)
+    {
+        clearTimeout(currentRefreshTimeout);
+        currentRefreshTimeout = setTimeout(onDoneBuilding, 1000);
+    }
+}
+
+function getWalls()
+{
+    const walls = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+        const row = [];
+        for (let x = 0; x < GRID_SIZE; x++) {
+            const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
+            row.push(tile.style.backgroundColor === 'black' ? 1 : 0);
+        }
+        walls.push(row);
+    }
+
+    return walls;
 }
 
 function dragToggle(event) {
@@ -57,23 +112,14 @@ function dragToggle(event) {
         document.querySelectorAll('.pathed').forEach(tile => {
             tile.classList.remove('pathed');
         });
+        const walls = getWalls();
 
-        const walls = [];
-        for (let y = 0; y < GRID_SIZE; y++) {
-            const row = [];
-            for (let x = 0; x < GRID_SIZE; x++) {
-                const tile = document.querySelector(`.tile[data-x="${x}"][data-y="${y}"]`);
-                row.push(tile.style.backgroundColor === 'black' ? 1 : 0);
-            }
-            walls.push(row);
-        }
         const spawnElement = document.querySelector(".spawn");
         if (!spawnElement)
             return;
         const spawn = [+spawnElement.dataset.x, +spawnElement.dataset.y];
         const target = [+event.currentTarget.dataset.x, +event.currentTarget.dataset.y];
         const path = bfs(walls, spawn, target);
-        console.log(path);
         for (let i = 0; i < path.length; i++)
         {
             const [x, y] = path[i];
@@ -405,11 +451,11 @@ function generateMaze() {
 
         if (y + 2 < MAZE_SIZE && !visited_map[i(x, y + 2)])
             neighbors.push(0);
-        if (y - 2 >= 0 &&         !visited_map[i(x, y - 2)])
+        if (y - 2 > 0 &&         !visited_map[i(x, y - 2)])
             neighbors.push(1);
         if (x + 2 < MAZE_SIZE && !visited_map[i(x + 2, y)])
             neighbors.push(2);
-        if (x - 2 >= 0 &&         !visited_map[i(x - 2, y)])
+        if (x - 2 > 0 &&         !visited_map[i(x - 2, y)])
             neighbors.push(3);
 
         if (neighbors.length === 0)
@@ -467,20 +513,79 @@ function bfs(maze, start, end) {
             return path.reverse();
         }
 
-        const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
-        for (let dir of directions) {
-            const newX = x + dir[0];
-            const newY = y + dir[1];
+        // Direction: Up
+        const newX1 = x;
+        const newY1 = y - 1;
+        if (isValid(newX1, newY1) && !visited[newY1][newX1] && maze[newY1][newX1] !== 1) {
+            visited[newY1][newX1] = true;
+            prev[newY1][newX1] = [x, y];
+            queue.push([newX1, newY1]);
+        }
 
-            if (isValid(newX, newY) && !visited[newY][newX] && maze[newY][newX] !== 1) {
-                visited[newY][newX] = true;
-                prev[newY][newX] = [x, y];
-                queue.push([newX, newY]);
-            }
+        // Direction: Right
+        const newX2 = x + 1;
+        const newY2 = y;
+        if (isValid(newX2, newY2) && !visited[newY2][newX2] && maze[newY2][newX2] !== 1) {
+            visited[newY2][newX2] = true;
+            prev[newY2][newX2] = [x, y];
+            queue.push([newX2, newY2]);
+        }
+
+        // Direction: Down
+        const newX3 = x;
+        const newY3 = y + 1;
+        if (isValid(newX3, newY3) && !visited[newY3][newX3] && maze[newY3][newX3] !== 1) {
+            visited[newY3][newX3] = true;
+            prev[newY3][newX3] = [x, y];
+            queue.push([newX3, newY3]);
+        }
+
+        // Direction: Left
+        const newX4 = x - 1;
+        const newY4 = y;
+        if (isValid(newX4, newY4) && !visited[newY4][newX4] && maze[newY4][newX4] !== 1) {
+            visited[newY4][newX4] = true;
+            prev[newY4][newX4] = [x, y];
+            queue.push([newX4, newY4]);
         }
     }
 
     return [];
+}
+
+function floodFill(matrix, spawn) {
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+    const distances = Array(rows).fill(Infinity).map(() => Array(cols).fill(Infinity));
+
+    // Check if the position is within the matrix boundaries and not an obstacle.
+    function isValid(x, y) {
+        return x >= 0 && y >= 0 && x < cols && y < rows && matrix[y][x] !== 1;
+    }
+
+    const queue = [{x: spawn[0], y: spawn[1], distance: 0}];
+
+    while(queue.length) {
+        const current = queue.shift();
+
+        // Skip if this position has been visited with a shorter or equal distance.
+        if (distances[current.x][current.y] <= current.distance)
+            continue;
+
+        distances[current.x][current.y] = current.distance;
+
+        const directions = [[0, -1], [1, 0], [0, 1], [-1, 0]];
+        for(let dir of directions) {
+            const newX = current.x + dir[0];
+            const newY = current.y + dir[1];
+
+            if(isValid(newX, newY) && distances[newX][newY] > current.distance + 1) {
+                queue.push({x: newX, y: newY, distance: current.distance + 1});
+            }
+        }
+    }
+
+    return distances;
 }
 
 createRandom.addEventListener("mousedown", () => {
