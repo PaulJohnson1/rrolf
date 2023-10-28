@@ -1,9 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\rrolf",
-    "\\rrolf\\Server"
+    "\\Client",
+    "\\MasterServer",
+    "\\Server",
+    "\\Shared",
+    "\\Shared\\Component"
   ],
-  "SelectedNode": "\\rrolf\\Server\\CMakeLists.txt",
+  "SelectedNode": "\\MasterServer\\main.js",
   "PreviewInSolutionExplorer": false
 }

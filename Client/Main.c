@@ -36,7 +36,6 @@ static void *rr_create_game_thread(void *arg)
         int64_t to_sleep = 16666 - elapsed_time;
         if (to_sleep > 0)
             usleep(to_sleep);
-        // otherwise don't even call the function
     }
 
     return 0;
@@ -97,7 +96,7 @@ void rr_wheel_event(struct rr_game *this, float delta)
 
 void rr_paste_event(struct rr_game *this, char *buf)
 {
-    if (this->input_data->clipboard)
+    if (this->input_data->clipboard != NULL)
         free(this->input_data->clipboard);
     this->input_data->clipboard = buf;
 }
@@ -129,23 +128,23 @@ void rr_main_loop(struct rr_game *this)
                 _rr_key_event(
                     $0, 0, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
             };
-            window.onmousedown =
-                function(e){
-                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    _rr_mouse_event(
-                    $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
-                    1, +!!button)};
-            window.onmousemove = function(e){
-                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    _rr_mouse_event(
-                    $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
-                    2, +!!button)};
-            window.onmouseup =
-                function(e){
-                    const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                    _rr_mouse_event(
-                    $0, clientX * devicePixelRatio, clientY * devicePixelRatio,
-                    0, +!!button)};
+            window.addEventListener("mousedown", async function(e)
+            {
+                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                _rr_mouse_event($0, clientX * devicePixelRatio,
+                                clientY * devicePixelRatio, 1, +!!button);
+            });
+            window.addEventListener("mousemove", async function(e)
+            {
+                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                _rr_mouse_event($0, clientX * devicePixelRatio,
+                               clientY * devicePixelRatio, 2, +!!button);
+            });
+            window.addEventListener("mouseup", async function(e){
+                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
+                _rr_mouse_event($0, clientX * devicePixelRatio,
+                                clientY * devicePixelRatio, 0, +!!button);
+            });
             window.addEventListener("touchstart", function(e){
                 e.preventDefault();
                 e.stopPropagation();
@@ -182,15 +181,15 @@ void rr_main_loop(struct rr_game *this)
                 for (const t of e.changedTouches)
                     _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 0, t.identifier);
             }, {passive: false});
-            window.onwheel =
-                function({deltaY}){_rr_wheel_event($0, deltaY)};
-            document.body.onpaste = function(e) {
+            window.addEventListener("wheel",
+                async function({deltaY}) { _rr_wheel_event($0, deltaY); });
+            document.body.addEventListener("paste", async function(e) {
                 const buf = new TextEncoder().encode(e.clipboardData.getData("text/plain"));
                 const $a = _malloc(buf.length + 1);
                 HEAPU8.set(buf, $a);
                 HEAPU8[$a + buf.length] = 0;
                 _rr_paste_event($0, $a);
-            };
+            });
             Module.addCtx = function()
             {
                 if (Module.availableCtxs.length)
@@ -214,6 +213,7 @@ void rr_main_loop(struct rr_game *this)
                 Module.ctxs[index] = null;
                 Module.availableCtxs.push(index);
             };
+            
 
             function loop(time)
             {

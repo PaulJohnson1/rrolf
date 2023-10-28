@@ -405,7 +405,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_bone)
         {
-            health->damage_reduction += 1.6 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
+            health->damage_reduction += 1.75 * RR_PETAL_RARITY_SCALE[slot->rarity].heal * bone_diminish_factor;
             bone_diminish_factor *= 0.6;
         }
         else
@@ -415,7 +415,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
                 if (slot->petals[inner].entity_hash == RR_NULL_ENTITY)
                     continue;
                 if (data->id == rr_petal_id_magnet)
-                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 125 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
+                    RR_SET_IF_GREATER(player_info->modifiers.drop_pickup_radius, 75 + 35 * RR_PETAL_RARITY_SCALE[slot->rarity].heal)
             }
         }
     }
@@ -496,7 +496,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     if (data->id == rr_petal_id_egg)
                     {
                         m_id = rr_mob_id_trex;
-                        m_rar = petal->rarity ? petal->rarity - 1 : 0;
+                        m_rar = petal->rarity >= 2 ? petal->rarity - 2 : 0;
                     }
                     EntityIdx mob_id =
                         rr_simulation_alloc_mob(simulation, petal_physical->arena, petal_physical->x, petal_physical->y, m_id, m_rar,

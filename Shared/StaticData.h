@@ -56,14 +56,14 @@ enum rr_rarity_id
     rr_rarity_id_epic,
     rr_rarity_id_legendary,
     rr_rarity_id_mythic,
-    rr_rarity_id_ultra,
-    //rr_rarity_id_super,
+    rr_rarity_id_exotic,
+    rr_rarity_id_ultimate,
     rr_rarity_id_max
 };
 
 enum rr_petal_id
 {
-    rr_petal_id_no_petal,
+    rr_petal_id_none,
     rr_petal_id_basic,
     rr_petal_id_pellet,
     rr_petal_id_fossil,
@@ -137,6 +137,7 @@ struct rr_mob_data
 {
     uint8_t id;
     uint8_t min_rarity;
+    uint8_t max_rarity;
     float health;
     float damage;
     float radius;
@@ -177,9 +178,9 @@ extern struct rr_mob_data RR_MOB_DATA[rr_mob_id_max];
 extern char const *RR_MOB_NAMES[rr_mob_id_max];
 extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
-extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
-extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 1];
-extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultra + 2];
+extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max];
+extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
+extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
@@ -194,13 +195,12 @@ struct rr_maze_grid
 #ifdef RR_SERVER
     uint8_t (*spawn_function)();
     float difficulty;
-    float local_difficulty;
-    float farming_slowdown;
     uint32_t spawn_timer;
     uint32_t player_count;
     uint32_t grid_points;
-    uint32_t max_points;
 #endif
+    float local_difficulty;
+    float overload_factor;
     uint8_t value;
 };
 

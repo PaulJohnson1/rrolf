@@ -68,7 +68,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     if (id == rr_petal_id_magnet)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "+%.0f", 75 + 125 * RR_PETAL_RARITY_SCALE[rarity].heal);
+        sprintf(extra, "+%.0f", 75 + 35 * RR_PETAL_RARITY_SCALE[rarity].heal);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -90,15 +90,15 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                                   rr_ui_text_init(extra, 12, 0xffffffff), NULL),
                               -1, 0));
     }
-    else if (id == rr_petal_id_egg && rarity > 0)
+    else if (id == rr_petal_id_egg)
     {
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
                           rr_ui_container_init(), 0, 0,
                           rr_ui_text_init("Spawns: ", 12, 0xffe07422),
-                          rr_ui_text_init(RR_RARITY_NAMES[rarity - 1], 12,
-                                          RR_RARITY_COLORS[rarity - 1]),
+                          rr_ui_text_init(RR_RARITY_NAMES[rarity >= 2 ? rarity - 2 : 0], 12,
+                                          RR_RARITY_COLORS[rarity >= 2 ? rarity - 2 : 0]),
                           rr_ui_text_init(" T-Rex", 12, 0xffffffff), NULL),
                       -1, 0));
     }
@@ -153,7 +153,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_bone)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%s", rr_sprintf(fmt, 1.6 * RR_PETAL_RARITY_SCALE[rarity].heal));
+        sprintf(extra, "%s", rr_sprintf(fmt, 1.75 * RR_PETAL_RARITY_SCALE[rarity].heal));
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(
@@ -199,7 +199,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
     else if (id == rr_petal_id_beak)
     {
         char *extra = malloc((sizeof *extra) * 8);
-        sprintf(extra, "%.1fs", 1 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].heal) / 4);
+        sprintf(extra, "%.1fs", 1 + sqrtf(RR_PETAL_RARITY_SCALE[rarity].heal) / 3);
         rr_ui_container_add_element(
             this, rr_ui_set_justify(
                       rr_ui_h_container_init(

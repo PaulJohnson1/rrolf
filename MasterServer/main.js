@@ -80,13 +80,11 @@ async function request(method, key, body)
         body: (() => {
             if (method !== "GET")
             {
-                let json = {
+                return JSON.stringify({
                     namespace_id: NAMESPACE_ID,
                     key,
                     value: body
-                };
-
-                return JSON.stringify(json);
+                });
             }
         })()
     });
@@ -96,7 +94,8 @@ async function request(method, key, body)
         const data = await data_j.json();
         return data;
     }
-    catch(e) {
+    catch (e) {
+        console.log(e, data_j);
         return {};
     }
 }
@@ -111,7 +110,6 @@ function apply_missing_defaults(account)
         failed_crafts: {},
         mob_gallery: {},
         inflated_up_to: 1,
-        linked_from: {}
     };
 
     // Fill in any missing defaults

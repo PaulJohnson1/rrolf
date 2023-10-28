@@ -258,11 +258,11 @@ void rr_game_init(struct rr_game *this)
                             rr_ui_container_init(), 0, 20,
                             rr_ui_link_toggle(
                                 rr_ui_set_fill_stroke(
-                                    rr_ui_h_container_init(rr_ui_container_init(), 5, 0,
-                                        rr_ui_text_input_init(350, 24, &this->cache.nickname[0], 16, "_0x4346"), 
+                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
+                                        rr_ui_text_input_init(350, 30, &this->cache.nickname[0], 16, "_0x4346"), 
                                         NULL
                                     ), 
-                                0xffffffff, 0xff222222),
+                                0x00000000, 0x00000000),
                             simulation_not_ready),
                             rr_ui_join_button_init(),
                             NULL
@@ -305,11 +305,11 @@ void rr_game_init(struct rr_game *this)
                                             rr_ui_copy_squad_code_button_init(),
                                             rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
                                                 rr_ui_set_fill_stroke(
-                                                    rr_ui_h_container_init(rr_ui_container_init(), 2, 0,
-                                                        rr_ui_text_input_init(100, 14, &this->connect_code[0], 16, "_0x4347"), 
+                                                    rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
+                                                        rr_ui_text_input_init(100, 18, &this->connect_code[0], 16, "_0x4347"), 
                                                         NULL
                                                     ), 
-                                                0xffffffff, 0xff222222),
+                                                0x00000000, 0x00000000),
                                                 rr_ui_join_squad_code_button_init(),
                                                 NULL
                                             ),
@@ -781,6 +781,19 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->inventory[id][rarity + 1] += successes;
             this->crafting_data.success_count = successes;
             this->crafting_data.animation = 0;
+            break;
+        }
+        case rr_clientbound_dev_info:
+        {
+            uint8_t biome = proto_bug_read_uint8(&encoder, "biome");
+            struct rr_maze_declaration *decl = &RR_MAZES[biome];
+            printf("%d\n", decl->maze_dim);
+            for (uint32_t y = 0; y < decl->maze_dim; ++y)
+                for (uint32_t x = 0; x < decl->maze_dim; ++x)
+                {
+                    decl->maze[y * decl->maze_dim + x].local_difficulty = proto_bug_read_float32(&encoder, "diff");
+                    decl->maze[y * decl->maze_dim + x].overload_factor = proto_bug_read_float32(&encoder, "olf");
+                }
             break;
         }
         default:

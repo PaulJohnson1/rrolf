@@ -104,9 +104,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         float seed = RR_MOB_DATA[id].loot[i].seed;
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
-        uint64_t cap = rarity;
-        if (rarity >= rr_rarity_id_mythic)
-            cap = rarity - 1;
+        uint64_t cap = rarity >= rr_rarity_id_exotic ? rarity - 1 : rarity;
         uint8_t min_rar = RR_PETAL_DATA[p_id].min_rarity;
         for (uint8_t r = min_rar + 1; r <= cap + 1; ++r)
         {
@@ -118,10 +116,10 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
                 end = 1;
             float chance =
                 pow(1 - (1 - end) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]) - pow(1 - (1 - start) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]);
-            if (chance <
-                0.00001)
+            if (chance * 100 <
+                0.01)
                 continue;
-            char *d = malloc((sizeof *d) * 12);
+            char *d = malloc((sizeof *d) * 16);
             float pct = 100 * chance;
             if (pct > 1)
                 sprintf(d, "%.1f%%", pct);
