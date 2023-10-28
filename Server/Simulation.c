@@ -60,6 +60,7 @@ void rr_simulation_init(struct rr_simulation *this)
     arena->biome = RR_GLOBAL_BIOME;
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W, SPAWN_ZONE_H);
+    /*
     set_special_zone(rr_biome_id_hell_creek, ornitho_zone, 11, 11, 2, 2);
     set_special_zone(rr_biome_id_hell_creek, ptera_meteor_zone, 13, 23, 4, 3);
     set_special_zone(rr_biome_id_hell_creek, edmonto_zone, 19, 3, 3, 2);
@@ -69,6 +70,7 @@ void rr_simulation_init(struct rr_simulation *this)
     set_special_zone(rr_biome_id_hell_creek, quetz_fern_zone, 4, 16, 4, 1);
     set_special_zone(rr_biome_id_hell_creek, patchy_zone, 7, 4, 2, 1);
     set_special_zone(rr_biome_id_hell_creek, anky_zone, 11, 0, 3, 2);
+    */
 }
 
 struct too_close_captures
