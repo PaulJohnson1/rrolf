@@ -111,7 +111,7 @@ struct rr_ui_element
     uint8_t v_flex;
 };
 
-//render funcs
+// render funcs
 void rr_ui_render_element(struct rr_ui_element *, struct rr_game *);
 void rr_ui_render_tooltip_above(struct rr_ui_element *, struct rr_ui_element *,
                                 struct rr_game *);
@@ -132,90 +132,102 @@ struct rr_ui_element *rr_ui_link_toggle(struct rr_ui_element *,
                                                     struct rr_game *));
 void rr_ui_container_poll_events(struct rr_ui_element *, struct rr_game *);
 
-struct rr_ui_element *rr_ui_element_init();
-struct rr_ui_element *rr_ui_static_space_init(float);
+extern struct rr_ui_element *rr_ui_element_init();
+extern struct rr_ui_element *rr_ui_static_space_init(float);
 
-struct rr_ui_element *rr_ui_container_init();
-struct rr_ui_element *rr_ui_popup_container_init();
-struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *,
-                                                struct rr_ui_element *, float);
-struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float, float);
-struct rr_ui_element *rr_ui_tooltip_container_init();
-struct rr_ui_element *rr_ui_container_add_element(struct rr_ui_element *,
-                                                  struct rr_ui_element *);
+extern struct rr_ui_element *rr_ui_container_init();
+extern struct rr_ui_element *rr_ui_popup_container_init();
+extern struct rr_ui_element *rr_ui_flex_container_init(struct rr_ui_element *,
+                                                       struct rr_ui_element *,
+                                                       float);
+extern struct rr_ui_element *rr_ui_2d_container_init(uint8_t, uint8_t, float,
+                                                     float);
+extern struct rr_ui_element *rr_ui_tooltip_container_init();
+extern struct rr_ui_element *
+rr_ui_container_add_element(struct rr_ui_element *, struct rr_ui_element *);
 
-struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
-struct rr_ui_element *rr_ui_dynamic_text_init(float, uint32_t,
-                                              void (*)(struct rr_ui_element *,
-                                                       struct rr_game *));
+extern struct rr_ui_element *rr_ui_text_init(char const *, float, uint32_t);
+extern struct rr_ui_element *
+rr_ui_dynamic_text_init(float, uint32_t,
+                        void (*)(struct rr_ui_element *, struct rr_game *));
 
-struct rr_ui_element *rr_ui_labeled_button_init(char *, float, uint8_t *);
+extern struct rr_ui_element *rr_ui_labeled_button_init(char *, float,
+                                                       uint8_t *);
 
-struct rr_ui_element *rr_ui_choose_element_init(
+extern struct rr_ui_element *rr_ui_choose_element_init(
     struct rr_ui_element *, struct rr_ui_element *,
     uint8_t (*)(struct rr_ui_element *, struct rr_game *));
-struct rr_ui_element *rr_ui_multi_choose_element_init(
+extern struct rr_ui_element *rr_ui_multi_choose_element_init(
     uint8_t (*)(struct rr_ui_element *, struct rr_game *), ...);
 
-struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
+extern struct rr_ui_element *rr_ui_toggle_box_init(uint8_t *);
 
-struct rr_ui_element *rr_ui_h_slider_init(float, float, float *, uint8_t);
+extern struct rr_ui_element *rr_ui_h_slider_init(float, float, float *,
+                                                 uint8_t);
 
-struct rr_ui_element *rr_ui_close_button_init(float, void (*)(struct rr_ui_element *, struct rr_game *));
+extern struct rr_ui_element *
+rr_ui_close_button_init(float,
+                        void (*)(struct rr_ui_element *, struct rr_game *));
 
-struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *, float);
+extern struct rr_ui_element *rr_ui_scroll_container_init(struct rr_ui_element *,
+                                                         float);
 
-struct rr_ui_element *rr_ui_text_input_init(float, float, char *, uint8_t, char *);
+extern struct rr_ui_element *rr_ui_text_input_init(float, float, char *,
+                                                   uint8_t, char *);
 // custom
-struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *);
-struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *);
+extern struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *);
+extern struct rr_ui_element *
+rr_ui_squad_player_tooltip_init(struct rr_squad_member *);
 
-struct rr_ui_element *rr_ui_inventory_container_init();
+extern struct rr_ui_element *rr_ui_inventory_container_init();
 
-struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t);
-struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
-struct rr_ui_element *rr_ui_secondary_loadout_button_init(uint8_t);
+extern struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t);
+extern struct rr_ui_element *rr_ui_loadout_button_init(uint8_t);
+extern struct rr_ui_element *rr_ui_secondary_loadout_button_init(uint8_t);
 
-struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
-struct rr_ui_element *rr_ui_account_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_rivet_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_account_container_init(struct rr_game *);
 
-struct rr_ui_element *rr_ui_inventory_toggle_button_init();
-struct rr_ui_element *rr_ui_settings_toggle_button_init();
-struct rr_ui_element *rr_ui_account_toggle_button_init();
+extern struct rr_ui_element *rr_ui_inventory_toggle_button_init();
+extern struct rr_ui_element *rr_ui_settings_toggle_button_init();
+extern struct rr_ui_element *rr_ui_account_toggle_button_init();
 
-struct rr_ui_element *rr_ui_discord_toggle_button_init();
+extern struct rr_ui_element *rr_ui_discord_toggle_button_init();
 
-struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
-struct rr_ui_element *rr_ui_squad_button_init();
-struct rr_ui_element *rr_ui_create_squad_button_init();
-struct rr_ui_element *rr_ui_join_button_init();
-struct rr_ui_element *rr_ui_copy_squad_code_button_init();
-struct rr_ui_element *rr_ui_join_squad_code_button_init();
-struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_squad_button_init();
+extern struct rr_ui_element *rr_ui_create_squad_button_init();
+extern struct rr_ui_element *rr_ui_join_button_init();
+extern struct rr_ui_element *rr_ui_copy_squad_code_button_init();
+extern struct rr_ui_element *rr_ui_join_squad_code_button_init();
+extern struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *);
 
-struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t, uint8_t);
-struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t, uint8_t);
+extern struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t, uint8_t);
+extern struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t, uint8_t);
 
-struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init();
-struct rr_ui_element *rr_ui_mob_container_init();
+extern struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init();
+extern struct rr_ui_element *rr_ui_mob_container_init();
 
-struct rr_ui_element *rr_ui_crafting_container_init();
-struct rr_ui_element *rr_ui_crafting_toggle_button_init();
+extern struct rr_ui_element *rr_ui_crafting_container_init();
+extern struct rr_ui_element *rr_ui_crafting_toggle_button_init();
 
-struct rr_ui_element *rr_ui_finished_game_screen_init();
+extern struct rr_ui_element *rr_ui_finished_game_screen_init();
 
-struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);
+extern struct rr_ui_element *rr_ui_in_game_player_hud_init(uint8_t);
 
-struct rr_ui_element *rr_ui_dev_squad_panel_toggle_button_init();
-struct rr_ui_element *rr_ui_dev_squad_panel_container_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_dev_squad_panel_toggle_button_init();
+extern struct rr_ui_element *
+rr_ui_dev_squad_panel_container_init(struct rr_game *);
 
-struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
+extern struct rr_ui_element *rr_ui_biome_button_init(char *, uint32_t, uint8_t);
 
-struct rr_ui_element *rr_ui_level_bar_init(float);
+extern struct rr_ui_element *rr_ui_level_bar_init(float);
 
-struct rr_ui_element *rr_ui_loot_container_init();
+extern struct rr_ui_element *rr_ui_loot_container_init();
 
-struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_minimap_init(struct rr_game *);
 
-struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);
-struct rr_ui_element *rr_ui_message_box_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *);
+extern struct rr_ui_element *rr_ui_message_box_init(struct rr_game *);
+
+extern struct rr_ui_element *rr_ui_anti_afk_container_init();

@@ -19,7 +19,7 @@ void rr_system_camera_tick(struct rr_simulation *this)
             rr_component_player_info_set_arena(player_info, physical->arena);
             continue;
         }
-        //tempfix
+        // tempfix
         continue;
         uint8_t has_seed = 0;
         for (EntityIdx j = 0; j < this->petal_count; ++j)
