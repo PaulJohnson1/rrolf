@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "typeindex": "c",
+        "typeinfo": "c",
+        "*.inc": "c"
+    }
+}

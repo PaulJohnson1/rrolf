@@ -835,7 +835,6 @@ static void server_tick(struct rr_server *this)
     if (!this->api_ws_ready)
         return;
     rr_simulation_tick(&this->simulation);
-    fputs("client tick\n", stderr);
     for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
     {
         if (rr_bitset_get(this->clients_in_use, i))
@@ -983,12 +982,9 @@ void rr_server_run(struct rr_server *this)
     while (1)
     {
         gettimeofday(&start, NULL);
-        fputs("server_recv\n", stderr);
         lws_service(this->server, -1);
-        fputs("api_server\n", stderr);
         lws_service(this->api_client_context, -1);
         server_tick(this);
-        fputs("end_tick\n", stderr);
         this->simulation.animation_length = 0;
         gettimeofday(&end, NULL);
 
