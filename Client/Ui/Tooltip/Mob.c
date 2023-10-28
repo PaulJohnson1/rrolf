@@ -104,7 +104,7 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         float seed = RR_MOB_DATA[id].loot[i].seed;
         struct rr_ui_element *temp =
             rr_ui_h_container_init(rr_ui_container_init(), 0, 10, NULL);
-        uint64_t cap = rarity == rr_rarity_id_ultimate ? rr_rarity_id_exotic : rarity;
+        uint64_t cap = rarity >= rr_rarity_id_exotic ? rarity - 1 : rarity;
         uint8_t min_rar = RR_PETAL_DATA[p_id].min_rarity;
         for (uint8_t r = min_rar + 1; r <= cap + 1; ++r)
         {
