@@ -211,8 +211,8 @@ static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uint
         return 0;
     float base_modifier =
         (max_points) / (max_points - grid->grid_points);
-    float spawn_at = base_modifier * difficulty_modifier /
-                     (player_modifier * overload_modifier);
+    float spawn_at = base_modifier * difficulty_modifier * overload_modifier /
+                     (player_modifier);
     if (grid->player_count == 0)
     {
         grid->overload_factor =

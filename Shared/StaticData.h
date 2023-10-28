@@ -137,6 +137,7 @@ struct rr_mob_data
 {
     uint8_t id;
     uint8_t min_rarity;
+    uint8_t max_rarity;
     float health;
     float damage;
     float radius;

@@ -20,6 +20,8 @@ uint32_t get_spawn_rarity(float difficulty)
         if (pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
                 pow(1.5, difficulty)) >= rarity_seed)
             break;
+    if (rarity == rr_rarity_id_exotic && rr_frand() < 0.01)
+        rarity = rr_rarity_id_ultimate;
     return rarity;
 }
 
@@ -36,5 +38,5 @@ uint8_t get_spawn_id(uint8_t biome, struct rr_maze_grid *zone)
 
 int should_spawn_at(uint8_t id, uint8_t rarity)
 {
-    return rarity >= RR_MOB_DATA[id].min_rarity;
+    return rarity >= RR_MOB_DATA[id].min_rarity && rarity <= RR_MOB_DATA[id].max_rarity;
 }

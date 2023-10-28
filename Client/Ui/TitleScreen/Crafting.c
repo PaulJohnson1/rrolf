@@ -56,7 +56,7 @@ static void craft_button_on_event(struct rr_ui_element *this,
         if (game->crafting_data.success_count == 0 &&
             game->crafting_data.count >= PETALS_PER_CRAFT &&
             game->crafting_data.crafting_id != 0 &&
-            game->crafting_data.crafting_rarity < rr_rarity_id_exotic)
+            game->crafting_data.crafting_rarity < rr_rarity_id_max - 1)
         {
             game->crafting_data.success_count = 0;
             game->crafting_data.animation = 50;
@@ -309,7 +309,7 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
         data->text = "Chance: 3%";
         break;
     case rr_rarity_id_mythic:
-        data->text = "Chance: 1%";
+        data->text = "Chance: 2%";
         break;
     }
 }
@@ -351,6 +351,9 @@ static void crafting_xp_text_animate(struct rr_ui_element *this,
         break;
     case rr_rarity_id_mythic:
         data->text = "1m xp per craft";
+        break;
+    case rr_rarity_id_exotic:
+        data->text = "25m xp per craft";
         break;
     }
 }
@@ -482,9 +485,9 @@ static uint8_t crafting_container_should_show(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_crafting_container_init()
 {
     struct rr_ui_element *this =
-        rr_ui_2d_container_init(rr_rarity_id_max - 1, 6, 15, 15);
+        rr_ui_2d_container_init(rr_rarity_id_max, 6, 15, 15);
     for (uint8_t id = 1; id < rr_petal_id_max; ++id)
-        for (uint8_t rarity = 0; rarity < rr_rarity_id_max - 1; ++rarity)
+        for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             rr_ui_container_add_element(
                 this, crafting_inventory_button_init(id, rarity));
     rr_ui_set_background(this, 0x00000000);
