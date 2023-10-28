@@ -188,7 +188,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
     "Legendary", "Mythic", "Exotic", "Ultimate"
 };
                                           
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 6, 10, 15, 25, 160, 1200};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 6, 10, 15, 25, 160, 1200, 250};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 8, 15, 40, 250, 800, 1200};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 5, 8, 12, 25, 75, 100, 150};
@@ -204,19 +204,26 @@ static void init_game_coefficients()
         sum += (RR_DROP_RARITY_COEFFICIENTS[a + 1] =
                     RR_DROP_RARITY_COEFFICIENTS[a] /
                     RR_DROP_RARITY_COEFFICIENTS[a + 1]);
-        sum2 += (RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1] =
-                     RR_MOB_WAVE_RARITY_COEFFICIENTS[a] /
-                     RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1]);
     }
     for (uint64_t a = 1; a <= rr_rarity_id_exotic + 1; ++a)
     {
         RR_DROP_RARITY_COEFFICIENTS[a] = RR_DROP_RARITY_COEFFICIENTS[a] / sum +
                                          RR_DROP_RARITY_COEFFICIENTS[a - 1];
+    }
+    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 1] = 1;
+    for (uint64_t a = 1; a <= rr_rarity_id_ultimate; ++a)
+    {
+        sum2 += (RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1] =
+                     RR_MOB_WAVE_RARITY_COEFFICIENTS[a] /
+                     RR_MOB_WAVE_RARITY_COEFFICIENTS[a + 1]);
+    }
+    for (uint64_t a = 1; a <= rr_rarity_id_ultimate + 1; ++a)
+    {
         RR_MOB_WAVE_RARITY_COEFFICIENTS[a] =
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a] / sum2 +
             RR_MOB_WAVE_RARITY_COEFFICIENTS[a - 1];
     }
-    RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 1] = 1;
+    RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_ultimate + 1] = 1;
     for (uint64_t mob = 1; mob < rr_mob_id_max; ++mob)
     {
         RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[mob] +=
@@ -330,16 +337,16 @@ static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maz
 static void print_chances(float difficulty) {
     printf("-----Chances for %.0f-----\n", difficulty);
     uint32_t rarity_cap = rr_rarity_id_common + (difficulty + 7) / 8;
-    if (rarity_cap > rr_rarity_id_exotic)
-        rarity_cap = rr_rarity_id_exotic;
-    uint8_t rarity = 0;
+    if (rarity_cap > rr_rarity_id_ultimate)
+        rarity_cap = rr_rarity_id_ultimate;
+    uint32_t rarity = rarity_cap >= 2 ? rarity_cap - 2 : 0;
     for (; rarity <= rarity_cap; ++rarity)
     {
         float start = rarity == 0 ? 0 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity]) * 0.3,
                 pow(1.5, difficulty));
         float end = rarity == rarity_cap ? 1 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
                 pow(1.5, difficulty));
-        printf("%s: %.9f\n", RR_RARITY_NAMES[rarity], end - start);
+        printf("%s: %.9f (1 per %.4f)\n", RR_RARITY_NAMES[rarity], end - start, 1 / (end - start));
     }
 }
 

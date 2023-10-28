@@ -180,7 +180,7 @@ extern struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max];
 extern struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max];
 extern double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max];
 extern double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
-extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2];
+extern double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1];
 
 extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
