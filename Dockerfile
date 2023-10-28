@@ -5,7 +5,8 @@ COPY . .
 RUN cmake Server -DDEBUG_BUILD=0 -DRIVET_BUILD=1 && make -j2
 # RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
 # RUN cmake Server -DDEBUG_BUILD=1 -DRIVET_BUILD=1 -DCMAKE_C_FLAGS="-DPROTO_BUG_NDEBUG" && make -j2
-
+FROM debian:12
+RUN apt-get update -y && apt-get install -y gcc gdb
 FROM alpine
 RUN apk update && apk add --no-cache ca-certificates curl-dev libwebsockets
 WORKDIR /usr/src/app
