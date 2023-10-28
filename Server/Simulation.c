@@ -36,10 +36,10 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x, uint32
             RR_MAZES[biome].maze[(Y+y)*dim+(X+x)].spawn_function = fun;
 }
 
-#define SPAWN_ZONE_X 19
-#define SPAWN_ZONE_Y 15
+#define SPAWN_ZONE_X 5
+#define SPAWN_ZONE_Y 12
 #define SPAWN_ZONE_W 3
-#define SPAWN_ZONE_H 1
+#define SPAWN_ZONE_H 3
 
 uint8_t ornitho_zone() { return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_fern; }
 uint8_t rex_zone() { return rr_mob_id_trex; }
@@ -204,7 +204,7 @@ static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uint
                                           grid->overload_factor);
     }
     float player_modifier = 1 + grid->player_count * 2.0 / 3;
-    float difficulty_modifier = 200 + 5 * grid->difficulty;
+    float difficulty_modifier = 200 + 4 * grid->difficulty;
     float overload_modifier = powf(1.2, grid->local_difficulty + grid->overload_factor);
     float max_points = get_max_points(grid);
     if (grid->grid_points >= max_points)
