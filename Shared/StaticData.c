@@ -98,8 +98,8 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
 struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_triceratops, rr_rarity_id_rare, rr_rarity_id_ultimate, 45, 15, 30.0f, {{rr_petal_id_leaf, 0.15},{rr_petal_id_fossil, 0.05}}},
     {rr_mob_id_trex, rr_rarity_id_epic, rr_rarity_id_ultimate, 40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_egg, 0.05}}},
-    {rr_mob_id_fern, rr_rarity_id_common, rr_rarity_id_ultimate, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
-    {rr_mob_id_tree, rr_rarity_id_rare, rr_rarity_id_ultimate, 100, 5, 64.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.1}}},
+    {rr_mob_id_fern, rr_rarity_id_common, rr_rarity_id_exotic, 10, 5, 24.0f, {{rr_petal_id_leaf, 0.1},{rr_petal_id_azalea, 0.25}}},
+    {rr_mob_id_tree, rr_rarity_id_rare, rr_rarity_id_exotic, 100, 5, 64.0f, {{rr_petal_id_leaf, 0.5},{rr_petal_id_peas, 0.25},{rr_petal_id_seed, 0.1}}},
     {rr_mob_id_pteranodon, rr_rarity_id_rare, rr_rarity_id_ultimate, 40, 15, 20.0f, {{rr_petal_id_shell, 0.15},{rr_petal_id_beak, 0.15}}},
     {rr_mob_id_dakotaraptor, rr_rarity_id_unusual, rr_rarity_id_ultimate, 40, 10, 25.0f, {{rr_petal_id_crest, 0.1},{rr_petal_id_feather, 0.15},{rr_petal_id_pellet, 0.05}}},
     {rr_mob_id_pachycephalosaurus, rr_rarity_id_common, rr_rarity_id_ultimate, 35, 15, 20.0f, {{rr_petal_id_fossil, 0.1},{rr_petal_id_light, 0.1},{rr_petal_id_web, 0.05}}},
@@ -178,7 +178,7 @@ char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
 double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 6, 10, 15, 25, 160, 1200};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 8, 15, 40, 250, 1000, 800};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 5, 8, 12, 25, 75, 300, 50};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 5, 8, 12, 25, 75, 200, 75};
 
 static void init_game_coefficients()
 {
@@ -316,7 +316,7 @@ static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maz
 
 static void print_chances(float difficulty) {
     printf("-----Chances for %.0f-----\n", difficulty);
-    uint32_t rarity_cap = rr_rarity_id_unusual + difficulty / 8;
+    uint32_t rarity_cap = rr_rarity_id_common + (difficulty + 7) / 8;
     if (rarity_cap > rr_rarity_id_exotic)
         rarity_cap = rr_rarity_id_exotic;
     uint8_t rarity = 0;
@@ -330,7 +330,9 @@ static void print_chances(float difficulty) {
     }
 }
 
-#ifdef RR_SERVER
+double RR_BASE_CRAFT_CHANCES[rr_rarity_id_max - 1] = {0.5, 0.3, 0.15, 0.05, 0.03, 0.02, 0.015};
+double RR_CRAFT_CHANCES[rr_rarity_id_max - 1];
+
 static double from_prd_base(double C)
 {
     double pProcOnN = 0;
@@ -343,9 +345,9 @@ static double from_prd_base(double C)
         pProcByN += pProcOnN;
         sumNpProcOnN += N * pProcOnN;
     }
-
     return (1 / sumNpProcOnN);
 }
+
 static double get_prd_base(double p)
 {
     if (p == 0)
@@ -370,18 +372,15 @@ static double get_prd_base(double p)
     return Cmid;
 }
 
-double RR_CRAFT_CHANCES[rr_rarity_id_max - 1] = {0.5, 0.3, 0.15, 0.05, 0.03, 0.02, 0.015};
-#endif
-
 #define init(MAZE) init_maze(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid), &RR_MAZE_TEMPLATE_##MAZE[0][0], &RR_MAZE_##MAZE[0][0]);
 
 void rr_static_data_init()
 {
+    for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_BASE_CRAFT_CHANCES[r]);
     init_game_coefficients();
     init(HELL_CREEK);
     init(BURROW);
     #ifdef RR_SERVER
-    for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_CRAFT_CHANCES[r]);
     print_chances(48);
     print_chances(44);
     print_chances(40);

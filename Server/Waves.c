@@ -12,7 +12,7 @@ uint32_t get_spawn_rarity(float difficulty)
     if (difficulty < 1)
         difficulty = 1;
     double rarity_seed = rr_frand();
-    uint32_t rarity_cap = rr_rarity_id_unusual + (difficulty - 1) / 8;
+    uint32_t rarity_cap = rr_rarity_id_common + (difficulty + 7) / 8;
     if (rarity_cap > rr_rarity_id_exotic)
         rarity_cap = rr_rarity_id_exotic;
     uint32_t rarity = rarity_cap >= 2 ? rarity_cap - 2 : 0;

@@ -224,9 +224,8 @@ extern struct rr_maze_declaration RR_MAZES[rr_biome_id_max];
 
 extern uint8_t RR_GLOBAL_BIOME;
 
-#ifdef RR_SERVER 
+extern double RR_BASE_CRAFT_CHANCES[rr_rarity_id_max - 1];
 extern double RR_CRAFT_CHANCES[rr_rarity_id_max - 1];
-#endif
 
 void rr_static_data_init();
 

@@ -311,6 +311,9 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
     case rr_rarity_id_mythic:
         data->text = "Chance: 2%";
         break;
+    case rr_rarity_id_exotic:
+        data->text = "Chance: 1.5%";
+        break;
     }
 }
 

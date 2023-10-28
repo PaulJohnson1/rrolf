@@ -731,7 +731,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         {
             uint8_t biome = proto_bug_read_uint8(&encoder, "biome");
             struct rr_maze_declaration *decl = &RR_MAZES[biome];
-            printf("%d\n", decl->maze_dim);
             for (uint32_t y = 0; y < decl->maze_dim; ++y)
                 for (uint32_t x = 0; x < decl->maze_dim; ++x)
                 {
