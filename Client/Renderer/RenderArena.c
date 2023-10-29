@@ -83,19 +83,6 @@ void render_background(struct rr_component_player_info *player_info, struct rr_g
                     rr_renderer_fill(renderer);
                 }
             }
-            if (grid[currY*maze_dim+nx].local_difficulty != 0 && rr_bitset_get(this->input_data->keys_pressed, 'Q'))
-            {
-                rr_renderer_set_text_baseline(renderer, 1);
-                rr_renderer_set_text_align(renderer, 1);
-                rr_renderer_set_fill(renderer, 0xffffffff);
-                rr_renderer_set_stroke(renderer, 0xff222222);
-                rr_renderer_set_text_size(renderer, 50);
-                rr_renderer_set_line_width(renderer, 50 * 0.12);
-                char a[32];
-                sprintf(a, "ld: %.2f | ol: %.2f", grid[currY*maze_dim+nx].local_difficulty, grid[currY*maze_dim+nx].overload_factor);
-                rr_renderer_stroke_text(renderer, a, (nx + 0.5) * grid_size, (currY + 0.5) * grid_size);
-                rr_renderer_fill_text(renderer, a, (nx + 0.5) * grid_size, (currY + 0.5) * grid_size);
-            }
         }
 }
 

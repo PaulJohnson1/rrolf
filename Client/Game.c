@@ -788,20 +788,6 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->crafting_data.animation = 0;
             break;
         }
-        case rr_clientbound_dev_info:
-        {
-            uint8_t biome = proto_bug_read_uint8(&encoder, "biome");
-            struct rr_maze_declaration *decl = &RR_MAZES[biome];
-            for (uint32_t y = 0; y < decl->maze_dim; ++y)
-                for (uint32_t x = 0; x < decl->maze_dim; ++x)
-                {
-                    decl->maze[y * decl->maze_dim + x].local_difficulty =
-                        proto_bug_read_float32(&encoder, "diff");
-                    decl->maze[y * decl->maze_dim + x].overload_factor =
-                        proto_bug_read_float32(&encoder, "olf");
-                }
-            break;
-        }
         default:
             RR_UNREACHABLE("how'd this happen");
         }
