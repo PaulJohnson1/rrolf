@@ -294,8 +294,10 @@ editor.addEventListener('mousedown', (event) => {
 });
 
 editor.addEventListener('mousemove', (event) => {
+    endTile = event.target;
+    console.log(endTile.dataset.x, endTile.dataset.y);
     if (selecting && startTile) {
-        endTile = event.target;
+        
         
         // Highlight tiles between startTile and endTile
         const startX = parseInt(startTile.dataset.x, 10);

@@ -28,7 +28,7 @@ struct rr_component_player_info_petal
 
 struct rr_component_player_info_petal_slot
 {
-    RR_SERVER_ONLY(struct rr_component_player_info_petal petals[5];)
+    RR_SERVER_ONLY(struct rr_component_player_info_petal petals[6];)
     uint8_t id;
     uint8_t rarity;
     uint8_t client_cooldown;

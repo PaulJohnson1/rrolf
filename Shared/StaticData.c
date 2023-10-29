@@ -31,13 +31,13 @@ struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_none, rr_rarity_id_common, &offensive[0], 0.0f, 0.0f, 0.0f, 0, 0, {0,0,0,0,0,0,0,0}},
     {rr_petal_id_basic, rr_rarity_id_common, &offensive[0], 10.0f, 15.0f, 0.0f, 50, 0, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_pellet, rr_rarity_id_common, &offensive[0], 12.5f, 5.0f, 0.0f, 15, 0, {1,2,2,3,3,5,5,5}},
+    {rr_petal_id_pellet, rr_rarity_id_common, &offensive[0], 15.0f, 5.0f, 0.0f, 20, 0, {1,2,2,3,3,5,6,6}},
     {rr_petal_id_fossil, rr_rarity_id_common, &offensive[0], 10.0f, 50.0f, 0.0f, 100, 0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_stinger, rr_rarity_id_common, &offensive[0], 80.0f, 3.0f, 10.0f, 150, 0, {1,1,1,1,1,3,5,5}},
     {rr_petal_id_light, rr_rarity_id_rare, &offensive[0], 8.0f, 5.0f, 15.0f, 20, 0, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 30.0f, 8.0f, 0.0f, 63, 13, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_peas, rr_rarity_id_rare, &offensive[0], 15.0f, 8.0f, 8.0f, 13, 12, {4,4,4,4,4,4,5,5}},
-    {rr_petal_id_leaf, rr_rarity_id_unusual, &defensive[0], 10.0f, 12.0f, 8.0f, 25, 0, {1,1,1,1,1,2,2,2}},
+    {rr_petal_id_leaf, rr_rarity_id_unusual, &offensive[0], 10.0f, 12.0f, 8.0f, 25, 0, {1,1,1,1,1,2,2,2}},
     {rr_petal_id_egg, rr_rarity_id_unusual, &defensive[0], 1.0f, 20.0f, 0.0f, 25, 100, {1,1,2,2,2,2,2,2}},
     {rr_petal_id_magnet, rr_rarity_id_rare, &defensive[0], 2.0f, 15.0f, 0.0f, 38, 0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_uranium, rr_rarity_id_rare, &offensive[0], 12.0f, 10.0f, 0.0f, 50, 25, {1,1,1,1,1,1,1,1}},
@@ -158,14 +158,14 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1.0, 300, 45},
-    {1.8, 150, 60},
-    {3.5, 75,  75},
-    {6.8, 36,  100},
-    {12.5,20,  125},
-    {24.5,10,  150},
-    {60.0,5,   200},
-    {180, 1,   250}
+    {1.0, 240, 45},
+    {1.8, 120, 60},
+    {3.5, 60,  75},
+    {6.8, 30,  100},
+    {12.5,15,  125},
+    {24.5,7.5, 150},
+    {60.0,2.5, 200},
+    {180, 0.5, 250}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
@@ -175,8 +175,8 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {16,  5.0, 2.4},
     {64,  8.5, 3.6},
     {480,14.5, 4.8},
-    {3600,24.6, 6.0},
-    {170600,42.0, 6.0}
+    {64e2,24.6, 6.0},
+    {256e3,42.0, 6.0}
 };
 // clang-format on
 

@@ -32,9 +32,7 @@ static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x,
 #define SPAWN_ZONE_W 3
 #define SPAWN_ZONE_H 3
 
-typedef uint8_t (*spawn_function)();
-
-static void set_special_zone(uint8_t biome, spawn_function fun, uint32_t x,
+static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x,
                              uint32_t y, uint32_t w, uint32_t h)
 {
     x *= 2;
@@ -47,15 +45,15 @@ static void set_special_zone(uint8_t biome, spawn_function fun, uint32_t x,
             RR_MAZES[biome].maze[(Y + y) * dim + (X + x)].spawn_function = fun;
 }
 
-uint8_t zone_1() { return rr_mob_id_ankylosaurus; }
-uint8_t zone_2() { return rr_mob_id_dakotaraptor; }
-uint8_t zone_3() { return rr_mob_id_edmontosaurus; }
-uint8_t zone_4() { return rr_mob_id_fern; }
-uint8_t zone_5() { return rr_mob_id_pteranodon; }
-uint8_t zone_6() { return rr_mob_id_meteor; }
-uint8_t zone_7() { return rr_mob_id_ornithomimus; }
-uint8_t zone_8() { return rr_mob_id_pachycephalosaurus; }
-uint8_t zone_9() { return rr_mob_id_quetzalcoatlus; }
+uint8_t ornith_zone() { return rr_mob_id_ornithomimus; }
+uint8_t fern_zone() { return rr_mob_id_fern; }
+uint8_t edmon_tree_zone() { return rr_mob_id_edmontosaurus; }
+uint8_t quetz_trex_zone() { return rr_frand() > 0.5 ? rr_mob_id_quetzalcoatlus : rr_mob_id_trex; }
+uint8_t trike_dako_zone() { return rr_frand() > 0.2 ? rr_mob_id_dakotaraptor : rr_mob_id_triceratops; }
+uint8_t pter_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
+uint8_t edmo_dako_zone() { return rr_frand() > 0.33 ? rr_mob_id_dakotaraptor : rr_mob_id_edmontosaurus; }
+uint8_t trex_dako_pter_zone() { return rr_frand() > 0.6 ? rr_mob_id_trex : rr_frand() > 0.5 ? rr_mob_id_dakotaraptor : rr_mob_id_pteranodon; }
+uint8_t dako_pter_zone() { return rr_frand() > 0.5 ? rr_mob_id_dakotaraptor : rr_mob_id_pteranodon; }
 
 struct zone
 {
@@ -63,27 +61,26 @@ struct zone
     uint32_t y;
     uint32_t w;
     uint32_t h;
+    uint8_t (*spawn_func)();
 };
 
-#define ZONE_POSITION_COUNT 9
-#define ZONE_SPAWNER_COUNT 9
+#define ZONE_POSITION_COUNT 12
+#define ROT_COUNT 7
 
 // all over spawn
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
-    {5, 12, 1, 1}, {6, 12, 1, 1}, {7, 12, 1, 1}, {5, 13, 1, 1}, {6, 13, 1, 1},
-    {7, 13, 1, 1}, {5, 14, 1, 1}, {6, 14, 1, 1}, {7, 14, 1, 1},
-};
-
-static spawn_function zone_spawners[ZONE_SPAWNER_COUNT] = {
-    zone_1,
-    zone_2,
-    zone_3,
-    zone_4,
-    zone_5,
-    zone_6,
-    zone_7,
-    zone_8,
-    zone_9,
+    {2, 9, 2, 2, ornith_zone}, 
+    {8, 22, 2, 2, fern_zone}, 
+    {11, 29, 3, 2, edmon_tree_zone}, 
+    {4, 25, 3, 2, quetz_trex_zone}, 
+    {34, 21, 3, 2, trike_dako_zone},
+    {38, 21, 5, 1, pter_zone}, 
+    {26, 31, 4, 2, edmo_dako_zone}, 
+    {17, 19, 3, 2, pter_zone},
+    {28, 24, 2, 3, trex_dako_pter_zone},
+    {0, 11, 5, 1, dako_pter_zone},
+    {21, 23, 3, 2, edmon_tree_zone},
+    {7, 33, 3, 2, trike_dako_zone},  
 };
 
 static void set_spawn_zones()
@@ -113,22 +110,11 @@ static void set_spawn_zones()
         seed = rr_get_hash(seed);
     }
 
-    // shuffle spawners
-    for (uint64_t i = ZONE_SPAWNER_COUNT - 1; i > 0; i--)
-    {
-        uint64_t j = seed % (i + 1);
-        spawn_function tmp = zone_spawners[i];
-        zone_spawners[i] = zone_spawners[j];
-        zone_spawners[j] = tmp;
-        seed = rr_get_hash(seed);
-    }
-
-    for (uint64_t i = 0; i < ZONE_SPAWNER_COUNT; i++)
+    for (uint64_t i = 0; i < ROT_COUNT; i++)
     {
         struct zone z = zone_positions[i];
-        spawn_function f = zone_spawners[i];
 
-        set_special_zone(rr_biome_id_hell_creek, f, z.x, z.y, z.w, z.h);
+        set_special_zone(rr_biome_id_hell_creek, z.spawn_func, z.x, z.y, z.w, z.h);
     }
 }
 
@@ -141,7 +127,6 @@ void rr_simulation_init(struct rr_simulation *this)
     rr_component_arena_spatial_hash_init(arena, this);
     set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W,
                      SPAWN_ZONE_H);
-    // set_special_zone(rr_biome_id_hell_creek, zone_4, 5, 12, 3, 3);
     set_spawn_zones();
 }
 
@@ -198,7 +183,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
 
     if (grid->spawn_function != NULL && rr_frand() <
 #ifdef RIVET_BUILD
-                                            0.33
+                                            0.5
 #else
                                             1
 #endif
@@ -398,17 +383,14 @@ static void tick_maze(struct rr_simulation *this)
         CODE;                                                                  \
     };
 
-static int64_t last_time_set = -1;
+static uint64_t ticks_since_last_set = 0;
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    struct timeval t;
-    gettimeofday(&t, NULL);
-    int64_t time = (t.tv_sec * 1000000 + t.tv_usec);
-    if (last_time_set == -1 || (time - last_time_set) >= 1000 * 1000 * 10)
+    if (ticks_since_last_set++ >= 25 * 60 * 30)
     {
+        ticks_since_last_set = 0;
         set_spawn_zones();
-        last_time_set = time;
     }
     rr_simulation_create_component_vectors(this);
     RR_TIME_BLOCK("collision_detection",
