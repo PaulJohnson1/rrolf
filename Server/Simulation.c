@@ -183,7 +183,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
 
     if (grid->spawn_function != NULL && rr_frand() <
 #ifdef RIVET_BUILD
-                                            0.5
+                                            0.67
 #else
                                             1
 #endif
@@ -383,14 +383,17 @@ static void tick_maze(struct rr_simulation *this)
         CODE;                                                                  \
     };
 
-static uint64_t ticks_since_last_set = 0;
+static int64_t last_time_set = -1;
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
-    if (ticks_since_last_set++ >= 25 * 60 * 30)
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    int64_t time = (t.tv_sec * 1000000 + t.tv_usec);
+    if (last_time_set == -1 || (time - last_time_set) >= 1000 * 1000 * 60 * 10)
     {
-        ticks_since_last_set = 0;
         set_spawn_zones();
+        last_time_set = time;
     }
     rr_simulation_create_component_vectors(this);
     RR_TIME_BLOCK("collision_detection",
