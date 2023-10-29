@@ -139,13 +139,13 @@ static void colliding_with_function(uint64_t i, void *_captures)
         physical2->velocity.y -= delta.x * vel_2;
         */
         //printf("%f %f\n", vf_1, vf_2);
-        #define KNOCKBACK_CONST (3.0f / 2)
+        #define KNOCKBACK_CONST (8.0f / 2)
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
-        physical1->collision_velocity.x -= coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
-        physical1->collision_velocity.y -= coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
-        physical2->collision_velocity.x -= (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
-        physical2->collision_velocity.y -= (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
+        physical1->acceleration.x -= coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
+        physical1->acceleration.y -= coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
+        physical2->acceleration.x -= (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
+        physical2->acceleration.y -= (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
         #undef KNOCKBACK_CONST
     }
 }
