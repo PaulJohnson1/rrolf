@@ -206,7 +206,7 @@ static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid, uint
                                           grid->overload_factor);
     }
     float player_modifier = 1 + grid->player_count * 2.0 / 3;
-    float difficulty_modifier = 200 + 4 * grid->difficulty;
+    float difficulty_modifier = 200 + 3 * grid->difficulty;
     float overload_modifier = powf(1.2, grid->local_difficulty + grid->overload_factor);
     float max_points = get_max_points(grid);
     if (grid->grid_points >= max_points)

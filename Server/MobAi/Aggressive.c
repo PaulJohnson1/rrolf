@@ -96,12 +96,13 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
     {
         if (ai->ticks_until_next_action == 0)
         {
+            struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
             float angle = rr_frand() * M_PI + M_PI / 2;
             rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(angle),
-            physical->y + physical->radius * sinf(angle), rr_mob_id_trex, rr_frand() < 0.1 ? rr_rarity_id_mythic : rr_rarity_id_legendary,
+            physical->y + physical->radius * sinf(angle), rr_mob_id_trex, mob->rarity - 2,
             rr_simulation_team_id_mobs);
             rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(2 * M_PI - angle),
-            physical->y + physical->radius * sinf(2 * M_PI - angle), rr_mob_id_trex, rr_frand() < 0.1 ? rr_rarity_id_mythic : rr_rarity_id_legendary,
+            physical->y + physical->radius * sinf(2 * M_PI - angle), rr_mob_id_trex, mob->rarity - 2,
             rr_simulation_team_id_mobs);
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = 300;

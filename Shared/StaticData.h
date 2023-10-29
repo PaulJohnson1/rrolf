@@ -38,7 +38,7 @@ enum rr_clientbound_packet_header
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
-#define RR_PLAYER_SPEED (3.6)
+#define RR_PLAYER_SPEED (4.0f)
 
 enum rr_biome_id
 {
