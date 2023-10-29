@@ -192,9 +192,9 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
     0, 1, 6, 10, 15, 25, 160, 1200, 250};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
-    0, 1, 8, 15, 40, 250, 800, 1200};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4,  5,  8,   12,
-                                                            25, 75, 100, 180};
+    0, 1, 8, 15, 40, 250, 2500, 1600};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
+    2.5, 4, 6, 15, 50, 320, 160, 120};
 
 static void init_game_coefficients()
 {
