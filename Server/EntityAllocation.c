@@ -3,15 +3,16 @@
 #include <Server/Waves.h>
 
 #include <math.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <Shared/Squad.h>
 #include <Shared/Utilities.h>
 
 static struct rr_maze_grid DEFAULT_GRID = {0};
 
-static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x,
+                             uint32_t y, uint32_t w, uint32_t h)
 {
     float dim = arena->maze->grid_size;
     arena->respawn_zone.x = 2 * x * dim;
@@ -20,7 +21,8 @@ static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint3
     arena->respawn_zone.h = 2 * h * dim;
 }
 
-EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena, EntityIdx entity)
+EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
+                                     EntityIdx arena, EntityIdx entity)
 {
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, entity);
@@ -32,9 +34,12 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
         rr_simulation_add_health(this, flower_id);
     struct rr_component_relations *relations =
         rr_simulation_add_relations(this, flower_id);
-    struct rr_spawn_zone *respawn_zone = &rr_simulation_get_arena(this, arena)->respawn_zone;
-    rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
-    rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
+    struct rr_spawn_zone *respawn_zone =
+        &rr_simulation_get_arena(this, arena)->respawn_zone;
+    rr_component_physical_set_x(physical,
+                                respawn_zone->x + respawn_zone->w * rr_frand());
+    rr_component_physical_set_y(physical,
+                                respawn_zone->y + respawn_zone->h * rr_frand());
     rr_component_physical_set_radius(physical, 25.0f);
     physical->mass = 10;
     physical->arena = arena;
@@ -42,22 +47,31 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this, EntityIdx arena
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 
-    memcpy(rr_simulation_add_flower(this, flower_id)->nickname, player_info->squad_member->nickname, sizeof player_info->squad_member->nickname);
-    rr_component_flower_set_level(rr_simulation_get_flower(this, flower_id), player_info->level);
-    rr_component_health_set_max_health(health, 100 * pow(1.0256, player_info->level > 120 ? 120 : player_info->level));
+    memcpy(rr_simulation_add_flower(this, flower_id)->nickname,
+           player_info->squad_member->nickname,
+           sizeof player_info->squad_member->nickname);
+    rr_component_flower_set_level(rr_simulation_get_flower(this, flower_id),
+                                  player_info->level);
+    rr_component_health_set_max_health(
+        health,
+        100 * pow(1.0256, player_info->level > 120 ? 120 : player_info->level));
     rr_component_health_set_health(health, health->max_health);
     health->damage = health->max_health * 0.1;
     health->damage_paused = 25;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
-    rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(this, entity));
+    rr_component_relations_set_owner(
+        relations, rr_simulation_get_entity_hash(this, entity));
     rr_component_relations_update_root_owner(this, relations);
     rr_component_player_info_set_camera_x(player_info, physical->x);
     rr_component_player_info_set_camera_y(player_info, physical->y);
-    rr_component_player_info_set_flower_id(player_info, rr_simulation_get_entity_hash(this, flower_id));
+    rr_component_player_info_set_flower_id(
+        player_info, rr_simulation_get_entity_hash(this, flower_id));
     return flower_id;
 }
 
-EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena, float x, float y, uint8_t id, uint8_t rarity, EntityIdx owner)
+EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
+                                    float x, float y, uint8_t id,
+                                    uint8_t rarity, EntityIdx owner)
 {
     struct rr_petal_data const *data = &RR_PETAL_DATA[id];
     EntityIdx petal_id = rr_simulation_alloc_entity(this);
@@ -87,7 +101,9 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     rr_component_petal_set_id(petal, id);
     rr_component_petal_set_rarity(petal, rarity);
 
-    rr_component_relations_set_owner(relations, rr_simulation_get_entity_hash(this, owner)); // flower owns petal, not player
+    rr_component_relations_set_owner(
+        relations, rr_simulation_get_entity_hash(
+                       this, owner)); // flower owns petal, not player
     rr_component_relations_set_team(
         relations, rr_simulation_get_relations(this, owner)->team);
     rr_component_relations_update_root_owner(this, relations);
@@ -104,11 +120,10 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     return petal_id;
 }
 
-static EntityIdx rr_simulation_alloc_mob_non_recursive(struct rr_simulation *this, EntityIdx arena_id,
-                                    float x, float y,
-                                  enum rr_mob_id mob_id,
-                                  enum rr_rarity_id rarity_id,
-                                  enum rr_simulation_team_id team_id)
+static EntityIdx rr_simulation_alloc_mob_non_recursive(
+    struct rr_simulation *this, EntityIdx arena_id, float x, float y,
+    enum rr_mob_id mob_id, enum rr_rarity_id rarity_id,
+    enum rr_simulation_team_id team_id)
 {
     EntityIdx entity = rr_simulation_alloc_entity(this);
 
@@ -147,8 +162,8 @@ static EntityIdx rr_simulation_alloc_mob_non_recursive(struct rr_simulation *thi
     return entity;
 }
 
-EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id,
-                                  float x, float y,
+EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
+                                  EntityIdx arena_id, float x, float y,
                                   enum rr_mob_id mob_id,
                                   enum rr_rarity_id rarity_id,
                                   enum rr_simulation_team_id team_id)
@@ -189,7 +204,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
     if (mob_id == rr_mob_id_beehive)
     {
         struct rr_component_arena *arena =
-        rr_simulation_add_arena(this, entity);
+            rr_simulation_add_arena(this, entity);
         rr_component_arena_set_biome(arena, rr_biome_id_beehive);
         rr_component_arena_spatial_hash_init(arena, this);
         set_respawn_zone(arena, 0, 0, 1, 1);
@@ -201,17 +216,21 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
                 if (v == 0 || (v & 8))
                     continue;
                 ++arena->mob_count;
-                rr_simulation_alloc_mob(this, entity, (X+rr_frand())*arena->maze->grid_size, (Y+rr_frand())*arena->maze->grid_size, rr_mob_id_honeybee, rarity_id, team_id);
+                rr_simulation_alloc_mob(
+                    this, entity, (X + rr_frand()) * arena->maze->grid_size,
+                    (Y + rr_frand()) * arena->maze->grid_size,
+                    rr_mob_id_honeybee, rarity_id, team_id);
             }
         }
     }
     else
     {
-        struct rr_component_health *health = rr_simulation_add_health(this, entity);
-        rr_component_health_set_max_health(health,
-                                        mob_data->health * rarity_scale->health);
+        struct rr_component_health *health =
+            rr_simulation_add_health(this, entity);
+        rr_component_health_set_max_health(health, mob_data->health *
+                                                       rarity_scale->health);
         rr_component_health_set_health(health,
-                                    mob_data->health * rarity_scale->health);
+                                       mob_data->health * rarity_scale->health);
         health->damage = mob_data->damage * rarity_scale->damage;
         if (mob_id == rr_mob_id_edmontosaurus)
             health->damage_reduction = 10 * rarity_scale->damage;
@@ -223,14 +242,20 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this, EntityIdx arena_id
                 rr_simulation_add_centipede(this, entity);
             rr_component_centipede_set_is_head(centipede, 1);
             struct rr_vector extension;
-            rr_vector_from_polar(&extension, -physical->radius * 2, physical->angle);
+            rr_vector_from_polar(&extension, -physical->radius * 2,
+                                 physical->angle);
             EntityIdx new_entity = RR_NULL_ENTITY;
             for (uint64_t i = 0; i < 5; ++i)
             {
-                new_entity = rr_simulation_alloc_mob_non_recursive(this, arena_id, physical->x + extension.x * (i + 1), physical->y + extension.y * (i + 1), mob_id, rarity_id, team_id);
-                centipede->child_node = rr_simulation_get_entity_hash(this, new_entity);
+                new_entity = rr_simulation_alloc_mob_non_recursive(
+                    this, arena_id, physical->x + extension.x * (i + 1),
+                    physical->y + extension.y * (i + 1), mob_id, rarity_id,
+                    team_id);
+                centipede->child_node =
+                    rr_simulation_get_entity_hash(this, new_entity);
                 centipede = rr_simulation_add_centipede(this, new_entity);
-                centipede->parent_node = rr_simulation_get_entity_hash(this, entity);
+                centipede->parent_node =
+                    rr_simulation_get_entity_hash(this, entity);
                 entity = new_entity;
             }
         }

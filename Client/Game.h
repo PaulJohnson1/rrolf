@@ -79,6 +79,11 @@ struct rr_game_squad
     char squad_code[16];
 };
 
+struct rr_developer_cheats
+{
+    float speed_percent;
+};
+
 struct rr_game
 {
     struct rr_particle_manager particle_manager;
@@ -87,6 +92,7 @@ struct rr_game
     struct rr_game_chat chat;
     struct rr_game_cache cache;
     struct rr_game_squad squad;
+    struct rr_developer_cheats developer_cheats;
     struct rr_game_squad other_squads[RR_SQUAD_COUNT];
 
     struct rr_rivet_account rivet_account;

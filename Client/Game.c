@@ -160,7 +160,7 @@ static void abandon_game_on_event(struct rr_ui_element *this,
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         struct proto_bug encoder;
-        proto_bug_init(&encoder, output_packet);
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
@@ -174,7 +174,7 @@ static void squad_leave_on_event(struct rr_ui_element *this,
         game->socket_ready)
     {
         struct proto_bug encoder;
-        proto_bug_init(&encoder, output_packet);
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
         proto_bug_write_uint8(&encoder, 3, "join type");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
@@ -217,7 +217,7 @@ void rr_game_init(struct rr_game *this)
                 rr_ui_settings_toggle_button_init(),
                 rr_ui_discord_toggle_button_init(),
                 rr_ui_account_toggle_button_init(),
-                rr_ui_dev_squad_panel_toggle_button_init(),
+                rr_ui_dev_panel_toggle_button_init(),
                 rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
                 NULL
             ),
@@ -437,8 +437,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_crafting_container_init(), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_settings_container_init(this), close_menu_button_init(25))->container);
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_account_container_init(this), close_menu_button_init(25))->container);
-    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_dev_squad_panel_container_init(this), close_menu_button_init(25))->container);
-
+    rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_dev_panel_container_init(this), close_menu_button_init(25))->container);
 
     this->link_account_tooltip = rr_ui_container_add_element(
         this->window,
@@ -576,7 +575,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "s encryption key");
             // respond
             struct proto_bug verify_encoder;
-            proto_bug_init(&verify_encoder, output_packet);
+            proto_bug_init(&verify_encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint64(&verify_encoder, rr_get_rand(),
                                    "useless bytes");
             proto_bug_write_uint64(&verify_encoder, verification,
@@ -650,7 +649,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 if (this->simulation_ready)
                     rr_simulation_init(this->simulation);
                 this->simulation_ready = 0;
-                proto_bug_init(&encoder, output_packet);
+                proto_bug_init(&encoder, RR_OUTGOING_PACKET);
                 proto_bug_write_uint8(&encoder, rr_serverbound_squad_update,
                                       "header");
                 proto_bug_write_string(&encoder, this->cache.nickname, 16,
@@ -900,7 +899,7 @@ void player_info_finder(struct rr_game *this)
 static void write_serverbound_packet_desktop(struct rr_game *this)
 {
     struct proto_bug encoder2;
-    proto_bug_init(&encoder2, output_packet);
+    proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder2, rr_serverbound_input, "header");
     uint8_t movement_flags = 0;
     movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
@@ -919,6 +918,10 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
     movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
     movement_flags |= this->cache.use_mouse << 6;
+
+    if (this->is_dev)
+        proto_bug_write_float32(&encoder2, this->developer_cheats.speed_percent,
+                                "speed_percent");
     proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
     if (this->cache.use_mouse)
     {
@@ -930,8 +933,9 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
             "mouse y");
     }
     rr_websocket_send(&this->socket, encoder2.current - encoder2.start);
+
     struct proto_bug encoder;
-    proto_bug_init(&encoder, output_packet);
+    proto_bug_init(&encoder, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder, rr_serverbound_petal_switch, "header");
     uint8_t should_write = 0;
     uint8_t switch_all =

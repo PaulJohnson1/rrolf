@@ -61,7 +61,7 @@ static void craft_button_on_event(struct rr_ui_element *this,
             game->crafting_data.success_count = 0;
             game->crafting_data.animation = 50;
             struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, rr_serverbound_petals_craft,
                                   "header");
             proto_bug_write_uint8(&encoder, game->crafting_data.crafting_id,

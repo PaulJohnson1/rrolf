@@ -9,7 +9,7 @@ struct lws;
 #endif
 struct rr_game;
 
-extern uint8_t output_packet[1024 * 16];
+extern uint8_t RR_OUTGOING_PACKET[1024 * 16];
 
 enum rr_websocket_event_type
 {

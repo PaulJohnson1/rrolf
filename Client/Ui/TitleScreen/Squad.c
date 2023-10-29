@@ -203,7 +203,7 @@ static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *gam
     {
         struct squad_pos_metadata *data = this->data;
         struct proto_bug encoder;
-        proto_bug_init(&encoder, output_packet);
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_kick, "header");
         proto_bug_write_uint8(&encoder, data->pos, "kick pos");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
@@ -326,7 +326,7 @@ static void join_button_on_event(struct rr_ui_element *this,
         if (game->socket_ready)
         {
             struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
@@ -349,7 +349,7 @@ static void toggle_private_on_event(struct rr_ui_element *this,
         if (game->socket_ready && game->squad.squad_private)
         {
             struct proto_bug encoder;
-            proto_bug_init(&encoder, output_packet);
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, rr_serverbound_private_update, "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
@@ -377,7 +377,7 @@ static void join_code_on_event(struct rr_ui_element *this,
         }
         #endif
         struct proto_bug encoder2;
-        proto_bug_init(&encoder2, output_packet);
+        proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
         proto_bug_write_uint8(&encoder2, 1, "join type");
         char *code = game->connect_code;
@@ -400,7 +400,7 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
         if (game->socket_ready)
         {
             struct proto_bug encoder2;
-            proto_bug_init(&encoder2, output_packet);
+            proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
             proto_bug_write_uint8(&encoder2, 0, "join type");
             
@@ -418,7 +418,7 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
         if (game->socket_ready)
         {
             struct proto_bug encoder2;
-            proto_bug_init(&encoder2, output_packet);
+            proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
             proto_bug_write_uint8(&encoder2, 2, "join type");
             

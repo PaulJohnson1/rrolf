@@ -13,7 +13,7 @@
 #include <Shared/Rivet.h>
 
 char const *regions[3] = {
-    "Automatic",
+    "Closest",
     "Atlanta",
     "Frankfurt"
 };
