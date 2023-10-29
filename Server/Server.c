@@ -774,10 +774,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             uint8_t id = proto_bug_read_uint8(&encoder, "id");
             uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
 
-            rr_simulation_alloc_mob(
+            EntityIdx e = rr_simulation_alloc_mob(
                 &this->simulation, client->player_info->arena,
                 client->player_info->camera_x, client->player_info->camera_y,
                 id, rarity, rr_simulation_team_id_mobs);
+            struct rr_component_mob *mob =
+                rr_simulation_get_mob(&this->simulation, e);
+            mob->no_drop = 1;
             break;
         }
         default:
