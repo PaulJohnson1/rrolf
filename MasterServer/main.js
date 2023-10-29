@@ -444,6 +444,7 @@ wss.on("connection", (ws, req) => {
                 }
 
                 db_append_petals_to_logs(petals);
+                break;
             }
             case 101:
                 game_server.rivet_server_id = decoder.ReadStringNT();

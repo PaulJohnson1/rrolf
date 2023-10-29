@@ -206,12 +206,18 @@ struct rr_maze_grid
     uint8_t value;
 };
 
+struct rr_spawn_zone
+{
+    float x;
+    float y;
+};
+
 struct rr_maze_declaration
 {
     uint32_t maze_dim;
     float grid_size;
     struct rr_maze_grid *maze;
-    uint8_t *template;
+    struct rr_spawn_zone spawn_zones[4];
 };
 
 #define RR_DECLARE_MAZE(name, size) \

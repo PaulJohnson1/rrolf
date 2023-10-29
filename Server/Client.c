@@ -33,9 +33,15 @@ void rr_server_client_create_flower(struct rr_server_client *this)
         return;
     if (this->player_info->flower_id != RR_NULL_ENTITY)
         return;
-    EntityIdx p = rr_simulation_alloc_player(&this->server->simulation, 1,
-                                             this->player_info->parent_id);
-
+    struct rr_simulation *simulation = &this->server->simulation;
+    EntityIdx p = rr_simulation_alloc_player(simulation, 1, this->player_info->parent_id);
+    uint32_t spawn_zone = this->player_info->level / 25 > 3 ? 3 : this->player_info->level / 25;
+    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, p);
+    struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME]; 
+    rr_component_physical_set_x(physical,
+                                2 * decl->grid_size * (decl->spawn_zones[spawn_zone].x + rr_frand()));
+    rr_component_physical_set_y(physical,
+                                2 *  decl->grid_size * (decl->spawn_zones[spawn_zone].y + rr_frand()));
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, outgoing_message);
     rr_binary_encoder_write_uint8(&encoder, 3);

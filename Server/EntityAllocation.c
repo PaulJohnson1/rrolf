@@ -11,22 +11,19 @@
 
 static struct rr_maze_grid DEFAULT_GRID = {0};
 
-static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x,
-                             uint32_t y, uint32_t w, uint32_t h)
+static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x, uint32_t y)
 {
     float dim = arena->maze->grid_size;
     arena->respawn_zone.x = 2 * x * dim;
     arena->respawn_zone.y = 2 * y * dim;
-    arena->respawn_zone.w = 2 * w * dim;
-    arena->respawn_zone.h = 2 * h * dim;
 }
 
 EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
-                                     EntityIdx arena, EntityIdx entity)
+                                     EntityIdx arena_id, EntityIdx entity)
 {
     struct rr_component_player_info *player_info =
         rr_simulation_get_player_info(this, entity);
-    rr_component_player_info_set_arena(player_info, arena);
+    rr_component_player_info_set_arena(player_info, arena_id);
     EntityIdx flower_id = rr_simulation_alloc_entity(this);
     struct rr_component_physical *physical =
         rr_simulation_add_physical(this, flower_id);
@@ -34,15 +31,15 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
         rr_simulation_add_health(this, flower_id);
     struct rr_component_relations *relations =
         rr_simulation_add_relations(this, flower_id);
-    struct rr_spawn_zone *respawn_zone =
-        &rr_simulation_get_arena(this, arena)->respawn_zone;
+    struct rr_component_arena *arena = rr_simulation_get_arena(this, arena_id);
+    struct rr_spawn_zone *respawn_zone = &arena->respawn_zone;
     rr_component_physical_set_x(physical,
-                                respawn_zone->x + respawn_zone->w * rr_frand());
+                                respawn_zone->x + 2 * arena->maze->grid_size * rr_frand());
     rr_component_physical_set_y(physical,
-                                respawn_zone->y + respawn_zone->h * rr_frand());
+                                respawn_zone->y + 2 * arena->maze->grid_size * rr_frand());
     rr_component_physical_set_radius(physical, 25.0f);
     physical->mass = 10;
-    physical->arena = arena;
+    physical->arena = arena_id;
     physical->friction = 0.75;
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
@@ -207,7 +204,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
             rr_simulation_add_arena(this, entity);
         rr_component_arena_set_biome(arena, rr_biome_id_beehive);
         rr_component_arena_spatial_hash_init(arena, this);
-        set_respawn_zone(arena, 0, 0, 1, 1);
+        set_respawn_zone(arena, 0, 0);
         for (uint32_t X = 0; X < arena->maze->maze_dim; ++X)
         {
             for (uint32_t Y = 0; Y < arena->maze->maze_dim; ++Y)

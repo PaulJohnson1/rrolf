@@ -200,7 +200,6 @@ static void system_velocity(EntityIdx id, void *simulation)
     }
     rr_vector_set(&physical->acceleration, 0, 0);
     rr_vector_set(&physical->wall_collision, 0, 0);
-    rr_vector_add(&physical->velocity, &physical->collision_velocity);
     struct rr_component_arena *arena = rr_simulation_get_arena(simulation, physical->arena);
     if (rr_vector_magnitude_cmp(&vel, arena->maze->grid_size) == 1)
         rr_vector_set_magnitude(&vel, arena->maze->grid_size);

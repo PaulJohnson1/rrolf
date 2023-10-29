@@ -58,8 +58,8 @@ static void enter_arena(struct rr_simulation *this, EntityIdx arena, EntityIdx e
     physical->arena = arena;
     struct rr_component_arena *a = rr_simulation_get_arena(this, arena);
     struct rr_spawn_zone *respawn_zone = &a->respawn_zone;
-    rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
-    rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
+    rr_component_physical_set_x(physical, respawn_zone->x + 2 * a->maze->grid_size * rr_frand());
+    rr_component_physical_set_y(physical, respawn_zone->y + 2 * a->maze->grid_size * rr_frand());
     rr_vector_set(&physical->velocity, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
     a->first_squad_to_enter = player_info->squad;
@@ -139,13 +139,13 @@ static void colliding_with_function(uint64_t i, void *_captures)
         physical2->velocity.y -= delta.x * vel_2;
         */
         //printf("%f %f\n", vf_1, vf_2);
-        #define KNOCKBACK_CONST (3.0f / 2)
+        #define KNOCKBACK_CONST (8.0f / 2)
         float coeff = (physical2->mass) / (physical1->mass + physical2->mass);
         rr_vector_normalize(&delta);
-        physical1->collision_velocity.x -= coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
-        physical1->collision_velocity.y -= coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
-        physical2->collision_velocity.x -= (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
-        physical2->collision_velocity.y -= (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
+        physical1->acceleration.x -= coeff * KNOCKBACK_CONST * delta.x * physical2->knockback_scale;
+        physical1->acceleration.y -= coeff * KNOCKBACK_CONST * delta.y * physical2->knockback_scale;
+        physical2->acceleration.x -= (coeff - 1) * KNOCKBACK_CONST * delta.x * physical1->knockback_scale;
+        physical2->acceleration.y -= (coeff - 1) * KNOCKBACK_CONST * delta.y * physical1->knockback_scale;
         #undef KNOCKBACK_CONST
     }
 }

@@ -12,14 +12,7 @@ RR_SERVER_ONLY(struct rr_maze_declaration;)
 
 #ifdef RR_SERVER
 #include <Server/SpatialHash.h>
-
-struct rr_spawn_zone
-{
-    float x;
-    float y;
-    float w;
-    float h;
-};
+#include <Shared/StaticData.h>
 #endif
 
 struct rr_component_arena
