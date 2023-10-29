@@ -296,26 +296,15 @@ struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
     return this;
 }
 
-static void squad_find_button_animate(struct rr_ui_element *this,
-                                      struct rr_game *game)
-{
-    rr_ui_default_animate(this, game);
-    struct rr_ui_labeled_button_metadata *data = this->data;
-    if (!game->socket_ready)
-        rr_ui_set_background(this, 0xff888888);
-    else
-        rr_ui_set_background(this, 0xffd4b30c);
-}
-
 static void ready_button_animate(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
     rr_ui_default_animate(this, game);
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (!game->socket_ready)
-        rr_ui_set_background(this, 0xff888888);
+        rr_ui_set_background(this, 0x80999999);
     else
-        rr_ui_set_background(this, 0xffd4b30c);
+        rr_ui_set_background(this, 0x80d4b30c);
 }
 
 static void join_button_on_event(struct rr_ui_element *this,
@@ -436,7 +425,7 @@ static uint8_t copy_button_should_show(struct rr_ui_element *this,
 struct rr_ui_element *rr_ui_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Find Squad", 36, 0);
-    this->animate = squad_find_button_animate;
+    this->animate = ready_button_animate;
     this->on_event = squad_join_button_on_event;
     return this;
 }
@@ -444,7 +433,7 @@ struct rr_ui_element *rr_ui_squad_button_init()
 struct rr_ui_element *rr_ui_create_squad_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Create Squad", 36, 0);
-    this->animate = squad_find_button_animate;
+    this->animate = ready_button_animate;
     this->on_event = squad_create_button_on_event;
     return this;
 }
@@ -469,8 +458,7 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
 struct rr_ui_element *rr_ui_join_squad_code_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
-    //this->animate = ready_button_animate;
-    rr_ui_set_background(this, 0xff45a8a8);
+    rr_ui_set_background(this, 0x80d4b30c);
     this->on_event = join_code_on_event;
     return this;
 }
