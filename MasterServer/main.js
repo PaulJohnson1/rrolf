@@ -205,7 +205,6 @@ async function db_append_petals_to_logs(petals)
 {
     const today = get_today();
     let entry = (await request("GET", `${DIRECTORY_SECRET}/game/logs/${today}`)).value;
-    console.log(entry);
     if (!entry)
     {
         await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, petals);
