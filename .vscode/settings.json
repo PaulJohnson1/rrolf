@@ -4,6 +4,10 @@
         "typeinfo": "c",
         "*.inc": "c",
         "utilities.h": "c",
-        "staticdata.h": "c"
+        "staticdata.h": "c",
+        "*.ipp": "c",
+        "regex": "c",
+        "time.h": "c",
+        "bitset.h": "c"
     }
 }
