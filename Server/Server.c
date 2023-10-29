@@ -389,6 +389,21 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // Read uuid
             proto_bug_read_string(&encoder, client->rivet_account.uuid, 100,
                                   "rivet uuid");
+#ifdef RIVET_BUILD
+            for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+            {
+                if (!rr_bitset_get(this->clients_in_use, j))
+                    continue;
+                if (i == j)
+                    continue;
+                if (strcmp(client->rivet_account.uuid, this->clients[j].rivet_account.uuid) == 0)
+                {
+                    fputs("skid multibox\n", stderr);
+                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"skid multibox", sizeof "skid multibox");
+                    return -1;
+                }
+            }
+#endif
             if (proto_bug_read_varuint(&encoder, "dev_flag") == 49453864343)
                 client->dev = 1;
 
@@ -453,7 +468,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = (RR_PLAYER_SPEED * client->speed_percent) *
+                    float scale = RR_PLAYER_SPEED *
                                   rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;

@@ -122,7 +122,7 @@ static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
     if (!(game->input_data->mouse_buttons_up_this_tick & 1))
         return;
     puts("edmonto summon");
-    struct proto_bug encoder = {};
+    struct proto_bug encoder;
     proto_bug_init(&encoder, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
     proto_bug_write_uint8(&encoder, rr_mob_id_edmontosaurus, "id");
@@ -131,19 +131,20 @@ static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
     rr_websocket_send(&game->socket, encoder.current - encoder.start);
 }
 
-static struct rr_ui_element *rr_ui_summon_button_init()
+static struct rr_ui_element *summon_mob_button_init()
 {
-    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 36, 0);
+    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 20, 0);
+    element->fill = 0x80ffffff;
     element->on_event = summon_edmonto;
     element->animate = rr_ui_default_animate;
 
     return element;
 }
 
-static struct rr_ui_element *rr_ui_speed_slider_init(struct rr_game *game)
+static struct rr_ui_element *speed_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
-        rr_ui_h_slider_init(400, 20, &game->developer_cheats.speed_percent, 1);
+        rr_ui_h_slider_init(100, 20, &game->developer_cheats.speed_percent, 1);
     game->developer_cheats.speed_percent = 0.05;
 
     return element;
@@ -152,8 +153,17 @@ static struct rr_ui_element *rr_ui_speed_slider_init(struct rr_game *game)
 struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
 {
     struct rr_ui_element *inner = rr_ui_v_container_init(
-        rr_ui_container_init(), 10, 10, rr_ui_summon_button_init(),
-        rr_ui_speed_slider_init(game), NULL);
+        rr_ui_container_init(), 10, 10, 
+        summon_mob_button_init(),
+        rr_ui_set_justify(
+            rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
+                rr_ui_text_init("Speed:", 20, 0xffffffff),
+                speed_slider_init(game), 
+                NULL
+            )
+        , -1, -1),
+        NULL
+    );
     for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
         rr_ui_container_add_element(
             inner, rr_ui_squad_container_init(&game->other_squads[i]));

@@ -40,7 +40,7 @@ enum rr_clientbound_packet_header
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)
-#define RR_PLAYER_SPEED (3.6)
+#define RR_PLAYER_SPEED (4.0f)
 
 enum rr_biome_id
 {
@@ -200,9 +200,9 @@ struct rr_maze_grid
     uint32_t spawn_timer;
     uint32_t player_count;
     uint32_t grid_points;
-#endif
     float local_difficulty;
     float overload_factor;
+#endif
     uint8_t value;
 };
 

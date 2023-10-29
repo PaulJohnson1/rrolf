@@ -33,15 +33,18 @@ static void labeled_button_on_render(struct rr_ui_element *this,
         this->abs_width = this->abs_height;
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
-    rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
-    rr_renderer_set_stroke(renderer, this->fill);
     rr_renderer_set_line_width(renderer, this->abs_height / 8);
     rr_renderer_begin_path(renderer);
     rr_renderer_round_rect(renderer, -this->abs_width / 2,
                            -this->abs_height / 2, this->abs_width,
                            this->abs_height, 6);
     rr_renderer_fill(renderer);
-    rr_renderer_stroke(renderer);
+    if (this->fill >= 0xff000000)
+    {
+        rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
+        rr_renderer_set_stroke(renderer, this->fill);
+        rr_renderer_stroke(renderer);
+    }
     rr_renderer_set_text_baseline(renderer, 1);
     rr_renderer_set_text_align(renderer, 1);
     renderer->state.filter.amount = 0;

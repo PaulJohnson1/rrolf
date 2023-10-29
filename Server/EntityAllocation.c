@@ -232,6 +232,7 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
         rr_component_health_set_health(health,
                                        mob_data->health * rarity_scale->health);
         health->damage = mob_data->damage * rarity_scale->damage;
+        health->damage_paused = 25;
         if (mob_id == rr_mob_id_edmontosaurus)
             health->damage_reduction = 10 * rarity_scale->damage;
         else if (mob_id == rr_mob_id_house_centipede)

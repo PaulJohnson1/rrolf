@@ -32,7 +32,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_none, rr_rarity_id_common, &offensive[0], 0.0f, 0.0f, 0.0f, 0, 0, {0,0,0,0,0,0,0,0}},
     {rr_petal_id_basic, rr_rarity_id_common, &offensive[0], 10.0f, 15.0f, 0.0f, 50, 0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_pellet, rr_rarity_id_common, &offensive[0], 12.5f, 5.0f, 0.0f, 15, 0, {1,2,2,3,3,5,5,5}},
-    {rr_petal_id_fossil, rr_rarity_id_common, &offensive[0], 8.0f, 50.0f, 0.0f, 100, 0, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_fossil, rr_rarity_id_common, &offensive[0], 10.0f, 50.0f, 0.0f, 100, 0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_stinger, rr_rarity_id_common, &offensive[0], 80.0f, 3.0f, 10.0f, 150, 0, {1,1,1,1,1,3,5,5}},
     {rr_petal_id_light, rr_rarity_id_rare, &offensive[0], 8.0f, 5.0f, 15.0f, 20, 0, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_shell, rr_rarity_id_rare, &offensive[0], 30.0f, 8.0f, 0.0f, 63, 13, {1,1,1,1,1,2,3,3}},
@@ -163,9 +163,9 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
     {3.5, 60,  75},
     {6.8, 30,  100},
     {12.5,15,  125},
-    {24.5,5,   150},
-    {60.0,1.5, 200},
-    {180, 0.5, 250}
+    {24.5,10,  150},
+    {60.0,5,   200},
+    {180, 1,   250}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
