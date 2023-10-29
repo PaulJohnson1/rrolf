@@ -189,6 +189,47 @@ async function db_read_or_create_user(username, password)
     return user.value;
 }
 
+// Octobober 19, 2023 = 102923
+function get_today()
+{
+    const date = new Date();
+    
+    const day = String(date.getDate()).padStart(2, '0'); // Day with leading zeros
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-based
+    const year = String(date.getFullYear()).slice(-2); // Last two digits of year
+
+    return `${month}${day}${year}`;
+}
+
+async function db_append_petals_to_logs(petals)
+{
+    const today = get_today();
+    let entry = (await request("GET", `${DIRECTORY_SECRET}/game/logs/${today}`)).value;
+    console.log(entry);
+    if (!entry)
+    {
+        await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, petals);
+        return;
+    }
+
+    petals = merge_petals(petals, entry);
+    await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, petals);
+}
+
+function merge_petals(obj1, obj2) {
+    const result = { ...obj1 };
+
+    for (let key in obj2) {
+        if (result[key]) {
+            result[key] += obj2[key];
+        } else {
+            result[key] = obj2[key];
+        }
+    }
+
+    return result;
+}
+
 async function handle_error(res, cb)
 {
     try
@@ -371,6 +412,20 @@ wss.on("connection", (ws, req) => {
                 }
                 await write_db_entry(uuid, user);
                 break;
+            }
+            case 3:
+            {
+                let petals = {};
+                let id = decoder.ReadUint8();
+                while (id)
+                {
+                    let rarity = decoder.ReadUint8();
+                    petals[`${id}:${rarity}`] ||= 0;
+                    petals[`${id}:${rarity}`]++;
+                    id = decoder.ReadUint8();
+                }
+
+                db_append_petals_to_logs(petals);
             }
             case 101:
                 game_server.rivet_server_id = decoder.ReadStringNT();

@@ -8,6 +8,9 @@
         "*.ipp": "c",
         "regex": "c",
         "time.h": "c",
-        "bitset.h": "c"
+        "bitset.h": "c",
+        "thread": "c",
+        "__locale": "c",
+        "locale": "c"
     }
 }

@@ -30,23 +30,32 @@ void rr_server_client_init(struct rr_server_client *this)
 void rr_server_client_create_flower(struct rr_server_client *this)
 {
     if (this->player_info == NULL)
-    {
         return;
-    }
     if (this->player_info->flower_id != RR_NULL_ENTITY)
-    {
         return;
-    }
     EntityIdx p = rr_simulation_alloc_player(&this->server->simulation, 1,
                                              this->player_info->parent_id);
-    return;
-    // no
-    if (this->dev)
+
+    struct rr_binary_encoder encoder;
+    rr_binary_encoder_init(&encoder, outgoing_message);
+    rr_binary_encoder_write_uint8(&encoder, 3);
+    for (uint64_t i = 0; i < 10; i++)
     {
-        rr_component_relations_set_team(
-            rr_simulation_get_relations(&this->server->simulation, p),
-            rr_simulation_team_id_mobs);
+        struct rr_component_player_info_petal_slot *slot =
+            this->player_info->slots + i;
+        rr_binary_encoder_write_uint8(&encoder, slot->id);
+        rr_binary_encoder_write_uint8(&encoder, slot->rarity);
     }
+    for (uint64_t i = 0; i < 10; i++)
+    {
+        struct rr_component_player_info_petal_slot *slot =
+            this->player_info->secondary_slots + i;
+        rr_binary_encoder_write_uint8(&encoder, slot->id);
+        rr_binary_encoder_write_uint8(&encoder, slot->rarity);
+    }
+    rr_binary_encoder_write_uint8(&encoder, 0);
+    lws_write(this->server->api_client, encoder.start,
+              encoder.at - encoder.start, LWS_WRITE_BINARY);
 }
 
 void rr_server_client_write_message(struct rr_server_client *this,
