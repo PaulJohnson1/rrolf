@@ -176,7 +176,7 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {64,  8.5, 3.6},
     {480,14.5, 4.8},
     {3600,24.6, 6.0},
-    {512e3,42.0, 7.5}
+    {512e3,42.0, 6.0}
 };
 // clang-format on
 
