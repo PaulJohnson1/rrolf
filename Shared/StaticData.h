@@ -30,14 +30,13 @@ enum rr_serverbound_packet_header
 
 enum rr_clientbound_packet_header
 {
-    rr_clientbound_update = 0,
-    rr_clientbound_animation_update = 1,
-    rr_clientbound_squad_dump = 2,
-    rr_clientbound_squad_fail = 3,
-    rr_clientbound_squad_leave = 4,
-    rr_clientbound_account_result = 5,
-    rr_clientbound_craft_result = 6,
-    rr_clientbound_dev_info = 7
+    rr_clientbound_update,
+    rr_clientbound_animation_update,
+    rr_clientbound_squad_dump,
+    rr_clientbound_squad_fail,
+    rr_clientbound_squad_leave,
+    rr_clientbound_account_result,
+    rr_clientbound_craft_result
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)

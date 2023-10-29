@@ -183,10 +183,10 @@ static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_gam
 {
     struct squad_pos_metadata *data = this->data;
     uint8_t p = data->pos;
-    if (game->squad.squad_members[p].is_dev)
-        return 0;
     if (game->squad.squad_members[game->squad.squad_pos].is_dev)
         return 1;
+    if (game->squad.squad_members[p].is_dev)
+        return 0;
     if (p == 0)
         return 0;
     if (!game->squad.squad_private)
