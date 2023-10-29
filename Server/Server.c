@@ -468,7 +468,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = (RR_PLAYER_SPEED * client->speed_percent) *
+                    float scale = RR_PLAYER_SPEED *
                                   rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;

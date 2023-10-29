@@ -12,8 +12,11 @@
 
 struct rr_renderer minimap;
 
+static uint8_t previous_biome = 255;
+
 #define DRAW_MINIMAP(renderer, grid) \
-    {\
+    if (arena->biome != previous_biome) {\
+        previous_biome = arena->biome;\
         float s = floorf(this->abs_width / maze_dim);\
         rr_renderer_set_dimensions(renderer, s * maze_dim, s * maze_dim); \
         rr_renderer_set_fill(renderer, 0xffffffff); \
