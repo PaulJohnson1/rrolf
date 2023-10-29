@@ -201,32 +201,51 @@ function get_today()
     return `${month}${day}${year}`;
 }
 
+function get_unique_petals(petals)
+{
+    petals = structuredClone(petals);
+    for (key in petals)
+        petals[key] = 1;
+    return petals;
+}
+
 async function db_append_petals_to_logs(petals)
 {
     const today = get_today();
     let entry = (await request("GET", `${DIRECTORY_SECRET}/game/logs/${today}`)).value;
     if (!entry)
     {
-        await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, petals);
+        console.log("new day");
+        const data = {
+            games_played: 1,
+            build_contains: get_unique_petals(petals),
+            build_sum: structuredClone(petals) 
+        };
+        await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, data);
         return;
     }
 
-    petals = merge_petals(petals, entry);
-    await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, petals);
+    if (entry["7:3"] && today == "102923")
+    {
+        console.log("wipe");
+        entry = {games_played: 0, build_sum: {}, build_contains: {}};
+    }
+
+    entry.games_played++;
+
+    merge_petals(entry.build_sum, petals);
+    merge_petals(entry.build_contains, get_unique_petals(petals));
+    await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, entry);
 }
 
 function merge_petals(obj1, obj2) {
-    const result = { ...obj1 };
-
     for (let key in obj2) {
-        if (result[key]) {
-            result[key] += obj2[key];
+        if (obj1[key]) {
+            obj1[key] += obj2[key];
         } else {
-            result[key] = obj2[key];
+            obj1[key] = obj2[key];
         }
     }
-
-    return result;
 }
 
 async function handle_error(res, cb)
