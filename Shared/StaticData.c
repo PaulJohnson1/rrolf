@@ -56,7 +56,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_mandible,  rr_rarity_id_common,    offensive,  5.0f,  10.0f,   0.0f,  75,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_wax,       rr_rarity_id_unusual,   offensive,  5.0f,  10.0f,  10.0f,  75,  0, {2,2,2,2,2,2,2,2}},
     {rr_petal_id_sand,      rr_rarity_id_common,    offensive, 15.0f,  10.0f,  10.0f,  37,  0, {4,4,4,4,4,4,4,4}},
-    {rr_petal_id_mint,      rr_rarity_id_unusual,   offensive,  5.0f,  10.0f,  10.0f,  50,  25, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_mint,      rr_rarity_id_unusual,   offensive,  5.0f,  10.0f,  10.0f,  50, 25, {1,1,1,1,1,1,1,1}},
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
@@ -145,7 +145,7 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
     50, //tric
     100,//trex
     15, //fern
-    1,  //tree
+    0.25,//tree
     75, //pter
     50, //dako
     25, //pachy
@@ -194,7 +194,7 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
     0, 1, 8, 15, 40, 250, 2500, 1600};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
-    2.5, 4, 6, 15, 50, 320, 160, 120};
+    2.5, 4, 6, 15, 50, 250, 180, 135};
 
 static void init_game_coefficients()
 {
