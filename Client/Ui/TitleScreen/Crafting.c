@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
-#include <Shared/pb.h>
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
+#include <Shared/pb.h>
 
 #define PETALS_PER_CRAFT 5
 
@@ -62,10 +62,14 @@ static void craft_button_on_event(struct rr_ui_element *this,
             game->crafting_data.animation = 50;
             struct proto_bug encoder;
             proto_bug_init(&encoder, output_packet);
-            proto_bug_write_uint8(&encoder, rr_serverbound_petals_craft, "header");
-            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_id, "craft id");
-            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_rarity, "craft rarity");
-            proto_bug_write_varuint(&encoder, game->crafting_data.count, "craft count");
+            proto_bug_write_uint8(&encoder, rr_serverbound_petals_craft,
+                                  "header");
+            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_id,
+                                  "craft id");
+            proto_bug_write_uint8(&encoder, game->crafting_data.crafting_rarity,
+                                  "craft rarity");
+            proto_bug_write_varuint(&encoder, game->crafting_data.count,
+                                    "craft count");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
@@ -88,7 +92,8 @@ static void crafting_ring_petal_on_event(struct rr_ui_element *this,
         game->pressed == this && game->crafting_data.animation == 0)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
-        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
+        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
+            0;
     }
     else if (data->count > 0)
         rr_ui_render_tooltip_above(
@@ -150,7 +155,7 @@ static void crafting_ring_petal_on_render(struct rr_ui_element *this,
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
-                                             data->prev_rarity);
+                                     data->prev_rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;
@@ -228,7 +233,8 @@ static uint8_t crafting_result_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
     return game->crafting_data.success_count &&
-           game->crafting_data.animation == 0 && game->crafting_data.crafting_id != 0;
+           game->crafting_data.animation == 0 &&
+           game->crafting_data.crafting_id != 0;
 }
 
 static void crafting_result_container_on_render(struct rr_ui_element *this,
@@ -239,10 +245,9 @@ static void crafting_result_container_on_render(struct rr_ui_element *this,
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_draw_background(renderer,
-                                  game->crafting_data.crafting_rarity + 1, 1);
-    rr_renderer_draw_petal_with_name(
-        renderer, game->crafting_data.crafting_id,
-        game->crafting_data.crafting_rarity + 1);
+                                game->crafting_data.crafting_rarity + 1, 1);
+    rr_renderer_draw_petal_with_name(renderer, game->crafting_data.crafting_id,
+                                     game->crafting_data.crafting_rarity + 1);
     rr_renderer_context_state_free(renderer, &state);
     if (game->crafting_data.success_count <= 1)
         return;
@@ -291,30 +296,13 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
         return;
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
-    switch (game->crafting_data.crafting_rarity)
-    {
-    case rr_rarity_id_common:
-        data->text = "Chance: 50%";
-        break;
-    case rr_rarity_id_unusual:
-        data->text = "Chance: 30%";
-        break;
-    case rr_rarity_id_rare:
-        data->text = "Chance: 15%";
-        break;
-    case rr_rarity_id_epic:
-        data->text = "Chance: 5%";
-        break;
-    case rr_rarity_id_legendary:
-        data->text = "Chance: 3%";
-        break;
-    case rr_rarity_id_mythic:
-        data->text = "Chance: 2%";
-        break;
-    case rr_rarity_id_exotic:
-        data->text = "Chance: 1.5%";
-        break;
-    }
+    static char text[100] = {0};
+    double chance = 100 *
+                    (1 + game->failed_crafts[game->crafting_data.crafting_id]
+                        [game->crafting_data.crafting_rarity]) *
+                    RR_CRAFT_CHANCES[game->crafting_data.crafting_rarity];
+    snprintf(text, 99, "Chance: %0.3f%%", chance > 100 ? 100 : chance);
+    data->text = text;
 }
 
 static struct rr_ui_element *crafting_chance_text_init()
@@ -373,11 +361,13 @@ static void crafting_inventory_button_animate(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
     struct crafting_inventory_button_metadata *data = this->data;
-    uint32_t count = data->count = rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
+    uint32_t count = data->count =
+        rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
     if (this->first_frame)
         data->secondary_animation = count == 0;
 
-    data->secondary_animation = rr_lerp(data->secondary_animation, count == 0, 0.2);
+    data->secondary_animation =
+        rr_lerp(data->secondary_animation, count == 0, 0.2);
     rr_renderer_scale(game->renderer, game->renderer->scale * this->width / 60);
     rr_renderer_draw_background(game->renderer, rr_rarity_id_max, 1);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
@@ -388,7 +378,8 @@ static void crafting_inventory_button_on_event(struct rr_ui_element *this,
 {
     struct crafting_inventory_button_metadata *data = this->data;
     uint32_t count = data->count;
-    if (game->crafting_data.crafting_id == data->id && game->crafting_data.crafting_rarity == data->rarity)
+    if (game->crafting_data.crafting_id == data->id &&
+        game->crafting_data.crafting_rarity == data->rarity)
         count += game->crafting_data.count;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
         game->pressed == this && game->crafting_data.animation == 0)
@@ -422,7 +413,9 @@ static void crafting_container_animate(struct rr_ui_element *this,
 {
     this->width = this->abs_width;
     this->height = this->abs_height;
-    rr_renderer_translate(game->renderer, 0, -(this->y - this->abs_height / 2) * 2 * this->animation * game->renderer->scale);
+    rr_renderer_translate(game->renderer, 0,
+                          -(this->y - this->abs_height / 2) * 2 *
+                              this->animation * game->renderer->scale);
 }
 
 static void crafting_inventory_button_on_render(struct rr_ui_element *this,
@@ -435,14 +428,14 @@ static void crafting_inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     uint32_t count = data->count;
-    if (game->crafting_data.crafting_id == data->id && game->crafting_data.crafting_rarity == data->rarity)
+    if (game->crafting_data.crafting_id == data->id &&
+        game->crafting_data.crafting_rarity == data->rarity)
         count += game->crafting_data.count;
     if (count < 5)
         rr_renderer_draw_background(renderer, rr_rarity_id_max + 2, 1);
     else
         rr_renderer_draw_background(renderer, data->rarity, 1);
-    rr_renderer_draw_petal_with_name(renderer, data->id,
-                                             data->rarity);
+    rr_renderer_draw_petal_with_name(renderer, data->id, data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;
@@ -507,12 +500,11 @@ struct rr_ui_element *rr_ui_crafting_container_init()
                     rr_ui_text_init("Crafting", 24, 0xffffffff),
                     rr_ui_h_container_init(
                         rr_ui_container_init(), 0, 25,
-                        rr_ui_v_container_init(
-                            rr_ui_container_init(), 0, 10,
-                            rr_ui_static_space_init(38),
-                            crafting_button_init(), 
-                            crafting_chance_text_init(),
-                            crafting_xp_text_init(), NULL),
+                        rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
+                                               rr_ui_static_space_init(38),
+                                               crafting_button_init(),
+                                               crafting_chance_text_init(),
+                                               crafting_xp_text_init(), NULL),
                         craft, NULL),
                     rr_ui_scroll_container_init(this, 300), NULL),
                 -1, 1),
@@ -542,82 +534,149 @@ static void crafting_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -24.73884514, -4.406824);
-    rr_renderer_bezier_curve_to(renderer, -24.73884514, -7.9466647, -21.86923714, -10.816272600000001, -18.32939614, -10.816272600000001);
-    rr_renderer_bezier_curve_to(renderer, -16.62950504, -10.816272600000001, -14.99923604, -10.140993940000001, -13.79723154, -8.938989500000002);
-    rr_renderer_bezier_curve_to(renderer, -12.59522714, -7.736984100000002, -11.91994754, -6.106716000000002, -11.91994754, -4.406824000000002);
-    rr_renderer_bezier_curve_to(renderer, -11.91994754, -0.866983300000002, -14.78955554, 2.002624599999998, -18.32939614, 2.002624599999998);
-    rr_renderer_bezier_curve_to(renderer, -21.86923714, 2.002624599999998, -24.738845140000002, -0.8669834000000018, -24.738845140000002, -4.406824000000002);
+    rr_renderer_bezier_curve_to(renderer, -24.73884514, -7.9466647,
+                                -21.86923714, -10.816272600000001, -18.32939614,
+                                -10.816272600000001);
+    rr_renderer_bezier_curve_to(renderer, -16.62950504, -10.816272600000001,
+                                -14.99923604, -10.140993940000001, -13.79723154,
+                                -8.938989500000002);
+    rr_renderer_bezier_curve_to(renderer, -12.59522714, -7.736984100000002,
+                                -11.91994754, -6.106716000000002, -11.91994754,
+                                -4.406824000000002);
+    rr_renderer_bezier_curve_to(renderer, -11.91994754, -0.866983300000002,
+                                -14.78955554, 2.002624599999998, -18.32939614,
+                                2.002624599999998);
+    rr_renderer_bezier_curve_to(renderer, -21.86923714, 2.002624599999998,
+                                -24.738845140000002, -0.8669834000000018,
+                                -24.738845140000002, -4.406824000000002);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -17.7677164, 17.25197);
-    rr_renderer_bezier_curve_to(renderer, -17.7677164, 13.7121293, -14.898108400000002, 10.8425195, -11.3582678, 10.8425195);
-    rr_renderer_bezier_curve_to(renderer, -9.6583758, 10.8425195, -8.0281086, 11.517801, -6.8261032, 12.7198045);
-    rr_renderer_bezier_curve_to(renderer, -5.6240978, 13.9218118, -4.9488182, 15.5520799, -4.9488182, 17.25197);
-    rr_renderer_bezier_curve_to(renderer, -4.9488182, 20.7918107, -7.818426199999999, 23.6614205, -11.3582678, 23.6614205);
-    rr_renderer_bezier_curve_to(renderer, -14.8981085, 23.6614205, -17.7677164, 20.7918107, -17.7677164, 17.25197);
+    rr_renderer_bezier_curve_to(renderer, -17.7677164, 13.7121293,
+                                -14.898108400000002, 10.8425195, -11.3582678,
+                                10.8425195);
+    rr_renderer_bezier_curve_to(renderer, -9.6583758, 10.8425195, -8.0281086,
+                                11.517801, -6.8261032, 12.7198045);
+    rr_renderer_bezier_curve_to(renderer, -5.6240978, 13.9218118, -4.9488182,
+                                15.5520799, -4.9488182, 17.25197);
+    rr_renderer_bezier_curve_to(renderer, -4.9488182, 20.7918107,
+                                -7.818426199999999, 23.6614205, -11.3582678,
+                                23.6614205);
+    rr_renderer_bezier_curve_to(renderer, -14.8981085, 23.6614205, -17.7677164,
+                                20.7918107, -17.7677164, 17.25197);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -6.41076, -17.7716537);
-    rr_renderer_bezier_curve_to(renderer, -6.41076, -21.3114944, -3.541152, -24.181102300000003, -0.0013113999999996295, -24.181102300000003);
-    rr_renderer_bezier_curve_to(renderer, 1.6985806000000003, -24.181102300000003, 3.3288487000000004, -23.505823100000004, 4.5308541, -22.303818300000003);
-    rr_renderer_bezier_curve_to(renderer, 5.7328576, -21.101813600000003, 6.4081372000000005, -19.471545300000002, 6.4081372000000005, -17.7716537);
-    rr_renderer_bezier_curve_to(renderer, 6.4081372000000005, -14.231812500000002, 3.5385292000000006, -11.362204700000001, -0.0013113999999996295, -11.362204700000001);
-    rr_renderer_bezier_curve_to(renderer, -3.5411520999999997, -11.362204700000001, -6.41076, -14.2318127, -6.41076, -17.7716537);
+    rr_renderer_bezier_curve_to(renderer, -6.41076, -21.3114944, -3.541152,
+                                -24.181102300000003, -0.0013113999999996295,
+                                -24.181102300000003);
+    rr_renderer_bezier_curve_to(
+        renderer, 1.6985806000000003, -24.181102300000003, 3.3288487000000004,
+        -23.505823100000004, 4.5308541, -22.303818300000003);
+    rr_renderer_bezier_curve_to(renderer, 5.7328576, -21.101813600000003,
+                                6.4081372000000005, -19.471545300000002,
+                                6.4081372000000005, -17.7716537);
+    rr_renderer_bezier_curve_to(
+        renderer, 6.4081372000000005, -14.231812500000002, 3.5385292000000006,
+        -11.362204700000001, -0.0013113999999996295, -11.362204700000001);
+    rr_renderer_bezier_curve_to(renderer, -3.5411520999999997,
+                                -11.362204700000001, -6.41076, -14.2318127,
+                                -6.41076, -17.7716537);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 11.918636, -4.215223000000002);
-    rr_renderer_bezier_curve_to(renderer, 11.918636, -7.755063700000002, 14.788242, -10.624671600000003, 18.3280827, -10.624671600000003);
-    rr_renderer_bezier_curve_to(renderer, 20.0279767, -10.624671600000003, 21.6582447, -9.949392000000003, 22.8602482, -8.747386600000002);
-    rr_renderer_bezier_curve_to(renderer, 24.0622517, -7.545383100000002, 24.7375332, -5.915115000000002, 24.7375332, -4.215223000000003);
-    rr_renderer_bezier_curve_to(renderer, 24.7375332, -0.6753823000000025, 21.867923400000002, 2.1942255999999976, 18.328082700000003, 2.1942255999999976);
-    rr_renderer_bezier_curve_to(renderer, 14.788242000000004, 2.1942255999999976, 11.918636000000003, -0.6753824000000024, 11.918636000000003, -4.215223000000003);
+    rr_renderer_bezier_curve_to(renderer, 11.918636, -7.755063700000002,
+                                14.788242, -10.624671600000003, 18.3280827,
+                                -10.624671600000003);
+    rr_renderer_bezier_curve_to(renderer, 20.0279767, -10.624671600000003,
+                                21.6582447, -9.949392000000003, 22.8602482,
+                                -8.747386600000002);
+    rr_renderer_bezier_curve_to(renderer, 24.0622517, -7.545383100000002,
+                                24.7375332, -5.915115000000002, 24.7375332,
+                                -4.215223000000003);
+    rr_renderer_bezier_curve_to(renderer, 24.7375332, -0.6753823000000025,
+                                21.867923400000002, 2.1942255999999976,
+                                18.328082700000003, 2.1942255999999976);
+    rr_renderer_bezier_curve_to(
+        renderer, 14.788242000000004, 2.1942255999999976, 11.918636000000003,
+        -0.6753824000000024, 11.918636000000003, -4.215223000000003);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 4.946193999999998, 17.25197);
-    rr_renderer_bezier_curve_to(renderer, 4.946193999999998, 13.7121293, 7.8158037999999985, 10.8425195, 11.355644499999999, 10.8425195);
-    rr_renderer_bezier_curve_to(renderer, 13.055534599999998, 10.8425195, 14.685802699999998, 11.517801, 15.887806199999998, 12.7198045);
-    rr_renderer_bezier_curve_to(renderer, 17.089813499999998, 13.9218118, 17.765091199999997, 15.5520799, 17.765091199999997, 17.25197);
-    rr_renderer_bezier_curve_to(renderer, 17.765091199999997, 20.7918107, 14.895485199999996, 23.6614205, 11.355644499999997, 23.6614205);
-    rr_renderer_bezier_curve_to(renderer, 7.815803799999997, 23.6614205, 4.946193999999997, 20.7918107, 4.946193999999997, 17.25197);
+    rr_renderer_bezier_curve_to(renderer, 4.946193999999998, 13.7121293,
+                                7.8158037999999985, 10.8425195,
+                                11.355644499999999, 10.8425195);
+    rr_renderer_bezier_curve_to(renderer, 13.055534599999998, 10.8425195,
+                                14.685802699999998, 11.517801,
+                                15.887806199999998, 12.7198045);
+    rr_renderer_bezier_curve_to(renderer, 17.089813499999998, 13.9218118,
+                                17.765091199999997, 15.5520799,
+                                17.765091199999997, 17.25197);
+    rr_renderer_bezier_curve_to(renderer, 17.765091199999997, 20.7918107,
+                                14.895485199999996, 23.6614205,
+                                11.355644499999997, 23.6614205);
+    rr_renderer_bezier_curve_to(renderer, 7.815803799999997, 23.6614205,
+                                4.946193999999997, 20.7918107,
+                                4.946193999999997, 17.25197);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -14.709308, -12.572641);
-    rr_renderer_bezier_curve_to(renderer, -12.9862827, -14.3609577, -10.9515823, -15.820073700000002, -8.705057499999999, -16.878386);
+    rr_renderer_bezier_curve_to(renderer, -12.9862827, -14.3609577, -10.9515823,
+                                -15.820073700000002, -8.705057499999999,
+                                -16.878386);
     rr_renderer_line_to(renderer, -5.857448899999999, -10.833644399999999);
-    rr_renderer_bezier_curve_to(renderer, -7.369045599999999, -10.1215482, -8.7381137, -9.1397672, -9.897469899999999, -7.936480999999999);
+    rr_renderer_bezier_curve_to(renderer, -7.369045599999999, -10.1215482,
+                                -8.7381137, -9.1397672, -9.897469899999999,
+                                -7.936480999999999);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -17.9825335, 11.287284999999997);
-    rr_renderer_bezier_curve_to(renderer, -19.1592904, 9.100616599999997, -19.927422099999998, 6.717681999999997, -20.249235199999998, 4.255422699999997);
+    rr_renderer_bezier_curve_to(renderer, -19.1592904, 9.100616599999997,
+                                -19.927422099999998, 6.717681999999997,
+                                -20.249235199999998, 4.255422699999997);
     rr_renderer_line_to(renderer, -13.624016799999998, 3.389518849999997);
-    rr_renderer_bezier_curve_to(renderer, -13.407481229999998, 5.046274249999997, -12.890635499999998, 6.6496545499999975, -12.098843599999999, 8.120975649999997);
+    rr_renderer_bezier_curve_to(
+        renderer, -13.407481229999998, 5.046274249999997, -12.890635499999998,
+        6.6496545499999975, -12.098843599999999, 8.120975649999997);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 3.6377750000000013, 21.710464);
-    rr_renderer_bezier_curve_to(renderer, 1.1950355000000012, 22.151286600000002, -1.3076156999999986, 22.142951500000002, -3.747366399999999, 21.685878276);
+    rr_renderer_bezier_curve_to(
+        renderer, 1.1950355000000012, 22.151286600000002, -1.3076156999999986,
+        22.142951500000002, -3.747366399999999, 21.685878276);
     rr_renderer_line_to(renderer, -2.517509899999999, 15.121222976);
-    rr_renderer_bezier_curve_to(renderer, -0.875900699999999, 15.428771496, 0.8080345000000011, 15.434375276, 2.4516561000000014, 15.137767318);
+    rr_renderer_bezier_curve_to(renderer, -0.875900699999999, 15.428771496,
+                                0.8080345000000011, 15.434375276,
+                                2.4516561000000014, 15.137767318);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 14.503703999999999, -12.361691);
-    rr_renderer_bezier_curve_to(renderer, 12.836688899999999, -14.1881042, 10.857028999999999, -15.684033900000001, 8.663459699999999, -16.7748723);
+    rr_renderer_bezier_curve_to(renderer, 12.836688899999999, -14.1881042,
+                                10.857028999999999, -15.684033900000001,
+                                8.663459699999999, -16.7748723);
     rr_renderer_line_to(renderer, 5.8911913999999985, -10.890056299999998);
-    rr_renderer_bezier_curve_to(renderer, 7.368980299999999, -10.135965039999999, 8.700363099999999, -9.104503299999998, 9.818450799999999, -7.847493799999998);
+    rr_renderer_bezier_curve_to(
+        renderer, 7.368980299999999, -10.135965039999999, 8.700363099999999,
+        -9.104503299999998, 9.818450799999999, -7.847493799999998);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 17.607044000000002, 11.099696999999999);
-    rr_renderer_bezier_curve_to(renderer, 18.720905100000003, 8.915870599999998, 19.4407156, 6.542876999999999, 19.7316396, 4.095542999999999);
+    rr_renderer_bezier_curve_to(renderer, 18.720905100000003, 8.915870599999998,
+                                19.4407156, 6.542876999999999, 19.7316396,
+                                4.095542999999999);
     rr_renderer_line_to(renderer, 13.300742800000002, 3.288555239999999);
-    rr_renderer_bezier_curve_to(renderer, 13.116790470000002, 4.945367939999999, 12.645683000000002, 6.552364439999999, 11.910053000000001, 8.03232964);
+    rr_renderer_bezier_curve_to(renderer, 13.116790470000002, 4.945367939999999,
+                                12.645683000000002, 6.552364439999999,
+                                11.910053000000001, 8.03232964);
     rr_renderer_fill(renderer);
 }
 

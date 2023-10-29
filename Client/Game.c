@@ -67,6 +67,12 @@ void read_account(struct proto_bug *decoder, struct rr_game *game)
         uint32_t count = proto_bug_read_varuint(decoder, "count");
         game->inventory[id][rarity] = count;
     }
+    while ((id = proto_bug_read_uint8(decoder, "id")))
+    {
+        uint8_t rarity = proto_bug_read_uint8(decoder, "rarity");
+        uint32_t count = proto_bug_read_varuint(decoder, "count");
+        game->failed_crafts[id][rarity] = count;
+    }
 }
 
 void rr_api_on_get_password(char *s, void *captures)
@@ -484,8 +490,6 @@ void rr_game_init(struct rr_game *this)
     //     rr_ui_anti_afk_container_init()
     // );
 
-
-    
     // clang-format on
 
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -774,8 +778,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             uint32_t successes =
                 proto_bug_read_varuint(&encoder, "success count");
             uint32_t fails = proto_bug_read_varuint(&encoder, "fail count");
+            uint32_t attempts = proto_bug_read_varuint(&encoder, "attempts");
             this->cache.experience +=
                 proto_bug_read_float64(&encoder, "craft xp");
+            this->failed_crafts[id][rarity] = attempts;
             this->inventory[id][rarity] -= fails;
             this->crafting_data.count -= fails;
             this->inventory[id][rarity + 1] += successes;
@@ -790,8 +796,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             for (uint32_t y = 0; y < decl->maze_dim; ++y)
                 for (uint32_t x = 0; x < decl->maze_dim; ++x)
                 {
-                    decl->maze[y * decl->maze_dim + x].local_difficulty = proto_bug_read_float32(&encoder, "diff");
-                    decl->maze[y * decl->maze_dim + x].overload_factor = proto_bug_read_float32(&encoder, "olf");
+                    decl->maze[y * decl->maze_dim + x].local_difficulty =
+                        proto_bug_read_float32(&encoder, "diff");
+                    decl->maze[y * decl->maze_dim + x].overload_factor =
+                        proto_bug_read_float32(&encoder, "olf");
                 }
             break;
         }

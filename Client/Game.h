@@ -117,6 +117,7 @@ struct rr_game
     struct rr_component_player_info *player_info;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
+    uint32_t failed_crafts[rr_petal_id_max][rr_rarity_id_max];
     uint8_t loadout_counts[rr_petal_id_max][rr_rarity_id_max];
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
     uint64_t dev_flag;

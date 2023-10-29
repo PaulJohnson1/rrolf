@@ -5,6 +5,7 @@
 
 #include <Shared/Utilities.h>
 
+// clang-format off
 struct rr_petal_base_stat_scale const offensive[rr_rarity_id_max] = {
     {1.0, 1.0},
     {1.7, 2.0},
@@ -177,28 +178,31 @@ struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
     {3600,24.6, 6.0},
     {512e3,42.0, 7.5}
 };
+// clang-format on
 
 uint32_t RR_RARITY_COLORS[rr_rarity_id_max] = {
     0xff7eef6d, 0xffffe65d, 0xff4d52e3, 0xff861fde,
-    0xffde1f1f, 0xff1fdbde, 0xffff2b75, 0xfff70fb6
-};
+    0xffde1f1f, 0xff1fdbde, 0xffff2b75, 0xfff70fb6};
 
 char const *RR_RARITY_NAMES[rr_rarity_id_max] = {
-    "Common", "Uncommon", "Rare", "Epic", 
-    "Legendary", "Mythic", "Exotic", "Ultimate"
-};
-                                          
-double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {0, 1, 6, 10, 15, 25, 160, 1200, 250};
+    "Common",    "Uncommon", "Rare",   "Epic",
+    "Legendary", "Mythic",   "Exotic", "Ultimate"};
 
-double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {0, 1, 8, 15, 40, 250, 800, 1200};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4, 5, 8, 12, 25, 75, 100, 180};
+double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
+    0, 1, 6, 10, 15, 25, 160, 1200, 250};
+
+double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
+    0, 1, 8, 15, 40, 250, 800, 1200};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {4,  5,  8,   12,
+                                                            25, 75, 100, 180};
 
 static void init_game_coefficients()
 {
     double sum = 1;
     double sum2 = 1;
     for (uint64_t a = 1; a < rr_rarity_id_max; ++a)
-        RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *= RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
+        RR_MOB_LOOT_RARITY_COEFFICIENTS[a] *=
+            RR_MOB_LOOT_RARITY_COEFFICIENTS[a - 1];
     for (uint64_t a = 1; a <= rr_rarity_id_exotic; ++a)
     {
         sum += (RR_DROP_RARITY_COEFFICIENTS[a + 1] =
@@ -240,101 +244,106 @@ static void init_game_coefficients()
     }
 }
 
-#define offset(a,b) ((x + a < 0 || y + b < 0 || x + a >= size/2 || y + b >= size/2) ? 0 : template[(y+b)*size/2+x+a])
-#define maze_grid(x,y) maze[(y) * size + (x)]
+#define offset(a, b)                                                           \
+    ((x + a < 0 || y + b < 0 || x + a >= size / 2 || y + b >= size / 2)        \
+         ? 0                                                                   \
+         : template[(y + b) * size / 2 + x + a])
+#define maze_grid(x, y) maze[(y) * size + (x)]
 
-static void init_maze(uint32_t size, uint8_t *template, struct rr_maze_grid *maze)
+static void init_maze(uint32_t size, uint8_t *template,
+                      struct rr_maze_grid *maze)
 {
-    for (int32_t y = 0; y < size/2; ++y)
+    for (int32_t y = 0; y < size / 2; ++y)
     {
-        for (int32_t x = 0; x < size/2; ++x)
+        for (int32_t x = 0; x < size / 2; ++x)
         {
-            uint8_t this_tile = offset(0,0);
-            #ifdef RR_SERVER
-            maze_grid(x*2,y*2).difficulty = this_tile;
-            maze_grid(x*2+1,y*2).difficulty = this_tile;
-            maze_grid(x*2,y*2+1).difficulty = this_tile;
-            maze_grid(x*2+1,y*2+1).difficulty = this_tile;
-            #endif
+            uint8_t this_tile = offset(0, 0);
+#ifdef RR_SERVER
+            maze_grid(x * 2, y * 2).difficulty = this_tile;
+            maze_grid(x * 2 + 1, y * 2).difficulty = this_tile;
+            maze_grid(x * 2, y * 2 + 1).difficulty = this_tile;
+            maze_grid(x * 2 + 1, y * 2 + 1).difficulty = this_tile;
+#endif
             this_tile = this_tile != 0;
-            //top left
-            uint8_t top = offset(0,-1);
-            uint8_t bottom = offset(0,1);
+            // top left
+            uint8_t top = offset(0, -1);
+            uint8_t bottom = offset(0, 1);
             if (this_tile)
             {
                 if (top == 0)
                 {
-                    if (offset(-1,0) == 0)
-                        maze_grid(x*2,y*2).value = 7;
+                    if (offset(-1, 0) == 0)
+                        maze_grid(x * 2, y * 2).value = 7;
                     else
-                        maze_grid(x*2,y*2).value = this_tile;
-                    if (offset(1,0) == 0)
-                        maze_grid(x*2+1,y*2).value = 5;
+                        maze_grid(x * 2, y * 2).value = this_tile;
+                    if (offset(1, 0) == 0)
+                        maze_grid(x * 2 + 1, y * 2).value = 5;
                     else
-                        maze_grid(x*2+1,y*2).value = this_tile;
+                        maze_grid(x * 2 + 1, y * 2).value = this_tile;
                 }
                 else
                 {
-                    maze_grid(x*2,y*2).value = this_tile;
-                    maze_grid(x*2+1,y*2).value = this_tile;
+                    maze_grid(x * 2, y * 2).value = this_tile;
+                    maze_grid(x * 2 + 1, y * 2).value = this_tile;
                 }
                 if (bottom == 0)
                 {
-                    if (offset(-1,0) == 0)
-                        maze_grid(x*2,y*2+1).value = 6;
+                    if (offset(-1, 0) == 0)
+                        maze_grid(x * 2, y * 2 + 1).value = 6;
                     else
-                        maze_grid(x*2,y*2+1).value = this_tile;
-                    if (offset(1,0) == 0)
-                        maze_grid(x*2+1,y*2+1).value = 4;
+                        maze_grid(x * 2, y * 2 + 1).value = this_tile;
+                    if (offset(1, 0) == 0)
+                        maze_grid(x * 2 + 1, y * 2 + 1).value = 4;
                     else
-                        maze_grid(x*2+1,y*2+1).value = this_tile;
+                        maze_grid(x * 2 + 1, y * 2 + 1).value = this_tile;
                 }
                 else
                 {
-                    maze_grid(x*2,y*2+1).value = this_tile;
-                    maze_grid(x*2+1,y*2+1).value = this_tile;
+                    maze_grid(x * 2, y * 2 + 1).value = this_tile;
+                    maze_grid(x * 2 + 1, y * 2 + 1).value = this_tile;
                 }
             }
             else
             {
                 if (top)
                 {
-                    if (offset(-1,0) && offset(-1,-1))
-                        maze_grid(x*2,y*2).value = 15;
+                    if (offset(-1, 0) && offset(-1, -1))
+                        maze_grid(x * 2, y * 2).value = 15;
                     else
-                        maze_grid(x*2,y*2).value = this_tile;
-                    if (offset(1,0) && offset(1,-1))
-                        maze_grid(x*2+1,y*2).value = 13;
+                        maze_grid(x * 2, y * 2).value = this_tile;
+                    if (offset(1, 0) && offset(1, -1))
+                        maze_grid(x * 2 + 1, y * 2).value = 13;
                     else
-                        maze_grid(x*2+1,y*2).value = this_tile;
+                        maze_grid(x * 2 + 1, y * 2).value = this_tile;
                 }
                 else
                 {
-                    maze_grid(x*2,y*2).value = this_tile;
-                    maze_grid(x*2+1,y*2).value = this_tile;
+                    maze_grid(x * 2, y * 2).value = this_tile;
+                    maze_grid(x * 2 + 1, y * 2).value = this_tile;
                 }
                 if (bottom)
                 {
-                    if (offset(-1,0) && offset(-1,1))
-                        maze_grid(x*2,y*2+1).value = 14;
+                    if (offset(-1, 0) && offset(-1, 1))
+                        maze_grid(x * 2, y * 2 + 1).value = 14;
                     else
-                        maze_grid(x*2,y*2+1).value = this_tile;
-                    if (offset(1,0) && offset(1,1))
-                        maze_grid(x*2+1,y*2+1).value = 12;
+                        maze_grid(x * 2, y * 2 + 1).value = this_tile;
+                    if (offset(1, 0) && offset(1, 1))
+                        maze_grid(x * 2 + 1, y * 2 + 1).value = 12;
                     else
-                        maze_grid(x*2+1,y*2+1).value = this_tile;
+                        maze_grid(x * 2 + 1, y * 2 + 1).value = this_tile;
                 }
                 else
                 {
-                    maze_grid(x*2,y*2+1).value = this_tile;
-                    maze_grid(x*2+1,y*2+1).value = this_tile;
+                    maze_grid(x * 2, y * 2 + 1).value = this_tile;
+                    maze_grid(x * 2 + 1, y * 2 + 1).value = this_tile;
                 }
             }
         }
     }
 }
 
-static void print_chances(float difficulty) {
+static void print_chances(float difficulty)
+{
     printf("-----Chances for %.0f-----\n", difficulty);
     uint32_t rarity_cap = rr_rarity_id_common + (difficulty + 7) / 8;
     if (rarity_cap > rr_rarity_id_ultimate)
@@ -342,15 +351,24 @@ static void print_chances(float difficulty) {
     uint32_t rarity = rarity_cap >= 2 ? rarity_cap - 2 : 0;
     for (; rarity <= rarity_cap; ++rarity)
     {
-        float start = rarity == 0 ? 0 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity]) * 0.3,
-                pow(1.5, difficulty));
-        float end = rarity == rarity_cap ? 1 : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) * 0.3,
-                pow(1.5, difficulty));
-        printf("%s: %.9f (1 per %.4f)\n", RR_RARITY_NAMES[rarity], end - start, 1 / (end - start));
+        float start =
+            rarity == 0
+                ? 0
+                : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity]) * 0.3,
+                      pow(1.5, difficulty));
+        float end =
+            rarity == rarity_cap
+                ? 1
+                : pow(1 - (1 - RR_MOB_WAVE_RARITY_COEFFICIENTS[rarity + 1]) *
+                              0.3,
+                      pow(1.5, difficulty));
+        printf("%s: %.9f (1 per %.4f)\n", RR_RARITY_NAMES[rarity], end - start,
+               1 / (end - start));
     }
 }
 
-double RR_BASE_CRAFT_CHANCES[rr_rarity_id_max - 1] = {0.5, 0.3, 0.15, 0.05, 0.03, 0.02, 0.015};
+double RR_BASE_CRAFT_CHANCES[rr_rarity_id_max - 1] = {0.5,  0.3,  0.15, 0.05,
+                                                      0.03, 0.02, 0.015};
 double RR_CRAFT_CHANCES[rr_rarity_id_max - 1];
 
 static double from_prd_base(double C)
@@ -360,7 +378,8 @@ static double from_prd_base(double C)
     double sumNpProcOnN = 0;
 
     double maxFails = ceil(1 / C);
-    for (uint32_t N = 1; N <= maxFails; ++N) {
+    for (uint32_t N = 1; N <= maxFails; ++N)
+    {
         pProcOnN = fmin(1, N * C) * (1 - pProcByN);
         pProcByN += pProcOnN;
         sumNpProcOnN += N * pProcOnN;
@@ -381,34 +400,37 @@ static double get_prd_base(double p)
     {
         Cmid = (Cupper + Clower) / 2;
         p1 = from_prd_base(Cmid);
-        if (fabs(p1 - p2) <= 0) break;
+        if (fabs(p1 - p2) <= 0)
+            break;
 
         if (p1 > p)
             Cupper = Cmid;
-        else 
+        else
             Clower = Cmid;
         p2 = p1;
     }
     return Cmid;
 }
 
-#define init(MAZE) init_maze(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid), &RR_MAZE_TEMPLATE_##MAZE[0][0], &RR_MAZE_##MAZE[0][0]);
+#define init(MAZE)                                                             \
+    init_maze(sizeof(RR_MAZE_##MAZE[0]) / sizeof(struct rr_maze_grid),         \
+              &RR_MAZE_TEMPLATE_##MAZE[0][0], &RR_MAZE_##MAZE[0][0]);
 
 void rr_static_data_init()
 {
-    for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r) RR_CRAFT_CHANCES[r] = get_prd_base(RR_BASE_CRAFT_CHANCES[r]);
+    for (uint32_t r = 0; r < rr_rarity_id_max - 1; ++r)
+        RR_CRAFT_CHANCES[r] = get_prd_base(RR_BASE_CRAFT_CHANCES[r]);
     init_game_coefficients();
     init(HELL_CREEK);
     init(BURROW);
-    #ifdef RR_SERVER
+#ifdef RR_SERVER
     print_chances(52);
     print_chances(44);
     print_chances(40);
     print_chances(36);
     print_chances(32);
-    #endif
+#endif
 }
-
 
 double xp_to_reach_level(uint32_t level)
 {
@@ -462,10 +484,10 @@ uint32_t level_from_xp(double xp)
 #define X 1
 #endif
 
-#define RR_DEFINE_MAZE(name, size) \
-struct rr_maze_grid RR_MAZE_##name[size][size]; \
-uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]
-
+#define RR_DEFINE_MAZE(name, size)                                             \
+    struct rr_maze_grid RR_MAZE_##name[size][size];                            \
+    uint8_t RR_MAZE_TEMPLATE_##name[size / 2][size / 2]
+// clang-format off
 RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,_,_,_,_,x,x,x,x,_,_,_,_,_,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x,X,_,_,_,_,_},
 {_,M,M,_,_,_,_,x,x,x,x,M,M,M,x,_,_,_,_,_,x,_,_,_,_,_,_,_,_,x,_,_,x,X,X,X,X,_,_,_},
@@ -508,13 +530,14 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 {_,_,_,m,m,m,m,m,m,m,m,m,m,m,m,m,M,M,_,_,_,_,_,_,_,l,l,l,l,l,l,L,L,L,L,L,L,L,_,_},
 {_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_}
 };
+// clang-format on
+RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 
-RR_DEFINE_MAZE(BURROW, 4) = {
-    {1, 1},
-    {0, 1}
-};
-
-#define MAZE_ENTRY(MAZE, GRID_SIZE) {(sizeof (RR_MAZE_##MAZE[0]) / sizeof (struct rr_maze_grid)), GRID_SIZE, &RR_MAZE_##MAZE[0][0], &RR_MAZE_TEMPLATE_##MAZE[0][0]}
+#define MAZE_ENTRY(MAZE, GRID_SIZE)                                            \
+    {                                                                          \
+        (sizeof(RR_MAZE_##MAZE[0]) / sizeof(struct rr_maze_grid)), GRID_SIZE,  \
+            &RR_MAZE_##MAZE[0][0], &RR_MAZE_TEMPLATE_##MAZE[0][0]              \
+    }
 struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
     MAZE_ENTRY(HELL_CREEK, 1024),
     MAZE_ENTRY(HELL_CREEK, 1024),

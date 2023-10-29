@@ -2,6 +2,8 @@
     "files.associations": {
         "typeindex": "c",
         "typeinfo": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "utilities.h": "c",
+        "staticdata.h": "c"
     }
 }
