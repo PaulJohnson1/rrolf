@@ -56,18 +56,24 @@ static void *rivet_disconnected_endpoint(void *_captures)
     return NULL;
 }
 
-static void rr_server_client_create_player_info(struct rr_server *server, struct rr_server_client *client)
+static void rr_server_client_create_player_info(struct rr_server *server,
+                                                struct rr_server_client *client)
 {
     puts("creating player info");
     struct rr_component_player_info *player_info = client->player_info =
-        rr_simulation_add_player_info(&server->simulation, rr_simulation_alloc_entity(&server->simulation));
+        rr_simulation_add_player_info(
+            &server->simulation,
+            rr_simulation_alloc_entity(&server->simulation));
     player_info->squad = client->squad;
-    struct rr_squad_member *member = player_info->squad_member = rr_squad_get_client_slot(server, client);
+    struct rr_squad_member *member = player_info->squad_member =
+        rr_squad_get_client_slot(server, client);
     rr_component_player_info_set_squad_pos(player_info, client->squad_pos);
     rr_component_player_info_set_slot_count(player_info, 10);
     player_info->level = level_from_xp(client->experience);
-    rr_component_player_info_set_slot_count(client->player_info, RR_SLOT_COUNT_FROM_LEVEL(player_info->level));
-    struct rr_component_arena *arena = rr_simulation_get_arena(&server->simulation, 1);
+    rr_component_player_info_set_slot_count(
+        client->player_info, RR_SLOT_COUNT_FROM_LEVEL(player_info->level));
+    struct rr_component_arena *arena =
+        rr_simulation_get_arena(&server->simulation, 1);
     for (uint64_t i = 0; i < player_info->slot_count; ++i)
     {
         uint8_t id = member->loadout[i].id;
@@ -87,7 +93,8 @@ void rr_server_client_free(struct rr_server_client *this)
 {
     // WARNING: ONLY TO BE USED WHEN CLIENT DISCONNECTS
     if (this->player_info != NULL)
-        rr_simulation_request_entity_deletion(&this->server->simulation, this->player_info->parent_id);
+        rr_simulation_request_entity_deletion(&this->server->simulation,
+                                              this->player_info->parent_id);
     rr_client_leave_squad(this->server, this);
     struct rr_server_client_message *message = this->message_root;
     while (message != NULL)
@@ -100,10 +107,14 @@ void rr_server_client_free(struct rr_server_client *this)
     puts("<rr_server::client_disconnect>");
 }
 
-static void write_animation_function(struct rr_simulation *simulation, struct proto_bug *encoder, struct rr_server_client *client, uint32_t pos)
+static void write_animation_function(struct rr_simulation *simulation,
+                                     struct proto_bug *encoder,
+                                     struct rr_server_client *client,
+                                     uint32_t pos)
 {
     struct rr_simulation_animation *animation = &simulation->animations[pos];
-    if (animation->type == rr_animation_type_damagenumber && animation->squad != client->squad)
+    if (animation->type == rr_animation_type_damagenumber &&
+        animation->squad != client->squad)
         return;
     proto_bug_write_uint8(encoder, 1, "continue");
     proto_bug_write_uint8(encoder, animation->type, "ani type");
@@ -164,14 +175,17 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
     proto_bug_write_string(&encoder, joined_code, 16, "squad code");
     proto_bug_write_uint8(&encoder, this->player_info != NULL, "in game");
     if (this->player_info != NULL)
-        rr_simulation_write_binary(&server->simulation, &encoder, this->player_info);
-    rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
+        rr_simulation_write_binary(&server->simulation, &encoder,
+                                   this->player_info);
+    rr_server_client_write_message(this, encoder.start,
+                                   encoder.current - encoder.start);
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_animation_update, "header");
     for (uint32_t i = 0; i < simulation->animation_length; ++i)
         write_animation_function(simulation, &encoder, this, i);
     proto_bug_write_uint8(&encoder, 0, "continue");
-    rr_server_client_write_message(this, encoder.start, encoder.current - encoder.start);
+    rr_server_client_write_message(this, encoder.start,
+                                   encoder.current - encoder.start);
 }
 
 static void delete_entity_function(EntityIdx entity, void *_captures)
@@ -182,11 +196,12 @@ static void delete_entity_function(EntityIdx entity, void *_captures)
 
 void rr_server_init(struct rr_server *this)
 {
-    fprintf(stderr, "server size: %lu\n", sizeof (struct rr_server));
-    #define XX(NAME, ID) \
-        fprintf(stderr, #NAME " component is id " #ID ", size is %lu\n", sizeof (struct rr_component_##NAME)); 
-        RR_FOR_EACH_COMPONENT;
-    #undef XX
+    fprintf(stderr, "server size: %lu\n", sizeof(struct rr_server));
+#define XX(NAME, ID)                                                           \
+    fprintf(stderr, #NAME " component is id " #ID ", size is %lu\n",           \
+            sizeof(struct rr_component_##NAME));
+    RR_FOR_EACH_COMPONENT;
+#undef XX
     memset(this, 0, sizeof *this);
 #ifndef RIVET_BUILD
     // RR_GLOBAL_BIOME = rr_biome_id_garden;
@@ -197,19 +212,25 @@ void rr_server_init(struct rr_server *this)
         rr_squad_init(&this->squads[i], this, i);
 }
 
-void rr_server_free(struct rr_server *this) { lws_context_destroy(this->server); }
+void rr_server_free(struct rr_server *this)
+{
+    lws_context_destroy(this->server);
+}
 
-static void rr_simulation_tick_entity_resetter_function(EntityIdx entity, void *captures)
+static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
+                                                        void *captures)
 {
     struct rr_simulation *this = captures;
-#define XX(COMPONENT, ID)                                                                                                                                      \
-    if (rr_simulation_has_##COMPONENT(this, entity))                                                                                                           \
+#define XX(COMPONENT, ID)                                                      \
+    if (rr_simulation_has_##COMPONENT(this, entity))                           \
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
 }
 
-static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_callback_reasons reason, uint8_t *packet, size_t size)
+static int handle_lws_event(struct rr_server *this, struct lws *ws,
+                            enum lws_callback_reasons reason, uint8_t *packet,
+                            size_t size)
 {
     switch (reason)
     {
@@ -217,7 +238,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
     {
         if (!this->api_ws_ready)
         {
-            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"api ws not ready", sizeof "api ws not ready" - 1);
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                             (uint8_t *)"api ws not ready",
+                             sizeof "api ws not ready" - 1);
             return -1;
         }
         for (uint64_t i = 0; i < RR_MAX_CLIENT_COUNT; i++)
@@ -232,20 +255,32 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 // send encryption key
                 struct proto_bug encryption_key_encoder;
                 proto_bug_init(&encryption_key_encoder, outgoing_message);
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].requested_verification, "verification");
-                proto_bug_write_uint32(&encryption_key_encoder, rr_get_rand(), "useless bytes");
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].clientbound_encryption_key, "c encryption key");
-                proto_bug_write_uint64(&encryption_key_encoder, this->clients[i].serverbound_encryption_key, "s encryption key");
+                proto_bug_write_uint64(&encryption_key_encoder,
+                                       this->clients[i].requested_verification,
+                                       "verification");
+                proto_bug_write_uint32(&encryption_key_encoder, rr_get_rand(),
+                                       "useless bytes");
+                proto_bug_write_uint64(
+                    &encryption_key_encoder,
+                    this->clients[i].clientbound_encryption_key,
+                    "c encryption key");
+                proto_bug_write_uint64(
+                    &encryption_key_encoder,
+                    this->clients[i].serverbound_encryption_key,
+                    "s encryption key");
                 rr_encrypt(outgoing_message, 1024, 21094093777837637ull);
                 rr_encrypt(outgoing_message, 8, 1);
                 rr_encrypt(outgoing_message, 1024, 59731158950470853ull);
                 rr_encrypt(outgoing_message, 1024, 64709235936361169ull);
                 rr_encrypt(outgoing_message, 1024, 59013169977270713ull);
-                rr_server_client_write_message(this->clients + i, outgoing_message, 1024);
+                rr_server_client_write_message(this->clients + i,
+                                               outgoing_message, 1024);
                 return 0;
             }
 
-        lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"too many active clients", sizeof "to many active clients" - 1);
+        lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                         (uint8_t *)"too many active clients",
+                         sizeof "to many active clients" - 1);
         return -1;
     }
     case LWS_CALLBACK_CLOSED:
@@ -274,9 +309,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 1);
-            rr_binary_encoder_write_nt_string(&encoder, this->clients[i].rivet_account.uuid);
+            rr_binary_encoder_write_nt_string(
+                &encoder, this->clients[i].rivet_account.uuid);
             rr_binary_encoder_write_uint8(&encoder, i);
-            lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+            lws_write(this->api_client, encoder.start,
+                      encoder.at - encoder.start, LWS_WRITE_BINARY);
             rr_server_client_free(this->clients + i);
             return 0;
         }
@@ -298,13 +335,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 free(message);
                 message = tmp;
             }
-            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"kicked for unspecified reason", sizeof "kicked for unspecified reason" - 1);
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                             (uint8_t *)"kicked for unspecified reason",
+                             sizeof "kicked for unspecified reason" - 1);
             return -1;
         }
         struct rr_server_client_message *message = client->message_root;
         while (message != NULL)
         {
-            lws_write(ws, message->packet + LWS_PRE, message->len, LWS_WRITE_BINARY);
+            lws_write(ws, message->packet + LWS_PRE, message->len,
+                      LWS_WRITE_BINARY);
             struct rr_server_client_message *tmp = message->next;
             free(message->packet);
             free(message);
@@ -319,7 +359,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         struct rr_server_client *client = lws_get_opaque_user_data(ws);
         uint64_t i = (client - this->clients);
         rr_decrypt(packet, size, client->serverbound_encryption_key);
-        client->serverbound_encryption_key = rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
+        client->serverbound_encryption_key =
+            rr_get_hash(rr_get_hash(client->serverbound_encryption_key));
         struct proto_bug encoder;
         proto_bug_init(&encoder, packet);
         proto_bug_set_bound(&encoder, packet + size);
@@ -328,20 +369,26 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             client->received_first_packet = 1;
 
             proto_bug_read_uint64(&encoder, "useless bytes");
-            uint64_t received_verification = proto_bug_read_uint64(&encoder, "verification");
+            uint64_t received_verification =
+                proto_bug_read_uint64(&encoder, "verification");
             if (received_verification != client->requested_verification)
             {
-                printf("%lu %lu\n", client->requested_verification, received_verification);
+                printf("%lu %lu\n", client->requested_verification,
+                       received_verification);
                 fputs("invalid verification\n", stderr);
-                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"invalid v", sizeof "invalid v" - 1);
+                lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                 (uint8_t *)"invalid v",
+                                 sizeof "invalid v" - 1);
                 return -1;
             }
 
             memset(&client->rivet_account, 0, sizeof(struct rr_rivet_account));
             // Read rivet token
-            proto_bug_read_string(&encoder, client->rivet_account.token, 300, "rivet token");
+            proto_bug_read_string(&encoder, client->rivet_account.token, 300,
+                                  "rivet token");
             // Read uuid
-            proto_bug_read_string(&encoder, client->rivet_account.uuid, 100, "rivet uuid");
+            proto_bug_read_string(&encoder, client->rivet_account.uuid, 100,
+                                  "rivet uuid");
             if (proto_bug_read_varuint(&encoder, "dev_flag") == 49453864343)
                 client->dev = 1;
 
@@ -354,18 +401,22 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             pthread_create(&thread, NULL, rivet_connected_endpoint, captures);
             pthread_detach(thread);
 #endif
-            printf("<rr_server::socket_verified::%s>\n", client->rivet_account.uuid);
+            printf("<rr_server::socket_verified::%s>\n",
+                   client->rivet_account.uuid);
             struct rr_binary_encoder encoder;
             rr_binary_encoder_init(&encoder, outgoing_message);
             rr_binary_encoder_write_uint8(&encoder, 0);
-            rr_binary_encoder_write_nt_string(&encoder, client->rivet_account.uuid);
+            rr_binary_encoder_write_nt_string(&encoder,
+                                              client->rivet_account.uuid);
             rr_binary_encoder_write_uint8(&encoder, i);
-            lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+            lws_write(this->api_client, encoder.start,
+                      encoder.at - encoder.start, LWS_WRITE_BINARY);
             return 0;
         }
         if (!client->verified)
             break;
-        switch (proto_bug_read_uint8(&encoder, "header"))
+        uint8_t header = proto_bug_read_uint8(&encoder, "header");
+        switch (header)
         {
         case rr_serverbound_input:
         {
@@ -373,7 +424,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 break;
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            uint8_t movementFlags = proto_bug_read_uint8(&encoder, "movement kb flags");
+            if (client->dev)
+                client->speed_percent =
+                    20 * proto_bug_read_float32(&encoder, "speed_percent");
+            uint8_t movementFlags =
+                proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
             float y = 0;
 
@@ -385,7 +440,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 x += (movementFlags & 8) >> 3;
                 if (x || y)
                 {
-                    float mag_1 = (client->dev ? 30 : RR_PLAYER_SPEED) / sqrtf(x * x + y * y);
+                    float mag_1 = (RR_PLAYER_SPEED * client->speed_percent) /
+                                  sqrtf(x * x + y * y);
                     x *= mag_1;
                     y *= mag_1;
                 }
@@ -397,7 +453,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = RR_PLAYER_SPEED * rr_fclamp((mag_1 - 25) / 50, 0, 1);
+                    float scale = (RR_PLAYER_SPEED * client->speed_percent) *
+                                  rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;
                 }
@@ -419,11 +476,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         case rr_serverbound_petal_switch:
         {
             if (client->player_info->flower_id == RR_NULL_ENTITY)
-                return 0;
+                break;
+            ;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= 10)
             {
-                rr_component_player_info_petal_swap(client->player_info, &this->simulation, pos - 1);
+                rr_component_player_info_petal_swap(client->player_info,
+                                                    &this->simulation, pos - 1);
                 pos = proto_bug_read_uint8(&encoder, "petal switch");
             }
             break;
@@ -443,8 +502,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                     rr_client_leave_squad(this, client);
                     struct proto_bug encoder;
                     proto_bug_init(&encoder, outgoing_message);
-                    proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
-                    rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+                    proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave,
+                                          "header");
+                    rr_server_client_write_message(
+                        client, encoder.start, encoder.current - encoder.start);
                 }
                 break;
             }
@@ -464,9 +525,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                      "header");
                 proto_bug_write_uint8(&failure, 0, "fail type");
-                rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                rr_server_client_write_message(client, failure.start,
+                                               failure.current - failure.start);
                 client->in_squad = 0;
                 break;
             }
@@ -474,9 +537,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
             {
                 struct proto_bug failure;
                 proto_bug_init(&failure, outgoing_message);
-                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                      "header");
                 proto_bug_write_uint8(&failure, 1, "fail type");
-                rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                rr_server_client_write_message(client, failure.start,
+                                               failure.current - failure.start);
                 client->in_squad = 0;
                 break;
             }
@@ -495,9 +560,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     struct proto_bug failure;
                     proto_bug_init(&failure, outgoing_message);
-                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                          "header");
                     proto_bug_write_uint8(&failure, 0, "fail type");
-                    rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                    rr_server_client_write_message(
+                        client, failure.start, failure.current - failure.start);
                     client->in_squad = 0;
                     client->pending_quick_join = 0;
                     break;
@@ -506,9 +573,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     struct proto_bug failure;
                     proto_bug_init(&failure, outgoing_message);
-                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                          "header");
                     proto_bug_write_uint8(&failure, 1, "fail type");
-                    rr_server_client_write_message(client, failure.start, failure.current - failure.start);
+                    rr_server_client_write_message(
+                        client, failure.start, failure.current - failure.start);
                     client->in_squad = 0;
                     client->pending_quick_join = 0;
                     break;
@@ -522,7 +591,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     if (client->player_info != NULL)
                     {
-                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        rr_simulation_request_entity_deletion(
+                            &this->simulation, client->player_info->parent_id);
                         client->player_info = NULL;
                     }
                     rr_squad_get_client_slot(this, client)->playing = 1;
@@ -533,11 +603,17 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     if (client->player_info != NULL)
                     {
-                        if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
-                            rr_simulation_request_entity_deletion(&this->simulation, client->player_info->flower_id);
+                        if (rr_simulation_entity_alive(
+                                &this->simulation,
+                                client->player_info->flower_id))
+                            rr_simulation_request_entity_deletion(
+                                &this->simulation,
+                                client->player_info->flower_id);
                         else
                         {
-                            rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                            rr_simulation_request_entity_deletion(
+                                &this->simulation,
+                                client->player_info->parent_id);
                             client->player_info = NULL;
                             rr_squad_get_client_slot(this, client)->playing = 0;
                         }
@@ -550,12 +626,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
         {
             if (!client->in_squad)
                 break;
-            proto_bug_read_string(&encoder, rr_squad_get_client_slot(this, client)->nickname, 16, "nickname");
-            uint8_t loadout_count = proto_bug_read_uint8(&encoder, "loadout count");
+            proto_bug_read_string(
+                &encoder, rr_squad_get_client_slot(this, client)->nickname, 16,
+                "nickname");
+            uint8_t loadout_count =
+                proto_bug_read_uint8(&encoder, "loadout count");
 
             if (loadout_count > 10)
                 break;
-            struct rr_squad_member *member = rr_squad_get_client_slot(this, client);
+            struct rr_squad_member *member =
+                rr_squad_get_client_slot(this, client);
             if (member == NULL)
                 break;
             uint32_t temp_inv[rr_petal_id_max][rr_rarity_id_max];
@@ -597,7 +677,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     if (client->player_info != NULL)
                     {
-                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        rr_simulation_request_entity_deletion(
+                            &this->simulation, client->player_info->parent_id);
                         client->player_info = NULL;
                     }
                     member->playing = 1;
@@ -608,7 +689,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 {
                     if (client->player_info != NULL)
                     {
-                        rr_simulation_request_entity_deletion(&this->simulation, client->player_info->parent_id);
+                        rr_simulation_request_entity_deletion(
+                            &this->simulation, client->player_info->parent_id);
                         client->player_info = NULL;
                         member->playing = 0;
                     }
@@ -643,15 +725,18 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 break;
             if (to_kick->player_info != NULL)
             {
-                rr_simulation_request_entity_deletion(&this->simulation, to_kick->player_info->parent_id);
+                rr_simulation_request_entity_deletion(
+                    &this->simulation, to_kick->player_info->parent_id);
                 to_kick->player_info = NULL;
             }
             rr_client_leave_squad(this, to_kick);
             struct proto_bug failure;
             proto_bug_init(&failure, outgoing_message);
-            proto_bug_write_uint8(&failure, rr_clientbound_squad_fail, "header");
+            proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                  "header");
             proto_bug_write_uint8(&failure, 2, "fail type");
-            rr_server_client_write_message(to_kick, failure.start, failure.current - failure.start);
+            rr_server_client_write_message(to_kick, failure.start,
+                                           failure.current - failure.start);
             break;
         }
         case rr_serverbound_petals_craft:
@@ -668,11 +753,34 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
                 break;
             if (!client->player_info)
                 break;
-            struct rr_simulation_animation *animation = &this->simulation.animations[this->simulation.animation_length++];
+            struct rr_simulation_animation *animation =
+                &this->simulation
+                     .animations[this->simulation.animation_length++];
             proto_bug_read_string(&encoder, animation->message, 64, "chat");
             animation->type = rr_animation_type_chat;
             animation->squad = client->squad;
-            strncpy(animation->name, rr_squad_get_client_slot(this, client)->nickname, 64);
+            strncpy(animation->name,
+                    rr_squad_get_client_slot(this, client)->nickname, 64);
+            break;
+        }
+        case rr_serverbound_dev_summon:
+        {
+            puts("edmonto requested");
+            if (!client->dev)
+                break;
+
+            puts("edmonto has been summoned by the gods");
+
+            uint8_t id = proto_bug_read_uint8(&encoder, "id");
+            uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
+
+            EntityIdx e = rr_simulation_alloc_mob(
+                &this->simulation, client->player_info->arena,
+                client->player_info->camera_x, client->player_info->camera_y,
+                id, rarity, rr_simulation_team_id_mobs);
+            struct rr_component_mob *mob =
+                rr_simulation_get_mob(&this->simulation, e);
+            mob->no_drop = 1;
             break;
         }
         default:
@@ -687,9 +795,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws, enum lws_cal
     return 0;
 }
 
-static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, void *user, void *packet, size_t size)
+static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason,
+                            void *user, void *packet, size_t size)
 {
-    struct rr_server *this = (struct rr_server *)lws_context_user(lws_get_context(ws));
+    struct rr_server *this =
+        (struct rr_server *)lws_context_user(lws_get_context(ws));
     switch (reason)
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
@@ -706,7 +816,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, vo
         rr_binary_encoder_init(&encoder, outgoing_message);
         rr_binary_encoder_write_uint8(&encoder, 101);
         rr_binary_encoder_write_nt_string(&encoder, lobby_id);
-        lws_write(this->api_client, encoder.start, encoder.at - encoder.start, LWS_WRITE_BINARY);
+        lws_write(this->api_client, encoder.start, encoder.at - encoder.start,
+                  LWS_WRITE_BINARY);
     }
     break;
     case LWS_CALLBACK_CLIENT_RECEIVE:
@@ -740,17 +851,21 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, vo
             }
             if (!rr_server_client_read_from_api(client, &decoder))
             {
-                printf("<rr_server::account_failed_read::%s>\n", client->rivet_account.uuid);
+                printf("<rr_server::account_failed_read::%s>\n",
+                       client->rivet_account.uuid);
                 client->pending_kick = 1;
                 break;
             }
             client->verified = 1;
             struct proto_bug encoder;
             proto_bug_init(&encoder, outgoing_message);
-            proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave, "header");
-            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            proto_bug_write_uint8(&encoder, rr_clientbound_squad_leave,
+                                  "header");
+            rr_server_client_write_message(client, encoder.start,
+                                           encoder.current - encoder.start);
             rr_server_client_write_account(client);
-            printf("<rr_server::account_read::%s>\n", client->rivet_account.uuid);
+            printf("<rr_server::account_read::%s>\n",
+                   client->rivet_account.uuid);
             break;
         }
         case 2:
@@ -796,7 +911,8 @@ static int api_lws_callback(struct lws *ws, enum lws_callback_reasons reason, vo
     return 0;
 }
 
-static int lws_callback(struct lws *ws, enum lws_callback_reasons reason, void *user, void *packet, size_t size)
+static int lws_callback(struct lws *ws, enum lws_callback_reasons reason,
+                        void *user, void *packet, size_t size)
 {
     switch (reason)
     {
@@ -810,7 +926,8 @@ static int lws_callback(struct lws *ws, enum lws_callback_reasons reason, void *
     }
     // assert(pthread_mutex_lock(&mutex) == 0);
 
-    struct rr_server *this = (struct rr_server *)lws_context_user(lws_get_context(ws));
+    struct rr_server *this =
+        (struct rr_server *)lws_context_user(lws_get_context(ws));
     int close = handle_lws_event(this, ws, reason, packet, size);
     if (close)
         return close;
@@ -848,15 +965,21 @@ static void server_tick(struct rr_server *this)
                 continue;
             if (client->player_info != NULL)
             {
-                if (rr_simulation_entity_alive(&this->simulation, client->player_info->flower_id))
-                    rr_vector_set(&rr_simulation_get_physical(&this->simulation, client->player_info->flower_id)->acceleration, client->player_accel_x,
-                                  client->player_accel_y);
+                if (rr_simulation_entity_alive(&this->simulation,
+                                               client->player_info->flower_id))
+                    rr_vector_set(
+                        &rr_simulation_get_physical(
+                             &this->simulation, client->player_info->flower_id)
+                             ->acceleration,
+                        client->player_accel_x, client->player_accel_y);
                 if (client->player_info->drops_this_tick_size > 0)
                 {
-                    for (uint32_t i = 0; i < client->player_info->drops_this_tick_size; ++i)
+                    for (uint32_t i = 0;
+                         i < client->player_info->drops_this_tick_size; ++i)
                     {
                         uint8_t id = client->player_info->drops_this_tick[i].id;
-                        uint8_t rarity = client->player_info->drops_this_tick[i].rarity;
+                        uint8_t rarity =
+                            client->player_info->drops_this_tick[i].rarity;
                         ++client->inventory[id][rarity];
                     }
                     rr_server_client_write_to_api(client);
@@ -864,12 +987,13 @@ static void server_tick(struct rr_server *this)
                     client->player_info->drops_this_tick_size = 0;
                 }
             }
-            rr_server_client_broadcast_update(client); 
+            rr_server_client_broadcast_update(client);
             if (!client->dev)
                 continue;
             struct proto_bug encoder;
             proto_bug_init(&encoder, outgoing_message);
-            proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump, "header");
+            proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump,
+                                  "header");
             for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
             {
                 struct rr_squad *squad = &this->squads[s];
@@ -884,39 +1008,53 @@ static void server_tick(struct rr_server *this)
                     proto_bug_write_uint8(&encoder, 1, "bitbit");
                     proto_bug_write_uint8(&encoder, member->playing, "ready");
                     proto_bug_write_uint8(&encoder, member->is_dev, "is_dev");
-                    proto_bug_write_string(&encoder, member->nickname, 16, "nickname");
+                    proto_bug_write_string(&encoder, member->nickname, 16,
+                                           "nickname");
                     for (uint8_t j = 0; j < 20; ++j)
                     {
-                        proto_bug_write_uint8(&encoder, member->loadout[j].id, "id");
-                        proto_bug_write_uint8(&encoder, member->loadout[j].rarity, "rar");
+                        proto_bug_write_uint8(&encoder, member->loadout[j].id,
+                                              "id");
+                        proto_bug_write_uint8(&encoder,
+                                              member->loadout[j].rarity, "rar");
                     }
                 }
                 proto_bug_write_uint8(&encoder, squad->private, "private");
                 proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
                 char joined_code[16];
-                sprintf(joined_code, "%s-%s", this->server_alias, squad->squad_code);
+                sprintf(joined_code, "%s-%s", this->server_alias,
+                        squad->squad_code);
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
             }
-            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+            rr_server_client_write_message(client, encoder.start,
+                                           encoder.current - encoder.start);
             if (client->player_info != NULL)
             {
-            proto_bug_init(&encoder, outgoing_message);
-            proto_bug_write_uint8(&encoder, rr_clientbound_dev_info, "header");
-            proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
-            struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
-            for (uint32_t y = 0; y < decl->maze_dim; ++y)
-            {
-                for (uint32_t x = 0; x < decl->maze_dim; ++x)
+                proto_bug_init(&encoder, outgoing_message);
+                proto_bug_write_uint8(&encoder, rr_clientbound_dev_info,
+                                      "header");
+                proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
+                struct rr_maze_declaration *decl = &RR_MAZES[RR_GLOBAL_BIOME];
+                for (uint32_t y = 0; y < decl->maze_dim; ++y)
                 {
-                    proto_bug_write_float32(&encoder, decl->maze[y * decl->maze_dim + x].local_difficulty, "diff");
-                    proto_bug_write_float32(&encoder, decl->maze[y * decl->maze_dim + x].overload_factor, "olf");
+                    for (uint32_t x = 0; x < decl->maze_dim; ++x)
+                    {
+                        proto_bug_write_float32(
+                            &encoder,
+                            decl->maze[y * decl->maze_dim + x].local_difficulty,
+                            "diff");
+                        proto_bug_write_float32(
+                            &encoder,
+                            decl->maze[y * decl->maze_dim + x].overload_factor,
+                            "olf");
+                    }
                 }
-            }
-            rr_server_client_write_message(client, encoder.start, encoder.current - encoder.start);
+                rr_server_client_write_message(client, encoder.start,
+                                               encoder.current - encoder.start);
             }
         }
     }
-    rr_simulation_for_each_entity(&this->simulation, &this->simulation, rr_simulation_tick_entity_resetter_function);
+    rr_simulation_for_each_entity(&this->simulation, &this->simulation,
+                                  rr_simulation_tick_entity_resetter_function);
 }
 
 void rr_server_run(struct rr_server *this)
@@ -924,7 +1062,10 @@ void rr_server_run(struct rr_server *this)
     {
         struct lws_context_creation_info info = {0};
 
-        info.protocols = (struct lws_protocols[]){{"g", lws_callback, sizeof(uint8_t), MESSAGE_BUFFER_SIZE, 0, NULL, 0}, {0}};
+        info.protocols =
+            (struct lws_protocols[]){{"g", lws_callback, sizeof(uint8_t),
+                                      MESSAGE_BUFFER_SIZE, 0, NULL, 0},
+                                     {0}};
 
         info.port = 1234;
         info.user = this;
@@ -988,7 +1129,8 @@ void rr_server_run(struct rr_server *this)
         this->simulation.animation_length = 0;
         gettimeofday(&end, NULL);
 
-        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_usec - start.tv_usec);
+        uint64_t elapsed_time = (end.tv_sec - start.tv_sec) * 1000000 +
+                                (end.tv_usec - start.tv_usec);
         if (elapsed_time > 25000)
             fprintf(stderr, "tick took %lu microseconds\n", elapsed_time);
         int64_t to_sleep = 40000 - elapsed_time;

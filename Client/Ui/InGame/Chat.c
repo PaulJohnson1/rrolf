@@ -35,7 +35,7 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
             if (game->chat.sending[0] != 0)
             {
                 struct proto_bug encoder;
-                proto_bug_init(&encoder, output_packet);
+                proto_bug_init(&encoder, RR_OUTGOING_PACKET);
                 proto_bug_write_uint8(&encoder, rr_serverbound_chat, "header");
                 proto_bug_write_string(&encoder, game->chat.sending, 64, "chat");
                 rr_websocket_send(&game->socket, encoder.current - encoder.start);

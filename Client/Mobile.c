@@ -137,7 +137,7 @@ static uint8_t draw_mobile_defend_button(struct rr_game *this)
 void rr_write_serverbound_packet_mobile(struct rr_game *this)
 {
     struct proto_bug encoder;
-    proto_bug_init(&encoder, output_packet);
+    proto_bug_init(&encoder, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder, rr_serverbound_input, "header");
     uint8_t is_attack = draw_mobile_attack_button(this);
     uint8_t is_defend = draw_mobile_defend_button(this);

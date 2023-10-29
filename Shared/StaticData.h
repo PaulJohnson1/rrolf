@@ -14,15 +14,18 @@ enum rr_animation_type
 
 enum rr_serverbound_packet_header
 {
-    rr_serverbound_input = 0,
-    rr_serverbound_petal_switch = 1,
-    rr_serverbound_squad_join = 2,
-    rr_serverbound_squad_ready = 3,
-    rr_serverbound_squad_update = 4,
-    rr_serverbound_private_update = 5,
-    rr_serverbound_squad_kick = 6,
-    rr_serverbound_petals_craft = 7,
-    rr_serverbound_chat = 8,
+    rr_serverbound_input,
+    rr_serverbound_petal_switch,
+    rr_serverbound_squad_join,
+    rr_serverbound_squad_ready,
+    rr_serverbound_squad_update,
+    rr_serverbound_private_update,
+    rr_serverbound_squad_kick,
+    rr_serverbound_petals_craft,
+    rr_serverbound_chat,
+
+    // cheats
+    rr_serverbound_dev_summon,
 };
 
 enum rr_clientbound_packet_header

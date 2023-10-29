@@ -13,7 +13,7 @@ static void continue_to_squad_event(struct rr_ui_element *this, struct rr_game *
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         struct proto_bug encoder;
-        proto_bug_init(&encoder, output_packet);
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }

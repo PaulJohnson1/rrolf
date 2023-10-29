@@ -13,7 +13,7 @@
 
 #include <Shared/Crypto.h>
 
-uint8_t output_packet[1024 * 16];
+uint8_t RR_OUTGOING_PACKET[1024 * 16];
 static uint8_t incoming_data[1024 * 512];
 static uint8_t *outputs[8192];
 static uint32_t packet_lengths[8192] = {0};
@@ -137,7 +137,7 @@ void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
     if (at >= 8192)
         return;
     uint8_t *output = malloc(length);
-    memcpy(output, output_packet, length);
+    memcpy(output, RR_OUTGOING_PACKET, length);
     outputs[at] = output;
     packet_lengths[at] = length;
     ++at;
@@ -145,14 +145,14 @@ void rr_websocket_queue_send(struct rr_websocket *this, uint32_t length)
 
 void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 {
-    rr_encrypt(output_packet, length, this->serverbound_encryption_key);
+    rr_encrypt(RR_OUTGOING_PACKET, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
 #ifndef EMSCRIPTEN
-    lws_write(this->socket, output_packet, length, LWS_WRITE_BINARY);
+    lws_write(this->socket, RR_OUTGOING_PACKET, length, LWS_WRITE_BINARY);
 #else
     EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
-           output_packet, length);
+           RR_OUTGOING_PACKET, length);
 #endif
 }
 

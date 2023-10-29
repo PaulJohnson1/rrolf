@@ -21,16 +21,19 @@ struct rr_server_client
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
+    uint64_t message_length;
     struct rr_server *server;
     struct lws *socket_handle;
     struct rr_server_client_message *message_root;
     struct rr_server_client_message *message_at;
-    uint64_t message_length;
     struct rr_component_player_info *player_info;
     double experience;
     float player_accel_x;
     float player_accel_y;
     char ip_address[100];
+
+    float speed_percent;
+
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t craft_fails[rr_petal_id_max][rr_rarity_id_max];
     uint32_t ticks_to_next_squad_action;
