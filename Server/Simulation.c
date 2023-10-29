@@ -18,19 +18,15 @@
 #include <Shared/pb.h>
 
 static void set_respawn_zone(struct rr_component_arena *arena, uint32_t x,
-                             uint32_t y, uint32_t w, uint32_t h)
+                             uint32_t y)
 {
     float dim = arena->maze->grid_size;
     arena->respawn_zone.x = 2 * x * dim;
     arena->respawn_zone.y = 2 * y * dim;
-    arena->respawn_zone.w = 2 * w * dim;
-    arena->respawn_zone.h = 2 * h * dim;
 }
 
 #define SPAWN_ZONE_X 6
 #define SPAWN_ZONE_Y 13
-#define SPAWN_ZONE_W 1
-#define SPAWN_ZONE_H 1
 
 static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x,
                              uint32_t y, uint32_t w, uint32_t h)
@@ -125,8 +121,7 @@ void rr_simulation_init(struct rr_simulation *this)
     struct rr_component_arena *arena = rr_simulation_add_arena(this, id);
     arena->biome = RR_GLOBAL_BIOME;
     rr_component_arena_spatial_hash_init(arena, this);
-    set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y, SPAWN_ZONE_W,
-                     SPAWN_ZONE_H);
+    set_respawn_zone(arena, SPAWN_ZONE_X, SPAWN_ZONE_Y);
     set_spawn_zones();
 }
 

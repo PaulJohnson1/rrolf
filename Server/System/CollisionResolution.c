@@ -58,8 +58,8 @@ static void enter_arena(struct rr_simulation *this, EntityIdx arena, EntityIdx e
     physical->arena = arena;
     struct rr_component_arena *a = rr_simulation_get_arena(this, arena);
     struct rr_spawn_zone *respawn_zone = &a->respawn_zone;
-    rr_component_physical_set_x(physical, respawn_zone->x + respawn_zone->w * rr_frand());
-    rr_component_physical_set_y(physical, respawn_zone->y + respawn_zone->h * rr_frand());
+    rr_component_physical_set_x(physical, respawn_zone->x + 2 * a->maze->grid_size * rr_frand());
+    rr_component_physical_set_y(physical, respawn_zone->y + 2 * a->maze->grid_size * rr_frand());
     rr_vector_set(&physical->velocity, 0, 0);
     rr_vector_set(&physical->collision_velocity, 0, 0);
     a->first_squad_to_enter = player_info->squad;
