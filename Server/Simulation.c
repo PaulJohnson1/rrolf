@@ -183,7 +183,7 @@ static void spawn_mob(struct rr_simulation *this, uint32_t grid_x,
 
     if (grid->spawn_function != NULL && rr_frand() <
 #ifdef RIVET_BUILD
-                                            0.67
+                                            0.75
 #else
                                             1
 #endif
