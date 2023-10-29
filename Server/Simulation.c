@@ -89,7 +89,7 @@ static void set_spawn_zones()
     struct timeval t;
     gettimeofday(&t, NULL);
     int64_t time =
-        (t.tv_sec * 1000000 + t.tv_usec) / 1000 /*ms*/ * 1000 /*s*/ * 5 /*5s*/;
+        (t.tv_sec * 1000000 + t.tv_usec) / (1000 * 1000 * 60 * 30);
 
     uint64_t seed = rr_get_hash(time);
 
@@ -383,17 +383,18 @@ static void tick_maze(struct rr_simulation *this)
         CODE;                                                                  \
     };
 
-static int64_t last_time_set = -1;
+static int64_t last_zone_epoch = -1;
 
 void rr_simulation_tick(struct rr_simulation *this)
 {
     struct timeval t;
     gettimeofday(&t, NULL);
     int64_t time = (t.tv_sec * 1000000 + t.tv_usec);
-    if (last_time_set == -1 || (time - last_time_set) >= 1000 * 1000 * 60 * 10)
-    {
+    int64_t current_zone_epoch = time / (1000 * 1000 * 60 * 30);
+
+    if (current_zone_epoch != last_zone_epoch) {
         set_spawn_zones();
-        last_time_set = time;
+        last_zone_epoch = current_zone_epoch;
     }
     rr_simulation_create_component_vectors(this);
     RR_TIME_BLOCK("collision_detection",
