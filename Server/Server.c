@@ -989,8 +989,7 @@ static void server_tick(struct rr_server *this)
                         client->player_accel_x, client->player_accel_y);
                 if (client->player_info->drops_this_tick_size > 0)
                 {
-                    for (uint32_t i = 0;
-                         i < client->player_info->drops_this_tick_size; ++i)
+                    for (uint32_t i = 0;i < client->player_info->drops_this_tick_size; ++i)
                     {
                         uint8_t id = client->player_info->drops_this_tick[i].id;
                         uint8_t rarity =

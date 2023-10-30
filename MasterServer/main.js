@@ -406,9 +406,6 @@ wss.on("connection", (ws, req) => {
                 if (!connected_clients[uuid])
                     break;
                 const user = connected_clients[uuid].user;
-                const pos = game_server.clients.indexOf(uuid);
-                if (pos === -1)
-                    break;
                 user.xp = decoder.ReadFloat64();
                 user.petals = {};
                 user.failed_crafts = {};
