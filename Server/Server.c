@@ -104,8 +104,8 @@ void rr_server_client_free(struct rr_server_client *this)
         free(message);
         message = tmp;
     }
-    client->message_at = client->message_root = NULL;
-    client->message_length = 0;
+    this->message_at = this->message_root = NULL;
+    this->message_length = 0;
     puts("<rr_server::client_disconnect>");
 }
 
@@ -294,7 +294,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             rr_bitset_unset(this->clients_in_use, i);
             client->in_use = 0;
             client->socket_handle = NULL;
-            rr_server_client_free(this->clients + i);
+            rr_server_client_free(client);
             if (client->received_first_packet == 0)
                 return 0;
 #ifdef RIVET_BUILD
