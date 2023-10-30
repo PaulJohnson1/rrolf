@@ -20,15 +20,15 @@ struct rr_id_rarity_pair
 };
 
 #define RR_FOR_EACH_COMPONENT \
-    XX(player_info, 3) \
-    XX(petal, 11) \
+    XX(flower, 5) \
+    XX(petal, 1) \
     XX(web, 8) \
-    XX(physical, 2) \
-    XX(health, 9) \
-    XX(drop, 10) \
-    XX(centipede, 7) \
-    XX(arena, 6) \
-    XX(mob, 1) \
+    XX(arena, 9) \
+    XX(player_info, 4) \
+    XX(mob, 2) \
     XX(ai, 12) \
-    XX(flower, 4) \
-    XX(relations, 5) 
+    XX(health, 3) \
+    XX(drop, 10) \
+    XX(centipede, 6) \
+    XX(physical, 7) \
+    XX(relations, 11) 

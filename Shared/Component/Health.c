@@ -14,9 +14,9 @@
 
 enum
 {
-    state_flags_health = 0b001,
+    state_flags_flags = 0b001,
     state_flags_max_health = 0b010,
-    state_flags_flags = 0b100,
+    state_flags_health = 0b100,
     state_flags_all = 0b111
 };
 
