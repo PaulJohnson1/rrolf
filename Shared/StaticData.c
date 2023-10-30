@@ -30,14 +30,14 @@ struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
 
 struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_none,      rr_rarity_id_common,    offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
-    {rr_petal_id_basic,     rr_rarity_id_common,    offensive, 12.0f,  15.0f,   0.0f,  50,  0, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_pellet,    rr_rarity_id_common,    offensive, 15.0f,   5.0f,   0.0f,  20,  0, {1,2,2,3,3,5,6,6}},
+    {rr_petal_id_basic,     rr_rarity_id_common,    offensive, 10.0f,  15.0f,   0.0f,  50,  0, {1,1,1,1,1,1,1,1}},
+    {rr_petal_id_pellet,    rr_rarity_id_common,    offensive, 12.5f,   5.0f,   0.0f,  20,  0, {1,2,2,3,3,5,6,6}},
     {rr_petal_id_fossil,    rr_rarity_id_common,    offensive, 10.0f,  60.0f,   0.0f, 100,  0, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_stinger,   rr_rarity_id_common,    offensive, 65.0f,   3.0f,  10.0f, 150,  0, {1,1,1,1,1,3,5,5}},
+    {rr_petal_id_stinger,   rr_rarity_id_common,    offensive, 50.0f,   3.0f,  10.0f, 150,  0, {1,1,1,1,1,3,5,5}},
     {rr_petal_id_light,     rr_rarity_id_rare,      offensive,  8.0f,   5.0f,  15.0f,  20,  0, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_shell,     rr_rarity_id_rare,      offensive, 32.0f,   8.0f,   0.0f,  63, 13, {1,1,1,1,1,2,3,3}},
     {rr_petal_id_peas,      rr_rarity_id_rare,      offensive, 15.0f,   8.0f,   8.0f,  13, 12, {4,4,4,4,4,4,5,5}},
-    {rr_petal_id_leaf,      rr_rarity_id_unusual,   offensive,  7.5f,  12.0f,   8.0f,  25,  0, {1,1,1,1,1,2,2,2}},
+    {rr_petal_id_leaf,      rr_rarity_id_unusual,   offensive,  9.0f,  15.0f,   8.0f,  38,  0, {1,1,1,1,1,2,2,2}},
     {rr_petal_id_egg,       rr_rarity_id_unusual,   defensive,  1.0f,  20.0f,   0.0f,  25, 75, {1,1,2,2,2,2,2,2}},
     {rr_petal_id_magnet,    rr_rarity_id_rare,      defensive,  2.0f,  15.0f,   0.0f,  38,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_uranium,   rr_rarity_id_rare,      offensive, 12.0f,  10.0f,   0.0f,  50, 25, {1,1,1,1,1,1,1,1}},
@@ -46,7 +46,7 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
     {rr_petal_id_bone,      rr_rarity_id_common,    defensive,  2.5f,  25.0f,   0.0f,  68,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_web,       rr_rarity_id_rare,      defensive,  5.0f,   5.0f,   0.0f,  50, 13, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_seed,      rr_rarity_id_legendary, defensive,  1.0f,  25.0f,   0.0f,  63,  1, {1,1,1,1,1,1,1,1}},
-    {rr_petal_id_gravel,    rr_rarity_id_unusual,   offensive, 17.5f,  10.0f,   0.0f,  16, 13, {1,2,2,2,3,3,4,4}},
+    {rr_petal_id_gravel,    rr_rarity_id_unusual,   offensive, 12.0f,   5.0f,   0.0f,  20, 13, {1,2,2,2,3,3,4,4}},
     {rr_petal_id_club,      rr_rarity_id_common,    defensive,  8.5f, 300.0f,   0.0f, 200,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_crest,     rr_rarity_id_rare,      offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
     {rr_petal_id_droplet,   rr_rarity_id_common,    offensive, 15.0f,   5.0f,   0.0f,  37,  0, {1,1,1,1,1,1,1,1}},
@@ -169,14 +169,14 @@ struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1.0, 1.0, 1.0},
-    {2.4, 1.7, 1.2},
-    {6.0, 2.9, 1.8}, 
-    {16,  5.0, 2.4},
-    {56,  8.5, 3.6},
-    {400,14.5, 4.5},
-    {48e2,24.6, 6.0},
-    {240e3,42.0,7.5}
+    {1.0,  1.0,1.0},
+    {2.4,  1.7,1.2},
+    {6.0,  2.9,1.8}, 
+    {16,   5.0,2.4},
+    {52,   8.5,3.6},
+    {320,  14.5,4.5},
+    {36e2, 24.6,6.0},
+    {128e3,42.0,7.5}
 };
 // clang-format on
 
@@ -192,9 +192,9 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
     0, 1, 6, 10, 15, 25, 160, 1200, 250};
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
-    0, 1, 8, 15, 40, 250, 2500, 1600};
+    0, 1, 8, 15, 40, 250, 2750, 2500};
 double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
-    2.5, 4, 6, 15, 50, 250, 180, 135};
+    2.5, 4, 6, 15, 50, 200, 200, 200};
 
 static void init_game_coefficients()
 {
