@@ -368,7 +368,7 @@ wss.on("connection", (ws, req) => {
                 }
                 try {
                     const user = await db_read_or_create_user(uuid, SERVER_SECRET);
-                    connected_clients[uuid] = new GameClient(user);
+                    connected_clients[uuid] = new GameClient(user, game_server.alias);
                     game_server.clients[pos] = uuid;
                     const encoder = new protocol.BinaryWriter();
                     encoder.WriteUint8(1);
@@ -383,6 +383,8 @@ wss.on("connection", (ws, req) => {
             case 1:
             {
                 const uuid = decoder.ReadStringNT();
+                if (connected_clients[uuid] && connected_clients[uuid].server !== game_server.alias)
+                    break;
                 const pos = game_server.clients.indexOf(uuid);
                 if (pos !== -1)
                 {
@@ -392,8 +394,8 @@ wss.on("connection", (ws, req) => {
                         break;
                     write_db_entry(client.user.username, client.user);
                     game_server.clients[pos] = 0;
+                    delete connected_clients[uuid];
                 }
-                delete connected_clients[uuid];
                 break;
             }
             case 2:
@@ -401,10 +403,9 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 if (!connected_clients[uuid])
                     break;
-                const user = connected_clients[uuid].user;
-                const pos = game_server.clients.indexOf(uuid);
-                if (pos === -1)
+                if (connected_clients[uuid] && connected_clients[uuid].server !== game_server.alias)
                     break;
+                const user = connected_clients[uuid].user;
                 user.xp = decoder.ReadFloat64();
                 user.petals = {};
                 user.failed_crafts = {};

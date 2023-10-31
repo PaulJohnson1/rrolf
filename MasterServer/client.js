@@ -1,8 +1,9 @@
 class GameClient
 {
-    constructor(user) 
+    constructor(user, server) 
     {
         this.user = user;
+        this.server = server;
         this.needs_gameserver_update = false;
         this.needs_database_update = false;
     }
