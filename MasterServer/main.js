@@ -165,7 +165,6 @@ async function db_read_user(username, password)
 
 async function db_read_or_create_user(username, password)
 {
-    console.log(database);
     if (!database.accounts.includes(username))
         database.accounts.push(username);
 
