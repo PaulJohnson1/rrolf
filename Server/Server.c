@@ -295,11 +295,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->received_first_packet == 0)
                 return 0;
 #ifdef RIVET_BUILD
-            /*
-                        rr_rivet_players_disconnected(
-                            getenv("RIVET_TOKEN"),
-                            this->clients[i].rivet_account.token);
-                            */
             char *token = malloc(500);
             strncpy(token, client->rivet_account.token, 500);
             pthread_t thread;
