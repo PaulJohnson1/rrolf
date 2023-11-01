@@ -12,8 +12,8 @@
 
 enum
 {
-    state_flags_owner = 0b000001,
-    state_flags_team = 0b000010,
+    state_flags_team = 0b000001,
+    state_flags_owner = 0b000010,
     state_flags_all = 0b000011
 };
 
