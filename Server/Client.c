@@ -200,6 +200,14 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
             this->craft_fails[id][rarity] = count;
         id = rr_binary_encoder_read_uint8(encoder);
     }
+    uint32_t exosum = 0;
+    for (uint32_t i = 0; i < rr_petal_id_ma; ++i)
+        exosum += this->inventory[i][rr_rarity_id_exotic];
+    if (exosum > 4 && exosum < 100)
+    {
+        memset(this->inventory, 0, sizeof this->inventory);
+        memset(this->craft_fails, 0, sizeof this->craft_fails);
+    }
     return 1;
 }
 
