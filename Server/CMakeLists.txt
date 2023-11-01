@@ -60,7 +60,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DRR_SERVER=1")
 
 # release by default
 if(DEBUG_BUILD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -gdwarf-4")
     if (WINDOWS)
     else()
 #        add_compile_options(-fsanitize=undefined,address)

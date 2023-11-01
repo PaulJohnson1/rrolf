@@ -20,27 +20,18 @@ const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
 const MAX_PETAL_COUNT = 24;
 
-const _jsonparse = JSON.parse;
-JSON.parse = function(str) {
-    try {
-        return _jsonparse(str);
-    } catch(e) {
-        console.log(str, e);
-        throw new Error(e);
-    }
-
-}
-let database = [];
+let database = {accounts: [], links: []};
 let changed = false;
-const databaseFilePath = path.join(__dirname, "linklogs.json");
+const databaseFilePath = path.join(__dirname, "database.json");
 
 if (fs.existsSync(databaseFilePath))
 {
     const databaseData = fs.readFileSync(databaseFilePath, "utf8");
     try {
         database = JSON.parse(databaseData);
+        if (Array.isArray(database)) database = {accounts: [], links: []}; // remove after first run
     } catch(e) {
-        database = [];
+        database = {};
     }
 }
 
@@ -144,10 +135,10 @@ function apply_missing_defaults(account)
 
 async function write_db_entry(username, data)
 {
+    if (!database.accounts.includes(username))
+        database.accounts.push(username);
     try {
         changed = true;
-        //delete data.needs_update;
-        //database[username] = structuredClone(data);
         await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
     } catch(e) {
         console.log(e);
@@ -156,9 +147,11 @@ async function write_db_entry(username, data)
 
 async function db_read_user(username, password)
 {
+    if (!database.accounts.includes(username))
+        database.accounts.push(username);
+
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
-    //const user = structuredClone({value: database[username]});
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
@@ -172,9 +165,11 @@ async function db_read_user(username, password)
 
 async function db_read_or_create_user(username, password)
 {
+    if (!database.accounts.includes(username))
+        database.accounts.push(username);
+
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
-    //const user = structuredClone({value: database[username]});
     const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
@@ -274,7 +269,7 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
             return "failed";
         }
         const new_account = await db_read_user(username, password);
-        database.push([old_username, username, old_account, new_account]);
+        database.links.push([old_username, username, old_account, new_account]);
         changed = true;
         if (!new_account || (new_account.xp * 3 <= old_account.xp))
         {

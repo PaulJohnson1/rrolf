@@ -14,9 +14,9 @@
 
 enum
 {
-    state_flags_eye_angle = 0b000001,
-    state_flags_face_flags = 0b000010,
-    state_flags_level = 0b000100,
+    state_flags_face_flags = 0b000001,
+    state_flags_level = 0b000010,
+    state_flags_eye_angle = 0b000100,
     state_flags_nickname = 0b001000,
     state_flags_all = 0b001111
 };
