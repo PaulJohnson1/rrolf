@@ -201,7 +201,7 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
         id = rr_binary_encoder_read_uint8(encoder);
     }
     uint32_t exosum = 0;
-    for (uint32_t i = 0; i < rr_petal_id_ma; ++i)
+    for (uint32_t i = 0; i < rr_petal_id_max; ++i)
         exosum += this->inventory[i][rr_rarity_id_exotic];
     if (exosum > 4 && exosum < 100)
     {
