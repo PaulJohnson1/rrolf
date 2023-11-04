@@ -458,7 +458,7 @@ wss.on("connection", (ws, req) => {
         log("game disconnect", [game_server.alias]);
         for (const uuid of game_server.clients)
         {
-            if (connected_clients[uuid])
+            if (connected_clients[uuid] && connected_clients[uuid].server === game_server.alias)
                 await write_db_entry(uuid, connected_clients[uuid].user);
             delete connected_clients[uuid];
         }
