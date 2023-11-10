@@ -293,7 +293,7 @@ static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid,
         grid->overload_factor = rr_fclamp(grid->overload_factor - 0.025 / 25, 0,
                                           grid->overload_factor);
     }
-    float player_modifier = 1 + grid->player_count * 2.0 / 3;
+    float player_modifier = 1 + grid->player_count * 4.0 / 3;
     float difficulty_modifier = 150 + 3 * grid->difficulty;
     float overload_modifier = powf(1.2, grid->local_difficulty + grid->overload_factor);
     float max_points = get_max_points(grid);
