@@ -18,6 +18,9 @@ struct rr_rivet_account
 
 // user must define this function.
 void rr_rivet_lobby_on_find(char *s, char *token, uint16_t port, void *captures);
+void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
+                        char *account_number, char *uuid, uint8_t linked,
+                        void *captures);
 
 RR_SERVER_ONLY(extern void rr_rivet_lobbies_ready(char const *lobby_token);)
 RR_SERVER_ONLY(extern int rr_rivet_players_connected(char const *lobby_token,

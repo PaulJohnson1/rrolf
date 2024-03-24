@@ -137,12 +137,13 @@ async function write_db_entry(username, data)
 {
     if (!database.accounts.includes(username))
         database.accounts.push(username);
-    try {
-        changed = true;
-        await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
-    } catch(e) {
-        console.log(e);
-    }
+    // try {
+    changed = true;
+    database[username] = data;
+    //     await request("PUT", `${DIRECTORY_SECRET}/game/players/${username}`, data);
+    // } catch(e) {
+    //     console.log(e);
+    // }
 }
 
 async function db_read_user(username, password)
@@ -152,7 +153,8 @@ async function db_read_user(username, password)
 
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    const user = {value: database[username]}
+    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         return null;
@@ -170,11 +172,12 @@ async function db_read_or_create_user(username, password)
 
     if (connected_clients[username] && (connected_clients[username].password === password || password === SERVER_SECRET))
         return connected_clients[username].user;
-    const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
+    const user = {value: database[username]}
+    // const user = await request("GET", `${DIRECTORY_SECRET}/game/players/${username}`);
     if (!user.value)
     {
         log("account create", [username]);
-        const user = apply_missing_defaults({});
+        const user = apply_missing_defaults({})
         user.password = hash(username + PASSWORD_SALT);
         user.username = username;
         await write_db_entry(username, user);
@@ -206,31 +209,31 @@ function get_unique_petals(petals)
 
 async function db_append_petals_to_logs(petals)
 {
-    const today = get_today();
-    let entry = (await request("GET", `${DIRECTORY_SECRET}/game/logs/${today}`)).value;
-    if (!entry)
-    {
-        console.log("new day");
-        const data = {
-            games_played: 1,
-            build_contains: get_unique_petals(petals),
-            build_sum: structuredClone(petals) 
-        };
-        await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, data);
-        return;
-    }
+    // const today = get_today();
+    // let entry = (await request("GET", `${DIRECTORY_SECRET}/game/logs/${today}`)).value;
+    // if (!entry)
+    // {
+    //     console.log("new day");
+    //     const data = {
+    //         games_played: 1,
+    //         build_contains: get_unique_petals(petals),
+    //         build_sum: structuredClone(petals) 
+    //     };
+    //     await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, data);
+    //     return;
+    // }
 
-    if (entry["7:3"] && today == "102923")
-    {
-        console.log("wipe");
-        entry = {games_played: 0, build_sum: {}, build_contains: {}};
-    }
+    // if (entry["7:3"] && today == "102923")
+    // {
+    //     console.log("wipe");
+    //     entry = {games_played: 0, build_sum: {}, build_contains: {}};
+    // }
 
-    entry.games_played++;
+    // entry.games_played++;
 
-    merge_petals(entry.build_sum, petals);
-    merge_petals(entry.build_contains, get_unique_petals(petals));
-    await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, entry);
+    // merge_petals(entry.build_sum, petals);
+    // merge_petals(entry.build_contains, get_unique_petals(petals));
+    // await request("PUT", `${DIRECTORY_SECRET}/game/logs/${today}`, entry);
 }
 
 function merge_petals(obj1, obj2) {
@@ -293,15 +296,15 @@ app.get(`${namespace}/account_link/:old_username/:old_password/:username/:passwo
 app.get(`${namespace}/user_get_password/:password`, async (req, res) => {
     const {password} = req.params;
     handle_error(res, async () => {
-        const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
-            headers: {
-                Authorization: "Bearer " + password
-            }
-        });
-        if (d.status != 200)
-            throw new Error(JSON.stringify(await d.text()));
-        const j = await d.json();
-        return hash(j.identity.identity_id + PASSWORD_SALT);
+        // const d = await fetch("https://identity.api.rivet.gg/v1/identities/self/profile", {
+        //     headers: {
+        //         Authorization: "Bearer " + password
+        //     }
+        // });
+        // if (d.status != 200)
+        //     throw new Error(JSON.stringify(await d.text()));
+        // const j = await d.json();
+        return hash("fucking shit");
     });
 });
 

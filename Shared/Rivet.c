@@ -125,14 +125,16 @@ void rr_rivet_lobbies_find(void *captures, char const *region)
             try
             {
                 fetch("https://matchmaker.api.rivet.gg/v1/lobbies/find", {
-                    "headers": {
+                    "headers" : {
                         "Authorization" :
                             // clang-format off
                             "Bearer pub_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.COPzyfqCMhDjm4W9jTEaEgoQjQm4bpQTSoibNAqQ6PIoSiIWGhQKEgoQBM-6Z-llSJm8ubdJfMaGOw.QAFVReaGxf6gfYm5NLa1FI6tLCVa2lBKCgbpmdXcuL3_okSrtYqlB9TeTTqZlYLxOMNcMyxnulzY0d5K4JTwCw"
                         // clang-format on
                     },
                     "method" : "POST",
-                    "body" : $1 ? '{"game_modes":["default"],"regions":["' + UTF8ToString($1) + '"]}' : '{"game_modes":["default"]}'
+                    "body" : $1 ? '{"game_modes":["default"],"regions":["' +
+                                      UTF8ToString($1) + '"]}'
+                                : '{"game_modes":["default"]}'
                 })
                     .then(function(r) { return r.json(); })
                     .then(function(json) {
@@ -144,14 +146,16 @@ void rr_rivet_lobbies_find(void *captures, char const *region)
                         HEAPU8.set(new TextEncoder().encode(token), $token);
                         HEAPU8[$host + host.length] = 0;
                         HEAPU8[$token + token.length] = 0;
-                        _rr_rivet_lobby_on_find($host, $token, json["ports"]["default"]["port"], $0);
+                        _rr_rivet_lobby_on_find(
+                            $host, $token, json["ports"]["default"]["port"],
+                            $0);
                         _free($host);
                         _free($token);
                     })
-                    .catch(function(error) {
-                        console.log(error);
-                    });
-            } catch(e) {
+                    .catch(function(error) { console.log(error); });
+            }
+            catch (e)
+            {
                 console.log(e);
             }
         },
@@ -185,13 +189,13 @@ void rr_rivet_lobbies_join(void *captures, char const *lobby_id)
                     HEAPU8.set(new TextEncoder().encode(token), $token);
                     HEAPU8[$host + host.length] = 0;
                     HEAPU8[$token + token.length] = 0;
-                    _rr_rivet_lobby_on_find($host, $token, json["ports"]["default"]["port"], $0);
+                    _rr_rivet_lobby_on_find(
+                        $host, $token, json["ports"]["default"]["port"], $0);
                     _free($host);
                     _free($token);
                 })
-                .catch(function(error) {
-                    _rr_rivet_lobby_on_find(0, 0, 0, $0);
-                });
+                .catch(
+                    function(error) { _rr_rivet_lobby_on_find(0, 0, 0, $0); });
         },
         captures, lobby_id);
 #endif
@@ -269,7 +273,10 @@ void rr_rivet_link_account(char *game_user, char *api_password, void *captures)
 void rr_rivet_identities_create_guest(void *captures)
 {
     puts("<rr_rivet::attempt_login>");
-#ifdef EMSCRIPTEN
+
+    rr_rivet_on_log_in("token", "url", "name", "1234", "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
+
+#if 0
     // clang-format off
     EM_ASM({
         function on_account(x)
