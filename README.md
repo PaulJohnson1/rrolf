@@ -4,7 +4,6 @@
 - sandbox pvp maybe similar to diep
 
 ## unofficial rrolf fork discord servers
-- [florix.fun](https://discord.gg/4c78Sck35t)
 - to add your own, make an issue with an invite to your server and I will consider adding it
 
 ## for developers: 
