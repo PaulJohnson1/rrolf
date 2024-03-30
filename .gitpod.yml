@@ -4,7 +4,7 @@ tasks:
       npm i -g http-server
     command:
       cd Client/public &&
-      http-server -c=-1
+      http-server -c=-1 --cors
 
   - name: Client Build
     init: |
@@ -48,7 +48,7 @@ tasks:
 ports:
   - port: 8080
     name: HTTP Server
-    onOpen: open-browser
+    onOpen: ignore
     visibility: public
 
   - port: 55554

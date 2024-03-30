@@ -21,7 +21,7 @@
 #ifdef RIVET_BUILD
 #define RR_BASE_API_URL "https://rrolf.io/api/"
 #else
-#define RR_BASE_API_URL "https://55554-maxnest0x0-rrolf-e93pfndk54i.ws-eu110.gitpod.io/api/"
+#define RR_BASE_API_URL "https://55554-maxnest0x0-rrolf-pxkaeghozpf.ws-eu110.gitpod.io/api/"
 #endif
 #ifdef RR_SERVER
 #define RR_API_SECRET                                                          \

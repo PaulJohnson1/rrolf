@@ -2,6 +2,7 @@ build/
 frontend_release_build/
 node_modules/
 .vs/
+emsdk/
 
 rrolf-client
 rrolf-client.wasm
