@@ -1,3 +1,18 @@
+// Copyright (C) 2024  Paul Johnson
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include <Client/Ui/Ui.h>
 
 #include <stdio.h>
@@ -125,7 +140,7 @@ static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
     struct proto_bug encoder;
     proto_bug_init(&encoder, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
-    proto_bug_write_uint8(&encoder, rr_mob_id_tree, "id");
+    proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
     proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
 
     rr_websocket_send(&game->socket, encoder.current - encoder.start);

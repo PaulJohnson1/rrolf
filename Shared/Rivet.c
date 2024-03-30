@@ -1,3 +1,18 @@
+// Copyright (C) 2024  Paul Johnson
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include <Shared/Rivet.h>
 
 #include <assert.h>
@@ -16,7 +31,7 @@
 #ifdef RIVET_BUILD
 #define BASE_API_URL "https://rrolf.io/api/"
 #else
-#define BASE_API_URL "http://localhost:55554/api/"
+#define BASE_API_URL "https://55554-pauljohnson1-rrolf-xprwarmjttt.ws-us110.gitpod.io/api/"
 #endif
 
 #define RR_RIVET_CURL_PROLOGUE                                                 \

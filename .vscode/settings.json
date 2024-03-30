@@ -11,6 +11,7 @@
         "bitset.h": "c",
         "thread": "c",
         "__locale": "c",
-        "locale": "c"
+        "locale": "c",
+        "vector.h": "c"
     }
 }

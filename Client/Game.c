@@ -1,3 +1,18 @@
+// Copyright (C) 2024  Paul Johnson
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #include <Client/Game.h>
 
 #include <assert.h>
@@ -1254,7 +1269,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-pauljohnson1-rrolf-xprwarmjttt.ws-us110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }
