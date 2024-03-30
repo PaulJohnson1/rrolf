@@ -19,10 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
 
 #include <Shared/pb.h>
 
@@ -32,7 +32,8 @@ struct biome_button_metadata
     uint8_t pos;
 };
 
-static void biome_button_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void biome_button_on_event(struct rr_ui_element *this,
+                                  struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -42,7 +43,7 @@ static void biome_button_on_event(struct rr_ui_element *this, struct rr_game *ga
 }
 
 static void biome_button_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                   struct rr_game *game)
 {
     struct biome_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
@@ -78,7 +79,8 @@ static void biome_button_on_render(struct rr_ui_element *this,
     rr_renderer_fill_text(renderer, data->text, 0, 0);
 }
 
-struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill, uint8_t pos)
+struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill,
+                                              uint8_t pos)
 {
     float height = 36;
     struct rr_ui_element *this = rr_ui_element_init();
@@ -87,7 +89,8 @@ struct rr_ui_element *rr_ui_biome_button_init(char *text, uint32_t fill, uint8_t
     data->text = text;
     this->data = data;
     this->abs_height = this->height = height;
-    this->abs_width = this->width = 10 + rr_renderer_get_text_size(text) * height / 2;
+    this->abs_width = this->width =
+        10 + rr_renderer_get_text_size(text) * height / 2;
     this->on_render = biome_button_on_render;
     this->on_event = biome_button_on_event;
     rr_ui_set_background(this, fill);

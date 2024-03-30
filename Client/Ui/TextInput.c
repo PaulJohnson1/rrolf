@@ -15,15 +15,15 @@
 
 #include <Client/Ui/Ui.h>
 
-#include <stdlib.h>
 #include <emscripten.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
 
 struct text_input_metadata
 {
@@ -32,20 +32,24 @@ struct text_input_metadata
     uint8_t max;
 };
 
-static void text_input_on_hide(struct rr_ui_element *this,
-                                 struct rr_game *game)
+static void text_input_on_hide(struct rr_ui_element *this, struct rr_game *game)
 {
     struct text_input_metadata *data = this->data;
     rr_dom_element_hide(data->name);
 }
 
-static void text_input_on_render(struct rr_ui_element *this, struct rr_game *game)
+static void text_input_on_render(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     struct rr_renderer_context_state state;
     struct text_input_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_dom_element_show(data->name);
-    rr_dom_element_update_position(data->name, this->abs_x, this->abs_y, this->abs_width * renderer->scale * renderer->state.transform_matrix[0], this->abs_height * renderer->scale * renderer->state.transform_matrix[4]);
+    rr_dom_element_update_position(data->name, this->abs_x, this->abs_y,
+                                   this->abs_width * renderer->scale *
+                                       renderer->state.transform_matrix[0],
+                                   this->abs_height * renderer->scale *
+                                       renderer->state.transform_matrix[4]);
     rr_dom_retrieve_text(data->name, data->text, data->max);
     rr_renderer_scale(renderer, renderer->scale);
     if (this->fill)
@@ -55,25 +59,28 @@ static void text_input_on_render(struct rr_ui_element *this, struct rr_game *gam
         rr_renderer_set_line_width(renderer, this->height * 0.12);
         rr_renderer_begin_path(renderer);
         rr_renderer_fill_rect(renderer, -this->width / 2, -this->height / 2,
-                            this->width, this->height);
+                              this->width, this->height);
         rr_renderer_stroke_rect(renderer, -this->width / 2, -this->height / 2,
                                 this->width, this->height);
     }
     if (game->is_mobile)
     {
-        if (rr_ui_mouse_over(this, game) && (game->input_data->mouse_buttons_down_this_tick & 1))
+        if (rr_ui_mouse_over(this, game) &&
+            (game->input_data->mouse_buttons_down_this_tick & 1))
         {
-            EM_ASM({
-                const element = document.getElementById(UTF8ToString($0));
-                element.value = prompt();
-            }, data->name);
+            EM_ASM(
+                {
+                    const element = document.getElementById(UTF8ToString($0));
+                    element.value = prompt();
+                },
+                data->name);
         }
     }
     return;
 }
 
-
-struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text, uint32_t max_length, char *name)
+struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
+                                            uint32_t max_length, char *name)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct text_input_metadata *data = malloc(sizeof *data);

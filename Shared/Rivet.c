@@ -31,7 +31,7 @@
 #ifdef RIVET_BUILD
 #define BASE_API_URL "https://rrolf.io/api/"
 #else
-#define BASE_API_URL "https://55554-pauljohnson1-rrolf-xprwarmjttt.ws-us110.gitpod.io/api/"
+#define BASE_API_URL "http://localhost:55554/"
 #endif
 
 #define RR_RIVET_CURL_PROLOGUE                                                 \
@@ -289,7 +289,8 @@ void rr_rivet_identities_create_guest(void *captures)
 {
     puts("<rr_rivet::attempt_login>");
 
-    rr_rivet_on_log_in("token", "url", "name", "1234", "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
+    rr_rivet_on_log_in("token", "url", "name", "1234",
+                       "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
 
 #if 0
     // clang-format off

@@ -21,8 +21,7 @@
 #include <Shared/SimulationCommon.h>
 #include <Shared/pb.h>
 
-#define FOR_EACH_PUBLIC_FIELD                                                  \
-    X(is_head, float32) 
+#define FOR_EACH_PUBLIC_FIELD X(is_head, float32)
 
 enum
 {
@@ -58,7 +57,6 @@ void rr_component_centipede_free(struct rr_component_centipede *this,
     }
 #endif
 }
-
 
 #ifdef RR_SERVER
 void rr_component_centipede_write(struct rr_component_centipede *this,

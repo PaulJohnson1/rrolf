@@ -105,20 +105,21 @@ struct rr_ui_element *rr_ui_set_background(struct rr_ui_element *this,
     this->fill = bg;
     if (bg >= 0xff000000)
     {
-        #define a 0.2
+#define a 0.2
         uint8_t red = rr_fclamp(
             (((bg >> 16) & 255) * (1 - a) + ((bg >> 16) & 255) * a), 0, 255);
-        uint8_t green =
-            rr_fclamp((((bg >> 8) & 255) * (1 - a) + ((bg >> 8) & 255) * a), 0, 255);
-        uint8_t blue =
-            rr_fclamp((((bg >> 0) & 255) * (1 - a) + ((bg >> 0) & 255) * a), 0, 255);
+        uint8_t green = rr_fclamp(
+            (((bg >> 8) & 255) * (1 - a) + ((bg >> 8) & 255) * a), 0, 255);
+        uint8_t blue = rr_fclamp(
+            (((bg >> 0) & 255) * (1 - a) + ((bg >> 0) & 255) * a), 0, 255);
         this->stroke = red | (green << 8) | (blue << 16) | (255 < 24);
         this->stroke_width = 6;
     }
     return this;
 }
 
-struct rr_ui_element *rr_ui_set_fill_stroke(struct rr_ui_element *this, uint32_t fill, uint32_t stroke)
+struct rr_ui_element *rr_ui_set_fill_stroke(struct rr_ui_element *this,
+                                            uint32_t fill, uint32_t stroke)
 {
     this->fill = fill;
     this->stroke = stroke;
@@ -179,7 +180,8 @@ void rr_ui_h_container_set(struct rr_ui_element *c)
         element->h_justify = -1;
         element->x = width;
         element->y = (-element->v_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 || element->height == 0)
+        if (element->completely_hidden || element->width == 0 ||
+            element->height == 0)
             continue;
 
         width += element->width * (1 - c->allow_overlap) + inner_spacing;
@@ -211,7 +213,8 @@ void rr_ui_v_container_set(struct rr_ui_element *c)
         element->v_justify = -1;
         element->y = height;
         element->x = (-element->h_justify) * (outer_spacing);
-        if (element->completely_hidden || element->width == 0 || element->height == 0)
+        if (element->completely_hidden || element->width == 0 ||
+            element->height == 0)
             continue;
 
         height += element->height * (1 - c->allow_overlap) + inner_spacing;
@@ -261,9 +264,12 @@ void rr_ui_grid_container_set(struct rr_ui_element *c)
         w = element->abs_width;
         h = element->abs_height;
         if (count - pos > mod)
-            element->x = outer_spacing + (pos % data->width) * (w + inner_spacing);
+            element->x =
+                outer_spacing + (pos % data->width) * (w + inner_spacing);
         else
-            element->x = outer_spacing + (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
+            element->x =
+                outer_spacing +
+                (pos % data->width + (width - mod) * 0.5) * (w + inner_spacing);
         element->y = outer_spacing + (pos / data->width) * (h + inner_spacing);
         if (element->completely_hidden)
             continue;
@@ -296,9 +302,10 @@ void rr_ui_container_refactor(struct rr_ui_element *c, struct rr_game *game)
         for (uint64_t i = 0; i < c->elements.size; ++i)
         {
             struct rr_ui_element *element = c->elements.start[i];
-            element->animation =
-                rr_lerp(element->animation, element->should_show(element, game) == 0,
-                        20 * game->lerp_delta + (1 - 20 * game->lerp_delta) * element->first_frame);
+            element->animation = rr_lerp(
+                element->animation, element->should_show(element, game) == 0,
+                20 * game->lerp_delta +
+                    (1 - 20 * game->lerp_delta) * element->first_frame);
             uint8_t before_hidden = element->completely_hidden;
             element->completely_hidden = element->animation > 0.99;
             if (element->completely_hidden && before_hidden == 0)

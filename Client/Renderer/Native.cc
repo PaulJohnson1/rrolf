@@ -241,8 +241,9 @@ extern "C"
     }
     float rr_renderer_get_text_size(char const *a) { return 0; }
 
-    void rr_renderer_draw_translated_image(struct rr_renderer *self, struct rr_renderer *other, float x, float y)
+    void rr_renderer_draw_translated_image(struct rr_renderer *self,
+                                           struct rr_renderer *other, float x,
+                                           float y)
     {
-
     }
 }

@@ -20,27 +20,39 @@
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 
-static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+static uint8_t is_close_enough_to_parent(struct rr_simulation *simulation,
+                                         EntityIdx seeker, EntityIdx target,
+                                         void *captures)
 {
     struct rr_component_physical *parent_physical = captures;
-    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-    return ((physical->x - parent_physical->x) * (physical->x - parent_physical->x) + 
-    (physical->y - parent_physical->y) * (physical->y - parent_physical->y) < 1000 * 1000);
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, target);
+    return ((physical->x - parent_physical->x) *
+                    (physical->x - parent_physical->x) +
+                (physical->y - parent_physical->y) *
+                    (physical->y - parent_physical->y) <
+            1000 * 1000);
 }
 
 uint8_t has_new_target(struct rr_component_ai *ai,
-                              struct rr_simulation *simulation)
+                       struct rr_simulation *simulation)
 {
     if (ai->target_entity == RR_NULL_ENTITY ||
         !rr_simulation_entity_alive(simulation, ai->target_entity))
     {
-        struct rr_component_relations *relations = rr_simulation_get_relations(simulation, ai->parent_id);
+        struct rr_component_relations *relations =
+            rr_simulation_get_relations(simulation, ai->parent_id);
         EntityIdx target_id;
         if (relations->team == rr_simulation_team_id_mobs)
-            target_id = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1800, NULL, no_filter);
+            target_id = rr_simulation_find_nearest_enemy(
+                simulation, ai->parent_id, 1800, NULL, no_filter);
         else
-            target_id = rr_simulation_find_nearest_enemy(simulation, ai->parent_id, 1800, rr_simulation_get_physical(simulation, relations->owner), is_close_enough_to_parent);
-        ai->target_entity = rr_simulation_get_entity_hash(simulation, target_id);
+            target_id = rr_simulation_find_nearest_enemy(
+                simulation, ai->parent_id, 1800,
+                rr_simulation_get_physical(simulation, relations->owner),
+                is_close_enough_to_parent);
+        ai->target_entity =
+            rr_simulation_get_entity_hash(simulation, target_id);
     }
     if (ai->target_entity != RR_NULL_ENTITY &&
         rr_simulation_entity_alive(simulation, ai->target_entity))
@@ -53,7 +65,7 @@ uint8_t has_new_target(struct rr_component_ai *ai,
         }
     }
     else if (!(ai->ai_state == rr_ai_state_idle ||
-            ai->ai_state == rr_ai_state_idle_moving))
+               ai->ai_state == rr_ai_state_idle_moving))
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;
@@ -64,11 +76,12 @@ uint8_t has_new_target(struct rr_component_ai *ai,
 
 uint8_t ai_is_passive(struct rr_component_ai *ai)
 {
-    return ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving;
+    return ai->ai_state == rr_ai_state_idle ||
+           ai->ai_state == rr_ai_state_idle_moving;
 }
 
-struct rr_vector predict(struct rr_vector delta,
-                                struct rr_vector velocity, float speed)
+struct rr_vector predict(struct rr_vector delta, struct rr_vector velocity,
+                         float speed)
 {
     float distance = rr_vector_get_magnitude(&delta);
     if (speed != 0)
@@ -110,7 +123,8 @@ void tick_idle_move_default(EntityIdx entity, struct rr_simulation *simulation)
     rr_vector_add(&physical->acceleration, &accel);
 }
 
-void tick_idle_move_sinusoid(EntityIdx entity, struct rr_simulation *simulation, float speed)
+void tick_idle_move_sinusoid(EntityIdx entity, struct rr_simulation *simulation,
+                             float speed)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -122,7 +136,8 @@ void tick_idle_move_sinusoid(EntityIdx entity, struct rr_simulation *simulation,
     rr_vector_add(&physical->acceleration, &accel);
 }
 
-uint8_t tick_summon_return_to_owner(EntityIdx entity, struct rr_simulation *simulation)
+uint8_t tick_summon_return_to_owner(EntityIdx entity,
+                                    struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
@@ -140,8 +155,7 @@ uint8_t tick_summon_return_to_owner(EntityIdx entity, struct rr_simulation *simu
     float dx = flower_physical->x - physical->x;
     float dy = flower_physical->y - physical->y;
     if (ai->ai_state == rr_ai_state_returning_to_owner &&
-            dx * dx + dy * dy >
-                (250 + physical->radius) * (250 + physical->radius))
+        dx * dx + dy * dy > (250 + physical->radius) * (250 + physical->radius))
     {
         struct rr_vector accel = {dx, dy};
         rr_vector_set_magnitude(&accel, RR_PLAYER_SPEED * 1.2);
@@ -151,7 +165,7 @@ uint8_t tick_summon_return_to_owner(EntityIdx entity, struct rr_simulation *simu
         return 1;
     }
     else if (dx * dx + dy * dy >
-                (1000 + physical->radius) * (1000 + physical->radius))
+             (1000 + physical->radius) * (1000 + physical->radius))
     {
         ai->ai_state = rr_ai_state_returning_to_owner;
         struct rr_vector accel = {dx, dy};

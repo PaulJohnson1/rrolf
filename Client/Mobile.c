@@ -17,20 +17,22 @@
 
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Socket.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Socket.h>
 #include <Shared/pb.h>
 
 static uint8_t joystick_press = 255;
 static uint8_t attack_press = 255;
 static uint8_t defend_press = 255;
 
-static void draw_mobile_joystick(struct rr_game *this, struct proto_bug *encoder)
+static void draw_mobile_joystick(struct rr_game *this,
+                                 struct proto_bug *encoder)
 {
     struct rr_renderer *renderer = this->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_translate(renderer, 200 * renderer->scale, renderer->height / 2);
+    rr_renderer_translate(renderer, 200 * renderer->scale,
+                          renderer->height / 2);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0x80000000);
     rr_renderer_begin_path(renderer);
@@ -38,9 +40,11 @@ static void draw_mobile_joystick(struct rr_game *this, struct proto_bug *encoder
     rr_renderer_fill(renderer);
     float cx = 200 * renderer->scale;
     float cy = renderer->height / 2;
-    if (joystick_press != 255 && this->input_data->touches[joystick_press].active)
+    if (joystick_press != 255 &&
+        this->input_data->touches[joystick_press].active)
     {
-        struct rr_input_touch *touch = &this->input_data->touches[joystick_press];
+        struct rr_input_touch *touch =
+            &this->input_data->touches[joystick_press];
         struct rr_vector delta = {touch->touch_x - cx, touch->touch_y - cy};
         if (rr_vector_magnitude_cmp(&delta, 100 * renderer->scale) == 1)
             rr_vector_set_magnitude(&delta, 100 * renderer->scale);
@@ -61,7 +65,8 @@ static void draw_mobile_joystick(struct rr_game *this, struct proto_bug *encoder
             struct rr_input_touch *touch = &this->input_data->touches[i];
             float x = touch->touch_x;
             float y = touch->touch_y;
-            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) < 100 * 100 * renderer->scale * renderer->scale)
+            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <
+                100 * 100 * renderer->scale * renderer->scale)
             {
                 joystick_press = i;
                 break;
@@ -78,7 +83,8 @@ static uint8_t draw_mobile_attack_button(struct rr_game *this)
     struct rr_renderer *renderer = this->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_translate(renderer, renderer->width - 250 * renderer->scale, renderer->height / 2);
+    rr_renderer_translate(renderer, renderer->width - 250 * renderer->scale,
+                          renderer->height / 2);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0x80000000);
     rr_renderer_begin_path(renderer);
@@ -101,7 +107,8 @@ static uint8_t draw_mobile_attack_button(struct rr_game *this)
             struct rr_input_touch *touch = &this->input_data->touches[i];
             float x = touch->touch_x;
             float y = touch->touch_y;
-            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) < 100 * 100 * renderer->scale * renderer->scale)
+            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <
+                100 * 100 * renderer->scale * renderer->scale)
             {
                 attack_press = i;
                 break;
@@ -116,7 +123,8 @@ static uint8_t draw_mobile_defend_button(struct rr_game *this)
     struct rr_renderer *renderer = this->renderer;
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
-    rr_renderer_translate(renderer, renderer->width - 100 * renderer->scale, renderer->height / 2 + 100 * renderer->scale);
+    rr_renderer_translate(renderer, renderer->width - 100 * renderer->scale,
+                          renderer->height / 2 + 100 * renderer->scale);
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, 0x80000000);
     rr_renderer_begin_path(renderer);
@@ -139,7 +147,8 @@ static uint8_t draw_mobile_defend_button(struct rr_game *this)
             struct rr_input_touch *touch = &this->input_data->touches[i];
             float x = touch->touch_x;
             float y = touch->touch_y;
-            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) < 50 * 50 * renderer->scale * renderer->scale)
+            if ((x - cx) * (x - cx) + (y - cy) * (y - cy) <
+                50 * 50 * renderer->scale * renderer->scale)
             {
                 defend_press = i;
                 break;
@@ -156,9 +165,10 @@ void rr_write_serverbound_packet_mobile(struct rr_game *this)
     proto_bug_write_uint8(&encoder, rr_serverbound_input, "header");
     uint8_t is_attack = draw_mobile_attack_button(this);
     uint8_t is_defend = draw_mobile_defend_button(this);
-    proto_bug_write_uint8(&encoder, (1 << 6) | (is_attack << 4) | (is_defend << 5), "movement kb flags");
+    proto_bug_write_uint8(&encoder,
+                          (1 << 6) | (is_attack << 4) | (is_defend << 5),
+                          "movement kb flags");
     draw_mobile_joystick(this, &encoder);
     rr_websocket_send(&this->socket, encoder.current - encoder.start);
     return;
 }
-

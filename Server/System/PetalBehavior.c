@@ -503,15 +503,19 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
         rr_simulation_get_player_info(simulation, id);
     if (!rr_simulation_entity_alive(simulation, player_info->flower_id))
         return;
-    struct rr_component_physical *flower_physical = rr_simulation_get_physical(simulation, player_info->flower_id);
+    struct rr_component_physical *flower_physical =
+        rr_simulation_get_physical(simulation, player_info->flower_id);
     petal_modifiers(simulation, player_info);
     uint32_t rotation_pos = 0;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {
-        struct rr_component_player_info_petal_slot *slot = &player_info->slots[outer];
+        struct rr_component_player_info_petal_slot *slot =
+            &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         uint8_t max_cd = 0;
-        slot->count = slot->id == rr_petal_id_peas ? 1 : RR_PETAL_DATA[slot->id].count[slot->rarity];
+        slot->count = slot->id == rr_petal_id_peas
+                          ? 1
+                          : RR_PETAL_DATA[slot->id].count[slot->rarity];
         for (uint64_t inner = 0; inner < slot->count; ++inner)
         {
             if (inner == 0 || data->clump_radius == 0)
@@ -534,13 +538,14 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     p_petal->entity_hash = rr_simulation_get_entity_hash(
                         simulation,
                         rr_simulation_alloc_petal(
-                            simulation, player_info->arena,
-                            flower_physical->x, flower_physical->y,
-                            slot->id, slot->rarity, player_info->flower_id));
+                            simulation, player_info->arena, flower_physical->x,
+                            flower_physical->y, slot->id, slot->rarity,
+                            player_info->flower_id));
             }
             else
             {
-                if (rr_simulation_get_physical(simulation, p_petal->entity_hash)->arena != player_info->arena)
+                if (rr_simulation_get_physical(simulation, p_petal->entity_hash)
+                        ->arena != player_info->arena)
                 {
                     rr_simulation_request_entity_deletion(simulation,
                                                           p_petal->entity_hash);

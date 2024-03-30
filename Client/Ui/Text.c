@@ -19,9 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
 
 static void text_on_render(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -66,8 +66,7 @@ struct rr_ui_element *rr_ui_text_init(char const *text, float size,
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct rr_ui_text_metadata *data = malloc(sizeof *data);
-    this->abs_width = this->width =
-        rr_renderer_get_text_size(text) * size;
+    this->abs_width = this->width = rr_renderer_get_text_size(text) * size;
     rr_ui_set_background(this, fill);
     this->abs_height = this->height = data->size = size;
     data->text = text;

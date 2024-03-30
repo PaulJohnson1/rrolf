@@ -15,9 +15,9 @@
 
 #include <Client/Ui/Ui.h>
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
 
 #include <Client/Game.h>
@@ -32,7 +32,8 @@ static void choose_element_on_render(struct rr_ui_element *this,
     if (to_show != data->previously_shown)
     {
         if (data->not_first_frame)
-            this->elements.start[data->previously_shown]->on_hide(this->elements.start[data->previously_shown], game);
+            this->elements.start[data->previously_shown]->on_hide(
+                this->elements.start[data->previously_shown], game);
         else
         {
             for (uint8_t i = 0; i < this->elements.size; ++i)
@@ -48,7 +49,7 @@ static void choose_element_on_render(struct rr_ui_element *this,
 }
 
 static void choose_element_poll_events(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                       struct rr_game *game)
 {
     struct rr_ui_choose_element_metadata *data = this->data;
     struct rr_ui_element *show = this->elements.start[data->previously_shown];
@@ -58,7 +59,7 @@ static void choose_element_poll_events(struct rr_ui_element *this,
 }
 
 static void choose_element_on_hide(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                   struct rr_game *game)
 {
     for (uint32_t i = 0; i < this->elements.size; ++i)
         this->elements.start[i]->on_hide(this->elements.start[i], game);

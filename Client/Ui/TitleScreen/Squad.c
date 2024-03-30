@@ -15,24 +15,24 @@
 
 #include <Client/Ui/Ui.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/DOM.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Simulation.h>
-#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Simulation.h>
 #include <Client/Ui/Engine.h>
 
 #include <Shared/Api.h>
-#include <Shared/pb.h>
 #include <Shared/Rivet.h>
-#include <Shared/Utilities.h>
 #include <Shared/Squad.h>
+#include <Shared/Utilities.h>
+#include <Shared/pb.h>
 
 struct squad_flower_metadata
 {
@@ -102,8 +102,8 @@ static uint8_t choose(struct rr_ui_element *this, struct rr_game *game)
     return member->in_use;
 }
 
-static struct rr_ui_element *
-rr_ui_flower_init(struct rr_squad_member *member, float size)
+static struct rr_ui_element *rr_ui_flower_init(struct rr_squad_member *member,
+                                               float size)
 {
     struct rr_ui_element *this = rr_ui_element_init();
     struct squad_flower_metadata *data = malloc(sizeof *data);
@@ -150,7 +150,8 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
-    rr_renderer_draw_static_petal(renderer, data->prev_id, data->prev_rarity, 1);
+    rr_renderer_draw_static_petal(renderer, data->prev_id, data->prev_rarity,
+                                  1);
 }
 
 static struct rr_ui_element *
@@ -185,7 +186,8 @@ static void background_change_animate(struct rr_ui_element *this,
         this->container->fill = 0x40000000;
 }
 
-static void squad_container_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void squad_container_on_event(struct rr_ui_element *this,
+                                     struct rr_game *game)
 {
     struct rr_ui_container_metadata *data = this->data;
     struct rr_squad_member *member = data->data;
@@ -194,7 +196,8 @@ static void squad_container_on_event(struct rr_ui_element *this, struct rr_game 
     rr_ui_render_tooltip_above(this, member->tooltip, game);
 }
 
-static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t kick_player_should_slow(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     struct squad_pos_metadata *data = this->data;
     uint8_t p = data->pos;
@@ -212,7 +215,8 @@ static uint8_t kick_player_should_slow(struct rr_ui_element *this, struct rr_gam
     return 1;
 }
 
-static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *game)
+static void kick_player_on_event(struct rr_ui_element *this,
+                                 struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -227,7 +231,8 @@ static void kick_player_on_event(struct rr_ui_element *this, struct rr_game *gam
 
 static struct rr_ui_element *kick_player_button_init(uint8_t pos)
 {
-    struct rr_ui_element *this = rr_ui_close_button_init(20, kick_player_on_event);
+    struct rr_ui_element *this =
+        rr_ui_close_button_init(20, kick_player_on_event);
     this->no_reposition = 1;
     this->should_show = kick_player_should_slow;
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
@@ -237,7 +242,8 @@ static struct rr_ui_element *kick_player_button_init(uint8_t pos)
     return this;
 }
 
-struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, uint8_t pos)
+struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad,
+                                                  uint8_t pos)
 {
     struct rr_squad_member *member = &squad->squad_members[pos];
     struct rr_ui_element *b = rr_ui_text_init("Empty", 15, 0xffffffff);
@@ -249,9 +255,7 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, u
                               -1, -1));
     struct rr_ui_element *top = rr_ui_v_container_init(
         rr_ui_container_init(), 0, 10, rr_ui_flower_init(member, 50),
-        rr_ui_text_init(member->nickname, 14, 0xffffffff), 
-        NULL
-    );
+        rr_ui_text_init(member->nickname, 14, 0xffffffff), NULL);
     rr_ui_v_pad(rr_ui_set_justify(top, 0, -1), 10);
     rr_ui_v_pad(rr_ui_set_justify(loadout, 0, 1), 10);
     top->prevent_on_event = loadout->prevent_on_event = 1;
@@ -277,7 +281,8 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad, u
         0x40ffffff);
 }
 
-static uint8_t squad_container_should_show(struct rr_ui_element *this, struct rr_game *game)
+static uint8_t squad_container_should_show(struct rr_ui_element *this,
+                                           struct rr_game *game)
 {
     struct rr_game_squad *squad = this->data;
     for (uint32_t i = 0; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -288,24 +293,20 @@ static uint8_t squad_container_should_show(struct rr_ui_element *this, struct rr
 
 struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
 {
-    struct rr_ui_element *this = rr_ui_v_container_init(rr_ui_container_init(), 0, 10, 
-        rr_ui_h_container_init(
-            rr_ui_container_init(), 0, 10,
-            squad_player_container_init(squad, 0),
-            squad_player_container_init(squad, 1),
-            squad_player_container_init(squad, 2),
-            squad_player_container_init(squad, 3),
-            NULL
-        ),
+    struct rr_ui_element *this = rr_ui_v_container_init(
+        rr_ui_container_init(), 0, 10,
+        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                               squad_player_container_init(squad, 0),
+                               squad_player_container_init(squad, 1),
+                               squad_player_container_init(squad, 2),
+                               squad_player_container_init(squad, 3), NULL),
         rr_ui_set_justify(
-            rr_ui_h_container_init(rr_ui_container_init(), 0, 0, 
+            rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 0,
                 rr_ui_text_init("Code: ", 16, 0xffffffff),
-                rr_ui_text_init(squad->squad_code, 16, 0xffffffff),
-                NULL
-            ),
-        -1, -1),
-        NULL
-    );
+                rr_ui_text_init(squad->squad_code, 16, 0xffffffff), NULL),
+            -1, -1),
+        NULL);
     this->data = squad;
     this->should_show = squad_container_should_show;
     return this;
@@ -331,22 +332,22 @@ static void join_button_on_event(struct rr_ui_element *this,
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
+            proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready,
+                                  "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
 }
 
-static void copy_code_on_event(struct rr_ui_element *this,
-                                 struct rr_game *game)
+static void copy_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
         if (game->socket_ready)
-            rr_copy_string(game->squad.squad_code);   
+            rr_copy_string(game->squad.squad_code);
 }
 
 static void toggle_private_on_event(struct rr_ui_element *this,
-                                 struct rr_game *game)
+                                    struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -354,21 +355,21 @@ static void toggle_private_on_event(struct rr_ui_element *this,
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder, rr_serverbound_private_update, "header");
+            proto_bug_write_uint8(&encoder, rr_serverbound_private_update,
+                                  "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
     }
 }
 
-static void join_code_on_event(struct rr_ui_element *this,
-                                 struct rr_game *game)
+static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         if (game->socket_pending)
             return;
         game->socket_pending = 1;
-        #ifdef RIVET_BUILD
+#ifdef RIVET_BUILD
         {
             if (game->socket_ready)
                 rr_websocket_disconnect(&game->socket, game);
@@ -379,7 +380,7 @@ static void join_code_on_event(struct rr_ui_element *this,
                 *link++ = *code++;
             rr_api_get_server_alias(server, game);
         }
-        #endif
+#endif
         struct proto_bug encoder2;
         proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
@@ -389,8 +390,9 @@ static void join_code_on_event(struct rr_ui_element *this,
             ++code;
         ++code;
         proto_bug_write_string(&encoder2, code, 7, "connect link");
-        
-        rr_websocket_queue_send(&game->socket, encoder2.current - encoder2.start);
+
+        rr_websocket_queue_send(&game->socket,
+                                encoder2.current - encoder2.start);
         game->connect_code[0] = 0;
     }
 }
@@ -405,16 +407,17 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
         {
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join,
+                                  "header");
             proto_bug_write_uint8(&encoder2, 0, "join type");
-            
+
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
     }
 }
 
 static void squad_create_button_on_event(struct rr_ui_element *this,
-                                       struct rr_game *game)
+                                         struct rr_game *game)
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -423,9 +426,10 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
         {
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join,
+                                  "header");
             proto_bug_write_uint8(&encoder2, 2, "join type");
-            
+
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
     }
@@ -447,7 +451,8 @@ struct rr_ui_element *rr_ui_squad_button_init()
 
 struct rr_ui_element *rr_ui_create_squad_button_init()
 {
-    struct rr_ui_element *this = rr_ui_labeled_button_init("Create Squad", 36, 0);
+    struct rr_ui_element *this =
+        rr_ui_labeled_button_init("Create Squad", 36, 0);
     this->animate = ready_button_animate;
     this->on_event = squad_create_button_on_event;
     return this;
@@ -480,7 +485,8 @@ struct rr_ui_element *rr_ui_join_squad_code_button_init()
 
 struct rr_ui_element *rr_ui_toggle_private_button_init(struct rr_game *game)
 {
-    struct rr_ui_element *this = rr_ui_toggle_box_init(&game->squad.squad_private);
+    struct rr_ui_element *this =
+        rr_ui_toggle_box_init(&game->squad.squad_private);
     this->on_event = toggle_private_on_event;
     return this;
 }

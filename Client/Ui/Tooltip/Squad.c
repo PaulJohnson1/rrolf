@@ -16,12 +16,12 @@
 #include <Client/Ui/Ui.h>
 
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
@@ -61,7 +61,8 @@ static void squad_loadout_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
-    rr_renderer_draw_static_petal(renderer, data->prev_id, data->prev_rarity, 1);
+    rr_renderer_draw_static_petal(renderer, data->prev_id, data->prev_rarity,
+                                  1);
 }
 
 static struct rr_ui_element *
@@ -93,24 +94,25 @@ static uint8_t dev_text_choose(struct rr_ui_element *this, struct rr_game *game)
 
 static struct rr_ui_element *dev_text_init(struct rr_squad_member *member)
 {
-    struct rr_ui_element *this = rr_ui_multi_choose_element_init(dev_text_choose,
-        rr_ui_text_init("You", 20, 0xffffffff),
+    struct rr_ui_element *this = rr_ui_multi_choose_element_init(
+        dev_text_choose, rr_ui_text_init("You", 20, 0xffffffff),
         rr_ui_text_init("Player", 20, 0xffffffff),
-        rr_ui_text_init("Developer", 20, 0xffffffff),
-        NULL);
+        rr_ui_text_init("Developer", 20, 0xffffffff), NULL);
     struct rr_ui_choose_element_metadata *data = this->data;
     data->data = member;
     return this;
 }
 
-struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *member)
+struct rr_ui_element *
+rr_ui_squad_player_tooltip_init(struct rr_squad_member *member)
 {
     struct rr_ui_element *this = rr_ui_set_justify(
         rr_ui_set_background(
-            rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                dev_text_init(member),
+            rr_ui_v_container_init(
+                rr_ui_container_init(), 10, 10, dev_text_init(member),
                 rr_ui_text_init(member->nickname, 16, 0xffffffff),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 
+                rr_ui_h_container_init(
+                    rr_ui_container_init(), 0, 5,
                     squad_loadout_button_init(&member->loadout[0], 1),
                     squad_loadout_button_init(&member->loadout[1], 1),
                     squad_loadout_button_init(&member->loadout[2], 1),
@@ -120,10 +122,9 @@ struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *me
                     squad_loadout_button_init(&member->loadout[6], 1),
                     squad_loadout_button_init(&member->loadout[7], 1),
                     squad_loadout_button_init(&member->loadout[8], 1),
-                    squad_loadout_button_init(&member->loadout[9], 1),
-                    NULL
-                ),
-                rr_ui_h_container_init(rr_ui_container_init(), 0, 5, 
+                    squad_loadout_button_init(&member->loadout[9], 1), NULL),
+                rr_ui_h_container_init(
+                    rr_ui_container_init(), 0, 5,
                     squad_loadout_button_init(&member->loadout[10], 0),
                     squad_loadout_button_init(&member->loadout[11], 0),
                     squad_loadout_button_init(&member->loadout[12], 0),
@@ -133,13 +134,10 @@ struct rr_ui_element *rr_ui_squad_player_tooltip_init(struct rr_squad_member *me
                     squad_loadout_button_init(&member->loadout[16], 0),
                     squad_loadout_button_init(&member->loadout[17], 0),
                     squad_loadout_button_init(&member->loadout[18], 0),
-                    squad_loadout_button_init(&member->loadout[19], 0),
-                    NULL
-                ),
-                NULL
-            )
-        , 0x80000000)
-    , -1, -1);
+                    squad_loadout_button_init(&member->loadout[19], 0), NULL),
+                NULL),
+            0x80000000),
+        -1, -1);
     this->poll_events = rr_ui_no_focus;
     rr_ui_link_toggle(this, rr_ui_never_show);
     return this;

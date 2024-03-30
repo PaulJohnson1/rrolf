@@ -50,13 +50,16 @@ int rr_on_socket_event_lws(struct lws *wsi, enum lws_callback_reasons reason,
     switch (reason)
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
-        rr_game_websocket_on_event_function(rr_websocket_event_type_open, NULL, this->user_data, 0);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_open, NULL,
+                                            this->user_data, 0);
         break;
     case LWS_CALLBACK_CLIENT_RECEIVE:
-        rr_game_websocket_on_event_function(rr_websocket_event_type_data, in, this->user_data, size);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_data, in,
+                                            this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CLOSED:
-        rr_game_websocket_on_event_function(rr_websocket_event_type_close, NULL, this->user_data, size);
+        rr_game_websocket_on_event_function(rr_websocket_event_type_close, NULL,
+                                            this->user_data, size);
         break;
     case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
         fputs((char *)in, stderr);
@@ -86,19 +89,21 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
             if (Module.socket && Module.socket.readyState < 2)
                 Module.socket.close();
             (function() {
-                let socket = Module.socket =
-                    new WebSocket(string);
+                let socket = Module.socket = new WebSocket(string);
                 socket.binaryType = "arraybuffer";
-                socket.onopen = function() {
+                socket.onopen = function()
+                {
                     _rr_on_socket_event_emscripten($0, 0, 0, 0);
                 };
-                socket.onclose = function(a) {
+                socket.onclose = function(a)
+                {
                     _rr_on_socket_event_emscripten($0, 1, 0, a.code);
                 };
                 socket.onmessage = function(event)
                 {
                     HEAPU8.set(new Uint8Array(event.data), $2);
-                    _rr_on_socket_event_emscripten($0, 2, $2, new Uint8Array(event.data).length);
+                    _rr_on_socket_event_emscripten(
+                        $0, 2, $2, new Uint8Array(event.data).length);
                 };
             })();
         },
@@ -177,15 +182,17 @@ void rr_websocket_send_all(struct rr_websocket *this)
         return;
     for (uint32_t i = 0; i < at; ++i)
     {
-        rr_encrypt(outputs[i], packet_lengths[i], this->serverbound_encryption_key);
+        rr_encrypt(outputs[i], packet_lengths[i],
+                   this->serverbound_encryption_key);
         this->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
-    #ifndef EMSCRIPTEN
-        lws_write(this->socket, outputs[i], packet_lengths[i], LWS_WRITE_BINARY);
-    #else
+#ifndef EMSCRIPTEN
+        lws_write(this->socket, outputs[i], packet_lengths[i],
+                  LWS_WRITE_BINARY);
+#else
         EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
-            outputs[i], packet_lengths[i]);
-    #endif
+               outputs[i], packet_lengths[i]);
+#endif
         free(outputs[i]);
     }
     at = 0;

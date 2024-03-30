@@ -50,7 +50,9 @@ static void container_on_render(struct rr_ui_element *this,
         if (this != game->window)
             rr_renderer_scale(renderer, renderer->scale);
         rr_renderer_begin_path(renderer);
-        rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2, this->abs_width, this->abs_height, 6);
+        rr_renderer_round_rect(renderer, -this->abs_width / 2,
+                               -this->abs_height / 2, this->abs_width,
+                               this->abs_height, 6);
         rr_renderer_fill(renderer);
         if (this->fill >= 0xff000000)
         {

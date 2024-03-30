@@ -19,13 +19,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <Client/Game.h>
 #include <Client/Assets/RenderFunctions.h>
+#include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
-#include <Shared/Utilities.h>
 #include <Shared/StaticData.h>
+#include <Shared/Utilities.h>
 
 static void inventory_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
@@ -34,8 +34,7 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
     rr_renderer_draw_background(renderer, data->rarity, 1);
-    rr_renderer_draw_petal_with_name(renderer, data->id,
-                                             data->rarity);
+    rr_renderer_draw_petal_with_name(renderer, data->id, data->rarity);
 }
 
 static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)
@@ -53,9 +52,11 @@ static struct rr_ui_element *tooltip_petal_icon_init(uint8_t id, uint8_t rarity)
 struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
 {
     char *hp = malloc((sizeof *hp) * 16);
-    rr_sprintf(hp, RR_MOB_DATA[id].health * RR_MOB_RARITY_SCALING[rarity].health);
+    rr_sprintf(hp,
+               RR_MOB_DATA[id].health * RR_MOB_RARITY_SCALING[rarity].health);
     char *dmg = malloc((sizeof *dmg) * 16);
-    rr_sprintf(dmg, RR_MOB_DATA[id].damage * RR_MOB_RARITY_SCALING[rarity].damage);
+    rr_sprintf(dmg,
+               RR_MOB_DATA[id].damage * RR_MOB_RARITY_SCALING[rarity].damage);
     struct rr_ui_element *this = rr_ui_set_background(
         rr_ui_v_container_init(
             rr_ui_tooltip_container_init(), 10, 5,
@@ -123,16 +124,16 @@ struct rr_ui_element *rr_ui_mob_tooltip_init(uint8_t id, uint8_t rarity)
         uint8_t min_rar = RR_PETAL_DATA[p_id].min_rarity;
         for (uint8_t r = min_rar + 1; r <= cap + 1; ++r)
         {
-            
-            double end =
-                r == cap + 1 ? 1 : RR_DROP_RARITY_COEFFICIENTS[r];
+
+            double end = r == cap + 1 ? 1 : RR_DROP_RARITY_COEFFICIENTS[r];
             double start = RR_DROP_RARITY_COEFFICIENTS[r - 1];
             if (cap < min_rar)
                 end = 1;
-            float chance =
-                pow(1 - (1 - end) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]) - pow(1 - (1 - start) * seed, RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]);
-            if (chance * 100 <
-                0.01)
+            float chance = pow(1 - (1 - end) * seed,
+                               RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]) -
+                           pow(1 - (1 - start) * seed,
+                               RR_MOB_LOOT_RARITY_COEFFICIENTS[rarity]);
+            if (chance * 100 < 0.01)
                 continue;
             char *d = malloc((sizeof *d) * 16);
             float pct = 100 * chance;

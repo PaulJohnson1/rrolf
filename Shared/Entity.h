@@ -34,16 +34,16 @@ struct rr_id_rarity_pair
     uint8_t rarity;
 };
 
-#define RR_FOR_EACH_COMPONENT \
-    XX(ai, 7) \
-    XX(flower, 5) \
-    XX(centipede, 2) \
-    XX(web, 4) \
-    XX(mob, 11) \
-    XX(health, 10) \
-    XX(arena, 12) \
-    XX(relations, 6) \
-    XX(physical, 3) \
-    XX(drop, 9) \
-    XX(player_info, 1) \
-    XX(petal, 8) 
+#define RR_FOR_EACH_COMPONENT                                                  \
+    XX(ai, 7)                                                                  \
+    XX(flower, 5)                                                              \
+    XX(centipede, 2)                                                           \
+    XX(web, 4)                                                                 \
+    XX(mob, 11)                                                                \
+    XX(health, 10)                                                             \
+    XX(arena, 12)                                                              \
+    XX(relations, 6)                                                           \
+    XX(physical, 3)                                                            \
+    XX(drop, 9)                                                                \
+    XX(player_info, 1)                                                         \
+    XX(petal, 8)

@@ -38,10 +38,10 @@ static void system_reset_colliding_with(EntityIdx entity, void *captures)
         rr_simulation_get_physical(this, entity);
     physical->colliding_with_size = 0;
     EntityIdx owner = rr_simulation_get_relations(this, entity)->owner;
-    if (rr_simulation_entity_alive(this, owner) && rr_simulation_has_physical(this, owner))
+    if (rr_simulation_entity_alive(this, owner) &&
+        rr_simulation_has_physical(this, owner))
         if (physical->arena != rr_simulation_get_physical(this, owner)->arena)
             rr_simulation_request_entity_deletion(this, entity);
-    
 }
 
 static void system_insert_entities(EntityIdx entity, void *_captures)
@@ -51,14 +51,17 @@ static void system_insert_entities(EntityIdx entity, void *_captures)
         rr_simulation_get_physical(this, entity);
     if (rr_simulation_has_health(this, entity))
     {
-        struct rr_component_health *health = rr_simulation_get_health(this, entity);
+        struct rr_component_health *health =
+            rr_simulation_get_health(this, entity);
         if (health->health == 0)
             return;
         rr_component_health_set_flags(health, health->flags & (~2));
     }
-    rr_spatial_hash_insert(&rr_simulation_get_arena(this, physical->arena)->spatial_hash, entity);
+    rr_spatial_hash_insert(
+        &rr_simulation_get_arena(this, physical->arena)->spatial_hash, entity);
 }
-static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a, EntityIdx b)
+static uint8_t should_entities_collide(struct rr_simulation *this, EntityIdx a,
+                                       EntityIdx b)
 {
 #define exclude(component_a, component_b)                                      \
     if (rr_simulation_has_##component_a(this, a) &&                            \
@@ -102,9 +105,8 @@ static void grid_filter_candidates(struct rr_simulation *this,
 #ifndef RIVET_BUILD
         if (physical1->colliding_with_size >= RR_MAX_COLLISION_COUNT)
             puts("entity cram limit exceeded");
-#endif        
+#endif
         physical1->colliding_with[physical1->colliding_with_size++] = entity2;
-
     }
 }
 
@@ -132,7 +134,8 @@ static void find_collisions(EntityIdx entity, void *_captures)
 {
     struct rr_simulation *this = _captures;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, entity);
-    rr_spatial_hash_find_possible_collisions(&arena->spatial_hash, NULL, grid_filter_candidates);
+    rr_spatial_hash_find_possible_collisions(&arena->spatial_hash, NULL,
+                                             grid_filter_candidates);
 }
 
 void rr_system_collision_detection_tick(struct rr_simulation *this)

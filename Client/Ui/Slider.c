@@ -18,9 +18,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
+#include <Client/Ui/Engine.h>
 
 #include <Shared/Utilities.h>
 

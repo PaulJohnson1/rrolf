@@ -29,7 +29,6 @@
 #define RR_BASE_FOV (0.9f)
 #endif
 
-
 struct rr_simulation;
 struct proto_bug;
 RR_SERVER_ONLY(struct rr_squad_member;)
@@ -54,7 +53,7 @@ struct rr_player_info_modifiers
 {
     float drop_pickup_radius;
     float petal_extension;
-    //float rotation_direction;
+    // float rotation_direction;
 };
 
 struct rr_component_player_info
@@ -83,7 +82,10 @@ struct rr_component_player_info
     uint8_t squad;
     uint8_t slot_count;
     RR_SERVER_ONLY(uint8_t *entities_in_view;)
-    RR_SERVER_ONLY(struct rr_id_rarity_pair drops_this_tick[8];) //yes, it's limited to 8. if the player poicks up more than that then it waits until the next tick
+    RR_SERVER_ONLY(struct rr_id_rarity_pair
+                       drops_this_tick[8];) // yes, it's limited to 8. if the
+                                            // player poicks up more than that
+                                            // then it waits until the next tick
     RR_SERVER_ONLY(uint8_t drops_this_tick_size;)
 };
 

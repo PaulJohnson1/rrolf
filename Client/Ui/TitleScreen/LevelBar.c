@@ -27,7 +27,7 @@ struct level_bar_metadata
 };
 
 void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
-{   
+{
     struct level_bar_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
@@ -56,7 +56,9 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
         }
         else
         {
-            data->lerp_xp = rr_lerp(data->lerp_xp, xp_to_reach_level(data->level + 1), 15 * game->lerp_delta);
+            data->lerp_xp =
+                rr_lerp(data->lerp_xp, xp_to_reach_level(data->level + 1),
+                        15 * game->lerp_delta);
             if (data->lerp_xp >= xp_to_reach_level(data->level + 1) * 0.995)
             {
                 ++data->level;
@@ -69,14 +71,20 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_set_line_cap(renderer, 1);
     rr_renderer_set_line_width(renderer, this->abs_height);
     rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, this->abs_height / 2 - this->abs_width / 2, 0);
-    rr_renderer_line_to(renderer, this->abs_width / 2 - this->abs_height / 2, 0);
+    rr_renderer_move_to(renderer, this->abs_height / 2 - this->abs_width / 2,
+                        0);
+    rr_renderer_line_to(renderer, this->abs_width / 2 - this->abs_height / 2,
+                        0);
     rr_renderer_stroke(renderer);
     rr_renderer_set_stroke(renderer, 0xff75dd34);
     rr_renderer_set_line_width(renderer, this->abs_height * 0.8);
     rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, this->abs_height / 2 - this->abs_width / 2, 0);
-    rr_renderer_line_to(renderer, this->abs_height / 2 - this->abs_width / 2 + (this->abs_width - this->abs_height) * ratio, 0);
+    rr_renderer_move_to(renderer, this->abs_height / 2 - this->abs_width / 2,
+                        0);
+    rr_renderer_line_to(renderer,
+                        this->abs_height / 2 - this->abs_width / 2 +
+                            (this->abs_width - this->abs_height) * ratio,
+                        0);
     rr_renderer_stroke(renderer);
     rr_renderer_set_stroke(renderer, 0xff222222);
     rr_renderer_set_fill(renderer, 0xffffffff);
@@ -89,7 +97,7 @@ void level_bar_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_begin_path(renderer);
     rr_renderer_stroke_text(renderer, out, 0, 0);
     rr_renderer_fill_text(renderer, out, 0, 0);
-    //printf("%.0f %d\n", xp, next_level - 1);
+    // printf("%.0f %d\n", xp, next_level - 1);
 }
 
 struct rr_ui_element *rr_ui_level_bar_init(float width)

@@ -62,8 +62,7 @@ extern "C"
     uint64_t proto_bug_read_varuint_internal(struct proto_bug *);
     float proto_bug_read_float32_internal(struct proto_bug *);
     double proto_bug_read_float64_internal(struct proto_bug *);
-    void proto_bug_read_string_internal(struct proto_bug *, char *,
-                                        uint64_t);
+    void proto_bug_read_string_internal(struct proto_bug *, char *, uint64_t);
 
 #ifndef PROTO_BUG_NDEBUG
     void proto_bug_write_uint8_debug(struct proto_bug *, uint8_t,

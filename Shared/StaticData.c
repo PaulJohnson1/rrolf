@@ -208,8 +208,8 @@ double RR_MOB_WAVE_RARITY_COEFFICIENTS[rr_rarity_id_max + 1] = {
 
 double RR_DROP_RARITY_COEFFICIENTS[rr_rarity_id_exotic + 2] = {
     0, 1, 8, 15, 40, 150, 500, 2500};
-double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {
-    2.5, 4, 6, 15, 35, 50, 125, 150};
+double RR_MOB_LOOT_RARITY_COEFFICIENTS[rr_rarity_id_max] = {2.5, 4,  6,   15,
+                                                            35,  50, 125, 150};
 
 static void init_game_coefficients()
 {
@@ -263,7 +263,7 @@ static void init_game_coefficients()
     ((x + a < 0 || y + b < 0 || x + a >= size / 2 || y + b >= size / 2)        \
          ? 0                                                                   \
          : template[(y + b) * size / 2 + x + a])
-#define maze_grid(x, y) maze[(y) * size + (x)]
+#define maze_grid(x, y) maze[(y)*size + (x)]
 
 static void init_maze(uint32_t size, uint8_t *template,
                       struct rr_maze_grid *maze)
@@ -548,15 +548,14 @@ RR_DEFINE_MAZE(HELL_CREEK, 80) = {
 // clang-format on
 RR_DEFINE_MAZE(BURROW, 4) = {{1, 1}, {0, 1}};
 
-#define MAZE_ENTRY(MAZE, GRID_SIZE)                               \
-        (sizeof(RR_MAZE_##MAZE[0]) / sizeof(struct rr_maze_grid)),\
-        GRID_SIZE,  \
-        &RR_MAZE_##MAZE[0][0] 
+#define MAZE_ENTRY(MAZE, GRID_SIZE)                                            \
+    (sizeof(RR_MAZE_##MAZE[0]) / sizeof(struct rr_maze_grid)), GRID_SIZE,      \
+        &RR_MAZE_##MAZE[0][0]
 
 struct rr_maze_declaration RR_MAZES[rr_biome_id_max] = {
-    {MAZE_ENTRY(HELL_CREEK, 1024), {{6,13},{11,15},{16,17},{22,23}}},
-    {MAZE_ENTRY(HELL_CREEK, 1024), {{6,13},{11,15},{16,17},{22,23}}},
-    {MAZE_ENTRY(BURROW, 512), {{0},{0},{0},{0}}},
+    {MAZE_ENTRY(HELL_CREEK, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
+    {MAZE_ENTRY(HELL_CREEK, 1024), {{6, 13}, {11, 15}, {16, 17}, {22, 23}}},
+    {MAZE_ENTRY(BURROW, 512), {{0}, {0}, {0}, {0}}},
 };
 
 uint8_t RR_GLOBAL_BIOME = rr_biome_id_hell_creek;

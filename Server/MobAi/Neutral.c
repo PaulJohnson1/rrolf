@@ -20,13 +20,14 @@
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 
-void tick_ai_neutral_default(EntityIdx entity,
-                                struct rr_simulation *simulation, float speed)
+void tick_ai_neutral_default(EntityIdx entity, struct rr_simulation *simulation,
+                             float speed)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (rr_simulation_entity_alive(simulation, ai->target_entity) && ai_is_passive(ai))
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
+        ai_is_passive(ai))
     {
         ai->ai_state = rr_ai_state_attacking;
         ai->ticks_until_next_action = 25;
@@ -66,13 +67,15 @@ void tick_ai_neutral_default(EntityIdx entity,
     }
 }
 
-void tick_ai_neutral_triceratops(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_neutral_triceratops(EntityIdx entity,
+                                 struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
 
-    if (rr_simulation_entity_alive(simulation, ai->target_entity) && ai_is_passive(ai))
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
+        ai_is_passive(ai))
     {
         ai->ai_state = rr_ai_state_waiting_to_attack;
         ai->ticks_until_next_action = 18;
@@ -139,13 +142,15 @@ void tick_ai_neutral_triceratops(EntityIdx entity, struct rr_simulation *simulat
     }
 }
 
-void tick_ai_neutral_ornithomimus(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_neutral_ornithomimus(EntityIdx entity,
+                                  struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-   
-    if (rr_simulation_entity_alive(simulation, ai->target_entity) && ai_is_passive(ai))
+
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
+        ai_is_passive(ai))
     {
         ai->ai_state = rr_ai_state_attacking;
         ai->ticks_until_next_action = -1;
@@ -169,7 +174,8 @@ void tick_ai_neutral_ornithomimus(EntityIdx entity, struct rr_simulation *simula
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic)
+        if (rr_simulation_get_mob(simulation, entity)->rarity >=
+            rr_rarity_id_exotic)
             physical->bearing_angle = rr_vector_theta(&delta);
         else
             physical->bearing_angle = rr_vector_theta(&delta) + M_PI;
@@ -182,12 +188,14 @@ void tick_ai_neutral_ornithomimus(EntityIdx entity, struct rr_simulation *simula
     }
 }
 
-void tick_ai_neutral_ankylosaurus(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_neutral_ankylosaurus(EntityIdx entity,
+                                  struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
-    if (rr_simulation_entity_alive(simulation, ai->target_entity) && ai_is_passive(ai))
+    if (rr_simulation_entity_alive(simulation, ai->target_entity) &&
+        ai_is_passive(ai))
     {
         ai->ai_state = rr_ai_state_attacking;
         ai->ticks_until_next_action = 10;
@@ -222,7 +230,11 @@ void tick_ai_neutral_ankylosaurus(EntityIdx entity, struct rr_simulation *simula
         ai->ticks_until_next_action = 10;
         if (rr_vector_magnitude_cmp(&delta, 100 + physical->radius) == -1)
         {
-            ai->ai_state = (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic && rr_frand() < 0.2) ? rr_ai_state_exotic_special :  rr_ai_state_charging;
+            ai->ai_state = (rr_simulation_get_mob(simulation, entity)->rarity >=
+                                rr_rarity_id_exotic &&
+                            rr_frand() < 0.2)
+                               ? rr_ai_state_exotic_special
+                               : rr_ai_state_charging;
             ai->ticks_until_next_action = 25;
         }
         break;

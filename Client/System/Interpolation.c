@@ -17,8 +17,8 @@
 
 #include <math.h>
 
-#include <Shared/SimulationCommon.h>
 #include <Shared/Entity.h>
+#include <Shared/SimulationCommon.h>
 #include <Shared/Vector.h>
 
 struct function_captures
@@ -40,10 +40,10 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
             physical->lerp_x = physical->x;
         if (physical->lerp_y == 0)
             physical->lerp_y = physical->y;
-        
+
         physical->velocity.x = physical->x - physical->lerp_x;
         physical->velocity.y = physical->y - physical->lerp_y;
-        
+
         physical->lerp_x = rr_lerp(physical->lerp_x, physical->x, 10 * delta);
         physical->lerp_y = rr_lerp(physical->lerp_y, physical->y, 10 * delta);
         physical->lerp_velocity.x =
@@ -64,14 +64,17 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
 
             physical->lerp_radius =
                 rr_lerp(physical->lerp_radius, physical->radius, 10 * delta);
-            physical->lerp_angle =
-                rr_angle_lerp(physical->lerp_angle, physical->angle, 10 * delta);
-            physical->turning_animation = rr_angle_lerp(physical->turning_animation,
-                                                        physical->angle, 6 * delta);
+            physical->lerp_angle = rr_angle_lerp(physical->lerp_angle,
+                                                 physical->angle, 10 * delta);
+            physical->turning_animation = rr_angle_lerp(
+                physical->turning_animation, physical->angle, 6 * delta);
 
             physical->animation_timer +=
                 (2 * (physical->parent_id % 2) - 1) * delta *
-                (fmin(rr_vector_get_magnitude(&physical->lerp_velocity), 20) * 0.5 + 1) * 2;
+                (fmin(rr_vector_get_magnitude(&physical->lerp_velocity), 20) *
+                     0.5 +
+                 1) *
+                2;
         }
         else
             physical->animation_timer += 0.5;
@@ -125,7 +128,8 @@ void system_interpolation_for_each_function(EntityIdx entity, void *_captures)
     {
         struct rr_component_health *health =
             rr_simulation_get_health(this, entity);
-        health->damage_animation = rr_lerp(health->damage_animation, 0, 5 * delta);
+        health->damage_animation =
+            rr_lerp(health->damage_animation, 0, 5 * delta);
         if (health->flags & 2)
         {
             if (health->damage_animation < 0.25)

@@ -26,7 +26,8 @@
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
 
-#define entity_alive(sim, id) (sim->entity_tracker[id] && !rr_bitset_get(sim->deleted_last_tick, id))
+#define entity_alive(sim, id)                                                  \
+    (sim->entity_tracker[id] && !rr_bitset_get(sim->deleted_last_tick, id))
 
 struct rr_protocol_for_each_function_captures
 {
@@ -66,7 +67,7 @@ static void rr_simulation_write_entity_function(uint64_t _id, void *_captures)
     RR_FOR_EACH_COMPONENT;
 #undef XX
 }
- 
+
 struct rr_simulation_find_entities_in_view_for_each_function_captures
 {
     int32_t view_width;
@@ -101,11 +102,13 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
             captures->view_y + captures->view_height)
         return;
     if (rr_simulation_has_drop(simulation, entity) &&
-        (!rr_bitset_get(
-            rr_simulation_get_drop(captures->simulation, entity)->can_be_picked_up_by,
-            captures->player_info->squad) || rr_bitset_get(
-            rr_simulation_get_drop(captures->simulation, entity)->picked_up_by,
-            captures->player_info->squad * RR_SQUAD_MEMBER_COUNT + captures->player_info->squad_pos)))
+        (!rr_bitset_get(rr_simulation_get_drop(captures->simulation, entity)
+                            ->can_be_picked_up_by,
+                        captures->player_info->squad) ||
+         rr_bitset_get(
+             rr_simulation_get_drop(captures->simulation, entity)->picked_up_by,
+             captures->player_info->squad * RR_SQUAD_MEMBER_COUNT +
+                 captures->player_info->squad_pos)))
         return;
     rr_bitset_set(captures->entities_in_view, entity);
 }
@@ -127,15 +130,19 @@ static void rr_simulation_find_entities_in_view(
 
     rr_bitset_set(entities_in_view, player_info->parent_id);
 
-    if (entity_alive(this, (EntityIdx) player_info->flower_id))
-        rr_bitset_set(entities_in_view, (EntityIdx) player_info->flower_id);
+    if (entity_alive(this, (EntityIdx)player_info->flower_id))
+        rr_bitset_set(entities_in_view, (EntityIdx)player_info->flower_id);
 
     if (!entity_alive(this, player_info->arena))
         rr_component_player_info_set_arena(player_info, 1);
     rr_bitset_set(captures.entities_in_view, player_info->arena);
     rr_bitset_set(captures.entities_in_view, 1);
-    struct rr_spatial_hash *shg = &rr_simulation_get_arena(this, player_info->arena)->spatial_hash;
-    rr_spatial_hash_query(shg, captures.view_x, captures.view_y, captures.view_width, captures.view_height, &captures, rr_simulation_find_entities_in_view_for_each_function);
+    struct rr_spatial_hash *shg =
+        &rr_simulation_get_arena(this, player_info->arena)->spatial_hash;
+    rr_spatial_hash_query(
+        shg, captures.view_x, captures.view_y, captures.view_width,
+        captures.view_height, &captures,
+        rr_simulation_find_entities_in_view_for_each_function);
 }
 
 static void rr_simulation_write_entity_deletions_function(uint64_t _id,
@@ -155,11 +162,16 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
         {
             if (rr_simulation_has_drop(captures->simulation, id))
             {
-                struct rr_component_drop *drop = rr_simulation_get_drop(captures->simulation, id);
-                if (!rr_bitset_get(drop->can_be_picked_up_by, player_info->squad))
+                struct rr_component_drop *drop =
+                    rr_simulation_get_drop(captures->simulation, id);
+                if (!rr_bitset_get(drop->can_be_picked_up_by,
+                                   player_info->squad))
                     serverside_delete = 1;
-                else if (rr_bitset_get(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos))
-                //1 = in-place deletion, 2 = suck to player
+                else if (rr_bitset_get(drop->picked_up_by,
+                                       player_info->squad *
+                                               RR_SQUAD_MEMBER_COUNT +
+                                           player_info->squad_pos))
+                    // 1 = in-place deletion, 2 = suck to player
                     serverside_delete = 2;
             }
         }
@@ -168,8 +180,6 @@ static void rr_simulation_write_entity_deletions_function(uint64_t _id,
         proto_bug_write_uint8(encoder, serverside_delete, "deletion type");
     }
 }
-
-
 
 void rr_simulation_write_binary(struct rr_simulation *this,
                                 struct proto_bug *encoder,
@@ -189,8 +199,9 @@ void rr_simulation_write_binary(struct rr_simulation *this,
         if (p_info->squad != player_info->squad)
             continue;
         rr_bitset_set(new_entities_in_view, p_id);
-        if (entity_alive(this,(EntityIdx) p_info->flower_id) && p_info->arena == player_info->arena)
-            rr_bitset_set(new_entities_in_view, (EntityIdx) p_info->flower_id);
+        if (entity_alive(this, (EntityIdx)p_info->flower_id) &&
+            p_info->arena == player_info->arena)
+            rr_bitset_set(new_entities_in_view, (EntityIdx)p_info->flower_id);
     }
 
     struct rr_protocol_for_each_function_captures captures;

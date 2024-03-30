@@ -21,7 +21,8 @@
 
 #include <Shared/Utilities.h>
 
-void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, void (*setup)(struct rr_renderer *), ...)
+void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet,
+                                  void (*setup)(struct rr_renderer *), ...)
 {
     struct rr_renderer *renderer = &spritesheet->renderer;
     rr_renderer_init(renderer);
@@ -60,10 +61,13 @@ void rr_renderer_spritesheet_init(struct rr_renderer_spritesheet *spritesheet, v
     }
 }
 
-void render_sprite_from_cache(struct rr_renderer *renderer, struct rr_renderer_spritesheet *spritesheet, uint32_t pos)
+void render_sprite_from_cache(struct rr_renderer *renderer,
+                              struct rr_renderer_spritesheet *spritesheet,
+                              uint32_t pos)
 {
     struct rr_sprite_bounds *bounds = &spritesheet->sprites[pos];
-    rr_renderer_draw_clipped_image(renderer, &spritesheet->renderer, bounds->x, bounds->y, bounds->w, bounds->h, 0, 0);
+    rr_renderer_draw_clipped_image(renderer, &spritesheet->renderer, bounds->x,
+                                   bounds->y, bounds->w, bounds->h, 0, 0);
 }
 
 void rr_renderer_context_state_init(struct rr_renderer *this,
@@ -161,7 +165,8 @@ void rr_renderer_add_color_filter(struct rr_renderer *this, uint32_t color,
     if (this->state.filter.amount == 0 || (this->state.filter.color << 8) == 0)
     {
         this->state.filter.color = color;
-        this->state.filter.amount = 1 - (1 - this->state.filter.amount) * (1 - amount);
+        this->state.filter.amount =
+            1 - (1 - this->state.filter.amount) * (1 - amount);
         return;
     }
     float alpha = this->state.filter.amount;

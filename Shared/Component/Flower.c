@@ -50,10 +50,14 @@ void rr_component_flower_free(struct rr_component_flower *this,
                               struct rr_simulation *simulation)
 {
 #ifdef RR_SERVER
-    if (rr_simulation_entity_alive(simulation, rr_simulation_get_relations(simulation, this->parent_id)->owner))
+    if (rr_simulation_entity_alive(
+            simulation,
+            rr_simulation_get_relations(simulation, this->parent_id)->owner))
     {
-        EntityHash p_id = rr_simulation_get_relations(simulation, this->parent_id)->owner;
-        struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_id);
+        EntityHash p_id =
+            rr_simulation_get_relations(simulation, this->parent_id)->owner;
+        struct rr_component_player_info *player_info =
+            rr_simulation_get_player_info(simulation, p_id);
         rr_component_player_info_set_flower_id(player_info, RR_NULL_ENTITY);
     }
 #endif

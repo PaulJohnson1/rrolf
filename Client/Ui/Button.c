@@ -19,10 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Ui/Engine.h>
 
 #include <Shared/pb.h>
 
@@ -81,7 +81,8 @@ struct rr_ui_element *rr_ui_labeled_button_init(char *text, float height,
     data->text = text;
     this->data = data;
     this->abs_height = this->height = height;
-    this->abs_width = this->width = 15 + rr_renderer_get_text_size(text) * height / 2;
+    this->abs_width = this->width =
+        15 + rr_renderer_get_text_size(text) * height / 2;
     this->on_render = labeled_button_on_render;
     this->on_event = button_on_event;
     rr_ui_set_background(this, 0xff000000);

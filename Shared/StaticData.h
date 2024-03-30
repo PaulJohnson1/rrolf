@@ -87,7 +87,7 @@ enum rr_petal_id
     rr_petal_id_stinger,
     rr_petal_id_light,
     rr_petal_id_shell,
-    rr_petal_id_peas, 
+    rr_petal_id_peas,
     rr_petal_id_leaf,
     rr_petal_id_egg,
     rr_petal_id_magnet,
@@ -203,7 +203,6 @@ extern uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 extern double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max];
 
-
 extern uint32_t RR_RARITY_COLORS[rr_rarity_id_max];
 extern char const *RR_RARITY_NAMES[rr_rarity_id_max];
 
@@ -235,9 +234,9 @@ struct rr_maze_declaration
     struct rr_spawn_zone spawn_zones[4];
 };
 
-#define RR_DECLARE_MAZE(name, size) \
-extern uint8_t RR_MAZE_TEMPLATE_##name[size/2][size/2]; \
-extern struct rr_maze_grid RR_MAZE_##name[size][size];
+#define RR_DECLARE_MAZE(name, size)                                            \
+    extern uint8_t RR_MAZE_TEMPLATE_##name[size / 2][size / 2];                \
+    extern struct rr_maze_grid RR_MAZE_##name[size][size];
 
 // RR_DECLARE_MAZE(HELL_CREEK, 54)
 RR_DECLARE_MAZE(HELL_CREEK, 80)

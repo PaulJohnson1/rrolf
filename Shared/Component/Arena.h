@@ -47,10 +47,11 @@ void rr_component_arena_init(struct rr_component_arena *,
                              struct rr_simulation *);
 void rr_component_arena_free(struct rr_component_arena *,
                              struct rr_simulation *);
-                             
+
 RR_SERVER_ONLY(void rr_component_arena_spatial_hash_init(
                    struct rr_component_arena *, struct rr_simulation *);)
-RR_SERVER_ONLY(struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *, uint32_t, uint32_t);)
+RR_SERVER_ONLY(struct rr_maze_grid *rr_component_arena_get_grid(
+                   struct rr_component_arena *, uint32_t, uint32_t);)
 RR_SERVER_ONLY(void rr_component_arena_write(
                    struct rr_component_arena *, struct proto_bug *, int,
                    struct rr_component_player_info *);)

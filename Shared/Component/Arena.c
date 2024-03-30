@@ -29,15 +29,13 @@
 #include <Shared/Utilities.h>
 #endif
 
-#define FOR_EACH_PUBLIC_FIELD                                                  \
-    X(biome, uint8)
+#define FOR_EACH_PUBLIC_FIELD X(biome, uint8)
 
 enum
 {
     state_flags_biome = 0b000001,
     state_flags_all = 0b000001
 };
-
 
 void rr_component_arena_init(struct rr_component_arena *this,
                              struct rr_simulation *simulation)
@@ -51,10 +49,12 @@ void rr_component_arena_free(struct rr_component_arena *this,
 #ifdef RR_SERVER
     if (rr_simulation_has_mob(simulation, this->parent_id))
     {
-        struct rr_component_physical *this_physical = rr_simulation_get_physical(simulation, this->parent_id);
+        struct rr_component_physical *this_physical =
+            rr_simulation_get_physical(simulation, this->parent_id);
         for (uint32_t i = 0; i < simulation->physical_count; ++i)
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, simulation->physical_vector[i]);
+            struct rr_component_physical *physical = rr_simulation_get_physical(
+                simulation, simulation->physical_vector[i]);
             if (physical->arena != this->parent_id)
                 continue;
             physical->arena = 1;
@@ -73,13 +73,17 @@ void rr_component_arena_free(struct rr_component_arena *this,
 #ifdef RR_SERVER
 #include <Shared/StaticData.h>
 
-void rr_component_arena_spatial_hash_init(struct rr_component_arena *this, struct rr_simulation *simulation)
+void rr_component_arena_spatial_hash_init(struct rr_component_arena *this,
+                                          struct rr_simulation *simulation)
 {
     this->maze = &RR_MAZES[this->biome];
-    rr_spatial_hash_init(&this->spatial_hash, simulation, this->maze->maze_dim * this->maze->grid_size);
+    rr_spatial_hash_init(&this->spatial_hash, simulation,
+                         this->maze->maze_dim * this->maze->grid_size);
 }
 
-struct rr_maze_grid *rr_component_arena_get_grid(struct rr_component_arena *this, uint32_t x, uint32_t y)
+struct rr_maze_grid *
+rr_component_arena_get_grid(struct rr_component_arena *this, uint32_t x,
+                            uint32_t y)
 {
     return &this->maze->maze[y * this->maze->maze_dim + x];
 }

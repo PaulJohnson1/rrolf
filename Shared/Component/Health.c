@@ -15,8 +15,8 @@
 
 #include <Shared/Component/Health.h>
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <Shared/Entity.h>
 #include <Shared/SimulationCommon.h>
@@ -24,7 +24,7 @@
 
 #define FOR_EACH_PUBLIC_FIELD                                                  \
     X(health, float32)                                                         \
-    X(flags, uint8)                                                           \
+    X(flags, uint8)                                                            \
     X(max_health, float32)
 
 enum
@@ -72,7 +72,9 @@ void rr_component_health_write(struct rr_component_health *this,
     this->max_health = tmp_max;
 }
 
-void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_component_health *this, EntityIdx from, float v)
+void rr_component_health_do_damage(struct rr_simulation *simulation,
+                                   struct rr_component_health *this,
+                                   EntityIdx from, float v)
 {
     if (this->health == 0)
         return;
@@ -87,25 +89,31 @@ void rr_component_health_do_damage(struct rr_simulation *simulation, struct rr_c
     this->protocol_state |= state_flags_health;
     if (!rr_simulation_has_mob(simulation, this->parent_id))
         return;
-    struct rr_component_mob *mob = rr_simulation_get_mob(simulation, this->parent_id);
+    struct rr_component_mob *mob =
+        rr_simulation_get_mob(simulation, this->parent_id);
     if (mob->player_spawned)
         return;
-    if (rr_simulation_get_relations(simulation, from)->team != rr_simulation_team_id_players)
+    if (rr_simulation_get_relations(simulation, from)->team !=
+        rr_simulation_team_id_players)
         return;
-    EntityHash p_info_id = rr_simulation_get_relations(simulation, from)->root_owner;
+    EntityHash p_info_id =
+        rr_simulation_get_relations(simulation, from)->root_owner;
     if (!rr_simulation_entity_alive(simulation, p_info_id))
         return;
     if (!rr_simulation_has_player_info(simulation, p_info_id))
         return;
-    struct rr_component_player_info *player_info = rr_simulation_get_player_info(simulation, p_info_id);
+    struct rr_component_player_info *player_info =
+        rr_simulation_get_player_info(simulation, p_info_id);
     uint8_t squad = player_info->squad;
     mob->squad_damage_counter[squad] += damage;
-    struct rr_component_physical *physical = rr_simulation_get_physical(simulation, this->parent_id);
-    struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+    struct rr_component_physical *physical =
+        rr_simulation_get_physical(simulation, this->parent_id);
+    struct rr_simulation_animation *animation =
+        &simulation->animations[simulation->animation_length++];
     animation->type = rr_animation_type_damagenumber;
     animation->x = physical->x;
     animation->y = physical->y;
-    animation->damage = damage; 
+    animation->damage = damage;
     animation->squad = squad;
 }
 

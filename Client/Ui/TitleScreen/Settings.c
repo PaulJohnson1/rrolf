@@ -24,19 +24,15 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Ui/Engine.h>
 
-#include <Shared/Utilities.h>
 #include <Shared/Rivet.h>
+#include <Shared/Utilities.h>
 
-char const *regions[3] = {
-    "Closest",
-    "Atlanta",
-    "Frankfurt"
-};
+char const *regions[3] = {"Closest", "Atlanta", "Frankfurt"};
 
 uint8_t selected = 0;
 
 static void region_button_on_event(struct rr_ui_element *this,
-                                            struct rr_game *game)
+                                   struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -45,7 +41,7 @@ static void region_button_on_event(struct rr_ui_element *this,
 }
 
 static void region_button_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                    struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (rr_ui_mouse_over(this, game))
@@ -73,7 +69,7 @@ static void region_button_on_render(struct rr_ui_element *this,
 static struct rr_ui_element *region_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->abs_width = this->width = 70; 
+    this->abs_width = this->width = 70;
     this->abs_height = this->height = 25;
     this->on_render = region_button_on_render;
     this->on_event = region_button_on_event;
@@ -81,7 +77,7 @@ static struct rr_ui_element *region_toggle_button_init()
 }
 
 static void region_join_button_on_event(struct rr_ui_element *this,
-                                            struct rr_game *game)
+                                        struct rr_game *game)
 {
     if (game->socket_pending)
         return;
@@ -89,24 +85,24 @@ static void region_join_button_on_event(struct rr_ui_element *this,
     {
 #ifdef RIVET_BUILD
         game->socket_pending = 1;
-        switch(selected)
+        switch (selected)
         {
-            case 0:
-                rr_rivet_lobbies_find(game, NULL);
-                break;
-            case 1:
-                rr_rivet_lobbies_find(game, "lnd-atl");
-                break;
-            case 2:
-                rr_rivet_lobbies_find(game, "lnd-fra");
-                break;
+        case 0:
+            rr_rivet_lobbies_find(game, NULL);
+            break;
+        case 1:
+            rr_rivet_lobbies_find(game, "lnd-atl");
+            break;
+        case 2:
+            rr_rivet_lobbies_find(game, "lnd-fra");
+            break;
         }
 #endif
     }
 }
 
 static void region_join_button_on_render(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                         struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (rr_ui_mouse_over(this, game))
@@ -134,7 +130,7 @@ static void region_join_button_on_render(struct rr_ui_element *this,
 static struct rr_ui_element *region_join_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
-    this->abs_width = this->width = 50; 
+    this->abs_width = this->width = 50;
     this->abs_height = this->height = 25;
     this->on_render = region_join_button_on_render;
     this->on_event = region_join_button_on_event;
@@ -158,7 +154,7 @@ static void settings_container_animate(struct rr_ui_element *this,
 }
 
 static void settings_toggle_button_on_render(struct rr_ui_element *this,
-                                       struct rr_game *game)
+                                             struct rr_game *game)
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
@@ -167,31 +163,44 @@ static void settings_toggle_button_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
     rr_renderer_begin_path(renderer);
-    rr_renderer_round_rect(renderer, -this->abs_width / 2, -this->abs_height / 2,
-                           this->abs_width, this->abs_height, 6);
+    rr_renderer_round_rect(renderer, -this->abs_width / 2,
+                           -this->abs_height / 2, this->abs_width,
+                           this->abs_height, 6);
     rr_renderer_fill(renderer);
     rr_renderer_scale(renderer, 1.2);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 12.00, 1.62);
     rr_renderer_line_to(renderer, 12.00, -1.62);
-    rr_renderer_bezier_curve_to(renderer, 10.35, -2.20, 9.31, -2.37, 8.78, -3.64);
-    rr_renderer_bezier_curve_to(renderer, 8.25, -4.91, 8.88, -5.77, 9.63, -7.34);
+    rr_renderer_bezier_curve_to(renderer, 10.35, -2.20, 9.31, -2.37, 8.78,
+                                -3.64);
+    rr_renderer_bezier_curve_to(renderer, 8.25, -4.91, 8.88, -5.77, 9.63,
+                                -7.34);
     rr_renderer_line_to(renderer, 7.34, -9.63);
-    rr_renderer_bezier_curve_to(renderer, 5.78, -8.89, 4.91, -8.25, 3.64, -8.78);
-    rr_renderer_bezier_curve_to(renderer, 2.37, -9.31, 2.20, -10.36, 1.62, -12.00);
+    rr_renderer_bezier_curve_to(renderer, 5.78, -8.89, 4.91, -8.25, 3.64,
+                                -8.78);
+    rr_renderer_bezier_curve_to(renderer, 2.37, -9.31, 2.20, -10.36, 1.62,
+                                -12.00);
     rr_renderer_line_to(renderer, -1.62, -12.00);
-    rr_renderer_bezier_curve_to(renderer, -2.20, -10.37, -2.37, -9.31, -3.64, -8.78);
-    rr_renderer_bezier_curve_to(renderer, -4.91, -8.25, -5.77, -8.88, -7.34, -9.63);
+    rr_renderer_bezier_curve_to(renderer, -2.20, -10.37, -2.37, -9.31, -3.64,
+                                -8.78);
+    rr_renderer_bezier_curve_to(renderer, -4.91, -8.25, -5.77, -8.88, -7.34,
+                                -9.63);
     rr_renderer_line_to(renderer, -9.63, -7.34);
-    rr_renderer_bezier_curve_to(renderer, -8.88, -5.78, -8.25, -4.91, -8.78, -3.64);
-    rr_renderer_bezier_curve_to(renderer, -9.31, -2.37, -10.37, -2.20, -12.00, -1.62);
+    rr_renderer_bezier_curve_to(renderer, -8.88, -5.78, -8.25, -4.91, -8.78,
+                                -3.64);
+    rr_renderer_bezier_curve_to(renderer, -9.31, -2.37, -10.37, -2.20, -12.00,
+                                -1.62);
     rr_renderer_line_to(renderer, -12.00, 1.62);
-    rr_renderer_bezier_curve_to(renderer, -10.37, 2.20, -9.31, 2.37, -8.78, 3.64);
-    rr_renderer_bezier_curve_to(renderer, -8.25, 4.92, -8.90, 5.80, -9.63, 7.34);
+    rr_renderer_bezier_curve_to(renderer, -10.37, 2.20, -9.31, 2.37, -8.78,
+                                3.64);
+    rr_renderer_bezier_curve_to(renderer, -8.25, 4.92, -8.90, 5.80, -9.63,
+                                7.34);
     rr_renderer_line_to(renderer, -7.34, 9.63);
-    rr_renderer_bezier_curve_to(renderer, -5.78, 8.88, -4.91, 8.25, -3.64, 8.78);
-    rr_renderer_bezier_curve_to(renderer, -2.37, 9.31, -2.20, 10.36, -1.62, 12.00);
+    rr_renderer_bezier_curve_to(renderer, -5.78, 8.88, -4.91, 8.25, -3.64,
+                                8.78);
+    rr_renderer_bezier_curve_to(renderer, -2.37, 9.31, -2.20, 10.36, -1.62,
+                                12.00);
     rr_renderer_line_to(renderer, 1.62, 12.00);
     rr_renderer_bezier_curve_to(renderer, 2.20, 10.36, 2.37, 9.31, 3.64, 8.78);
     rr_renderer_bezier_curve_to(renderer, 4.91, 8.25, 5.76, 8.88, 7.34, 9.63);
@@ -242,10 +251,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_container_init(), 5, 5,
                                 rr_ui_text_init("Region:", 15, 0xffffffff),
                                 region_toggle_button_init(),
-                                region_join_button_init(),
-                                NULL
-                            )
-                        , -1, -1),
+                                region_join_button_init(), NULL),
+                            -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
@@ -274,10 +281,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(
-                                    &game->cache.tint_petals),
-                                rr_ui_text_init("Tint petals", 15,
-                                                0xffffffff),
+                                rr_ui_toggle_box_init(&game->cache.tint_petals),
+                                rr_ui_text_init("Tint petals", 15, 0xffffffff),
                                 NULL),
                             -1, -1),
                         rr_ui_set_justify(

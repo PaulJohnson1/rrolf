@@ -15,8 +15,8 @@
 
 #include <Server/System/System.h>
 
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <Server/EntityDetection.h>
@@ -44,10 +44,10 @@ static void system_default_idle_heal(EntityIdx entity, void *captures)
     }
     else
         health->poison = 0;
-    //if (health->health > 0)
+    // if (health->health > 0)
     //{
-        //rr_component_health_set_health(health, health->health +
-       //                                            health->max_health * 0.0002);
+    // rr_component_health_set_health(health, health->health +
+    //                                            health->max_health * 0.0002);
     if (health->damage_paused > 0)
         health->damage_paused -= 1;
     //}
@@ -63,7 +63,9 @@ struct lightning_captures
     float curr_y;
 };
 
-static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seeker, EntityIdx target, void *captures)
+static uint8_t lightning_filter(struct rr_simulation *simulation,
+                                EntityIdx seeker, EntityIdx target,
+                                void *captures)
 {
     if (seeker == target)
         return 0;
@@ -77,36 +79,49 @@ static uint8_t lightning_filter(struct rr_simulation *simulation, EntityIdx seek
 }
 
 static void lightning_petal_system(struct rr_simulation *simulation,
-                                 struct rr_component_petal *petal, EntityIdx first)
+                                   struct rr_component_petal *petal,
+                                   EntityIdx first)
 {
-    struct rr_component_physical *petal_physical = rr_simulation_get_physical(simulation, petal->parent_id);
-    struct rr_component_physical *first_physical = rr_simulation_get_physical(simulation, first);
-    struct rr_component_relations *relations = rr_simulation_get_relations(simulation, petal->parent_id);
-    struct rr_simulation_animation *animation = &simulation->animations[simulation->animation_length++];
+    struct rr_component_physical *petal_physical =
+        rr_simulation_get_physical(simulation, petal->parent_id);
+    struct rr_component_physical *first_physical =
+        rr_simulation_get_physical(simulation, first);
+    struct rr_component_relations *relations =
+        rr_simulation_get_relations(simulation, petal->parent_id);
+    struct rr_simulation_animation *animation =
+        &simulation->animations[simulation->animation_length++];
     animation->type = rr_animation_type_lightningbolt;
     EntityIdx chain[16] = {petal->parent_id, first};
     animation->points[0].x = petal_physical->x;
     animation->points[0].y = petal_physical->y;
     animation->points[1].x = first_physical->x;
     animation->points[1].y = first_physical->y;
-    uint32_t chain_amount = petal->rarity + 1;   
-    float damage = rr_simulation_get_health(simulation, petal->parent_id)->damage * 0.5; 
+    uint32_t chain_amount = petal->rarity + 1;
+    float damage =
+        rr_simulation_get_health(simulation, petal->parent_id)->damage * 0.5;
     EntityIdx target = RR_NULL_ENTITY;
-    struct lightning_captures captures = {chain, 2, first_physical->x, first_physical->y};
+    struct lightning_captures captures = {chain, 2, first_physical->x,
+                                          first_physical->y};
     for (; captures.length < chain_amount + 1; ++captures.length)
     {
-        target = rr_simulation_find_nearest_enemy_custom_pos(simulation, petal->parent_id, captures.curr_x, captures.curr_y, 400, &captures, lightning_filter);
+        target = rr_simulation_find_nearest_enemy_custom_pos(
+            simulation, petal->parent_id, captures.curr_x, captures.curr_y, 400,
+            &captures, lightning_filter);
         if (target == RR_NULL_ENTITY)
             break;
         if (rr_simulation_has_ai(simulation, target))
         {
-            struct rr_component_ai *ai = rr_simulation_get_ai(simulation, target);
+            struct rr_component_ai *ai =
+                rr_simulation_get_ai(simulation, target);
             if (ai->target_entity == RR_NULL_ENTITY)
                 ai->target_entity = relations->owner;
         }
-        struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-        struct rr_component_health *health = rr_simulation_get_health(simulation, target);
-        rr_component_health_do_damage(simulation, health, petal->parent_id, damage);
+        struct rr_component_physical *physical =
+            rr_simulation_get_physical(simulation, target);
+        struct rr_component_health *health =
+            rr_simulation_get_health(simulation, target);
+        rr_component_health_do_damage(simulation, health, petal->parent_id,
+                                      damage);
         health->damage_paused = 5;
         physical->stun_ticks = 4;
         chain[captures.length] = target;
@@ -119,7 +134,8 @@ static void lightning_petal_system(struct rr_simulation *simulation,
     rr_simulation_request_entity_deletion(simulation, petal->parent_id);
 }
 
-static void damage_effect(struct rr_simulation *simulation, EntityIdx target, EntityIdx attacker)
+static void damage_effect(struct rr_simulation *simulation, EntityIdx target,
+                          EntityIdx attacker)
 {
     if (rr_simulation_has_ai(simulation, target))
     {
@@ -133,25 +149,34 @@ static void damage_effect(struct rr_simulation *simulation, EntityIdx target, En
                 ai->target_entity = relations->owner;
             }
             else
-                ai->target_entity = rr_simulation_get_entity_hash(simulation, attacker);
+                ai->target_entity =
+                    rr_simulation_get_entity_hash(simulation, attacker);
         }
     }
     if (rr_simulation_has_mob(simulation, attacker))
     {
-        struct rr_component_mob *mob = rr_simulation_get_mob(simulation, attacker);
-        if (mob->id == rr_mob_id_pachycephalosaurus && mob->rarity >= rr_rarity_id_exotic)
+        struct rr_component_mob *mob =
+            rr_simulation_get_mob(simulation, attacker);
+        if (mob->id == rr_mob_id_pachycephalosaurus &&
+            mob->rarity >= rr_rarity_id_exotic)
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(simulation, target);
             physical->stun_ticks = 25;
         }
     }
     else if (rr_simulation_has_petal(simulation, attacker))
     {
-        struct rr_component_petal *petal = rr_simulation_get_petal(simulation, attacker);
+        struct rr_component_petal *petal =
+            rr_simulation_get_petal(simulation, attacker);
         if (petal->id == rr_petal_id_beak)
         {
-            struct rr_component_physical *physical = rr_simulation_get_physical(simulation, target);
-            physical->stun_ticks = 25 * (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 3) * (1 - physical->slow_resist);
+            struct rr_component_physical *physical =
+                rr_simulation_get_physical(simulation, target);
+            physical->stun_ticks =
+                25 *
+                (1 + sqrtf(RR_PETAL_RARITY_SCALE[petal->rarity].heal) / 3) *
+                (1 - physical->slow_resist);
         }
         else if (petal->id == rr_petal_id_lightning)
         {
@@ -159,9 +184,12 @@ static void damage_effect(struct rr_simulation *simulation, EntityIdx target, En
         }
         else if (petal->id == rr_petal_id_mandible)
         {
-            struct rr_component_health *health = rr_simulation_get_health(simulation, target);
+            struct rr_component_health *health =
+                rr_simulation_get_health(simulation, target);
             if (health->health > 0 && health->health * 2 < health->max_health)
-                rr_component_health_do_damage(simulation, health, attacker, 50 * RR_PETAL_DATA[petal->id].scale[petal->rarity].damage);
+                rr_component_health_do_damage(
+                    simulation, health, attacker,
+                    50 * RR_PETAL_DATA[petal->id].scale[petal->rarity].damage);
         }
     }
 }
@@ -191,7 +219,8 @@ static void colliding_with_function(uint64_t i, void *_captures)
         return;
     uint8_t bypass = rr_simulation_has_petal(this, entity1) ||
                      rr_simulation_has_petal(this, entity2);
-    uint8_t byp2 = (rr_simulation_has_mob(this, entity1) && rr_simulation_has_mob(this, entity2));               
+    uint8_t byp2 = (rr_simulation_has_mob(this, entity1) &&
+                    rr_simulation_has_mob(this, entity2));
     if (health1->damage_paused == 0 || bypass)
     {
         damage_effect(this, entity1, entity2);

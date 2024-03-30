@@ -20,14 +20,17 @@
 #include <Client/Renderer/Renderer.h>
 #include <Client/Simulation.h>
 
-void rr_component_flower_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
+void rr_component_flower_render(EntityIdx entity, struct rr_game *game,
+                                struct rr_simulation *simulation)
 {
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_flower *flower =
         rr_simulation_get_flower(simulation, entity);
-    rr_renderer_add_color_filter(renderer, 0xffff0000, 0.5 * rr_simulation_get_health(simulation, entity)->damage_animation);
+    rr_renderer_add_color_filter(
+        renderer, 0xffff0000,
+        0.5 * rr_simulation_get_health(simulation, entity)->damage_animation);
     rr_renderer_set_global_alpha(renderer, 1 - physical->deletion_animation);
     rr_renderer_scale(renderer, 1 + physical->deletion_animation * 0.5);
     rr_renderer_set_stroke(renderer, 0xffcfbb50);

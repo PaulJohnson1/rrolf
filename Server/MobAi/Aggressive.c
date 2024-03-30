@@ -21,7 +21,8 @@
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 
-void tick_ai_aggro_default(EntityIdx entity, struct rr_simulation *simulation, float speed)
+void tick_ai_aggro_default(EntityIdx entity, struct rr_simulation *simulation,
+                           float speed)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -95,13 +96,15 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
         // struct rr_vector prediction = predict(delta, physical2->velocity, 4);
         float target_angle = rr_vector_theta(&delta);
 
-        rr_component_physical_set_angle(physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
+        rr_component_physical_set_angle(
+            physical, rr_angle_lerp(physical->angle, target_angle, 0.4));
 
         rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 1.05, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
         if (ai->ticks_until_next_action == 0)
         {
-            if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic)
+            if (rr_simulation_get_mob(simulation, entity)->rarity >=
+                rr_rarity_id_exotic)
                 ai->ai_state = rr_ai_state_exotic_special;
             ai->ticks_until_next_action = 15;
         }
@@ -111,14 +114,19 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
     {
         if (ai->ticks_until_next_action == 0)
         {
-            struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
+            struct rr_component_mob *mob =
+                rr_simulation_get_mob(simulation, entity);
             float angle = rr_frand() * M_PI + M_PI / 2;
-            rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(angle),
-            physical->y + physical->radius * sinf(angle), rr_mob_id_trex, mob->rarity - 2,
-            rr_simulation_team_id_mobs);
-            rr_simulation_alloc_mob(simulation, physical->arena, physical->x + physical->radius * cosf(2 * M_PI - angle),
-            physical->y + physical->radius * sinf(2 * M_PI - angle), rr_mob_id_trex, mob->rarity - 2,
-            rr_simulation_team_id_mobs);
+            rr_simulation_alloc_mob(
+                simulation, physical->arena,
+                physical->x + physical->radius * cosf(angle),
+                physical->y + physical->radius * sinf(angle), rr_mob_id_trex,
+                mob->rarity - 2, rr_simulation_team_id_mobs);
+            rr_simulation_alloc_mob(
+                simulation, physical->arena,
+                physical->x + physical->radius * cosf(2 * M_PI - angle),
+                physical->y + physical->radius * sinf(2 * M_PI - angle),
+                rr_mob_id_trex, mob->rarity - 2, rr_simulation_team_id_mobs);
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = 300;
         }
@@ -129,7 +137,8 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
     }
 }
 
-void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_aggro_pteranodon(EntityIdx entity,
+                              struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -154,7 +163,12 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
         struct rr_vector delta = {physical2->x, physical2->y};
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
-        struct rr_vector prediction = predict(delta, physical2->velocity, (ai->has_prediction || rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic) * 20); // make this less op
+        struct rr_vector prediction =
+            predict(delta, physical2->velocity,
+                    (ai->has_prediction ||
+                     rr_simulation_get_mob(simulation, entity)->rarity >=
+                         rr_rarity_id_exotic) *
+                        20); // make this less op
         rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
         if (rr_vector_magnitude_cmp(&delta, 500) == 1)
         {
@@ -164,7 +178,9 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
         }
         if (ai->ticks_until_next_action == 0)
         {
-            if (rr_simulation_get_mob(simulation, entity)->rarity >= rr_rarity_id_exotic && rr_frand() < 0.2)
+            if (rr_simulation_get_mob(simulation, entity)->rarity >=
+                    rr_rarity_id_exotic &&
+                rr_frand() < 0.2)
             {
                 ai->ai_state = rr_ai_state_exotic_special;
                 ai->ticks_until_next_action = 75;
@@ -176,8 +192,8 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
                 rr_simulation_get_mob(simulation, entity);
             // spawn a shell
             EntityIdx petal_id = rr_simulation_alloc_petal(
-                simulation, physical->arena, physical->x, physical->y, rr_petal_id_shell,
-                mob->rarity, mob->parent_id);
+                simulation, physical->arena, physical->x, physical->y,
+                rr_petal_id_shell, mob->rarity, mob->parent_id);
             struct rr_component_physical *physical2 =
                 rr_simulation_get_physical(simulation, petal_id);
             struct rr_component_health *health =
@@ -190,8 +206,10 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             physical2->knockback_scale = 25;
             physical2->bearing_angle = physical->angle;
             rr_vector_from_polar(&physical2->velocity, 100, physical->angle);
-            rr_component_petal_set_detached(rr_simulation_get_petal(simulation, petal_id), 1);
-            rr_component_health_set_max_health(health, 5 * RR_MOB_RARITY_SCALING[mob->rarity].health);
+            rr_component_petal_set_detached(
+                rr_simulation_get_petal(simulation, petal_id), 1);
+            rr_component_health_set_max_health(
+                health, 5 * RR_MOB_RARITY_SCALING[mob->rarity].health);
             rr_component_health_set_health(health, health->max_health);
             health->damage = 10 * RR_MOB_RARITY_SCALING[mob->rarity].damage;
             rr_simulation_get_petal(simulation, petal_id)->effect_delay = 50;
@@ -214,7 +232,8 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
             predict(delta, physical2->velocity,
                     ai->has_prediction * 20); // make this less op
         rr_component_physical_set_angle(physical, rr_vector_theta(&prediction));
-        if (ai->ticks_until_next_action < 50) {
+        if (ai->ticks_until_next_action < 50)
+        {
             struct rr_vector accel;
             rr_vector_from_polar(&accel, RR_PLAYER_SPEED * 2, physical->angle);
             rr_vector_add(&physical->acceleration, &accel);
@@ -231,7 +250,8 @@ void tick_ai_aggro_pteranodon(EntityIdx entity, struct rr_simulation *simulation
     }
 }
 
-void tick_ai_aggro_pachycephalosaurus(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_aggro_pachycephalosaurus(EntityIdx entity,
+                                      struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -260,8 +280,7 @@ void tick_ai_aggro_pachycephalosaurus(EntityIdx entity, struct rr_simulation *si
         // struct rr_vector prediction = predict(delta, physical2->velocity, 4);
         float target_angle = rr_vector_theta(&delta);
 
-        rr_component_physical_set_angle(
-            physical, target_angle);
+        rr_component_physical_set_angle(physical, target_angle);
 
         rr_vector_from_polar(&accel, RR_PLAYER_SPEED, physical->angle);
         rr_vector_add(&physical->acceleration, &accel);
@@ -290,7 +309,8 @@ void tick_ai_aggro_pachycephalosaurus(EntityIdx entity, struct rr_simulation *si
     }
 }
 
-void tick_ai_aggro_quetzalcoaltus(EntityIdx entity, struct rr_simulation *simulation)
+void tick_ai_aggro_quetzalcoaltus(EntityIdx entity,
+                                  struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =

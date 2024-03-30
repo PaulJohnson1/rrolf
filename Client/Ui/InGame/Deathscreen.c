@@ -23,7 +23,8 @@
 #include <Client/Socket.h>
 #include <Shared/pb.h>
 
-static void continue_to_squad_event(struct rr_ui_element *this, struct rr_game *game)
+static void continue_to_squad_event(struct rr_ui_element *this,
+                                    struct rr_game *game)
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
@@ -36,7 +37,8 @@ static void continue_to_squad_event(struct rr_ui_element *this, struct rr_game *
 
 static uint8_t game_over(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->simulation_ready && game->player_info->flower_id == RR_NULL_ENTITY;
+    return game->simulation_ready &&
+           game->player_info->flower_id == RR_NULL_ENTITY;
 }
 
 struct rr_ui_element *rr_ui_finished_game_screen_init()

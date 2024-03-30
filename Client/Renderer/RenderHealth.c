@@ -21,7 +21,8 @@
 #include <Client/Simulation.h>
 #include <Shared/StaticData.h>
 
-void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct rr_simulation *simulation)
+void rr_component_health_render(EntityIdx entity, struct rr_game *game,
+                                struct rr_simulation *simulation)
 {
     struct rr_renderer *renderer = game->renderer;
     struct rr_component_physical *physical =
@@ -48,7 +49,8 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
     {
         struct rr_component_mob *mob =
             rr_simulation_get_mob(simulation, entity);
-        if (!rr_simulation_has_centipede(simulation, entity) || rr_simulation_get_centipede(simulation, entity)->is_head)
+        if (!rr_simulation_has_centipede(simulation, entity) ||
+            rr_simulation_get_centipede(simulation, entity)->is_head)
         {
             length += mob->rarity * 5;
             // mob rarity
@@ -61,9 +63,11 @@ void rr_component_health_render(EntityIdx entity, struct rr_game *game, struct r
             rr_renderer_translate(renderer, length, 7);
         }
     }
-    else if (rr_simulation_has_flower(simulation, entity) && physical->deletion_animation == 0)
+    else if (rr_simulation_has_flower(simulation, entity) &&
+             physical->deletion_animation == 0)
     {
-        struct rr_component_flower *flower = rr_simulation_get_flower(simulation, entity);
+        struct rr_component_flower *flower =
+            rr_simulation_get_flower(simulation, entity);
         rr_renderer_set_fill(renderer, 0xffffffff);
         rr_renderer_set_stroke(renderer, 0xff000000);
         rr_renderer_set_text_size(renderer, 12);

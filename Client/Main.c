@@ -68,7 +68,8 @@ void rr_key_event(struct rr_game *this, uint8_t type, uint32_t which,
         rr_bitset_set(this->input_data->keys_pressed, which);
         rr_bitset_set(this->input_data->keys_pressed_this_tick, which);
         if (this->input_data->keycodes_length < 16 && key != 0)
-            this->input_data->keycodes_pressed_this_tick[this->input_data->keycodes_length++] = key;
+            this->input_data->keycodes_pressed_this_tick
+                [this->input_data->keycodes_length++] = key;
     }
     else
     {
@@ -95,7 +96,8 @@ void rr_mouse_event(struct rr_game *this, float x, float y, uint8_t state,
     }
 }
 
-void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state, uint8_t identifier)
+void rr_touch_event(struct rr_game *this, float x, float y, uint8_t state,
+                    uint8_t identifier)
 {
     struct rr_input_touch *touch = &this->input_data->touches[identifier % 16];
     touch->touch_x = x;
@@ -136,75 +138,103 @@ void rr_main_loop(struct rr_game *this)
             window.onkeydown = function(e)
             {
                 _rr_key_event(
-                    $0, 1, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
+                    $0, 1, e.which,
+                    e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) *
+                                e.key.charCodeAt()
+                          : 0);
             };
             window.onkeyup = function(e)
             {
                 _rr_key_event(
-                    $0, 0, e.which, e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) * e.key.charCodeAt() : 0);
+                    $0, 0, e.which,
+                    e.key ? (!e.ctrlKey && !e.metaKey && e.key.length == 1) *
+                                e.key.charCodeAt()
+                          : 0);
             };
-            window.addEventListener("mousedown", async function(e)
-            {
-                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                _rr_mouse_event($0, clientX * devicePixelRatio,
-                                clientY * devicePixelRatio, 1, +!!button);
-            });
-            window.addEventListener("mousemove", async function(e)
-            {
-                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                _rr_mouse_event($0, clientX * devicePixelRatio,
-                               clientY * devicePixelRatio, 2, +!!button);
-            });
-            window.addEventListener("mouseup", async function(e){
-                const clientX = e.clientX; const clientY = e.clientY; const button = e.button;
-                _rr_mouse_event($0, clientX * devicePixelRatio,
-                                clientY * devicePixelRatio, 0, +!!button);
-            });
-            window.addEventListener("touchstart", function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                _rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    1, 0);
-                for (const t of e.changedTouches)
-                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
-            }, {passive: false});
-            window.addEventListener("touchmove", function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                _rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    2, 0);
-                for (const t of e.changedTouches)
-                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 1, t.identifier);
-            }, {passive: false});
-            window.addEventListener("touchend", function(e){
-                e.preventDefault();
-                e.stopPropagation();
-                if (!e.changedTouches.length)
-                    return;
-                const touch = e.changedTouches[0];
-                _rr_mouse_event(
-                    $0, touch.clientX * devicePixelRatio, touch.clientY * devicePixelRatio,
-                    0, 0);
-                for (const t of e.changedTouches)
-                    _rr_touch_event($0, t.clientX * devicePixelRatio, t.clientY * devicePixelRatio, 0, t.identifier);
-            }, {passive: false});
-            window.addEventListener("wheel",
+            window.addEventListener(
+                "mousedown", async function(e) {
+                    const clientX = e.clientX;
+                    const clientY = e.clientY;
+                    const button = e.button;
+                    _rr_mouse_event($0, clientX * devicePixelRatio,
+                                    clientY * devicePixelRatio, 1, +!!button);
+                });
+            window.addEventListener(
+                "mousemove", async function(e) {
+                    const clientX = e.clientX;
+                    const clientY = e.clientY;
+                    const button = e.button;
+                    _rr_mouse_event($0, clientX * devicePixelRatio,
+                                    clientY * devicePixelRatio, 2, +!!button);
+                });
+            window.addEventListener(
+                "mouseup", async function(e) {
+                    const clientX = e.clientX;
+                    const clientY = e.clientY;
+                    const button = e.button;
+                    _rr_mouse_event($0, clientX * devicePixelRatio,
+                                    clientY * devicePixelRatio, 0, +!!button);
+                });
+            window.addEventListener(
+                "touchstart",
+                function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!e.changedTouches.length)
+                        return;
+                    const touch = e.changedTouches[0];
+                    _rr_mouse_event($0, touch.clientX * devicePixelRatio,
+                                    touch.clientY * devicePixelRatio, 1, 0);
+                    for (const t of e.changedTouches)
+                        _rr_touch_event($0, t.clientX * devicePixelRatio,
+                                        t.clientY * devicePixelRatio, 1,
+                                        t.identifier);
+                },
+                {passive : false});
+            window.addEventListener(
+                "touchmove",
+                function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!e.changedTouches.length)
+                        return;
+                    const touch = e.changedTouches[0];
+                    _rr_mouse_event($0, touch.clientX * devicePixelRatio,
+                                    touch.clientY * devicePixelRatio, 2, 0);
+                    for (const t of e.changedTouches)
+                        _rr_touch_event($0, t.clientX * devicePixelRatio,
+                                        t.clientY * devicePixelRatio, 1,
+                                        t.identifier);
+                },
+                {passive : false});
+            window.addEventListener(
+                "touchend",
+                function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!e.changedTouches.length)
+                        return;
+                    const touch = e.changedTouches[0];
+                    _rr_mouse_event($0, touch.clientX * devicePixelRatio,
+                                    touch.clientY * devicePixelRatio, 0, 0);
+                    for (const t of e.changedTouches)
+                        _rr_touch_event($0, t.clientX * devicePixelRatio,
+                                        t.clientY * devicePixelRatio, 0,
+                                        t.identifier);
+                },
+                {passive : false});
+            window.addEventListener(
+                "wheel",
                 async function({deltaY}) { _rr_wheel_event($0, deltaY); });
-            document.body.addEventListener("paste", async function(e) {
-                const buf = new TextEncoder().encode(e.clipboardData.getData("text/plain"));
-                const $a = _malloc(buf.length + 1);
-                HEAPU8.set(buf, $a);
-                HEAPU8[$a + buf.length] = 0;
-                _rr_paste_event($0, $a);
-            });
+            document.body.addEventListener(
+                "paste", async function(e) {
+                    const buf = new TextEncoder().encode(
+                        e.clipboardData.getData("text/plain"));
+                    const $a = _malloc(buf.length + 1);
+                    HEAPU8.set(buf, $a);
+                    HEAPU8[$a + buf.length] = 0;
+                    _rr_paste_event($0, $a);
+                });
             Module.addCtx = function()
             {
                 if (Module.availableCtxs.length)
@@ -228,7 +258,6 @@ void rr_main_loop(struct rr_game *this)
                 Module.ctxs[index] = null;
                 Module.availableCtxs.push(index);
             };
-            
 
             function loop(time)
             {
@@ -239,8 +268,7 @@ void rr_main_loop(struct rr_game *this)
                 Module.canvas.width = innerWidth * devicePixelRatio;
                 Module.canvas.height = innerHeight * devicePixelRatio;
                 _rr_renderer_main_loop($0, delta, Module.canvas.width,
-                                              Module.canvas.height,
-                                              devicePixelRatio);
+                                       Module.canvas.height, devicePixelRatio);
                 requestAnimationFrame(loop);
             };
             requestAnimationFrame(loop);
@@ -270,7 +298,8 @@ int main()
     static struct rr_renderer renderer;
     static struct rr_input_data input_data;
     struct rr_simulation *simulation = malloc(sizeof *simulation);
-    struct rr_simulation *deletion_simulation = malloc(sizeof *deletion_simulation);
+    struct rr_simulation *deletion_simulation =
+        malloc(sizeof *deletion_simulation);
     rr_main_loop(&game);
 
     rr_renderer_init(&renderer);

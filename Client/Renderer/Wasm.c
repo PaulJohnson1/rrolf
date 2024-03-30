@@ -311,7 +311,10 @@ void rr_renderer_rect(struct rr_renderer *this, float x, float y, float w,
         rr_renderer_execute_instructions();
 }
 
-void rr_renderer_draw_clipped_image(struct rr_renderer *this, struct rr_renderer *image, float sx, float sy, float sw, float sh, float dx, float dy)
+void rr_renderer_draw_clipped_image(struct rr_renderer *this,
+                                    struct rr_renderer *image, float sx,
+                                    float sy, float sw, float sh, float dx,
+                                    float dy)
 {
     update_if_transformed(this);
     instruction_tape[instruction_size].type = 20;
@@ -331,7 +334,9 @@ void rr_renderer_draw_translated_image(struct rr_renderer *this,
                                        struct rr_renderer *image, float x,
                                        float y)
 {
-    rr_renderer_draw_clipped_image(this, image, image->width / 2, image->height / 2, image->width, image->height, x, y);
+    rr_renderer_draw_clipped_image(this, image, image->width / 2,
+                                   image->height / 2, image->width,
+                                   image->height, x, y);
 }
 
 void rr_renderer_draw_image(struct rr_renderer *this, struct rr_renderer *image)
@@ -478,8 +483,7 @@ void rr_renderer_execute_instructions()
             {
                 const ctx_id = HEAPU16[instr + 2 >> 1];
                 const ctx_id_2 = HEAPU16[instr + 4 >> 1];
-                const args =
-                    HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
+                const args = HEAPF32.subarray(instr + 8 >> 2, instr + 32 >> 2);
                 const char_arg = HEAPU32[instr + 32 >> 2];
                 let str;
                 switch (HEAPU8[instr])
@@ -576,8 +580,9 @@ void rr_renderer_execute_instructions()
                                              args[3]);
                     break;
                 case 20:
-                    Module.ctxs[ctx_id].drawImage(Module.ctxs[ctx_id_2].canvas,
-                                                  args[0], args[1], args[2], args[3], args[4], args[5], args[2], args[3]);
+                    Module.ctxs[ctx_id].drawImage(
+                        Module.ctxs[ctx_id_2].canvas, args[0], args[1], args[2],
+                        args[3], args[4], args[5], args[2], args[3]);
                     break;
                 case 21:
                     Module.ctxs[ctx_id].fillRect(args[0], args[1], args[2],

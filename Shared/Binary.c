@@ -78,7 +78,7 @@ double rr_binary_encoder_read_float64(struct rr_binary_encoder *this)
 
 void rr_binary_encoder_read_nt_string(struct rr_binary_encoder *this, char *buf)
 {
-    while(*this->at)
+    while (*this->at)
     {
         *buf++ = *this->at++;
     }
@@ -111,9 +111,10 @@ void rr_binary_encoder_write_utf8(struct rr_binary_encoder *this, uint32_t v)
     rr_binary_encoder_write_uint8(this, v);
 }
 
-void rr_binary_encoder_write_nt_string(struct rr_binary_encoder *this, char *buf)
+void rr_binary_encoder_write_nt_string(struct rr_binary_encoder *this,
+                                       char *buf)
 {
-    while(*buf)
+    while (*buf)
     {
         rr_binary_encoder_write_uint8(this, *buf++);
     }
@@ -126,7 +127,8 @@ void rr_binary_encoder_write_float32(struct rr_binary_encoder *this, float data)
     this->at += sizeof data;
 }
 
-void rr_binary_encoder_write_float64(struct rr_binary_encoder *this, double data)
+void rr_binary_encoder_write_float64(struct rr_binary_encoder *this,
+                                     double data)
 {
     memcpy(this->at, &data, sizeof data);
     this->at += sizeof data;

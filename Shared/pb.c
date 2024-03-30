@@ -147,7 +147,8 @@ extern "C"
         proto_bug_write_uint8_internal(self, data << 1);
     }
     void proto_bug_write_string_internal(struct proto_bug *self,
-                                         char const *string, uint64_t buf_length)
+                                         char const *string,
+                                         uint64_t buf_length)
     {
         for (uint64_t i = 0; i < buf_length - 1; ++i)
         {
@@ -205,7 +206,7 @@ extern "C"
     }
     float proto_bug_read_float32_internal(struct proto_bug *self)
     {
-        if (self->end && self->current + (sizeof (float)) > self->end)
+        if (self->end && self->current + (sizeof(float)) > self->end)
             return 0;
         float data;
         memcpy(&data, self->current, sizeof data);
@@ -214,7 +215,7 @@ extern "C"
     }
     double proto_bug_read_float64_internal(struct proto_bug *self)
     {
-        if (self->end && self->current + (sizeof (double)) > self->end)
+        if (self->end && self->current + (sizeof(double)) > self->end)
             return 0;
         double data;
         memcpy(&data, self->current, sizeof data);
@@ -256,12 +257,11 @@ extern "C"
         uint64_t magic = proto_bug_read_uint64_internal(self);
         if (magic != 0x1234567890abcdefull)
         {
-            sprintf(
-                assertion_fail_message,
-                "proto_bug exception: read invalid data (maybe OOB)\n"
-                "invalid read at: %s:%u\n"
-                "expected: %llX; encountered: %" PRIX64 "\n",
-                file, line, 0x1234567890abcdefull, magic);
+            sprintf(assertion_fail_message,
+                    "proto_bug exception: read invalid data (maybe OOB)\n"
+                    "invalid read at: %s:%u\n"
+                    "expected: %llX; encountered: %" PRIX64 "\n",
+                    file, line, 0x1234567890abcdefull, magic);
 
             fputs(assertion_fail_message, stderr);
             abort();
@@ -275,7 +275,8 @@ extern "C"
         proto_bug_read_string_internal(self, received_name, 2048);
         proto_bug_read_string_internal(self, received_file, 2048);
         uint32_t received_line = proto_bug_read_varuint_internal(self);
-        if ((received_encoding_type != expected_encoding_type) || (strcmp(received_name, name)))
+        if ((received_encoding_type != expected_encoding_type) ||
+            (strcmp(received_name, name)))
         {
             sprintf(
                 assertion_fail_message,

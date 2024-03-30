@@ -17,11 +17,11 @@
 
 #include <string.h>
 
-#include <Client/Ui/Engine.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
 #include <Client/Simulation.h>
 #include <Client/Socket.h>
+#include <Client/Ui/Engine.h>
 #include <Shared/Bitset.h>
 #include <Shared/pb.h>
 /*
@@ -52,8 +52,8 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
                 struct proto_bug encoder;
                 proto_bug_init(&encoder, RR_OUTGOING_PACKET);
                 proto_bug_write_uint8(&encoder, rr_serverbound_chat, "header");
-                proto_bug_write_string(&encoder, game->chat.sending, 64, "chat");
-                rr_websocket_send(&game->socket, encoder.current - encoder.start);
+                proto_bug_write_string(&encoder, game->chat.sending, 64,
+"chat"); rr_websocket_send(&game->socket, encoder.current - encoder.start);
             }
             memset(game->chat.sending, 0, sizeof game->chat.sending);
         }
@@ -79,11 +79,12 @@ static void chatbar_on_event(struct rr_ui_element *this, struct rr_game *game)
         game->chat.chat_active = mouse_over;
 }
 
-static struct rr_ui_element *rr_ui_chat_text_init(struct rr_game_chat_message *message)
+static struct rr_ui_element *rr_ui_chat_text_init(struct rr_game_chat_message
+*message)
 {
     return rr_ui_set_justify(
-        rr_ui_h_container_init(rr_ui_container_init(), 0, 10, 
-            rr_ui_text_init(message->sender_name, 16, 0xffffffcf), 
+        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+            rr_ui_text_init(message->sender_name, 16, 0xffffffcf),
             rr_ui_text_init(message->message, 16, 0xffffffff),
             NULL
         ),
@@ -109,15 +110,14 @@ struct rr_ui_element *rr_ui_message_box_init(struct rr_game *game)
 
 struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
 {
-    struct rr_ui_element *chatbar = rr_ui_text_input_init(200, 14, game->chat.sending, 64, "_0x4523");
-    chatbar->animate = chatbar_animate;
+    struct rr_ui_element *chatbar = rr_ui_text_input_init(200, 14,
+game->chat.sending, 64, "_0x4523"); chatbar->animate = chatbar_animate;
     chatbar->on_event = chatbar_on_event;
-    struct rr_ui_element *text = rr_ui_set_justify(rr_ui_text_init("Press [Enter] or click here to chat", 14, 0xffffffff), -1, -1);
-    text->prevent_on_event = 1;
-    chatbar->fill = 0xff222222;
-    chatbar->stroke = 0xffffffff;
-    struct rr_ui_element *this = rr_ui_set_background(
-        rr_ui_h_container_init(rr_ui_container_init(), 10, 0, 
+    struct rr_ui_element *text = rr_ui_set_justify(rr_ui_text_init("Press
+[Enter] or click here to chat", 14, 0xffffffff), -1, -1); text->prevent_on_event
+= 1; chatbar->fill = 0xff222222; chatbar->stroke = 0xffffffff; struct
+rr_ui_element *this = rr_ui_set_background(
+        rr_ui_h_container_init(rr_ui_container_init(), 10, 0,
         rr_ui_choose_element_init(
             rr_ui_flex_container_init(
                 rr_ui_text_init("[Squad]", 14, 0xffffffff),

@@ -41,7 +41,9 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
         rr_simulation_get_player_info(this, flower_relations->owner);
     if (!rr_bitset_get(drop->can_be_picked_up_by, player_info->squad))
         return;
-    if (rr_bitset_get(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos))
+    if (rr_bitset_get(drop->picked_up_by,
+                      player_info->squad * RR_SQUAD_MEMBER_COUNT +
+                          player_info->squad_pos))
         return;
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, drop_id);
@@ -51,17 +53,23 @@ static void drop_pick_up(EntityIdx entity, void *_captures)
 
     struct rr_vector delta = {physical->x - flower_physical->x,
                               physical->y - flower_physical->y};
-    if (rr_vector_magnitude_cmp(&delta,
-        physical->radius + player_info->modifiers.drop_pickup_radius) == 1)
+    if (rr_vector_magnitude_cmp(
+            &delta,
+            physical->radius + player_info->modifiers.drop_pickup_radius) == 1)
         return;
     if (player_info->drops_this_tick_size >= 8)
         return;
-    rr_bitset_set(drop->picked_up_by, player_info->squad * RR_SQUAD_MEMBER_COUNT + player_info->squad_pos);
+    rr_bitset_set(drop->picked_up_by,
+                  player_info->squad * RR_SQUAD_MEMBER_COUNT +
+                      player_info->squad_pos);
 
-    ++player_info->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
+    ++player_info
+          ->collected_this_run[drop->id * rr_rarity_id_max + drop->rarity];
     rr_component_player_info_set_update_loot(player_info);
-    player_info->drops_this_tick[player_info->drops_this_tick_size].id = drop->id;
-    player_info->drops_this_tick[player_info->drops_this_tick_size].rarity = drop->rarity;
+    player_info->drops_this_tick[player_info->drops_this_tick_size].id =
+        drop->id;
+    player_info->drops_this_tick[player_info->drops_this_tick_size].rarity =
+        drop->rarity;
     ++player_info->drops_this_tick_size;
 }
 

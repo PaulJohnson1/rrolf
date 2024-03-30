@@ -19,9 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 
 #include <Client/Ui/Engine.h>
@@ -64,14 +64,16 @@ static void inventory_button_on_event(struct rr_ui_element *this,
         }
     }
     else
-        rr_ui_render_tooltip_above(this, game->petal_tooltips[data->id][data->rarity], game);
+        rr_ui_render_tooltip_above(
+            this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static uint8_t inventory_button_should_show(struct rr_ui_element *this,
                                             struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    data->count = rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
+    data->count =
+        rr_game_get_adjusted_inventory_count(game, data->id, data->rarity);
     return data->count;
 }
 
@@ -100,8 +102,7 @@ static void inventory_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_draw_background(renderer, data->rarity, 1);
-    rr_renderer_draw_petal_with_name(renderer, data->id,
-                                             data->rarity);
+    rr_renderer_draw_petal_with_name(renderer, data->id, data->rarity);
     rr_renderer_context_state_free(renderer, &state);
     if (data->count <= 1)
         return;
@@ -143,16 +144,15 @@ struct rr_ui_element *rr_ui_inventory_container_init()
     struct rr_ui_element *this = rr_ui_2d_container_init(5, 6, 15, 15);
     for (uint8_t rarity = rr_rarity_id_max - 1; rarity != 255; --rarity)
         for (uint8_t id = 1; id < rr_petal_id_max; ++id)
-            rr_ui_container_add_element(this, inventory_button_init(id, rarity));
+            rr_ui_container_add_element(this,
+                                        inventory_button_init(id, rarity));
     rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *c = rr_ui_set_background(
         rr_ui_pad(
             rr_ui_set_justify(rr_ui_v_container_init(
                                   rr_ui_container_init(), 10, 10,
                                   rr_ui_text_init("Inventory", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(this, 400),
-                                  NULL
-                            ),
+                                  rr_ui_scroll_container_init(this, 400), NULL),
                               -1, 1),
             10),
         0x40ffffff);
@@ -181,15 +181,31 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 23.33446, -2.6127010000000013);
-    rr_renderer_bezier_curve_to(renderer, 24.2073886, 7.090080999999998, 18.967551, 16.315945, 10.187094, 20.536078999999997);
-    rr_renderer_bezier_curve_to(renderer, 1.4066340000000004, 24.756217499999998, -9.070863000000001, 23.0845447, -16.102187999999998, 16.341662999999997);
-    rr_renderer_bezier_curve_to(renderer, -23.133512399999997, 9.598777399999996, -25.242334999999997, -0.7995510000000046, -21.393474499999996, -9.748982000000002);
-    rr_renderer_bezier_curve_to(renderer, -17.544613299999995, -18.698411500000002, -8.546193999999996, -24.319875000000003, 1.1846275000000048, -23.8539005);
+    rr_renderer_bezier_curve_to(renderer, 24.2073886, 7.090080999999998,
+                                18.967551, 16.315945, 10.187094,
+                                20.536078999999997);
+    rr_renderer_bezier_curve_to(
+        renderer, 1.4066340000000004, 24.756217499999998, -9.070863000000001,
+        23.0845447, -16.102187999999998, 16.341662999999997);
+    rr_renderer_bezier_curve_to(
+        renderer, -23.133512399999997, 9.598777399999996, -25.242334999999997,
+        -0.7995510000000046, -21.393474499999996, -9.748982000000002);
+    rr_renderer_bezier_curve_to(
+        renderer, -17.544613299999995, -18.698411500000002, -8.546193999999996,
+        -24.319875000000003, 1.1846275000000048, -23.8539005);
     rr_renderer_line_to(renderer, 0.8613395400000048, -17.102770900000003);
-    rr_renderer_bezier_curve_to(renderer, -6.054159159999995, -17.433930000000004, -12.449156459999996, -13.438868100000004, -15.184465459999997, -7.078686900000003);
-    rr_renderer_bezier_curve_to(renderer, -17.919774059999998, -0.7185069000000031, -16.421075859999995, 6.6713780999999965, -11.424054159999997, 11.463412099999998);
-    rr_renderer_bezier_curve_to(renderer, -6.427032459999997, 16.2554424, 1.019115840000003, 17.443465099999997, 7.2592118400000025, 14.444300499999997);
-    rr_renderer_bezier_curve_to(renderer, 13.499308840000001, 11.445132099999997, 17.22315534, 4.888497499999998, 16.602782840000003, -2.007077500000001);
+    rr_renderer_bezier_curve_to(
+        renderer, -6.054159159999995, -17.433930000000004, -12.449156459999996,
+        -13.438868100000004, -15.184465459999997, -7.078686900000003);
+    rr_renderer_bezier_curve_to(
+        renderer, -17.919774059999998, -0.7185069000000031, -16.421075859999995,
+        6.6713780999999965, -11.424054159999997, 11.463412099999998);
+    rr_renderer_bezier_curve_to(renderer, -6.427032459999997, 16.2554424,
+                                1.019115840000003, 17.443465099999997,
+                                7.2592118400000025, 14.444300499999997);
+    rr_renderer_bezier_curve_to(
+        renderer, 13.499308840000001, 11.445132099999997, 17.22315534,
+        4.888497499999998, 16.602782840000003, -2.007077500000001);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
@@ -215,18 +231,32 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, -14.692233, 15.376137);
-    rr_renderer_bezier_curve_to(renderer, -16.0932187, 3.514208, -8.009691, -7.385411999999999, 3.7481050000000007, -9.488343);
+    rr_renderer_bezier_curve_to(renderer, -16.0932187, 3.514208, -8.009691,
+                                -7.385411999999999, 3.7481050000000007,
+                                -9.488343);
     rr_renderer_line_to(renderer, 5.0527315, -2.1939876000000007);
-    rr_renderer_bezier_curve_to(renderer, -2.8447465000000003, -0.7814910000000006, -8.2742895, 6.5395654, -7.333275499999999, 14.5069874);
+    rr_renderer_bezier_curve_to(renderer, -2.8447465000000003,
+                                -0.7814910000000006, -8.2742895, 6.5395654,
+                                -7.333275499999999, 14.5069874);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
     rr_renderer_move_to(renderer, 1.8865219999999994, -8.334557);
-    rr_renderer_bezier_curve_to(renderer, 3.2485195999999994, -9.8537497, 5.5841844, -9.9811806, 7.103377999999999, -8.619183);
-    rr_renderer_bezier_curve_to(renderer, 7.832919799999999, -7.96512836, 8.272758199999998, -7.0480522, 8.3261334, -6.069702599999999);
-    rr_renderer_bezier_curve_to(renderer, 8.379512459999999, -5.0913528999999995, 8.0420567, -4.1318687999999995, 7.38800016, -3.402326999999999);
-    rr_renderer_bezier_curve_to(renderer, 6.026004459999999, -1.8831352999999993, 3.69033776, -1.7557052999999991, 2.17114616, -3.1177028999999994);
-    rr_renderer_bezier_curve_to(renderer, 0.6519544600000002, -4.4797005, 0.5245244600000001, -6.8153653, 1.8865220600000001, -8.334556899999999);
+    rr_renderer_bezier_curve_to(renderer, 3.2485195999999994, -9.8537497,
+                                5.5841844, -9.9811806, 7.103377999999999,
+                                -8.619183);
+    rr_renderer_bezier_curve_to(renderer, 7.832919799999999, -7.96512836,
+                                8.272758199999998, -7.0480522, 8.3261334,
+                                -6.069702599999999);
+    rr_renderer_bezier_curve_to(
+        renderer, 8.379512459999999, -5.0913528999999995, 8.0420567,
+        -4.1318687999999995, 7.38800016, -3.402326999999999);
+    rr_renderer_bezier_curve_to(
+        renderer, 6.026004459999999, -1.8831352999999993, 3.69033776,
+        -1.7557052999999991, 2.17114616, -3.1177028999999994);
+    rr_renderer_bezier_curve_to(renderer, 0.6519544600000002, -4.4797005,
+                                0.5245244600000001, -6.8153653,
+                                1.8865220600000001, -8.334556899999999);
     rr_renderer_fill(renderer);
 }
 

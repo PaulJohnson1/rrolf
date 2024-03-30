@@ -312,10 +312,11 @@ static void crafting_chance_text_animate(struct rr_ui_element *this,
     }
     this->fill = RR_RARITY_COLORS[game->crafting_data.crafting_rarity + 1];
     static char text[100] = {0};
-    double chance = 100 *
-                    (1 + game->failed_crafts[game->crafting_data.crafting_id]
-                        [game->crafting_data.crafting_rarity]) *
-                    RR_CRAFT_CHANCES[game->crafting_data.crafting_rarity];
+    double chance =
+        100 *
+        (1 + game->failed_crafts[game->crafting_data.crafting_id]
+                                [game->crafting_data.crafting_rarity]) *
+        RR_CRAFT_CHANCES[game->crafting_data.crafting_rarity];
     snprintf(text, 99, "Chance: %0.3f%%", chance > 100 ? 100 : chance);
     data->text = text;
 }

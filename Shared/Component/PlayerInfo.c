@@ -62,8 +62,10 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
     memset(this, 0, sizeof *this);
     this->camera_fov = RR_BASE_FOV;
     RR_SERVER_ONLY(this->modifiers.drop_pickup_radius = 25;)
-    this->collected_this_run = malloc(rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
-    memset(this->collected_this_run, 0, rr_petal_id_max * rr_rarity_id_max * sizeof (uint32_t));
+    this->collected_this_run =
+        malloc(rr_petal_id_max * rr_rarity_id_max * sizeof(uint32_t));
+    memset(this->collected_this_run, 0,
+           rr_petal_id_max * rr_rarity_id_max * sizeof(uint32_t));
 #ifdef RR_SERVER
     this->entities_in_view = malloc(RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
     memset(this->entities_in_view, 0, RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT));
@@ -73,7 +75,7 @@ void rr_component_player_info_init(struct rr_component_player_info *this,
 #ifdef RR_SERVER
 #include <Server/Simulation.h>
 #include <Server/Squad.h>
-#endif 
+#endif
 
 void rr_component_player_info_free(struct rr_component_player_info *this,
                                    struct rr_simulation *simulation)
@@ -96,7 +98,7 @@ void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this,
 }
 
 void rr_component_player_info_set_update_loot(
-                   struct rr_component_player_info *this)
+    struct rr_component_player_info *this)
 {
     this->protocol_state |= state_flags_petals_collected;
 }
@@ -161,11 +163,15 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
         {
             for (uint32_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
             {
-                if (this->collected_this_run[id * rr_rarity_id_max + rarity] == 0)
+                if (this->collected_this_run[id * rr_rarity_id_max + rarity] ==
+                    0)
                     continue;
                 proto_bug_write_uint8(encoder, id, "dr_id");
                 proto_bug_write_uint8(encoder, rarity, "dr_rar");
-                proto_bug_write_varuint(encoder, this->collected_this_run[id * rr_rarity_id_max + rarity], "dr_cnt");
+                proto_bug_write_varuint(
+                    encoder,
+                    this->collected_this_run[id * rr_rarity_id_max + rarity],
+                    "dr_cnt");
             }
         }
         proto_bug_write_uint8(encoder, 0, "dr_id");
@@ -210,7 +216,8 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
         while (id)
         {
             uint8_t rarity = proto_bug_read_uint8(encoder, "dr_rar");
-            this->collected_this_run[id * rr_rarity_id_max + rarity] = proto_bug_read_varuint(encoder, "dr_cnt");
+            this->collected_this_run[id * rr_rarity_id_max + rarity] =
+                proto_bug_read_varuint(encoder, "dr_cnt");
             id = proto_bug_read_uint8(encoder, "dr_id");
         }
     }

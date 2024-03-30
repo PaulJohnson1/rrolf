@@ -20,9 +20,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Client/Assets/RenderFunctions.h>
 #include <Client/Game.h>
 #include <Client/InputData.h>
-#include <Client/Assets/RenderFunctions.h>
 #include <Client/Renderer/Renderer.h>
 
 #include <Client/Ui/Engine.h>
@@ -93,8 +93,7 @@ title_screen_loadout_button_should_show(struct rr_ui_element *this,
                                         struct rr_game *game)
 {
     struct loadout_button_metadata *data = this->data;
-    return !game->simulation_ready &&
-           data->pos % 10 < game->slots_unlocked;
+    return !game->simulation_ready && data->pos % 10 < game->slots_unlocked;
 }
 
 static void title_screen_loadout_button_animate(struct rr_ui_element *this,
@@ -178,7 +177,7 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
-                                             data->prev_rarity);
+                                     data->prev_rarity);
 }
 
 static void loadout_button_on_render(struct rr_ui_element *this,
@@ -198,7 +197,7 @@ static void loadout_button_on_render(struct rr_ui_element *this,
         rr_renderer_fill(renderer);
     }
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
-                                             data->prev_rarity);
+                                     data->prev_rarity);
 }
 
 struct rr_ui_element *rr_ui_title_screen_loadout_button_init(uint8_t pos)

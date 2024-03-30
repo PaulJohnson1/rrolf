@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include <Client/Renderer/Renderer.h>
 #include <Client/Particle.h>
+#include <Client/Renderer/Renderer.h>
 #include <Client/Socket.h>
 #include <Client/Ui/Ui.h>
 #include <Shared/Entity.h>
@@ -65,7 +65,7 @@ struct rr_game_chat_message
 
 struct rr_game_chat
 {
-    uint8_t chat_active; //0 = inactive, 1 = local, 2 = squad
+    uint8_t chat_active; // 0 = inactive, 1 = local, 2 = squad
     uint8_t chat_type;
     uint32_t at;
     struct rr_game_chat_message messages[10];
@@ -143,7 +143,7 @@ struct rr_game
     EntityIdx player_infos[RR_SQUAD_MEMBER_COUNT];
     uint64_t dev_flag;
     float lerp_delta;
-    
+
     uint8_t socket_ready : 1;
     uint8_t socket_pending : 1;
     uint8_t joined_squad : 1;
@@ -168,6 +168,8 @@ void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
 
-void rr_game_websocket_on_event_function(enum rr_websocket_event_type, void *, void *, uint64_t);
+void rr_game_websocket_on_event_function(enum rr_websocket_event_type, void *,
+                                         void *, uint64_t);
 
-uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *, uint8_t, uint8_t);
+uint32_t rr_game_get_adjusted_inventory_count(struct rr_game *, uint8_t,
+                                              uint8_t);

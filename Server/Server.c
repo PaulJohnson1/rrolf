@@ -410,10 +410,13 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     continue;
                 if (i == j)
                     continue;
-                if (strcmp(client->rivet_account.uuid, this->clients[j].rivet_account.uuid) == 0)
+                if (strcmp(client->rivet_account.uuid,
+                           this->clients[j].rivet_account.uuid) == 0)
                 {
                     fputs("skid multibox\n", stderr);
-                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY, (uint8_t *)"skid multibox", sizeof "skid multibox");
+                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                     (uint8_t *)"skid multibox",
+                                     sizeof "skid multibox");
                     return -1;
                 }
             }
@@ -482,8 +485,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = RR_PLAYER_SPEED *
-                                  rr_fclamp((mag_1 - 25) / 50, 0, 1);
+                    float scale =
+                        RR_PLAYER_SPEED * rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;
                 }
@@ -1003,7 +1006,8 @@ static void server_tick(struct rr_server *this)
                         client->player_accel_x, client->player_accel_y);
                 if (client->player_info->drops_this_tick_size > 0)
                 {
-                    for (uint32_t i = 0;i < client->player_info->drops_this_tick_size; ++i)
+                    for (uint32_t i = 0;
+                         i < client->player_info->drops_this_tick_size; ++i)
                     {
                         uint8_t id = client->player_info->drops_this_tick[i].id;
                         uint8_t rarity =

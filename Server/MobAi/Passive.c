@@ -20,8 +20,7 @@
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 
-void tick_ai_passive_default(EntityIdx entity,
-                                struct rr_simulation *simulation)
+void tick_ai_passive_default(EntityIdx entity, struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =
@@ -55,14 +54,17 @@ void tick_ai_passive_meteor(EntityIdx entity, struct rr_simulation *simulation)
         break;
     case rr_ai_state_idle_moving:
         ai->ticks_until_next_action = 10;
-        struct rr_vector normal = {physical->wall_collision.x, physical->wall_collision.y};
+        struct rr_vector normal = {physical->wall_collision.x,
+                                   physical->wall_collision.y};
         if (rr_vector_get_magnitude(&normal) != 0)
         {
             float angle = rr_vector_theta(&normal);
-            physical->bearing_angle = (2 * angle - (M_PI + physical->bearing_angle));
+            physical->bearing_angle =
+                (2 * angle - (M_PI + physical->bearing_angle));
         }
-        
-        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.15, physical->bearing_angle);
+
+        rr_vector_from_polar(&physical->acceleration, RR_PLAYER_SPEED * 0.15,
+                             physical->bearing_angle);
         rr_component_physical_set_angle(physical, physical->angle + 0.1);
         break;
     default:

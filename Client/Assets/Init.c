@@ -20,7 +20,6 @@
 #include <Client/Game.h>
 #include <Client/Renderer/Renderer.h>
 
-
 void rr_assets_init(struct rr_game *this)
 {
     rr_renderer_tiles_init();

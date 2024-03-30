@@ -19,11 +19,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <Client/Game.h>
-#include <Client/Simulation.h>
-#include <Client/InputData.h>
 #include <Client/Assets/RenderFunctions.h>
+#include <Client/Game.h>
+#include <Client/InputData.h>
 #include <Client/Renderer/Renderer.h>
+#include <Client/Simulation.h>
 
 #include <Client/Ui/Engine.h>
 
@@ -44,12 +44,13 @@ static void collected_button_on_event(struct rr_ui_element *this,
 }
 
 static uint8_t collected_button_should_show(struct rr_ui_element *this,
-                                               struct rr_game *game)
+                                            struct rr_game *game)
 {
     if (!game->simulation_ready)
         return 0;
     struct collected_button_metadata *data = this->data;
-    return game->player_info->collected_this_run[data->id * rr_rarity_id_max + data->rarity];
+    return game->player_info
+        ->collected_this_run[data->id * rr_rarity_id_max + data->rarity];
 }
 
 static void collected_button_on_render(struct rr_ui_element *this,
@@ -61,10 +62,10 @@ static void collected_button_on_render(struct rr_ui_element *this,
     struct rr_renderer_context_state state;
     rr_renderer_context_state_init(renderer, &state);
     rr_renderer_draw_background(renderer, data->rarity, 1);
-    rr_renderer_draw_petal_with_name(renderer, data->id,
-                                             data->rarity);
+    rr_renderer_draw_petal_with_name(renderer, data->id, data->rarity);
     rr_renderer_context_state_free(renderer, &state);
-    if (game->player_info->collected_this_run[data->id * rr_rarity_id_max + data->rarity] == 1)
+    if (game->player_info->collected_this_run[data->id * rr_rarity_id_max +
+                                              data->rarity] == 1)
         return;
     rr_renderer_translate(renderer, 25, -25);
     rr_renderer_rotate(renderer, 0.5);
@@ -76,7 +77,9 @@ static void collected_button_on_render(struct rr_ui_element *this,
     rr_renderer_set_line_width(renderer, 18 * 0.12);
 
     char out[12];
-    sprintf(&out[0], "x%d", game->player_info->collected_this_run[data->id * rr_rarity_id_max + data->rarity]);
+    sprintf(&out[0], "x%d",
+            game->player_info->collected_this_run[data->id * rr_rarity_id_max +
+                                                  data->rarity]);
     rr_renderer_stroke_text(renderer, (char const *)&out, 0, 0);
     rr_renderer_fill_text(renderer, (char const *)&out, 0, 0);
 }
@@ -97,11 +100,12 @@ static struct rr_ui_element *collected_button_init(uint8_t id, uint8_t rarity)
 }
 
 static uint8_t loot_container_should_show(struct rr_ui_element *this,
-                                               struct rr_game *game)
+                                          struct rr_game *game)
 {
-    return game->simulation_ready && (game->simulation->game_over || game->player_info->flower_id == RR_NULL_ENTITY);
+    return game->simulation_ready &&
+           (game->simulation->game_over ||
+            game->player_info->flower_id == RR_NULL_ENTITY);
 }
-
 
 struct rr_ui_element *rr_ui_loot_container_init()
 {
@@ -112,13 +116,13 @@ struct rr_ui_element *rr_ui_loot_container_init()
                                         collected_button_init(id, rarity));
     rr_ui_set_background(this, 0x00000000);
     struct rr_ui_element *c = rr_ui_set_background(
-        rr_ui_pad(
-            rr_ui_set_justify(rr_ui_v_container_init(
-                                  rr_ui_container_init(), 10, 10,
-                                  rr_ui_text_init("Collected this run", 24, 0xffffffff),
-                                  rr_ui_scroll_container_init(this, 500), NULL),
-                              1, 0),
-            20),
+        rr_ui_pad(rr_ui_set_justify(
+                      rr_ui_v_container_init(
+                          rr_ui_container_init(), 10, 10,
+                          rr_ui_text_init("Collected this run", 24, 0xffffffff),
+                          rr_ui_scroll_container_init(this, 500), NULL),
+                      1, 0),
+                  20),
         0x40ffffff);
     c->should_show = loot_container_should_show;
     c->animate = rr_ui_instant_hide_animate;

@@ -68,9 +68,13 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
             if (rr_simulation_has_physical(del_s, id_2))
             {
                 rr_simulation_get_physical(del_s, id_2)->deletion_type = type;
-                if (rr_simulation_has_mob(this, id) && (rr_simulation_get_relations(this, id)->team == rr_simulation_team_id_mobs || rr_simulation_get_mob(this, id)->id == rr_mob_id_meteor))
+                if (rr_simulation_has_mob(this, id) &&
+                    (rr_simulation_get_relations(this, id)->team ==
+                         rr_simulation_team_id_mobs ||
+                     rr_simulation_get_mob(this, id)->id == rr_mob_id_meteor))
                 {
-                    struct rr_component_mob *mob = rr_simulation_get_mob(this, id);
+                    struct rr_component_mob *mob =
+                        rr_simulation_get_mob(this, id);
                     ++game->cache.mob_kills[mob->id][mob->rarity];
                 }
             }
@@ -88,7 +92,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
         uint8_t is_creation = proto_bug_read_uint8(encoder, "upcreate");
         uint32_t component_flags =
             proto_bug_read_varuint(encoder, "entity component flags");
-        
+
         if (is_creation)
         {
 #ifndef RIVET_BUILD
@@ -103,7 +107,9 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 #undef XX
         }
         else if ((component_flags >> 1) != (this->entity_tracker[id] >> 1))
-            printf("protocol error: entity %d misaligned: expected %d but got %d", id, this->entity_tracker[id] >> 1, component_flags >> 1);
+            printf(
+                "protocol error: entity %d misaligned: expected %d but got %d",
+                id, this->entity_tracker[id] >> 1, component_flags >> 1);
 
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \
@@ -113,7 +119,7 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 #undef XX
     }
     game->player_info = rr_simulation_get_player_info(
-        this, proto_bug_read_varuint (encoder, "pinfo id"));
+        this, proto_bug_read_varuint(encoder, "pinfo id"));
     this->game_over = proto_bug_read_uint8(encoder, "game over");
     this->updated_this_tick = 1;
 }
@@ -146,7 +152,7 @@ EntityIdx rr_simulation_alloc_entity(struct rr_simulation *this)
         if (!rr_simulation_has_entity(this, i))
         {
             this->entity_tracker[i] = 1;
-            //no more manual
+            // no more manual
 #ifndef NDEBUG
             printf("<rr_simulation::entity_create::%d>\n", i);
 #endif

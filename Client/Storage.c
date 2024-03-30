@@ -63,7 +63,8 @@ void rr_local_storage_store_bytes(char *label, void const *bytes, uint64_t size)
     EM_ASM(
         {
             const string = UTF8ToString($0);
-            const bytes = new TextDecoder().decode(HEAPU8.subarray($1, $1 + $2 - 1));
+            const bytes =
+                new TextDecoder().decode(HEAPU8.subarray($1, $1 + $2 - 1));
 
             window.localStorage[string] = bytes;
         },
@@ -89,84 +90,93 @@ uint32_t rr_local_storage_get_bytes(char *label, void *bytes)
     return 0;
 }
 
-#define STORE_ID_RARITY(encoder, start, id_count, rarity_count) \
-{ \
-    for (uint8_t id = 0; id < id_count; ++id) \
-    { \
-        for (uint8_t rarity = 0; rarity < rarity_count; ++rarity) \
-        { \
-            if (start[id][rarity] == 0) \
-                continue; \
-            rr_binary_encoder_write_uint8(encoder, id + 1); \
-            rr_binary_encoder_write_uint8(encoder, rarity); \
-            rr_binary_encoder_write_varuint(encoder, start[id][rarity]); \
-        } \
-    } \
-    rr_binary_encoder_write_uint8(encoder, 0); \
-}
+#define STORE_ID_RARITY(encoder, start, id_count, rarity_count)                \
+    {                                                                          \
+        for (uint8_t id = 0; id < id_count; ++id)                              \
+        {                                                                      \
+            for (uint8_t rarity = 0; rarity < rarity_count; ++rarity)          \
+            {                                                                  \
+                if (start[id][rarity] == 0)                                    \
+                    continue;                                                  \
+                rr_binary_encoder_write_uint8(encoder, id + 1);                \
+                rr_binary_encoder_write_uint8(encoder, rarity);                \
+                rr_binary_encoder_write_varuint(encoder, start[id][rarity]);   \
+            }                                                                  \
+        }                                                                      \
+        rr_binary_encoder_write_uint8(encoder, 0);                             \
+    }
 
-#define STORE_LOADOUT \
-{ \
-    for (uint32_t n = 0; n < 20; ++n) \
-    { \
-        if (this->cache.loadout[n].id == 0) \
-            continue; \
-        rr_binary_encoder_write_uint8(&encoder, n + 1); \
-        rr_binary_encoder_write_uint8(&encoder, this->cache.loadout[n].id); \
-        rr_binary_encoder_write_uint8(&encoder, this->cache.loadout[n].rarity); \
-    } \
-    rr_binary_encoder_write_uint8(&encoder, 0); \
-}
+#define STORE_LOADOUT                                                          \
+    {                                                                          \
+        for (uint32_t n = 0; n < 20; ++n)                                      \
+        {                                                                      \
+            if (this->cache.loadout[n].id == 0)                                \
+                continue;                                                      \
+            rr_binary_encoder_write_uint8(&encoder, n + 1);                    \
+            rr_binary_encoder_write_uint8(&encoder,                            \
+                                          this->cache.loadout[n].id);          \
+            rr_binary_encoder_write_uint8(&encoder,                            \
+                                          this->cache.loadout[n].rarity);      \
+        }                                                                      \
+        rr_binary_encoder_write_uint8(&encoder, 0);                            \
+    }
 
-#define READ_LOADOUT \
-{ \
-    uint8_t pos = rr_binary_encoder_read_uint8(&decoder); \
-    while (pos && pos <= 20) \
-    { \
-        this->cache.loadout[pos - 1].id = rr_binary_encoder_read_uint8(&decoder); \
-        this->cache.loadout[pos - 1].rarity = rr_binary_encoder_read_uint8(&decoder); \
-        pos = rr_binary_encoder_read_uint8(&decoder); \
-    } \
-}
+#define READ_LOADOUT                                                           \
+    {                                                                          \
+        uint8_t pos = rr_binary_encoder_read_uint8(&decoder);                  \
+        while (pos && pos <= 20)                                               \
+        {                                                                      \
+            this->cache.loadout[pos - 1].id =                                  \
+                rr_binary_encoder_read_uint8(&decoder);                        \
+            this->cache.loadout[pos - 1].rarity =                              \
+                rr_binary_encoder_read_uint8(&decoder);                        \
+            pos = rr_binary_encoder_read_uint8(&decoder);                      \
+        }                                                                      \
+    }
 
-#define GET_ID_RARITY(encoder, start) \
-{ \
-    uint8_t id = rr_binary_encoder_read_uint8(encoder); \
-    while(id) \
-    { \
-        uint8_t rarity = rr_binary_encoder_read_uint8(encoder); \
-        uint32_t count = rr_binary_encoder_read_varuint(encoder); \
-        start[id - 1][rarity] = count; \
-        id = rr_binary_encoder_read_uint8(encoder); \
-    } \
-}
+#define GET_ID_RARITY(encoder, start)                                          \
+    {                                                                          \
+        uint8_t id = rr_binary_encoder_read_uint8(encoder);                    \
+        while (id)                                                             \
+        {                                                                      \
+            uint8_t rarity = rr_binary_encoder_read_uint8(encoder);            \
+            uint32_t count = rr_binary_encoder_read_varuint(encoder);          \
+            start[id - 1][rarity] = count;                                     \
+            id = rr_binary_encoder_read_uint8(encoder);                        \
+        }                                                                      \
+    }
 
 void rr_game_cache_data(struct rr_game *this)
 {
     struct rr_binary_encoder encoder;
-    rr_binary_encoder_init(&encoder, (uint8_t *) storage_buf2);
+    rr_binary_encoder_init(&encoder, (uint8_t *)storage_buf2);
     STORE_LOADOUT;
-    STORE_ID_RARITY(&encoder, this->inventory, rr_petal_id_max, rr_rarity_id_max);
-    STORE_ID_RARITY(&encoder, this->cache.mob_kills, rr_mob_id_max, rr_rarity_id_max);
-    rr_binary_encoder_write_uint8(&encoder, this->cache.displaying_debug_information);
+    STORE_ID_RARITY(&encoder, this->inventory, rr_petal_id_max,
+                    rr_rarity_id_max);
+    STORE_ID_RARITY(&encoder, this->cache.mob_kills, rr_mob_id_max,
+                    rr_rarity_id_max);
+    rr_binary_encoder_write_uint8(&encoder,
+                                  this->cache.displaying_debug_information);
     rr_binary_encoder_write_uint8(&encoder, this->cache.screen_shake);
     rr_binary_encoder_write_uint8(&encoder, this->cache.tint_petals);
     rr_binary_encoder_write_uint8(&encoder, this->cache.use_mouse);
     rr_binary_encoder_write_nt_string(&encoder, this->cache.nickname);
     rr_binary_encoder_write_float64(&encoder, this->cache.experience);
     rr_binary_encoder_write_varuint(&encoder, this->dev_flag);
-    rr_local_storage_store_bytes("rrolf_account_data", encoder.start, encoder.at - encoder.start);
+    rr_local_storage_store_bytes("rrolf_account_data", encoder.start,
+                                 encoder.at - encoder.start);
 }
 
 void rr_game_cache_load(struct rr_game *this)
 {
     struct rr_binary_encoder decoder;
     rr_local_storage_get_bytes("rrolf_account_data", storage_buf2);
-    rr_binary_encoder_init(&decoder, (uint8_t *) storage_buf2);
+    rr_binary_encoder_init(&decoder, (uint8_t *)storage_buf2);
     READ_LOADOUT;
     GET_ID_RARITY(&decoder, this->inventory);
     GET_ID_RARITY(&decoder, this->cache.mob_kills);
-    this->cache.displaying_debug_information = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.displaying_debug_information =
+        rr_binary_encoder_read_uint8(&decoder);
     this->cache.screen_shake = rr_binary_encoder_read_uint8(&decoder);
     this->cache.tint_petals = rr_binary_encoder_read_uint8(&decoder);
     this->cache.use_mouse = rr_binary_encoder_read_uint8(&decoder);

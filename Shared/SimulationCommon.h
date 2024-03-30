@@ -38,24 +38,24 @@ struct rr_spatial_hash;
 struct rr_simulation_animation
 {
     uint8_t type;
-    #ifdef RR_CLIENT
+#ifdef RR_CLIENT
     float opacity;
     uint32_t color;
-    #endif
-    union 
+#endif
+    union
     {
         uint8_t length;
         uint8_t squad;
     };
-    union 
+    union
     {
         struct rr_vector points[16];
-        struct 
+        struct
         {
             float x;
             float y;
             struct rr_vector velocity;
-            struct rr_vector acceleration;   
+            struct rr_vector acceleration;
             float size;
             uint32_t damage;
 #ifdef RR_SERVER
@@ -65,7 +65,6 @@ struct rr_simulation_animation
 #endif
         };
     };
-    
 };
 
 enum rr_simulation_team_id
@@ -79,7 +78,8 @@ struct rr_simulation
     uint16_t entity_tracker[RR_MAX_ENTITY_COUNT];
     RR_SERVER_ONLY(uint16_t entity_hash_tracker[RR_MAX_ENTITY_COUNT];)
     uint8_t pending_deletions[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];
-    RR_SERVER_ONLY(uint8_t deleted_last_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
+    RR_SERVER_ONLY(
+        uint8_t deleted_last_tick[RR_BITSET_ROUND(RR_MAX_ENTITY_COUNT)];)
 
 #define XX(COMPONENT, ID)                                                      \
     struct rr_component_##COMPONENT                                            \

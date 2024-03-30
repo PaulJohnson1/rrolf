@@ -38,12 +38,14 @@ struct rr_spatial_hash
     uint32_t size;
 };
 
-void rr_spatial_hash_init(struct rr_spatial_hash *, struct rr_simulation *, float);
+void rr_spatial_hash_init(struct rr_spatial_hash *, struct rr_simulation *,
+                          float);
 void rr_spatial_hash_insert(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_update(struct rr_spatial_hash *, EntityIdx);
 void rr_spatial_hash_query(struct rr_spatial_hash *, float, float, float, float,
                            void *, void (*)(EntityIdx, void *));
-void rr_spatial_hash_find_possible_collisions(
-    struct rr_spatial_hash *, void *,
-    void (*)(struct rr_simulation *, EntityIdx, EntityIdx, void *));
+void rr_spatial_hash_find_possible_collisions(struct rr_spatial_hash *, void *,
+                                              void (*)(struct rr_simulation *,
+                                                       EntityIdx, EntityIdx,
+                                                       void *));
 void rr_spatial_hash_reset(struct rr_spatial_hash *);

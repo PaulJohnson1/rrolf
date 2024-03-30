@@ -59,12 +59,32 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x,
 uint8_t ornith_zone() { return rr_mob_id_ornithomimus; }
 uint8_t fern_zone() { return rr_mob_id_fern; }
 uint8_t edmon_tree_zone() { return rr_mob_id_edmontosaurus; }
-uint8_t quetz_trex_zone() { return rr_frand() > 0.5 ? rr_mob_id_quetzalcoatlus : rr_mob_id_trex; }
-uint8_t trike_dako_zone() { return rr_frand() > 0.2 ? rr_mob_id_dakotaraptor : rr_mob_id_triceratops; }
-uint8_t pter_zone() { return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor; }
-uint8_t edmo_dako_zone() { return rr_frand() > 0.33 ? rr_mob_id_dakotaraptor : rr_mob_id_edmontosaurus; }
-uint8_t trex_dako_pter_zone() { return rr_frand() > 0.6 ? rr_mob_id_trex : rr_frand() > 0.5 ? rr_mob_id_dakotaraptor : rr_mob_id_pteranodon; }
-uint8_t dako_pter_zone() { return rr_frand() > 0.5 ? rr_mob_id_dakotaraptor : rr_mob_id_pteranodon; }
+uint8_t quetz_trex_zone()
+{
+    return rr_frand() > 0.5 ? rr_mob_id_quetzalcoatlus : rr_mob_id_trex;
+}
+uint8_t trike_dako_zone()
+{
+    return rr_frand() > 0.2 ? rr_mob_id_dakotaraptor : rr_mob_id_triceratops;
+}
+uint8_t pter_zone()
+{
+    return rr_frand() > 0.02 ? rr_mob_id_pteranodon : rr_mob_id_meteor;
+}
+uint8_t edmo_dako_zone()
+{
+    return rr_frand() > 0.33 ? rr_mob_id_dakotaraptor : rr_mob_id_edmontosaurus;
+}
+uint8_t trex_dako_pter_zone()
+{
+    return rr_frand() > 0.6   ? rr_mob_id_trex
+           : rr_frand() > 0.5 ? rr_mob_id_dakotaraptor
+                              : rr_mob_id_pteranodon;
+}
+uint8_t dako_pter_zone()
+{
+    return rr_frand() > 0.5 ? rr_mob_id_dakotaraptor : rr_mob_id_pteranodon;
+}
 
 struct zone
 {
@@ -80,18 +100,12 @@ struct zone
 
 // all over spawn
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
-    {2, 9, 2, 2, ornith_zone}, 
-    {8, 22, 2, 2, fern_zone}, 
-    {11, 29, 3, 2, edmon_tree_zone}, 
-    {4, 25, 3, 2, quetz_trex_zone}, 
-    {34, 21, 3, 2, trike_dako_zone},
-    {38, 21, 5, 1, pter_zone}, 
-    {26, 31, 4, 2, edmo_dako_zone}, 
-    {17, 19, 3, 2, pter_zone},
-    {28, 24, 2, 3, trex_dako_pter_zone},
-    {0, 11, 5, 1, dako_pter_zone},
-    {21, 23, 3, 2, edmon_tree_zone},
-    {7, 33, 3, 2, trike_dako_zone},  
+    {2, 9, 2, 2, ornith_zone},           {8, 22, 2, 2, fern_zone},
+    {11, 29, 3, 2, edmon_tree_zone},     {4, 25, 3, 2, quetz_trex_zone},
+    {34, 21, 3, 2, trike_dako_zone},     {38, 21, 5, 1, pter_zone},
+    {26, 31, 4, 2, edmo_dako_zone},      {17, 19, 3, 2, pter_zone},
+    {28, 24, 2, 3, trex_dako_pter_zone}, {0, 11, 5, 1, dako_pter_zone},
+    {21, 23, 3, 2, edmon_tree_zone},     {7, 33, 3, 2, trike_dako_zone},
 };
 
 static void set_spawn_zones()
@@ -99,8 +113,7 @@ static void set_spawn_zones()
     puts("refreshing spawn zones");
     struct timeval t;
     gettimeofday(&t, NULL);
-    int64_t time =
-        (t.tv_sec * 1000000 + t.tv_usec) / (1000 * 1000 * 60 * 30);
+    int64_t time = (t.tv_sec * 1000000 + t.tv_usec) / (1000 * 1000 * 60 * 30);
 
     uint64_t seed = rr_get_hash(time);
 
@@ -125,7 +138,8 @@ static void set_spawn_zones()
     {
         struct zone z = zone_positions[i];
 
-        set_special_zone(rr_biome_id_hell_creek, z.spawn_func, z.x, z.y, z.w, z.h);
+        set_special_zone(rr_biome_id_hell_creek, z.spawn_func, z.x, z.y, z.w,
+                         z.h);
     }
 }
 
@@ -288,7 +302,8 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
 
 static float get_max_points(struct rr_maze_grid *grid)
 {
-    return (0.2 + (grid->player_count) * 1.2) * powf(1.1, grid->overload_factor);
+    return (0.2 + (grid->player_count) * 1.2) *
+           powf(1.1, grid->overload_factor);
 }
 static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid,
                      uint32_t grid_x, uint32_t grid_y)
@@ -310,7 +325,8 @@ static int tick_grid(struct rr_simulation *this, struct rr_maze_grid *grid,
     }
     float player_modifier = 1 + grid->player_count * 4.0 / 3;
     float difficulty_modifier = 150 + 3 * grid->difficulty;
-    float overload_modifier = powf(1.2, grid->local_difficulty + grid->overload_factor);
+    float overload_modifier =
+        powf(1.2, grid->local_difficulty + grid->overload_factor);
     float max_points = get_max_points(grid);
     if (grid->grid_points >= max_points)
         return 0;
@@ -402,7 +418,8 @@ void rr_simulation_tick(struct rr_simulation *this)
     int64_t time = (t.tv_sec * 1000000 + t.tv_usec);
     int64_t current_zone_epoch = time / (1000 * 1000 * 60 * 30);
 
-    if (current_zone_epoch != last_zone_epoch) {
+    if (current_zone_epoch != last_zone_epoch)
+    {
         set_spawn_zones();
         last_zone_epoch = current_zone_epoch;
     }
