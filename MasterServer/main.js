@@ -348,7 +348,7 @@ const saveDatabaseToFile = () => {
     {
         changed = false;
         console.log("saving database to file:", databaseFilePath);
-        const databaseData = JSON.stringify(database, null, 2);
+        const databaseData = JSON.stringify(database);
         fs.writeFileSync(databaseFilePath, databaseData, "utf8");
     }
 };

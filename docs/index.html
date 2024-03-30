@@ -49,7 +49,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 padding-left: 2px;
             }
         </style>
-        <script src="https://8080-maxnest0x0-rrolf-pxkaeghozpf.ws-eu110.gitpod.io/rrolf-client"></script>
+        <script src="https://8080-maxnest0x0-rrolf-pxkaeghozpf.ws-eu110.gitpod.io/rrolf-client" onerror="alert('Sorry, the server is not running')"></script>
+        <script>
+            function transferAccount() {
+                window.addEventListener("message", event => {
+                    if (event.origin === "https://8080-maxnest0x0-rrolf-e93pfndk54i.ws-eu110.gitpod.io") {
+                        if (event.data) {
+                            window.localStorage["rivet_account_uuid"] = event.data;
+                            window.location.reload();
+                        } else alert("Old account not found");
+                    }
+                });
+                window.open("https://8080-maxnest0x0-rrolf-e93pfndk54i.ws-eu110.gitpod.io/transfer.html", "", "popup");
+            }
+        </script>
     </head>
     <body>
     </body>
