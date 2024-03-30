@@ -105,6 +105,15 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_edmontosaurus:
         tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED);
         break;
+    case rr_mob_id_hornet:
+        tick_ai_aggro_trex(entity, this);
+        break;
+    case rr_mob_id_honeybee:
+        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED + 0.1);
+        break;
+    case rr_mob_id_ant:
+        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED * 2);
+        break;
     default:
         tick_ai_passive_default(entity, this);
         break;

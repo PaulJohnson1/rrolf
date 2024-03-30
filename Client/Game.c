@@ -371,7 +371,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_title_screen_loadout_button_init(19),
                         NULL
                     ),
-                    rr_ui_text_init("powered by Rivet", 15, 0xffffffff),
+                    rr_ui_text_init("https://github.com/PaulJohnson1/rrolf", 15, 0xffffffff),
                     NULL
                 ),
             0x00000000),
@@ -1269,7 +1269,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "ws://127.0.0.1:1234");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rrolf-e93pfndk54i.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }

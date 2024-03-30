@@ -43,6 +43,7 @@
 
 uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 uint8_t *outgoing_message = lws_message_data + LWS_PRE;
+uint8_t beehive_spawned = 0;
 
 struct connected_captures
 {
@@ -421,7 +422,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
             }
 #endif
-            if (proto_bug_read_varuint(&encoder, "dev_flag") == 49453864343)
+            // if (proto_bug_read_varuint(&encoder, "dev_flag") == 1)
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
@@ -457,8 +458,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
             if (client->dev)
-                client->speed_percent =
-                    20 * proto_bug_read_float32(&encoder, "speed_percent");
+                // client->speed_percent =
+                    proto_bug_read_float32(&encoder, "speed_percent");
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
@@ -798,21 +799,29 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case rr_serverbound_dev_summon:
         {
             puts("edmonto requested");
-            if (!client->dev)
+            // if (!client->dev)
+            // if (beehive_spawned)
                 break;
 
             puts("edmonto has been summoned by the gods");
+            beehive_spawned = 1;
 
-            uint8_t id = proto_bug_read_uint8(&encoder, "id");
-            uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
+            // uint8_t id = proto_bug_read_uint8(&encoder, "id");
+            // uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
+            // uint8_t id = rand() % rr_mob_id_max;
+            // uint8_t rarity = 5 + rand() % 3;
+            uint8_t id = 16;
+            uint8_t rarity = 7;
 
-            EntityIdx e = rr_simulation_alloc_mob(
-                &this->simulation, client->player_info->arena,
-                client->player_info->camera_x, client->player_info->camera_y,
-                id, rarity, rr_simulation_team_id_mobs);
-            struct rr_component_mob *mob =
-                rr_simulation_get_mob(&this->simulation, e);
-            mob->no_drop = 1;
+            for (uint8_t i = 0; i < 1; i++) {
+                EntityIdx e = rr_simulation_alloc_mob(
+                    &this->simulation, client->player_info->arena,
+                    client->player_info->camera_x + (rr_frand() * 2000 - 1000), client->player_info->camera_y + (rr_frand() * 2000 - 1000),
+                    id, rarity, rr_simulation_team_id_mobs);
+                struct rr_component_mob *mob =
+                    rr_simulation_get_mob(&this->simulation, e);
+                // mob->no_drop = 1;
+            }
             break;
         }
         default:

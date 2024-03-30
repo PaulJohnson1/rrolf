@@ -33,7 +33,7 @@ const PASSWORD_SALT = "aiapd8tfa3pd8tfn3pad8tap3d84t3q4pntardi4tad4otupadrtouad3
 const CLOUD_TOKEN = "cloud.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CKOM_-XtMRCjtLqo-DAaEgoQjUflOmYrT3Sv5ckk4-Nk0yIWOhQKEgoQ6l7BiqssS-iYCw6PaqKKnA.Pgw_qDBaugBIFd7ilYcbbm_6yPNDeqreiDi1VBkKX84ER7CXvS-8abNuRhKtU_hDtgT9Sd4a7JWN68fdLnEKCA";
 const NAMESPACE_ID = "04cfba67-e965-4899-bcb9-b7497cc6863b";
 const SERVER_SECRET = "ad904nf3adrgnariwpanyf3qap8unri4t9b384wna3g34ytgdr4bwtvd4y";
-const MAX_PETAL_COUNT = 24;
+const MAX_PETAL_COUNT = 28;
 
 let database = {accounts: [], links: []};
 let changed = false;
@@ -117,6 +117,12 @@ function apply_missing_defaults(account)
         mob_gallery: {},
         inflated_up_to: 1,
     };
+    defaults.xp = 10000000; // lvl 62
+    for (let id = 1; id < MAX_PETAL_COUNT; id++) {
+        for (let rarity = 0; rarity <= 4; rarity++) {
+            defaults.petals[`${id}:${rarity}`] = 5;
+        }
+    }
 
     // Fill in any missing defaults
     for (let prop in defaults) {
@@ -373,7 +379,7 @@ wss.on("connection", (ws, req) => {
                 const uuid = decoder.ReadStringNT();
                 const pos = decoder.ReadUint8();
                 log("attempt init", [uuid]);
-                if (!is_valid_uuid(uuid) || connected_clients[uuid])
+                if (!is_valid_uuid(uuid) || connected_clients[uuid] || uuid === "b5f62776-ef1c-472d-8ccd-b329edee545b")
                 {
                     log("player force disconnect", [uuid]);
                     const encoder = new protocol.BinaryWriter();
@@ -498,7 +504,7 @@ const try_save_exit = () =>
 for (const error of ["beforeExit", "exit", "SIGTERM", "SIGINT", "uncaughtException"])
     process.on(error, args => { console.log(error, args); try_save_exit() });
 
-setInterval(saveDatabaseToFile, 60000);
+setInterval(saveDatabaseToFile, 10000);
 
 setInterval(() =>  {
     log("player count", [Object.keys(connected_clients).length]);

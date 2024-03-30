@@ -31,7 +31,7 @@
 #ifdef RIVET_BUILD
 #define BASE_API_URL "https://rrolf.io/api/"
 #else
-#define BASE_API_URL "http://localhost:55554/"
+#define BASE_API_URL "https://55554-maxnest0x0-rrolf-e93pfndk54i.ws-eu110.gitpod.io/api/"
 #endif
 
 #define RR_RIVET_CURL_PROLOGUE                                                 \
@@ -289,10 +289,9 @@ void rr_rivet_identities_create_guest(void *captures)
 {
     puts("<rr_rivet::attempt_login>");
 
-    rr_rivet_on_log_in("token", "url", "name", "1234",
-                       "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
+    // rr_rivet_on_log_in("token", "url", "name", "1234", "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
 
-#if 0
+#if EMSCRIPTEN
     // clang-format off
     EM_ASM({
         function on_account(x)
@@ -323,45 +322,66 @@ void rr_rivet_identities_create_guest(void *captures)
 
         function attempt(x)
         {
-            if (!window.localStorage[x])
+            const r = {};
+            r["identity_token"] = "token";
+            r["identity"] = {};
+            r["identity"]["avatar_url"] = "url";
+            r["identity"]["display_name"] = "name";
+            r["identity"]["identity_id"] = "";
+            r["identity"]["account_number"] = "1234";
+            r["identity"]["is_game_linked"] = true;
+
+            if (
+                !window.localStorage["rivet_account_uuid"] ||
+                window.localStorage["rivet_account_uuid"] === "b5f62776-ef1c-472d-8ccd-b329edee545b"
+            )
             {
-                fetch("https://identity.api.rivet.gg/v1/identities", {
-                    "method": "POST",
-                    "body": "{}",
-                    "headers": {
-                        // is a dev token
-                        "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                // fetch("https://identity.api.rivet.gg/v1/identities", {
+                //     "method": "POST",
+                //     "body": "{}",
+                //     "headers": {
+                //         // is a dev token
+                //         "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                //     }
+                // }).then(r => r.json())
+                // .then(r => {
+                    // window.localStorage[x] = r["identity_token"];
+                    // window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
+                    function uuidv4() {
+                        return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+                            (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+                        );
                     }
-                }).then(r => r.json())
-                .then(r => {
-                    window.localStorage[x] = r["identity_token"];
+                    r["identity"]["identity_id"] = uuidv4();
+                    // window.localStorage[x] = r["identity_token"];
                     window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
                     on_account(r);
-                });
+                // });
             }
             else
             {
-                fetch("https://identity.api.rivet.gg/v1/identities", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        "existing_identity_token": window.localStorage[x]
-                    }),
-                    headers: {
-                        // is a dev token
-                        "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
-                    }
-                }).then(r => r.json())
-                .then(r => {
-                    if (r.code == "ERROR")
-                        throw r;
-                    window.localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
-                    if (!window.localStorage["rivet_account_uuid"])
-                        window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
+                // fetch("https://identity.api.rivet.gg/v1/identities", {
+                //     method: "POST",
+                //     body: JSON.stringify({
+                //         "existing_identity_token": window.localStorage[x]
+                //     }),
+                //     headers: {
+                //         // is a dev token
+                //         "Authorization": "Bearer dev_prod.eyJ0eXAiOiJKV1QiLCJhbGciOiJFZERTQSJ9.CNeDpPyHMhDXq9--kjEaEgoQSQ1V9oVxQXCp8rlTVZHUpyIvQi0KEgoQBM-6Z-llSJm8ubdJfMaGOxoJMTI3LjAuMC4xIgwKB2RlZmF1bHQQ0gk.kmTY4iKP2TgXcpboXPEilKbIX6uITZxrJBXICJ82uhjZfUTdw6ziiunWcpwaf8cY8umDY7gQHL66z6b_lwEIDg"
+                //     }
+                // }).then(r => r.json())
+                // .then(r => {
+                //     if (r.code == "ERROR")
+                //         throw r;
+                //     window.localStorage["DO_NOT_SHARE_rivet_account_token"] = r["identity_token"];
+                //     if (!window.localStorage["rivet_account_uuid"])
+                //         window.localStorage["rivet_account_uuid"] = r["identity"]["identity_id"];
+                    r["identity"]["identity_id"] = window.localStorage["rivet_account_uuid"];
                     on_account(r);
-                }).catch(function(e)
-                {
-                   alert("Login failed: please reload");
-                });
+                // }).catch(function(e)
+                // {
+                //    alert("Login failed: please reload");
+                // });
             };
         };
         attempt("DO_NOT_SHARE_rivet_account_token");

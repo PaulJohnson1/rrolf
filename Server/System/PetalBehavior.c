@@ -440,7 +440,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     health->damage_reduction = 0;
     uint8_t rot_count = 0;
     float bone_diminish_factor = 1;
-    float feather_diminish_factor = 1;
+    float feather_diminish_factor = 1.5;
     rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -578,8 +578,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     uint8_t m_id, m_rar;
                     if (data->id == rr_petal_id_egg)
                     {
-                        m_id = rr_mob_id_trex;
-                        m_rar = petal->rarity >= 2 ? petal->rarity - 2 : 0;
+                        m_id = rr_mob_id_meteor;
+                        m_rar = petal->rarity >= 1 ? petal->rarity - 1 : 0;
                     }
                     EntityIdx mob_id = rr_simulation_alloc_mob(
                         simulation, petal_physical->arena, petal_physical->x,
