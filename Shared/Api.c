@@ -51,8 +51,8 @@ void rr_api_get_password(char const *token, void *captures)
     EM_ASM(
         {
             fetch(UTF8ToString($0) + "user_get_password/" + UTF8ToString($1))
-                .then(x = > x.text())
-                .then(pw = > {
+                .then(x => x.text())
+                .then(pw => {
                     const $pw = _malloc(pw.length + 1);
                     HEAPU8.set(new TextEncoder().encode(pw), $pw);
                     HEAPU8[$pw + pw.length] = 0;
