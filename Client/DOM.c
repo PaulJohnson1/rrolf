@@ -145,8 +145,7 @@ void rr_page_reload(uint8_t no_cache)
 uint8_t rr_dom_test_mobile()
 {
     return EM_ASM_INT({
-        return +(
-            (/ iPhone | iPad | iPod | Android / i).test(navigator.userAgent));
+        return +((/iPhone|iPad|iPod|Android/i).test(navigator.userAgent));
     });
 }
 

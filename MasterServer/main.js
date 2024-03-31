@@ -20,7 +20,6 @@ const fs = require("fs");
 const WSS = require("ws");
 const http = require("http")
 const crypto = require("crypto");
-const rng = require("./rng");
 const protocol = require("./protocol");
 const GameServer = require("./gameserver");
 const GameClient = require("./client");
