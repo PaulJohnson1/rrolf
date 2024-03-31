@@ -451,7 +451,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         if (data->id == rr_petal_id_leaf)
             rr_component_health_set_health(
                 health, health->health +
-                            0.04 * RR_PETAL_RARITY_SCALE[slot->rarity].heal);
+                            0.05 * RR_PETAL_RARITY_SCALE[slot->rarity].heal);
         else if (data->id == rr_petal_id_light)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)

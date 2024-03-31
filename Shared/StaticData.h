@@ -80,61 +80,61 @@ enum rr_rarity_id
 
 enum rr_petal_id
 {
-    rr_petal_id_none,
-    rr_petal_id_basic,
-    rr_petal_id_pellet,
-    rr_petal_id_fossil,
-    rr_petal_id_stinger,
-    rr_petal_id_light,
-    rr_petal_id_shell,
-    rr_petal_id_peas,
-    rr_petal_id_leaf,
-    rr_petal_id_egg,
-    rr_petal_id_magnet,
-    rr_petal_id_uranium,
-    rr_petal_id_feather,
-    rr_petal_id_azalea,
-    rr_petal_id_bone,
-    rr_petal_id_web,
-    rr_petal_id_seed,
-    rr_petal_id_gravel,
-    rr_petal_id_club,
-    rr_petal_id_crest,
-    rr_petal_id_droplet,
-    rr_petal_id_beak,
-    rr_petal_id_lightning,
-    rr_petal_id_third_eye,
-    rr_petal_id_mandible,
-    rr_petal_id_wax,
-    rr_petal_id_sand,
-    rr_petal_id_mint,
+    rr_petal_id_none, // 0
+    rr_petal_id_basic, // 1
+    rr_petal_id_pellet, // 2
+    rr_petal_id_fossil, // 3
+    rr_petal_id_stinger, // 4
+    rr_petal_id_light, // 5
+    rr_petal_id_shell, // 6
+    rr_petal_id_peas, // 7
+    rr_petal_id_leaf, // 8
+    rr_petal_id_egg, // 9
+    rr_petal_id_magnet, // 10
+    rr_petal_id_uranium, // 11
+    rr_petal_id_feather, // 12
+    rr_petal_id_azalea, // 13
+    rr_petal_id_bone, // 14
+    rr_petal_id_web, // 15
+    rr_petal_id_seed, // 16
+    rr_petal_id_gravel, // 17
+    rr_petal_id_club, // 18
+    rr_petal_id_crest, // 19
+    rr_petal_id_droplet, // 20
+    rr_petal_id_beak, // 21
+    rr_petal_id_lightning, // 22
+    rr_petal_id_third_eye, // 23
+    rr_petal_id_mandible, // 24
+    rr_petal_id_wax, // 25
+    rr_petal_id_sand, // 26
+    rr_petal_id_mint, // 27
 
     rr_petal_id_max
 };
 
 enum rr_mob_id
 {
-    rr_mob_id_triceratops,
-    rr_mob_id_trex,
-    rr_mob_id_fern,
-    rr_mob_id_tree,
-    rr_mob_id_pteranodon,
-    rr_mob_id_dakotaraptor,
-    rr_mob_id_pachycephalosaurus,
-    rr_mob_id_ornithomimus,
-    rr_mob_id_ankylosaurus,
-    rr_mob_id_meteor,
-    rr_mob_id_quetzalcoatlus,
-    rr_mob_id_edmontosaurus,
+    rr_mob_id_triceratops, // 0
+    rr_mob_id_trex, // 1
+    rr_mob_id_fern, // 2
+    rr_mob_id_tree, // 3
+    rr_mob_id_pteranodon, // 4
+    rr_mob_id_dakotaraptor, // 5
+    rr_mob_id_pachycephalosaurus, // 6
+    rr_mob_id_ornithomimus, // 7
+    rr_mob_id_ankylosaurus, // 8
+    rr_mob_id_meteor, // 9
+    rr_mob_id_quetzalcoatlus, // 10
+    rr_mob_id_edmontosaurus, // 11
 
-    rr_mob_id_ant,
-    rr_mob_id_hornet,
-    rr_mob_id_dragonfly,
-    rr_mob_id_honeybee,
-    rr_mob_id_beehive,
-    rr_mob_id_spider,
-    rr_mob_id_house_centipede,
-    rr_mob_id_lanternfly,
+    rr_mob_id_ant, // 12
+    rr_mob_id_hornet, // 13
+    rr_mob_id_dragonfly, // 14
+    rr_mob_id_honeybee, // 15
+    rr_mob_id_beehive, // 16
+    rr_mob_id_spider, // 17
+    rr_mob_id_house_centipede, // 18
+    rr_mob_id_lanternfly, // 19
     rr_mob_id_max
 };
 

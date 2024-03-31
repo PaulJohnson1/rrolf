@@ -371,7 +371,7 @@ void rr_game_init(struct rr_game *this)
                         rr_ui_title_screen_loadout_button_init(19),
                         NULL
                     ),
-                    rr_ui_text_init("https://github.com/PaulJohnson1/rrolf", 15, 0xffffffff),
+                    rr_ui_text_init("https://github.com/maxnest0x0/rrolf", 15, 0xffffffff),
                     NULL
                 ),
             0x00000000),
@@ -716,8 +716,17 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 squad->squad_private =
                     proto_bug_read_uint8(&encoder, "private");
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-                proto_bug_read_string(&encoder, squad->squad_code, 16,
+                if (squad->squad_private)
+                {
+                    proto_bug_read_string(&encoder, NULL, 16,
+                                        "squad code");
+                    strcpy(squad->squad_code, "private");
+                }
+                else
+                {
+                    proto_bug_read_string(&encoder, squad->squad_code, 16,
                                       "squad code");
+                }
             }
             break;
         }

@@ -404,7 +404,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // Read uuid
             proto_bug_read_string(&encoder, client->rivet_account.uuid, 100,
                                   "rivet uuid");
-#ifdef RIVET_BUILD
+// #ifdef RIVET_BUILD
             for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
             {
                 if (!rr_bitset_get(this->clients_in_use, j))
@@ -421,7 +421,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     return -1;
                 }
             }
-#endif
+// #endif
             // if (proto_bug_read_varuint(&encoder, "dev_flag") == 1)
                 client->dev = 1;
 

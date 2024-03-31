@@ -106,13 +106,19 @@ static void system_for_each(EntityIdx entity, void *simulation)
         tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED);
         break;
     case rr_mob_id_hornet:
-        tick_ai_aggro_trex(entity, this);
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED + 0.25);
         break;
     case rr_mob_id_honeybee:
-        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED + 0.1);
+        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED + 0.25);
         break;
     case rr_mob_id_ant:
-        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED * 2);
+        tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED * 3);
+        break;
+    case rr_mob_id_dragonfly:
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED + 0.25);
+        break;
+    case rr_mob_id_spider:
+        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED + 0.5);
         break;
     default:
         tick_ai_passive_default(entity, this);
