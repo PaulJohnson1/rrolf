@@ -662,6 +662,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             proto_bug_read_string(
                 &encoder, rr_squad_get_client_slot(this, client)->nickname, 16,
                 "nickname");
+            if (rr_squad_get_client_slot(this, client)->nickname[0] == 0)
+                strcpy(rr_squad_get_client_slot(this, client)->nickname, "Anonymous");
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 

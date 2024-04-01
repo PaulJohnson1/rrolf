@@ -61,6 +61,7 @@ struct rr_game_chat_message
     uint8_t type;
     char sender_name[16];
     char message[64];
+    char text[100];
 };
 
 struct rr_game_chat

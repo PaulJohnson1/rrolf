@@ -380,7 +380,7 @@ void rr_game_init(struct rr_game *this)
     
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
-    /*
+
     rr_ui_container_add_element(this->window, 
         rr_ui_link_toggle(
             rr_ui_pad(
@@ -390,7 +390,6 @@ void rr_game_init(struct rr_game *this)
             , 20)
         , simulation_ready)
     );
-    */
 
     rr_ui_container_add_element(
         this->window,
@@ -718,9 +717,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
                 if (squad->squad_private)
                 {
-                    proto_bug_read_string(&encoder, NULL, 16,
+                    static char code[16];
+                    proto_bug_read_string(&encoder, code, 16,
                                         "squad code");
-                    strcpy(squad->squad_code, "private");
+                    strcpy(squad->squad_code, "(private)");
                 }
                 else
                 {
@@ -765,6 +765,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 }
                 case rr_animation_type_chat:
                     rr_particle_delete(&this->particle_manager, particle);
+                    if (this->chat.at < 9) this->chat.at++;
+                    else {
+                        for (uint8_t i = 0; i < 9; i++) {
+                            this->chat.messages[i] = this->chat.messages[i + 1];
+                        }
+                    }
                     proto_bug_read_string(
                         &encoder,
                         this->chat.messages[this->chat.at].sender_name, 64,
@@ -772,7 +778,9 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_string(
                         &encoder, this->chat.messages[this->chat.at].message,
                         64, "chat");
-                    this->chat.at = (this->chat.at + 1) % 10;
+                    strcpy(this->chat.messages[this->chat.at].text, this->chat.messages[this->chat.at].sender_name);
+                    strcat(this->chat.messages[this->chat.at].text, ": ");
+                    strcat(this->chat.messages[this->chat.at].text, this->chat.messages[this->chat.at].message);
                     break;
                 default:
                     break;
@@ -1278,7 +1286,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rrolf-pxkaeghozpf.ws-eu110.gitpod.io/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rrolf-4mdcfhgyf5k.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }

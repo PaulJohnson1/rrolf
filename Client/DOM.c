@@ -104,6 +104,17 @@ void rr_dom_set_text(char const *name, char *text)
         name, text);
 }
 
+void rr_dom_focus(char const *name)
+{
+    EM_ASM(
+        {
+            const name = UTF8ToString($0);
+            const elem = document.getElementById(name);
+            setTimeout(elem.focus.bind(elem));
+        },
+        name);
+}
+
 void rr_copy_string(char const *str)
 {
     EM_ASM(
