@@ -421,7 +421,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
             }
 // #endif
-            // if (proto_bug_read_varuint(&encoder, "dev_flag") == 1)
+#ifndef SANDBOX
+            if (rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag")) == 94472176279338)
+#endif
                 client->dev = 1;
 
 #ifdef RIVET_BUILD
@@ -456,12 +458,9 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            if (client->dev) {
-                float speed = proto_bug_read_float32(&encoder, "speed_percent");
-#ifdef SANDBOX
-                client->speed_percent = 20 * speed;
-#endif
-            }
+            if (client->dev)
+                client->speed_percent =
+                    20 * proto_bug_read_float32(&encoder, "speed_percent");
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
@@ -803,9 +802,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case rr_serverbound_dev_summon:
         {
             puts("edmonto requested");
-#ifdef SANDBOX
             if (!client->dev || client->player_info == NULL)
-#endif
                 break;
 
             puts("edmonto has been summoned by the gods");
@@ -1033,8 +1030,8 @@ static void server_tick(struct rr_server *this)
                 }
             }
             rr_server_client_broadcast_update(client);
-            if (!client->dev)
-                continue;
+            // if (!client->dev)
+            //     continue;
             struct proto_bug encoder;
             proto_bug_init(&encoder, outgoing_message);
             proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump,
@@ -1066,8 +1063,11 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_uint8(&encoder, squad->private, "private");
                 proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
                 char joined_code[16];
-                sprintf(joined_code, "%s-%s", this->server_alias,
-                        squad->squad_code);
+                if (client->dev || !squad->private)
+                    sprintf(joined_code, "%s-%s", this->server_alias,
+                            squad->squad_code);
+                else
+                    strcpy(joined_code, "(private)");
                 proto_bug_write_string(&encoder, joined_code, 16, "squad code");
             }
             rr_server_client_write_message(client, encoder.start,

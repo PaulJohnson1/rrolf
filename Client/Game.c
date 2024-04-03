@@ -381,7 +381,7 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
 
-    rr_ui_container_add_element(this->window, 
+    rr_ui_container_add_element(this->window,
         rr_ui_link_toggle(
             rr_ui_pad(
                 rr_ui_set_justify(
@@ -715,18 +715,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 squad->squad_private =
                     proto_bug_read_uint8(&encoder, "private");
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
-                if (squad->squad_private)
-                {
-                    static char code[16];
-                    proto_bug_read_string(&encoder, code, 16,
-                                        "squad code");
-                    strcpy(squad->squad_code, "(private)");
-                }
-                else
-                {
-                    proto_bug_read_string(&encoder, squad->squad_code, 16,
-                                      "squad code");
-                }
+                proto_bug_read_string(&encoder, squad->squad_code, 16,
+                                    "squad code");
             }
             break;
         }
@@ -1212,7 +1202,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                          186 /* ; */) & !this->chat.chat_active)
+                          186 /* ; */) && !this->chat.chat_active)
         this->cache.displaying_debug_information ^= 1;
 
     if (this->cache.displaying_debug_information)

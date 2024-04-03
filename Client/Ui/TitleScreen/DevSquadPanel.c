@@ -30,13 +30,15 @@
 static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
-    return game->is_dev && game->menu_open == rr_game_menu_dev_squad_panel;
+    // return game->is_dev && game->menu_open == rr_game_menu_dev_squad_panel;
+    return game->menu_open == rr_game_menu_dev_squad_panel;
 }
 
 static uint8_t dev_squad_panel_button_should_show(struct rr_ui_element *this,
                                                   struct rr_game *game)
 {
-    return game->is_dev;
+    // return game->is_dev;
+    return 1;
 }
 
 static void dev_squad_panel_container_animate(struct rr_ui_element *this,

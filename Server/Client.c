@@ -51,6 +51,13 @@ void rr_server_client_create_flower(struct rr_server_client *this)
     struct rr_simulation *simulation = &this->server->simulation;
     EntityIdx p =
         rr_simulation_alloc_player(simulation, 1, this->player_info->parent_id);
+    struct rr_component_health *health =
+        rr_simulation_get_health(simulation, p);
+    if (this->dev)
+    {
+        rr_component_health_set_max_health(health, 1000 * health->max_health);
+        rr_component_health_set_health(health, health->max_health);
+    }
     uint32_t spawn_zone =
         this->player_info->level / 25 > 3 ? 3 : this->player_info->level / 25;
     struct rr_component_physical *physical =
