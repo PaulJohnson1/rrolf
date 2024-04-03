@@ -23,7 +23,8 @@ void rr_system_particle_render_tick(struct rr_game *game, float delta)
     {
         struct rr_simulation_animation *particle =
             &game->particle_manager.particles[i];
-        rr_renderer_render_particle(game->renderer, particle);
+        if (!game->cache.low_performance_mode)
+            rr_renderer_render_particle(game->renderer, particle);
         particle->opacity *= 0.9;
         if (particle->type != rr_animation_type_lightningbolt)
         {

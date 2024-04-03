@@ -71,12 +71,12 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
             memset(game->chat.sending, 0, sizeof game->chat.sending);
             rr_dom_set_text("_0x4523", "");
         }
-        else
-        {
-            rr_dom_focus("_0x4523");
-        }
         game->chat.chat_active ^= 1;
     }
+    if (game->chat.chat_active)
+        rr_dom_focus("_0x4523");
+    else
+        rr_dom_blur("_0x4523");
 };
 
 static uint8_t chatbar_choose(struct rr_ui_element *this, struct rr_game *game)
@@ -102,7 +102,7 @@ static struct rr_ui_element *rr_ui_chat_text_init(struct rr_game_chat_message
 {
     return rr_ui_set_justify(
         rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-            rr_ui_text_init(message->text, 16, 0xffffffcf),
+            rr_ui_text_init(message->text, 16, 0xffffffff),
             NULL
         ),
     -1, -1);
@@ -127,7 +127,7 @@ struct rr_ui_element *rr_ui_message_box_init(struct rr_game *game)
 
 struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
 {
-    struct rr_ui_element *chatbar = rr_ui_text_input_init(200, 14, game->chat.sending, 64, "_0x4523");
+    struct rr_ui_element *chatbar = rr_ui_text_input_init(200, 18, game->chat.sending, 64, "_0x4523");
     chatbar->animate = chatbar_animate;
     chatbar->on_event = chatbar_on_event;
     struct rr_ui_element *text = rr_ui_text_init("Press [Enter] or click here to chat", 14, 0xffffffff);

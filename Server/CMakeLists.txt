@@ -97,6 +97,10 @@ if(RIVET_BUILD)
     set(SRCS ${SRCS} ../Shared/Rivet.c)
 endif()
 
+if(SANDBOX)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSANDBOX")
+endif()
+
 add_executable(rrolf-server ${SRCS})
 
 if (WINDOWS)

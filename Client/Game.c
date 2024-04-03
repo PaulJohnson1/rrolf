@@ -765,8 +765,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 }
                 case rr_animation_type_chat:
                     rr_particle_delete(&this->particle_manager, particle);
-                    if (this->chat.at < 9) this->chat.at++;
-                    else {
+                    if (this->chat.at < 9)
+                        this->chat.at++;
+                    else
+                    {
                         for (uint8_t i = 0; i < 9; i++) {
                             this->chat.messages[i] = this->chat.messages[i + 1];
                         }
@@ -920,21 +922,27 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder2, rr_serverbound_input, "header");
     uint8_t movement_flags = 0;
-    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
-                       rr_bitset_get(this->input_data->keys_pressed, 38))
-                      << 0;
-    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
-                       rr_bitset_get(this->input_data->keys_pressed, 37))
-                      << 1;
-    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
-                       rr_bitset_get(this->input_data->keys_pressed, 40))
-                      << 2;
-    movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
-                       rr_bitset_get(this->input_data->keys_pressed, 39))
-                      << 3;
+    if (!this->chat.chat_active)
+    {
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'W') ||
+                        rr_bitset_get(this->input_data->keys_pressed, 38))
+                        << 0;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'A') ||
+                        rr_bitset_get(this->input_data->keys_pressed, 37))
+                        << 1;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'S') ||
+                        rr_bitset_get(this->input_data->keys_pressed, 40))
+                        << 2;
+        movement_flags |= (rr_bitset_get(this->input_data->keys_pressed, 'D') ||
+                        rr_bitset_get(this->input_data->keys_pressed, 39))
+                        << 3;
+    }
     movement_flags |= this->input_data->mouse_buttons << 4;
-    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
-    movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
+    if (!this->chat.chat_active)
+    {
+        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
+        movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
+    }
     movement_flags |= this->cache.use_mouse << 6;
 
     if (this->is_dev)
@@ -955,21 +963,24 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     struct proto_bug encoder;
     proto_bug_init(&encoder, RR_OUTGOING_PACKET);
     proto_bug_write_uint8(&encoder, rr_serverbound_petal_switch, "header");
-    uint8_t should_write = 0;
-    uint8_t switch_all =
-        rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
-    for (uint8_t n = 1; n <= this->slots_unlocked; ++n)
-        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                              '0' + (n % 10)) ||
-            switch_all)
-        {
-            proto_bug_write_uint8(&encoder, n, "petal switch");
-            should_write = 1;
-        }
-    if (should_write)
+    if (!this->chat.chat_active)
     {
-        proto_bug_write_uint8(&encoder, 0, "petal switch");
-        rr_websocket_send(&this->socket, encoder.current - encoder.start);
+        uint8_t should_write = 0;
+        uint8_t switch_all =
+            rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'X');
+        for (uint8_t n = 1; n <= this->slots_unlocked; ++n)
+            if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                                '0' + (n % 10)) ||
+                switch_all)
+            {
+                proto_bug_write_uint8(&encoder, n, "petal switch");
+                should_write = 1;
+            }
+        if (should_write)
+        {
+            proto_bug_write_uint8(&encoder, 0, "petal switch");
+            rr_websocket_send(&this->socket, encoder.current - encoder.start);
+        }
     }
 }
 
@@ -1201,7 +1212,7 @@ void rr_game_tick(struct rr_game *this, float delta)
         }
     }
     if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                          186 /* ; */))
+                          186 /* ; */) & !this->chat.chat_active)
         this->cache.displaying_debug_information ^= 1;
 
     if (this->cache.displaying_debug_information)

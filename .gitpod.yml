@@ -4,6 +4,7 @@ tasks:
       npm i -g http-server
     command:
       cd Client/public &&
+
       http-server -c=-1 --cors
 
   - name: Client Build
@@ -18,9 +19,7 @@ tasks:
     command: |
       . emsdk/emsdk_env.sh &&
       cd Client/build &&
-      make &&
-      cp rrolf-client ../public &&
-      cp rrolf-client.wasm ../public
+      make && cp rrolf-client ../public && cp rrolf-client.wasm ../public
 
   - name: Master Server
     init: |
@@ -42,8 +41,7 @@ tasks:
       cd ../..
     command: |
       cd Server/build &&
-      make &&
-      ./rrolf-server
+      make && until ./rrolf-server; do echo server crashed; done
 
 ports:
   - port: 8080

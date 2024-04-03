@@ -43,7 +43,6 @@
 
 uint8_t lws_message_data[MESSAGE_BUFFER_SIZE];
 uint8_t *outgoing_message = lws_message_data + LWS_PRE;
-uint8_t beehive_spawned = 0;
 
 struct connected_captures
 {
@@ -457,9 +456,12 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            if (client->dev)
-                // client->speed_percent =
-                    proto_bug_read_float32(&encoder, "speed_percent");
+            if (client->dev) {
+                float speed = proto_bug_read_float32(&encoder, "speed_percent");
+#ifdef SANDBOX
+                client->speed_percent = 20 * speed;
+#endif
+            }
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
@@ -801,19 +803,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case rr_serverbound_dev_summon:
         {
             puts("edmonto requested");
-            // if (!client->dev)
-            // if (beehive_spawned)
+#ifdef SANDBOX
+            if (!client->dev || client->player_info == NULL)
+#endif
                 break;
 
             puts("edmonto has been summoned by the gods");
-            beehive_spawned = 1;
 
             // uint8_t id = proto_bug_read_uint8(&encoder, "id");
             // uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
-            // uint8_t id = rand() % rr_mob_id_max;
-            // uint8_t rarity = 5 + rand() % 3;
-            uint8_t id = 16;
-            uint8_t rarity = 7;
+            uint8_t id = rand() % rr_mob_id_max;
+            uint8_t rarity = 6 + rand() % 2;
+            // uint8_t id = 16;
+            // uint8_t rarity = 7;
 
             for (uint8_t i = 0; i < 1; i++) {
                 EntityIdx e = rr_simulation_alloc_mob(

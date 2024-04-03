@@ -43,6 +43,19 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
                         30 + 5 * sinf(physical->animation_timer * 0.1));
         rr_renderer_fill(renderer);
     }
+    if (petal->rarity == 7)
+    {
+        struct rr_simulation_animation *particle = rr_particle_alloc(
+            &game->particle_manager, rr_animation_type_default);
+        float angle =
+            rr_vector_theta(&physical->lerp_velocity) + M_PI - 1 + rr_frand() * 2;
+        rr_vector_from_polar(&particle->velocity, -(3 + rr_frand() * 2), angle);
+        particle->x = physical->lerp_x;
+        particle->y = physical->lerp_y;
+        particle->size = 3 + rr_frand() * 2;
+        particle->opacity = 0.1 + rr_frand() * 0.2;
+        particle->color = 0xffffffff;
+    }
     if (game->cache.tint_petals)
         rr_renderer_add_color_filter(renderer, RR_RARITY_COLORS[petal->rarity],
                                      0.4);

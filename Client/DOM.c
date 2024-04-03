@@ -110,7 +110,18 @@ void rr_dom_focus(char const *name)
         {
             const name = UTF8ToString($0);
             const elem = document.getElementById(name);
-            setTimeout(elem.focus.bind(elem));
+            elem.focus();
+        },
+        name);
+}
+
+void rr_dom_blur(char const *name)
+{
+    EM_ASM(
+        {
+            const name = UTF8ToString($0);
+            const elem = document.getElementById(name);
+            elem.blur();
         },
         name);
 }
