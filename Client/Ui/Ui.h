@@ -195,6 +195,7 @@ extern struct rr_ui_element *rr_ui_settings_toggle_button_init();
 extern struct rr_ui_element *rr_ui_account_toggle_button_init();
 
 extern struct rr_ui_element *rr_ui_discord_toggle_button_init();
+extern struct rr_ui_element *rr_ui_github_toggle_button_init();
 
 extern struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *);
 extern struct rr_ui_element *rr_ui_squad_button_init();

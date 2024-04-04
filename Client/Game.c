@@ -231,6 +231,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
                 rr_ui_settings_toggle_button_init(),
                 rr_ui_discord_toggle_button_init(),
+                rr_ui_github_toggle_button_init(),
                 rr_ui_account_toggle_button_init(),
                 rr_ui_dev_panel_toggle_button_init(),
                 rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
@@ -491,6 +492,11 @@ void rr_game_init(struct rr_game *this)
     this->discord_tooltip = rr_ui_container_add_element(
         this->window,
         make_label_tooltip("Join Our Discord!")
+    );
+
+    this->github_tooltip = rr_ui_container_add_element(
+        this->window,
+        make_label_tooltip("We're Open Source!")
     );
 
     this->link_reminder_tooltip = rr_ui_container_add_element(
@@ -770,9 +776,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_string(
                         &encoder, this->chat.messages[this->chat.at].message,
                         64, "chat");
-                    strcpy(this->chat.messages[this->chat.at].text, this->chat.messages[this->chat.at].sender_name);
-                    strcat(this->chat.messages[this->chat.at].text, ": ");
-                    strcat(this->chat.messages[this->chat.at].text, this->chat.messages[this->chat.at].message);
+                    sprintf(this->chat.messages[this->chat.at].text, "%s: %s",
+                        this->chat.messages[this->chat.at].sender_name, this->chat.messages[this->chat.at].message);
                     break;
                 default:
                     break;

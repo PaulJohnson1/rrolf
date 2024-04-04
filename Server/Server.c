@@ -79,6 +79,7 @@ static void rr_server_client_create_player_info(struct rr_server *server,
         rr_simulation_add_player_info(
             &server->simulation,
             rr_simulation_alloc_entity(&server->simulation));
+    player_info->dev = client->dev;
     player_info->squad = client->squad;
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
@@ -810,9 +811,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // uint8_t id = proto_bug_read_uint8(&encoder, "id");
             // uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
             uint8_t id = rand() % rr_mob_id_max;
-            uint8_t rarity = 6 + rand() % 2;
-            // uint8_t id = 16;
-            // uint8_t rarity = 7;
+            uint8_t rarity = rr_rarity_id_max - 1;
 
             for (uint8_t i = 0; i < 1; i++) {
                 EntityIdx e = rr_simulation_alloc_mob(
@@ -821,7 +820,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     id, rarity, rr_simulation_team_id_mobs);
                 struct rr_component_mob *mob =
                     rr_simulation_get_mob(&this->simulation, e);
-                // mob->no_drop = 1;
+                mob->no_drop = 1;
             }
             break;
         }

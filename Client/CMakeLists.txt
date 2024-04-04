@@ -85,6 +85,7 @@ set(SRCS
     Ui/TitleScreen/Crafting.c
     Ui/TitleScreen/DevSquadPanel.c
     Ui/TitleScreen/Discord.c
+    Ui/TitleScreen/Github.c
     Ui/TitleScreen/Inventory.c
     Ui/TitleScreen/LevelBar.c
     Ui/TitleScreen/MobGallery.c
