@@ -316,10 +316,10 @@ void rr_game_init(struct rr_game *this)
                                             socket_ready,
                                             rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                             rr_ui_squad_container_init(&this->squad),
-                                            rr_ui_text_init("Failed to join :/", 24, 0xffff2222),
-                                            rr_ui_text_init("Hmm... Squad Doesn't Exist", 18, 0xffff2222),
-                                            rr_ui_text_init("This squad is full!", 24, 0xffff2222),
-                                            rr_ui_text_init("You were KICKED!", 24, 0xffff2222),
+                                            rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
+                                            rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
+                                            rr_ui_text_init("Squad is full", 24, 0xffff2222),
+                                            rr_ui_text_init("Kicked from squad", 24, 0xffff2222),
                                             NULL
                                         ),
                                         rr_ui_flex_container_init(
