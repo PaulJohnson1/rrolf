@@ -274,7 +274,7 @@ void rr_game_init(struct rr_game *this)
             rr_ui_set_background(
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 20,
                     rr_ui_v_container_init(rr_ui_container_init(), 0, 10,
-                        rr_ui_text_init("rrolf.io", 96, 0xffffffff),
+                        rr_ui_text_init("Rysteria", 96, 0xffffffff),
                         rr_ui_h_container_init(
                             rr_ui_container_init(), 0, 20,
                             rr_ui_link_toggle(
