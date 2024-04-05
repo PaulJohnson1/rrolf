@@ -126,10 +126,10 @@ struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
     {rr_mob_id_edmontosaurus,        rr_rarity_id_epic, rr_rarity_id_ultimate,  50, 15, 30.0f, {{rr_petal_id_bone,    0.15},{rr_petal_id_fossil,     0.1},{rr_petal_id_third_eye, 0.05}}},
     {rr_mob_id_ant,                rr_rarity_id_common, rr_rarity_id_ultimate,  15, 10, 20.0f, {{rr_petal_id_pellet,   0.1},{rr_petal_id_leaf,       0.1},{rr_petal_id_mandible,  0.05}}},
     {rr_mob_id_hornet,             rr_rarity_id_common, rr_rarity_id_ultimate,27.5, 25, 25.0f, {{rr_petal_id_stinger,  0.1},{rr_petal_id_crest,     0.05}}},
-    {rr_mob_id_dragonfly,         rr_rarity_id_unusual, rr_rarity_id_ultimate,  20, 10, 25.0f, {{rr_petal_id_pellet,   0.1},{rr_petal_id_third_eye, 0.05}}},
+    {rr_mob_id_dragonfly,         rr_rarity_id_unusual, rr_rarity_id_ultimate,  20, 10, 25.0f, {{rr_petal_id_pellet,   0.1},{rr_petal_id_magnet,    0.05}}},
     {rr_mob_id_honeybee,           rr_rarity_id_common, rr_rarity_id_ultimate,12.5, 25, 22.0f, {{rr_petal_id_wax,     0.05},{rr_petal_id_stinger,   0.05}}},
     {rr_mob_id_beehive,              rr_rarity_id_rare, rr_rarity_id_ultimate,   0,  0, 45.0f, {{rr_petal_id_wax,     0.05},{rr_petal_id_azalea,    0.05}}},
-    {rr_mob_id_spider,               rr_rarity_id_rare, rr_rarity_id_ultimate,  20, 25, 25.0f, {{rr_petal_id_web,      0.1},{rr_petal_id_magnet,    0.01}}}, {rr_petal_id_third_eye,    0.01}}},
+    {rr_mob_id_spider,               rr_rarity_id_rare, rr_rarity_id_ultimate,  20, 25, 25.0f, {{rr_petal_id_web,      0.1},{rr_petal_id_third_eye, 0.01}}},
     {rr_mob_id_house_centipede,    rr_rarity_id_common, rr_rarity_id_ultimate,  25, 10, 23.0f, {{rr_petal_id_peas,     0.1},{rr_petal_id_sand,      0.05}}},
     {rr_mob_id_lanternfly,        rr_rarity_id_unusual, rr_rarity_id_ultimate,  20, 10, 25.0f, {{rr_petal_id_mint,     0.1},{rr_petal_id_sand,      0.05}}},
 };
