@@ -229,10 +229,13 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                 if (v == 0 || (v & 8))
                     continue;
                 ++arena->mob_count;
-                rr_simulation_alloc_mob(
+                EntityIdx bee_entity = rr_simulation_alloc_mob(
                     this, entity, (X + rr_frand()) * arena->maze->grid_size,
                     (Y + rr_frand()) * arena->maze->grid_size,
                     rr_mob_id_honeybee, rarity_id, team_id);
+                struct rr_component_mob *bee_mob =
+                    rr_simulation_get_mob(this, bee_entity);
+                bee_mob->no_drop = mob->no_drop;
             }
         }
     }
@@ -270,6 +273,11 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                 centipede = rr_simulation_add_centipede(this, new_entity);
                 centipede->parent_node =
                     rr_simulation_get_entity_hash(this, entity);
+                struct rr_component_mob *old_mob =
+                    rr_simulation_get_mob(this, entity);
+                struct rr_component_mob *new_mob =
+                    rr_simulation_get_mob(this, new_entity);
+                new_mob->no_drop = old_mob->no_drop;
                 entity = new_entity;
             }
         }

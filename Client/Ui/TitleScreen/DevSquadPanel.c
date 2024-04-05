@@ -150,7 +150,7 @@ static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
 
 static struct rr_ui_element *summon_mob_button_init()
 {
-    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 20, 0);
+    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 30, 0);
     element->fill = 0x80ffffff;
     element->on_event = summon_edmonto;
     element->animate = rr_ui_default_animate;

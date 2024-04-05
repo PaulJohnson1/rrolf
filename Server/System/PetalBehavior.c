@@ -578,8 +578,8 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
                     uint8_t m_id, m_rar;
                     if (data->id == rr_petal_id_egg)
                     {
-                        m_id = rr_mob_id_meteor;
-                        m_rar = petal->rarity >= 1 ? petal->rarity - 1 : 0;
+                        m_id = rr_mob_id_trex;
+                        m_rar = petal->rarity >= 2 ? petal->rarity - 2 : 0;
                     }
                     EntityIdx mob_id = rr_simulation_alloc_mob(
                         simulation, petal_physical->arena, petal_physical->x,

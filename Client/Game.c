@@ -1292,7 +1292,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-f2z4cn804sb.ws-eu110.gitpod.io/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-5sgfst98l53.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }
