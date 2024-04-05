@@ -112,7 +112,7 @@ static void github_toggle_button_on_event(struct rr_ui_element *this,
     {
         if (game->pressed != this)
             return;
-        rr_page_open("https://github.com/maxnest0x0/rrolf");
+        rr_page_open("https://github.com/maxnest0x0/rysteria");
     }
     else
         rr_ui_render_tooltip_below(this, game->github_tooltip, game);
