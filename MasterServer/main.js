@@ -115,14 +115,14 @@ function apply_missing_defaults(account)
         petals: {"1:0": 5},
         failed_crafts: {},
         mob_gallery: {},
-        inflated_up_to: 1,
+        // inflated_up_to: 1,
     };
-    defaults.xp = 10000000; // lvl 62
-    for (let id = 1; id < MAX_PETAL_COUNT; id++) {
-        for (let rarity = 0; rarity <= 4; rarity++) {
-            defaults.petals[`${id}:${rarity}`] = 5;
-        }
-    }
+    // defaults.xp = 10000000; // lvl 62
+    // for (let id = 1; id < MAX_PETAL_COUNT; id++) {
+    //     for (let rarity = 0; rarity <= 4; rarity++) {
+    //         defaults.petals[`${id}:${rarity}`] = 5;
+    //     }
+    // }
 
     // Fill in any missing defaults
     for (let prop in defaults) {
@@ -138,32 +138,32 @@ function apply_missing_defaults(account)
         }
     }
 
-    if (account.inflated_up_to < MAX_PETAL_COUNT)
-    {
-        log("inflated acc", [account.username]);
-        for (let i = account.inflated_up_to; i < MAX_PETAL_COUNT; i++)
-        {
-            account.failed_crafts[`${i}:0`] = Math.max(4, account.failed_crafts[`${i}:0`] || 0); //  guarantee
-            account.failed_crafts[`${i}:1`] = Math.max(4, account.failed_crafts[`${i}:1`] || 0); //  47.5%
-            account.failed_crafts[`${i}:2`] = Math.max(6, account.failed_crafts[`${i}:2`] || 0); //  19.3%
-            account.failed_crafts[`${i}:3`] = Math.max(8, account.failed_crafts[`${i}:3`] || 0); //  3.04%
-            account.failed_crafts[`${i}:4`] = Math.max(10, account.failed_crafts[`${i}:4`] || 0); // 1.38%
-        }
-        account.inflated_up_to = MAX_PETAL_COUNT;
-    }
+    // if (account.inflated_up_to < MAX_PETAL_COUNT)
+    // {
+    //     log("inflated acc", [account.username]);
+    //     for (let i = account.inflated_up_to; i < MAX_PETAL_COUNT; i++)
+    //     {
+    //         account.failed_crafts[`${i}:0`] = Math.max(4, account.failed_crafts[`${i}:0`] || 0); //  guarantee
+    //         account.failed_crafts[`${i}:1`] = Math.max(4, account.failed_crafts[`${i}:1`] || 0); //  47.5%
+    //         account.failed_crafts[`${i}:2`] = Math.max(6, account.failed_crafts[`${i}:2`] || 0); //  19.3%
+    //         account.failed_crafts[`${i}:3`] = Math.max(8, account.failed_crafts[`${i}:3`] || 0); //  3.04%
+    //         account.failed_crafts[`${i}:4`] = Math.max(10, account.failed_crafts[`${i}:4`] || 0); // 1.38%
+    //     }
+    //     account.inflated_up_to = MAX_PETAL_COUNT;
+    // }
 
-    const hashes = [
-        "268036d559a21daea7d11ac53cc8aa7425dd08f4ea7ea26b2ff774465f84df973467ce2b968508e85928022f50bc45c6cca8f6492e3b4da3cf566106edeb9dac", // m
-        "217a508324eacd3d02507612c1946f9e03c536ae15c292310141ea35bdb9c59acab135da9eb828ceb15752299ad4ab317efc074c67de9d05edb4cd048371a4eb", // d
-    ];
-    if (hashes.includes(hash(account.username)) || SANDBOX) {
-        account.xp = 10000000000; // lvl 120
-        for (let id = 1; id < MAX_PETAL_COUNT; id++) {
-            for (let rarity = 0; rarity < 8; rarity++) {
-                account.petals[`${id}:${rarity}`] = 20
-            }
-        }
-    }
+    // const hashes = [
+    //     "268036d559a21daea7d11ac53cc8aa7425dd08f4ea7ea26b2ff774465f84df973467ce2b968508e85928022f50bc45c6cca8f6492e3b4da3cf566106edeb9dac", // m
+    //     "217a508324eacd3d02507612c1946f9e03c536ae15c292310141ea35bdb9c59acab135da9eb828ceb15752299ad4ab317efc074c67de9d05edb4cd048371a4eb", // d
+    // ];
+    // if (hashes.includes(hash(account.username)) || SANDBOX) {
+    //     account.xp = 10000000000; // lvl 120
+    //     for (let id = 1; id < MAX_PETAL_COUNT; id++) {
+    //         for (let rarity = 0; rarity < 8; rarity++) {
+    //             account.petals[`${id}:${rarity}`] = 20
+    //         }
+    //     }
+    // }
     return account;
 }
 

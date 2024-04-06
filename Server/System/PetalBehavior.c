@@ -440,7 +440,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
     health->damage_reduction = 0;
     uint8_t rot_count = 0;
     float bone_diminish_factor = 1;
-    float feather_diminish_factor = 1.5;
+    float feather_diminish_factor = 1;
     rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
@@ -476,7 +476,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
         else if (data->id == rr_petal_id_bone)
         {
             health->damage_reduction +=
-                1.75 * RR_PETAL_RARITY_SCALE[slot->rarity].heal *
+                4.5 * RR_PETAL_RARITY_SCALE[slot->rarity].heal *
                 bone_diminish_factor;
             bone_diminish_factor *= 0.5;
         }
