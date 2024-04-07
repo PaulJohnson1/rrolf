@@ -318,11 +318,24 @@ void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
         rr_ui_render_tooltip_right(this, game->gallery_tooltip, game);
 }
 
+void mob_toggle_toggle_button_animate(struct rr_ui_element *this,
+                                       struct rr_game *game)
+{
+    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'V'))
+    {
+        if (game->menu_open == rr_game_menu_gallery)
+            game->menu_open = rr_game_menu_none;
+        else
+            game->menu_open = rr_game_menu_gallery;
+    }
+}
+
 struct rr_ui_element *rr_ui_mob_gallery_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
     rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 60;
+    this->animate = mob_toggle_toggle_button_animate;
     this->on_event = mob_toggle_toggle_button_on_event;
     this->on_render = mob_toggle_toggle_on_render;
     return this;

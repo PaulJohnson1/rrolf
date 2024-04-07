@@ -397,9 +397,21 @@ void rr_game_init(struct rr_game *this)
         rr_ui_set_justify(
             rr_ui_link_toggle(
                 rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                    rr_ui_inventory_toggle_button_init(),
-                    rr_ui_mob_gallery_toggle_button_init(),
-                    rr_ui_crafting_toggle_button_init(),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                        rr_ui_inventory_toggle_button_init(),
+                        rr_ui_text_init("[z]", 18, 0xffffffff),
+                        NULL
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                        rr_ui_mob_gallery_toggle_button_init(),
+                        rr_ui_text_init("[v]", 18, 0xffffffff),
+                        NULL
+                    ),
+                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                        rr_ui_crafting_toggle_button_init(),
+                        rr_ui_text_init("[c]", 18, 0xffffffff),
+                        NULL
+                    ),
                     NULL
                 ),
             simulation_not_ready),

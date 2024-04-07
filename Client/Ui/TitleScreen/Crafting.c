@@ -712,11 +712,24 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
         rr_ui_render_tooltip_right(this, game->craft_tooltip, game);
 }
 
+void crafting_toggle_button_animate(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'C'))
+    {
+        if (game->menu_open == rr_game_menu_crafting)
+            game->menu_open = rr_game_menu_none;
+        else
+            game->menu_open = rr_game_menu_crafting;
+    }
+}
+
 struct rr_ui_element *rr_ui_crafting_toggle_button_init()
 {
     struct rr_ui_element *this = rr_ui_element_init();
     rr_ui_set_background(this, 0x80888888);
     this->abs_width = this->abs_height = this->width = this->height = 60;
+    this->animate = crafting_toggle_button_animate;
     this->on_event = crafting_toggle_button_on_event;
     this->on_render = crafting_toggle_on_render;
     return this;

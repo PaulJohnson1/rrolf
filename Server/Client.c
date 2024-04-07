@@ -211,6 +211,12 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
             this->inventory[id][rarity] = count;
         id = rr_binary_encoder_read_uint8(encoder);
     }
+    if (this->dev) {
+        this->experience = 10000000000; // lvl 120
+        for (uint8_t id = 1; id < rr_petal_id_max; ++id)
+            for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+                this->inventory[id][rarity] = 20;
+    }
     id = rr_binary_encoder_read_uint8(encoder);
     while (id)
     {
@@ -225,6 +231,8 @@ int rr_server_client_read_from_api(struct rr_server_client *this,
 
 void rr_server_client_write_to_api(struct rr_server_client *this)
 {
+    if (this->dev)
+        return;
     struct rr_binary_encoder encoder;
     rr_binary_encoder_init(&encoder, outgoing_message);
     rr_binary_encoder_write_uint8(&encoder, 2);

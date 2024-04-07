@@ -29,6 +29,26 @@ void rr_component_drop_render(EntityIdx entity, struct rr_game *game,
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
     struct rr_component_drop *drop = rr_simulation_get_drop(simulation, entity);
+    if (game->cache.low_performance_mode)
+    {
+        uint8_t significant_rarity = 0;
+        uint8_t petal_count = 0;
+        for (uint8_t rarity = 0; rarity < rr_rarity_id_max; ++rarity)
+            for (uint8_t id = 1; id < rr_petal_id_max; ++id)
+            {
+                petal_count += game->inventory[id][rarity];
+                if (petal_count >= game->slots_unlocked)
+                {
+                    significant_rarity = rarity;
+                    petal_count = 0;
+                    break;
+                }
+            }
+
+        uint8_t min_rarity = significant_rarity >= 2 ? significant_rarity - 2 : 0;
+        if (drop->rarity < min_rarity)
+            return;
+    }
     if (physical->deletion_type == 2)
     {
         struct rr_component_player_info *player_info = game->player_info;

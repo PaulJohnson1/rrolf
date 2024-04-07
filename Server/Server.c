@@ -423,7 +423,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
 // #endif
 #ifndef SANDBOX
-            if (rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag")) == 94472176279338)
+            if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 7574626341943500955)
 #endif
                 client->dev = 1;
 
