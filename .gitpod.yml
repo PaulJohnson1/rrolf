@@ -52,7 +52,6 @@ ports:
   - port: 55554
     name: Master Server
     onOpen: ignore
-    visibility: public
 
   - port: 1234
     name: Game Server

@@ -110,7 +110,8 @@ void rr_rivet_on_log_in(char *token, char *avatar_url, char *name,
     strcpy(this->rivet_account.uuid, uuid);
     this->account_linked = linked;
 
-    rr_api_get_password(this->rivet_account.token, this);
+    // rr_api_get_password(this->rivet_account.token, this);
+    rr_api_on_get_password("5d68a8ec6cbf3997a641803260390362d59681bc7524ef3a3fd67afddaba0ba96d1196d30834aa25aa1440cadffb4c87af6495e613c535b793cc1c71aa8c4d04", this);
 }
 
 static struct rr_ui_element *make_label_tooltip(char const *text)
@@ -1304,7 +1305,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-5sgfst98l53.ws-eu110.gitpod.io/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-jzvfi98nq26.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }
