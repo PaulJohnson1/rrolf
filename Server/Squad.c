@@ -63,6 +63,22 @@ void rr_squad_remove_client(struct rr_squad *this,
     client->in_squad = 0;
 }
 
+void rr_client_can_rejoin_squads(struct rr_server *this,
+                                 struct rr_server_client *member,
+                                 uint8_t choosen)
+{
+    // check if there's non-empty squad at choosen pos or below
+    for (uint8_t i = choosen; i < RR_SQUAD_COUNT; ++i)
+        for (uint8_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+            if (this->squads[i].members[j].in_use)
+                return;
+
+    // chosen empty squad once, next time search from top
+    for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
+        if (!this->squads[i].private)
+            rr_bitset_unset(member->joined_squad_before, i);
+}
+
 uint8_t rr_client_find_squad(struct rr_server *this,
                              struct rr_server_client *member)
 {
@@ -70,6 +86,7 @@ uint8_t rr_client_find_squad(struct rr_server *this,
         if (rr_squad_has_space(&this->squads[i]) && !this->squads[i].private &&
             !rr_bitset_get(member->joined_squad_before, i))
         {
+            rr_client_can_rejoin_squads(this, member, i);
             return i;
         }
     return RR_ERROR_CODE_INVALID_SQUAD;

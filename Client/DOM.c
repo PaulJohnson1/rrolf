@@ -25,6 +25,7 @@ void rr_dom_create_text_element(char const *name, uint32_t text_limit)
             const elem = document.createElement('input');
             elem.id = name;
             elem.type = "text";
+            elem.maxLength = $1;
             elem.style.position = "absolute";
             elem.style["font-family"] = "Ubuntu";
             elem.style.display = 'none';
@@ -124,6 +125,15 @@ void rr_dom_blur(char const *name)
             elem.blur();
         },
         name);
+}
+
+uint8_t rr_dom_has_focus(char const *name)
+{
+    return EM_ASM_INT({
+        const name = UTF8ToString($0);
+        const elem = document.getElementById(name);
+        return +(document.activeElement === elem);
+    }, name);
 }
 
 void rr_copy_string(char const *str)

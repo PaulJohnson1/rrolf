@@ -27,6 +27,7 @@
 #include <Client/Ui/Engine.h>
 
 #include <Shared/Utilities.h>
+#include <Client/DOM.h>
 
 struct inventory_button_metadata
 {
@@ -279,7 +280,8 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
 void inventory_toggle_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'Z'))
+    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'Z') &&
+        !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_inventory)
             game->menu_open = rr_game_menu_none;

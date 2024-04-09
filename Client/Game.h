@@ -84,6 +84,7 @@ struct rr_game_cache
     uint8_t tint_petals;
     uint8_t screen_shake;
     uint8_t low_performance_mode;
+    uint8_t disable_chat;
     char nickname[128];
 };
 

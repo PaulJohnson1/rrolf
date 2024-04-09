@@ -27,6 +27,7 @@
 
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
+#include <Client/DOM.h>
 
 struct mob_button_metadata
 {
@@ -39,6 +40,9 @@ static void mob_button_on_event(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
+    if (RR_MOB_DATA[data->id].min_rarity > data->rarity
+        || RR_MOB_DATA[data->id].max_rarity < data->rarity)
+        return;
     if (data->secondary_animation > 0.999)
         return;
     rr_ui_render_tooltip_above(this, game->mob_tooltips[data->id][data->rarity],
@@ -69,7 +73,8 @@ static void mob_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
-    if (RR_MOB_DATA[data->id].min_rarity > data->rarity)
+    if (RR_MOB_DATA[data->id].min_rarity > data->rarity
+        || RR_MOB_DATA[data->id].max_rarity < data->rarity)
         return;
     if (data->secondary_animation > 0.999)
         return;
@@ -321,7 +326,8 @@ void mob_toggle_toggle_button_on_event(struct rr_ui_element *this,
 void mob_toggle_toggle_button_animate(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'V'))
+    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'V') &&
+        !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_gallery)
             game->menu_open = rr_game_menu_none;

@@ -423,7 +423,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             }
 // #endif
 #ifndef SANDBOX
-            if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 7574626341943500955)
+            if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 538077234822853942)
 #endif
                 client->dev = 1;
 
@@ -798,6 +798,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             animation->squad = client->squad;
             strncpy(animation->name,
                     rr_squad_get_client_slot(this, client)->nickname, 64);
+            printf("chat: %s: %s\n", animation->name, animation->message);
             break;
         }
         case rr_serverbound_dev_summon:

@@ -28,6 +28,7 @@
 #include <Shared/StaticData.h>
 #include <Shared/Utilities.h>
 #include <Shared/pb.h>
+#include <Client/DOM.h>
 
 #define PETALS_PER_CRAFT 5
 
@@ -715,7 +716,8 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
 void crafting_toggle_button_animate(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
-    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'C'))
+    if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'C') &&
+        !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_crafting)
             game->menu_open = rr_game_menu_none;

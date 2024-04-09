@@ -25,6 +25,7 @@ void rr_dom_retrieve_text(char const *, char *, uint32_t);
 void rr_dom_set_text(char const *, char *);
 void rr_dom_focus(char const *);
 void rr_dom_blur(char const *);
+uint8_t rr_dom_has_focus(char const *);
 void rr_copy_string(char const *);
 void rr_page_reload(uint8_t);
 uint8_t rr_dom_test_mobile();

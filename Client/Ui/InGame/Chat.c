@@ -97,6 +97,15 @@ static void chatbar_on_event(struct rr_ui_element *this, struct rr_game *game)
         game->chat.chat_active = mouse_over;
 }
 
+static void chat_animate(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->cache.disable_chat)
+    {
+        this->completely_hidden = 1;
+        rr_dom_element_hide("_0x4523");
+    }
+}
+
 static struct rr_ui_element *rr_ui_chat_text_init(struct rr_game_chat_message
 *message)
 {
@@ -150,9 +159,11 @@ struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
     this->animate = chat_bar_animate;
     this->on_event = chat_bar_on_event;
     this->elements.start[0]->on_event = this->on_event;
-    return rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+    struct rr_ui_element *chat = rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
         rr_ui_set_justify(rr_ui_message_box_init(game), -1, -1),
         rr_ui_set_justify(this, -1, -1),
         NULL
     );
+    chat->animate = chat_animate;
+    return chat;
 }

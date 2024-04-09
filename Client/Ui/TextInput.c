@@ -96,6 +96,6 @@ struct rr_ui_element *rr_ui_text_input_init(float w, float h, char *text,
     this->on_render = text_input_on_render;
     this->on_hide = text_input_on_hide;
     this->animate = rr_ui_instant_hide_animate;
-    rr_dom_create_text_element(data->name, 16);
+    rr_dom_create_text_element(data->name, max_length);
     return this;
 }
