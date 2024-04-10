@@ -40,8 +40,8 @@ static void mob_button_on_event(struct rr_ui_element *this,
                                 struct rr_game *game)
 {
     struct mob_button_metadata *data = this->data;
-    if (RR_MOB_DATA[data->id].min_rarity > data->rarity
-        || RR_MOB_DATA[data->id].max_rarity < data->rarity)
+    if (RR_MOB_DATA[data->id].min_rarity > data->rarity ||
+        RR_MOB_DATA[data->id].max_rarity < data->rarity)
         return;
     if (data->secondary_animation > 0.999)
         return;
@@ -73,8 +73,8 @@ static void mob_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     struct mob_button_metadata *data = this->data;
-    if (RR_MOB_DATA[data->id].min_rarity > data->rarity
-        || RR_MOB_DATA[data->id].max_rarity < data->rarity)
+    if (RR_MOB_DATA[data->id].min_rarity > data->rarity ||
+        RR_MOB_DATA[data->id].max_rarity < data->rarity)
         return;
     if (data->secondary_animation > 0.999)
         return;

@@ -18,6 +18,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 void rr_log_hex(uint8_t *start, uint8_t *end)
 {
@@ -200,4 +201,29 @@ char *rr_sprintf(char *buf, double i)
     else
         sprintf(buf, "%.1fm", i / 1000000);
     return buf;
+}
+
+uint8_t rr_validate_user_string(char *str)
+{
+    return strstr(str, "\ufdfd") == NULL &&
+           strstr(str, "\U0001242b") == NULL &&
+           strstr(str, "\U00012219") == NULL &&
+           strstr(str, "\u2e3b") == NULL &&
+           strstr(str, "\ua9c5") == NULL &&
+           strstr(str, "\u102a") == NULL &&
+           strstr(str, "\u0bf5") == NULL &&
+           strstr(str, "\u0bf8") == NULL &&
+           strstr(str, "\u2031") == NULL;
+}
+
+char *rr_trim_string(char *str)
+{
+    char *end;
+    while (isspace(*str))
+        ++str;
+    end = str + strlen(str) - 1;
+    while (end > str && isspace(*end))
+        --end;
+    end[1] = 0;
+    return str;
 }

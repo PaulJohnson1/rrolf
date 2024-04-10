@@ -661,11 +661,11 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         {
             if (!client->in_squad)
                 break;
-            proto_bug_read_string(
-                &encoder, rr_squad_get_client_slot(this, client)->nickname, 16,
-                "nickname");
-            if (rr_squad_get_client_slot(this, client)->nickname[0] == 0)
-                strcpy(rr_squad_get_client_slot(this, client)->nickname, "Anonymous");
+            char *nickname = rr_squad_get_client_slot(this, client)->nickname;
+            proto_bug_read_string(&encoder, nickname, 16, "nickname");
+            strcpy(nickname, rr_trim_string(nickname));
+            if (nickname[0] == 0 || !rr_validate_user_string(nickname))
+                strcpy(nickname, "Anonymous");
             uint8_t loadout_count =
                 proto_bug_read_uint8(&encoder, "loadout count");
 
@@ -790,15 +790,26 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (!client->player_info)
                 break;
+            char name[64];
+            char message[64];
+            strncpy(name, rr_squad_get_client_slot(this, client)->nickname, 64);
+            proto_bug_read_string(&encoder, message, 64, "chat");
+            strcpy(message, rr_trim_string(message));
+            if (message[0] == 0)
+                break;
+            if (!rr_validate_user_string(message))
+            {
+                printf("blocked chat: %s: %s\n", name, message);
+                break;
+            }
             struct rr_simulation_animation *animation =
                 &this->simulation
                      .animations[this->simulation.animation_length++];
-            proto_bug_read_string(&encoder, animation->message, 64, "chat");
+            strcpy(animation->name, name);
+            strcpy(animation->message, message);
             animation->type = rr_animation_type_chat;
             animation->squad = client->squad;
-            strncpy(animation->name,
-                    rr_squad_get_client_slot(this, client)->nickname, 64);
-            printf("chat: %s: %s\n", animation->name, animation->message);
+            printf("chat: %s: %s\n", name, message);
             break;
         }
         case rr_serverbound_dev_summon:
@@ -1003,7 +1014,7 @@ static void server_tick(struct rr_server *this)
                 lws_callback_on_writable(client->socket_handle);
             if (client->ticks_to_next_squad_action > 0)
                 --client->ticks_to_next_squad_action;
-            if (!client->verified || !client->in_squad)
+            if (!client->verified)
                 continue;
             if (client->player_info != NULL)
             {
@@ -1029,13 +1040,15 @@ static void server_tick(struct rr_server *this)
                     client->player_info->drops_this_tick_size = 0;
                 }
             }
-            rr_server_client_broadcast_update(client);
+            if (client->in_squad)
+                rr_server_client_broadcast_update(client);
             // if (!client->dev)
             //     continue;
             struct proto_bug encoder;
             proto_bug_init(&encoder, outgoing_message);
             proto_bug_write_uint8(&encoder, rr_clientbound_squad_dump,
                                   "header");
+            proto_bug_write_uint8(&encoder, client->dev, "is_dev");
             for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
             {
                 struct rr_squad *squad = &this->squads[s];

@@ -246,13 +246,13 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                     rr_ui_v_container_init(
                         rr_ui_container_init(), 10, 10,
                         rr_ui_text_init("Settings", 24, 0xffffffff),
-                        rr_ui_set_justify(
+                        /*rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 5,
                                 rr_ui_text_init("Region:", 15, 0xffffffff),
                                 region_toggle_button_init(),
                                 region_join_button_init(), NULL),
-                            -1, -1),
+                            -1, -1),*/
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,

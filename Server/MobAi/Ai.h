@@ -42,7 +42,10 @@ void tick_ai_neutral_triceratops(EntityIdx, struct rr_simulation *);
 void tick_ai_neutral_ornithomimus(EntityIdx, struct rr_simulation *);
 void tick_ai_neutral_ankylosaurus(EntityIdx, struct rr_simulation *);
 
+void tick_ai_aggro_triceratops(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_trex(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_pteranodon(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_pachycephalosaurus(EntityIdx, struct rr_simulation *);
+void tick_ai_aggro_ornithomimus(EntityIdx, struct rr_simulation *);
+void tick_ai_aggro_ankylosaurus(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_quetzalcoaltus(EntityIdx, struct rr_simulation *);

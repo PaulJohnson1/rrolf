@@ -665,8 +665,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
             this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
             proto_bug_read_string(&encoder, this->squad.squad_code, 16,
                                   "squad code");
-            this->is_dev =
-                this->squad.squad_members[this->squad.squad_pos].is_dev;
+            // this->is_dev =
+            //     this->squad.squad_members[this->squad.squad_pos].is_dev;
             if (proto_bug_read_uint8(&encoder, "in game") == 1)
             {
                 if (!this->simulation_ready)
@@ -707,6 +707,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case rr_clientbound_squad_dump:
         {
+            this->is_dev = proto_bug_read_uint8(&encoder, "is_dev");
             for (uint32_t s = 0; s < RR_SQUAD_COUNT; ++s)
             {
                 struct rr_game_squad *squad = &this->other_squads[s];
@@ -954,8 +955,9 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     movement_flags |= this->cache.use_mouse << 6;
 
     if (this->is_dev)
-        proto_bug_write_float32(&encoder2, this->developer_cheats.speed_percent,
-                                "speed_percent");
+        proto_bug_write_float32(&encoder2,
+            this->developer_cheats.speed_percent > 0.05 ?
+            this->developer_cheats.speed_percent : 0.05, "speed_percent");
     proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
     if (this->cache.use_mouse)
     {

@@ -44,6 +44,8 @@ int rr_angle_within(float, float, float);
 float rr_frand();
 float rr_fclamp(float, float, float);
 char *rr_sprintf(char *, double);
+uint8_t rr_validate_user_string(char *);
+char *rr_trim_string(char *);
 
 int rr_base_64_decode(char *, const char *);
 int rr_base_64_encode(char *, const char *, int);
