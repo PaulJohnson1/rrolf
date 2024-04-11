@@ -30,14 +30,20 @@
 static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
-    // return game->is_dev && game->menu_open == rr_game_menu_dev_squad_panel;
-    return game->menu_open == rr_game_menu_dev_squad_panel;
+    if (game->menu_open != rr_game_menu_dev_squad_panel)
+        return 0;
+    if (game->is_dev)
+        return 1;
+    for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+        for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+            if (game->other_squads[i].squad_members[j].in_use)
+                return 1;
+    return 0;
 }
 
 static uint8_t dev_squad_panel_button_should_show(struct rr_ui_element *this,
                                                   struct rr_game *game)
 {
-    // return game->is_dev;
     return 1;
 }
 
@@ -70,47 +76,58 @@ static void dev_squad_panel_toggle_button_on_render(struct rr_ui_element *this,
                            -this->abs_height / 2, this->abs_width,
                            this->abs_height, 6);
     rr_renderer_fill(renderer);
-    rr_renderer_scale(renderer, 1.2);
+    rr_renderer_scale(renderer, 0.15);
+    rr_renderer_translate(renderer, -100, -84);
     rr_renderer_set_fill(renderer, 0xffffffff);
     rr_renderer_begin_path(renderer);
-    rr_renderer_move_to(renderer, 12.00, 1.62);
-    rr_renderer_line_to(renderer, 12.00, -1.62);
-    rr_renderer_bezier_curve_to(renderer, 10.35, -2.20, 9.31, -2.37, 8.78,
-                                -3.64);
-    rr_renderer_bezier_curve_to(renderer, 8.25, -4.91, 8.88, -5.77, 9.63,
-                                -7.34);
-    rr_renderer_line_to(renderer, 7.34, -9.63);
-    rr_renderer_bezier_curve_to(renderer, 5.78, -8.89, 4.91, -8.25, 3.64,
-                                -8.78);
-    rr_renderer_bezier_curve_to(renderer, 2.37, -9.31, 2.20, -10.36, 1.62,
-                                -12.00);
-    rr_renderer_line_to(renderer, -1.62, -12.00);
-    rr_renderer_bezier_curve_to(renderer, -2.20, -10.37, -2.37, -9.31, -3.64,
-                                -8.78);
-    rr_renderer_bezier_curve_to(renderer, -4.91, -8.25, -5.77, -8.88, -7.34,
-                                -9.63);
-    rr_renderer_line_to(renderer, -9.63, -7.34);
-    rr_renderer_bezier_curve_to(renderer, -8.88, -5.78, -8.25, -4.91, -8.78,
-                                -3.64);
-    rr_renderer_bezier_curve_to(renderer, -9.31, -2.37, -10.37, -2.20, -12.00,
-                                -1.62);
-    rr_renderer_line_to(renderer, -12.00, 1.62);
-    rr_renderer_bezier_curve_to(renderer, -10.37, 2.20, -9.31, 2.37, -8.78,
-                                3.64);
-    rr_renderer_bezier_curve_to(renderer, -8.25, 4.92, -8.90, 5.80, -9.63,
-                                7.34);
-    rr_renderer_line_to(renderer, -7.34, 9.63);
-    rr_renderer_bezier_curve_to(renderer, -5.78, 8.88, -4.91, 8.25, -3.64,
-                                8.78);
-    rr_renderer_bezier_curve_to(renderer, -2.37, 9.31, -2.20, 10.36, -1.62,
-                                12.00);
-    rr_renderer_line_to(renderer, 1.62, 12.00);
-    rr_renderer_bezier_curve_to(renderer, 2.20, 10.36, 2.37, 9.31, 3.64, 8.78);
-    rr_renderer_bezier_curve_to(renderer, 4.91, 8.25, 5.76, 8.88, 7.34, 9.63);
-    rr_renderer_line_to(renderer, 9.63, 7.34);
-    rr_renderer_bezier_curve_to(renderer, 8.88, 5.78, 8.25, 4.91, 8.78, 3.64);
-    rr_renderer_bezier_curve_to(renderer, 9.31, 2.37, 10.37, 2.20, 12.00, 1.62);
-    rr_renderer_arc(renderer, 0, 0, 4);
+    rr_renderer_move_to(renderer, 40.77, 1.58);
+    rr_renderer_bezier_curve_to(renderer, 12.74, 11.58, 16.2, 51.19, 45.64, 57.32);
+    rr_renderer_bezier_curve_to(renderer, 56.48, 59.58, 71.85, 50.99, 76.38, 40.14);
+    rr_renderer_bezier_curve_to(renderer, 85.72, 17.79, 63.32, -6.47, 40.77, 1.58);
+    rr_renderer_move_to(renderer, 137.04, 3.8);
+    rr_renderer_bezier_curve_to(renderer, 113.7, 16.07, 117.62, 49.75, 143.19, 56.64);
+    rr_renderer_bezier_curve_to(renderer, 155.32, 59.91, 169.86, 53.4, 175.24, 42.3);
+    rr_renderer_bezier_curve_to(renderer, 187.77, 16.42, 162.15, -9.4, 137.04, 3.8);
+    rr_renderer_move_to(renderer, 90, 42);
+    rr_renderer_bezier_curve_to(renderer, 82.08, 44.8, 74.5, 53.07, 72.28, 61.35);
+    rr_renderer_bezier_curve_to(renderer, 64.68, 89.55, 99.54, 109.74, 120.18, 89.1);
+    rr_renderer_bezier_curve_to(renderer, 142.02, 67.26, 119.21, 31.67, 90, 42);
+    rr_renderer_move_to(renderer, 18.25, 62.37);
+    rr_renderer_bezier_curve_to(renderer, 5.77, 73.64, 0, 87.98, 0, 107.72);
+    rr_renderer_bezier_curve_to(renderer, 0, 122.18, 4.6, 124.72, 37.13, 128.17);
+    rr_renderer_line_to(renderer, 45.8, 129.09);
+    rr_renderer_line_to(renderer, 48.17, 122.14);
+    rr_renderer_bezier_curve_to(renderer, 51.42, 112.6, 58.89, 102.16, 66.64, 96.32);
+    rr_renderer_line_to(renderer, 73.1, 91.44);
+    rr_renderer_line_to(renderer, 69.52, 84.2);
+    rr_renderer_bezier_curve_to(renderer, 67.06, 79.24, 65.93, 74.26, 65.93, 68.4);
+    rr_renderer_bezier_curve_to(renderer, 65.93, 59.92, 65.9, 59.86, 62.1, 61.3);
+    rr_renderer_bezier_curve_to(renderer, 55.37, 63.86, 41.17, 63.03, 34.62, 59.69);
+    rr_renderer_bezier_curve_to(renderer, 26.52, 55.56, 25.62, 55.71, 18.25, 62.37);
+    rr_renderer_move_to(renderer, 164.62, 59.87);
+    rr_renderer_bezier_curve_to(renderer, 158.74, 63.02, 144.46, 63.8, 137.95, 61.32);
+    rr_renderer_bezier_curve_to(renderer, 134.18, 59.89, 134.15, 59.94, 134.15, 68.97);
+    rr_renderer_bezier_curve_to(renderer, 134.15, 75.72, 133.2, 79.78, 130.45, 84.69);
+    rr_renderer_line_to(renderer, 126.75, 91.32);
+    rr_renderer_line_to(renderer, 132.55, 95.45);
+    rr_renderer_bezier_curve_to(renderer, 140.1, 100.83, 148.51, 112.38, 151.67, 121.74);
+    rr_renderer_line_to(renderer, 154.18, 129.18);
+    rr_renderer_line_to(renderer, 163.63, 128.18);
+    rr_renderer_bezier_curve_to(renderer, 195.66, 124.79, 200, 122.24, 200, 106.79);
+    rr_renderer_bezier_curve_to(renderer, 200, 76.28, 181, 51.09, 164.62, 59.87);
+    rr_renderer_move_to(renderer, 71.14, 99.77);
+    rr_renderer_bezier_curve_to(renderer, 57.59, 109.76, 51.86, 122.06, 51.07, 142.9);
+    rr_renderer_line_to(renderer, 50.45, 159.18);
+    rr_renderer_line_to(renderer, 55.78, 161.71);
+    rr_renderer_bezier_curve_to(renderer, 74.25, 170.48, 125.66, 170.52, 144.06, 161.79);
+    rr_renderer_line_to(renderer, 149.23, 159.34);
+    rr_renderer_line_to(renderer, 149.23, 145.72);
+    rr_renderer_bezier_curve_to(renderer, 149.23, 124.79, 142.76, 109.99, 129.28, 100.08);
+    rr_renderer_line_to(renderer, 123.1, 95.53);
+    rr_renderer_line_to(renderer, 115.49, 99.3);
+    rr_renderer_bezier_curve_to(renderer, 105.43, 104.27, 94.52, 104.25, 84.38, 99.23);
+    rr_renderer_line_to(renderer, 76.9, 95.53);
+    rr_renderer_line_to(renderer, 71.14, 99.77);
     rr_renderer_fill(renderer);
 }
 
@@ -126,6 +143,8 @@ static void dev_squad_panel_toggle_button_on_event(struct rr_ui_element *this,
         else
             game->menu_open = rr_game_menu_dev_squad_panel;
     }
+    else
+        rr_ui_render_tooltip_below(this, game->squads_tooltip, game);
 }
 
 struct rr_ui_element *rr_ui_dev_panel_toggle_button_init()
@@ -182,7 +201,7 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
         NULL);
     dev_tools->should_show = dev_tools_should_show;
     struct rr_ui_element *inner = rr_ui_v_container_init(
-        rr_ui_container_init(), 10, 10, dev_tools, NULL);
+        rr_ui_container_init(), 10, 10, NULL);
     for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
         rr_ui_container_add_element(
             inner, rr_ui_squad_container_init(&game->other_squads[i]));
@@ -192,11 +211,12 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
         rr_ui_set_background(
             rr_ui_v_pad(
                 rr_ui_set_justify(
-                    rr_ui_scroll_container_init(
-                        rr_ui_set_background(
-                            inner
-                        , 0x40ffffff)
-                    , 400),
+                    rr_ui_v_container_init(
+                        rr_ui_container_init(), 10, 10,
+                        rr_ui_text_init("Squads", 24, 0xffffffff),
+                        dev_tools,
+                        rr_ui_scroll_container_init(inner, 322),
+                        NULL),
                     -1, -1),
                 50),
             0x40ffffff),

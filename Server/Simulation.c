@@ -281,6 +281,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     if (rr_simulation_has_arena(this, entity))
         return;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
+    struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     if (rr_component_arena_get_grid(
             arena,
             rr_fclamp(physical->x / arena->maze->grid_size, 0,
@@ -289,7 +290,6 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
                       arena->maze->maze_dim - 1))
             ->player_count == 0)
     {
-        struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
         if (--mob->ticks_to_despawn == 0)
         {
             mob->no_drop = 1;
@@ -297,7 +297,15 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         }
     }
     else
-        rr_simulation_get_mob(this, entity)->ticks_to_despawn = 30 * 25;
+        mob->ticks_to_despawn = 30 * 25;
+    if (mob->force_despawn)
+    {
+        if (--mob->ticks_to_force_despawn == 0)
+        {
+            mob->no_drop = 1;
+            rr_simulation_request_entity_deletion(this, entity);
+        }
+    }
 }
 
 static float get_max_points(struct rr_maze_grid *grid)

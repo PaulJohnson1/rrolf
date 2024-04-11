@@ -179,6 +179,7 @@ struct rr_petal_rarity_scale
     float heal;
     float seed_cooldown;
     float web_radius;
+    float bone_reduction;
 };
 
 struct rr_mob_rarity_scale

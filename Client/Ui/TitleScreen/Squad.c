@@ -302,7 +302,7 @@ struct rr_ui_element *rr_ui_squad_container_init(struct rr_game_squad *squad)
                                squad_player_container_init(squad, 3), NULL),
         rr_ui_set_justify(
             rr_ui_h_container_init(
-                rr_ui_container_init(), 0, 0,
+                rr_ui_container_init(), 5, 0,
                 rr_ui_text_init("Code: ", 16, 0xffffffff),
                 rr_ui_text_init(squad->squad_code, 16, 0xffffffff), NULL),
             -1, -1),

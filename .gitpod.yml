@@ -19,7 +19,7 @@ tasks:
     command: |
       . emsdk/emsdk_env.sh &&
       cd Client/build &&
-      make && cp rrolf-client ../public && cp rrolf-client.wasm ../public
+      make -j && cp rrolf-client ../public && cp rrolf-client.wasm ../public
 
   - name: Master Server
     init: |
@@ -41,7 +41,7 @@ tasks:
       cd ../..
     command: |
       cd Server/build &&
-      make && until ./rrolf-server; do echo server crashed; done
+      make -j && until ./rrolf-server; do echo server crashed; done
 
 ports:
   - port: 8080

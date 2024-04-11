@@ -30,6 +30,8 @@ struct rr_component_mob
     RR_SERVER_ONLY(struct rr_maze_grid *zone;)
     RR_SERVER_ONLY(float squad_damage_counter[RR_SQUAD_COUNT];)
     RR_SERVER_ONLY(uint16_t ticks_to_despawn;)
+    RR_SERVER_ONLY(uint8_t force_despawn;)
+    RR_SERVER_ONLY(uint16_t ticks_to_force_despawn;)
     EntityIdx parent_id;
     RR_SERVER_ONLY(uint8_t protocol_state;)
     uint8_t id;
