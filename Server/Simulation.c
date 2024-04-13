@@ -282,6 +282,7 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
         return;
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
+    struct rr_component_ai *ai = rr_simulation_get_ai(this, entity);
     if (rr_component_arena_get_grid(
             arena,
             rr_fclamp(physical->x / arena->maze->grid_size, 0,
@@ -298,7 +299,8 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
     }
     else
         mob->ticks_to_despawn = 30 * 25;
-    if (mob->force_despawn)
+    if (mob->force_despawn && (mob->id == rr_mob_id_ornithomimus ||
+        ai->ai_state == rr_ai_state_idle || ai->ai_state == rr_ai_state_idle_moving))
     {
         if (--mob->ticks_to_force_despawn == 0)
         {

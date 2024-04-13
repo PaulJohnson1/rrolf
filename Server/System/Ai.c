@@ -75,35 +75,36 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_tree:
         break;
     case rr_mob_id_triceratops:
-        tick_ai_neutral_triceratops(entity, this);
+        tick_ai_hybrid_triceratops(entity, this, rr_rarity_id_exotic);
         break;
     case rr_mob_id_trex:
-        tick_ai_aggro_trex(entity, this);
+        tick_ai_hybrid_trex(entity, this, rr_rarity_id_common);
         break;
     case rr_mob_id_meteor:
         tick_ai_passive_meteor(entity, this);
         break;
     case rr_mob_id_pteranodon:
-        tick_ai_aggro_pteranodon(entity, this);
+        tick_ai_hybrid_pteranodon(entity, this, rr_rarity_id_rare);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this,
-                              RR_PLAYER_SPEED * (1.5 - mob->rarity * 0.05));
+        tick_ai_hybrid_default(entity, this,
+                               RR_PLAYER_SPEED * (1.5 - mob->rarity * 0.05),
+                               rr_rarity_id_unusual);
         break;
     case rr_mob_id_pachycephalosaurus:
-        tick_ai_aggro_pachycephalosaurus(entity, this);
+        tick_ai_hybrid_pachycephalosaurus(entity, this, rr_rarity_id_unusual);
         break;
     case rr_mob_id_ornithomimus:
-        tick_ai_aggro_ornithomimus(entity, this);
+        tick_ai_hybrid_ornithomimus(entity, this, rr_rarity_id_legendary);
         break;
     case rr_mob_id_ankylosaurus:
-        tick_ai_aggro_ankylosaurus(entity, this);
+        tick_ai_hybrid_ankylosaurus(entity, this, rr_rarity_id_epic);
         break;
     case rr_mob_id_quetzalcoatlus:
-        tick_ai_aggro_quetzalcoaltus(entity, this);
+        tick_ai_hybrid_quetzalcoaltus(entity, this, rr_rarity_id_rare);
         break;
     case rr_mob_id_edmontosaurus:
-        tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED);
+        tick_ai_hybrid_default(entity, this, RR_PLAYER_SPEED, rr_rarity_id_epic);
         break;
     default:
         tick_ai_passive_default(entity, this);
