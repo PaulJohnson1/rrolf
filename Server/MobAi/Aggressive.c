@@ -418,7 +418,7 @@ void tick_ai_aggro_ornithomimus(EntityIdx entity,
             rr_rarity_id_exotic)
             physical->bearing_angle = rr_vector_theta(&delta);
         else
-            physical->bearing_angle = rr_vector_theta(&delta) + M_PI;
+            physical->bearing_angle = rr_vector_theta(&delta);
 
         tick_idle_move_sinusoid(entity, simulation, RR_PLAYER_SPEED);
         break;

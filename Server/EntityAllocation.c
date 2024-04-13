@@ -108,7 +108,7 @@ EntityIdx rr_simulation_alloc_petal(struct rr_simulation *this, EntityIdx arena,
     {
         rr_component_physical_set_radius(physical, 15);
         physical->mass = 25 * powf(1.8, petal->rarity);
-        physical->knockback_scale = 5;
+        physical->knockback_scale = 100;
     }
 
     rr_component_petal_set_id(petal, id);
@@ -196,12 +196,12 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
     switch (mob->id)
     {
         case rr_mob_id_triceratops:
-        case rr_mob_id_ankylosaurus:
-        case rr_mob_id_edmontosaurus:
+        // case rr_mob_id_ankylosaurus:
+        // case rr_mob_id_edmontosaurus:
             if (mob->rarity <= rr_rarity_id_mythic)
             {
                 mob->force_despawn = 1;
-                mob->ticks_to_force_despawn = (10 + 2 * rr_frand()) * 60 * 25;
+                mob->ticks_to_force_despawn = 4 * 60 * 25;
             }
             if (mob->rarity == rr_rarity_id_exotic)
             {
@@ -209,15 +209,20 @@ EntityIdx rr_simulation_alloc_mob(struct rr_simulation *this,
                 mob->ticks_to_force_despawn = (20 + 4 * rr_frand()) * 60 * 25;
             }
             break;
-        case rr_mob_id_ornithomimus:
+        // case rr_mob_id_ornithomimus:
+        //     if (mob->rarity <= rr_rarity_id_mythic)
+        //     {
+        //         mob->force_despawn = 1;
+        //         mob->ticks_to_force_despawn = (8 + 2 * rr_frand()) * 60 * 25;
+        //     }
+        //     break;
+        case rr_mob_id_fern:
             if (mob->rarity <= rr_rarity_id_mythic)
             {
                 mob->force_despawn = 1;
-                mob->ticks_to_force_despawn = (8 + 2 * rr_frand()) * 60 * 25;
+                mob->ticks_to_force_despawn = 2 * 60 * 25;
             }
-            break;
-        case rr_mob_id_fern:
-            if (mob->rarity <= rr_rarity_id_exotic)
+            if (mob->rarity == rr_rarity_id_exotic)
             {
                 mob->force_despawn = 1;
                 mob->ticks_to_force_despawn = (8 + 2 * rr_frand()) * 60 * 25;
