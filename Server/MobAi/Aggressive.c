@@ -178,7 +178,8 @@ void tick_ai_aggro_trex(EntityIdx entity, struct rr_simulation *simulation)
         if (ai->ticks_until_next_action == 0)
         {
             if (rr_simulation_get_mob(simulation, entity)->rarity >=
-                rr_rarity_id_exotic)
+                rr_rarity_id_exotic &&
+                !rr_simulation_get_mob(simulation, entity)->player_spawned)
                 ai->ai_state = rr_ai_state_exotic_special;
             ai->ticks_until_next_action = 15;
         }
@@ -415,7 +416,7 @@ void tick_ai_aggro_ornithomimus(EntityIdx entity,
         struct rr_vector target_pos = {physical->x, physical->y};
         rr_vector_sub(&delta, &target_pos);
         if (rr_simulation_get_mob(simulation, entity)->rarity >=
-            rr_rarity_id_exotic)
+            rr_rarity_id_legendary)
             physical->bearing_angle = rr_vector_theta(&delta);
         else
             physical->bearing_angle = rr_vector_theta(&delta);

@@ -95,17 +95,21 @@ struct zone
     uint8_t (*spawn_func)();
 };
 
-#define ZONE_POSITION_COUNT 12
-#define ROT_COUNT 7
+#define ZONE_POSITION_COUNT 10
+#define ROT_COUNT 5
+#define PERMA_ZONE_POSITION_COUNT 2
 
 // all over spawn
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
-    {2, 9, 2, 2, ornith_zone},           {8, 22, 2, 2, fern_zone},
     {11, 29, 3, 2, edmon_tree_zone},     {4, 25, 3, 2, quetz_trex_zone},
     {34, 21, 3, 2, trike_dako_zone},     {38, 21, 5, 1, pter_zone},
     {26, 31, 4, 2, edmo_dako_zone},      {17, 19, 3, 2, pter_zone},
     {28, 24, 2, 3, trex_dako_pter_zone}, {0, 11, 5, 1, dako_pter_zone},
     {21, 23, 3, 2, edmon_tree_zone},     {7, 33, 3, 2, trike_dako_zone},
+};
+
+static struct zone perma_zone_positions[PERMA_ZONE_POSITION_COUNT] = {
+    {2, 9, 2, 2, ornith_zone},           {8, 22, 2, 2, fern_zone},
 };
 
 static void set_spawn_zones()
@@ -116,6 +120,13 @@ static void set_spawn_zones()
     int64_t time = (t.tv_sec * 1000000 + t.tv_usec) / (1000 * 1000 * 60 * 30);
 
     uint64_t seed = rr_get_hash(time);
+
+    for (uint64_t i = 0; i < PERMA_ZONE_POSITION_COUNT; i++)
+    {
+        struct zone zone = perma_zone_positions[i];
+        set_special_zone(rr_biome_id_hell_creek, zone.spawn_func, zone.x, zone.y,
+                         zone.w, zone.h);
+    }
 
     for (uint64_t i = 0; i < ZONE_POSITION_COUNT; i++)
     {
@@ -426,7 +437,7 @@ void rr_simulation_tick(struct rr_simulation *this)
     struct timeval t;
     gettimeofday(&t, NULL);
     int64_t time = (t.tv_sec * 1000000 + t.tv_usec);
-    int64_t current_zone_epoch = time / (1000 * 1000 * 60 * 30);
+    int64_t current_zone_epoch = time / (1000 * 1000 * 60 * 10);
 
     if (current_zone_epoch != last_zone_epoch)
     {

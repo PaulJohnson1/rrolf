@@ -25,7 +25,6 @@ set(SRCS
     MobAi/Helpers.c
     MobAi/Neutral.c
     MobAi/Passive.c
-    MobAi/Hybrid.c
     System/Ai.c
     System/Camera.c
     System/Centipede.c

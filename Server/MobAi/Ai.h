@@ -35,7 +35,6 @@ uint8_t tick_summon_return_to_owner(EntityIdx, struct rr_simulation *);
 void tick_ai_passive_default(EntityIdx, struct rr_simulation *);
 void tick_ai_neutral_default(EntityIdx, struct rr_simulation *, float);
 void tick_ai_aggro_default(EntityIdx, struct rr_simulation *, float);
-void tick_ai_hybrid_default(EntityIdx, struct rr_simulation *, float, uint8_t);
 
 void tick_ai_passive_meteor(EntityIdx, struct rr_simulation *);
 
@@ -50,11 +49,3 @@ void tick_ai_aggro_pachycephalosaurus(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_ornithomimus(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_ankylosaurus(EntityIdx, struct rr_simulation *);
 void tick_ai_aggro_quetzalcoaltus(EntityIdx, struct rr_simulation *);
-
-void tick_ai_hybrid_triceratops(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_trex(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_pteranodon(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_pachycephalosaurus(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_ornithomimus(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_ankylosaurus(EntityIdx, struct rr_simulation *, uint8_t);
-void tick_ai_hybrid_quetzalcoaltus(EntityIdx, struct rr_simulation *, uint8_t);

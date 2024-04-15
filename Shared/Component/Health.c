@@ -80,6 +80,9 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
         return;
     if (v <= this->damage_reduction)
         return;
+    if (this->damage_reduction != 0 &&
+        rr_simulation_get_mob(simulation, from)->player_spawned)
+        return;
     rr_component_health_set_flags(this, this->flags | 2);
     v = this->health - (v - this->damage_reduction);
     if (v < 0)
