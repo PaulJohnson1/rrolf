@@ -85,17 +85,27 @@ static void system_for_each(EntityIdx entity, void *simulation)
         }
         break;
     case rr_mob_id_trex:
-        tick_ai_aggro_trex(entity, this);
+        if (mob->rarity >= rr_rarity_id_rare)
+            tick_ai_aggro_trex(entity, this);
+        else
+            tick_ai_neutral_trex(entity, this);
         break;
     case rr_mob_id_meteor:
         tick_ai_passive_meteor(entity, this);
         break;
     case rr_mob_id_pteranodon:
-        tick_ai_aggro_pteranodon(entity, this);
+        if (mob->rarity >= rr_rarity_id_rare)
+            tick_ai_aggro_pteranodon(entity, this);
+        else
+            tick_ai_neutral_pteranodon(entity, this);
         break;
     case rr_mob_id_dakotaraptor:
-        tick_ai_aggro_default(entity, this,
-                               RR_PLAYER_SPEED * (1.5 - mob->rarity * 0.05));
+        if (mob->rarity >= rr_rarity_id_rare)
+            tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED *
+                                  (1.5 - mob->rarity * 0.05));
+        else
+            tick_ai_neutral_default(entity, this, RR_PLAYER_SPEED *
+                                    (1.5 - mob->rarity * 0.05));
         break;
     case rr_mob_id_pachycephalosaurus:
         tick_ai_aggro_pachycephalosaurus(entity, this);
@@ -103,23 +113,25 @@ static void system_for_each(EntityIdx entity, void *simulation)
     case rr_mob_id_ornithomimus:
         if (mob->rarity >= rr_rarity_id_legendary)
             tick_ai_aggro_ornithomimus(entity, this);
-        {
+        else
             tick_ai_neutral_ornithomimus(entity, this);
-        }
         break;
     case rr_mob_id_ankylosaurus:
         if (mob->rarity >= rr_rarity_id_legendary)
             tick_ai_aggro_ankylosaurus(entity, this);
-        {
+        else
             tick_ai_neutral_ankylosaurus(entity, this);
-        }
         break;
     case rr_mob_id_quetzalcoatlus:
-        tick_ai_aggro_quetzalcoaltus(entity, this);
+        if (mob->rarity >= rr_rarity_id_rare)
+            tick_ai_aggro_quetzalcoaltus(entity, this);
+        else
+            tick_ai_neutral_quetzalcoaltus(entity, this);
         break;
     case rr_mob_id_edmontosaurus:
         if (mob->rarity >= rr_rarity_id_mythic)
             tick_ai_aggro_default(entity, this, RR_PLAYER_SPEED);
+        else
         {
             if (mob->rarity >= rr_rarity_id_legendary)
                 mob->force_despawn = 1;

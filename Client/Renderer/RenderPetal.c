@@ -43,7 +43,7 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
                         30 + 5 * sinf(physical->animation_timer * 0.1));
         rr_renderer_fill(renderer);
     }
-    if (petal->rarity == 7)
+    if (petal->rarity == rr_rarity_id_ultimate)
     {
         struct rr_simulation_animation *particle = rr_particle_alloc(
             &game->particle_manager, rr_animation_type_default);
