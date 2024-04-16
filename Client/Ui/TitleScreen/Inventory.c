@@ -41,7 +41,7 @@ static void inventory_button_on_event(struct rr_ui_element *this,
 {
     struct inventory_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-        game->pressed == this)
+        game->pressed == this && !game->simulation_ready)
     {
         if (data->count == 0)
             return;
@@ -81,7 +81,8 @@ static uint8_t inventory_button_should_show(struct rr_ui_element *this,
 static uint8_t inventory_container_should_show(struct rr_ui_element *this,
                                                struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_inventory && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_inventory &&
+        game->player_info->flower_id == RR_NULL_ENTITY;
 }
 
 static void inventory_container_animate(struct rr_ui_element *this,
@@ -281,6 +282,7 @@ void inventory_toggle_button_animate(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'Z') &&
+        !game->chat.chat_active &&
         !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_inventory)

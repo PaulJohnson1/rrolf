@@ -74,7 +74,10 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
         game->chat.chat_active ^= 1;
     }
     if (game->chat.chat_active)
+    {
+        game->menu_open = 0;
         rr_dom_focus("_0x4523");
+    }
     else
         rr_dom_blur("_0x4523");
 };

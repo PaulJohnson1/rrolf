@@ -492,7 +492,8 @@ struct rr_ui_element *crafting_inventory_button_init(uint8_t id, uint8_t rarity)
 static uint8_t crafting_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_crafting && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_crafting &&
+        game->player_info->flower_id == RR_NULL_ENTITY;
 }
 
 struct rr_ui_element *rr_ui_crafting_container_init()
@@ -717,6 +718,7 @@ void crafting_toggle_button_animate(struct rr_ui_element *this,
                                      struct rr_game *game)
 {
     if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'C') &&
+        !game->chat.chat_active &&
         !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_crafting)

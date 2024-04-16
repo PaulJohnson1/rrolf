@@ -404,28 +404,29 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             // Read uuid
             proto_bug_read_string(&encoder, client->rivet_account.uuid, 100,
                                   "rivet uuid");
-// #ifdef RIVET_BUILD
-            for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
-            {
-                if (!rr_bitset_get(this->clients_in_use, j))
-                    continue;
-                if (i == j)
-                    continue;
-                if (strcmp(client->rivet_account.uuid,
-                           this->clients[j].rivet_account.uuid) == 0)
-                {
-                    fputs("skid multibox\n", stderr);
-                    lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                     (uint8_t *)"skid multibox",
-                                     sizeof "skid multibox");
-                    return -1;
-                }
-            }
-// #endif
+
 #ifndef SANDBOX
             if (rr_get_hash(rr_get_hash(proto_bug_read_varuint(&encoder, "dev_flag"))) == 538077234822853942)
 #endif
                 client->dev = 1;
+
+            if (!client->dev)
+                for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+                {
+                    if (!rr_bitset_get(this->clients_in_use, j))
+                        continue;
+                    if (i == j)
+                        continue;
+                    if (strcmp(client->rivet_account.uuid,
+                            this->clients[j].rivet_account.uuid) == 0)
+                    {
+                        fputs("skid multibox\n", stderr);
+                        lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                                        (uint8_t *)"skid multibox",
+                                        sizeof "skid multibox");
+                        return -1;
+                    }
+                }
 
 #ifdef RIVET_BUILD
             struct connected_captures *captures = malloc(sizeof *captures);

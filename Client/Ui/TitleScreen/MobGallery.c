@@ -115,7 +115,8 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
 static uint8_t mob_container_should_show(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_gallery && !game->simulation_ready;
+    return game->menu_open == rr_game_menu_gallery &&
+        game->player_info->flower_id == RR_NULL_ENTITY;
 }
 
 static void mob_container_animate(struct rr_ui_element *this,
@@ -327,6 +328,7 @@ void mob_toggle_toggle_button_animate(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'V') &&
+        !game->chat.chat_active &&
         !rr_dom_has_focus("_0x4346") && !rr_dom_has_focus("_0x4347"))
     {
         if (game->menu_open == rr_game_menu_gallery)

@@ -272,17 +272,17 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(
-                                    &game->cache.displaying_debug_information),
-                                rr_ui_text_init("Show debug info", 15,
-                                                0xffffffff),
+                                rr_ui_toggle_box_init(&game->cache.tint_petals),
+                                rr_ui_text_init("Tint petals", 15, 0xffffffff),
                                 NULL),
                             -1, -1),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(&game->cache.tint_petals),
-                                rr_ui_text_init("Tint petals", 15, 0xffffffff),
+                                rr_ui_toggle_box_init(
+                                    &game->cache.disable_chat),
+                                rr_ui_text_init("Disable chat", 15,
+                                                0xffffffff),
                                 NULL),
                             -1, -1),
                         rr_ui_set_justify(
@@ -298,8 +298,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(
-                                    &game->cache.disable_chat),
-                                rr_ui_text_init("Disable chat", 15,
+                                    &game->cache.displaying_debug_information),
+                                rr_ui_text_init("Debug mode", 15,
                                                 0xffffffff),
                                 NULL),
                             -1, -1),

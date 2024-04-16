@@ -109,6 +109,26 @@ void render_background(struct rr_component_player_info *player_info,
                     rr_renderer_fill(renderer);
                 }
             }
+
+            if (this->cache.displaying_debug_information &&
+                nx % 2 && currY % 2)
+            {
+                char pos[10];
+                sprintf(pos, "%d %d", (nx - 1) / 2, (currY - 1) / 2);
+                struct rr_renderer_context_state state;
+                rr_renderer_context_state_init(renderer, &state);
+                rr_renderer_set_text_size(renderer, 64);
+                rr_renderer_set_text_align(renderer, 1);
+                rr_renderer_set_text_baseline(renderer, 1);
+                rr_renderer_fill_text(renderer, pos, nx * grid_size, currY * grid_size);
+                rr_renderer_set_line_width(renderer, 2);
+                rr_renderer_set_global_alpha(renderer, 1);
+                rr_renderer_stroke_rect(renderer, (nx - 1) * grid_size,
+                                        (currY - 1) * grid_size, grid_size * 2, grid_size * 2);
+                rr_renderer_stroke_rect(renderer, (nx + 1) * grid_size,
+                                        (currY + 1) * grid_size, grid_size * 2, grid_size * 2);
+                rr_renderer_context_state_free(renderer, &state);
+            }
         }
 }
 

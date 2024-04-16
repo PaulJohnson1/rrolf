@@ -100,7 +100,21 @@ void rr_ui_render_element(struct rr_ui_element *this, struct rr_game *game)
 
     this->animate(this, game);
     if (this->completely_hidden == 0)
+    {
         this->on_render(this, game);
+        if (game->cache.displaying_debug_information)
+        {
+            rr_renderer_set_transform(game->renderer, 1, 0, 0, 0, 1, 0);
+            rr_renderer_begin_path(game->renderer);
+            rr_renderer_set_stroke(game->renderer, 0xff000000);
+            rr_renderer_set_line_width(game->renderer, 1);
+            rr_renderer_stroke_rect(game->renderer,
+                                    this->abs_x - this->abs_width / 2 * game->renderer->scale,
+                                    this->abs_y - this->abs_height / 2 * game->renderer->scale,
+                                    this->abs_width * game->renderer->scale,
+                                    this->abs_height * game->renderer->scale);
+        }
+    }
     this->first_frame = 0;
     rr_renderer_context_state_free(game->renderer, &state);
 }

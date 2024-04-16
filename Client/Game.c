@@ -134,6 +134,13 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
     return game->simulation_ready;
 }
 
+static uint8_t no_flower(struct rr_ui_element *this,
+                                struct rr_game *game)
+{
+    return game->player_info->flower_id == RR_NULL_ENTITY;
+}
+
+
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
     if (game->socket_error)
@@ -383,39 +390,41 @@ void rr_game_init(struct rr_game *this)
     rr_ui_container_add_element(this->window, rr_ui_finished_game_screen_init());
     rr_ui_container_add_element(this->window, rr_ui_loot_container_init());
 
-    rr_ui_container_add_element(this->window,
-        rr_ui_link_toggle(
-            rr_ui_pad(
-                rr_ui_set_justify(
-                    rr_ui_chat_bar_init(this),
-                -1, 1)
-            , 20)
-        , simulation_ready)
-    );
-
     rr_ui_container_add_element(
         this->window,
         rr_ui_set_justify(
-            rr_ui_link_toggle(
-                rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
-                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                        rr_ui_inventory_toggle_button_init(),
-                        rr_ui_text_init("[z]", 18, 0xffffffff),
-                        NULL
-                    ),
-                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                        rr_ui_mob_gallery_toggle_button_init(),
-                        rr_ui_text_init("[v]", 18, 0xffffffff),
-                        NULL
-                    ),
-                    rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                        rr_ui_crafting_toggle_button_init(),
-                        rr_ui_text_init("[c]", 18, 0xffffffff),
-                        NULL
-                    ),
-                    NULL
-                ),
-            simulation_not_ready),
+            rr_ui_h_container_init(rr_ui_container_init(), 0, 0,
+                rr_ui_link_toggle(
+                    rr_ui_set_justify(
+                        rr_ui_v_container_init(rr_ui_container_init(), 10, 10,
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                rr_ui_inventory_toggle_button_init(),
+                                rr_ui_text_init("[z]", 18, 0xffffffff),
+                                NULL
+                            ),
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                rr_ui_mob_gallery_toggle_button_init(),
+                                rr_ui_text_init("[v]", 18, 0xffffffff),
+                                NULL
+                            ),
+                            rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
+                                rr_ui_crafting_toggle_button_init(),
+                                rr_ui_text_init("[c]", 18, 0xffffffff),
+                                NULL
+                            ),
+                            NULL
+                        ),
+                    -1, 1),
+                no_flower),
+                rr_ui_link_toggle(
+                    rr_ui_pad(
+                        rr_ui_set_justify(
+                            rr_ui_chat_bar_init(this),
+                        -1, 1)
+                    , 20)
+                , simulation_ready),
+                NULL
+            ),
         -1, 1)
     );
 

@@ -56,7 +56,9 @@ static void set_special_zone(uint8_t biome, uint8_t (*fun)(), uint32_t x,
             RR_MAZES[biome].maze[(Y + y) * dim + (X + x)].spawn_function = fun;
 }
 
-uint8_t ornith_zone() { return rr_mob_id_ornithomimus; }
+uint8_t ornith_pachy_zone() {
+    return rr_frand() > 0.5 ? rr_mob_id_ornithomimus : rr_mob_id_pachycephalosaurus;
+}
 uint8_t fern_zone() { return rr_mob_id_fern; }
 uint8_t edmon_tree_zone() { return rr_mob_id_edmontosaurus; }
 uint8_t quetz_trex_zone()
@@ -103,13 +105,13 @@ struct zone
 static struct zone zone_positions[ZONE_POSITION_COUNT] = {
     {11, 29, 3, 2, edmon_tree_zone},     {4, 25, 3, 2, quetz_trex_zone},
     {34, 21, 3, 2, trike_dako_zone},     {38, 21, 5, 1, pter_zone},
-    {26, 31, 4, 2, edmo_dako_zone},      {17, 19, 3, 2, pter_zone},
+    {26, 31, 4, 2, edmo_dako_zone},      {13, 8, 2, 3, pter_zone},
     {28, 24, 2, 3, trex_dako_pter_zone}, {0, 11, 5, 1, dako_pter_zone},
     {21, 23, 3, 2, edmon_tree_zone},     {7, 33, 3, 2, trike_dako_zone},
 };
 
 static struct zone perma_zone_positions[PERMA_ZONE_POSITION_COUNT] = {
-    {2, 9, 2, 2, ornith_zone},           {8, 22, 2, 2, fern_zone},
+    {2, 9, 2, 2, ornith_pachy_zone},     {8, 22, 2, 2, fern_zone},
 };
 
 static void set_spawn_zones()

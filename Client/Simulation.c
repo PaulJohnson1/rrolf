@@ -95,10 +95,10 @@ void rr_simulation_read_binary(struct rr_game *game, struct proto_bug *encoder)
 
         if (is_creation)
         {
-#ifndef RIVET_BUILD
-            printf("create entity with id %d, components %d\n", id,
-                   component_flags);
-#endif
+// #ifndef RIVET_BUILD
+//             printf("create entity with id %d, components %d\n", id,
+//                    component_flags);
+// #endif
             this->entity_tracker[id] = 1 | component_flags;
 #define XX(COMPONENT, ID)                                                      \
     if (component_flags & (1 << ID))                                           \

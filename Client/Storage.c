@@ -175,7 +175,7 @@ void rr_game_cache_load(struct rr_game *this)
     READ_LOADOUT;
     GET_ID_RARITY(&decoder, this->inventory);
     GET_ID_RARITY(&decoder, this->cache.mob_kills);
-    this->cache.displaying_debug_information =
+    // this->cache.displaying_debug_information =
         rr_binary_encoder_read_uint8(&decoder);
     this->cache.screen_shake = rr_binary_encoder_read_uint8(&decoder);
     this->cache.tint_petals = rr_binary_encoder_read_uint8(&decoder);
