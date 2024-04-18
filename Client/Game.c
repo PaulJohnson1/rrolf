@@ -547,6 +547,14 @@ void rr_game_init(struct rr_game *this)
         rr_ui_container_add_element(this->window,
                                     this->squad.squad_members[i].tooltip);
     }
+    for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+        for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+        {
+            struct rr_squad_member *member =
+                &this->other_squads[i].squad_members[j];
+            member->tooltip = rr_ui_squad_player_tooltip_init(member);
+            rr_ui_container_add_element(this->window, member->tooltip);
+        }
 
     for (uint32_t id = 0; id < rr_mob_id_max; ++id)
     {

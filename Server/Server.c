@@ -774,6 +774,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             struct rr_server_client *to_kick = squad->members[pos].client;
             if (to_kick == NULL)
                 break;
+#ifdef SANDBOX
+            if (to_kick->dev)
+                break;
+#endif
             if (to_kick->player_info != NULL)
             {
                 rr_simulation_request_entity_deletion(
@@ -836,18 +840,35 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
             // uint8_t id = proto_bug_read_uint8(&encoder, "id");
             // uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
-            uint8_t id = rand() % rr_mob_id_max;
+            uint8_t id = rand() % (rr_mob_id_edmontosaurus + 1);
             uint8_t rarity = rr_rarity_id_max - 1;
 
-            for (uint8_t i = 0; i < 1; i++) {
-                EntityIdx e = rr_simulation_alloc_mob(
-                    &this->simulation, client->player_info->arena,
-                    client->player_info->camera_x + (rr_frand() * 2000 - 1000), client->player_info->camera_y + (rr_frand() * 2000 - 1000),
-                    id, rarity, rr_simulation_team_id_mobs);
-                struct rr_component_mob *mob =
-                    rr_simulation_get_mob(&this->simulation, e);
-                mob->no_drop = 1;
-            }
+            struct rr_component_arena *arena =
+                rr_simulation_get_arena(&this->simulation, client->player_info->arena);
+            for (uint8_t i = 0; i < 1; ++i)
+                for (uint8_t j = 0; j < 100; ++j)
+                {
+                    float x = rr_fclamp(
+                        client->player_info->camera_x + (rr_frand() * 2000 - 1000),
+                        0, arena->maze->grid_size * arena->maze->maze_dim);
+                    float y = rr_fclamp(
+                        client->player_info->camera_y + (rr_frand() * 2000 - 1000),
+                        0, arena->maze->grid_size * arena->maze->maze_dim);
+                    uint32_t grid_x = x / arena->maze->grid_size;
+                    uint32_t grid_y = y / arena->maze->grid_size;
+                    struct rr_maze_grid *grid =
+                        rr_component_arena_get_grid(arena, grid_x, grid_y);
+                    if (grid->value == 0 || (grid->value & 8))
+                        continue;
+
+                    EntityIdx e = rr_simulation_alloc_mob(
+                        &this->simulation, client->player_info->arena,
+                        x, y, id, rarity, rr_simulation_team_id_mobs);
+                    struct rr_component_mob *mob =
+                        rr_simulation_get_mob(&this->simulation, e);
+                    mob->no_drop = 1;
+                    break;
+                }
             break;
         }
         default:

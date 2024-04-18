@@ -48,15 +48,11 @@ static void scroll_container_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     struct scroll_container_metadata *data = this->data;
-    if (rr_ui_mouse_over(this, game) && game->input_data->scroll_delta != 0)
-    {
-        struct scroll_container_metadata *data = this->data;
-        data->y += game->input_data->scroll_delta * 0.4;
-        if (data->y > this->elements.start[0]->abs_height - this->abs_height)
-            data->y = this->elements.start[0]->abs_height - this->abs_height;
-        if (data->y < 0)
-            data->y = 0;
-    }
+    data->y += game->input_data->scroll_delta * 0.4;
+    if (data->y > this->elements.start[0]->abs_height - this->abs_height)
+        data->y = this->elements.start[0]->abs_height - this->abs_height;
+    if (data->y < 0)
+        data->y = 0;
     data->lerp_y = rr_lerp(data->lerp_y, data->y, 0.2);
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_set_stroke(renderer, 0x80000000);
