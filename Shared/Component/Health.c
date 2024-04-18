@@ -78,13 +78,24 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
 {
     if (this->health == 0)
         return;
-    if (v <= this->damage_reduction)
-        return;
-    if (this->damage_reduction != 0 &&
-        rr_simulation_get_mob(simulation, from)->player_spawned)
+    uint8_t no_reduction = 0;
+    if (rr_simulation_has_mob(simulation, from))
+    {
+        struct rr_component_mob *from_mob = rr_simulation_get_mob(simulation, from);
+        if (from_mob->id == rr_mob_id_edmontosaurus)
+            no_reduction = 1;
+        if (rr_simulation_has_mob(simulation, this->parent_id))
+        {
+            struct rr_component_mob *mob = rr_simulation_get_mob(simulation, this->parent_id);
+            if (mob->id == rr_mob_id_edmontosaurus && from_mob->player_spawned &&
+                (from_mob->rarity < mob->rarity || from_mob->rarity - mob->rarity < 2))
+                return;
+        }
+    }
+    if (v <= this->damage_reduction && !no_reduction)
         return;
     rr_component_health_set_flags(this, this->flags | 2);
-    v = this->health - (v - this->damage_reduction);
+    v = this->health - (v - (no_reduction ? 0 : this->damage_reduction));
     if (v < 0)
         v = 0;
     float damage = this->health - v;

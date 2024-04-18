@@ -67,6 +67,7 @@ struct rr_game_chat_message
 struct rr_game_chat
 {
     uint8_t chat_active; // 0 = inactive, 1 = local, 2 = squad
+    uint8_t chat_active_last_tick;
     uint8_t chat_type;
     uint32_t at;
     struct rr_game_chat_message messages[10];
@@ -85,12 +86,14 @@ struct rr_game_cache
     uint8_t screen_shake;
     uint8_t low_performance_mode;
     uint8_t disable_chat;
+    uint8_t show_coordinates;
     char nickname[128];
 };
 
 struct rr_game_squad
 {
     struct rr_squad_member squad_members[RR_SQUAD_MEMBER_COUNT];
+    uint8_t squad_index;
     uint8_t squad_pos;
     uint8_t squad_private;
     char squad_code[16];

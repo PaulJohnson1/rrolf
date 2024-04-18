@@ -75,11 +75,15 @@ static void chat_bar_animate(struct rr_ui_element *this, struct rr_game *game)
     }
     if (game->chat.chat_active)
     {
-        game->menu_open = 0;
+        if (!game->chat.chat_active_last_tick)
+            game->menu_open = 0;
         rr_dom_focus("_0x4523");
     }
     else
         rr_dom_blur("_0x4523");
+    if (game->menu_open != 0)
+        game->chat.chat_active = 0;
+    game->chat.chat_active_last_tick = game->chat.chat_active;
 };
 
 static uint8_t chatbar_choose(struct rr_ui_element *this, struct rr_game *game)

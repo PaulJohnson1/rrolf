@@ -196,6 +196,8 @@ static void squad_leave_on_event(struct rr_ui_element *this,
     if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
         game->socket_ready)
     {
+        if (game->socket_error > 1)
+            game->socket_error = 0;
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
@@ -673,6 +675,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         proto_bug_read_uint8(&encoder, "rar");
                 }
             }
+            this->squad.squad_index = proto_bug_read_uint8(&encoder, "sqidx");
             this->squad.squad_pos = proto_bug_read_uint8(&encoder, "sqpos");
             this->squad.squad_private =
                 proto_bug_read_uint8(&encoder, "private");
@@ -746,6 +749,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                             proto_bug_read_uint8(&encoder, "rar");
                     }
                 }
+                squad->squad_index = s;
                 squad->squad_private =
                     proto_bug_read_uint8(&encoder, "private");
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
@@ -797,15 +801,10 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                             this->chat.messages[i] = this->chat.messages[i + 1];
                         }
                     }
-                    proto_bug_read_string(
-                        &encoder,
-                        this->chat.messages[this->chat.at].sender_name, 64,
-                        "name");
-                    proto_bug_read_string(
-                        &encoder, this->chat.messages[this->chat.at].message,
-                        64, "chat");
-                    sprintf(this->chat.messages[this->chat.at].text, "%s: %s",
-                        this->chat.messages[this->chat.at].sender_name, this->chat.messages[this->chat.at].message);
+                    struct rr_game_chat_message *message = &this->chat.messages[this->chat.at];
+                    proto_bug_read_string(&encoder, message->sender_name, 64, "name");
+                    proto_bug_read_string(&encoder, message->message, 64, "chat");
+                    sprintf(message->text, "%s: %s", message->sender_name, message->message);
                     break;
                 default:
                     break;
@@ -1321,7 +1320,7 @@ void rr_game_connect_socket(struct rr_game *this)
 #else
     rr_websocket_init(&this->socket);
     this->socket.user_data = this;
-    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-ziy3y8flqgx.ws-eu110.gitpod.io/");
+    rr_websocket_connect_to(&this->socket, "wss://1234-maxnest0x0-rysteria-vqkbytbl119.ws-eu110.gitpod.io/");
     // rr_websocket_connect_to(&this->socket, "45.79.197.197", 1234, 0);
 #endif
 }

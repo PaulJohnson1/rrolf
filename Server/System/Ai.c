@@ -85,7 +85,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
         }
         break;
     case rr_mob_id_trex:
-        if (mob->rarity >= rr_rarity_id_rare)
+        if (mob->rarity >= rr_rarity_id_rare || mob->player_spawned)
             tick_ai_aggro_trex(entity, this);
         else
             tick_ai_neutral_trex(entity, this);
@@ -114,7 +114,10 @@ static void system_for_each(EntityIdx entity, void *simulation)
         if (mob->rarity >= rr_rarity_id_legendary)
             tick_ai_aggro_ornithomimus(entity, this);
         else
+        {
+            mob->force_despawn = 1;
             tick_ai_neutral_ornithomimus(entity, this);
+        }
         break;
     case rr_mob_id_ankylosaurus:
         if (mob->rarity >= rr_rarity_id_legendary)

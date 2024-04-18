@@ -185,6 +185,7 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
             proto_bug_write_uint8(&encoder, member->loadout[j].rarity, "rar");
         }
     }
+    proto_bug_write_uint8(&encoder, this->squad, "sqidx");
     proto_bug_write_uint8(&encoder, this->squad_pos, "sqpos");
     proto_bug_write_uint8(&encoder, squad->private, "private");
     proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
@@ -197,6 +198,13 @@ void rr_server_client_broadcast_update(struct rr_server_client *this)
                                    this->player_info);
     rr_server_client_write_message(this, encoder.start,
                                    encoder.current - encoder.start);
+}
+
+void rr_server_client_broadcast_animation_update(struct rr_server_client *this)
+{
+    struct rr_server *server = this->server;
+    struct rr_simulation *simulation = &server->simulation;
+    struct proto_bug encoder;
     proto_bug_init(&encoder, outgoing_message);
     proto_bug_write_uint8(&encoder, rr_clientbound_animation_update, "header");
     for (uint32_t i = 0; i < simulation->animation_length; ++i)
@@ -744,22 +752,27 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case rr_serverbound_squad_kick:
         {
-            if (!client->in_squad)
+            uint8_t index = proto_bug_read_uint8(&encoder, "kick index");
+            uint8_t pos = proto_bug_read_uint8(&encoder, "kick pos");
+            if (index >= RR_SQUAD_COUNT)
+                break;
+            if (pos >= RR_SQUAD_MEMBER_COUNT)
+                break;
+            if (!client->in_squad && !client->dev)
+                break;
+            if (client->squad != index && !client->dev)
                 break;
             if (client->squad_pos != 0 && !client->dev)
                 break;
-            uint8_t pos = proto_bug_read_uint8(&encoder, "kick pos");
-            if (pos >= RR_SQUAD_MEMBER_COUNT)
+            if (client->squad_pos == pos && !client->dev)
                 break;
-            if (pos == client->squad_pos)
+            struct rr_squad *squad = &this->squads[index];
+            if (!squad->private && !client->dev)
                 break;
-            struct rr_squad *squad = rr_client_get_squad(this, client);
             if (!squad->members[pos].in_use)
                 break;
             struct rr_server_client *to_kick = squad->members[pos].client;
             if (to_kick == NULL)
-                break;
-            if (to_kick->dev)
                 break;
             if (to_kick->player_info != NULL)
             {
@@ -1043,6 +1056,7 @@ static void server_tick(struct rr_server *this)
             }
             if (client->in_squad)
                 rr_server_client_broadcast_update(client);
+            rr_server_client_broadcast_animation_update(client);
             // if (!client->dev)
             //     continue;
             struct proto_bug encoder;
@@ -1077,7 +1091,8 @@ static void server_tick(struct rr_server *this)
                 proto_bug_write_uint8(&encoder, squad->private, "private");
                 proto_bug_write_uint8(&encoder, RR_GLOBAL_BIOME, "biome");
                 char joined_code[16];
-                if (client->dev || !squad->private)
+                if (client->dev || !squad->private ||
+                    (client->in_squad && client->squad == s))
                     sprintf(joined_code, "%s-%s", this->server_alias,
                             squad->squad_code);
                 else

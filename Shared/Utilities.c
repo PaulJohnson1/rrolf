@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#define _GNU_SOURCE
+
 #include <Shared/Utilities.h>
 
 #include <math.h>
@@ -213,7 +215,8 @@ uint8_t rr_validate_user_string(char *str)
            strstr(str, "\u102a") == NULL &&
            strstr(str, "\u0bf5") == NULL &&
            strstr(str, "\u0bf8") == NULL &&
-           strstr(str, "\u2031") == NULL;
+           strstr(str, "\u2031") == NULL &&
+           strcasestr(str, "rwar") == NULL; // someone keeps spamming
 }
 
 char *rr_trim_string(char *str)

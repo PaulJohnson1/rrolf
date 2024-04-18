@@ -42,6 +42,7 @@ struct squad_flower_metadata
 
 struct squad_pos_metadata
 {
+    struct rr_game_squad *squad;
     uint8_t pos;
 };
 
@@ -200,18 +201,18 @@ static uint8_t kick_player_should_slow(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     struct squad_pos_metadata *data = this->data;
-    uint8_t p = data->pos;
-    if (game->squad.squad_members[game->squad.squad_pos].is_dev)
+    uint8_t index = data->squad->squad_index;
+    uint8_t pos = data->pos;
+    if (game->is_dev)
         return 1;
-    if (game->squad.squad_members[p].is_dev)
-        return 0;
-    if (p == 0)
-        return 0;
-    if (!game->squad.squad_private)
+    if (game->squad.squad_index != index)
         return 0;
     if (game->squad.squad_pos != 0)
         return 0;
-
+    if (game->squad.squad_pos == pos)
+        return 0;
+    if (!game->squad.squad_private)
+        return 0;
     return 1;
 }
 
@@ -224,12 +225,14 @@ static void kick_player_on_event(struct rr_ui_element *this,
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_kick, "header");
+        proto_bug_write_uint8(&encoder, data->squad->squad_index, "kick index");
         proto_bug_write_uint8(&encoder, data->pos, "kick pos");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
 }
 
-static struct rr_ui_element *kick_player_button_init(uint8_t pos)
+static struct rr_ui_element *kick_player_button_init(struct rr_game_squad *squad,
+                                                     uint8_t pos)
 {
     struct rr_ui_element *this =
         rr_ui_close_button_init(20, kick_player_on_event);
@@ -237,6 +240,7 @@ static struct rr_ui_element *kick_player_button_init(uint8_t pos)
     this->should_show = kick_player_should_slow;
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
     struct squad_pos_metadata *data = malloc(sizeof *data);
+    data->squad = squad;
     data->pos = pos;
     this->data = data;
     return this;
@@ -264,7 +268,7 @@ struct rr_ui_element *squad_player_container_init(struct rr_game_squad *squad,
     squad_container->abs_height = squad_container->height = 120;
     rr_ui_container_add_element(squad_container, loadout);
     rr_ui_container_add_element(squad_container, top);
-    rr_ui_container_add_element(squad_container, kick_player_button_init(pos));
+    rr_ui_container_add_element(squad_container, kick_player_button_init(squad, pos));
     squad_container->on_event = squad_container_on_event;
     squad_container->resizeable = 0;
     struct rr_ui_container_metadata *d_data = squad_container->data;
