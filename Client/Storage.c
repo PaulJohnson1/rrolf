@@ -157,7 +157,7 @@ void rr_game_cache_data(struct rr_game *this)
                     rr_rarity_id_max);
     rr_binary_encoder_write_uint8(&encoder, this->cache.show_coordinates);
     rr_binary_encoder_write_uint8(&encoder, this->cache.screen_shake);
-    rr_binary_encoder_write_uint8(&encoder, this->cache.tint_petals);
+    rr_binary_encoder_write_uint8(&encoder, this->cache.show_hitboxes);
     rr_binary_encoder_write_uint8(&encoder, this->cache.use_mouse);
     rr_binary_encoder_write_nt_string(&encoder, this->cache.nickname);
     rr_binary_encoder_write_float64(&encoder, this->cache.experience);
@@ -176,7 +176,7 @@ void rr_game_cache_load(struct rr_game *this)
     GET_ID_RARITY(&decoder, this->cache.mob_kills);
     this->cache.show_coordinates = rr_binary_encoder_read_uint8(&decoder);
     this->cache.screen_shake = rr_binary_encoder_read_uint8(&decoder);
-    this->cache.tint_petals = rr_binary_encoder_read_uint8(&decoder);
+    this->cache.show_hitboxes = rr_binary_encoder_read_uint8(&decoder);
     this->cache.use_mouse = rr_binary_encoder_read_uint8(&decoder);
     rr_binary_encoder_read_nt_string(&decoder, this->cache.nickname);
     this->cache.experience = rr_binary_encoder_read_float64(&decoder);

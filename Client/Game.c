@@ -134,12 +134,25 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
     return game->simulation_ready;
 }
 
-static uint8_t no_flower(struct rr_ui_element *this,
-                                struct rr_game *game)
+static uint8_t ui_not_hidden(struct rr_ui_element *this,
+                               struct rr_game *game)
 {
-    return game->player_info->flower_id == RR_NULL_ENTITY;
+    return !game->cache.hide_ui || !game->simulation_ready;
 }
 
+static uint8_t ui_not_hidden_and_simulation_ready(struct rr_ui_element *this,
+                                                  struct rr_game *game)
+{
+    return !game->cache.hide_ui && game->simulation_ready;
+}
+
+static uint8_t ui_not_hidden_and_player_dead(struct rr_ui_element *this,
+                                             struct rr_game *game)
+{
+    return (!game->cache.hide_ui &&
+           game->player_info->flower_id == RR_NULL_ENTITY) ||
+           !game->simulation_ready;
+}
 
 static uint8_t socket_ready(struct rr_ui_element *this, struct rr_game *game)
 {
@@ -196,8 +209,7 @@ static void squad_leave_on_event(struct rr_ui_element *this,
     if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
         game->socket_ready)
     {
-        if (game->socket_error > 1)
-            game->socket_error = 0;
+        game->socket_error = 0;
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
@@ -237,17 +249,19 @@ void rr_game_init(struct rr_game *this)
     // clang-format off
     rr_ui_container_add_element(
         this->window,
-        rr_ui_set_justify(
-            rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
-                rr_ui_settings_toggle_button_init(),
-                rr_ui_discord_toggle_button_init(),
-                rr_ui_github_toggle_button_init(),
-                rr_ui_account_toggle_button_init(),
-                rr_ui_dev_panel_toggle_button_init(),
-                rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
-                NULL
-            ),
-        -1, -1)
+        rr_ui_link_toggle(
+            rr_ui_set_justify(
+                rr_ui_h_container_init(rr_ui_container_init(), 10, 10,
+                    rr_ui_settings_toggle_button_init(),
+                    rr_ui_discord_toggle_button_init(),
+                    rr_ui_github_toggle_button_init(),
+                    rr_ui_account_toggle_button_init(),
+                    rr_ui_dev_panel_toggle_button_init(),
+                    rr_ui_link_toggle(rr_ui_close_button_init(30, abandon_game_on_event), simulation_ready),
+                    NULL
+                ),
+            -1, -1),
+        ui_not_hidden)
     );
 
     rr_ui_container_add_element(
@@ -263,7 +277,7 @@ void rr_game_init(struct rr_game *this)
             , 1, -1),
         10),
     0x80000000),
-        simulation_ready
+        ui_not_hidden_and_simulation_ready
         )
     );
     rr_ui_container_add_element(this->window, rr_ui_pad(
@@ -417,7 +431,7 @@ void rr_game_init(struct rr_game *this)
                             NULL
                         ),
                     -1, 1),
-                no_flower),
+                ui_not_hidden_and_player_dead),
                 rr_ui_link_toggle(
                     rr_ui_pad(
                         rr_ui_set_justify(
@@ -468,7 +482,7 @@ void rr_game_init(struct rr_game *this)
                     NULL
                 ),
             0, 1),
-        player_alive)
+        ui_not_hidden_and_simulation_ready)
     );
 
     rr_ui_container_add_element(this->window, rr_ui_container_add_element(rr_ui_inventory_container_init(), close_menu_button_init(25))->container);
@@ -896,6 +910,18 @@ void render_mob_component(EntityIdx entity, struct rr_game *this,
         rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_mob_render(entity, this, simulation);
+    if (this->cache.show_hitboxes)
+    {
+        struct rr_component_mob *mob = rr_simulation_get_mob(simulation, entity);
+        rr_renderer_scale(this->renderer, 1 / (1 + physical->deletion_animation * 0.5));
+        rr_renderer_scale(this->renderer, 1 / RR_MOB_RARITY_SCALING[mob->rarity].radius);
+        rr_renderer_begin_path(this->renderer);
+        rr_renderer_reset_color_filter(this->renderer);
+        rr_renderer_set_stroke(this->renderer, RR_RARITY_COLORS[mob->rarity]);
+        rr_renderer_set_line_width(this->renderer, 2);
+        rr_renderer_arc(this->renderer, 0, 0, physical->radius);
+        rr_renderer_stroke(this->renderer);
+    }
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
@@ -908,6 +934,18 @@ void render_petal_component(EntityIdx entity, struct rr_game *this,
         rr_simulation_get_physical(simulation, entity);
     rr_renderer_translate(this->renderer, physical->lerp_x, physical->lerp_y);
     rr_component_petal_render(entity, this, simulation);
+    if (this->cache.show_hitboxes)
+    {
+        struct rr_component_petal *petal = rr_simulation_get_petal(simulation, entity);
+        rr_renderer_scale(this->renderer, 1 / (1 + physical->deletion_animation * 0.5));
+        rr_renderer_scale(this->renderer, 10 / physical->radius);
+        rr_renderer_begin_path(this->renderer);
+        rr_renderer_reset_color_filter(this->renderer);
+        rr_renderer_set_stroke(this->renderer, RR_RARITY_COLORS[petal->rarity]);
+        rr_renderer_set_line_width(this->renderer, 2);
+        rr_renderer_arc(this->renderer, 0, 0, physical->radius);
+        rr_renderer_stroke(this->renderer);
+    }
     rr_renderer_context_state_free(this->renderer, &state);
 }
 
@@ -1066,7 +1104,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             if (this->cache.screen_shake &&
                 player_info->flower_id != RR_NULL_ENTITY)
             {
-                if (0)
+                if (rr_simulation_get_health(this->simulation,
+                    player_info->flower_id)->damage_animation > 0.1)
                 {
                     float r = rr_frand() * 5;
                     float a = rr_frand() * 2 * M_PI;
@@ -1242,9 +1281,18 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_write_serverbound_packet_mobile(this);
         }
     }
-    if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
-                          186 /* ; */) && !this->chat.chat_active)
-        this->cache.displaying_debug_information ^= 1;
+    if (!rr_is_text_input_focused())
+    {
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,
+                              186 /* ; */))
+            this->cache.displaying_debug_information ^= 1;
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'M'))
+            this->cache.use_mouse ^= 1;
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'H'))
+            this->cache.show_hitboxes ^= 1;
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'I'))
+            this->cache.hide_ui ^= 1;
+    }
 
     if (this->cache.displaying_debug_information)
     {

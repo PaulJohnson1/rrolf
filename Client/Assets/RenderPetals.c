@@ -199,6 +199,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -40.44, -3.45, -42.48, -5.49,
                                         -42.48, -8.00);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
             break;
         case rr_petal_id_stinger:
             rr_renderer_set_fill(renderer, 0xff333333);
@@ -344,6 +345,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -68.11, -5.45, -71.53, -8.87,
                                         -71.53, -13.09);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.15f);
             break;
         case rr_petal_id_peas:
             rr_renderer_set_stroke(renderer, 0xff709d45);
@@ -426,6 +428,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_line_to(renderer, -64.96, -41.73);
             rr_renderer_line_to(renderer, -48.13, -29.42);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
             break;
         case rr_petal_id_egg:
             rr_renderer_set_stroke(renderer, 0xffb08a48);
@@ -489,6 +492,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_move_to(renderer, 40.00, -18.00);
             rr_renderer_quadratic_curve_to(renderer, 0.00, -30.00, 0.00, 0.00);
             rr_renderer_stroke(renderer);
+            rr_renderer_scale(renderer, 1 / 0.5);
             break;
         case rr_petal_id_uranium:
             rr_renderer_set_fill(renderer, 0xff63bf2e);
@@ -646,6 +650,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, 12.25, 151.67, 10.09, 164.23,
                                         5.32, 157.96);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.1);
             break;
         case rr_petal_id_azalea:
             rr_renderer_set_fill(renderer, 0xfff686bd);
@@ -856,6 +861,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -7.29, 103.84, -2.62, 98.77,
                                         -1.89, 81.84);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.1);
             break;
         case rr_petal_id_web:
             rr_renderer_set_fill(renderer, 0xffffffff);
@@ -942,6 +948,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, 19.07, 2.77, 30.56, 2.77,
                                         37.65, 9.86);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.1);
             break;
         case rr_petal_id_gravel:
             rr_renderer_set_stroke(renderer, 0xff606060);
@@ -1100,6 +1107,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -5.36, -38.56, -9.71, -42.92,
                                         -9.71, -48.30);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
             break;
         case rr_petal_id_crest:
             rr_renderer_scale(renderer, 0.25);
@@ -1227,6 +1235,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, 45.03, -20.07, 58.02, -37.35,
                                         69.85, -47.54);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.25);
             break;
         case rr_petal_id_droplet:
             rr_renderer_scale(renderer, 0.2);
@@ -1321,6 +1330,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -48.34, 29.60, -50.30, 24.94,
                                         -48.63, 20.85);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2);
             break;
         case rr_petal_id_beak:
             rr_renderer_scale(renderer, 0.1);
@@ -1384,6 +1394,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -7.07, 114.84, -68.59, 143.42,
                                         -76.43, 127.36);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.1);
             break;
         case rr_petal_id_lightning:
             rr_renderer_scale(renderer, 0.18f);
@@ -1487,6 +1498,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_line_to(renderer, -23.83, 18.28);
             rr_renderer_line_to(renderer, -48.16, 16.98);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.18f);
             break;
         case rr_petal_id_third_eye:
             rr_renderer_scale(renderer, 0.6f);
@@ -1502,6 +1514,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_begin_path(renderer);
             rr_renderer_arc(renderer, 0, 0, 7);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.6f);
             break;
         case rr_petal_id_mandible:
             rr_renderer_scale(renderer, 0.09);
@@ -1549,6 +1562,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, 69.94, 57.79, 71.46, 44.89,
                                         67.91, 34.98);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.09);
             break;
         case rr_petal_id_wax:
             rr_renderer_scale(renderer, 0.16);
@@ -1752,6 +1766,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, 13.90, 33.22, 21.78, 28.68,
                                         25.15, 21.10);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.16);
             break;
         case rr_petal_id_sand:
             rr_renderer_set_line_cap(renderer, 1);
@@ -2037,6 +2052,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id,
             rr_renderer_bezier_curve_to(renderer, -6.70, 5.37, -2.75, 4.53,
                                         0.21, 6.45);
             rr_renderer_fill(renderer);
+            rr_renderer_scale(renderer, 1 / 0.2f);
             break;
         default:
             break;

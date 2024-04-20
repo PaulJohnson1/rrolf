@@ -87,6 +87,8 @@ struct rr_game_cache
     uint8_t low_performance_mode;
     uint8_t disable_chat;
     uint8_t show_coordinates;
+    uint8_t show_hitboxes;
+    uint8_t hide_ui;
     char nickname[128];
 };
 

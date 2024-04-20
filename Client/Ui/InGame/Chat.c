@@ -106,7 +106,7 @@ static void chatbar_on_event(struct rr_ui_element *this, struct rr_game *game)
 
 static void chat_animate(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->cache.disable_chat)
+    if (game->cache.disable_chat || game->cache.hide_ui)
     {
         this->completely_hidden = 1;
         rr_dom_element_hide("_0x4523");

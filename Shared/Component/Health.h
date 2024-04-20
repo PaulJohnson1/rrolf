@@ -33,6 +33,7 @@ struct rr_component_health
     RR_SERVER_ONLY(float damage;)
     RR_SERVER_ONLY(float secondary_damage;)
     RR_SERVER_ONLY(float damage_reduction;)
+    RR_SERVER_ONLY(float damage_reduction_ratio;)
     RR_SERVER_ONLY(float poison;)
     RR_SERVER_ONLY(uint16_t poison_ticks;)
     EntityIdx parent_id;

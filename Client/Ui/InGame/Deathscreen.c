@@ -37,7 +37,7 @@ static void continue_to_squad_event(struct rr_ui_element *this,
 
 static uint8_t game_over(struct rr_ui_element *this, struct rr_game *game)
 {
-    return game->simulation_ready &&
+    return !game->cache.hide_ui && game->simulation_ready &&
            game->player_info->flower_id == RR_NULL_ENTITY;
 }
 

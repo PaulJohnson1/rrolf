@@ -140,7 +140,8 @@ static struct rr_ui_element *region_join_button_init()
 static uint8_t settings_container_should_show(struct rr_ui_element *this,
                                               struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_settings;
+    return game->menu_open == rr_game_menu_settings &&
+           (!game->cache.hide_ui || !game->simulation_ready);
 }
 
 static void settings_container_animate(struct rr_ui_element *this,
@@ -253,14 +254,15 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 region_toggle_button_init(),
                                 region_join_button_init(), NULL),
                             -1, -1),*/
-                        rr_ui_set_justify(
+                        rr_ui_flex_container_init(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(&game->cache.use_mouse),
                                 rr_ui_text_init("Mouse movement", 15,
                                                 0xffffffff),
                                 NULL),
-                            -1, -1),
+                                rr_ui_text_init("[m]", 15, 0xffffffff),
+                            10),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
@@ -269,13 +271,14 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_text_init("Screen shake", 15, 0xffffffff),
                                 NULL),
                             -1, -1),
-                        rr_ui_set_justify(
+                        rr_ui_flex_container_init(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
-                                rr_ui_toggle_box_init(&game->cache.tint_petals),
-                                rr_ui_text_init("Tint petals", 15, 0xffffffff),
+                                rr_ui_toggle_box_init(&game->cache.show_hitboxes),
+                                rr_ui_text_init("Show hitboxes", 15, 0xffffffff),
                                 NULL),
-                            -1, -1),
+                                rr_ui_text_init("[h]", 15, 0xffffffff),
+                            10),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
@@ -285,6 +288,16 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                                 0xffffffff),
                                 NULL),
                             -1, -1),
+                        rr_ui_flex_container_init(
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10,
+                                rr_ui_toggle_box_init(
+                                    &game->cache.hide_ui),
+                                rr_ui_text_init("Hide UI", 15,
+                                                0xffffffff),
+                                NULL),
+                                rr_ui_text_init("[i]", 15, 0xffffffff),
+                            10),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
@@ -303,7 +316,7 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                                 0xffffffff),
                                 NULL),
                             -1, -1),
-                        rr_ui_set_justify(
+                        rr_ui_flex_container_init(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,
                                 rr_ui_toggle_box_init(
@@ -311,7 +324,8 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 rr_ui_text_init("Debug mode", 15,
                                                 0xffffffff),
                                 NULL),
-                            -1, -1),
+                                rr_ui_text_init("[;]", 15, 0xffffffff),
+                            10),
                         NULL),
                     -1, -1),
                 50),

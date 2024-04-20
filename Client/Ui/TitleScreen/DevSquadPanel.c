@@ -30,7 +30,8 @@
 static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
-    if (game->menu_open != rr_game_menu_dev_squad_panel)
+    if (game->menu_open != rr_game_menu_dev_squad_panel ||
+        (game->cache.hide_ui && game->simulation_ready))
         return 0;
     if (game->is_dev)
         return 1;

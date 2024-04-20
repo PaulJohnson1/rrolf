@@ -96,7 +96,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Does low damage to mobs in a big range",
     "It's so light it increases your movement speed. Stacks diminishingly",
     "It heals you",
-    "Gives the player armor. Stacks diminishingly",
+    "Gives the player armor. Does not stack",
     "It slows everything down",
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
@@ -175,14 +175,14 @@ double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1.0, 240, 45, 10},
-    {1.8, 120, 60, 20},
-    {3.5, 60,  75, 30},
-    {6.8, 30,  100,50},
-    {12.5,15,  125,80},
-    {24.5,7.5, 150,140},
-    {60.0,2.5, 200,240},
-    {180, 0.5, 250,410}
+    {1.0, 240, 45, 0.2},
+    {1.8, 120, 60, 0.3},
+    {3.5, 60,  75, 0.4},
+    {6.8, 30,  100,0.5},
+    {12.5,15,  125,0.6},
+    {24.5,7.5, 150,0.7},
+    {60.0,2.5, 200,0.8},
+    {180, 0.5, 250,0.9}
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {

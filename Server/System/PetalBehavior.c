@@ -438,6 +438,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
 
     physical->aggro_range_multiplier = 1;
     health->damage_reduction = 0;
+    health->damage_reduction_ratio = 0;
     uint8_t rot_count = 0;
     float bone_diminish_factor = 1;
     float feather_diminish_factor = 1;
@@ -475,10 +476,10 @@ static void petal_modifiers(struct rr_simulation *simulation,
         }
         else if (data->id == rr_petal_id_bone)
         {
-            health->damage_reduction +=
+            health->damage_reduction_ratio +=
                 RR_PETAL_RARITY_SCALE[slot->rarity].bone_reduction *
                 bone_diminish_factor;
-            bone_diminish_factor *= 0.5;
+            bone_diminish_factor *= 0;
         }
         else
         {
