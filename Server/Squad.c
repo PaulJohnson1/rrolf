@@ -67,7 +67,6 @@ void rr_client_can_rejoin_squads(struct rr_server *this,
                                  struct rr_server_client *member,
                                  uint8_t choosen)
 {
-    // check if there's non-empty public squad at choosen pos or below
     for (uint8_t i = choosen; i < RR_SQUAD_COUNT; ++i)
     {
         if (this->squads[i].private)
@@ -77,7 +76,6 @@ void rr_client_can_rejoin_squads(struct rr_server *this,
                 return;
     }
 
-    // chosen empty squad once, next time search from top
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
         if (!this->squads[i].private)
             rr_bitset_unset(member->joined_squad_before, i);
@@ -103,18 +101,27 @@ uint8_t rr_client_create_squad(struct rr_server *this,
         if (this->squads[i].member_count == 0)
         {
             this->squads[i].private = 1;
+            for (uint32_t j = 0; j < RR_MAX_CLIENT_COUNT; ++j)
+                rr_bitset_unset(this->clients[j].joined_squad_before, i);
             return i;
         }
     return RR_ERROR_CODE_INVALID_SQUAD;
 }
 
-uint8_t rr_client_join_squad_with_code(struct rr_server *this, char *code)
+uint8_t rr_client_join_squad_with_code(struct rr_server *this,
+                                       struct rr_server_client *member,
+                                       char *code)
 {
     for (uint8_t i = 0; i < RR_SQUAD_COUNT; ++i)
         if (memcmp(this->squads[i].squad_code, code, 6) == 0)
-            return rr_squad_has_space(&this->squads[i])
-                       ? i
-                       : RR_ERROR_CODE_FULL_SQUAD;
+        {
+            if (!member->dev && this->squads[i].private &&
+                rr_bitset_get(member->joined_squad_before, i))
+                return RR_ERROR_CODE_KICKED_FROM_SQUAD;
+            if (!rr_squad_has_space(&this->squads[i]))
+                return RR_ERROR_CODE_FULL_SQUAD;
+            return i;
+        }
     return RR_ERROR_CODE_INVALID_SQUAD;
 }
 
@@ -126,7 +133,8 @@ uint8_t rr_client_join_squad(struct rr_server *this,
     rr_squad_add_client(&this->squads[pos], member);
     member->squad = pos;
     member->in_squad = 1;
-    rr_bitset_set(member->joined_squad_before, pos);
+    if (!this->squads[pos].private)
+        rr_bitset_set(member->joined_squad_before, pos);
     return 1;
 }
 

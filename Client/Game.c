@@ -942,7 +942,7 @@ void render_petal_component(EntityIdx entity, struct rr_game *this,
         rr_renderer_begin_path(this->renderer);
         rr_renderer_reset_color_filter(this->renderer);
         rr_renderer_set_stroke(this->renderer, RR_RARITY_COLORS[petal->rarity]);
-        rr_renderer_set_line_width(this->renderer, 2);
+        rr_renderer_set_line_width(this->renderer, 3);
         rr_renderer_arc(this->renderer, 0, 0, physical->radius);
         rr_renderer_stroke(this->renderer);
     }
@@ -1011,6 +1011,8 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
         movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
         movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
     }
+    movement_flags |= (this->cache.hold_attack & 1) << 4;
+    movement_flags |= (this->cache.hold_defense & 1) << 5;
     movement_flags |= this->cache.use_mouse << 6;
 
     if (this->is_dev)
@@ -1291,8 +1293,28 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'H'))
             this->cache.show_hitboxes ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'I'))
+        {
             this->cache.hide_ui ^= 1;
+            if (this->cache.hide_ui)
+                this->menu_open = 0;
+        }
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'K'))
+        {
+            this->cache.hold_attack ^= 1;
+            if (this->cache.hold_attack)
+                this->cache.hold_defense = 0;
+        }
+        if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'L'))
+        {
+            this->cache.hold_defense ^= 1;
+            if (this->cache.hold_defense)
+                this->cache.hold_attack = 0;
+        }
     }
+    if (this->menu_open == 0)
+        this->player_info->fov_adjustment =
+            rr_fclamp(this->player_info->fov_adjustment -
+            this->input_data->scroll_delta * 0.001, 0, 1);
 
     if (this->cache.displaying_debug_information)
     {

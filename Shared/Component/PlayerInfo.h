@@ -72,6 +72,8 @@ struct rr_component_player_info
     RR_CLIENT_ONLY(float lerp_camera_y;)
     float camera_fov;
     RR_CLIENT_ONLY(float lerp_camera_fov;)
+    RR_CLIENT_ONLY(float camera_fov_last_tick;)
+    RR_CLIENT_ONLY(float fov_adjustment;)
     RR_SERVER_ONLY(uint16_t protocol_state;)
     EntityIdx parent_id;
     EntityHash flower_id; // will be RR_NULL_ENTITY if nonexistant

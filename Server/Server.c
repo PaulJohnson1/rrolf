@@ -561,7 +561,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             {
                 char link[16] = {0};
                 proto_bug_read_string(&encoder, link, 7, "connect link");
-                squad = rr_client_join_squad_with_code(this, link);
+                squad = rr_client_join_squad_with_code(this, client, link);
             }
             else if (type == 0)
                 squad = rr_client_find_squad(this, client);
@@ -589,6 +589,18 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->in_squad = 0;
                 break;
             }
+            if (squad == RR_ERROR_CODE_KICKED_FROM_SQUAD)
+            {
+                struct proto_bug failure;
+                proto_bug_init(&failure, outgoing_message);
+                proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
+                                      "header");
+                proto_bug_write_uint8(&failure, 2, "fail type");
+                rr_server_client_write_message(client, failure.start,
+                                               failure.current - failure.start);
+                client->in_squad = 0;
+                break;
+            }
             rr_client_join_squad(this, client, squad);
             break;
         }
@@ -607,19 +619,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
                                           "header");
                     proto_bug_write_uint8(&failure, 0, "fail type");
-                    rr_server_client_write_message(
-                        client, failure.start, failure.current - failure.start);
-                    client->in_squad = 0;
-                    client->pending_quick_join = 0;
-                    break;
-                }
-                if (squad == RR_ERROR_CODE_FULL_SQUAD)
-                {
-                    struct proto_bug failure;
-                    proto_bug_init(&failure, outgoing_message);
-                    proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,
-                                          "header");
-                    proto_bug_write_uint8(&failure, 1, "fail type");
                     rr_server_client_write_message(
                         client, failure.start, failure.current - failure.start);
                     client->in_squad = 0;
@@ -747,7 +746,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         case rr_serverbound_private_update:
         {
             if (client->in_squad)
-                rr_client_get_squad(this, client)->private = 0;
+            {
+                struct rr_squad *squad = rr_client_get_squad(this, client);
+                if (client->dev)
+                {
+                    squad->private ^= 1;
+                    if (squad->private)
+                        for (uint32_t i = 0; i < RR_MAX_CLIENT_COUNT; ++i)
+                            rr_bitset_unset(this->clients[i].joined_squad_before,
+                                            client->squad);
+                }
+                else if (client->squad_pos == 0)
+                    squad->private = 0;
+            }
             break;
         }
         case rr_serverbound_squad_kick:
@@ -785,6 +796,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 to_kick->player_info = NULL;
             }
             rr_client_leave_squad(this, to_kick);
+            rr_bitset_set(to_kick->joined_squad_before, index);
             struct proto_bug failure;
             proto_bug_init(&failure, outgoing_message);
             proto_bug_write_uint8(&failure, rr_clientbound_squad_fail,

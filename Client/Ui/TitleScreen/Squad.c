@@ -355,7 +355,7 @@ static void toggle_private_on_event(struct rr_ui_element *this,
 {
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
-        if (game->socket_ready && game->squad.squad_private)
+        if (game->socket_ready)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);

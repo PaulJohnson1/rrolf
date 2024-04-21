@@ -115,9 +115,12 @@ static struct rr_ui_element *mob_button_init(uint8_t id, uint8_t rarity)
 static uint8_t mob_container_should_show(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
-    return game->menu_open == rr_game_menu_gallery &&
-           (!game->simulation_ready || (!game->cache.hide_ui &&
-           game->player_info->flower_id == RR_NULL_ENTITY));
+    uint8_t r = game->menu_open == rr_game_menu_gallery &&
+                (!game->simulation_ready || (!game->cache.hide_ui &&
+                game->player_info->flower_id == RR_NULL_ENTITY));
+    if (!r && game->menu_open == rr_game_menu_gallery)
+        game->menu_open = 0;
+    return r;
 }
 
 static void mob_container_animate(struct rr_ui_element *this,

@@ -51,7 +51,8 @@ void rr_server_free(struct rr_server *);
 
 uint8_t rr_client_create_squad(struct rr_server *, struct rr_server_client *);
 uint8_t rr_client_find_squad(struct rr_server *, struct rr_server_client *);
-uint8_t rr_client_join_squad_with_code(struct rr_server *, char *);
+uint8_t rr_client_join_squad_with_code(struct rr_server *,
+                                       struct rr_server_client *, char *);
 uint8_t rr_client_join_squad(struct rr_server *, struct rr_server_client *,
                              uint8_t);
 void rr_client_leave_squad(struct rr_server *, struct rr_server_client *);

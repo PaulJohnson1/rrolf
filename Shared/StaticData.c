@@ -101,7 +101,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "What does this one do",
     "Tiny rocks that stay on the ground and trip dinos",
     "Heavy and sturdy",
-    "Increases your vision range. Does not stack",
+    "Increases your maximum vision range. Does not stack",
     "This mysterious petal reverses your petal rotation",
     "Stuns mobs and prevents them from moving",
     "A stunning display",

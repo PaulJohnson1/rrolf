@@ -89,6 +89,8 @@ struct rr_game_cache
     uint8_t show_coordinates;
     uint8_t show_hitboxes;
     uint8_t hide_ui;
+    uint8_t hold_attack;
+    uint8_t hold_defense;
     char nickname[128];
 };
 

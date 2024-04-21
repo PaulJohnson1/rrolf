@@ -263,6 +263,24 @@ struct rr_ui_element *rr_ui_settings_container_init(struct rr_game *game)
                                 NULL),
                                 rr_ui_text_init("[m]", 15, 0xffffffff),
                             10),
+                        rr_ui_flex_container_init(
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10,
+                                rr_ui_toggle_box_init(&game->cache.hold_attack),
+                                rr_ui_text_init("Hold attack", 15,
+                                                0xffffffff),
+                                NULL),
+                                rr_ui_text_init("[k]", 15, 0xffffffff),
+                            10),
+                        rr_ui_flex_container_init(
+                            rr_ui_h_container_init(
+                                rr_ui_container_init(), 5, 10,
+                                rr_ui_toggle_box_init(&game->cache.hold_defense),
+                                rr_ui_text_init("Hold defense", 15,
+                                                0xffffffff),
+                                NULL),
+                                rr_ui_text_init("[l]", 15, 0xffffffff),
+                            10),
                         rr_ui_set_justify(
                             rr_ui_h_container_init(
                                 rr_ui_container_init(), 5, 10,

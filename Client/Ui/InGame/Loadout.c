@@ -162,11 +162,13 @@ static void loadout_button_animate(struct rr_ui_element *this,
         data->prev_id = id;
         data->prev_rarity = rarity;
     }
-    if (data->lerp_cd < slot->client_cooldown)
-        data->lerp_cd = slot->client_cooldown * (1.0f / 255);
+    uint8_t cd = player_info->flower_id == RR_NULL_ENTITY ?
+        0 : slot->client_cooldown;
+    if (data->lerp_cd < cd)
+        data->lerp_cd = cd * (1.0f / 255);
     else
         data->lerp_cd =
-            rr_lerp(data->lerp_cd, slot->client_cooldown * (1.0f / 255), 0.2);
+            rr_lerp(data->lerp_cd, cd * (1.0f / 255), 0.2);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 

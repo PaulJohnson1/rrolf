@@ -92,9 +92,12 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
                 return;
         }
     }
-    v *= 1 - this->damage_reduction_ratio;
-    if (v <= this->damage_reduction && !no_reduction)
-        return;
+    if (!no_reduction)
+    {
+        v *= 1 - this->damage_reduction_ratio;
+        if (v <= this->damage_reduction)
+            return;
+    }
     rr_component_health_set_flags(this, this->flags | 2);
     v = this->health - (v - (no_reduction ? 0 : this->damage_reduction));
     if (v < 0)

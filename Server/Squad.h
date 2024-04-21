@@ -23,6 +23,7 @@
 
 #define RR_ERROR_CODE_INVALID_SQUAD 255
 #define RR_ERROR_CODE_FULL_SQUAD 254
+#define RR_ERROR_CODE_KICKED_FROM_SQUAD 253
 
 struct rr_server_client;
 struct rr_server;
