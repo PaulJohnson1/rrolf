@@ -46,6 +46,7 @@ struct rr_component_player_info_petal_slot
     uint8_t id;
     uint8_t rarity;
     uint8_t client_cooldown;
+    uint8_t client_health;
     RR_SERVER_ONLY(uint8_t count;)
 };
 
@@ -98,6 +99,8 @@ void rr_component_player_info_free(struct rr_component_player_info *,
                                    struct rr_simulation *);
 
 RR_SERVER_ONLY(void rr_component_player_info_set_slot_cd(
+                   struct rr_component_player_info *, uint8_t, uint8_t);)
+RR_SERVER_ONLY(void rr_component_player_info_set_slot_hp(
                    struct rr_component_player_info *, uint8_t, uint8_t);)
 RR_SERVER_ONLY(void rr_component_player_info_set_update_loot(
                    struct rr_component_player_info *);)

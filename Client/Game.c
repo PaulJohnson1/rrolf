@@ -1293,24 +1293,14 @@ void rr_game_tick(struct rr_game *this, float delta)
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'H'))
             this->cache.show_hitboxes ^= 1;
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'I'))
-        {
             this->cache.hide_ui ^= 1;
-            if (this->cache.hide_ui)
-                this->menu_open = 0;
-        }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'K'))
-        {
             this->cache.hold_attack ^= 1;
-            if (this->cache.hold_attack)
-                this->cache.hold_defense = 0;
-        }
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick, 'L'))
-        {
             this->cache.hold_defense ^= 1;
-            if (this->cache.hold_defense)
-                this->cache.hold_attack = 0;
-        }
     }
+    if (this->cache.hide_ui && this->simulation_ready)
+        this->menu_open = 0;
     if (this->menu_open == 0)
         this->player_info->fov_adjustment =
             rr_fclamp(this->player_info->fov_adjustment -

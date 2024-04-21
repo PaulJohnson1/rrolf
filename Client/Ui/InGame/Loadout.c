@@ -38,6 +38,7 @@ struct loadout_button_metadata
     uint8_t prev_rarity;
     float secondary_animation;
     float lerp_cd;
+    float lerp_hp;
 };
 
 static void loadout_button_on_event(struct rr_ui_element *this,
@@ -162,13 +163,12 @@ static void loadout_button_animate(struct rr_ui_element *this,
         data->prev_id = id;
         data->prev_rarity = rarity;
     }
-    uint8_t cd = player_info->flower_id == RR_NULL_ENTITY ?
-        0 : slot->client_cooldown;
-    if (data->lerp_cd < cd)
-        data->lerp_cd = cd * (1.0f / 255);
-    else
-        data->lerp_cd =
-            rr_lerp(data->lerp_cd, cd * (1.0f / 255), 0.2);
+    float cd = (player_info->flower_id == RR_NULL_ENTITY ?
+        0 : slot->client_cooldown) * (1.0f / 255);
+    data->lerp_cd = rr_lerp(data->lerp_cd, cd, 0.2);
+    float hp = (player_info->flower_id == RR_NULL_ENTITY ?
+        255 : slot->client_health) * (1.0f / 255);
+    data->lerp_hp = rr_lerp(data->lerp_hp, hp, 0.2);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }
 
@@ -197,6 +197,8 @@ static void loadout_button_on_render(struct rr_ui_element *this,
         rr_renderer_partial_arc(renderer, 0, 0, 90, -M_PI / 2 - pct * M_PI * 10,
                                 -M_PI / 2 - pct * M_PI * 8, 0);
         rr_renderer_fill(renderer);
+        rr_renderer_fill_rect(renderer, -30.0f, -30.0f, 60.0f,
+                              60.0f * (1 - data->lerp_hp));
     }
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                      data->prev_rarity);
@@ -229,6 +231,7 @@ struct rr_ui_element *rr_ui_loadout_button_init(uint8_t pos)
     data->prev_rarity = 0;
     data->secondary_animation = 1;
     data->lerp_cd = 0;
+    data->lerp_hp = 255;
     this->data = data;
     this->abs_width = this->width = pos < 10 ? 60 : 50;
     this->abs_height = this->height = pos < 10 ? 60 : 50;

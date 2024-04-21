@@ -514,6 +514,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             &player_info->slots[outer];
         struct rr_petal_data const *data = &RR_PETAL_DATA[slot->id];
         uint8_t max_cd = 0;
+        uint8_t min_hp = 255;
         slot->count = slot->id == rr_petal_id_peas
                           ? 1
                           : RR_PETAL_DATA[slot->id].count[slot->rarity];
@@ -545,6 +546,12 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             }
             else
             {
+                struct rr_component_health *health = rr_simulation_get_health(
+                    simulation, p_petal->entity_hash);
+                float hp = rr_fclamp(
+                    255.0f * health->health / health->max_health, 0, 255);
+                if (hp < min_hp)
+                    min_hp = hp;
                 if (rr_simulation_get_physical(simulation, p_petal->entity_hash)
                         ->arena != player_info->arena)
                 {
@@ -603,6 +610,7 @@ static void rr_system_petal_reload_foreach_function(EntityIdx id,
             }
         }
         rr_component_player_info_set_slot_cd(player_info, outer, max_cd);
+        rr_component_player_info_set_slot_hp(player_info, outer, min_hp);
     }
     player_info->rotation_count = rotation_pos;
 }

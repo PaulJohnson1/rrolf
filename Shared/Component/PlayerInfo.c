@@ -97,6 +97,14 @@ void rr_component_player_info_set_slot_cd(struct rr_component_player_info *this,
     this->slots[pos].client_cooldown = cd;
 }
 
+void rr_component_player_info_set_slot_hp(struct rr_component_player_info *this,
+                                          uint8_t pos, uint8_t hp)
+{
+    this->protocol_state |=
+        (this->slots[pos].client_health != hp) * state_flags_petals;
+    this->slots[pos].client_health = hp;
+}
+
 void rr_component_player_info_set_update_loot(
     struct rr_component_player_info *this)
 {
@@ -151,6 +159,8 @@ void rr_component_player_info_write(struct rr_component_player_info *this,
             proto_bug_write_uint8(encoder, this->slots[i].rarity, "p_rar");
             proto_bug_write_uint8(encoder, this->slots[i].client_cooldown,
                                   "p_ccd");
+            proto_bug_write_uint8(encoder, this->slots[i].client_health,
+                                  "p_chp");
 
             proto_bug_write_uint8(encoder, this->secondary_slots[i].id, "p_id");
             proto_bug_write_uint8(encoder, this->secondary_slots[i].rarity,
@@ -204,6 +214,8 @@ void rr_component_player_info_read(struct rr_component_player_info *this,
             this->slots[i].rarity = proto_bug_read_uint8(encoder, "p_rar");
             this->slots[i].client_cooldown =
                 proto_bug_read_uint8(encoder, "p_ccd");
+            this->slots[i].client_health =
+                proto_bug_read_uint8(encoder, "p_chp");
 
             this->secondary_slots[i].id = proto_bug_read_uint8(encoder, "p_id");
             this->secondary_slots[i].rarity =
