@@ -1,8 +1,0 @@
-{
-  "OutputFoldersPerTargetSystem": {
-    "Local Machine": [
-      "rrolf\\Server\\out\\build\\x64-Debug",
-      "rrolf\\Server\\out\\install\\x64-Debug"
-    ]
-  }
-}
