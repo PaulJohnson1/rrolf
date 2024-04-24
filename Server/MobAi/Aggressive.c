@@ -430,7 +430,7 @@ void tick_ai_aggro_ornithomimus(EntityIdx entity,
 }
 
 void tick_ai_aggro_ankylosaurus(EntityIdx entity,
-                                  struct rr_simulation *simulation)
+                                struct rr_simulation *simulation)
 {
     struct rr_component_ai *ai = rr_simulation_get_ai(simulation, entity);
     struct rr_component_physical *physical =

@@ -110,8 +110,7 @@ void render_background(struct rr_component_player_info *player_info,
                 }
             }
 
-            if (this->cache.show_coordinates &&
-                nx % 2 && currY % 2)
+            if (this->cache.show_coordinates && nx % 2 && currY % 2)
             {
                 char pos[10];
                 sprintf(pos, "%d %d", (nx - 1) / 2, (currY - 1) / 2);

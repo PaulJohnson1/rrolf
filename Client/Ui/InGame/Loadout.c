@@ -163,11 +163,11 @@ static void loadout_button_animate(struct rr_ui_element *this,
         data->prev_id = id;
         data->prev_rarity = rarity;
     }
-    float cd = (player_info->flower_id == RR_NULL_ENTITY ?
-        0 : slot->client_cooldown) * (1.0f / 255);
+    float cd = (player_info->flower_id == RR_NULL_ENTITY ? 0 :
+        slot->client_cooldown) * (1.0f / 255);
     data->lerp_cd = rr_lerp(data->lerp_cd, cd, 0.2);
-    float hp = (player_info->flower_id == RR_NULL_ENTITY ?
-        255 : slot->client_health) * (1.0f / 255);
+    float hp = (player_info->flower_id == RR_NULL_ENTITY ? 255 :
+        slot->client_health) * (1.0f / 255);
     data->lerp_hp = rr_lerp(data->lerp_hp, hp, 0.2);
     rr_renderer_scale(game->renderer, (1 - data->secondary_animation));
 }

@@ -46,21 +46,17 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
     if (petal->rarity >= rr_rarity_id_exotic)
     {
         uint8_t exo = petal->rarity == rr_rarity_id_exotic;
-        uint8_t count = exo ? 1 : 2;
-        for (uint8_t i = 0; i < count; ++i)
-        {
-            struct rr_simulation_animation *particle = rr_particle_alloc(
-                &game->particle_manager, rr_animation_type_default);
-            float angle =
-                rr_vector_theta(&physical->lerp_velocity) - 0.5 + rr_frand();
-            rr_vector_from_polar(&particle->velocity,
-                                 (5 + rr_frand() * 3) * (exo ? 0.5 : 1), angle);
-            particle->x = physical->lerp_x;
-            particle->y = physical->lerp_y;
-            particle->size = (3 + rr_frand() * 2) * (exo ? 0.5 : 1);
-            particle->opacity = (0.3 + rr_frand() * 0.2) * (exo ? 0.5 : 1);
-            particle->color = 0xffffffff;
-        }
+        struct rr_simulation_animation *particle = rr_particle_alloc(
+            &game->particle_manager, rr_animation_type_default);
+        float angle =
+            rr_vector_theta(&physical->lerp_velocity) - 0.5 + rr_frand();
+        rr_vector_from_polar(&particle->velocity,
+                             (5 + rr_frand() * 3) * (exo ? 0.5 : 1), angle);
+        particle->x = physical->lerp_x;
+        particle->y = physical->lerp_y;
+        particle->size = (3 + rr_frand() * 2) * (exo ? 0.5 : 1);
+        particle->opacity = (0.3 + rr_frand() * 0.2) * (exo ? 0.5 : 1);
+        particle->color = 0xffffffff;
     }
     if (game->cache.tint_petals)
         rr_renderer_add_color_filter(renderer, RR_RARITY_COLORS[petal->rarity],

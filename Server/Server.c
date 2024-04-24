@@ -425,14 +425,17 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                         continue;
                     if (i == j)
                         continue;
+                    if (this->clients[j].dev)
+                        continue;
                     if (strcmp(client->rivet_account.uuid,
-                            this->clients[j].rivet_account.uuid) == 0)
+                        this->clients[j].rivet_account.uuid) == 0)
                     {
-                        fputs("skid multibox\n", stderr);
-                        lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
-                                        (uint8_t *)"skid multibox",
-                                        sizeof "skid multibox");
-                        return -1;
+                        this->clients[j].pending_kick = 1;
+                        // fputs("skid multibox\n", stderr);
+                        // lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                        //                  (uint8_t *)"skid multibox",
+                        //                  sizeof "skid multibox");
+                        // return -1;
                     }
                 }
 
@@ -829,9 +832,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (!rr_validate_user_string(message))
             {
-                printf("blocked chat: %s: %s\n", name, message);
+                printf("[blocked chat] %s: %s\n", name, message);
                 break;
             }
+            printf("[chat] %s: %s\n", name, message);
             struct rr_simulation_animation *animation =
                 &this->simulation
                      .animations[this->simulation.animation_length++];
@@ -839,7 +843,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             strcpy(animation->message, message);
             animation->type = rr_animation_type_chat;
             animation->squad = client->squad;
-            printf("chat: %s: %s\n", name, message);
             break;
         }
         case rr_serverbound_dev_summon:

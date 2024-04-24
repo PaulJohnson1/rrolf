@@ -719,7 +719,7 @@ void crafting_toggle_button_on_event(struct rr_ui_element *this,
 }
 
 void crafting_toggle_button_animate(struct rr_ui_element *this,
-                                     struct rr_game *game)
+                                    struct rr_game *game)
 {
     if (rr_bitset_get(game->input_data->keys_pressed_this_tick, 'C') &&
         !rr_is_text_input_focused())

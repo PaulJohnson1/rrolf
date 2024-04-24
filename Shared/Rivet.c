@@ -289,7 +289,8 @@ void rr_rivet_identities_create_guest(void *captures)
 {
     puts("<rr_rivet::attempt_login>");
 
-    // rr_rivet_on_log_in("token", "url", "name", "1234", "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
+    // rr_rivet_on_log_in("token", "url", "name", "1234",
+    //                    "b5f62776-ef1c-472d-8ccd-b329edee545b", 1, captures);
 
 #if EMSCRIPTEN
     // clang-format off

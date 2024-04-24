@@ -76,10 +76,11 @@ struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
 };    
 
 char const *RR_PETAL_NAMES[rr_petal_id_max] = {
-    "Secret", "Petal", "Pellet", "Fossil",   "Stinger",  "Berries", "Shell",
-    "Peas",   "Leaf",  "Egg",    "Magnet", "Uranium", "Feather", "Azalea",
-    "Bone",   "Web",   "Seed",   "Gravel", "Club", "Crest", "Droplet",
-    "Beak", "Lightning", "Third Eye", "Mandible", "Wax", "Sand", "Mint"};
+    "Secret", "Petal",     "Pellet",    "Fossil",   "Spikes",  "Berries", "Shell",
+    "Peas",   "Leaf",      "Egg",       "Magnet",   "Uranium", "Feather", "Azalea",
+    "Bone",   "Web",       "Seed",      "Gravel",   "Club",    "Crest",   "Droplet",
+    "Beak",   "Lightning", "Third Eye", "Mandible", "Wax",     "Sand",    "Mint",
+};
     
 char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     0,
@@ -155,45 +156,45 @@ uint32_t RR_MOB_DIFFICULTY_COEFFICIENTS[rr_mob_id_max] = {
     4, //anky
     1, //meteor
     5, //quetz
-    3, //edmon
+    3, //edmo
 };
 
 double RR_HELL_CREEK_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {
-    50, //tric
-    100,//trex
-    15, //fern
-    0.25,//tree
-    75, //pter
-    50, //dako
-    25, //pachy
-    40, //ornith
-    25, //anky
-    0.5,//meteor
-    75, //quetz
-    25,  //edmo
+    50,   //tric
+    100,  //trex
+    15,   //fern
+    0.25, //tree
+    75,   //pter
+    50,   //dako
+    25,   //pachy
+    40,   //ornith
+    25,   //anky
+    0.5,  //meteor
+    75,   //quetz
+    25,   //edmo
 };
 double RR_GARDEN_MOB_ID_RARITY_COEFFICIENTS[rr_mob_id_max] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 10};
 
 struct rr_petal_rarity_scale RR_PETAL_RARITY_SCALE[rr_rarity_id_max] = {
-    {1.0, 240, 45, 0.2},
-    {1.8, 120, 60, 0.3},
-    {3.5, 60,  75, 0.4},
-    {6.8, 30,  100,0.5},
-    {12.5,15,  125,0.6},
-    {24.5,7.5, 150,0.7},
-    {60.0,2.5, 200,0.8},
-    {180, 0.5, 250,0.9}
+    {1,    240, 45,  0.2},
+    {1.8,  120, 60,  0.3},
+    {3.5,  60,  75,  0.4},
+    {6.8,  30,  100, 0.5},
+    {12.5, 15,  125, 0.6},
+    {24.5, 7.5, 150, 0.7},
+    {60,   2.5, 200, 0.8},
+    {180,  0.5, 250, 0.9},
 };
 
 struct rr_mob_rarity_scale RR_MOB_RARITY_SCALING[rr_rarity_id_max] = {
-    {1.0,  1.0,1.0},
-    {2.4,  1.7,1.2},
-    {6.0,  2.9,1.5}, 
-    {14.4, 5.0,2.0},
-    {40,   8.5,2.8},
-    {192, 14.5,4.0},
-    {2560,24.6,5.5},
-    {128e3,42.0,7.0}
+    {1,      1,    1  },
+    {2.4,    1.7,  1.2},
+    {6,      2.9,  1.5}, 
+    {14.4,   5,    2  },
+    {40,     8.5,  2.8},
+    {192,    14.5, 4  },
+    {2560,   24.6, 5.5},
+    {128000, 42,   7  },
 };
 // clang-format on
 

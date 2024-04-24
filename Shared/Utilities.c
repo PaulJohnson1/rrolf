@@ -215,8 +215,8 @@ uint8_t rr_validate_user_string(char *str)
            strstr(str, "\u102a") == NULL &&
            strstr(str, "\u0bf5") == NULL &&
            strstr(str, "\u0bf8") == NULL &&
-           strstr(str, "\u2031") == NULL &&
-           strcasestr(str, "rwar") == NULL; // someone keeps spamming
+           strstr(str, "\u2031") == NULL;
+           // strcasestr(str, "rwar") == NULL;
 }
 
 char *rr_trim_string(char *str)

@@ -135,7 +135,7 @@ static uint8_t simulation_ready(struct rr_ui_element *this,
 }
 
 static uint8_t ui_not_hidden(struct rr_ui_element *this,
-                               struct rr_game *game)
+                             struct rr_game *game)
 {
     return !game->cache.hide_ui || !game->simulation_ready;
 }
@@ -776,7 +776,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     proto_bug_read_uint8(&encoder, "private");
                 this->selected_biome = proto_bug_read_uint8(&encoder, "biome");
                 proto_bug_read_string(&encoder, squad->squad_code, 16,
-                                    "squad code");
+                                      "squad code");
             }
             break;
         }
@@ -819,7 +819,8 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                         this->chat.at++;
                     else
                     {
-                        for (uint8_t i = 0; i < 9; i++) {
+                        for (uint8_t i = 0; i < 9; i++)
+                        {
                             this->chat.messages[i] = this->chat.messages[i + 1];
                         }
                     }
@@ -1011,14 +1012,13 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
         movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 32) << 4;
         movement_flags |= rr_bitset_get(this->input_data->keys_pressed, 16) << 5;
     }
-    movement_flags |= (this->cache.hold_attack & 1) << 4;
-    movement_flags |= (this->cache.hold_defense & 1) << 5;
+    movement_flags |= this->cache.hold_attack << 4;
+    movement_flags |= this->cache.hold_defense << 5;
     movement_flags |= this->cache.use_mouse << 6;
 
     if (this->is_dev)
-        proto_bug_write_float32(&encoder2,
-            this->developer_cheats.speed_percent > 0.05 ?
-            this->developer_cheats.speed_percent : 0.05, "speed_percent");
+        proto_bug_write_float32(&encoder2, rr_fclamp(
+            this->developer_cheats.speed_percent, 0.05, 1), "speed_percent");
     proto_bug_write_uint8(&encoder2, movement_flags, "movement kb flags");
     if (this->cache.use_mouse)
     {
@@ -1180,7 +1180,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 #undef GRID_SIZE
         struct rr_simulation *sim = this->simulation;
         rr_simulation_create_component_vectors(sim);
-        if (this->simulation->petal_count < 50 && rr_frand() < 0.015)
+        if (this->simulation->petal_count < 50 && rr_frand() < 0.03)
         {
             EntityIdx petal_id = rr_simulation_alloc_entity(sim);
             struct rr_component_physical *physical =
@@ -1205,23 +1205,27 @@ void rr_game_tick(struct rr_game *this, float delta)
                     sum += this->inventory[i][r];
             float seed = rr_frand() * sum;
             uint8_t id_chosen = 1;
+            uint8_t rarity_chosen = 0;
             for (uint32_t i = 1; i < rr_petal_id_max; ++i)
             {
                 for (uint32_t r = 0; r < rr_rarity_id_max; ++r)
                     if ((seed -= this->inventory[i][r]) <= 0)
                     {
                         id_chosen = i;
+                        rarity_chosen = r;
                         break;
                     }
                 if (seed < 0)
                     break;
             }
             petal->id = id_chosen;
+            petal->rarity = rarity_chosen;
             physical->velocity.x = rr_frand() * 40 + 80;
             physical->velocity.y = rr_frand() * 5 + 15;
             physical->animation_timer = rr_frand() * M_PI * 2;
             physical->parent_id = rand() % 3;
         }
+        rr_system_particle_render_tick(this, delta);
         struct rr_renderer_context_state state2;
         for (uint32_t i = 0; i < this->simulation->petal_count; ++i)
         {
