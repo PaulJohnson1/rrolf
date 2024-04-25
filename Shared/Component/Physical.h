@@ -57,6 +57,7 @@ struct rr_component_physical
     RR_CLIENT_ONLY(float animation;)       // the actual animation client uses
     RR_CLIENT_ONLY(float animation_timer;) // global timer
     RR_CLIENT_ONLY(float deletion_animation;)
+    RR_CLIENT_ONLY(uint8_t on_title_screen;)
     RR_SERVER_ONLY(uint32_t stun_ticks;)
     RR_CLIENT_ONLY(uint8_t deletion_type : 2;)
     RR_CLIENT_ONLY(uint8_t animation_started : 1;)

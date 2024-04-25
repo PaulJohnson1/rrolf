@@ -120,7 +120,7 @@ struct rr_ui_element *rr_ui_petal_tooltip_init(uint8_t id, uint8_t rarity)
                           rr_ui_text_init(" T-Rex", 12, 0xffffffff), NULL),
                       -1, 0));
     }
-    else if (id == rr_petal_id_light)
+    else if (id == rr_petal_id_berry)
     {
         char *extra = malloc((sizeof *extra) * 16);
         sprintf(extra, "%.1f rad/s", (0.012 + 0.008 * rarity) * 25);

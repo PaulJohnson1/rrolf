@@ -54,7 +54,16 @@ void rr_component_petal_render(EntityIdx entity, struct rr_game *game,
                              (5 + rr_frand() * 3) * (exo ? 0.5 : 1), angle);
         particle->x = physical->lerp_x;
         particle->y = physical->lerp_y;
-        particle->size = (3 + rr_frand() * 2) * (exo ? 0.5 : 1);
+        if (physical->on_title_screen &&
+            (petal->id == rr_petal_id_magnet || petal->id == rr_petal_id_crest))
+        {
+            float angle = rr_frand() * 2 * M_PI;
+            float dist = rr_frand() * physical->radius;
+            particle->x += cosf(angle) * dist;
+            particle->y += sinf(angle) * dist;
+        }
+        particle->size = (3 + rr_frand() * 2) * (exo ? 0.5 : 1) *
+                         (physical->on_title_screen ? physical->radius / 20 : 1);
         particle->opacity = (0.3 + rr_frand() * 0.2) * (exo ? 0.5 : 1);
         particle->color = 0xffffffff;
     }

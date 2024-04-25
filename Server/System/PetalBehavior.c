@@ -408,7 +408,7 @@ static void system_flower_petal_movement_logic(
                              curr_angle);
         rr_vector_add(&chase_vector, &clump_vector);
     }
-    if (petal->id == rr_petal_id_light)
+    if (petal->id == rr_petal_id_berry)
     {
         struct rr_vector random_vector;
         rr_vector_from_polar(&random_vector, 10.0f, rr_frand() * M_PI * 2);
@@ -453,7 +453,7 @@ static void petal_modifiers(struct rr_simulation *simulation,
             rr_component_health_set_health(
                 health, health->health +
                             0.05 * RR_PETAL_RARITY_SCALE[slot->rarity].heal);
-        else if (data->id == rr_petal_id_light)
+        else if (data->id == rr_petal_id_berry)
             to_rotate += (0.012 + 0.008 * slot->rarity);
         else if (data->id == rr_petal_id_feather)
         {

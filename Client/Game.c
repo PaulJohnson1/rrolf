@@ -1180,7 +1180,7 @@ void rr_game_tick(struct rr_game *this, float delta)
 #undef GRID_SIZE
         struct rr_simulation *sim = this->simulation;
         rr_simulation_create_component_vectors(sim);
-        if (this->simulation->petal_count < 50 && rr_frand() < 0.03)
+        if (rr_frand() < 0.05)
         {
             EntityIdx petal_id = rr_simulation_alloc_entity(sim);
             struct rr_component_physical *physical =
@@ -1199,6 +1199,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             physical->lerp_x = -1050;
             physical->lerp_y = (rr_frand() - 0.5) * this->renderer->height;
             physical->y = physical->lerp_y;
+            physical->on_title_screen = 1;
             uint32_t sum = 0;
             for (uint32_t i = 1; i < rr_petal_id_max; ++i)
                 for (uint32_t r = 0; r < rr_rarity_id_max; ++r)

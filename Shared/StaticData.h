@@ -85,7 +85,7 @@ enum rr_petal_id
     rr_petal_id_pellet,    // 2
     rr_petal_id_fossil,    // 3
     rr_petal_id_stinger,   // 4
-    rr_petal_id_light,     // 5
+    rr_petal_id_berry,     // 5
     rr_petal_id_shell,     // 6
     rr_petal_id_peas,      // 7
     rr_petal_id_leaf,      // 8
