@@ -462,6 +462,14 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         if (!client->verified)
             break;
+        uint8_t qv = proto_bug_read_uint8(&encoder, "qv");
+        if (qv != 255)
+        {
+            client->pending_kick = 1;
+            printf("%u %u\n", 255, qv);
+            fputs("invalid quick verification\n", stderr);
+            break;
+        }
         uint8_t header = proto_bug_read_uint8(&encoder, "header");
         switch (header)
         {
@@ -522,9 +530,10 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         case rr_serverbound_petal_switch:
         {
+            if (client->player_info == NULL)
+                break;
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            ;
             uint8_t pos = proto_bug_read_uint8(&encoder, "petal switch");
             while (pos != 0 && pos <= 10)
             {
