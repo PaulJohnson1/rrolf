@@ -65,9 +65,9 @@ void rr_squad_remove_client(struct rr_squad *this,
 
 void rr_client_can_rejoin_squads(struct rr_server *this,
                                  struct rr_server_client *member,
-                                 uint8_t choosen)
+                                 uint8_t chosen)
 {
-    for (uint8_t i = choosen; i < RR_SQUAD_COUNT; ++i)
+    for (uint8_t i = chosen; i < RR_SQUAD_COUNT; ++i)
     {
         if (this->squads[i].private)
             continue;

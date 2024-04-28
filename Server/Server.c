@@ -788,10 +788,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             struct rr_server_client *to_kick = squad->members[pos].client;
             if (to_kick == NULL)
                 break;
-#ifdef SANDBOX
-            if (to_kick->dev)
-                break;
-#endif
+            // if (to_kick->dev)
+            //     break;
             if (to_kick->player_info != NULL)
             {
                 rr_simulation_request_entity_deletion(
