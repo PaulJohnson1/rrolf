@@ -1,7 +1,7 @@
 # rrolf
 ## Installation Guide: 
 
-### WARNING: rrolf is difficult to set up on Windows (specifically libwebsockets.) This guide is for Debian only.
+### This guide is for Debian only.
 ### Install dependencies
 - the [NEWEST version of emscripten](https://emscripten.org/docs/getting_started/downloads.html)
 - libwebsockets, ``apt install libwebsockets-dev``
@@ -22,7 +22,7 @@ Build the client:
 cd Client
 mkdir build
 cd build
-cmake .. -DWASM_BUILD=1
+cmake .. -DWASM_BUILD=1 -DDEBUG_BUILD=0
 make -j`nproc`
 cp ../../RivetStaticPage/index.html .
 ```
@@ -32,7 +32,7 @@ Build the server:
 cd Server
 mkdir build
 cd build
-cmake ..
+cmake .. -DDEBUG_BUILD=0
 make -j`nproc`
 ```
 
