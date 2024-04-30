@@ -178,6 +178,8 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    if (rr_ui_mouse_over(this, game) && game->cache.loadout[data->pos].id != 0)
+        game->cursor = rr_game_cursor_pointer;
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                      data->prev_rarity);
@@ -188,6 +190,13 @@ static void loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
+    struct rr_component_player_info_petal_slot *slot1 =
+        &game->player_info->slots[data->pos % 10];
+    struct rr_component_player_info_petal_slot *slot2 =
+        &game->player_info->slots[data->pos % 10 + 10];
+    if (rr_ui_mouse_over(this, game) && (slot1->id != 0 || slot2->id != 0) &&
+        game->player_info->flower_id != RR_NULL_ENTITY)
+        game->cursor = rr_game_cursor_pointer;
     float pct = data->lerp_cd * data->lerp_cd * (3 - 2 * data->lerp_cd);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     if (data->pos < 10)

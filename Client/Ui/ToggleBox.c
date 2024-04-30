@@ -31,6 +31,8 @@ void toggle_box_on_event(struct rr_ui_element *this, struct rr_game *game)
 
 void toggle_box_render(struct rr_ui_element *this, struct rr_game *game)
 {
+    if (rr_ui_mouse_over(this, game))
+        game->cursor = rr_game_cursor_pointer;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     if (*((uint8_t *)this->data))

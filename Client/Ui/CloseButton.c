@@ -33,7 +33,10 @@ static void close_button_on_render(struct rr_ui_element *this,
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale);
     if (rr_ui_mouse_over(this, game))
+    {
         rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
+        game->cursor = rr_game_cursor_pointer;
+    }
     rr_renderer_set_fill(renderer, this->fill);
     rr_renderer_round_rect(renderer, -this->abs_width / 2,
                            -this->abs_height / 2, this->abs_width,

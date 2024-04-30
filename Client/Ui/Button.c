@@ -40,7 +40,10 @@ static void labeled_button_on_render(struct rr_ui_element *this,
     struct rr_ui_labeled_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     if (rr_ui_mouse_over(this, game))
+    {
         rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
+        game->cursor = rr_game_cursor_pointer;
+    }
 
     this->abs_width =
         15 + rr_renderer_get_text_size(data->text) * this->abs_height / 2;

@@ -202,3 +202,17 @@ void rr_page_open(char const *name)
         },
         name);
 }
+
+void rr_dom_set_cursor(uint8_t cursor)
+{
+    EM_ASM({
+        let cursor = "default";
+        switch ($0)
+        {
+            case 1:
+                cursor = "pointer";
+                break;
+        }
+        Module.canvas.style.cursor = cursor;
+    }, cursor);
+}

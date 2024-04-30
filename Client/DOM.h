@@ -31,3 +31,4 @@ void rr_copy_string(char const *);
 void rr_page_reload(uint8_t);
 uint8_t rr_dom_test_mobile();
 void rr_page_open(char const *);
+void rr_dom_set_cursor(uint8_t);

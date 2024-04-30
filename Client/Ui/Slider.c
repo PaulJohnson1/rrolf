@@ -51,12 +51,13 @@ static void h_slider_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_begin_path(renderer);
     rr_renderer_arc(renderer, offset, 0, this->abs_height / 2);
     rr_renderer_fill(renderer);
-    if (rr_ui_mouse_over(this, game) &&
-        game->input_data->mouse_buttons_down_this_tick & 1)
+    if (rr_ui_mouse_over(this, game))
     {
-        data->dragging = !!this->stop_event_propagation;
+        if (game->input_data->mouse_buttons_down_this_tick & 1)
+            data->dragging = !!this->stop_event_propagation;
+        game->cursor = rr_game_cursor_pointer;
     }
-    else if (game->input_data->mouse_buttons_up_this_tick & 1 && data->dragging)
+    if (game->input_data->mouse_buttons_up_this_tick & 1 && data->dragging)
     {
         data->dragging = 0;
         game->block_ui_input = 1;

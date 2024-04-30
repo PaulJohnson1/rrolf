@@ -1265,8 +1265,10 @@ void rr_game_tick(struct rr_game *this, float delta)
     if (this->crafting_data.animation < 0)
         this->crafting_data.animation = 0;
     this->prev_focused = this->focused;
+    this->cursor = rr_game_cursor_default;
     rr_ui_container_refactor(this->window, this);
     rr_ui_render_element(this->window, this);
+    rr_dom_set_cursor(this->cursor);
     if (!this->block_ui_input)
     {
         this->window->poll_events(this->window, this);

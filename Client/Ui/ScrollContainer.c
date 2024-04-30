@@ -77,15 +77,16 @@ static void scroll_container_on_render(struct rr_ui_element *this,
         // scrollbar
         float x = renderer->state.transform_matrix[2];
         y = renderer->state.transform_matrix[5];
-        if ((game->input_data->mouse_buttons & 1) &&
-            fabsf(x - game->input_data->mouse_x) < 7.5 &&
+        if (fabsf(x - game->input_data->mouse_x) < 7.5 &&
             game->input_data->mouse_y > y &&
             game->input_data->mouse_y < y + height * renderer->scale)
         {
-            data->scroll_focus = 1;
+            if (game->input_data->mouse_buttons & 1)
+                data->scroll_focus = 1;
+            game->cursor = rr_game_cursor_pointer;
         }
-        else if (data->scroll_focus &&
-                 game->input_data->mouse_buttons_up_this_tick & 1)
+        if (data->scroll_focus &&
+            game->input_data->mouse_buttons_up_this_tick & 1)
         {
             data->scroll_focus = 0;
             game->block_ui_input = 1;

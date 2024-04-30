@@ -38,6 +38,12 @@ enum rr_game_menu
     rr_game_menu_dev_squad_panel
 };
 
+enum rr_game_cursor
+{
+    rr_game_cursor_default,
+    rr_game_cursor_pointer
+};
+
 struct rr_game_debug_info
 {
     uint8_t frame_pos;
@@ -169,6 +175,7 @@ struct rr_game
     uint8_t ticks_until_text_cache;
     uint8_t selected_biome;
     uint8_t slots_unlocked;
+    uint8_t cursor;
 
     char rivet_player_token[400];
     char connect_code[16];

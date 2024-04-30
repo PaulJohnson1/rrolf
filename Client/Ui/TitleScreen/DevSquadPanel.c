@@ -68,7 +68,10 @@ static void dev_squad_panel_toggle_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
+    {
         renderer->state.filter.amount = 0.2;
+        game->cursor = rr_game_cursor_pointer;
+    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
