@@ -43,6 +43,7 @@ struct rr_websocket
 #endif
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
+    uint8_t quick_verification;
 };
 
 void rr_websocket_init(struct rr_websocket *);

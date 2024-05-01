@@ -50,6 +50,7 @@
 #include <Shared/Utilities.h>
 #include <Shared/cJSON.h>
 #include <Shared/pb.h>
+#include <Shared/MagicNumber.h>
 
 static void validate_loadout(struct rr_game *this)
 {
@@ -204,7 +205,7 @@ static void abandon_game_on_event(struct rr_ui_element *this,
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder, 255, "qv");
+        proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
@@ -222,7 +223,7 @@ static void squad_leave_on_event(struct rr_ui_element *this,
             game->socket_error = 0;
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder, 255, "qv");
+            proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
             proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
             proto_bug_write_uint8(&encoder, 3, "join type");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
@@ -657,6 +658,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                 proto_bug_read_uint64(&encoder, "c encryption key");
             this->socket.serverbound_encryption_key =
                 proto_bug_read_uint64(&encoder, "s encryption key");
+            this->socket.quick_verification = RR_SECRET8;
             // respond
             struct proto_bug verify_encoder;
             proto_bug_init(&verify_encoder, RR_OUTGOING_PACKET);
@@ -735,7 +737,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
                     rr_simulation_init(this->simulation);
                 this->simulation_ready = 0;
                 proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-                proto_bug_write_uint8(&encoder, 255, "qv");
+                proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
                 proto_bug_write_uint8(&encoder, rr_serverbound_squad_update,
                                       "header");
                 proto_bug_write_string(&encoder, this->cache.nickname, 16,
@@ -1003,7 +1005,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
 {
     struct proto_bug encoder2;
     proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-    proto_bug_write_uint8(&encoder2, 255, "qv");
+    proto_bug_write_uint8(&encoder2, this->socket.quick_verification, "qv");
     proto_bug_write_uint8(&encoder2, rr_serverbound_input, "header");
     uint8_t movement_flags = 0;
     if (!this->chat.chat_active)
@@ -1048,7 +1050,7 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
 
     struct proto_bug encoder;
     proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-    proto_bug_write_uint8(&encoder, 255, "qv");
+    proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
     proto_bug_write_uint8(&encoder, rr_serverbound_petal_switch, "header");
     if (!this->chat.chat_active)
     {

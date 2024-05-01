@@ -30,6 +30,7 @@
 #include <Shared/Crypto.h>
 #include <Shared/Entity.h>
 #include <Shared/pb.h>
+#include <Shared/MagicNumber.h>
 
 double CRAFT_XP_GAINS[rr_rarity_id_max - 1] = {1, 8, 60, 750, 25000, 1000000, 100000000};
 
@@ -39,6 +40,7 @@ void rr_server_client_init(struct rr_server_client *this)
     this->clientbound_encryption_key = rr_get_rand();
     this->serverbound_encryption_key = rr_get_rand();
     this->requested_verification = rr_get_rand();
+    this->quick_verification = RR_SECRET8;
     this->speed_percent = 1;
 }
 

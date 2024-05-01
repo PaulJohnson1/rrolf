@@ -166,7 +166,7 @@ static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
         puts("edmonto summon");
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder, 255, "qv");
+        proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
         proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
         proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
         proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");

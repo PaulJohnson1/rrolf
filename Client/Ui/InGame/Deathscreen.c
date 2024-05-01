@@ -30,7 +30,7 @@ static void continue_to_squad_event(struct rr_ui_element *this,
     {
         struct proto_bug encoder;
         proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder, 255, "qv");
+        proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }

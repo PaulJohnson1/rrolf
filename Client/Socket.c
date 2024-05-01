@@ -168,6 +168,7 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
     rr_encrypt(RR_OUTGOING_PACKET, length, this->serverbound_encryption_key);
     this->serverbound_encryption_key =
         rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+    this->quick_verification = rr_get_hash(this->quick_verification);
 #ifndef EMSCRIPTEN
     lws_write(this->socket, RR_OUTGOING_PACKET, length, LWS_WRITE_BINARY);
 #else
@@ -186,6 +187,7 @@ void rr_websocket_send_all(struct rr_websocket *this)
                    this->serverbound_encryption_key);
         this->serverbound_encryption_key =
             rr_get_hash(rr_get_hash(this->serverbound_encryption_key));
+        this->quick_verification = rr_get_hash(this->quick_verification);
 #ifndef EMSCRIPTEN
         lws_write(this->socket, outputs[i], packet_lengths[i],
                   LWS_WRITE_BINARY);

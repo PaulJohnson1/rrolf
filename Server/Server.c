@@ -462,13 +462,16 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
         }
         if (!client->verified)
             break;
+        client->quick_verification = rr_get_hash(client->quick_verification);
         uint8_t qv = proto_bug_read_uint8(&encoder, "qv");
-        if (qv != 255)
+        if (qv != client->quick_verification)
         {
-            client->pending_kick = 1;
-            printf("%u %u\n", 255, qv);
+            printf("%u %u\n", client->quick_verification, qv);
             fputs("invalid quick verification\n", stderr);
-            break;
+            lws_close_reason(ws, LWS_CLOSE_STATUS_GOINGAWAY,
+                             (uint8_t *)"invalid qv",
+                             sizeof "invalid qv" - 1);
+            return -1;
         }
         uint8_t header = proto_bug_read_uint8(&encoder, "header");
         switch (header)

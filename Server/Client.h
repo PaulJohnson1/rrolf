@@ -36,6 +36,7 @@ struct rr_server_client
     uint64_t clientbound_encryption_key;
     uint64_t serverbound_encryption_key;
     uint64_t requested_verification;
+    uint8_t quick_verification;
     uint64_t message_length;
     struct rr_server *server;
     struct lws *socket_handle;
