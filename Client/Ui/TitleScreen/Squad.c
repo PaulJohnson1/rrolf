@@ -327,9 +327,21 @@ static void ready_button_animate(struct rr_ui_element *this,
         rr_ui_set_background(this, 0x80d4b30c);
 }
 
+static void join_code_button_animate(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    rr_ui_default_animate(this, game);
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (game->socket_pending || game->connect_code[0] == 0)
+        rr_ui_set_background(this, 0x80999999);
+    else
+        rr_ui_set_background(this, 0x80d4b30c);
+}
+
 static void join_button_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->socket_ready)
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
@@ -342,17 +354,24 @@ static void join_button_on_event(struct rr_ui_element *this,
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
         game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
+    else
+        data->clickable = 0;
 }
 
 static void copy_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->socket_ready)
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
             rr_copy_string(game->squad.squad_code);
         game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
+    else
+        data->clickable = 0;
 }
 
 static void toggle_private_on_event(struct rr_ui_element *this,
@@ -375,39 +394,44 @@ static void toggle_private_on_event(struct rr_ui_element *this,
 
 static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (!game->socket_pending && game->connect_code[0] != 0)
     {
-        if (game->socket_pending)
-            return;
-        game->socket_pending = 1;
-#ifdef RIVET_BUILD
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
-            if (game->socket_ready)
-                rr_websocket_disconnect(&game->socket, game);
-            char server[16] = {0};
-            char *link = server;
+#ifdef RIVET_BUILD
+            {
+                game->socket_pending = 1;
+                if (game->socket_ready)
+                    rr_websocket_disconnect(&game->socket, game);
+                char server[16] = {0};
+                char *link = server;
+                char *code = game->connect_code;
+                while (*code != 0 && *code != '-')
+                    *link++ = *code++;
+                rr_api_get_server_alias(server, game);
+            }
+#endif
+            struct proto_bug encoder2;
+            proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
+            proto_bug_write_uint8(&encoder2, game->socket.quick_verification, "qv");
+            proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
+            proto_bug_write_uint8(&encoder2, 1, "join type");
             char *code = game->connect_code;
             while (*code != 0 && *code != '-')
-                *link++ = *code++;
-            rr_api_get_server_alias(server, game);
-        }
-#endif
-        struct proto_bug encoder2;
-        proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder2, game->socket.quick_verification, "qv");
-        proto_bug_write_uint8(&encoder2, rr_serverbound_squad_join, "header");
-        proto_bug_write_uint8(&encoder2, 1, "join type");
-        char *code = game->connect_code;
-        while (*code != 0 && *code != '-')
+                ++code;
             ++code;
-        ++code;
-        proto_bug_write_string(&encoder2, code, 7, "connect link");
+            proto_bug_write_string(&encoder2, code, 7, "connect link");
 
-        rr_websocket_queue_send(&game->socket,
-                                encoder2.current - encoder2.start);
-        game->connect_code[0] = 0;
+            rr_websocket_queue_send(&game->socket,
+                                    encoder2.current - encoder2.start);
+            game->connect_code[0] = 0;
+        }
+        game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
-    game->cursor = rr_game_cursor_pointer;
+    else
+        data->clickable = 0;
 }
 
 static void squad_join_button_on_event(struct rr_ui_element *this,
@@ -428,7 +452,10 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
         game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
+    else
+        data->clickable = 0;
 }
 
 static void squad_create_button_on_event(struct rr_ui_element *this,
@@ -449,7 +476,10 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
         game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
+    else
+        data->clickable = 0;
 }
 
 static uint8_t copy_button_should_show(struct rr_ui_element *this,
@@ -495,7 +525,7 @@ struct rr_ui_element *rr_ui_copy_squad_code_button_init()
 struct rr_ui_element *rr_ui_join_squad_code_button_init()
 {
     struct rr_ui_element *this = rr_ui_labeled_button_init("Join", 24, 0);
-    rr_ui_set_background(this, 0x80d4b30c);
+    this->animate = join_code_button_animate;
     this->on_event = join_code_on_event;
     return this;
 }

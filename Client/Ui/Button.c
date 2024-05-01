@@ -33,6 +33,7 @@ static void button_on_event(struct rr_ui_element *this, struct rr_game *game)
         data->toggle != NULL)
         (*(data->toggle)) ^= 1;
     game->cursor = rr_game_cursor_pointer;
+    data->clickable = 1;
 }
 
 static void labeled_button_on_render(struct rr_ui_element *this,
@@ -40,7 +41,7 @@ static void labeled_button_on_render(struct rr_ui_element *this,
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    if (rr_ui_mouse_over(this, game))
+    if (rr_ui_mouse_over(this, game) && data->clickable)
         rr_renderer_add_color_filter(renderer, 0xff000000, 0.2);
 
     this->abs_width =

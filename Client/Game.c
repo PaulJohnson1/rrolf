@@ -232,10 +232,17 @@ static void squad_leave_on_event(struct rr_ui_element *this,
     }
 }
 
+static uint8_t close_squad_button_should_show(struct rr_ui_element *this,
+                                              struct rr_game *game)
+{
+    return game->socket_ready;
+}
+
 static struct rr_ui_element *close_squad_button_init(float w)
 {
     struct rr_ui_element *this =
         rr_ui_close_button_init(w, squad_leave_on_event);
+    this->should_show = close_squad_button_should_show;
     this->no_reposition = 1;
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
     return this;
@@ -355,6 +362,7 @@ void rr_game_init(struct rr_game *this)
                                             socket_ready,
                                             rr_ui_text_init("Joining Squad...", 24, 0xffffffff),
                                             rr_ui_squad_container_init(&this->squad),
+                                            rr_ui_text_init("Disconnected", 24, 0xffff2222),
                                             rr_ui_text_init("Failed to join squad", 24, 0xffff2222),
                                             rr_ui_text_init("Squad doesn't exist", 24, 0xffff2222),
                                             rr_ui_text_init("Squad is full", 24, 0xffff2222),
@@ -629,15 +637,12 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         // memset the clients
         printf("<rr_websocket::close::%llu>\n", size);
         this->socket_ready = 0;
-        if (size == 1006)
-        {
-            this->socket_error = 1;
-            if (this->simulation_ready)
-                rr_simulation_init(this->simulation);
-            this->simulation_ready = 0;
-            this->socket.recieved_first_packet = 0;
-            rr_game_connect_socket(this);
-        }
+        this->socket_error = 1;
+        if (this->simulation_ready)
+            rr_simulation_init(this->simulation);
+        this->simulation_ready = 0;
+        this->socket.recieved_first_packet = 0;
+        this->ticks_until_reconnect = 30 + 30 * rr_frand();
         break;
     case rr_websocket_event_type_data:
     {
@@ -853,7 +858,7 @@ void rr_game_websocket_on_event_function(enum rr_websocket_event_type type,
         }
         case rr_clientbound_squad_fail:
             this->socket_error =
-                2 + proto_bug_read_uint8(&encoder, "fail type");
+                3 + proto_bug_read_uint8(&encoder, "fail type");
             if (this->simulation_ready)
                 rr_simulation_init(this->simulation);
             this->simulation_ready = 0;
@@ -1279,8 +1284,6 @@ void rr_game_tick(struct rr_game *this, float delta)
         this->crafting_data.animation = 0;
     this->prev_focused = this->focused;
     this->cursor = rr_game_cursor_default;
-    rr_ui_container_refactor(this->window, this);
-    rr_ui_render_element(this->window, this);
     if (!this->block_ui_input)
     {
         this->window->poll_events(this->window, this);
@@ -1294,6 +1297,8 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->prev_focused->on_event(this->prev_focused, this);
     }
     this->block_ui_input = 0;
+    rr_ui_container_refactor(this->window, this);
+    rr_ui_render_element(this->window, this);
     rr_dom_set_cursor(this->cursor);
 #ifndef EMSCRIPTEN
     lws_service(this->socket.socket_context, -1);
@@ -1308,6 +1313,8 @@ void rr_game_tick(struct rr_game *this, float delta)
                 rr_write_serverbound_packet_mobile(this);
         }
     }
+    else if (--this->ticks_until_reconnect == 0)
+        rr_game_connect_socket(this);
     if (!rr_is_text_input_focused())
     {
         if (rr_bitset_get_bit(this->input_data->keys_pressed_this_tick,

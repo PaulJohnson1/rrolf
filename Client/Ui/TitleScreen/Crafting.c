@@ -74,13 +74,14 @@ static uint8_t can_craft(struct rr_game *game)
 static void craft_button_on_event(struct rr_ui_element *this,
                                   struct rr_game *game)
 {
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (can_craft(game))
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1 &&
             game->pressed == this)
         {
-            game->crafting_data.success_count = 0;
             game->crafting_data.animation = 50;
+            data->clickable = 0;
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
@@ -94,8 +95,12 @@ static void craft_button_on_event(struct rr_ui_element *this,
                                     "craft count");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
+        else
+            data->clickable = 1;
         game->cursor = rr_game_cursor_pointer;
     }
+    else
+        data->clickable = 0;
 }
 
 static void craft_button_animate(struct rr_ui_element *this,
@@ -146,8 +151,7 @@ static void crafting_result_container_on_event(struct rr_ui_element *this,
         game->pressed == this)
     {
         game->crafting_data.count = game->crafting_data.success_count = 0;
-        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity =
-            0;
+        game->crafting_data.crafting_id = game->crafting_data.crafting_rarity = 0;
     }
     if (game->crafting_data.success_count > 0)
         rr_ui_render_tooltip_above(

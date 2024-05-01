@@ -176,6 +176,7 @@ struct rr_game
     uint8_t selected_biome;
     uint8_t slots_unlocked;
     uint8_t cursor;
+    uint8_t ticks_until_reconnect;
 
     char rivet_player_token[400];
     char connect_code[16];

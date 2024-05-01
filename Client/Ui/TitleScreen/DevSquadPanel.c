@@ -161,27 +161,44 @@ struct rr_ui_element *rr_ui_dev_panel_toggle_button_init()
 
 static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (game->simulation_ready)
     {
-        puts("edmonto summon");
-        struct proto_bug encoder;
-        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
-        proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
-        proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
-        proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
+        {
+            puts("edmonto summon");
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+            proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
+            proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
+            proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
+            proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
 
-        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        }
+        game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
     }
-    game->cursor = rr_game_cursor_pointer;
+    else
+        data->clickable = 0;
+}
+
+static void summon_mob_button_animate(struct rr_ui_element *this,
+                                      struct rr_game *game)
+{
+    rr_ui_default_animate(this, game);
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (!game->simulation_ready)
+        rr_ui_set_background(this, 0x80999999);
+    else
+        rr_ui_set_background(this, 0x80ffffff);
 }
 
 static struct rr_ui_element *summon_mob_button_init()
 {
     struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 30, 0);
-    element->fill = 0x80ffffff;
     element->on_event = summon_edmonto;
-    element->animate = rr_ui_default_animate;
+    element->animate = summon_mob_button_animate;
 
     return element;
 }

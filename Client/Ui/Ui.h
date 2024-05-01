@@ -37,6 +37,7 @@ struct rr_ui_labeled_button_metadata
 {
     uint8_t *toggle;
     char *text;
+    uint8_t clickable;
 };
 
 struct rr_ui_text_metadata

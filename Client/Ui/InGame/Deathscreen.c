@@ -26,6 +26,7 @@
 static void continue_to_squad_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
+    struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->input_data->mouse_buttons_up_this_tick & 1)
     {
         struct proto_bug encoder;
@@ -35,6 +36,7 @@ static void continue_to_squad_event(struct rr_ui_element *this,
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
     game->cursor = rr_game_cursor_pointer;
+    data->clickable = 1;
 }
 
 static uint8_t game_over(struct rr_ui_element *this, struct rr_game *game)
