@@ -159,10 +159,7 @@ static void settings_toggle_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
-    {
         renderer->state.filter.amount = 0.2;
-        game->cursor = rr_game_cursor_pointer;
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
@@ -227,8 +224,8 @@ static void settings_toggle_button_on_event(struct rr_ui_element *this,
         else
             game->menu_open = rr_game_menu_settings;
     }
-    else
-        rr_ui_render_tooltip_below(this, game->settings_tooltip, game);
+    rr_ui_render_tooltip_below(this, game->settings_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 struct rr_ui_element *rr_ui_settings_toggle_button_init()

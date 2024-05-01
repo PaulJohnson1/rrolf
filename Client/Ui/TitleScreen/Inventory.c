@@ -40,33 +40,22 @@ static void inventory_button_on_event(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
     struct inventory_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-        game->pressed == this && !game->simulation_ready)
-    {
-        if (data->count == 0)
-            return;
-        for (uint8_t i = 0; i < game->slots_unlocked; ++i)
+    if (data->count == 0)
+        return;
+    for (uint8_t i = 0; i < 20; ++i)
+        if (i % 10 < game->slots_unlocked && game->cache.loadout[i].id == 0)
         {
-            if (game->cache.loadout[i].id == 0)
+            if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+                game->pressed == this && !game->simulation_ready)
             {
                 game->cache.loadout[i].id = data->id;
                 game->cache.loadout[i].rarity = data->rarity;
-                return;
             }
+            game->cursor = rr_game_cursor_pointer;
+            break;
         }
-        for (uint8_t i = 10; i < 10 + game->slots_unlocked; ++i)
-        {
-            if (game->cache.loadout[i].id == 0)
-            {
-                game->cache.loadout[i].id = data->id;
-                game->cache.loadout[i].rarity = data->rarity;
-                return;
-            }
-        }
-    }
-    else
-        rr_ui_render_tooltip_above(
-            this, game->petal_tooltips[data->id][data->rarity], game);
+    rr_ui_render_tooltip_above(
+        this, game->petal_tooltips[data->id][data->rarity], game);
 }
 
 static uint8_t inventory_button_should_show(struct rr_ui_element *this,
@@ -102,13 +91,6 @@ static void inventory_container_animate(struct rr_ui_element *this,
 static void inventory_button_on_render(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
-    if (rr_ui_mouse_over(this, game))
-        for (uint8_t i = 0; i < 20; ++i)
-            if (i % 10 < game->slots_unlocked && game->cache.loadout[i].id == 0)
-            {
-                game->cursor = rr_game_cursor_pointer;
-                break;
-            }
     struct inventory_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
     rr_renderer_scale(renderer, renderer->scale * this->width / 60);
@@ -180,10 +162,7 @@ static void inventory_toggle_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
-    {
         renderer->state.filter.amount = 0.2;
-        game->cursor = rr_game_cursor_pointer;
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
@@ -288,8 +267,8 @@ void inventory_toggle_button_on_event(struct rr_ui_element *this,
         else
             game->menu_open = rr_game_menu_inventory;
     }
-    else
-        rr_ui_render_tooltip_right(this, game->inventory_tooltip, game);
+    rr_ui_render_tooltip_right(this, game->inventory_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 void inventory_toggle_button_animate(struct rr_ui_element *this,

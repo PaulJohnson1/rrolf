@@ -51,12 +51,11 @@ static void loadout_button_on_event(struct rr_ui_element *this,
         game->cache.loadout[data->pos].id = 0;
         game->cache.loadout[data->pos].rarity = 0;
     }
-    else
+    if (game->cache.loadout[data->pos].id != 0)
     {
-        if (game->cache.loadout[data->pos].id == 0)
-            return;
         rr_ui_render_tooltip_above(
             this, game->petal_tooltips[data->prev_id][data->prev_rarity], game);
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
@@ -75,19 +74,20 @@ static void petal_switch_button_event(struct rr_ui_element *this,
         proto_bug_write_uint8(&encoder, 0, "petal switch");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
-    else
-    {
-        struct rr_component_player_info *player_info = game->player_info;
-        struct rr_component_player_info_petal_slot *slot =
-            data->pos < 10 ? &player_info->slots[data->pos]
-                           : &player_info->secondary_slots[data->pos - 10];
-        uint8_t id = slot->id;
-        uint8_t rarity = slot->rarity;
-        if (id == 0)
-            return;
-        rr_ui_render_tooltip_above(this, game->petal_tooltips[id][rarity],
-                                   game);
-    }
+    struct rr_component_player_info *player_info = game->player_info;
+    struct rr_component_player_info_petal_slot *slot =
+        data->pos < 10 ? &player_info->slots[data->pos]
+                       : &player_info->secondary_slots[data->pos - 10];
+    struct rr_component_player_info_petal_slot *slot1 =
+        &game->player_info->slots[data->pos % 10];
+    struct rr_component_player_info_petal_slot *slot2 =
+        &game->player_info->slots[data->pos % 10 + 10];
+    if (slot->id != 0)
+        rr_ui_render_tooltip_above(this,
+            game->petal_tooltips[slot->id][slot->rarity], game);
+    if ((slot1->id != 0 || slot2->id != 0) &&
+        game->player_info->flower_id != RR_NULL_ENTITY)
+        game->cursor = rr_game_cursor_pointer;
 }
 
 static uint8_t
@@ -178,8 +178,6 @@ static void title_screen_loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    if (rr_ui_mouse_over(this, game) && game->cache.loadout[data->pos].id != 0)
-        game->cursor = rr_game_cursor_pointer;
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     rr_renderer_draw_petal_with_name(renderer, data->prev_id,
                                      data->prev_rarity);
@@ -190,13 +188,6 @@ static void loadout_button_on_render(struct rr_ui_element *this,
 {
     struct loadout_button_metadata *data = this->data;
     struct rr_renderer *renderer = game->renderer;
-    struct rr_component_player_info_petal_slot *slot1 =
-        &game->player_info->slots[data->pos % 10];
-    struct rr_component_player_info_petal_slot *slot2 =
-        &game->player_info->slots[data->pos % 10 + 10];
-    if (rr_ui_mouse_over(this, game) && (slot1->id != 0 || slot2->id != 0) &&
-        game->player_info->flower_id != RR_NULL_ENTITY)
-        game->cursor = rr_game_cursor_pointer;
     float pct = data->lerp_cd * data->lerp_cd * (3 - 2 * data->lerp_cd);
     rr_renderer_draw_background(renderer, data->prev_rarity, 1);
     if (data->pos < 10)

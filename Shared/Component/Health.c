@@ -83,13 +83,13 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
     {
         struct rr_component_mob *from_mob = rr_simulation_get_mob(simulation, from);
         if (from_mob->id == rr_mob_id_edmontosaurus)
-            no_reduction = 1;
+            no_reduction = 1; // blame Lans ST
         if (rr_simulation_has_mob(simulation, this->parent_id))
         {
             struct rr_component_mob *mob = rr_simulation_get_mob(simulation, this->parent_id);
             if (mob->id == rr_mob_id_edmontosaurus && from_mob->player_spawned &&
                 (from_mob->rarity < mob->rarity || from_mob->rarity - mob->rarity < 2))
-                return;
+                return; // blame Lans ST
         }
     }
     if (!no_reduction)

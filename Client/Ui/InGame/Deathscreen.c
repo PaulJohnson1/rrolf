@@ -34,6 +34,7 @@ static void continue_to_squad_event(struct rr_ui_element *this,
         proto_bug_write_uint8(&encoder, rr_serverbound_squad_ready, "header");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static uint8_t game_over(struct rr_ui_element *this, struct rr_game *game)

@@ -38,10 +38,7 @@ static void discord_toggle_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
-    {
         renderer->state.filter.amount = 0.2;
-        game->cursor = rr_game_cursor_pointer;
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
@@ -116,8 +113,8 @@ static void discord_toggle_button_on_event(struct rr_ui_element *this,
             return;
         rr_page_open("https://discord.gg/x6gW8Qrs7d");
     }
-    else
-        rr_ui_render_tooltip_below(this, game->discord_tooltip, game);
+    rr_ui_render_tooltip_below(this, game->discord_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 struct rr_ui_element *rr_ui_discord_toggle_button_init()

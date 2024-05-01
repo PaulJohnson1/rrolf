@@ -38,10 +38,7 @@ static void github_toggle_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
-    {
         renderer->state.filter.amount = 0.2;
-        game->cursor = rr_game_cursor_pointer;
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
@@ -92,8 +89,8 @@ static void github_toggle_button_on_event(struct rr_ui_element *this,
             return;
         rr_page_open("https://github.com/maxnest0x0/rysteria");
     }
-    else
-        rr_ui_render_tooltip_below(this, game->github_tooltip, game);
+    rr_ui_render_tooltip_below(this, game->github_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 struct rr_ui_element *rr_ui_github_toggle_button_init()

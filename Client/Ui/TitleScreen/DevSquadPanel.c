@@ -68,10 +68,7 @@ static void dev_squad_panel_toggle_button_on_render(struct rr_ui_element *this,
 {
     struct rr_renderer *renderer = game->renderer;
     if (game->focused == this)
-    {
         renderer->state.filter.amount = 0.2;
-        game->cursor = rr_game_cursor_pointer;
-    }
     rr_renderer_scale(renderer, renderer->scale);
     rr_renderer_set_fill(renderer, this->fill);
     renderer->state.filter.amount += 0.2;
@@ -147,8 +144,8 @@ static void dev_squad_panel_toggle_button_on_event(struct rr_ui_element *this,
         else
             game->menu_open = rr_game_menu_dev_squad_panel;
     }
-    else
-        rr_ui_render_tooltip_below(this, game->squads_tooltip, game);
+    rr_ui_render_tooltip_below(this, game->squads_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 struct rr_ui_element *rr_ui_dev_panel_toggle_button_init()
@@ -164,17 +161,19 @@ struct rr_ui_element *rr_ui_dev_panel_toggle_button_init()
 
 static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (!(game->input_data->mouse_buttons_up_this_tick & 1))
-        return;
-    puts("edmonto summon");
-    struct proto_bug encoder;
-    proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-    proto_bug_write_uint8(&encoder, 255, "qv");
-    proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
-    proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
-    proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    {
+        puts("edmonto summon");
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+        proto_bug_write_uint8(&encoder, 255, "qv");
+        proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
+        proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
+        proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
 
-    rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+    }
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static struct rr_ui_element *summon_mob_button_init()

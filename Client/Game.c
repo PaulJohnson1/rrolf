@@ -182,9 +182,16 @@ static void window_on_event(struct rr_ui_element *this, struct rr_game *game)
     }
 }
 
+static void close_menu_on_event(struct rr_ui_element *this, struct rr_game *game)
+{
+    if (game->input_data->mouse_buttons_up_this_tick & 1)
+        game->menu_open = 0;
+    game->cursor = rr_game_cursor_pointer;
+}
+
 static struct rr_ui_element *close_menu_button_init(float w)
 {
-    struct rr_ui_element *this = rr_ui_close_button_init(w, window_on_event);
+    struct rr_ui_element *this = rr_ui_close_button_init(w, close_menu_on_event);
     this->no_reposition = 1;
     rr_ui_pad(rr_ui_set_justify(this, 1, -1), 5);
     return this;
@@ -202,21 +209,25 @@ static void abandon_game_on_event(struct rr_ui_element *this,
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
     rr_ui_render_tooltip_below(this, game->abandon_game_tooltip, game);
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static void squad_leave_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
-    if ((game->input_data->mouse_buttons_up_this_tick & 1) &&
-        game->socket_ready)
+    if (game->socket_ready)
     {
-        game->socket_error = 0;
-        struct proto_bug encoder;
-        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-        proto_bug_write_uint8(&encoder, 255, "qv");
-        proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
-        proto_bug_write_uint8(&encoder, 3, "join type");
-        rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
+        {
+            game->socket_error = 0;
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+            proto_bug_write_uint8(&encoder, 255, "qv");
+            proto_bug_write_uint8(&encoder, rr_serverbound_squad_join, "header");
+            proto_bug_write_uint8(&encoder, 3, "join type");
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        }
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
@@ -1268,7 +1279,6 @@ void rr_game_tick(struct rr_game *this, float delta)
     this->cursor = rr_game_cursor_default;
     rr_ui_container_refactor(this->window, this);
     rr_ui_render_element(this->window, this);
-    rr_dom_set_cursor(this->cursor);
     if (!this->block_ui_input)
     {
         this->window->poll_events(this->window, this);
@@ -1282,6 +1292,7 @@ void rr_game_tick(struct rr_game *this, float delta)
             this->prev_focused->on_event(this->prev_focused, this);
     }
     this->block_ui_input = 0;
+    rr_dom_set_cursor(this->cursor);
 #ifndef EMSCRIPTEN
     lws_service(this->socket.socket_context, -1);
 #endif

@@ -192,8 +192,6 @@ static void squad_container_on_event(struct rr_ui_element *this,
 {
     struct rr_ui_container_metadata *data = this->data;
     struct rr_squad_member *member = data->data;
-    if (member->tooltip == NULL)
-        return;
     rr_ui_render_tooltip_above(this, member->tooltip, game);
 }
 
@@ -230,6 +228,7 @@ static void kick_player_on_event(struct rr_ui_element *this,
         proto_bug_write_uint8(&encoder, data->pos, "kick pos");
         rr_websocket_send(&game->socket, encoder.current - encoder.start);
     }
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static struct rr_ui_element *kick_player_button_init(struct rr_game_squad *squad,
@@ -331,9 +330,9 @@ static void ready_button_animate(struct rr_ui_element *this,
 static void join_button_on_event(struct rr_ui_element *this,
                                  struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->socket_ready)
     {
-        if (game->socket_ready)
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
@@ -342,22 +341,26 @@ static void join_button_on_event(struct rr_ui_element *this,
                                   "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
 static void copy_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
-        if (game->socket_ready)
+    if (game->socket_ready)
+    {
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
             rr_copy_string(game->squad.squad_code);
+        game->cursor = rr_game_cursor_pointer;
+    }
 }
 
 static void toggle_private_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->socket_ready && (game->squad.squad_private || game->is_dev))
     {
-        if (game->socket_ready)
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
@@ -366,6 +369,7 @@ static void toggle_private_on_event(struct rr_ui_element *this,
                                   "header");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
@@ -403,15 +407,16 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
                                 encoder2.current - encoder2.start);
         game->connect_code[0] = 0;
     }
+    game->cursor = rr_game_cursor_pointer;
 }
 
 static void squad_join_button_on_event(struct rr_ui_element *this,
                                        struct rr_game *game)
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->socket_ready)
     {
-        if (game->socket_ready)
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
@@ -422,6 +427,7 @@ static void squad_join_button_on_event(struct rr_ui_element *this,
 
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
@@ -429,9 +435,9 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
                                          struct rr_game *game)
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
-    if (game->input_data->mouse_buttons_up_this_tick & 1)
+    if (game->socket_ready)
     {
-        if (game->socket_ready)
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
             struct proto_bug encoder2;
             proto_bug_init(&encoder2, RR_OUTGOING_PACKET);
@@ -442,6 +448,7 @@ static void squad_create_button_on_event(struct rr_ui_element *this,
 
             rr_websocket_send(&game->socket, encoder2.current - encoder2.start);
         }
+        game->cursor = rr_game_cursor_pointer;
     }
 }
 
