@@ -90,7 +90,8 @@ struct rr_component_player_info
                                             // player poicks up more than that
                                             // then it waits until the next tick
     RR_SERVER_ONLY(uint8_t drops_this_tick_size;)
-    uint8_t dev;
+    RR_SERVER_ONLY(uint8_t dev;)
+    RR_SERVER_ONLY(uint8_t invisible;)
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *,

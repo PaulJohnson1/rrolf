@@ -159,21 +159,45 @@ struct rr_ui_element *rr_ui_dev_panel_toggle_button_init()
     return this;
 }
 
-static void summon_edmonto(struct rr_ui_element *this, struct rr_game *game)
+static void summon_mob_button_on_event(struct rr_ui_element *this,
+                                       struct rr_game *game)
 {
     struct rr_ui_labeled_button_metadata *data = this->data;
     if (game->simulation_ready)
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
-            puts("edmonto summon");
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
-            proto_bug_write_uint8(&encoder, rr_serverbound_dev_summon, "header");
-            proto_bug_write_uint8(&encoder, rand() % rr_mob_id_ant, "id");
+            proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
+            proto_bug_write_uint8(&encoder, rr_dev_cheat_summon_mob, "cheat type");
+            proto_bug_write_uint8(&encoder, rand() % (rr_mob_id_edmontosaurus + 1), "id");
             proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
+            proto_bug_write_uint8(&encoder, 1, "amount");
+            proto_bug_write_uint8(&encoder, 1, "no drop");
+            rr_websocket_send(&game->socket, encoder.current - encoder.start);
+        }
+        game->cursor = rr_game_cursor_pointer;
+        data->clickable = 1;
+    }
+    else
+        data->clickable = 0;
+}
 
+static void kill_mobs_button_on_event(struct rr_ui_element *this,
+                                      struct rr_game *game)
+{
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (game->simulation_ready)
+    {
+        if (game->input_data->mouse_buttons_up_this_tick & 1)
+        {
+            struct proto_bug encoder;
+            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+            proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
+            proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
+            proto_bug_write_uint8(&encoder, rr_dev_cheat_kill_mobs, "cheat type");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
         game->cursor = rr_game_cursor_pointer;
@@ -194,31 +218,64 @@ static void summon_mob_button_animate(struct rr_ui_element *this,
         rr_ui_set_background(this, 0x80ffffff);
 }
 
+static void kill_mobs_button_animate(struct rr_ui_element *this,
+                                     struct rr_game *game)
+{
+    rr_ui_default_animate(this, game);
+    struct rr_ui_labeled_button_metadata *data = this->data;
+    if (!game->simulation_ready)
+        rr_ui_set_background(this, 0x80999999);
+    else
+        rr_ui_set_background(this, 0x80ffffff);
+}
+
 static struct rr_ui_element *summon_mob_button_init()
 {
-    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon", 30, 0);
-    element->on_event = summon_edmonto;
+    struct rr_ui_element *element = rr_ui_labeled_button_init("Summon Mob", 30, 0);
+    element->on_event = summon_mob_button_on_event;
     element->animate = summon_mob_button_animate;
+    return element;
+}
 
+static struct rr_ui_element *kill_mobs_button_init()
+{
+    struct rr_ui_element *element = rr_ui_labeled_button_init("Kill Mobs", 30, 0);
+    element->on_event = kill_mobs_button_on_event;
+    element->animate = kill_mobs_button_animate;
+    return element;
+}
+
+static struct rr_ui_element *invisible_toggle_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_toggle_box_init(&game->developer_cheats.invisible),
+            rr_ui_text_init("Invisible", 16, 0xffffffff), NULL);
+    game->developer_cheats.invisible = 0;
     return element;
 }
 
 static struct rr_ui_element *speed_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
-        rr_ui_h_slider_init(100, 20, &game->developer_cheats.speed_percent, 1);
-    game->developer_cheats.speed_percent = 0.05;
-
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_text_init("Speed:", 16, 0xffffffff),
+            rr_ui_h_slider_init(100, 20,
+                &game->developer_cheats.speed_percent, 1), NULL);
+    game->developer_cheats.speed_percent = 0;
     return element;
 }
 
 struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
 {
     struct rr_ui_element *dev_tools = rr_ui_v_container_init(
-        rr_ui_container_init(), 10, 10, summon_mob_button_init(),
-        rr_ui_h_container_init(rr_ui_container_init(), 0, 10,
-                               rr_ui_text_init("Speed:", 20, 0xffffffff),
-                               speed_slider_init(game), NULL),
+        rr_ui_container_init(), 10, 10,
+        summon_mob_button_init(),
+        kill_mobs_button_init(),
+        invisible_toggle_init(game),
+        speed_slider_init(game),
         NULL);
     dev_tools->should_show = dev_tools_should_show;
     struct rr_ui_element *inner = rr_ui_v_container_init(

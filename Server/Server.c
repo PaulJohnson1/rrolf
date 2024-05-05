@@ -50,6 +50,12 @@ struct connected_captures
     struct rr_server_client *client;
 };
 
+struct dev_cheat_kill_mob_captures
+{
+    struct rr_simulation *simulation;
+    struct rr_component_player_info *player_info;
+};
+
 static void *rivet_connected_endpoint(void *_captures)
 {
     struct connected_captures *captures = _captures;
@@ -80,6 +86,7 @@ static void rr_server_client_create_player_info(struct rr_server *server,
             &server->simulation,
             rr_simulation_alloc_entity(&server->simulation));
     player_info->dev = client->dev;
+    player_info->invisible = client->invisible;
     player_info->squad = client->squad;
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
@@ -252,6 +259,23 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
         rr_simulation_get_##COMPONENT(this, entity)->protocol_state = 0;
     RR_FOR_EACH_COMPONENT
 #undef XX
+}
+
+static void rr_simulation_dev_cheat_kill_mob(EntityIdx entity, void *_captures)
+{
+    struct dev_cheat_kill_mob_captures *captures = _captures;
+    struct rr_simulation *this = captures->simulation;
+    struct rr_component_player_info *player_info = captures->player_info;
+    struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
+    struct rr_component_physical *physical = rr_simulation_get_physical(this, entity);
+    float delta_x = player_info->camera_x - physical->x;
+    float delta_y = player_info->camera_y - physical->y;
+    float dist = 1024 + physical->radius;
+    if (delta_x * delta_x + delta_y * delta_y < dist * dist)
+    {
+        mob->no_drop = 1;
+        rr_simulation_request_entity_deletion(this, entity);
+    }
 }
 
 static int handle_lws_event(struct rr_server *this, struct lws *ws,
@@ -482,9 +506,6 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 break;
             if (client->player_info->flower_id == RR_NULL_ENTITY)
                 break;
-            if (client->dev)
-                client->speed_percent =
-                    20 * proto_bug_read_float32(&encoder, "speed_percent");
             uint8_t movementFlags =
                 proto_bug_read_uint8(&encoder, "movement kb flags");
             float x = 0;
@@ -498,7 +519,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 x += (movementFlags & 8) >> 3;
                 if (x || y)
                 {
-                    float mag_1 = (RR_PLAYER_SPEED * client->speed_percent) /
+                    float mag_1 = RR_PLAYER_SPEED * client->speed_percent /
                                   sqrtf(x * x + y * y);
                     x *= mag_1;
                     y *= mag_1;
@@ -511,8 +532,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale =
-                        RR_PLAYER_SPEED * rr_fclamp((mag_1 - 25) / 50, 0, 1);
+                    float scale = RR_PLAYER_SPEED * client->speed_percent *
+                                  rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;
                 }
@@ -855,45 +876,98 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
             animation->squad = client->squad;
             break;
         }
-        case rr_serverbound_dev_summon:
+        case rr_serverbound_dev_cheat:
         {
-            puts("edmonto requested");
-            if (!client->dev || client->player_info == NULL)
-                break;
-
-            puts("edmonto has been summoned by the gods");
-
-            // uint8_t id = proto_bug_read_uint8(&encoder, "id");
-            // uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
-            uint8_t id = rand() % (rr_mob_id_edmontosaurus + 1);
-            uint8_t rarity = rr_rarity_id_max - 1;
-
-            struct rr_component_arena *arena =
-                rr_simulation_get_arena(&this->simulation, client->player_info->arena);
-            for (uint8_t i = 0; i < 1; ++i)
-                for (uint8_t j = 0; j < 100; ++j)
+            switch (proto_bug_read_uint8(&encoder, "cheat type"))
+            {
+            case rr_dev_cheat_summon_mob:
+            {
+                if (!client->dev)
                 {
-                    float x = rr_fclamp(
-                        client->player_info->camera_x + (rr_frand() * 2000 - 1000),
-                        0, arena->maze->grid_size * arena->maze->maze_dim);
-                    float y = rr_fclamp(
-                        client->player_info->camera_y + (rr_frand() * 2000 - 1000),
-                        0, arena->maze->grid_size * arena->maze->maze_dim);
-                    uint32_t grid_x = x / arena->maze->grid_size;
-                    uint32_t grid_y = y / arena->maze->grid_size;
-                    struct rr_maze_grid *grid =
-                        rr_component_arena_get_grid(arena, grid_x, grid_y);
-                    if (grid->value == 0 || (grid->value & 8))
-                        continue;
-
-                    EntityIdx e = rr_simulation_alloc_mob(
-                        &this->simulation, client->player_info->arena,
-                        x, y, id, rarity, rr_simulation_team_id_mobs);
-                    struct rr_component_mob *mob =
-                        rr_simulation_get_mob(&this->simulation, e);
-                    mob->no_drop = 1;
+                    puts("summon mob request by non-dev");
                     break;
                 }
+                if (client->player_info == NULL)
+                    break;
+
+                uint8_t id = proto_bug_read_uint8(&encoder, "id");
+                uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
+                uint8_t amount = proto_bug_read_uint8(&encoder, "amount");
+                uint8_t no_drop = proto_bug_read_uint8(&encoder, "no drop");
+
+                struct rr_component_arena *arena =
+                    rr_simulation_get_arena(&this->simulation, client->player_info->arena);
+                for (uint8_t i = 0; i < amount; ++i)
+                    for (uint8_t j = 0; j < 255; ++j)
+                    {
+                        float angle = rr_frand() * 2 * M_PI;
+                        float dist = 512;
+                        float x = client->player_info->camera_x + cosf(angle) * dist;
+                        float y = client->player_info->camera_y + sinf(angle) * dist;
+                        uint32_t grid_x = rr_fclamp(x / arena->maze->grid_size,
+                                                    0, arena->maze->maze_dim - 1);
+                        uint32_t grid_y = rr_fclamp(y / arena->maze->grid_size,
+                                                    0, arena->maze->maze_dim - 1);
+                        struct rr_maze_grid *grid =
+                            rr_component_arena_get_grid(arena, grid_x, grid_y);
+                        if (grid->value == 0 || (grid->value & 8))
+                            continue;
+
+                        EntityIdx e = rr_simulation_alloc_mob(
+                            &this->simulation, client->player_info->arena,
+                            x, y, id, rarity, rr_simulation_team_id_mobs);
+                        struct rr_component_mob *mob =
+                            rr_simulation_get_mob(&this->simulation, e);
+                        mob->no_drop = no_drop;
+                        break;
+                    }
+                break;
+            }
+            case rr_dev_cheat_kill_mobs:
+            {
+                if (!client->dev)
+                {
+                    puts("kill mobs request by non-dev");
+                    break;
+                }
+                if (client->player_info == NULL)
+                    break;
+
+                struct dev_cheat_kill_mob_captures captures;
+                captures.simulation = &this->simulation;
+                captures.player_info = client->player_info;
+                rr_simulation_for_each_mob(&this->simulation, &captures,
+                                           rr_simulation_dev_cheat_kill_mob);
+                break;
+            }
+            case rr_dev_cheat_flags:
+            {
+                if (!client->dev)
+                {
+                    puts("cheat flags request by non-dev");
+                    break;
+                }
+
+                uint8_t flags = proto_bug_read_uint8(&encoder, "cheat flags");
+                client->invisible = (flags & 1) >> 0;
+                if (client->player_info != NULL)
+                    client->player_info->invisible = client->invisible;
+                break;
+            }
+            case rr_dev_cheat_speed_percent:
+            {
+                if (!client->dev)
+                {
+                    puts("speed percent request by non-dev");
+                    break;
+                }
+
+                float speed_percent = rr_fclamp(proto_bug_read_float32(
+                                          &encoder, "speed percent"), 0, 1);
+                client->speed_percent = powf(speed_percent, 2) * 19 + 1;
+                break;
+            }
+            }
             break;
         }
         default:

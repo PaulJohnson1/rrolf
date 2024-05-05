@@ -38,9 +38,7 @@ enum rr_serverbound_packet_header
     rr_serverbound_squad_kick,
     rr_serverbound_petals_craft,
     rr_serverbound_chat,
-
-    // cheats
-    rr_serverbound_dev_summon,
+    rr_serverbound_dev_cheat,
 };
 
 enum rr_clientbound_packet_header
@@ -52,6 +50,14 @@ enum rr_clientbound_packet_header
     rr_clientbound_squad_leave,
     rr_clientbound_account_result,
     rr_clientbound_craft_result
+};
+
+enum rr_dev_cheat_type
+{
+    rr_dev_cheat_summon_mob,
+    rr_dev_cheat_kill_mobs,
+    rr_dev_cheat_flags,
+    rr_dev_cheat_speed_percent
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)

@@ -184,8 +184,7 @@ void tick_ai_neutral_trex(EntityIdx entity, struct rr_simulation *simulation)
         if (ai->ticks_until_next_action == 0)
         {
             if (rr_simulation_get_mob(simulation, entity)->rarity >=
-                rr_rarity_id_exotic &&
-                !rr_simulation_get_mob(simulation, entity)->player_spawned)
+                rr_rarity_id_exotic)
                 ai->ai_state = rr_ai_state_exotic_special;
             ai->ticks_until_next_action = 15;
         }
@@ -197,17 +196,40 @@ void tick_ai_neutral_trex(EntityIdx entity, struct rr_simulation *simulation)
         {
             struct rr_component_mob *mob =
                 rr_simulation_get_mob(simulation, entity);
+            struct rr_component_relations *relations =
+                rr_simulation_get_relations(simulation, entity);
             float angle = rr_frand() * M_PI + M_PI / 2;
-            rr_simulation_alloc_mob(
+            EntityIdx entity1 = rr_simulation_alloc_mob(
                 simulation, physical->arena,
                 physical->x + physical->radius * cosf(angle),
                 physical->y + physical->radius * sinf(angle), rr_mob_id_trex,
-                mob->rarity - 2, rr_simulation_team_id_mobs);
-            rr_simulation_alloc_mob(
+                mob->rarity - 2, relations->team);
+            EntityIdx entity2 = rr_simulation_alloc_mob(
                 simulation, physical->arena,
                 physical->x + physical->radius * cosf(2 * M_PI - angle),
                 physical->y + physical->radius * sinf(2 * M_PI - angle),
-                rr_mob_id_trex, mob->rarity - 2, rr_simulation_team_id_mobs);
+                rr_mob_id_trex, mob->rarity - 2, relations->team);
+            struct rr_component_mob *mob1 =
+                rr_simulation_get_mob(simulation, entity1);
+            struct rr_component_mob *mob2 =
+                rr_simulation_get_mob(simulation, entity2);
+            mob1->no_drop = mob->no_drop;
+            mob2->no_drop = mob->no_drop;
+            if (mob->player_spawned)
+            {
+                mob1->player_spawned = 1;
+                mob2->player_spawned = 1;
+                struct rr_component_relations *relations1 =
+                    rr_simulation_get_relations(simulation, entity1);
+                struct rr_component_relations *relations2 =
+                    rr_simulation_get_relations(simulation, entity2);
+                EntityHash owner =
+                    rr_simulation_get_entity_hash(simulation, relations->owner);
+                rr_component_relations_set_owner(relations1, owner);
+                rr_component_relations_set_owner(relations2, owner);
+                rr_component_relations_update_root_owner(simulation, relations1);
+                rr_component_relations_update_root_owner(simulation, relations2);
+            }
             ai->ai_state = rr_ai_state_attacking;
             ai->ticks_until_next_action = 300;
         }

@@ -426,6 +426,7 @@ static void join_code_on_event(struct rr_ui_element *this, struct rr_game *game)
             rr_websocket_queue_send(&game->socket,
                                     encoder2.current - encoder2.start);
             game->connect_code[0] = 0;
+            rr_dom_set_text("_0x4347", "");
         }
         game->cursor = rr_game_cursor_pointer;
         data->clickable = 1;

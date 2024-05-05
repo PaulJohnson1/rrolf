@@ -57,6 +57,8 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
     physical->mass = 10;
     physical->arena = arena_id;
     physical->friction = 0.75;
+    if (player_info->dev)
+        rr_component_physical_set_angle(physical, M_PI);
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
 

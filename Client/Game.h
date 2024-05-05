@@ -111,7 +111,10 @@ struct rr_game_squad
 
 struct rr_developer_cheats
 {
+    uint8_t invisible;
     float speed_percent;
+    uint8_t flags_last_tick;
+    float speed_percent_last_tick;
 };
 
 struct rr_game
