@@ -53,6 +53,8 @@ void shg_cb_enemy(EntityIdx potential, void *_captures)
         return;
     struct rr_component_physical *t_physical =
         rr_simulation_get_physical(simulation, potential);
+    if (t_physical->no_aggro)
+        return;
     struct rr_vector delta = {captures->x - t_physical->x,
                               captures->y - t_physical->y};
     float dist =

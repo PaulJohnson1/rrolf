@@ -66,6 +66,7 @@ struct rr_component_physical
     RR_SERVER_ONLY(EntityIdx arena;)
     RR_SERVER_ONLY(uint16_t colliding_with_size;)
     RR_SERVER_ONLY(EntityIdx colliding_with[RR_MAX_COLLISION_COUNT];)
+    RR_SERVER_ONLY(uint8_t no_aggro;)
 };
 
 void rr_component_physical_init(struct rr_component_physical *,

@@ -78,6 +78,8 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
 {
     if (this->health == 0)
         return;
+    if (this->invulnerable)
+        return;
     uint8_t no_reduction = 0;
     if (rr_simulation_has_mob(simulation, from))
     {

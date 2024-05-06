@@ -66,7 +66,8 @@ static void uranium_damage(EntityIdx mob, void *_captures)
         rr_component_health_do_damage(simulation, health, captures->flower_id,
                                       captures->damage);
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
-        if (ai->target_entity == RR_NULL_ENTITY)
+        if (ai->target_entity == RR_NULL_ENTITY &&
+            !rr_simulation_get_physical(simulation, captures->flower_id)->no_aggro)
             ai->target_entity = captures->flower_id;
     }
 }

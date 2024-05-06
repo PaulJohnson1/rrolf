@@ -1075,6 +1075,41 @@ static void write_serverbound_packet_desktop(struct rr_game *this)
     }
 }
 
+void rr_write_dev_cheat_packets(struct rr_game *this, uint8_t force)
+{
+    if (!this->is_dev)
+        return;
+    uint8_t cheat_flags = 0;
+    cheat_flags |= this->developer_cheats.invisible << 0;
+    cheat_flags |= this->developer_cheats.invulnerable << 1;
+    cheat_flags |= this->developer_cheats.no_aggro << 2;
+    if (force || cheat_flags != this->developer_cheats.flags_last_tick)
+    {
+        this->developer_cheats.flags_last_tick = cheat_flags;
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+        proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
+        proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
+        proto_bug_write_uint8(&encoder, rr_dev_cheat_flags, "cheat type");
+        proto_bug_write_uint8(&encoder, cheat_flags, "cheat flags");
+        rr_websocket_send(&this->socket, encoder.current - encoder.start);
+    }
+    if (force || this->developer_cheats.speed_percent !=
+        this->developer_cheats.speed_percent_last_tick)
+    {
+        this->developer_cheats.speed_percent_last_tick =
+            this->developer_cheats.speed_percent;
+        struct proto_bug encoder;
+        proto_bug_init(&encoder, RR_OUTGOING_PACKET);
+        proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
+        proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
+        proto_bug_write_uint8(&encoder, rr_dev_cheat_speed_percent, "cheat type");
+        proto_bug_write_float32(&encoder, this->developer_cheats.speed_percent,
+                                "speed percent");
+        rr_websocket_send(&this->socket, encoder.current - encoder.start);
+    }
+}
+
 void rr_game_tick(struct rr_game *this, float delta)
 {
     if (this->ticks_until_text_cache == 0)
@@ -1308,33 +1343,7 @@ void rr_game_tick(struct rr_game *this, float delta)
                 write_serverbound_packet_desktop(this);
             else
                 rr_write_serverbound_packet_mobile(this);
-        }
-        uint8_t cheat_flags = 0;
-        cheat_flags |= this->developer_cheats.invisible << 0;
-        if (cheat_flags != this->developer_cheats.flags_last_tick)
-        {
-            this->developer_cheats.flags_last_tick = cheat_flags;
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
-            proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
-            proto_bug_write_uint8(&encoder, rr_dev_cheat_flags, "cheat type");
-            proto_bug_write_uint8(&encoder, cheat_flags, "cheat flags");
-            rr_websocket_send(&this->socket, encoder.current - encoder.start);
-        }
-        if (this->developer_cheats.speed_percent !=
-            this->developer_cheats.speed_percent_last_tick)
-        {
-            this->developer_cheats.speed_percent_last_tick =
-                this->developer_cheats.speed_percent;
-            struct proto_bug encoder;
-            proto_bug_init(&encoder, RR_OUTGOING_PACKET);
-            proto_bug_write_uint8(&encoder, this->socket.quick_verification, "qv");
-            proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
-            proto_bug_write_uint8(&encoder, rr_dev_cheat_speed_percent, "cheat type");
-            proto_bug_write_float32(&encoder, this->developer_cheats.speed_percent,
-                                    "speed percent");
-            rr_websocket_send(&this->socket, encoder.current - encoder.start);
+            rr_write_dev_cheat_packets(this, 0);
         }
     }
     else if (--this->ticks_until_reconnect == 0)

@@ -95,7 +95,7 @@ static void player_hud_on_render(struct rr_ui_element *this,
         rr_renderer_stroke(renderer);
         rr_renderer_translate(renderer, -length, 0);
         rr_renderer_scale(renderer, this->abs_height / 50);
-        if (data->pos == 0 && game->developer_cheats.invisible)
+        if (data->pos == 0 && game->developer_cheats.invisible && game->is_dev)
             rr_renderer_set_global_alpha(renderer, 0.5);
         render_dead_flower(game);
     }
@@ -147,7 +147,7 @@ static void player_hud_on_render(struct rr_ui_element *this,
             rr_renderer_translate(renderer, -length, 0);
             rr_renderer_scale(renderer, this->abs_height / 50);
             rr_renderer_scale(renderer, 25 / physical->radius);
-            if (data->pos == 0 && game->developer_cheats.invisible)
+            if (data->pos == 0 && game->developer_cheats.invisible && game->is_dev)
                 rr_renderer_set_global_alpha(renderer, 0.5);
             rr_component_flower_render(player_info->flower_id, game,
                                        game->simulation);

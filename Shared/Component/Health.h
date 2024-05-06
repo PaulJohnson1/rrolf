@@ -41,6 +41,7 @@ struct rr_component_health
     RR_SERVER_ONLY(uint8_t protocol_state;)
     RR_CLIENT_ONLY(uint8_t prev_flags;)
     RR_SERVER_ONLY(uint8_t damage_paused;)
+    RR_SERVER_ONLY(uint8_t invulnerable;)
 };
 
 void rr_component_health_init(struct rr_component_health *,

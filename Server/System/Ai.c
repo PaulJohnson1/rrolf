@@ -58,7 +58,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
             rr_simulation_get_physical(this, ai->target_entity);
         struct rr_vector diff = {physical->x - t_physical->x,
                                  physical->y - t_physical->y};
-        if (rr_vector_magnitude_cmp(&diff, 2000) == 1)
+        if (rr_vector_magnitude_cmp(&diff, 2000) == 1 ||
+            t_physical->no_aggro)
         {
             ai->target_entity = RR_NULL_ENTITY;
             ai->ai_state = rr_ai_state_idle;

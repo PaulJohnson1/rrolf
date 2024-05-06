@@ -92,6 +92,8 @@ struct rr_component_player_info
     RR_SERVER_ONLY(uint8_t drops_this_tick_size;)
     RR_SERVER_ONLY(uint8_t dev;)
     RR_SERVER_ONLY(uint8_t invisible;)
+    RR_SERVER_ONLY(uint8_t invulnerable;)
+    RR_SERVER_ONLY(uint8_t no_aggro;)
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *,

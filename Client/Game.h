@@ -112,6 +112,8 @@ struct rr_game_squad
 struct rr_developer_cheats
 {
     uint8_t invisible;
+    uint8_t invulnerable;
+    uint8_t no_aggro;
     float speed_percent;
     uint8_t flags_last_tick;
     float speed_percent_last_tick;
@@ -189,6 +191,7 @@ void rr_game_init(struct rr_game *);
 void rr_game_tick(struct rr_game *, float);
 void rr_game_connect_socket(struct rr_game *);
 void rr_simulation_read_binary(struct rr_game *, struct proto_bug *);
+void rr_write_dev_cheat_packets(struct rr_game *, uint8_t);
 
 void rr_game_websocket_on_event_function(enum rr_websocket_event_type, void *,
                                          void *, uint64_t);

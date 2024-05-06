@@ -346,6 +346,7 @@ static void join_button_on_event(struct rr_ui_element *this,
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
+            rr_write_dev_cheat_packets(game, 1);
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");

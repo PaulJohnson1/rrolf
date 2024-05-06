@@ -64,6 +64,8 @@ struct rr_server_client
     uint8_t in_use : 1;
     uint8_t pending_quick_join : 1;
     uint8_t invisible : 1;
+    uint8_t invulnerable : 1;
+    uint8_t no_aggro : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);
