@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <Server/EntityAllocation.h>
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 #include <Server/Waves.h>
 
@@ -57,10 +58,7 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
     physical->mass = 10;
     physical->arena = arena_id;
     physical->friction = 0.75;
-    physical->no_aggro = player_info->no_aggro;
-    physical->no_wall_collision = player_info->no_wall_collision;
-    physical->no_collision = player_info->no_collision;
-    if (player_info->dev)
+    if (player_info->client->dev)
         rr_component_physical_set_angle(physical, M_PI);
     if (rand() < RAND_MAX / 1000)
         rr_component_physical_set_angle(physical, rr_frand() * M_PI * 2);
@@ -76,7 +74,6 @@ EntityIdx rr_simulation_alloc_player(struct rr_simulation *this,
     rr_component_health_set_health(health, health->max_health);
     health->damage = health->max_health * 0.1;
     health->damage_paused = 25;
-    health->invulnerable = player_info->invulnerable;
     rr_component_relations_set_team(relations, rr_simulation_team_id_players);
     rr_component_relations_set_owner(
         relations, rr_simulation_get_entity_hash(this, entity));

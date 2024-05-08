@@ -14,6 +14,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <Server/EntityDetection.h>
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 #include <Server/SpatialHash.h>
 
@@ -46,6 +47,8 @@ void shg_cb_enemy(EntityIdx potential, void *_captures)
           rr_simulation_get_petal(simulation, potential)->detached));
     if (!allow)
         return;
+    if (dev_cheat_enabled(simulation, potential, no_aggro))
+        return;
     if (rr_simulation_get_relations(simulation, potential)->team ==
         captures->seeker_team)
         return;
@@ -53,8 +56,6 @@ void shg_cb_enemy(EntityIdx potential, void *_captures)
         return;
     struct rr_component_physical *t_physical =
         rr_simulation_get_physical(simulation, potential);
-    if (t_physical->no_aggro)
-        return;
     struct rr_vector delta = {captures->x - t_physical->x,
                               captures->y - t_physical->y};
     float dist =

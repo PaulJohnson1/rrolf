@@ -41,7 +41,8 @@ void rr_server_client_init(struct rr_server_client *this)
     this->serverbound_encryption_key = rr_get_rand();
     this->requested_verification = rr_get_rand();
     this->quick_verification = RR_SECRET8;
-    this->speed_percent = 1;
+    memset(&this->dev_cheats, 0, sizeof(struct rr_server_client_dev_cheats));
+    this->dev_cheats.speed_percent = 1;
 }
 
 void rr_server_client_create_flower(struct rr_server_client *this)

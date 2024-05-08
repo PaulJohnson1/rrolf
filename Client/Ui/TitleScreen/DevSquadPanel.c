@@ -250,9 +250,9 @@ static struct rr_ui_element *invisible_toggle_init(struct rr_game *game)
     struct rr_ui_element *element =
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
-            rr_ui_toggle_box_init(&game->developer_cheats.invisible),
+            rr_ui_toggle_box_init(&game->dev_cheats.invisible),
             rr_ui_text_init("Invisible", 16, 0xffffffff), NULL);
-    game->developer_cheats.invisible = 1;
+    game->dev_cheats.invisible = 1;
     return element;
 }
 
@@ -261,9 +261,9 @@ static struct rr_ui_element *invulnerable_toggle_init(struct rr_game *game)
     struct rr_ui_element *element =
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
-            rr_ui_toggle_box_init(&game->developer_cheats.invulnerable),
+            rr_ui_toggle_box_init(&game->dev_cheats.invulnerable),
             rr_ui_text_init("Invulnerable", 16, 0xffffffff), NULL);
-    game->developer_cheats.invulnerable = 1;
+    game->dev_cheats.invulnerable = 1;
     return element;
 }
 
@@ -272,9 +272,9 @@ static struct rr_ui_element *no_aggro_toggle_init(struct rr_game *game)
     struct rr_ui_element *element =
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
-            rr_ui_toggle_box_init(&game->developer_cheats.no_aggro),
+            rr_ui_toggle_box_init(&game->dev_cheats.no_aggro),
             rr_ui_text_init("No aggro", 16, 0xffffffff), NULL);
-    game->developer_cheats.no_aggro = 1;
+    game->dev_cheats.no_aggro = 1;
     return element;
 }
 
@@ -283,9 +283,9 @@ static struct rr_ui_element *no_wall_collision_toggle_init(struct rr_game *game)
     struct rr_ui_element *element =
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
-            rr_ui_toggle_box_init(&game->developer_cheats.no_wall_collision),
+            rr_ui_toggle_box_init(&game->dev_cheats.no_wall_collision),
             rr_ui_text_init("No wall collision", 16, 0xffffffff), NULL);
-    game->developer_cheats.no_wall_collision = 1;
+    game->dev_cheats.no_wall_collision = 1;
     return element;
 }
 
@@ -294,9 +294,9 @@ static struct rr_ui_element *no_collision_toggle_init(struct rr_game *game)
     struct rr_ui_element *element =
         rr_ui_h_container_init(
             rr_ui_container_init(), 0, 10,
-            rr_ui_toggle_box_init(&game->developer_cheats.no_collision),
+            rr_ui_toggle_box_init(&game->dev_cheats.no_collision),
             rr_ui_text_init("No collision", 16, 0xffffffff), NULL);
-    game->developer_cheats.no_collision = 1;
+    game->dev_cheats.no_collision = 1;
     return element;
 }
 
@@ -307,8 +307,8 @@ static struct rr_ui_element *speed_slider_init(struct rr_game *game)
             rr_ui_container_init(), 0, 10,
             rr_ui_text_init("Speed:", 16, 0xffffffff),
             rr_ui_h_slider_init(100, 20,
-                &game->developer_cheats.speed_percent, 1), NULL);
-    game->developer_cheats.speed_percent = 0;
+                &game->dev_cheats.speed_percent, 1), NULL);
+    game->dev_cheats.speed_percent = 0;
     return element;
 }
 

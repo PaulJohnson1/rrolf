@@ -49,6 +49,7 @@ void rr_component_health_free(struct rr_component_health *this,
 }
 
 #ifdef RR_SERVER
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 
 #include <Shared/StaticData.h>
@@ -76,9 +77,9 @@ void rr_component_health_do_damage(struct rr_simulation *simulation,
                                    struct rr_component_health *this,
                                    EntityIdx from, float v)
 {
-    if (this->health == 0)
+    if (dev_cheat_enabled(simulation, this->parent_id, invulnerable))
         return;
-    if (this->invulnerable)
+    if (this->health == 0)
         return;
     uint8_t no_reduction = 0;
     if (rr_simulation_has_mob(simulation, from))

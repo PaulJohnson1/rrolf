@@ -50,7 +50,7 @@ struct connected_captures
     struct rr_server_client *client;
 };
 
-struct dev_cheat_kill_mob_captures
+struct dev_cheat_captures
 {
     struct rr_simulation *simulation;
     struct rr_component_player_info *player_info;
@@ -85,12 +85,7 @@ static void rr_server_client_create_player_info(struct rr_server *server,
         rr_simulation_add_player_info(
             &server->simulation,
             rr_simulation_alloc_entity(&server->simulation));
-    player_info->dev = client->dev;
-    player_info->invisible = client->invisible;
-    player_info->invulnerable = client->invulnerable;
-    player_info->no_aggro = client->no_aggro;
-    player_info->no_wall_collision = client->no_wall_collision;
-    player_info->no_collision = client->no_collision;
+    player_info->client = client;
     player_info->squad = client->squad;
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
@@ -267,7 +262,7 @@ static void rr_simulation_tick_entity_resetter_function(EntityIdx entity,
 
 static void rr_simulation_dev_cheat_kill_mob(EntityIdx entity, void *_captures)
 {
-    struct dev_cheat_kill_mob_captures *captures = _captures;
+    struct dev_cheat_captures *captures = _captures;
     struct rr_simulation *this = captures->simulation;
     struct rr_component_player_info *player_info = captures->player_info;
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
@@ -280,6 +275,17 @@ static void rr_simulation_dev_cheat_kill_mob(EntityIdx entity, void *_captures)
         mob->no_drop = 1;
         rr_simulation_request_entity_deletion(this, entity);
     }
+}
+
+static void rr_simulation_dev_cheat_set_max_health(EntityIdx entity, void *_captures)
+{
+    struct dev_cheat_captures *captures = _captures;
+    struct rr_simulation *this = captures->simulation;
+    struct rr_component_player_info *player_info = captures->player_info;
+    struct rr_component_health *health = rr_simulation_get_health(this, entity);
+    struct rr_component_relations *relations = rr_simulation_get_relations(this, entity);
+    if (relations->root_owner == rr_simulation_get_entity_hash(this, player_info->parent_id))
+        rr_component_health_set_health(health, health->max_health);
 }
 
 static int handle_lws_event(struct rr_server *this, struct lws *ws,
@@ -523,7 +529,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 x += (movementFlags & 8) >> 3;
                 if (x || y)
                 {
-                    float mag_1 = RR_PLAYER_SPEED * client->speed_percent /
+                    float mag_1 = RR_PLAYER_SPEED *
+                                  client->dev_cheats.speed_percent /
                                   sqrtf(x * x + y * y);
                     x *= mag_1;
                     y *= mag_1;
@@ -536,7 +543,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if ((x != 0 || y != 0) && fabsf(x) < 10000 && fabsf(y) < 10000)
                 {
                     float mag_1 = sqrtf(x * x + y * y);
-                    float scale = RR_PLAYER_SPEED * client->speed_percent *
+                    float scale = RR_PLAYER_SPEED *
+                                  client->dev_cheats.speed_percent *
                                   rr_fclamp((mag_1 - 25) / 50, 0, 1);
                     x *= scale / mag_1;
                     y *= scale / mag_1;
@@ -937,7 +945,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 if (client->player_info == NULL)
                     break;
 
-                struct dev_cheat_kill_mob_captures captures;
+                struct dev_cheat_captures captures;
                 captures.simulation = &this->simulation;
                 captures.player_info = client->player_info;
                 rr_simulation_for_each_mob(&this->simulation, &captures,
@@ -953,26 +961,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 }
 
                 uint8_t flags = proto_bug_read_uint8(&encoder, "cheat flags");
-                client->invisible = flags >> 0 & 1;
-                client->invulnerable = flags >> 1 & 1;
-                client->no_aggro = flags >> 2 & 1;
-                client->no_wall_collision = flags >> 3 & 1;
-                client->no_collision = flags >> 4 & 1;
-                if (client->player_info != NULL)
+                client->dev_cheats.invisible = flags >> 0 & 1;
+                client->dev_cheats.invulnerable = flags >> 1 & 1;
+                client->dev_cheats.no_aggro = flags >> 2 & 1;
+                client->dev_cheats.no_wall_collision = flags >> 3 & 1;
+                client->dev_cheats.no_collision = flags >> 4 & 1;
+
+                if (client->player_info != NULL && client->dev_cheats.invulnerable)
                 {
-                    struct rr_component_health *health =
-                        rr_simulation_get_health(&this->simulation, client->player_info->flower_id);
-                    struct rr_component_physical *physical =
-                        rr_simulation_get_physical(&this->simulation, client->player_info->flower_id);
-
-                    client->player_info->invisible = client->invisible;
-                    health->invulnerable = client->player_info->invulnerable = client->invulnerable;
-                    physical->no_aggro = client->player_info->no_aggro = client->no_aggro;
-                    physical->no_wall_collision = client->player_info->no_wall_collision = client->no_wall_collision;
-                    physical->no_collision = client->player_info->no_collision = client->no_collision;
-
-                    if (health->invulnerable)
-                        rr_component_health_set_health(health, health->max_health);
+                    struct dev_cheat_captures captures;
+                    captures.simulation = &this->simulation;
+                    captures.player_info = client->player_info;
+                    rr_simulation_for_each_health(&this->simulation, &captures,
+                                                  rr_simulation_dev_cheat_set_max_health);
                 }
                 break;
             }
@@ -986,7 +987,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
                 float speed_percent = rr_fclamp(proto_bug_read_float32(
                                           &encoder, "speed percent"), 0, 1);
-                client->speed_percent = powf(speed_percent, 2) * 19 + 1;
+                client->dev_cheats.speed_percent = powf(speed_percent, 2) * 19 + 1;
                 break;
             }
             }

@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <Server/Client.h>
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
 #include <Shared/Bitset.h>
@@ -114,7 +115,7 @@ static void lightning_petal_system(struct rr_simulation *simulation,
             struct rr_component_ai *ai =
                 rr_simulation_get_ai(simulation, target);
             if (ai->target_entity == RR_NULL_ENTITY &&
-                !rr_simulation_get_physical(simulation, relations->owner)->no_aggro)
+                !dev_cheat_enabled(simulation, relations->owner, no_aggro))
                 ai->target_entity = relations->owner;
         }
         struct rr_component_physical *physical =
@@ -147,10 +148,10 @@ static void damage_effect(struct rr_simulation *simulation, EntityIdx target,
             {
                 struct rr_component_relations *relations =
                     rr_simulation_get_relations(simulation, attacker);
-                if (!rr_simulation_get_physical(simulation, relations->owner)->no_aggro)
+                if (!dev_cheat_enabled(simulation, relations->owner, no_aggro))
                     ai->target_entity = relations->owner;
             }
-            else if (!rr_simulation_get_physical(simulation, attacker)->no_aggro)
+            else if (!dev_cheat_enabled(simulation, attacker, no_aggro))
                 ai->target_entity =
                     rr_simulation_get_entity_hash(simulation, attacker);
         }

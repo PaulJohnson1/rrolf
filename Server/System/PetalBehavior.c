@@ -18,6 +18,7 @@
 #include <math.h>
 #include <stdio.h>
 
+#include <Server/Client.h>
 #include <Server/EntityAllocation.h>
 #include <Server/EntityDetection.h>
 #include <Server/Simulation.h>
@@ -67,7 +68,7 @@ static void uranium_damage(EntityIdx mob, void *_captures)
                                       captures->damage);
         struct rr_component_ai *ai = rr_simulation_get_ai(simulation, mob);
         if (ai->target_entity == RR_NULL_ENTITY &&
-            !rr_simulation_get_physical(simulation, captures->flower_id)->no_aggro)
+            !dev_cheat_enabled(simulation, captures->flower_id, no_aggro))
             ai->target_entity = captures->flower_id;
     }
 }

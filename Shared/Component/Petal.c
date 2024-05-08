@@ -76,6 +76,9 @@ void rr_component_petal_free(struct rr_component_petal *this,
     web->slow_factor = 0.05 + powf(0.56, this->rarity);
     relations->team =
         rr_simulation_get_relations(simulation, this->parent_id)->team;
+    rr_component_relations_set_owner(relations,
+        rr_simulation_get_relations(simulation, this->parent_id)->owner);
+    rr_component_relations_update_root_owner(simulation, relations);
 #endif
 }
 

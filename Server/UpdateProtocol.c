@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 #include <Server/SpatialHash.h>
 #include <Shared/Bitset.h>
@@ -88,17 +89,10 @@ rr_simulation_find_entities_in_view_for_each_function(EntityIdx entity,
     struct rr_simulation *simulation = captures->simulation;
     if (!entity_alive(simulation, entity))
         return;
-
-    EntityHash p_info_id =
-        rr_simulation_get_relations(simulation, entity)->root_owner;
-    if (rr_simulation_has_player_info(simulation, p_info_id))
-    {
-        struct rr_component_player_info *player_info =
-            rr_simulation_get_player_info(simulation, p_info_id);
-        if (player_info->parent_id != captures->player_info->parent_id &&
-            player_info->invisible)
-            return;
-    }
+    if (dev_cheat_enabled(simulation, entity, invisible) &&
+        rr_simulation_get_relations(simulation, entity)->root_owner !=
+            rr_simulation_get_entity_hash(simulation, captures->player_info->parent_id))
+        return;
 
     struct rr_component_physical *physical =
         rr_simulation_get_physical(simulation, entity);
@@ -206,7 +200,8 @@ void rr_simulation_write_binary(struct rr_simulation *this,
             continue;
         struct rr_component_player_info *p_info =
             rr_simulation_get_player_info(this, p_id);
-        if (p_info->squad != player_info->squad || p_info->invisible)
+        if (p_info->squad != player_info->squad ||
+            p_info->client->dev_cheats.invisible)
             continue;
         rr_bitset_set(new_entities_in_view, p_id);
         if (entity_alive(this, (EntityIdx)p_info->flower_id) &&

@@ -17,6 +17,7 @@
 
 #include <math.h>
 
+#include <Server/Client.h>
 #include <Server/Simulation.h>
 #include <Shared/Entity.h>
 #include <Shared/StaticData.h>
@@ -245,7 +246,7 @@ static void system_velocity(EntityIdx id, void *simulation)
         (rr_simulation_has_petal(simulation, id) &&
          rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg &&
          rr_simulation_get_petal(simulation, id)->id != rr_petal_id_seed) ||
-         physical->no_wall_collision)
+        dev_cheat_enabled(simulation, id, no_wall_collision))
     {
         rr_component_physical_set_x(physical, now_x);
         rr_component_physical_set_y(physical, now_y);

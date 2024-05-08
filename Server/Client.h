@@ -21,6 +21,13 @@
 #include <Shared/Rivet.h>
 #include <Shared/StaticData.h>
 
+#define dev_cheat_enabled(simulation, entity, cheat_name)                      \
+    (rr_simulation_has_player_info(simulation,                                 \
+        rr_simulation_get_relations(simulation, entity)->root_owner) &&        \
+        rr_simulation_get_player_info(simulation,                              \
+            rr_simulation_get_relations(simulation, entity)->root_owner)->     \
+                client->dev_cheats.cheat_name)
+
 struct rr_binary_encoder;
 
 struct rr_server_client_message
@@ -28,6 +35,16 @@ struct rr_server_client_message
     struct rr_server_client_message *next;
     uint64_t len;
     uint8_t *packet;
+};
+
+struct rr_server_client_dev_cheats
+{
+    uint8_t invisible : 1;
+    uint8_t invulnerable : 1;
+    uint8_t no_aggro : 1;
+    uint8_t no_wall_collision : 1;
+    uint8_t no_collision : 1;
+    float speed_percent;
 };
 
 struct rr_server_client
@@ -43,12 +60,11 @@ struct rr_server_client
     struct rr_server_client_message *message_root;
     struct rr_server_client_message *message_at;
     struct rr_component_player_info *player_info;
+    struct rr_server_client_dev_cheats dev_cheats;
     double experience;
     float player_accel_x;
     float player_accel_y;
     char ip_address[100];
-
-    float speed_percent;
 
     uint32_t inventory[rr_petal_id_max][rr_rarity_id_max];
     uint32_t craft_fails[rr_petal_id_max][rr_rarity_id_max];
@@ -63,11 +79,6 @@ struct rr_server_client
     uint8_t pending_kick : 1;
     uint8_t in_use : 1;
     uint8_t pending_quick_join : 1;
-    uint8_t invisible : 1;
-    uint8_t invulnerable : 1;
-    uint8_t no_aggro : 1;
-    uint8_t no_wall_collision : 1;
-    uint8_t no_collision : 1;
 };
 
 void rr_server_client_init(struct rr_server_client *);

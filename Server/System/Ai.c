@@ -19,6 +19,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include <Server/Client.h>
 #include <Server/EntityAllocation.h>
 #include <Server/EntityDetection.h>
 #include <Server/MobAi/Ai.h>
@@ -41,15 +42,14 @@ static void system_for_each(EntityIdx entity, void *simulation)
     struct rr_component_mob *mob = rr_simulation_get_mob(this, entity);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
-    if (!rr_simulation_entity_alive(simulation, ai->target_entity) &&
-        ai->target_entity != RR_NULL_ENTITY)
+    if (ai->target_entity != RR_NULL_ENTITY &&
+        (!rr_simulation_entity_alive(simulation, ai->target_entity) ||
+            dev_cheat_enabled(this, ai->target_entity, no_aggro)))
     {
         ai->target_entity = RR_NULL_ENTITY;
         ai->ai_state = rr_ai_state_idle;
         ai->ticks_until_next_action = 25;
     }
-    if (physical->stun_ticks > 0)
-        return;
     struct rr_component_relations *relations =
         rr_simulation_get_relations(this, entity);
     if (ai->target_entity != RR_NULL_ENTITY)
@@ -58,8 +58,7 @@ static void system_for_each(EntityIdx entity, void *simulation)
             rr_simulation_get_physical(this, ai->target_entity);
         struct rr_vector diff = {physical->x - t_physical->x,
                                  physical->y - t_physical->y};
-        if (rr_vector_magnitude_cmp(&diff, 2000) == 1 ||
-            t_physical->no_aggro)
+        if (rr_vector_magnitude_cmp(&diff, 2000) == 1)
         {
             ai->target_entity = RR_NULL_ENTITY;
             ai->ai_state = rr_ai_state_idle;
@@ -69,6 +68,8 @@ static void system_for_each(EntityIdx entity, void *simulation)
     if (mob->player_spawned)
         if (tick_summon_return_to_owner(entity, this))
             return;
+    if (physical->stun_ticks > 0)
+        return;
 
     switch (mob->id)
     {
