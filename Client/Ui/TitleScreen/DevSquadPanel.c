@@ -278,6 +278,28 @@ static struct rr_ui_element *no_aggro_toggle_init(struct rr_game *game)
     return element;
 }
 
+static struct rr_ui_element *no_wall_collision_toggle_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_toggle_box_init(&game->developer_cheats.no_wall_collision),
+            rr_ui_text_init("No wall collision", 16, 0xffffffff), NULL);
+    game->developer_cheats.no_wall_collision = 1;
+    return element;
+}
+
+static struct rr_ui_element *no_collision_toggle_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_toggle_box_init(&game->developer_cheats.no_collision),
+            rr_ui_text_init("No collision", 16, 0xffffffff), NULL);
+    game->developer_cheats.no_collision = 1;
+    return element;
+}
+
 static struct rr_ui_element *speed_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
@@ -299,6 +321,8 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
         rr_ui_set_justify(invisible_toggle_init(game), -1, -1),
         rr_ui_set_justify(invulnerable_toggle_init(game), -1, -1),
         rr_ui_set_justify(no_aggro_toggle_init(game), -1, -1),
+        rr_ui_set_justify(no_wall_collision_toggle_init(game), -1, -1),
+        rr_ui_set_justify(no_collision_toggle_init(game), -1, -1),
         speed_slider_init(game),
         NULL);
     dev_tools->should_show = dev_tools_should_show;

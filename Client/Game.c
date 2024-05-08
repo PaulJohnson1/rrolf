@@ -1083,6 +1083,8 @@ void rr_write_dev_cheat_packets(struct rr_game *this, uint8_t force)
     cheat_flags |= this->developer_cheats.invisible << 0;
     cheat_flags |= this->developer_cheats.invulnerable << 1;
     cheat_flags |= this->developer_cheats.no_aggro << 2;
+    cheat_flags |= this->developer_cheats.no_wall_collision << 3;
+    cheat_flags |= this->developer_cheats.no_collision << 4;
     if (force || cheat_flags != this->developer_cheats.flags_last_tick)
     {
         this->developer_cheats.flags_last_tick = cheat_flags;

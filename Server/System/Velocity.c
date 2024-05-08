@@ -233,20 +233,22 @@ static void system_velocity(EntityIdx id, void *simulation)
         rr_vector_set_magnitude(&vel, arena->maze->grid_size);
     float before_x = physical->x;
     float before_y = physical->y;
-    float now_x = rr_fclamp(before_x + vel.x, physical->radius,
-                            arena->maze->maze_dim * arena->maze->grid_size -
+    int32_t extra = 3;
+    float now_x = rr_fclamp(before_x + vel.x, physical->radius - extra * arena->maze->grid_size,
+                            (arena->maze->maze_dim + extra) * arena->maze->grid_size -
                                 physical->radius);
-    float now_y = rr_fclamp(before_y + vel.y, physical->radius,
-                            arena->maze->maze_dim * arena->maze->grid_size -
+    float now_y = rr_fclamp(before_y + vel.y, physical->radius - extra * arena->maze->grid_size,
+                            (arena->maze->maze_dim + extra) * arena->maze->grid_size -
                                 physical->radius);
 
     if (rr_simulation_has_web(simulation, id) ||
         (rr_simulation_has_petal(simulation, id) &&
          rr_simulation_get_petal(simulation, id)->id != rr_petal_id_egg &&
-         rr_simulation_get_petal(simulation, id)->id != rr_petal_id_seed))
+         rr_simulation_get_petal(simulation, id)->id != rr_petal_id_seed) ||
+         physical->no_wall_collision)
     {
-        rr_component_physical_set_x(physical, before_x + vel.x);
-        rr_component_physical_set_y(physical, before_y + vel.y);
+        rr_component_physical_set_x(physical, now_x);
+        rr_component_physical_set_y(physical, now_y);
         return;
     }
     int32_t before_grid_x = floorf(before_x / arena->maze->grid_size);

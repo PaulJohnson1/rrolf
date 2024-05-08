@@ -94,6 +94,8 @@ struct rr_component_player_info
     RR_SERVER_ONLY(uint8_t invisible;)
     RR_SERVER_ONLY(uint8_t invulnerable;)
     RR_SERVER_ONLY(uint8_t no_aggro;)
+    RR_SERVER_ONLY(uint8_t no_wall_collision;)
+    RR_SERVER_ONLY(uint8_t no_collision;)
 };
 
 void rr_component_player_info_init(struct rr_component_player_info *,

@@ -114,6 +114,8 @@ struct rr_developer_cheats
     uint8_t invisible;
     uint8_t invulnerable;
     uint8_t no_aggro;
+    uint8_t no_wall_collision;
+    uint8_t no_collision;
     float speed_percent;
     uint8_t flags_last_tick;
     float speed_percent_last_tick;

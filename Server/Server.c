@@ -89,6 +89,8 @@ static void rr_server_client_create_player_info(struct rr_server *server,
     player_info->invisible = client->invisible;
     player_info->invulnerable = client->invulnerable;
     player_info->no_aggro = client->no_aggro;
+    player_info->no_wall_collision = client->no_wall_collision;
+    player_info->no_collision = client->no_collision;
     player_info->squad = client->squad;
     struct rr_squad_member *member = player_info->squad_member =
         rr_squad_get_client_slot(server, client);
@@ -954,6 +956,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->invisible = flags >> 0 & 1;
                 client->invulnerable = flags >> 1 & 1;
                 client->no_aggro = flags >> 2 & 1;
+                client->no_wall_collision = flags >> 3 & 1;
+                client->no_collision = flags >> 4 & 1;
                 if (client->player_info != NULL)
                 {
                     struct rr_component_health *health =
@@ -964,6 +968,8 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                     client->player_info->invisible = client->invisible;
                     health->invulnerable = client->player_info->invulnerable = client->invulnerable;
                     physical->no_aggro = client->player_info->no_aggro = client->no_aggro;
+                    physical->no_wall_collision = client->player_info->no_wall_collision = client->no_wall_collision;
+                    physical->no_collision = client->player_info->no_collision = client->no_collision;
 
                     if (health->invulnerable)
                         rr_component_health_set_health(health, health->max_health);

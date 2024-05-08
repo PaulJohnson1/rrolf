@@ -94,6 +94,8 @@ static void grid_filter_candidates(struct rr_simulation *this,
         rr_simulation_get_physical(this, entity1);
     struct rr_component_physical *physical2 =
         rr_simulation_get_physical(this, entity2);
+    if (physical1->no_collision || physical2->no_collision)
+        return;
     if (!should_entities_collide(this, entity1, entity2))
         return;
     struct rr_vector delta = {physical1->x - physical2->x,
