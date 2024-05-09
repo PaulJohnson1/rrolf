@@ -30,22 +30,34 @@
 static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
-    if (game->menu_open != rr_game_menu_dev_squad_panel ||
-        (game->cache.hide_ui && game->simulation_ready))
-        return 0;
-    if (game->is_dev)
-        return 1;
-    for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
-        for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
-            if (game->other_squads[i].squad_members[j].in_use)
-                return 1;
+    if (game->menu_open == rr_game_menu_dev_squad_panel &&
+        (!game->cache.hide_ui || !game->simulation_ready))
+    {
+        if (game->is_dev)
+            return 1;
+        for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+            for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+                if (game->other_squads[i].squad_members[j].in_use)
+                    return 1;
+    }
+    if (game->menu_open == rr_game_menu_dev_squad_panel)
+        game->menu_open = 0;
     return 0;
 }
 
 static uint8_t dev_squad_panel_button_should_show(struct rr_ui_element *this,
                                                   struct rr_game *game)
 {
-    return 1;
+    if (!game->cache.hide_ui || !game->simulation_ready)
+    {
+        if (game->is_dev)
+            return 1;
+        for (uint32_t i = 0; i < RR_SQUAD_COUNT; ++i)
+            for (uint32_t j = 0; j < RR_SQUAD_MEMBER_COUNT; ++j)
+                if (game->other_squads[i].squad_members[j].in_use)
+                    return 1;
+    }
+    return 0;
 }
 
 static uint8_t dev_tools_should_show(struct rr_ui_element *this, struct rr_game *game)

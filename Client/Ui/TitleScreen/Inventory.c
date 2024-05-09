@@ -42,18 +42,19 @@ static void inventory_button_on_event(struct rr_ui_element *this,
     struct inventory_button_metadata *data = this->data;
     if (data->count == 0)
         return;
-    for (uint8_t i = 0; i < 20; ++i)
-        if (i % 10 < game->slots_unlocked && game->cache.loadout[i].id == 0)
-        {
-            if (game->input_data->mouse_buttons_up_this_tick & 1 &&
-                game->pressed == this && !game->simulation_ready)
+    if (!game->simulation_ready)
+        for (uint8_t i = 0; i < 20; ++i)
+            if (i % 10 < game->slots_unlocked && game->cache.loadout[i].id == 0)
             {
-                game->cache.loadout[i].id = data->id;
-                game->cache.loadout[i].rarity = data->rarity;
+                if (game->input_data->mouse_buttons_up_this_tick & 1 &&
+                    game->pressed == this)
+                {
+                    game->cache.loadout[i].id = data->id;
+                    game->cache.loadout[i].rarity = data->rarity;
+                }
+                game->cursor = rr_game_cursor_pointer;
+                break;
             }
-            game->cursor = rr_game_cursor_pointer;
-            break;
-        }
     rr_ui_render_tooltip_above(
         this, game->petal_tooltips[data->id][data->rarity], game);
 }

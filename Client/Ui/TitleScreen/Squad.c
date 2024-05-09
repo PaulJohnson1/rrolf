@@ -378,7 +378,7 @@ static void copy_code_on_event(struct rr_ui_element *this, struct rr_game *game)
 static void toggle_private_on_event(struct rr_ui_element *this,
                                     struct rr_game *game)
 {
-    if (game->socket_ready && (game->squad.squad_private || game->is_dev))
+    if (!game->socket_error && (game->squad.squad_private || game->is_dev))
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {

@@ -100,10 +100,10 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
     rr_renderer_scale(renderer, this->abs_width / minimap.width);
     rr_renderer_draw_image(renderer, &minimap);
     rr_renderer_scale(renderer, minimap.width / this->abs_width);
-    rr_renderer_set_fill(renderer, 0xff0000ff);
+    rr_renderer_set_fill(renderer, 0xff0080ff);
     rr_renderer_set_global_alpha(renderer, 0.8);
     rr_renderer_begin_path(renderer);
-    rr_renderer_arc(renderer, midX, midY, 2);
+    rr_renderer_arc(renderer, midX, midY, 2.5);
     rr_renderer_fill(renderer);
     rr_renderer_set_fill(renderer, 0xffff00ff);
     for (uint32_t i = 1; i < RR_SQUAD_MEMBER_COUNT; ++i)
@@ -121,7 +121,7 @@ static void minimap_on_render(struct rr_ui_element *this, struct rr_game *game)
                 (player_info->camera_x / (grid_size * maze_dim) - 0.5),
             this->abs_height *
                 (player_info->camera_y / (grid_size * maze_dim) - 0.5),
-            2);
+            2.5);
         rr_renderer_fill(renderer);
     }
 }
