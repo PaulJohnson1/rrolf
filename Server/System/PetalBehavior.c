@@ -444,7 +444,8 @@ static void petal_modifiers(struct rr_simulation *simulation,
     uint8_t rot_count = 0;
     float bone_diminish_factor = 1;
     float feather_diminish_factor = 1;
-    rr_component_player_info_set_camera_fov(player_info, RR_BASE_FOV);
+    rr_component_player_info_set_camera_fov(player_info,
+        RR_BASE_FOV / player_info->client->dev_cheats.fov_percent);
     float to_rotate = 0.1;
     for (uint64_t outer = 0; outer < player_info->slot_count; ++outer)
     {

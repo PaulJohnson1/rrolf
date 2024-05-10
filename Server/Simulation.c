@@ -22,6 +22,7 @@
 #include <string.h>
 #include <sys/time.h>
 
+#include <Server/Client.h>
 #include <Server/EntityAllocation.h>
 #include <Server/EntityDetection.h>
 #include <Server/SpatialHash.h>
@@ -259,6 +260,8 @@ static void count_flower_vicinity(EntityIdx entity, void *_simulation)
     struct rr_component_arena *arena = rr_simulation_get_arena(this, 1);
     struct rr_component_physical *physical =
         rr_simulation_get_physical(this, entity);
+    if (dev_cheat_enabled(this, entity, no_grid_influence))
+        return;
 #ifdef RIVET_BUILD
 #define FOV 3072
 #else
@@ -305,6 +308,8 @@ static void despawn_mob(EntityIdx entity, void *_simulation)
                       arena->maze->maze_dim - 1))
             ->player_count == 0)
     {
+        if (mob->ticks_to_despawn > 30 * 25)
+            mob->ticks_to_despawn = 30 * 25;
         if (--mob->ticks_to_despawn == 0)
         {
             mob->no_drop = 1;

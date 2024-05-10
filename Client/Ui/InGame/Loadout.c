@@ -81,7 +81,7 @@ static void petal_switch_button_event(struct rr_ui_element *this,
     struct rr_component_player_info_petal_slot *slot1 =
         &game->player_info->slots[data->pos % 10];
     struct rr_component_player_info_petal_slot *slot2 =
-        &game->player_info->slots[data->pos % 10 + 10];
+        &game->player_info->secondary_slots[data->pos % 10];
     if (slot->id != 0)
         rr_ui_render_tooltip_above(this,
             game->petal_tooltips[slot->id][slot->rarity], game);

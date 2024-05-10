@@ -57,7 +57,8 @@ enum rr_dev_cheat_type
     rr_dev_cheat_summon_mob,
     rr_dev_cheat_kill_mobs,
     rr_dev_cheat_flags,
-    rr_dev_cheat_speed_percent
+    rr_dev_cheat_speed_percent,
+    rr_dev_cheat_fov_percent
 };
 
 #define RR_SLOT_COUNT_FROM_LEVEL(level) (level < 100 ? 5 + (level) / 20 : 10)

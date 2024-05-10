@@ -43,6 +43,7 @@ void rr_server_client_init(struct rr_server_client *this)
     this->quick_verification = RR_SECRET8;
     memset(&this->dev_cheats, 0, sizeof(struct rr_server_client_dev_cheats));
     this->dev_cheats.speed_percent = 1;
+    this->dev_cheats.fov_percent = 1;
 }
 
 void rr_server_client_create_flower(struct rr_server_client *this)

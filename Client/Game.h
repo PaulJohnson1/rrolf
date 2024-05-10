@@ -116,9 +116,12 @@ struct rr_dev_cheats
     uint8_t no_aggro;
     uint8_t no_wall_collision;
     uint8_t no_collision;
+    uint8_t no_grid_influence;
     float speed_percent;
+    float fov_percent;
     uint8_t flags_last_tick;
     float speed_percent_last_tick;
+    float fov_percent_last_tick;
 };
 
 struct rr_game

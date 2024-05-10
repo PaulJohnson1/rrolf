@@ -966,6 +966,7 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 client->dev_cheats.no_aggro = flags >> 2 & 1;
                 client->dev_cheats.no_wall_collision = flags >> 3 & 1;
                 client->dev_cheats.no_collision = flags >> 4 & 1;
+                client->dev_cheats.no_grid_influence = flags >> 5 & 1;
 
                 if (client->player_info != NULL && client->dev_cheats.invulnerable)
                 {
@@ -988,6 +989,19 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
                 float speed_percent = rr_fclamp(proto_bug_read_float32(
                                           &encoder, "speed percent"), 0, 1);
                 client->dev_cheats.speed_percent = powf(speed_percent, 2) * 19 + 1;
+                break;
+            }
+            case rr_dev_cheat_fov_percent:
+            {
+                if (!client->dev)
+                {
+                    puts("fov percent request by non-dev");
+                    break;
+                }
+
+                float fov_percent = rr_fclamp(proto_bug_read_float32(
+                                        &encoder, "fov percent"), 0, 1);
+                client->dev_cheats.fov_percent = powf(fov_percent, 2) * 19 + 1;
                 break;
             }
             }

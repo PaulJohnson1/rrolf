@@ -30,7 +30,7 @@
 static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
                                                      struct rr_game *game)
 {
-    if (game->menu_open == rr_game_menu_dev_squad_panel &&
+    if (game->menu_open == rr_game_menu_dev_squad_panel && game->socket_ready &&
         (!game->cache.hide_ui || !game->simulation_ready))
     {
         if (game->is_dev)
@@ -48,7 +48,7 @@ static uint8_t dev_squad_panel_container_should_show(struct rr_ui_element *this,
 static uint8_t dev_squad_panel_button_should_show(struct rr_ui_element *this,
                                                   struct rr_game *game)
 {
-    if (!game->cache.hide_ui || !game->simulation_ready)
+    if (game->socket_ready && (!game->cache.hide_ui || !game->simulation_ready))
     {
         if (game->is_dev)
             return 1;
@@ -312,6 +312,17 @@ static struct rr_ui_element *no_collision_toggle_init(struct rr_game *game)
     return element;
 }
 
+static struct rr_ui_element *no_grid_influence_toggle_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_toggle_box_init(&game->dev_cheats.no_grid_influence),
+            rr_ui_text_init("No grid influence", 16, 0xffffffff), NULL);
+    game->dev_cheats.no_grid_influence = 1;
+    return element;
+}
+
 static struct rr_ui_element *speed_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
@@ -320,7 +331,19 @@ static struct rr_ui_element *speed_slider_init(struct rr_game *game)
             rr_ui_text_init("Speed:", 16, 0xffffffff),
             rr_ui_h_slider_init(100, 20,
                 &game->dev_cheats.speed_percent, 1), NULL);
-    game->dev_cheats.speed_percent = 0;
+    game->dev_cheats.speed_percent = 1;
+    return element;
+}
+
+static struct rr_ui_element *fov_slider_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            rr_ui_text_init("FOV:", 16, 0xffffffff),
+            rr_ui_h_slider_init(100, 20,
+                &game->dev_cheats.fov_percent, 1), NULL);
+    game->dev_cheats.fov_percent = 0;
     return element;
 }
 
@@ -335,7 +358,9 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
         rr_ui_set_justify(no_aggro_toggle_init(game), -1, -1),
         rr_ui_set_justify(no_wall_collision_toggle_init(game), -1, -1),
         rr_ui_set_justify(no_collision_toggle_init(game), -1, -1),
-        speed_slider_init(game),
+        rr_ui_set_justify(no_grid_influence_toggle_init(game), -1, -1),
+        rr_ui_set_justify(speed_slider_init(game), 1, 1),
+        rr_ui_set_justify(fov_slider_init(game), 1, 1),
         NULL);
     dev_tools->should_show = dev_tools_should_show;
     struct rr_ui_element *inner = rr_ui_v_container_init(
