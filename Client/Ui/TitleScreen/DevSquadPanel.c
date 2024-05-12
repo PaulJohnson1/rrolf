@@ -179,14 +179,21 @@ static void summon_mob_button_on_event(struct rr_ui_element *this,
     {
         if (game->input_data->mouse_buttons_up_this_tick & 1)
         {
+            uint8_t max_id = rr_mob_id_edmontosaurus + 1;
+            uint8_t id = game->dev_cheats.summon_mob_id * max_id;
+            if (id == max_id)
+                id = rand() % max_id;
+            uint8_t rarity = game->dev_cheats.summon_mob_rarity * rr_rarity_id_max;
+            if (rarity == rr_rarity_id_max)
+                rarity = rand() % rr_rarity_id_max;
             struct proto_bug encoder;
             proto_bug_init(&encoder, RR_OUTGOING_PACKET);
             proto_bug_write_uint8(&encoder, game->socket.quick_verification, "qv");
             proto_bug_write_uint8(&encoder, rr_serverbound_dev_cheat, "header");
             proto_bug_write_uint8(&encoder, rr_dev_cheat_summon_mob, "cheat type");
-            proto_bug_write_uint8(&encoder, rand() % (rr_mob_id_edmontosaurus + 1), "id");
-            proto_bug_write_uint8(&encoder, rr_rarity_id_ultimate, "rarity");
-            proto_bug_write_uint8(&encoder, 1, "amount");
+            proto_bug_write_uint8(&encoder, id, "id");
+            proto_bug_write_uint8(&encoder, rarity, "rarity");
+            proto_bug_write_uint8(&encoder, 1, "count");
             proto_bug_write_uint8(&encoder, 1, "no drop");
             rr_websocket_send(&game->socket, encoder.current - encoder.start);
         }
@@ -241,11 +248,64 @@ static void kill_mobs_button_animate(struct rr_ui_element *this,
         rr_ui_set_background(this, 0x80ffffff);
 }
 
+static void summon_mob_id_slider_animate(struct rr_ui_element *this,
+                                         struct rr_game *game)
+{
+    uint8_t max_id = rr_mob_id_edmontosaurus + 1;
+    uint8_t id = game->dev_cheats.summon_mob_id * max_id;
+    static char name[32];
+    strcpy(name, id == max_id ? "Random" : RR_MOB_NAMES[id]);
+    sprintf(game->dev_cheats.summon_mob_id_text, "%u (%s)", id, name);
+}
+
+static void summon_mob_rarity_slider_animate(struct rr_ui_element *this,
+                                             struct rr_game *game)
+{
+    uint8_t rarity = game->dev_cheats.summon_mob_rarity * rr_rarity_id_max;
+    static char name[16];
+    strcpy(name, rarity == rr_rarity_id_max ? "Random" : RR_RARITY_NAMES[rarity]);
+    sprintf(game->dev_cheats.summon_mob_rarity_text, "%u (%s)", rarity, name);
+}
+
 static struct rr_ui_element *summon_mob_button_init()
 {
     struct rr_ui_element *element = rr_ui_labeled_button_init("Summon Mob", 30, 0);
     element->on_event = summon_mob_button_on_event;
     element->animate = summon_mob_button_animate;
+    return element;
+}
+
+static struct rr_ui_element *summon_mob_id_slider_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_v_container_init(
+            rr_ui_container_init(), 0, 0,
+            rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 5,
+                rr_ui_text_init("ID:", 16, 0xffffffff),
+                rr_ui_h_slider_init(155, 20, &game->dev_cheats.summon_mob_id, 1),
+                NULL),
+            rr_ui_text_init(game->dev_cheats.summon_mob_id_text, 16, 0xffffffff),
+            NULL);
+    game->dev_cheats.summon_mob_id = 1;
+    element->animate = summon_mob_id_slider_animate;
+    return element;
+}
+
+static struct rr_ui_element *summon_mob_rarity_slider_init(struct rr_game *game)
+{
+    struct rr_ui_element *element =
+        rr_ui_v_container_init(
+            rr_ui_container_init(), 0, 0,
+            rr_ui_h_container_init(
+                rr_ui_container_init(), 0, 5,
+                rr_ui_text_init("Rarity:", 16, 0xffffffff),
+                rr_ui_h_slider_init(100, 20, &game->dev_cheats.summon_mob_rarity, 1),
+                NULL),
+            rr_ui_text_init(game->dev_cheats.summon_mob_rarity_text, 16, 0xffffffff),
+            NULL);
+    game->dev_cheats.summon_mob_rarity = (float)rr_rarity_id_ultimate / rr_rarity_id_max;
+    element->animate = summon_mob_rarity_slider_animate;
     return element;
 }
 
@@ -327,10 +387,10 @@ static struct rr_ui_element *speed_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
         rr_ui_h_container_init(
-            rr_ui_container_init(), 0, 10,
+            rr_ui_container_init(), 0, 5,
             rr_ui_text_init("Speed:", 16, 0xffffffff),
-            rr_ui_h_slider_init(100, 20,
-                &game->dev_cheats.speed_percent, 1), NULL);
+            rr_ui_h_slider_init(150, 20, &game->dev_cheats.speed_percent, 1),
+            NULL);
     game->dev_cheats.speed_percent = 1;
     return element;
 }
@@ -339,10 +399,10 @@ static struct rr_ui_element *fov_slider_init(struct rr_game *game)
 {
     struct rr_ui_element *element =
         rr_ui_h_container_init(
-            rr_ui_container_init(), 0, 10,
+            rr_ui_container_init(), 0, 5,
             rr_ui_text_init("FOV:", 16, 0xffffffff),
-            rr_ui_h_slider_init(100, 20,
-                &game->dev_cheats.fov_percent, 1), NULL);
+            rr_ui_h_slider_init(150, 20, &game->dev_cheats.fov_percent, 1),
+            NULL);
     game->dev_cheats.fov_percent = 0;
     return element;
 }
@@ -351,7 +411,13 @@ struct rr_ui_element *rr_ui_dev_panel_container_init(struct rr_game *game)
 {
     struct rr_ui_element *dev_tools = rr_ui_v_container_init(
         rr_ui_container_init(), 10, 10,
-        summon_mob_button_init(),
+        rr_ui_h_container_init(
+            rr_ui_container_init(), 0, 10,
+            summon_mob_button_init(),
+            summon_mob_id_slider_init(game),
+            summon_mob_rarity_slider_init(game),
+            NULL
+        ),
         kill_mobs_button_init(),
         rr_ui_set_justify(invisible_toggle_init(game), -1, -1),
         rr_ui_set_justify(invulnerable_toggle_init(game), -1, -1),

@@ -111,6 +111,10 @@ struct rr_game_squad
 
 struct rr_dev_cheats
 {
+    float summon_mob_id;
+    char summon_mob_id_text[32];
+    float summon_mob_rarity;
+    char summon_mob_rarity_text[16];
     uint8_t invisible;
     uint8_t invulnerable;
     uint8_t no_aggro;

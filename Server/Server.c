@@ -904,12 +904,14 @@ static int handle_lws_event(struct rr_server *this, struct lws *ws,
 
                 uint8_t id = proto_bug_read_uint8(&encoder, "id");
                 uint8_t rarity = proto_bug_read_uint8(&encoder, "rarity");
-                uint8_t amount = proto_bug_read_uint8(&encoder, "amount");
+                uint8_t count = proto_bug_read_uint8(&encoder, "count");
                 uint8_t no_drop = proto_bug_read_uint8(&encoder, "no drop");
+                if (id >= rr_mob_id_max || rarity >= rr_rarity_id_max)
+                    break;
 
                 struct rr_component_arena *arena =
                     rr_simulation_get_arena(&this->simulation, client->player_info->arena);
-                for (uint8_t i = 0; i < amount; ++i)
+                for (uint8_t i = 0; i < count; ++i)
                     for (uint8_t j = 0; j < 255; ++j)
                     {
                         float angle = rr_frand() * 2 * M_PI;

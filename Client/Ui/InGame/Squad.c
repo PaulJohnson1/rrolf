@@ -60,12 +60,8 @@ struct player_hud_metadata
 static uint8_t player_hud_should_show(struct rr_ui_element *this,
                                       struct rr_game *game)
 {
-    if (game->cache.hide_ui || !game->simulation_ready)
-        return 0;
     struct player_hud_metadata *data = this->data;
-    if (game->player_infos[data->pos] == RR_NULL_ENTITY)
-        return 0;
-    return 1;
+    return game->player_infos[data->pos] != RR_NULL_ENTITY;
 }
 
 static void player_hud_on_render(struct rr_ui_element *this,

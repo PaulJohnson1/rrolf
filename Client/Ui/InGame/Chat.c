@@ -147,6 +147,7 @@ struct rr_ui_element *rr_ui_chat_bar_init(struct rr_game *game)
     struct rr_ui_element *chatbar = rr_ui_text_input_init(200, 18, game->chat.sending, 64, "_0x4523");
     chatbar->animate = chatbar_animate;
     chatbar->on_event = chatbar_on_event;
+    // fixme: click doesn't work
     struct rr_ui_element *text = rr_ui_text_init("Press [Enter] or click here to chat", 14, 0xffffffff);
     text->prevent_on_event = 1;
     chatbar->fill = 0xffffffff;
