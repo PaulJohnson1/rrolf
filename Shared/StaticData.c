@@ -43,7 +43,7 @@ struct rr_petal_base_stat_scale const defensive[rr_rarity_id_max] = {
     {432,42.0}
 };
 
-struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {
+struct rr_petal_data RR_PETAL_DATA[rr_petal_id_max] = {        //dmg    hp     clump  CD1 CD2   clumps
     {rr_petal_id_none,      rr_rarity_id_common,    offensive,  0.0f,   0.0f,   0.0f,   0,  0, {0,0,0,0,0,0,0,0}},
     {rr_petal_id_basic,     rr_rarity_id_common,    offensive, 10.0f,  15.0f,   0.0f,  50,  0, {1,1,1,1,1,1,1,1}},
     {rr_petal_id_pellet,    rr_rarity_id_common,    offensive, 12.5f,   5.0f,   0.0f,  20,  0, {1,2,2,3,3,5,6,6}},
@@ -111,7 +111,7 @@ char const *RR_PETAL_DESCRIPTIONS[rr_petal_id_max] = {
     "Remember to feed your pets"
 };
 
-struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {
+struct rr_mob_data RR_MOB_DATA[rr_mob_id_max] = {                            // hp  dmg rad     
     {rr_mob_id_triceratops,          rr_rarity_id_rare, rr_rarity_id_ultimate,  45, 15, 30.0f, {{rr_petal_id_leaf,    0.15},{rr_petal_id_fossil,    0.05}}},
     {rr_mob_id_trex,                 rr_rarity_id_epic, rr_rarity_id_ultimate,  40, 25, 32.0f, {{rr_petal_id_stinger, 0.05},{rr_petal_id_egg,       0.05}}},
     {rr_mob_id_fern,               rr_rarity_id_common, rr_rarity_id_exotic,    10,  5, 24.0f, {{rr_petal_id_leaf,     0.1},{rr_petal_id_azalea,    0.25}}},
