@@ -216,3 +216,19 @@ void rr_dom_set_cursor(uint8_t cursor)
         Module.canvas.style.cursor = cursor;
     }, cursor);
 }
+
+void rr_dom_get_socket_url(char *out)
+{
+    EM_ASM({
+        HEAPU8[$0] = 0;
+        if (!window["rrolfScript"])
+            return;
+        const url = window["rrolfScript"].src.replace("http", "ws")
+            .replace("8080", "1234").replace("rrolf-client", "");
+        const arr = new TextEncoder().encode(url);
+        if (arr.length >= 128)
+            return;
+        HEAPU8.set(arr, $0);
+        HEAPU8[$0 + arr.length] = 0;
+    }, out);
+}
