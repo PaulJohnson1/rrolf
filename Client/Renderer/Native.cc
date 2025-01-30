@@ -70,6 +70,7 @@ extern "C"
     void rr_renderer_set_global_alpha(struct rr_renderer *self, float a)
     {
         // Not applicable in cairo
+        // test
     }
 
     void rr_renderer_set_line_cap(struct rr_renderer *self, uint8_t l)
