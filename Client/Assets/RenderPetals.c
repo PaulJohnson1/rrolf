@@ -144,7 +144,7 @@ void rr_renderer_draw_petal(struct rr_renderer *renderer, uint8_t id, uint8_t fl
         case rr_petal_id_iris:
             rr_renderer_set_stroke(renderer,0xffa760b1);
             rr_renderer_set_fill(renderer,0xffce76db);
-            rr_renderer_set_line_width(renderer, 3);
+            rr_renderer_set_line_width(mi, 3);
             rr_renderer_begin_path(renderer);
             rr_renderer_arc(renderer,0,0,6);
             rr_renderer_fill(renderer);
