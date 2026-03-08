@@ -93,17 +93,17 @@ void rr_websocket_connect_to(struct rr_websocket *this, char const *link)
                 socket.binaryType = "arraybuffer";
                 socket.onopen = function()
                 {
-                    _rr_on_socket_event_emscripten($0, 0, 0, 0);
+                    _rr_on_socket_event_emscripten($0, 0, 0, BigInt(0));
                 };
                 socket.onclose = function(a)
                 {
-                    _rr_on_socket_event_emscripten($0, 1, 0, a.code);
+                    _rr_on_socket_event_emscripten($0, 1, 0, BigInt(a.code));
                 };
                 socket.onmessage = function(event)
                 {
                     HEAPU8.set(new Uint8Array(event.data), $2);
                     _rr_on_socket_event_emscripten(
-                        $0, 2, $2, new Uint8Array(event.data).length);
+                        $0, 2, $2, BigInt(new Uint8Array(event.data).length));
                 };
             })();
         },
@@ -171,8 +171,9 @@ void rr_websocket_send(struct rr_websocket *this, uint32_t length)
 #ifndef EMSCRIPTEN
     lws_write(this->socket, RR_OUTGOING_PACKET, length, LWS_WRITE_BINARY);
 #else
-    EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
-           RR_OUTGOING_PACKET, length);
+    EM_ASM(
+        { Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
+        RR_OUTGOING_PACKET, length);
 #endif
 }
 
@@ -190,8 +191,9 @@ void rr_websocket_send_all(struct rr_websocket *this)
         lws_write(this->socket, outputs[i], packet_lengths[i],
                   LWS_WRITE_BINARY);
 #else
-        EM_ASM({ Module.socket.send(HEAPU8.subarray($0, $0 + $1)); },
-               outputs[i], packet_lengths[i]);
+        EM_ASM(
+            { Module.socket.send(HEAPU8.subarray($0, $0 + $1)); }, outputs[i],
+            packet_lengths[i]);
 #endif
         free(outputs[i]);
     }
